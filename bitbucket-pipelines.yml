@@ -18,7 +18,7 @@ pipelines:
                 # - npm test
                 - npm run build
               artifacts:
-                - .next/**
+                - build/**
           - step:
               name: Security Scan
               script:
@@ -39,7 +39,7 @@ pipelines:
                 AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION
                 S3_BUCKET: $S3_BUCKET_DEV
                 ACL: 'public-read'
-                LOCAL_PATH: '.next'
+                LOCAL_PATH: 'build'
     # master:
     #   - parallel:
     #       - step:
