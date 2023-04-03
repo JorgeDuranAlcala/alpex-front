@@ -1,6 +1,7 @@
 // ** MUI Theme Provider
 import { deepmerge } from '@mui/utils'
 import { ThemeOptions } from '@mui/material'
+import { koHoRegular } from 'src/utils/fotnsExport'
 
 // ** User Theme Options
 import UserThemeOptions from 'src/layouts/UserThemeOptions'
@@ -27,6 +28,19 @@ const themeOptions = (settings: Settings): ThemeOptions => {
   delete userThemeConfig.components
   delete userThemeConfig.typography
 
+  const koHo = {
+    fontFamily: 'KoHo',
+    fontStyle: 'normal',
+    fontDisplay: 'swap',
+    fontWeight: 400,
+    src: `
+      local('KoHo Regular'),
+      local('KoHo-Regular'),
+      url(${koHoRegular}) format('truetype')
+    `,
+    fontWeightBold: 700,
+  };
+
   const mergedThemeConfig = deepmerge(
     {
       direction,
@@ -34,7 +48,7 @@ const themeOptions = (settings: Settings): ThemeOptions => {
       typography: {
         fontFamily:
           userFontFamily ||
-          [
+          [ 'KoHo',
             'Inter',
             'sans-serif',
             '-apple-system',
@@ -48,6 +62,13 @@ const themeOptions = (settings: Settings): ThemeOptions => {
             '"Segoe UI Emoji"',
             '"Segoe UI Symbol"'
           ].join(',')
+      },
+      overrides: {
+        MuiCssBaseline: {
+          "@global": {
+            "@font-face": [koHo],
+          },
+        },
       },
       shadows: shadows(mode),
       ...spacing,
