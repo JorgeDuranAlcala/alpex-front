@@ -37,8 +37,8 @@ const ListSubheader = styled((props: ListSubheaderProps) => <MuiListSubheader co
 const VerticalNavSectionTitle = (props: Props) => {
   // ** Props
   const { item, navHover, settings, collapsedNavWidth, navigationBorderWidth } = props
+  console.log(item)
 
-  // ** Hook
   const theme = useTheme()
 
   // ** Vars

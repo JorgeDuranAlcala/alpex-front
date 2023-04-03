@@ -42,7 +42,8 @@ const MenuHeaderWrapper = styled(Box)<BoxProps>(({ theme }) => ({
 const HeaderTitle = styled(Typography)<TypographyProps>({
   fontWeight: 700,
   lineHeight: 1.2,
-  transition: 'opacity .25s ease-in-out, margin .25s ease-in-out'
+  transition: 'opacity .25s ease-in-out, margin .25s ease-in-out',
+  color: 'rgba(68,72,84,0.68)'
 })
 
 const StyledLink = styled(Link)({
@@ -128,76 +129,21 @@ const VerticalNavHeader = (props: Props) => {
         userNavMenuBranding(props)
       ) : (
         <StyledLink href='/'>
-          <svg width={40} fill='none' height={22} viewBox='0 0 268 150' xmlns='http://www.w3.org/2000/svg'>
-            <rect
-              rx='25.1443'
-              width='50.2886'
-              height='143.953'
-              fill={theme.palette.primary.main}
-              transform='matrix(-0.865206 0.501417 0.498585 0.866841 195.571 0)'
+          <svg width='32' height='32' viewBox='0 0 32 32' fill='none' xmlns='http://www.w3.org/2000/svg'>
+            <path
+              d='M22.826 27.159L20.0331 22.0493C19.2134 22.5995 18.2888 22.9741 17.3174 23.1498L20.1875 28.3945L21.6033 30.9815L21.6226 31.0137L21.8672 30.8786L24.1775 29.6172L22.826 27.159Z'
+              fill='#3BABF1'
             />
-            <rect
-              rx='25.1443'
-              width='50.2886'
-              height='143.953'
-              fillOpacity='0.4'
-              fill='url(#paint0_linear_7821_79167)'
-              transform='matrix(-0.865206 0.501417 0.498585 0.866841 196.084 0)'
+            <path
+              d='M15.9982 0.00195312H0V23.2721H8.72629V26.1808H11.6351V23.2721H15.9982C16.4407 23.2709 16.8822 23.2299 17.3174 23.1498C18.2885 22.973 19.2129 22.5985 20.0332 22.0494C20.8864 21.4794 21.61 20.7361 22.1568 19.8678C22.8876 18.7104 23.2738 17.3689 23.2701 16.0002C23.2701 14.0715 22.504 12.2219 21.1402 10.8581C19.7765 9.4944 17.9268 8.72825 15.9982 8.72825H8.72629V20.3633H2.90877V2.91072H15.9982C23.2122 2.91072 29.0876 8.77973 29.0876 16.0002C29.0879 17.7417 28.7395 19.4656 28.0632 21.0704C27.3868 22.6752 26.396 24.1283 25.1492 25.3443L26.5907 27.9827C28.2911 26.4843 29.6522 24.6403 30.5832 22.574C31.5143 20.5077 31.9939 18.2666 31.99 16.0002C31.9964 7.16447 24.8339 0.00195312 15.9982 0.00195312ZM11.6351 11.637H15.9982C17.1551 11.638 18.2643 12.0981 19.0823 12.9161C19.9003 13.7341 20.3603 14.8433 20.3614 16.0002C20.3604 16.1765 20.3497 16.3527 20.3292 16.5279C20.1992 17.5854 19.6872 18.5589 18.8896 19.2653C18.092 19.9717 17.0637 20.3622 15.9982 20.3633H11.6351V11.637Z'
+              fill='#565659'
             />
-            <rect
-              rx='25.1443'
-              width='50.2886'
-              height='143.953'
-              fill={theme.palette.primary.main}
-              transform='matrix(0.865206 0.501417 -0.498585 0.866841 173.147 0)'
+            <path
+              d='M15.9982 29.0897H0V31.9984H15.9982C16.9083 31.9967 17.8167 31.9192 18.7139 31.7668L17.2209 29.0317C16.8155 29.0639 16.4101 29.0897 15.9982 29.0897Z'
+              fill='#565659'
             />
-            <rect
-              rx='25.1443'
-              width='50.2886'
-              height='143.953'
-              fill={theme.palette.primary.main}
-              transform='matrix(-0.865206 0.501417 0.498585 0.866841 94.1973 0)'
-            />
-            <rect
-              rx='25.1443'
-              width='50.2886'
-              height='143.953'
-              fillOpacity='0.4'
-              fill='url(#paint1_linear_7821_79167)'
-              transform='matrix(-0.865206 0.501417 0.498585 0.866841 94.1973 0)'
-            />
-            <rect
-              rx='25.1443'
-              width='50.2886'
-              height='143.953'
-              fill={theme.palette.primary.main}
-              transform='matrix(0.865206 0.501417 -0.498585 0.866841 71.7728 0)'
-            />
-            <defs>
-              <linearGradient
-                y1='0'
-                x1='25.1443'
-                x2='25.1443'
-                y2='143.953'
-                id='paint0_linear_7821_79167'
-                gradientUnits='userSpaceOnUse'
-              >
-                <stop />
-                <stop offset='1' stopOpacity='0' />
-              </linearGradient>
-              <linearGradient
-                y1='0'
-                x1='25.1443'
-                x2='25.1443'
-                y2='143.953'
-                id='paint1_linear_7821_79167'
-                gradientUnits='userSpaceOnUse'
-              >
-                <stop />
-                <stop offset='1' stopOpacity='0' />
-              </linearGradient>
-            </defs>
           </svg>
+
           <HeaderTitle variant='h6' sx={{ ...menuCollapsedStyles, ...(navCollapsed && !navHover ? {} : { ml: 2 }) }}>
             {themeConfig.templateName}
           </HeaderTitle>

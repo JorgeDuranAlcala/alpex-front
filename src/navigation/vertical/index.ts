@@ -3,7 +3,134 @@ import { VerticalNavItemsType } from 'src/@core/layouts/types'
 
 const navigation = (): VerticalNavItemsType => {
   return [
+    /*********************************************** News Items ReDesign *****************************************************/
     {
+      title: 'Dashboard',
+      icon: 'mdi:dashboard',
+      path: '/dashboards/crm'
+    },
+    {
+      title: 'Acounts',
+      icon: 'mdi:accounts',
+      children: [
+        {
+          title: 'List',
+          path: '/apps/invoice/list'
+        },
+        {
+          title: 'Preview'
+        },
+        {
+          title: 'Edit'
+        },
+        {
+          title: 'Add'
+        }
+      ]
+    },
+    {
+      title: 'Payments',
+      icon: 'mdi:payments',
+      children: [
+        {
+          title: 'List'
+
+          // path: '/apps/invoice/list'
+        },
+        {
+          title: 'Preview'
+        },
+        {
+          title: 'Edit'
+        },
+        {
+          title: 'Add'
+        }
+      ]
+    },
+    {
+      title: 'Renewais',
+      icon: 'mdi:renewals',
+      children: [
+        {
+          title: 'List'
+
+          // path: '/apps/invoice/list'
+        },
+        {
+          title: 'Preview'
+        },
+        {
+          title: 'Edit'
+        },
+        {
+          title: 'Add'
+        }
+      ]
+    },
+    {
+      title: 'Claims',
+      icon: 'mdi:claims',
+      children: [
+        {
+          title: 'List'
+
+          // path: '/apps/invoice/list'
+        },
+        {
+          title: 'Preview'
+        },
+        {
+          title: 'Edit'
+        },
+        {
+          title: 'Add'
+        }
+      ]
+    },
+    {
+      title: 'Catalogues',
+      icon: 'mdi:catalogues',
+      children: [
+        {
+          title: 'List'
+
+          // path: '/apps/invoice/list'
+        },
+        {
+          title: 'Preview'
+        },
+        {
+          title: 'Edit'
+        },
+        {
+          title: 'Add'
+        }
+      ]
+    },
+    {
+      title: 'Configuration',
+      icon: 'mdi:configuration',
+      children: [
+        {
+          title: 'List'
+
+          // path: '/apps/invoice/list'
+        },
+        {
+          title: 'Preview'
+        },
+        {
+          title: 'Edit'
+        },
+        {
+          title: 'Add'
+        }
+      ]
+    }
+
+    /***********************************************************************************************************************/
+    /*{
       title: 'Dashboards',
       icon: 'mdi:home-outline',
       badgeContent: 'new',
@@ -350,7 +477,7 @@ const navigation = (): VerticalNavItemsType => {
       icon: 'mdi:google-circles-extended'
     },
     {
-      
+
       title: 'Cards',
       icon: 'mdi:credit-card-outline',
       children: [
@@ -618,7 +745,7 @@ const navigation = (): VerticalNavItemsType => {
           path: 'https://pixinvent.com/demo/materialize-mui-react-nextjs-admin-template/documentation'
         }
       ]
-    }
+    }*/
   ]
 }
 
