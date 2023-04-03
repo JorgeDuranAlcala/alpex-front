@@ -42,8 +42,7 @@ const MenuHeaderWrapper = styled(Box)<BoxProps>(({ theme }) => ({
 const HeaderTitle = styled(Typography)<TypographyProps>({
   fontWeight: 700,
   lineHeight: 1.2,
-  transition: 'opacity .25s ease-in-out, margin .25s ease-in-out',
-  color: 'rgba(68,72,84,0.68)'
+  transition: 'opacity .25s ease-in-out, margin .25s ease-in-out'
 })
 
 const StyledLink = styled(Link)({
@@ -143,7 +142,6 @@ const VerticalNavHeader = (props: Props) => {
               fill='#565659'
             />
           </svg>
-
           <HeaderTitle variant='h6' sx={{ ...menuCollapsedStyles, ...(navCollapsed && !navHover ? {} : { ml: 2 }) }}>
             {themeConfig.templateName}
           </HeaderTitle>
