@@ -1,28 +1,28 @@
 // ** React Imports
-import React, { useState, ReactNode } from 'react'
-import Lottie from 'react-lottie';
-import loginAnimation from './animations/login-animation.json';
+import { ReactNode, useState } from 'react'
+import Lottie from 'react-lottie'
+import loginAnimation from './animations/login-animation.json'
 
 // ** MUI Components
 import Button from '@mui/material/Button'
 import Checkbox from '@mui/material/Checkbox'
-import TextField from '@mui/material/TextField'
-import InputLabel from '@mui/material/InputLabel'
-import IconButton from '@mui/material/IconButton'
 import FormControl from '@mui/material/FormControl'
+import MuiFormControlLabel, { FormControlLabelProps } from '@mui/material/FormControlLabel'
+import FormHelperText from '@mui/material/FormHelperText'
+import IconButton from '@mui/material/IconButton'
+import InputAdornment from '@mui/material/InputAdornment'
+import InputLabel from '@mui/material/InputLabel'
 import OutlinedInput from '@mui/material/OutlinedInput'
 import { styled } from '@mui/material/styles'
-import FormHelperText from '@mui/material/FormHelperText'
-import InputAdornment from '@mui/material/InputAdornment'
-import MuiFormControlLabel, { FormControlLabelProps } from '@mui/material/FormControlLabel'
+import TextField from '@mui/material/TextField'
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
 
 // ** Third Party Imports
-import * as yup from 'yup'
-import { useForm, Controller } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
+import { Controller, useForm } from 'react-hook-form'
+import * as yup from 'yup'
 
 // ** Hooks
 import { useAuth } from 'src/hooks/useAuth'
@@ -38,19 +38,15 @@ const FormControlLabel = styled(MuiFormControlLabel)<FormControlLabelProps>(({ t
   }
 }))
 
-
 const schema = yup.object().shape({
   email: yup.string().email().required(),
   password: yup.string().min(5).required()
 })
 
-
 interface FormData {
   email: string
   password: string
 }
-
-
 
 const Background = () => {
   const defaultOptions = {
@@ -60,18 +56,16 @@ const Background = () => {
     rendererSettings: {
       preserveAspectRatio: 'xMidYMid slice'
     }
-  };
+  }
 
   return (
-    <div className="background">
+    <div className='background'>
       <div>
         <Lottie options={defaultOptions} />
       </div>
     </div>
-  );
-};
-
-
+  )
+}
 
 const LoginPage = () => {
   const [rememberMe, setRememberMe] = useState<boolean>(true)
@@ -85,7 +79,7 @@ const LoginPage = () => {
     setError,
     handleSubmit,
     formState: { errors }
-  } = useForm({
+  } = useForm<FormData>({
     mode: 'onBlur',
     resolver: yupResolver(schema)
   })
@@ -100,99 +94,97 @@ const LoginPage = () => {
     })
   }
 
-
   return (
-    <div className="login-view">
+    <div className='login-view'>
       <Background />
-      <div className="login-form">
-
-      <div className="form-row title-form">
-        <div className="logo">
-          <img alt="logo" src="/images/logos/logo-dynamic.svg"/>
+      <div className='login-form'>
+        <div className='form-row title-form'>
+          <div className='logo'>
+            <img alt='logo' src='/images/logos/logo-dynamic.svg' />
+          </div>
+          <img className='title-img' alt='title' src='/images/logos/title.svg' />
         </div>
-        <img className="title-img" alt="title" src="/images/logos/title.svg"/>
-      </div>
-      <div className="form-row directions">
-      Login with your email and password.
-      </div>
-      <div className="form-row form-inputs">
-      <form noValidate autoComplete='off' onSubmit={handleSubmit(onSubmit)}>
-              <FormControl fullWidth sx={{ mb: 4 }}>
-                <Controller
-                  name='email'
-                  control={control}
-                  rules={{ required: true }}
-                  render={({ field: { value, onChange, onBlur } }) => (
-                    <TextField
-                      autoFocus
-                      label='Email'
-                      value={value}
-                      onBlur={onBlur}
-                      onChange={onChange}
-                      error={Boolean(errors.email)}
-                      sx={{ '& .MuiOutlinedInput-root.Mui-focused  .MuiOutlinedInput-notchedOutline': { borderColor: "#0D567B"},
-                       '& .MuiInputLabel-root.Mui-focused': { color: "#0D567B"} }}
-                    />
-                  )}
-                />
-                {errors.email && <FormHelperText sx={{ color: 'error.main' }}>Invalid email</FormHelperText>}
-              </FormControl>
-              <FormControl fullWidth>
-                <InputLabel htmlFor='auth-login-v2-password' error={Boolean(errors.password)}>
-                  Password
-                </InputLabel>
-                <Controller
-                  name='password'
-                  control={control}
-                  rules={{ required: true }}
-                  render={({ field: { value, onChange, onBlur } }) => (
-                    <OutlinedInput
-                      value={value}
-                      onBlur={onBlur}
-                      label='Password'
-                      onChange={onChange}
-                      id='auth-login-v2-password'
-                      error={Boolean(errors.password)}
-                      type={showPassword ? 'text' : 'password'}
-                      endAdornment={
-                        <InputAdornment position='end'>
-                          <IconButton
-                            edge='end'
-                            onMouseDown={e => e.preventDefault()}
-                            onClick={() => setShowPassword(!showPassword)}
-                          >
-                            <Icon icon={showPassword ? 'mdi:eye-outline' : 'mdi:eye-off-outline'} fontSize={20} />
-                          </IconButton>
-                        </InputAdornment>
-                      }
-                    />
-                  )}
-                />
-                {errors.password && (
-                  <FormHelperText sx={{ color: 'error.main' }} id=''>
-                    {errors.password.message}
-                  </FormHelperText>
+        <div className='form-row directions'>Login with your email and password.</div>
+        <div className='form-row form-inputs'>
+          <form noValidate autoComplete='off' onSubmit={handleSubmit(onSubmit)}>
+            <FormControl fullWidth sx={{ mb: 4 }}>
+              <Controller
+                name='email'
+                control={control}
+                rules={{ required: true }}
+                render={({ field: { value, onChange, onBlur } }) => (
+                  <TextField
+                    autoFocus
+                    label='Email'
+                    value={value}
+                    onBlur={onBlur}
+                    onChange={onChange}
+                    error={Boolean(errors.email)}
+                    sx={{
+                      '& .MuiOutlinedInput-root.Mui-focused  .MuiOutlinedInput-notchedOutline': {
+                        borderColor: '#0D567B'
+                      },
+                      '& .MuiInputLabel-root.Mui-focused': { color: '#0D567B' }
+                    }}
+                  />
                 )}
-              </FormControl>
-            </form>
-      </div>
-      <div className="remember-me">
-      <FormControlLabel
-        label='Remember Me'
-        control={<Checkbox checked={rememberMe} onChange={e => setRememberMe(e.target.checked)} />}
-      />
-      </div>
-      <div className="form-row login-btn">
-      <Button fullWidth size='large' type='submit' variant='contained' sx={{ mb: 7 }}>
-                Login
-      </Button>
-      </div>
-      <div className="form-row">
-        <div className="forgot-text">
-          Forgot your password?
+              />
+              {errors.email && <FormHelperText sx={{ color: 'error.main' }}>Invalid email</FormHelperText>}
+            </FormControl>
+            <FormControl fullWidth>
+              <InputLabel htmlFor='auth-login-v2-password' error={Boolean(errors.password)}>
+                Password
+              </InputLabel>
+              <Controller
+                name='password'
+                control={control}
+                rules={{ required: true }}
+                render={({ field: { value, onChange, onBlur } }) => (
+                  <OutlinedInput
+                    value={value}
+                    onBlur={onBlur}
+                    label='Password'
+                    onChange={onChange}
+                    id='auth-login-v2-password'
+                    error={Boolean(errors.password)}
+                    type={showPassword ? 'text' : 'password'}
+                    endAdornment={
+                      <InputAdornment position='end'>
+                        <IconButton
+                          edge='end'
+                          onMouseDown={e => e.preventDefault()}
+                          onClick={() => setShowPassword(!showPassword)}
+                        >
+                          <Icon icon={showPassword ? 'mdi:eye-outline' : 'mdi:eye-off-outline'} fontSize={20} />
+                        </IconButton>
+                      </InputAdornment>
+                    }
+                  />
+                )}
+              />
+              {errors.password && (
+                <FormHelperText sx={{ color: 'error.main' }} id=''>
+                  {errors.password.message}
+                </FormHelperText>
+              )}
+            </FormControl>
+          </form>
+        </div>
+        <div className='remember-me'>
+          <FormControlLabel
+            label='Remember Me'
+            control={<Checkbox checked={rememberMe} onChange={e => setRememberMe(e.target.checked)} />}
+          />
+        </div>
+        <div className='form-row login-btn'>
+          <Button fullWidth size='large' type='submit' variant='contained' sx={{ mb: 7 }}>
+            Login
+          </Button>
+        </div>
+        <div className='form-row'>
+          <div className='forgot-text'>Forgot your password?</div>
         </div>
       </div>
-    </div>
     </div>
   )
 }

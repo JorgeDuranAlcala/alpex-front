@@ -1,4 +1,4 @@
-image: node:18.13.0
+image: node:18.15.0
 
 # Workflow Configuration
 
@@ -76,4 +76,3 @@ pipelines:
                 S3_BUCKET: $S3_BUCKET_PROD
                 ACL: 'public-read'
                 LOCAL_PATH: 'build'
-
