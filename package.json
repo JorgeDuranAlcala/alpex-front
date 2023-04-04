@@ -1,5 +1,5 @@
 {
-  "name": "materialize-mui-react-nextjs-admin-template",
+  "name": "Alpex",
   "version": "2.0.0",
   "private": true,
   "scripts": {
@@ -88,6 +88,7 @@
     "@types/react-credit-cards": "0.8.1",
     "@types/react-datepicker": "4.8.0",
     "@types/react-draft-wysiwyg": "1.13.4",
+    "@types/react-lottie": "^1.2.6",
     "@types/react-redux": "7.1.24",
     "@typescript-eslint/eslint-plugin": "5.41.0",
     "@typescript-eslint/parser": "5.41.0",
