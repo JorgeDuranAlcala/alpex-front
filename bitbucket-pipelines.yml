@@ -1,4 +1,4 @@
-image: node:18.13.0
+image: node:18.15.0
 
 # Workflow Configuration
 
@@ -13,6 +13,7 @@ pipelines:
                 - node
               script:
                 - printenv > .env
+                - rm package-lock.json
                 - npm install
                 # CI=true in default variables for Bitbucket Pipelines https://support.atlassian.com/bitbucket-cloud/docs/variables-in-pipelines/
                 # - npm test
@@ -76,4 +77,3 @@ pipelines:
                 S3_BUCKET: $S3_BUCKET_PROD
                 ACL: 'public-read'
                 LOCAL_PATH: 'build'
-

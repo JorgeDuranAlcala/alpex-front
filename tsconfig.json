@@ -27,6 +27,12 @@
       "apexcharts/*": [
         "./node_modules/apexcharts-clevision/*"
       ],
+      "@/public/": [
+        "./public/"
+      ],
+      "@/public/*": [
+        "./public/*"
+      ],
     }
   },
   "include": [
