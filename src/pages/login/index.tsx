@@ -21,7 +21,7 @@ import Icon from 'src/@core/components/icon'
 
 // ** Third Party Imports
 import { yupResolver } from '@hookform/resolvers/yup'
-import { Controller, useForm } from 'react-hook-form'
+import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import * as yup from 'yup'
 
 // ** Hooks
@@ -43,7 +43,7 @@ const schema = yup.object().shape({
   password: yup.string().min(5).required()
 })
 
-interface FormData {
+type FormData = {
   email: string
   password: string
 }
@@ -84,7 +84,7 @@ const LoginPage = () => {
     resolver: yupResolver(schema)
   })
 
-  const onSubmit = (data: FormData) => {
+  const onSubmit: SubmitHandler<FormData> = data => {
     const { email, password } = data
     auth.login({ email, password, rememberMe }, () => {
       setError('email', {
@@ -177,7 +177,14 @@ const LoginPage = () => {
           />
         </div>
         <div className='form-row login-btn'>
-          <Button fullWidth size='large' type='submit' variant='contained' sx={{ mb: 7 }}>
+          <Button
+            fullWidth
+            size='large'
+            type='submit'
+            variant='contained'
+            onClick={handleSubmit(onSubmit)}
+            sx={{ mb: 7 }}
+          >
             Login
           </Button>
         </div>
