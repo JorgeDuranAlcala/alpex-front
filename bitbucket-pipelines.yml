@@ -13,7 +13,6 @@ pipelines:
                 - node
               script:
                 - printenv > .env
-                - rm package-lock.json
                 - npm install
                 # CI=true in default variables for Bitbucket Pipelines https://support.atlassian.com/bitbucket-cloud/docs/variables-in-pipelines/
                 # - npm test
