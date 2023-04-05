@@ -74,8 +74,12 @@ const BrokersBalanceStatus = () => {
     <Card sx={{ position: 'relative', width: '566px', height: '393px' }}>
       <HeaderTitle>
         <ContainerTitle>
-          <Typography variant='h6'>Brokers balance status</Typography>
-          <Typography variant='body2'>Overview</Typography>
+          <Typography variant='h6' sx={{ color: theme.palette.text.primary, fontFamily: 'Inter' }}>
+            Brokers balance status
+          </Typography>
+          <Typography variant='body2' sx={{ fontFamily: 'Inter' }}>
+            Overview
+          </Typography>
         </ContainerTitle>
       </HeaderTitle>
       <div style={{ padding: '20px 20px 15px 20px' }}>
