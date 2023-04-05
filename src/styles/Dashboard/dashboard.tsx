@@ -11,12 +11,9 @@ const ContainerHeader = styled('div')({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'flex-start',
-  padding: '12px 20px',
+  padding: '12px 10px',
   width: '100%',
-  height: '80px',
-
-  // border: '1px solid black',
-  marginBottom: '30px'
+  height: '80px'
 })
 
 const Body = styled('div')({
