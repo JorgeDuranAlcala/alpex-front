@@ -14,8 +14,8 @@ import Icon from 'src/@core/components/icon'
 import { ThemeColor } from 'src/@core/layouts/types'
 
 // ** Custom Components
-import CustomChip from 'src/@core/components/mui/chip'
 import CustomAvatar from 'src/@core/components/mui/avatar'
+import CustomChip from 'src/@core/components/mui/chip'
 
 // ** Utils Import
 import { getInitials } from 'src/@core/utils/get-initials'
@@ -126,43 +126,44 @@ const rows: TableBodyRowType[] = [
     username: '@rsims6f',
     email: 'lonnie35@hotmail.com',
     avatarSrc: '/images/avatars/5.png'
-  },
-  {
-    id: 5,
-    status: 'active',
-    role: 'maintainer',
-    name: 'Lucile Young',
-    username: '@lyoung4a',
-    email: 'ahmad_Collins@yahoo.com',
-    avatarSrc: '/images/avatars/4.png'
-  },
-  {
-    id: 6,
-    role: 'editor',
-    status: 'pending',
-    name: 'Francis Frank',
-    username: '@ffrank7e',
-    avatarSrc: '/images/avatars/7.png',
-    email: 'tillman.Gleason68@hotmail.com'
-  },
-  {
-    id: 7,
-    role: 'subscriber',
-    status: 'inactive',
-    name: 'Phoebe Patterson',
-    email: 'otho21@gmail.com',
-    username: '@ppatterson2g',
-    avatarSrc: '/images/avatars/8.png'
-  },
-  {
-    id: 8,
-    status: 'active',
-    role: 'subscriber',
-    name: 'Curtis Underwood',
-    username: '@cunderwood8h',
-    avatarSrc: '/images/avatars/3.png',
-    email: 'florencio.Little@hotmail.com'
   }
+
+  // {
+  //   id: 5,
+  //   status: 'active',
+  //   role: 'maintainer',
+  //   name: 'Lucile Young',
+  //   username: '@lyoung4a',
+  //   email: 'ahmad_Collins@yahoo.com',
+  //   avatarSrc: '/images/avatars/4.png'
+  // },
+  // {
+  //   id: 6,
+  //   role: 'editor',
+  //   status: 'pending',
+  //   name: 'Francis Frank',
+  //   username: '@ffrank7e',
+  //   avatarSrc: '/images/avatars/7.png',
+  //   email: 'tillman.Gleason68@hotmail.com'
+  // },
+  // {
+  //   id: 7,
+  //   role: 'subscriber',
+  //   status: 'inactive',
+  //   name: 'Phoebe Patterson',
+  //   email: 'otho21@gmail.com',
+  //   username: '@ppatterson2g',
+  //   avatarSrc: '/images/avatars/8.png'
+  // },
+  // {
+  //   id: 8,
+  //   status: 'active',
+  //   role: 'subscriber',
+  //   name: 'Curtis Underwood',
+  //   username: '@cunderwood8h',
+  //   avatarSrc: '/images/avatars/3.png',
+  //   email: 'florencio.Little@hotmail.com'
+  // }
 ]
 
 const renderUserAvatar = (row: TableBodyRowType) => {
