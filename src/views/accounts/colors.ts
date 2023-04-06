@@ -18,6 +18,9 @@ const colors = {
     text:{
       primary:'#444854DE',
       secondary:'#444854AD',
+    },
+    action:{
+      hover:'#4448540D'
     }
 }
 
