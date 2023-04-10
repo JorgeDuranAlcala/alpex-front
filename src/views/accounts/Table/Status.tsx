@@ -7,7 +7,6 @@ import Typography from '@mui/material/Typography'
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
-import NotTakenUpIcon from 'src/assets/icons/notTakenUpIcon'
 
 // ** Custom utilities
 import colors from 'src/views/accounts/colors'
@@ -57,7 +56,7 @@ interface IStatusProps {
       notTakenUp:(
         <>
           <Box component='span' sx={{ display: 'flex', mr: 2, color: colors.secondary.dark }}>
-            <NotTakenUpIcon />
+          <Icon icon='custom:not-taken-up' fontSize={20} />
           </Box>
           <Typography sx={{ color: colors.secondary.dark, fontSize:fonts.size.px13,fontFamily:fonts.inter }}>
             Not Taken Up
