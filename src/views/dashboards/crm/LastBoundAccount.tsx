@@ -22,7 +22,7 @@ const LastBoundAccount = () => {
   const theme = useTheme()
 
   return (
-    <Card sx={{ position: 'relative', width: '566px', height: '393px' }}>
+    <Card sx={{ position: 'relative', width: '55%', height: '393px' }}>
       <HeaderTitle>
         <ContainerTitle>
           <Typography variant='h6' sx={{ color: theme.palette.text.primary, fontFamily: 'Inter' }}>
