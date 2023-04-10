@@ -10,21 +10,34 @@ const navigation = (): VerticalNavItemsType => {
       path: '/dashboards/crm'
     },
     {
-      title: 'Acounts',
+      title: 'Accounts',
       icon: 'mdi:accounts',
+      externalLink:true,
+      path: '/accounts',
       children: [
         {
           title: 'List',
-          path: '/apps/invoice/list'
+          path: '/accounts'
         },
         {
-          title: 'Preview'
+          title: 'Pending',
+          icon: 'mdi:clock',
         },
         {
-          title: 'Edit'
+          title: 'Not Materialized',
+          icon: 'mdi:progress-helper',
         },
         {
-          title: 'Add'
+          title: 'Not Taken Up',
+          icon: 'custom:not-taken-up',
+        },
+        {
+          title: 'Declined',
+          icon: 'mdi:cancel',
+        },
+        {
+          title: 'Bound',
+          icon: 'icon-park-outline:link-three',
         }
       ]
     },
