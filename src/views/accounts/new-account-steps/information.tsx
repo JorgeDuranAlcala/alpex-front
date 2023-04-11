@@ -1,20 +1,60 @@
+import { ForwardedRef, forwardRef, useState } from 'react'
+
 // ** MUI Imports
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
 import Button from '@mui/material/Button'
 import FormControl from '@mui/material/FormControl'
 import FormHelperText from '@mui/material/FormHelperText'
+import InputAdornment from '@mui/material/InputAdornment'
 import InputLabel from "@mui/material/InputLabel"
 import MenuItem from '@mui/material/MenuItem'
 import Select from '@mui/material/Select'
 import TextField from '@mui/material/TextField'
 import Icon from 'src/@core/components/icon'
 
+// ** Styled Components
+
+
 // ** Third Party Imports
+import DatePicker from 'react-datepicker'
 import { Controller, useForm } from 'react-hook-form'
+import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
+
+// ** Types
+import { DateType } from 'src/types/forms/reactDatepickerTypes'
 
 
-const Information = () => {
+interface PickerProps {
+  label?: string
+}
+/* eslint-disable */
+const CustomInput = forwardRef(({ ...props }: PickerProps, ref: ForwardedRef<HTMLElement>) => {
+  return (
+    <TextField
+      id="date-textfield"
+      inputRef={ref}
+      sx={{ width: { sm: '250px', xs: '170px' }, '& .MuiInputBase-input': { color: 'text.secondary' } }}
+      InputProps={{
+        endAdornment: (
+          <InputAdornment position="end">
+            <CalendarTodayIcon />
+          </InputAdornment>
+        ),
+      }}
+      {...props}
+    />
+
+  )
+})
+
+const BasicInfo = () => {
 
   const { control, formState: { errors } } = useForm();
+  const [receptionDate, setReceptionDate] = useState<DateType>(null)
+  const [effectiveDate, setEffectiveDate] = useState<DateType>(null)
+  const [expirationDate, setExpirationDate] = useState<DateType>(null)
+
+
 
   const handleSubmit = () => {
     console.log("elsubmit")
@@ -22,9 +62,6 @@ const Information = () => {
 
   return (
     <>
-      <div className='information'>
-        <form noValidate autoComplete='on' onSubmit={handleSubmit}>
-          <div className="section">
             <div className="title">Basic info</div>
             <div className="form-wrapper">
               <div className="form-col">
@@ -49,7 +86,7 @@ const Information = () => {
                   {errors.insured && <FormHelperText sx={{ color: 'error.main' }}>Invalid field</FormHelperText>}
                 </FormControl>
                 <FormControl fullWidth>
-                <InputLabel>Country</InputLabel>
+                  <InputLabel>Country</InputLabel>
                   <Controller
                     name='country'
                     control={control}
@@ -81,7 +118,7 @@ const Information = () => {
               <div className="form-col">
                 <div className="title">Broker</div>
                 <FormControl fullWidth>
-                <InputLabel>Select Broker</InputLabel>
+                  <InputLabel>Select Broker</InputLabel>
                   <Controller
                     name='broker'
                     control={control}
@@ -107,7 +144,7 @@ const Information = () => {
                   )}
                 </FormControl>
                 <FormControl fullWidth>
-                <InputLabel>Select Broker Contact</InputLabel>
+                  <InputLabel>Select Broker Contact</InputLabel>
                   <Controller
                     name='broker-contact'
                     control={control}
@@ -134,7 +171,7 @@ const Information = () => {
               <div className="form-col">
                 <div className="title">Cedant</div>
                 <FormControl fullWidth>
-                <InputLabel>Select Cedant</InputLabel>
+                  <InputLabel>Select Cedant</InputLabel>
                   <Controller
                     name='cedant'
                     control={control}
@@ -160,7 +197,7 @@ const Information = () => {
                   )}
                 </FormControl>
                 <FormControl fullWidth>
-                <InputLabel>Select Cedant Contact</InputLabel>
+                  <InputLabel>Select Cedant Contact</InputLabel>
                   <Controller
                     name='cedant-contact'
                     control={control}
@@ -185,17 +222,158 @@ const Information = () => {
                 </Button>
               </div>
               <div className="form-col">
-                <div className="title">Bussines</div>
+                <div className="title">Business</div>
+                <FormControl fullWidth>
+                  <InputLabel>Line of business</InputLabel>
+                  <Controller
+                    name='bussines'
+                    control={control}
+                    rules={{ required: true }}
+                    render={({ field: { value, onChange } }) => (
+                      <Select
+                        label='Line of Business'
+                        value={value}
+                        onChange={onChange}
+                        labelId='business'
+                        error={Boolean(errors.business)}
+                      >
+                        <MenuItem value='lb1'>Lb 1</MenuItem>
+                        <MenuItem value='lb2'>Lb 2</MenuItem>
+                        <MenuItem value='lb3'>Lb 3</MenuItem>
+                      </Select>
+                    )}
+                  />
+                  {errors.business && (
+                    <FormHelperText sx={{ color: 'error.main' }} id='business-error'>
+                      Please select a line of business
+                    </FormHelperText>
+                  )}
+                </FormControl>
               </div>
               <div className="form-col">
                 <div className="title">Dates</div>
+                <DatePickerWrapper>
+
+                  <DatePicker
+
+                    selected={receptionDate}
+                    shouldCloseOnSelect
+                    id='reception-date'
+                    customInput={
+                      <CustomInput
+                        label='Reception date'
+                      />
+                    }
+                    onChange={(date: Date) => setReceptionDate(date)}
+                  />
+
+
+                  <DatePicker
+                    selected={effectiveDate}
+                    shouldCloseOnSelect
+                    id='effective-date'
+                    customInput={
+                      <CustomInput
+                        label='Effective date'
+                      />
+                    }
+                    onChange={(date: Date) => setEffectiveDate(date)}
+                  />
+                  <DatePicker
+                    selected={expirationDate}
+                    shouldCloseOnSelect
+                    id='expiration-date'
+                    customInput={
+                      <CustomInput
+                        label='Expiration date'
+                      />
+                    }
+                    onChange={(date: Date) => setExpirationDate(date)}
+                  />
+                </DatePickerWrapper>
+
+
               </div>
               <div className="form-col">
                 <div className="title">Underwriter team</div>
+                <FormControl fullWidth>
+                  <InputLabel>Underwriter</InputLabel>
+                  <Controller
+                    name='underwriter'
+                    control={control}
+                    rules={{ required: false }}
+                    render={({ field: { value, onChange } }) => (
+                      <Select
+                        label='Underwriter'
+                        value={value}
+                        onChange={onChange}
+                        labelId='underwriter'
+                      >
+                        <MenuItem value='u1'>U1</MenuItem>
+                        <MenuItem value='u2'>U2</MenuItem>
+                        <MenuItem value='u3'>U3</MenuItem>
+                      </Select>
+                    )}
+                  />
+                </FormControl>
+                <FormControl fullWidth>
+                  <InputLabel>Lead underwriter</InputLabel>
+                  <Controller
+                    name='lead-underwriter'
+                    control={control}
+                    rules={{ required: false }}
+                    render={({ field: { value, onChange } }) => (
+                      <Select
+                        label='Lead Underwriter'
+                        value={value}
+                        onChange={onChange}
+                        labelId='lead-underwriter'
+                      >
+                        <MenuItem value='Lu1'>LU1</MenuItem>
+                        <MenuItem value='Lu2'>LU2</MenuItem>
+                        <MenuItem value='Lu3'>LU3</MenuItem>
+                      </Select>
+                    )}
+                  />
+                </FormControl>
+                <FormControl fullWidth>
+                  <InputLabel>Technical assistant</InputLabel>
+                  <Controller
+                    name='assistant'
+                    control={control}
+                    rules={{ required: false }}
+                    render={({ field: { value, onChange } }) => (
+                      <Select
+                        label='Technical assistant'
+                        value={value}
+                        onChange={onChange}
+                        labelId='assistant'
+                      >
+                        <MenuItem value='assistant1'>Assistant 1</MenuItem>
+                        <MenuItem value='assistant2'>Assistant 2</MenuItem>
+                        <MenuItem value='assistant3'>Assistant 3</MenuItem>
+                      </Select>
+                    )}
+                  />
+                </FormControl>
               </div>
-
-
             </div>
+    </>
+  )
+}
+
+const Information = () => {
+
+  const handleSubmit = () => {
+    console.log("elsubmit")
+  };
+
+  return (
+    <>
+      <div className='information'>
+        <form noValidate autoComplete='on' onSubmit={handleSubmit}>
+          <div className="section">
+            <BasicInfo/>
           </div>
 
           <div className="section">
