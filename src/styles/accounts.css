@@ -40,3 +40,39 @@
 .account-list-item {
     min-width: 0 !important;
 }
+
+
+
+/* - New accoun styles ----------------------------------------------------------------------------------------------  */
+
+.information{
+  width: 100%;
+  padding: 15px;
+}
+
+.information .form-wrapper{
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.information .title{
+  font-size: 24px;
+  color: rgba(68, 72, 84, 0.87);
+  font-weight: 600;
+}
+
+.form-col{
+  width: 28%;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.form-col .title{
+  font-size: 20px;
+  color: rgba(68, 72, 84, 0.68)
+}
+
+.section{
+  margin-bottom: 40px;
+}

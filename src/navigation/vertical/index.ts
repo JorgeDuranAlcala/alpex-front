@@ -62,7 +62,7 @@ const navigation = (): VerticalNavItemsType => {
       ]
     },
     {
-      title: 'Renewais',
+      title: 'Renewals',
       icon: 'mdi:renewals',
       children: [
         {
