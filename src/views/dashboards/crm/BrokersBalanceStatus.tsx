@@ -1,10 +1,12 @@
 // ** MUI Imports
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import { Box, MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material'
 import Card from '@mui/material/Card'
 import { useTheme } from '@mui/material/styles'
 import { ApexOptions } from 'apexcharts'
 import { useState } from 'react'
 import ReactApexcharts from 'src/@core/components/react-apexcharts'
+import LongMenu from 'src/pages/components/button-filter/card'
 import {
   ContainerAccounts,
   ContainerCircularProgress,
@@ -77,6 +79,7 @@ const BrokersBalanceStatus = () => {
           <Typography variant='h6' sx={{ color: theme.palette.text.primary, fontFamily: 'Inter' }}>
             Brokers balance status
           </Typography>
+          <LongMenu />
           <Typography variant='body2' sx={{ fontFamily: 'Inter' }}>
             Overview
           </Typography>
@@ -91,6 +94,7 @@ const BrokersBalanceStatus = () => {
             handleOnchange(e)
             console.log(e.target.value)
           }}
+          IconComponent={KeyboardArrowDownIcon}
         >
           {brokers?.map((item, index) => (
             <MenuItem key={index} value={item.value}>
