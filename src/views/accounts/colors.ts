@@ -20,7 +20,8 @@ const colors = {
       secondary:'#444854AD',
     },
     action:{
-      hover:'#4448540D'
+      active:'#4448548A',
+      hover:'#4448540D',
     }
 }
 
