@@ -1,5 +1,6 @@
 // ** MUI Imports
 import FileDownloadIcon from '@mui/icons-material/FileDownload'
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import { Button, MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material'
 import Card from '@mui/material/Card'
 import { useState } from 'react'
@@ -9,11 +10,13 @@ const DowlandAccountInfo = () => {
   const [broker, setBroker] = useState('')
   const brokers = [
     { name: 'Select option', value: '' },
-    { name: 'option1', value: 1 },
-    { name: 'option2', value: 2 },
-    { name: 'option3', value: 3 },
-    { name: 'option4', value: 4 },
-    { name: 'option5', value: 5 }
+    { name: 'Pending', value: 1 },
+    { name: 'No materialized', value: 2 },
+    { name: 'Not taken up', value: 3 },
+    { name: 'Declined', value: 4 },
+    { name: 'Bound', value: 5 },
+    { name: 'Reneward', value: 6 },
+    { name: 'All accounts', value: 7 }
   ]
 
   const handleOnchange = (e: SelectChangeEvent) => {
@@ -50,6 +53,7 @@ const DowlandAccountInfo = () => {
             handleOnchange(e)
             console.log(e.target.value)
           }}
+          IconComponent={KeyboardArrowDownIcon}
         >
           {brokers?.map((item, index) => (
             <MenuItem key={index} value={item.value}>
