@@ -1,6 +1,6 @@
 import SearchIcon from '@mui/icons-material/Search'
+import { ContainerIcon, ContainerSearch, Input } from 'src/styles/Dashboard/SearchInput/searchInput'
 import fonts from 'src/views/accounts/font'
-import { ContainerIcon, ContainerSearch, Input } from './styles'
 
 const SearchInput = () => {
   return (
