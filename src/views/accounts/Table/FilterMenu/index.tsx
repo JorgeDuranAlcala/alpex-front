@@ -1,6 +1,7 @@
 // ** Custom utilities
 import FilterMenuAccountId from 'src/views/accounts/Table/FilterMenu/FilterMenuAccountId';
 import FilterMenuEffectiveDate from 'src/views/accounts/Table/FilterMenu/FilterMenuEffectiveDate';
+import FilterMenuExpirationDate from 'src/views/accounts/Table/FilterMenu/FilterMenuExpirationDate';
 import FilterMenuInsured from 'src/views/accounts/Table/FilterMenu/FilterMenuInsured';
 import FilterMenuLob from 'src/views/accounts/Table/FilterMenu/FilterMenuLob';
 import FilterMenuStatus from 'src/views/accounts/Table/FilterMenu/FilterMenuStatus';
@@ -30,6 +31,9 @@ const FilterMenu: React.FC<IFilterMenu> = ({ field, }) => {
         ),
         [EFieldColumn.EFFECTIVE_DATE]: (
             <FilterMenuEffectiveDate  />
+        ),
+        [EFieldColumn.EXPIRATION_DATE]: (
+            <FilterMenuExpirationDate  />
         ),
     }
   

@@ -18,6 +18,7 @@ const colors = {
     text:{
       primary:'#444854DE',
       secondary:'#444854AD',
+      disabled:'#44485461',
     },
     action:{
       active:'#4448548A',

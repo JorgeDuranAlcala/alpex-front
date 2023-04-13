@@ -41,7 +41,13 @@
     min-width: 0 !important;
 }
 
+.account-datepicker-popper-only-month .react-datepicker__navigation {
+  display: none;
+}
 
+.account-datepicker-popper-only-month .react-datepicker-year-header {
+  display: none;
+}
 
 /* - New accoun styles ----------------------------------------------------------------------------------------------  */
 

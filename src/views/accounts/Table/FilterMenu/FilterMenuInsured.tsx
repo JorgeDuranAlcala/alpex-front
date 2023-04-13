@@ -16,7 +16,7 @@ const FilterMenuInsured = () => {
     const [query, setQuery] = useState('')
   
 return (
-    <Box sx={{padding:'3px 30px', display: 'flex', alignItems: 'center', width: '100%' }}>
+    <Box component={'li'} sx={{padding:'3px 30px', display: 'flex', alignItems: 'center', width: '100%' }}>
         <Input
             value={query}
             placeholder='Search by Insured'

@@ -68,8 +68,8 @@ const CustomInput = forwardRef(({ ...props }: PickerProps, ref: ForwardedRef<HTM
 });
 
 
-const FilterMenuEffectiveDate = () => {
-  const [effectiveDate, setEffectiveDate] = useState<DateType>(new Date())
+const FilterMenuExpirationDate = () => {
+  const [expirationDate, setExpirationDate] = useState<DateType>(new Date())
   const [month, setMonth] = useState<DateType>(new Date())
   const [year, setYear] = useState<DateType>(new Date())
 
@@ -78,7 +78,7 @@ return (
       <Box component={'li'} sx={{padding:'8px 16px 12px 16px'}}>
         <DatePickerWrapper>
         <DatePicker
-            selected={effectiveDate}
+            selected={expirationDate}
             shouldCloseOnSelect
             id='effective-date'
             customInput={
@@ -86,9 +86,9 @@ return (
                 label='Write a full date'
               />
             }
-            onChange={(date: Date) => setEffectiveDate(date)}
+            onChange={(date: Date) => setExpirationDate(date)}
             popperProps={{strategy: 'fixed'}} 
-            popperPlacement="right"
+            popperPlacement="left"
             popperModifiers={[
               {
                 name: 'offset',
@@ -122,7 +122,7 @@ return (
               onChange={(date: Date) => setMonth(date)}
               popperClassName='account-datepicker-popper-only-month'
               popperProps={{strategy: 'fixed'}} 
-              popperPlacement="right"
+              popperPlacement="left"
               popperModifiers={[
                 {
                   name: 'offset',
@@ -150,7 +150,7 @@ return (
                 }
                 onChange={(date: Date) => setYear(date)}
                 popperProps={{strategy: 'fixed'}} 
-                popperPlacement="right"
+                popperPlacement="left"
                 popperModifiers={[
                   {
                     name: 'offset',
@@ -170,4 +170,4 @@ return (
   );
 };
 
-export default FilterMenuEffectiveDate;
+export default FilterMenuExpirationDate;

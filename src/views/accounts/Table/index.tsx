@@ -155,7 +155,7 @@ const Table = () => {
         disableColumnMenu:true,
         sortable:false,
         headerClassName:'account-column-header',
-        renderHeader:({ colDef }) => <ColumnHeader colDef={colDef} />,
+        renderHeader:({ colDef }) => <ColumnHeader colDef={colDef} action={handleClickColumnHeader}/>,
         renderCell: ({row}) => (
           <Typography sx={{ color: colors.text.secondary, fontSize:fonts.size.px14, fontFamily:fonts.inter }}>
             {row.expirationDate}

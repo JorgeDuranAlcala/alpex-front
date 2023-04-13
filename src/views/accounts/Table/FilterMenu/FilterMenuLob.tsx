@@ -50,7 +50,7 @@ const FilterMenuLobOption: React.FC<IFilterMenuLobOptionProps> = ({ lob }) => {
 const FilterMenuLob = ({  }) => {
     return (
         <>
-            <Box sx={{padding:'10px 10px', display:'block', width:'100%', borderRadius:'0'}}>
+            <Box component={'li'} sx={{padding:'10px 10px', display:'block', width:'100%', borderRadius:'0'}}>
                 <Box sx={{display: 'flex'}}>
                     <Typography sx={{ color: colors.text.secondary, fontSize:fonts.size.px12,fontFamily:fonts.inter }}>
                     Line of Business
