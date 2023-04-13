@@ -1,0 +1,53 @@
+import CloseIcon from '@mui/icons-material/Close'
+import { Button, Typography } from '@mui/material'
+import {
+  Column,
+  ColumnData,
+  ColumnLabel,
+  Container,
+  ContainerData,
+  HeaderColumns,
+  HeaderTitleModal,
+  Row
+} from 'src/styles/Dashboard/ModalReinsurers/modalReinsurers'
+
+const ModalReinsurers = () => {
+  const rows = [
+    { label: 'Teinsurer 1 LTDH', data: '$350,000.00 USD' },
+    { label: 'Teinsurer 1 LTDH', data: '$350,000.00 USD', backgroundColor: 'rgba(76, 78, 100, 0.04)' },
+    { label: 'Teinsurer 1 LTDH', data: '$350,000.00 USD' },
+    { label: 'Teinsurer 1 LTDH', data: '$350,000.00 USD', backgroundColor: 'rgba(76, 78, 100, 0.04)' }
+  ]
+
+  return (
+    <>
+      <HeaderTitleModal>
+        <Typography variant='h6'>Reinsurers in this account</Typography>
+        <CloseIcon />
+      </HeaderTitleModal>
+      <Container>
+        <ContainerData>
+          <HeaderColumns>
+            <Column sx={{ padding: '16px 16px 16px 20px' }}>
+              <Typography>Name</Typography>
+            </Column>
+            <Column sx={{ padding: '16px 16px 16px 0px' }}>
+              <Typography>Debt to date</Typography>
+            </Column>
+          </HeaderColumns>
+          {rows?.map((item, index) => (
+            <Row key={index} sx={{ backgroundColor: item.backgroundColor }}>
+              <ColumnLabel>{item.label}</ColumnLabel>
+              <ColumnData>{item.data}</ColumnData>
+            </Row>
+          ))}
+        </ContainerData>
+        <Button variant='outlined' sx={{ width: 'auto', height: '42px', fontSize: '15px' }}>
+          Reinsurers balance
+        </Button>
+      </Container>
+    </>
+  )
+}
+
+export default ModalReinsurers

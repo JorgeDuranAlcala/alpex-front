@@ -18,7 +18,8 @@ const colors = {
   text: {
     primary: '#444854DE',
     secondary: '#444854AD',
-    light: 'rgba(68,72,84,0.87)'
+    light: 'rgba(68,72,84,0.87)',
+    disbled: 'rgba(68, 72, 84, 0.38)'
   },
   action: {
     hover: '#4448540D'

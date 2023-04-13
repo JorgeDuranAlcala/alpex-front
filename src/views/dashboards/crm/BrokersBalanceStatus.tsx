@@ -6,7 +6,10 @@ import { useTheme } from '@mui/material/styles'
 import { ApexOptions } from 'apexcharts'
 import { useState } from 'react'
 import ReactApexcharts from 'src/@core/components/react-apexcharts'
-import LongMenu from 'src/pages/components/button-filter/card'
+
+// import CustomModal from 'src/pages/components/modal'
+// import ModalReinsurers from './ModalReinsurers'
+
 import {
   ContainerAccounts,
   ContainerCircularProgress,
@@ -28,7 +31,6 @@ const BrokersBalanceStatus = () => {
     { name: 'broker4', value: 4 },
     { name: 'broker5', value: 5 }
   ]
-
   const handleOnchange = (e: SelectChangeEvent) => {
     setBroker(e.target.value)
   }
@@ -79,15 +81,17 @@ const BrokersBalanceStatus = () => {
           <Typography variant='h6' sx={{ color: theme.palette.text.primary, fontFamily: 'Inter' }}>
             Brokers balance status
           </Typography>
-          <LongMenu />
           <Typography variant='body2' sx={{ fontFamily: 'Inter' }}>
             Overview
           </Typography>
         </ContainerTitle>
+        {/* <CustomModal width={'41%'} height={'66.5%'} bgColor={'background.paper'} top={'50%'} left={'50%'}>
+          <ModalReinsurers />
+        </CustomModal> */}
       </HeaderTitle>
       <div style={{ padding: '20px 20px 15px 20px' }}>
         <Select
-          sx={{ width: '100%', height: '48px' }}
+          sx={{ width: '100%', height: '48px', outline: 'none' }}
           value={broker}
           displayEmpty
           onChange={e => {
