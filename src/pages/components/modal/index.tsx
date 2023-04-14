@@ -1,7 +1,10 @@
+import CloseIcon from '@mui/icons-material/Close'
+import { Typography } from '@mui/material'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Modal from '@mui/material/Modal'
 import { ReactNode, useState } from 'react'
+import { ButtonClose, HeaderTitleModal } from 'src/styles/Dashboard/ModalReinsurers/modalReinsurers'
 
 interface ICustomModal {
   width: string
@@ -21,7 +24,10 @@ const CustomModal = ({ width, height, bgColor, top, left, children }: ICustomMod
 
   return (
     <div>
-      <Button onClick={handleOpen}>Open modal</Button>
+      <Button onClick={handleOpen} variant='outlined' sx={{ width: '100%', height: '30px', fontSize: '13px' }}>
+        Balance Preview
+      </Button>
+
       <Modal open={open} onClose={handleClose}>
         <Box
           sx={{
@@ -38,6 +44,12 @@ const CustomModal = ({ width, height, bgColor, top, left, children }: ICustomMod
             borderRadius: '10px'
           }}
         >
+          <HeaderTitleModal>
+            <Typography variant='h6'>Reinsurers in this account</Typography>
+            <ButtonClose onClick={handleClose}>
+              <CloseIcon />
+            </ButtonClose>
+          </HeaderTitleModal>
           {children}
         </Box>
       </Modal>
