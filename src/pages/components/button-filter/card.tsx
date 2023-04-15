@@ -6,9 +6,10 @@ import MenuItem from '@mui/material/MenuItem'
 
 import { Card } from '@mui/material'
 
-const options = ['None', 'Atria', 'Callisto', 'Dione']
-
-export default function LongMenu() {
+interface IDataFilter {
+  dataFilter: string[]
+}
+export default function LongMenu({ dataFilter }: IDataFilter) {
   const [menu, setMenu] = React.useState(false)
 
   const handleClick = () => {
@@ -19,13 +20,13 @@ export default function LongMenu() {
   }
 
   return (
-    <div>
+    <div style={{ position: 'absolute' }}>
       <IconButton onClick={handleClick}>
         <FilterListIcon />
       </IconButton>
       {menu && (
         <Card>
-          {options.map(option => (
+          {dataFilter.map(option => (
             <MenuItem key={option} onClick={handleClose}>
               {option}
             </MenuItem>
