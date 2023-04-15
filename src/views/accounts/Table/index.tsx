@@ -1,4 +1,5 @@
 // ** React Imports
+import { useState } from 'react';
 
 // ** MUI Imports
 import Box from '@mui/material/Box';
@@ -7,7 +8,8 @@ import Typography from '@mui/material/Typography';
 import {
   DataGrid,
   GRID_CHECKBOX_SELECTION_COL_DEF,
-  GridColumns
+  GridColumns,
+  GridRowId,
 } from '@mui/x-data-grid';
 
 // ** Icon Imports
@@ -27,6 +29,7 @@ import fonts from 'src/views/accounts/font';
 
 // ** Fake data
 import data from 'src/views/accounts/data';
+import ModalAction from './modal';
 
 interface IAccount {
   id: string; 
@@ -48,6 +51,8 @@ export enum EFieldColumn {
 }
 
 const Table = () => {
+  // ** State 
+  const [selectedRows, setSelectedRows] = useState<GridRowId[]>([])
 
   const handleClickColumnHeader = (field: string) => {
     console.log(field);
@@ -171,11 +176,21 @@ const Table = () => {
         disableColumnMenu:true,
         cellClassName:'account-column-cell-pl-0',
         renderHeader:({ colDef }) => <ColumnHeader colDef={colDef} showIcon={false}/>,
-        renderCell: () => (
+        renderCell: ({ row }) => (
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <IconButton size='small' sx={{ mr: 1 }}>
-                <Icon icon='ic:baseline-login' />
-              </IconButton>
+              <ModalAction
+                renderButton={
+                  (handleOpen: ()=>void) => (
+                    <IconButton onClick={handleOpen} size='small' sx={{ mr: 1 }}>
+                      <Icon icon='ic:baseline-login' />
+                    </IconButton>
+                  )
+                }
+                headingText={`You are about to duplicate: #${row.id} ${row.insured} ${row.effectiveDate}`}
+                text='With this action you’ll have two accounts with the same information as it is right now. Do you want to proceed?'
+                handleClickContinue={()=>{console.log('Continue')}}
+                handleClickCancel={()=>{console.log('Cancel')}}
+              />
               <IconButton size='small' sx={{ mr: 1 }}>
                 <Icon icon='mdi:content-copy' />
               </IconButton>
@@ -189,7 +204,7 @@ const Table = () => {
   
   return (
       <>
-        <TableHeader/>
+        <TableHeader  selectedRows={selectedRows}/>
         <DataGrid
           autoHeight
           checkboxSelection
@@ -202,6 +217,7 @@ const Table = () => {
             Pagination: CustomPagination,
           }}
           className={'account-datagrid'}
+          onSelectionModelChange={rows => setSelectedRows(rows)}
         />
       </>
     )
