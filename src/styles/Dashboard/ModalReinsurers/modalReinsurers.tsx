@@ -5,6 +5,7 @@ const HeaderTitleModal = styled('div')({
   flexDirection: 'row',
   alignItems: 'center',
   paddingTop: '20px',
+  paddingRight: '10px',
   gap: '10px',
   width: '100%',
   height: '56px',
@@ -72,4 +73,14 @@ const ColumnData = styled('div')({
   height: '100%'
 })
 
-export { HeaderTitleModal, Container, ContainerData, HeaderColumns, Column, Row, ColumnLabel, ColumnData }
+const ButtonClose = styled('div')({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  justifyContent: 'center',
+  width: '36px',
+  height: '36px',
+  cursor: 'pointer'
+})
+
+export { HeaderTitleModal, Container, ContainerData, HeaderColumns, Column, Row, ColumnLabel, ColumnData, ButtonClose }
