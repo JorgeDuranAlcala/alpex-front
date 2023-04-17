@@ -2,16 +2,20 @@
 import { IconButton } from '@mui/material'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
+
 import React, { useState } from 'react'
 import Icon from 'src/@core/components/icon'
+import DatePickerFilter from './DatePicker'
+import SearchInput from './SearchInput'
 
 // import { SelectChangeEvent } from '@mui/material';
 
-const ITEM_HEIGHT = 48
 interface IDataFilter {
   dataFilter: string[]
+  date?: boolean
+  insured?: boolean
 }
-const ButtonFilter = ({ dataFilter }: IDataFilter) => {
+const ButtonFilter = ({ dataFilter, date, insured }: IDataFilter) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
 
   // const [menu, setMenu] = React.useState('');
@@ -56,25 +60,32 @@ const ButtonFilter = ({ dataFilter }: IDataFilter) => {
         onClose={handleClose}
         PaperProps={{
           style: {
-            maxHeight: ITEM_HEIGHT * 4.5,
-            width: '20ch',
+            display: 'flex',
+            maxHeight: 'auto',
+            width: 'auto',
             borderRadius: '10px',
-            padding: '8px 0px'
+            padding: date ? '16px' : insured ? '4px 4px 4px 16px' : '8px'
           }
         }}
       >
-        {dataFilter?.map((option, index) => (
-          <MenuItem
-            key={index}
-            onClick={() => {
-              handleClose()
+        {date ? (
+          <DatePickerFilter />
+        ) : insured ? (
+          <SearchInput />
+        ) : (
+          dataFilter?.map((option, index) => (
+            <MenuItem
+              key={index}
+              onClick={() => {
+                handleClose()
 
-              // setMenu(option);
-            }}
-          >
-            {option}
-          </MenuItem>
-        ))}
+                // setMenu(option);
+              }}
+            >
+              {option}
+            </MenuItem>
+          ))
+        )}
       </Menu>
     </>
   )

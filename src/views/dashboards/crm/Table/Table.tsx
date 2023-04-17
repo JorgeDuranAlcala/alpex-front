@@ -1,13 +1,16 @@
-import { Button } from '@mui/material'
+// import { Button } from '@mui/material'
+
 import Box from '@mui/material/Box'
-import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
 import { DataGrid, GridColumns } from '@mui/x-data-grid'
-import Icon from 'src/@core/components/icon'
+
 import ButtonFilter from 'src/pages/components/button-filter'
+import CustomModal from 'src/pages/components/modal'
+
 import colors from 'src/views/accounts/colors'
 import fonts from 'src/views/accounts/font'
 import CustomPagination from 'src/views/accounts/Table/CustomPagination'
+import ModalReinsurers from '../ModalReinsurers'
 import { brokers, data, debt, status } from './data'
 import HeaderTable from './HeaderTable'
 import Status from './Status'
@@ -46,9 +49,7 @@ const column: GridColumns<INearlyPaymentStatus> = [
           >
             {headerName}
           </Typography>
-          <IconButton size='small'>
-            <Icon icon='mdi:filter-variant' fontSize={20} />
-          </IconButton>
+          <ButtonFilter dataFilter={brokers} insured />
         </Box>
       )
     },
@@ -120,9 +121,7 @@ const column: GridColumns<INearlyPaymentStatus> = [
           >
             {headerName}
           </Typography>
-          <IconButton size='small'>
-            <Icon icon='mdi:filter-variant' fontSize={20} />
-          </IconButton>
+          <ButtonFilter dataFilter={brokers} date />
         </Box>
       )
     },
@@ -230,9 +229,13 @@ const column: GridColumns<INearlyPaymentStatus> = [
       )
     },
     renderCell: () => (
-      <Button variant='outlined' sx={{ width: '100%', height: '30px', fontSize: '13px' }}>
-        Balance Preview
-      </Button>
+      <CustomModal width={'41%'} height={'66.5%'} bgColor={'background.paper'} top={'50%'} left={'50%'}>
+        <ModalReinsurers />
+      </CustomModal>
+
+      // <Button variant='outlined' sx={{ width: '100%', height: '30px', fontSize: '13px' }}>
+      //   Balance Preview
+      // </Button>
     )
   }
 ]
