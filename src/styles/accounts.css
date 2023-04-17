@@ -59,6 +59,10 @@
 .information .create-contact-btn{
   margin: 10px;
 }
+.create-contact-modal{
+  width: 100%;
+  margin: 10px 0 !important;
+}
 
  .btn-icon{
   margin-right: 8px;

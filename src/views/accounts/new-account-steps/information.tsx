@@ -1,16 +1,21 @@
-import { ForwardedRef, forwardRef, useState } from 'react'
+import { ForwardedRef, forwardRef, useEffect, useState } from 'react'
 
 // ** MUI Imports
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
+import CloseIcon from '@mui/icons-material/Close'
+import { Typography } from '@mui/material'
+import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import FormControl from '@mui/material/FormControl'
 import FormHelperText from '@mui/material/FormHelperText'
 import InputAdornment from '@mui/material/InputAdornment'
 import InputLabel from "@mui/material/InputLabel"
 import MenuItem from '@mui/material/MenuItem'
+import Modal from '@mui/material/Modal'
 import Select from '@mui/material/Select'
 import TextField from '@mui/material/TextField'
 import Icon from 'src/@core/components/icon'
+import { ButtonClose, HeaderTitleModal } from 'src/styles/Dashboard/ModalReinsurers/modalReinsurers'
 
 // ** Components
 
@@ -42,7 +47,7 @@ interface BasicInfo {
 
 const initialBasicInfo: BasicInfo = {
   insured: '',
-  conuntry: '',
+  country: '',
   broker: '',
   brokerContact: '',
   cedant: '',
@@ -53,41 +58,28 @@ const initialBasicInfo: BasicInfo = {
   technicalAssistant: '',
 }
 
-interface PlacementData {
-  currency: string
-  total: number
-  sir: number
-  reinsuranceBrokerageP: number
-  taxesP: number
-  frontingFeeP: number
-  netPremium: number
-  exchangeRate: number
-  limit: number
-  grossPremium: number
-  reinsuranceBrokerage: number
-  taxes: number
-  frontingFee: number
-  attachmentPoint: number
-  typeOfLimit: number
+interface ContactData {
+  name: string
+  email: string
+  phone: string
+  country: string
 }
 
-const initialPlacementData: PlacementData = {
-  currency: '',
-  total: 0.00,
-  sir: 0.00,
-  reinsuranceBrokerageP: 0.00,
-  taxesP: 0.00,
-  frontingFeeP: 0.00,
-  netPremium: 0.00,
-  exchangeRate: 0.00,
-  limit: 0.00,
-  grossPremium: 0.00,
-  reinsuranceBrokerage: 0.00,
-  taxes: 0.00,
-  frontingFee: 0.00,
-  attachmentPoint: 0.00,
-  typeOfLimit: 0.00,
+const initialContactData: ContactData = {
+  name: '',
+  email: '',
+  phone: '',
+  country: '',
+
 }
+
+const expresions = {
+
+  name: /^[a-zA-ZÀ-ÿ\s]{1,40}$/, // Letras y espacios, pueden llevar acentos.
+  email:
+    /^(?:[^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*|"[^\n"]+")@(?:[^<>()[\].,;:\s@"]+\.)+[^<>()[\]\.,;:\s@"]{2,63}$/i,
+  phone: /^\d{10}$/, // 7 a 10 numeros.
+};
 
 /* eslint-disable */
 const CustomInput = forwardRef(({ ...props }: PickerProps, ref: ForwardedRef<HTMLElement>) => {
@@ -109,56 +101,187 @@ const CustomInput = forwardRef(({ ...props }: PickerProps, ref: ForwardedRef<HTM
   )
 })
 
-const ModalBroker = () => {
+const ModalBroker = ({ id }) => {
 
+  const [contactData, setContactData] = useState<ContactData>(initialContactData)
+  const [open, setOpen] = useState<boolean>(false)
+  const [btnDisable, setBtnDisable] = useState(true)
+  const [startValidations, setStartValidations] = useState(false)
+  const [error, setError] = useState(true)
+  const [nameError, setNameError] = useState(false)
+  const [emailError, setEmailError] = useState(false)
+  const [phoneError, setPhoneError] = useState(false)
+  const [countryError, setCountryError] = useState(false)
+
+
+  const validate = () => {
+
+
+    if (expresions.name.test(contactData.name) && contactData.name !== undefined && contactData.name !== "") {
+      setNameError(false)
+    } else {
+      setNameError(true)
+      setError(true)
+    }
+
+    if (expresions.email.test(contactData.email) && contactData.email !== undefined && contactData.email !== "") {
+      setEmailError(false)
+    } else {
+      setEmailError(true)
+      setError(true)
+    }
+
+    if (expresions.phone.test(contactData.phone) && contactData.phone !== undefined && contactData.phone !== "") {
+      setPhoneError(false)
+    } else {
+      setPhoneError(true)
+      setError(true)
+    }
+
+    if (contactData.country !== undefined && contactData.country !== "") {
+      setCountryError(false)
+    } else {
+      setCountryError(true)
+      setError(true)
+    }
+
+    if(!nameError  && !emailError && !phoneError && !countryError){
+      setError(false)
+    }
+    console.log(error)
+    if(!error){
+      setBtnDisable(false)
+    }else{
+      setBtnDisable(true)
+    }
+  }
+
+    useEffect(
+    () => {
+      if(startValidations)
+      validate()
+    }, [contactData])
+
+  const handleChange = (field: keyof ContactData, value: ContactData[keyof ContactData]) => {
+    setStartValidations(true)
+    setContactData({ ...contactData, [field]: value })
+
+  }
+
+  const handleClose = () => {
+    setOpen(false)
+  }
+
+  const handleCreateContact = () => {
+    console.log("createContact")
+  }
   return (
-  <>
+    <>
+      <Button className="create-contact-btn" onClick={() => setOpen(true)}>
+        <div className="btn-icon">
+          <Icon icon='mdi:plus-circle-outline' />
+        </div>
+        CREATE NEW CONTACT
+      </Button>
+      <Modal open={open} onClose={handleClose}>
+        <Box
+          sx={{
+            position: 'absolute',
+            bgcolor: "white",
+            top: "50%",
+            left: "50%",
+            boxShadow: 24,
+            pl: 5,
+            pr: 5,
+            transform: 'translate(-50%, -50%)',
+            borderRadius: '10px',
+            padding: "15px"
+          }}
+        >
+          <HeaderTitleModal>
+            <Typography variant='h6'>Create new contact</Typography>
+            <ButtonClose onClick={handleClose}>
+              <CloseIcon />
+            </ButtonClose>
+          </HeaderTitleModal>
+          <div className="contact-form">
+            <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
 
-  <div className="modal fade" id="modalCenter" tabindex="-1" aria-hidden="true">
-    <div className="modal-dialog modal-dialog-centered" role="document">
-      <div className="modal-content">
-        <div className="modal-header">
-          <h5 className="modal-title" id="modalCenterTitle">Modal title</h5>
-          <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div className="modal-body">
-          <div className="row">
-            <div className="col mb-4 mt-2">
-              <div className="form-floating form-floating-outline">
-                <input type="text" id="nameWithTitle" className="form-control" placeholder="Enter Name"/>
-                <label >Name</label>
-              </div>
-            </div>
+              <TextField
+                autoFocus
+                label='Contact Name'
+                value={contactData.name}
+                onChange={(e) => handleChange("name", e.target.value)}
+              />
+
+              {nameError && <FormHelperText sx={{ color: 'error.main' }}>Invalid name</FormHelperText>}
+            </FormControl>
+            <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
+
+              <TextField
+                autoFocus
+                label='Contact email'
+                value={contactData.email}
+                onChange={(e) => handleChange('email', e.target.value)}
+              />
+
+              {emailError && <FormHelperText sx={{ color: 'error.main' }}>Invalid field</FormHelperText>}
+            </FormControl>
+            <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
+
+              <TextField
+                autoFocus
+                label='Contact Phone'
+                value={contactData.phone}
+                onChange={(e) => handleChange('phone', e.target.value)}
+              />
+
+              {phoneError && <FormHelperText sx={{ color: 'error.main' }}>Invalid field</FormHelperText>}
+            </FormControl>
+            <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
+              <InputLabel>Select country</InputLabel>
+
+              <Select
+                label='Select country'
+                value={contactData.country}
+                onChange={(e) => handleChange('country', e.target.value)}
+                labelId='invoice-country'
+              >
+                <MenuItem value='USA'>USA</MenuItem>
+                <MenuItem value='UK'>UK</MenuItem>
+                <MenuItem value='Russia'>Russia</MenuItem>
+                <MenuItem value='Australia'>Australia</MenuItem>
+                <MenuItem value='Canada'>Canada</MenuItem>
+              </Select>
+
+              {countryError && (
+                <FormHelperText sx={{ color: 'error.main' }} id='invoice-country-error'>
+                  Select a country
+                </FormHelperText>
+              )}
+            </FormControl>
+
           </div>
-          <div className="row g-2">
-            <div className="col mb-2">
-              <div className="form-floating form-floating-outline">
-                <input type="email" id="emailWithTitle" className="form-control" placeholder="xxxx@xxx.xx"/>
-                <label>Email</label>
-              </div>
-            </div>
-            <div className="col mb-2">
-              <div className="form-floating form-floating-outline">
-                <input type="date" id="dobWithTitle" className="form-control" placeholder="DD / MM / YY"/>
-                <label >DOB</label>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="modal-footer">
-          <button type="button" className="btn btn-label-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="button" className="btn btn-primary">Save changes</button>
-        </div>
-      </div>
-    </div>
-</div>
-  </>
+          <Button
+            className="create-contact-modal"
+            disabled={btnDisable}
+            variant='contained'
+            onClick={handleCreateContact}>
+            CREATE
+          </Button>
+          <Button
+            className="create-contact-modal"
+            onClick={() => setOpen(false)}>
+            CANCEL
+          </Button>
+        </Box>
+      </Modal>
+    </>
   )
 }
 
 const BasicInfo = () => {
 
-  const { control, setValue, formState: { errors } } = useForm();
   const [receptionDate, setReceptionDate] = useState<DateType>(null)
   const [effectiveDate, setEffectiveDate] = useState<DateType>(null)
   const [expirationDate, setExpirationDate] = useState<DateType>(null)
@@ -202,7 +325,7 @@ const BasicInfo = () => {
               <MenuItem value='Canada'>Canada</MenuItem>
             </Select>
 
-            {errors.country && (
+            {false && (
               <FormHelperText sx={{ color: 'error.main' }} id='invoice-country-error'>
                 Select a country
               </FormHelperText>
@@ -225,7 +348,7 @@ const BasicInfo = () => {
               <MenuItem value='br2'>Br2</MenuItem>
               <MenuItem value='br3'>Br3</MenuItem>
             </Select>
-            {errors.broker && (
+            {false && (
               <FormHelperText sx={{ color: 'error.main' }} id='broker-error'>
                 Please select Broker
               </FormHelperText>
@@ -245,16 +368,7 @@ const BasicInfo = () => {
               <MenuItem value='brc2'>Broker contact 2</MenuItem>
             </Select>
           </FormControl>
-          <button type="button" className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCenter">
-    Launch modal
-  </button>
-  <ModalBroker/>
-          <Button className="create-contact-btn">
-            <div className="btn-icon">
-              <Icon icon='mdi:plus-circle-outline' />
-            </div>
-            CREATE NEW CONTACT
-          </Button>
+          <ModalBroker />
         </div>
         <div className="form-col">
           <div className="title">Cedant</div>
@@ -272,7 +386,7 @@ const BasicInfo = () => {
               <MenuItem value='cedant3'>cedant 3</MenuItem>
             </Select>
 
-            {errors.cedant && (
+            {false && (
               <FormHelperText sx={{ color: 'error.main' }} id='select-cedant-error'>
                 Please select Cedant
               </FormHelperText>
@@ -314,7 +428,7 @@ const BasicInfo = () => {
               <MenuItem value='lb2'>Lb 2</MenuItem>
               <MenuItem value='lb3'>Lb 3</MenuItem>
             </Select>
-            {errors.business && (
+            {false && (
               <FormHelperText sx={{ color: 'error.main' }} id='business-error'>
                 Please select a line of business
               </FormHelperText>
@@ -424,82 +538,106 @@ const BasicInfo = () => {
 }
 
 const PlacementStructure = () => {
-  const [cur, setReceptionDate] = useState()
 
-  const [formData, setFormData] = useState<PlacementData>(initialPlacementData)
+  // const [formData, setFormData] = useState<PlacementData>(initialPlacementData)
+  const [currency, setCurrency] = useState<string>()
+  const [total, setTotal] = useState<number>()
+  const [sir, setSir] = useState<number>()
+  const [reinsuranceBrokerageP, setReinsuranceBrokerageP] = useState<number>()
+  const [taxesP, setTaxesP] = useState<number>()
+  const [frontingFeeP, setFrontingFeeP] = useState<number>()
+  const [netPremium, setNetPremium] = useState<number>()
+  const [exchangeRate, setExchangeRate] = useState<number>()
+  const [limit, setLimit] = useState<number>()
+  const [grossPremium, setGrossPremium] = useState<number>()
+  const [reinsuranceBrokerage, setReinsuranceBrokerage] = useState<number>()
+  const [taxes, setTaxes] = useState<number>()
+  const [frontingFee, setFrontingFee] = useState<number>()
+  const [attachmentPoint, setAttachmentPoint] = useState<number>()
+  const [typeOfLimit, setTypeOfLimit] = useState<string>()
 
-  const changeInput = () => {
-    console.log("input")
-  }
-  type AutoCalculate =
-  'reinsuranceBrokerage' | 'reinsuranceBrokerageP' | 'taxes' | 'taxesP' | 'frontingFee' | 'frontingFeeP' | 'grossPremium'
-
-  const calculate = async (type : keyof PlacementData) => {
+  const calculate = async (type: string) => {
     console.log(type)
-    const grossPremium:number = formData.grossPremium || 0
-    const reinsuranceBrokerageP:number = formData.reinsuranceBrokerageP || 0
-    const reinsuranceBrokerage:number = formData.reinsuranceBrokerage || 0
-    const taxesP:number = formData.taxesP || 0
-    const taxes:number = formData.taxes || 0
-    const frontingFeeP:number = formData.frontingFeeP || 0
-    const frontingFee:number = formData.frontingFee || 0
+    const grossPremiumc: number = grossPremium || 0
+    const reinsuranceBrokeragePc: number = reinsuranceBrokerageP || 0
+    const reinsuranceBrokeragec: number = reinsuranceBrokerage || 0
+    const taxesPc: number = taxesP || 0
+    const taxesc: number = taxes || 0
+    const frontingFeePc: number = frontingFeeP || 0
+    const frontingFeec: number = frontingFee || 0
 
     switch (type) {
-      case 'reinsuranceBrokerage':{
-        console.log(grossPremium)
-        console.log(reinsuranceBrokerageP)
-        const result = grossPremium * (reinsuranceBrokerageP / 100)
+      case 'reinsuranceBrokerageP': {
+        console.log(grossPremiumc)
+        console.log(reinsuranceBrokeragePc)
+        const result = grossPremiumc * (reinsuranceBrokeragePc / 100)
+        setReinsuranceBrokerage(isFinite(result) ? result : 0)
 
-
         break
       }
-      case 'reinsuranceBrokerageP':{
-        const result = reinsuranceBrokerage * 100 / grossPremium
-        setFormData({ ...formData, [type]: (isFinite(result) ? result : 0) })
+      case 'reinsuranceBrokerage': {
+        const result = reinsuranceBrokeragec * 100 / grossPremiumc
+        console.log("resulttt")
+        console.log(result)
+        setReinsuranceBrokerageP(isFinite(result) ? result : 0)
         break
       }
-      case 'taxesP':{
-        const result = (taxes * 100) / grossPremium
-        setFormData({ ...formData, ["taxesP"]: (isFinite(result) ? result : 0) })
+      case 'taxes': {
+        const result = (taxesc * 100) / grossPremiumc
+        setTaxesP(isFinite(result) ? result : 0)
         break
       }
-      case 'taxes':{
-        const result = grossPremium * (taxesP / 100)
-        setFormData({ ...formData, ["taxes"]: (isFinite(result) ? result : 0) })
+      case 'taxesP': {
+        const result = grossPremiumc * (taxesPc / 100)
+        setTaxes(isFinite(result) ? result : 0)
         break
       }
-      case 'frontingFee':{
-        const result = grossPremium * (frontingFeeP / 100)
-        setFormData({ ...formData, ["frontingFee"]: (isFinite(result) ? result : 0) })
+      case 'frontingFeeP': {
+        const result = grossPremiumc * (frontingFeePc / 100)
+        setFrontingFee(isFinite(result) ? result : 0)
         break
       }
-      case 'frontingFeeP':{
-        const result = frontingFee * 100 / grossPremium
-        setFormData({ ...formData, ["frontingFeeP"]: (isFinite(result) ? result : 0) })
+      case 'frontingFee': {
+        const result = frontingFeec * 100 / grossPremiumc
+        setFrontingFeeP(isFinite(result) ? result : 0)
         break
       }
-      case 'grossPremium':{
-        const resultBrokerage = reinsuranceBrokerage * 100 / grossPremium
-        const resultTaxes = taxesP * 100 / grossPremium
-        const resultFronting = frontingFee * 100 / grossPremium
-        setFormData({ ...formData, ["reinsuranceBrokerageP"]: (isFinite(resultBrokerage) ? resultBrokerage : 0) })
-        setFormData({ ...formData, ["taxesP"]: (isFinite(resultTaxes) ? resultTaxes : 0) })
-        setFormData({ ...formData, ["frontingFeeP"]: (isFinite(resultFronting) ? resultFronting : 0) })
+      case 'grossPremium': {
+        const resultBrokerage = reinsuranceBrokeragec * 100 / grossPremiumc
+        const resultTaxes = taxesPc * 100 / grossPremiumc
+        const resultFronting = frontingFeec * 100 / grossPremiumc
+        setReinsuranceBrokerageP(isFinite(resultBrokerage) ? resultBrokerage : 0)
+        setTaxesP(isFinite(resultTaxes) ? resultTaxes : 0)
+        setFrontingFeeP(isFinite(resultFronting) ? resultFronting : 0)
         break
       }
     }
-    const reinsuranceBrokerageTotalFinal = formData.reinsuranceBrokerage ? formData.reinsuranceBrokerage : 0
-    const taxesFinal = formData.taxes ? formData.taxes : 0
-    const frontingFeeTotalFinal = formData.frontingFee ? formData.frontingFee : 0
-    setFormData({ ...formData, ["netPremium"]: (grossPremium - reinsuranceBrokerageTotalFinal - taxesFinal - frontingFeeTotalFinal) })
-    setFormData({ ...formData, ["total"]: 456 })
+    const reinsuranceBrokerageTotalFinal = reinsuranceBrokerage ? reinsuranceBrokerage : 0
+    const taxesFinal = taxes ? taxes : 0
+    const frontingFeeTotalFinal = frontingFee ? frontingFee : 0
+    setNetPremium(grossPremiumc - reinsuranceBrokerageTotalFinal - taxesFinal - frontingFeeTotalFinal)
+
 
   }
 
+  const handleCurrencyChange = (value: any) => {
+    console.log(value)
+    switch (value) {
+      case 'USD':
+        setExchangeRate(18.50)
+        break;
+      case 'EUR':
+        setExchangeRate(20.00)
+        break;
+      case 'MXN':
+        setExchangeRate(1)
+        break;
+    }
+  }
   const handleFormChange = (field: keyof PlacementData, value: any) => {
     console.log(value)
-    setFormData({ ...formData, [field]: value })
-    console.log(formData)
+    // setFormData({ ...formData, [field]: value })
+    // console.log(formData)
   }
   return (
     <>
@@ -509,9 +647,13 @@ const PlacementStructure = () => {
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <InputLabel>Currency</InputLabel>
             <Select
+              id='currency'
               label='Currency'
-              value={formData.currency}
-              onChange={e => handleFormChange('currency', e.target.value)}
+              value={currency}
+              onChange={(e) => {
+                setCurrency(e.target.value)
+                handleCurrencyChange(e.target.value)
+              }}
               labelId='currency'
             >
               <MenuItem value='USD'>USD</MenuItem>
@@ -527,7 +669,7 @@ const PlacementStructure = () => {
 
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <NumericFormat
-              value={formData.total}
+              value={total}
               allowLeadingZeros
               thousandSeparator=","
               customInput={TextField}
@@ -535,15 +677,15 @@ const PlacementStructure = () => {
               label="Total values"
               multiline
               prefix={'$'}
-              maxRows={4}
+              decimalScale={2}
               variant="outlined"
-              onValueChange={(value, e) => {handleFormChange('total', value.floatValue)}}
+              onValueChange={(value, e) => { setTotal(value.floatValue) }}
             />
             {false && <FormHelperText sx={{ color: 'error.main' }}>Required Field</FormHelperText>}
           </FormControl>
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <NumericFormat
-              value={formData.sir}
+              value={sir}
               allowLeadingZeros
               thousandSeparator=","
               customInput={TextField}
@@ -551,15 +693,15 @@ const PlacementStructure = () => {
               label="SIR"
               multiline
               prefix={'$'}
-              maxRows={4}
+              decimalScale={2}
               variant="outlined"
-              onValueChange={(value, e) => {handleFormChange('sir', value.floatValue)}}
+              onValueChange={(value, e) => { setSir(value.floatValue) }}
             />
             {false && <FormHelperText sx={{ color: 'error.main' }}>Required Field</FormHelperText>}
           </FormControl>
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <NumericFormat
-              value={formData.reinsuranceBrokerageP}
+              value={reinsuranceBrokerageP}
               allowLeadingZeros
               thousandSeparator=","
               customInput={TextField}
@@ -567,17 +709,17 @@ const PlacementStructure = () => {
               label="Reinsurance brokerage %"
               multiline
               prefix={'%'}
-              maxRows={4}
+              decimalScale={2}
               variant="outlined"
-              onBlur={()=> calculate('reinsuranceBrokerage')}
-              onValueChange={(value, e) => {handleFormChange('reinsuranceBrokerageP', value.floatValue)}}
+              onBlur={() => calculate('reinsuranceBrokerageP')}
+              onValueChange={(value, e) => { setReinsuranceBrokerageP(value.floatValue) }}
 
             />
             {false && <FormHelperText sx={{ color: 'error.main' }}>Required Field</FormHelperText>}
           </FormControl>
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <NumericFormat
-              value={formData.taxesP}
+              value={taxesP}
               allowLeadingZeros
               thousandSeparator=","
               customInput={TextField}
@@ -585,9 +727,10 @@ const PlacementStructure = () => {
               label="Taxes %"
               multiline
               prefix={'%'}
+              decimalScale={2}
               variant="outlined"
-              onBlur={()=> calculate('taxesP')}
-              onValueChange={(value, e) => {handleFormChange('taxesP', value.floatValue)}}
+              onBlur={() => calculate('taxesP')}
+              onValueChange={(value, e) => { setTaxesP(value.floatValue) }}
             />
             {false && <FormHelperText sx={{ color: 'error.main' }}>Required Field</FormHelperText>}
           </FormControl>
@@ -595,7 +738,7 @@ const PlacementStructure = () => {
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
 
             <NumericFormat
-              value={formData.frontingFeeP}
+              value={frontingFeeP}
               allowLeadingZeros
               thousandSeparator=","
               customInput={TextField}
@@ -604,15 +747,16 @@ const PlacementStructure = () => {
               multiline
               prefix={'%'}
               maxRows={4}
+              decimalScale={2}
               variant="outlined"
-              onBlur={()=> calculate('frontingFeeP')}
-              onValueChange={(value, e) => {handleFormChange('frontingFeeP', value.floatValue)}}
+              onBlur={() => calculate('frontingFeeP')}
+              onValueChange={(value, e) => { setFrontingFeeP(value.floatValue) }}
             />
             {false && <FormHelperText sx={{ color: 'error.main' }}>Required Field</FormHelperText>}
           </FormControl>
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <NumericFormat
-              value={formData.netPremium}
+              value={netPremium}
               allowLeadingZeros
               thousandSeparator=","
               customInput={TextField}
@@ -621,7 +765,8 @@ const PlacementStructure = () => {
               label="Net premium"
               multiline
               variant="outlined"
-              onValueChange={(value, e) => {handleFormChange('netPremium', value.floatValue)}}
+              decimalScale={2}
+              onValueChange={(value, e) => { setNetPremium(value.floatValue) }}
             />
             {false && <FormHelperText sx={{ color: 'error.main' }}>Required Field</FormHelperText>}
           </FormControl>
@@ -631,22 +776,21 @@ const PlacementStructure = () => {
         <div className="form-col">
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <NumericFormat
-              value={formData.exchangeRate}
+              value={exchangeRate}
               allowLeadingZeros
               thousandSeparator=","
               customInput={TextField}
               id="exchange-rate"
               label="Exchange rate"
-              disabled
               multiline
               variant="outlined"
-
+              decimalScale={2}
             />
             {false && <FormHelperText sx={{ color: 'error.main' }}>Required Field</FormHelperText>}
           </FormControl>
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <NumericFormat
-              value={formData.limit}
+              value={limit}
               allowLeadingZeros
               thousandSeparator=","
               customInput={TextField}
@@ -654,13 +798,14 @@ const PlacementStructure = () => {
               label="Limit"
               multiline
               variant="outlined"
-              onValueChange={(value, e) => {handleFormChange('limit', value.floatValue)}}
+              decimalScale={2}
+              onValueChange={(value, e) => { setLimit(value.floatValue) }}
             />
             {false && <FormHelperText sx={{ color: 'error.main' }}>Required Field</FormHelperText>}
           </FormControl>
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <NumericFormat
-              value={formData.grossPremium}
+              value={grossPremium}
               allowLeadingZeros
               thousandSeparator=","
               customInput={TextField}
@@ -668,15 +813,16 @@ const PlacementStructure = () => {
               label="Gross Premium"
               multiline
               variant="outlined"
-              onBlur={()=> calculate('grossPremium')}
-              onValueChange={(value, e) => {handleFormChange('grossPremium', value.floatValue)}}
+              decimalScale={2}
+              onBlur={() => calculate('grossPremium')}
+              onValueChange={(value, e) => { setGrossPremium(value.floatValue) }}
             />
             {false && <FormHelperText sx={{ color: 'error.main' }}>Required Field</FormHelperText>}
           </FormControl>
 
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <NumericFormat
-              value={formData.reinsuranceBrokerage}
+              value={reinsuranceBrokerage}
               allowLeadingZeros
               thousandSeparator=","
               customInput={TextField}
@@ -684,15 +830,16 @@ const PlacementStructure = () => {
               label="Reinsurance Brokerage"
               multiline
               variant="outlined"
-              onBlur={()=> calculate('reinsuranceBrokerage')}
-              onValueChange={(value, e) => {handleFormChange('reinsuranceBrokerage', value.floatValue)}}
+              decimalScale={2}
+              onBlur={() => calculate('reinsuranceBrokerage')}
+              onValueChange={(value, e) => { setReinsuranceBrokerage(value.floatValue) }}
             />
             {false && <FormHelperText sx={{ color: 'error.main' }}>Required Field</FormHelperText>}
           </FormControl>
 
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <NumericFormat
-              value={formData.taxes}
+              value={taxes}
               allowLeadingZeros
               thousandSeparator=","
               customInput={TextField}
@@ -700,14 +847,15 @@ const PlacementStructure = () => {
               label="Taxes"
               multiline
               variant="outlined"
-              onBlur={()=> calculate('taxes')}
-              onValueChange={(value, e) => {handleFormChange('taxes', value.floatValue)}}
+              decimalScale={2}
+              onBlur={() => calculate('taxes')}
+              onValueChange={(value, e) => { setTaxes(value.floatValue) }}
             />
             {false && <FormHelperText sx={{ color: 'error.main' }}>Required Field</FormHelperText>}
           </FormControl>
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <NumericFormat
-              value={formData.frontingFee}
+              value={frontingFee}
               allowLeadingZeros
               thousandSeparator=","
               customInput={TextField}
@@ -715,8 +863,9 @@ const PlacementStructure = () => {
               label="Fronting fee"
               multiline
               variant="outlined"
-              onBlur={()=> calculate('frontingFee')}
-              onValueChange={(value, e) => {handleFormChange('frontingFee', value.floatValue)}}
+              decimalScale={2}
+              onBlur={() => calculate('frontingFee')}
+              onValueChange={(value, e) => { setFrontingFee(value.floatValue) }}
             />
             {false && <FormHelperText sx={{ color: 'error.main' }}>Required Field</FormHelperText>}
           </FormControl>
@@ -724,7 +873,7 @@ const PlacementStructure = () => {
         <div className="form-col">
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <NumericFormat
-              value={formData.attachmentPoint}
+              value={attachmentPoint}
               allowLeadingZeros
               thousandSeparator=","
               customInput={TextField}
@@ -732,7 +881,8 @@ const PlacementStructure = () => {
               label="Attachment point"
               multiline
               variant="outlined"
-              onValueChange={(value, e) => {handleFormChange('attachmentPoint', value.floatValue)}}
+              decimalScale={2}
+              onValueChange={(value, e) => { setAttachmentPoint(value.floatValue) }}
             />
             {false && <FormHelperText sx={{ color: 'error.main' }}>Required Field</FormHelperText>}
           </FormControl>
@@ -740,8 +890,8 @@ const PlacementStructure = () => {
             <InputLabel>Type of limit</InputLabel>
             <Select
               label='Type of Limit'
-              value={formData.typeOfLimit}
-              onChange={e => handleFormChange('typeOfLimit', e.target.value)}
+              value={typeOfLimit}
+              onChange={e => setTypeOfLimit(e.target.value)}
               labelId='type-of-limit'
 
             >
