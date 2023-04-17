@@ -1,4 +1,3 @@
-import CloseIcon from '@mui/icons-material/Close'
 import { Button, Typography } from '@mui/material'
 import {
   Column,
@@ -7,7 +6,6 @@ import {
   Container,
   ContainerData,
   HeaderColumns,
-  HeaderTitleModal,
   Row
 } from 'src/styles/Dashboard/ModalReinsurers/modalReinsurers'
 
@@ -21,10 +19,6 @@ const ModalReinsurers = () => {
 
   return (
     <>
-      <HeaderTitleModal>
-        <Typography variant='h6'>Reinsurers in this account</Typography>
-        <CloseIcon />
-      </HeaderTitleModal>
       <Container>
         <ContainerData>
           <HeaderColumns>

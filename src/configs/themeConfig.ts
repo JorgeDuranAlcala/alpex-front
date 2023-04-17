@@ -10,13 +10,13 @@ import { Direction } from '@mui/material'
 
 // ** Types
 import {
-  Skin,
-  Mode,
   AppBar,
-  Footer,
   ContentWidth,
-  VerticalNavToggle,
-  HorizontalMenuToggle
+  Footer,
+  HorizontalMenuToggle,
+  Mode,
+  Skin,
+  VerticalNavToggle
 } from 'src/@core/layouts/types'
 
 type ThemeConfig = {
@@ -74,7 +74,7 @@ const themeConfig: ThemeConfig = {
   horizontalMenuAnimation: true /* true | false */,
 
   // ** AppBar Configs
-  appBar: 'fixed' /* fixed | static | hidden /*! Note: hidden value will only work for Vertical Layout */,
+  appBar: 'static' /* fixed | static | hidden /*! Note: hidden value will only work for Vertical Layout */,
   appBarBlur: true /* true | false */,
 
   // ** Other Configs
