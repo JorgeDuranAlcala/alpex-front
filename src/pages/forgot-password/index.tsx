@@ -101,7 +101,7 @@ const ForgotPasswordPage = () => {
             step === 1 ? (
               <WSStep1 handleVariant={handleVariant} />
             ) : step === 2 ? (
-              <WSStep2 handleVariant={handleVariant} />
+              <WSStep2 />
             ) : (
               <InitialStep handleVariant={handleVariant} />
             )

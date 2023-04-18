@@ -15,6 +15,11 @@ import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import BlankLayout from 'src/@core/layouts/BlankLayout'
 import * as yup from 'yup'
 
+type FormData = {
+  password: string
+  confirmPassword: string
+}
+
 const schema = yup.object().shape({
   password: yup.string().min(5).required(),
   confirmPassword: yup.string().min(5).required()
@@ -36,13 +41,6 @@ const Background = () => {
       </div>
     </div>
   )
-}
-const onSubmit: SubmitHandler<FormData> = data => {
-  console.log(data)
-  setError('email', {
-    type: 'manual',
-    message: 'Email or Password is invalid'
-  })
 }
 const ForgotPasswordPage = () => {
   const router = useRouter()

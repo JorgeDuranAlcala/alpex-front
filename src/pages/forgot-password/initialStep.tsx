@@ -8,7 +8,10 @@ import Button from '@mui/material/Button'
 // ** Layout Import
 import BlankLayout from 'src/@core/layouts/BlankLayout'
 
-const InitialStep = ({ handleVariant }) => {
+interface InitialStep {
+  handleVariant: (variant: string, step: number) => void
+}
+const InitialStep = ({ handleVariant }: InitialStep) => {
   return (
     <div className='buttons'>
       <Button

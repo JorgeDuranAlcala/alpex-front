@@ -22,8 +22,10 @@ const schema = yup.object().shape({
 type FormData = {
   number: string
 }
-
-const WSStep1 = ({ handleVariant }) => {
+interface WSStep1 {
+  handleVariant: (variant: string, step: number) => void
+}
+const WSStep1 = ({ handleVariant }: WSStep1) => {
   const {
     control,
     handleSubmit,
@@ -37,7 +39,7 @@ const WSStep1 = ({ handleVariant }) => {
   const [selectedCountry, setSelectedCountry] = useState<any>(null)
 
   const onSubmit: SubmitHandler<FormData> = data => {
-    const { number } = data
+    console.log(data)
     handleVariant('whatsapp', 2)
   }
 

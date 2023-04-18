@@ -22,8 +22,10 @@ const schema = yup.object().shape({
 type FormData = {
   email: string
 }
-
-const EmailStep1 = ({ handleVariant }) => {
+interface EmailStep1 {
+  handleVariant: (variant: string, step: number) => void
+}
+const EmailStep1 = ({ handleVariant }: EmailStep1) => {
   const {
     control,
     handleSubmit,

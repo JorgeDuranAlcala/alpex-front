@@ -7,7 +7,10 @@ import Button from '@mui/material/Button'
 
 import BlankLayout from 'src/@core/layouts/BlankLayout'
 
-const EmailStep2 = ({ handleVariant }) => {
+interface EmailStep2 {
+  handleVariant: (variant: string, step: number) => void
+}
+const EmailStep2 = ({ handleVariant }: EmailStep2) => {
   return (
     <div className='buttons'>
       <Button

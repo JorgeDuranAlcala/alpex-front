@@ -1,10 +1,10 @@
 // ** React Imports
-import { useRouter } from 'next/router'
 import { ReactNode, useEffect, useState } from 'react'
 
 // ** MUI Components
 import { Button, FormHelperText, Grid, TextField } from '@mui/material'
 import FormControl from '@mui/material/FormControl'
+import { useRouter } from 'next/router'
 
 // ** Third Party Imports
 import { yupResolver } from '@hookform/resolvers/yup'
@@ -16,12 +16,12 @@ import { Icon } from '@iconify/react'
 import BlankLayout from 'src/@core/layouts/BlankLayout'
 
 const schema = yup.object().shape({
-  number1: yup.number().required(),
-  number2: yup.number().required(),
-  number3: yup.number().required(),
-  number4: yup.number().required(),
-  number5: yup.number().required(),
-  number6: yup.number().required()
+  number1: yup.number(),
+  number2: yup.number(),
+  number3: yup.number(),
+  number4: yup.number(),
+  number5: yup.number(),
+  number6: yup.number()
 })
 
 type FormData = {
@@ -32,55 +32,57 @@ type FormData = {
   number5: string
   number6: string
 }
-
-const WSStep2 = ({ handleVariant }) => {
-  const router = useRouter()
+const WSStep2 = () => {
   const {
     control,
     handleSubmit,
+    setValue,
     formState: { errors }
   } = useForm<FormData>({
     mode: 'onBlur',
     resolver: yupResolver(schema)
   })
+  const router = useRouter()
 
   const onSubmit: SubmitHandler<FormData> = data => {
-    const { number1 } = data
+    console.log(data)
     router.push('/reset-password')
   }
 
   const [counter, setCounter] = useState(59)
   const [enabled, setEnabled] = useState(false)
+  const [codeState, setCodeState] = useState('')
   useEffect(() => {
     setInterval(() => {
       setCounter((counter: any) => counter - 1)
     }, 1000)
   }, [])
   useEffect(() => {
-    const inputs = document.querySelectorAll('#inputs-code input')
+    const inputs = document.querySelectorAll<HTMLElement>('#inputs-code input')
     inputs.forEach((input, index) => {
-      input.dataset.index = index
+      input.dataset.index = index.toString()
     })
     const handlePaste = (e: ClipboardEvent) => {
-      const data = e.clipboardData.getData('text')
-      const value = data.split('')
-
+      const data = e?.clipboardData?.getData('text')
+      const value = data?.split('')
       inputs.forEach((input, index) => {
         try {
-          input.value = value[index] || ''
+          // @ts-ignore
+          setValue('number' + (index + 1), value[index] || '')
+          submit()
         } catch (error) {}
       })
-      submit()
     }
-    const handleKeyDown = e => {
+    const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Control') {
         return false
       }
-      const input = e.target
+      const input = e.target as HTMLInputElement
       const value = input.value
       input.value = ''
       input.value = value ? value[0] : ''
 
+      // @ts-ignore
       const fieldIndex = +input.dataset.index
 
       if (value.length > 0 && fieldIndex < inputs.length - 1) {
@@ -98,16 +100,21 @@ const WSStep2 = ({ handleVariant }) => {
     })
     const submit = () => {
       let code = ''
-      inputs.forEach(input => {
+      inputs.forEach((input: any) => {
         code += input.value
       })
-      if (code.length == 6) {
-        setEnabled(true)
-      } else {
-        setEnabled(false)
-      }
+      setCodeState(code)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  useEffect(() => {
+    if (codeState.length == 6) {
+      setEnabled(true)
+    } else {
+      setEnabled(false)
+    }
+  }, [codeState])
 
   return (
     <div className='buttons'>
