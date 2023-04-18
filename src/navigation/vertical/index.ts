@@ -12,32 +12,32 @@ const navigation = (): VerticalNavItemsType => {
     {
       title: 'Accounts',
       icon: 'mdi:accounts',
-      externalLink:true,
+      externalLink: true,
       path: '/accounts',
       children: [
         {
-          title: 'List',
+          title: 'All',
           path: '/accounts'
         },
         {
           title: 'Pending',
-          icon: 'mdi:clock',
+          icon: 'mdi:clock'
         },
         {
           title: 'Not Materialized',
-          icon: 'mdi:progress-helper',
+          icon: 'mdi:progress-helper'
         },
         {
           title: 'Not Taken Up',
-          icon: 'custom:not-taken-up',
+          icon: 'custom:not-taken-up'
         },
         {
           title: 'Declined',
-          icon: 'mdi:cancel',
+          icon: 'mdi:cancel'
         },
         {
           title: 'Bound',
-          icon: 'icon-park-outline:link-three',
+          icon: 'icon-park-outline:link-three'
         }
       ]
     },

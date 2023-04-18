@@ -1,4 +1,5 @@
 import { Button, Typography } from '@mui/material'
+import UserThemeOptions from 'src/layouts/UserThemeOptions'
 import {
   Column,
   ColumnData,
@@ -16,6 +17,11 @@ const ModalReinsurers = () => {
     { label: 'Teinsurer 1 LTDH', data: '$350,000.00 USD' },
     { label: 'Teinsurer 1 LTDH', data: '$350,000.00 USD', backgroundColor: 'rgba(76, 78, 100, 0.04)' }
   ]
+
+  const userThemeConfig: any = Object.assign({}, UserThemeOptions())
+
+  const inter = userThemeConfig.typography?.fontFamilyInter
+  const useColor = userThemeConfig.palette?.buttonText.primary
 
   return (
     <>
@@ -36,7 +42,10 @@ const ModalReinsurers = () => {
             </Row>
           ))}
         </ContainerData>
-        <Button variant='outlined' sx={{ width: 'auto', height: '42px', fontSize: '15px' }}>
+        <Button
+          variant='outlined'
+          sx={{ width: 'auto', height: '42px', fontSize: '15px', color: useColor, fontFamily: inter }}
+        >
           Reinsurers balance
         </Button>
       </Container>

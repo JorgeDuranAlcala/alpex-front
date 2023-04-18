@@ -16,16 +16,76 @@ const UserThemeOptions = (): ThemeOptions => {
 
   // ** To use core palette, uncomment the below line
   // const palette = corePalette(mode, skin)
+  const whiteColor = '#FFF'
+  const mainColor = '76, 78, 100'
+  const darkColor = '87, 90, 111'
+  const lightColor = '68, 72, 84'
+  const middleColor = '77, 80, 98'
 
   return {
-    // palette: {
-    //   primary: {
-    //     light: '#787EFF',
-    //     main: '#666CFF',
-    //     dark: '#5A5FE0',
-    //     contrastText: '#FFF'
-    //   }
-    // },
+    palette: {
+      primary: {
+        light: '#787EFF',
+        main: '#666CFF',
+        dark: '#5A5FE0',
+        contrastText: whiteColor
+      },
+      secondary: {
+        light: '#7F889B',
+        main: '#6D788D',
+        dark: '#606A7C',
+        contrastText: whiteColor
+      },
+      error: {
+        light: '#FF625F',
+        main: '#FF4D49',
+        dark: '#E04440',
+        contrastText: whiteColor
+      },
+      warning: {
+        light: '#FDBE42',
+        main: '#FDB528',
+        dark: '#DF9F23',
+        contrastText: whiteColor
+      },
+      info: {
+        light: '#40CDFA',
+        main: '#26C6F9',
+        dark: '#21AEDB',
+        contrastText: whiteColor
+      },
+      success: {
+        light: '#83E542',
+        main: '#72E128',
+        dark: '#64C623',
+        contrastText: whiteColor
+      },
+      buttonText: {
+        primary: '#2535A8'
+      },
+      text: {
+        primary: `rgba(${mainColor}, 0.87)`,
+        secondary: `rgba(${mainColor}, 0.6)`,
+        disabled: `rgba(${mainColor}, 0.38)`,
+        dark: `rgba(${darkColor}, 0.87)`,
+        light: `rgba(${lightColor}, 0.87)`,
+        ligthDisabled: `rgba(${lightColor}, 0.38)`,
+        title: `rgba(${middleColor}, 0.87)`,
+        subTitle: `rgba(${middleColor}, 0.68)`,
+        paidsText: '#535353'
+      },
+      divider: `rgba(${mainColor}, 0.12)`,
+      action: {
+        active: `rgba(${mainColor}, 0.54)`,
+        hover: `rgba(${mainColor}, 0.05)`,
+        hoverOpacity: 0.05,
+        selected: `rgba(${mainColor}, 0.08)`,
+        disabled: `rgba(${mainColor}, 0.26)`,
+        disabledBackground: `rgba(${mainColor}, 0.12)`,
+        focus: `rgba(${mainColor}, 0.12)`
+      }
+    },
+
     // breakpoints: {
     //   values: {
     //     xs: 0,
@@ -116,7 +176,23 @@ const UserThemeOptions = (): ThemeOptions => {
     // },
     typography: {
       fontFamily:
-        '"KoHo", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji"'
+        '"KoHo", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji"',
+      fontFamilyInter: '"Inter", sans-serif',
+      fontFamilyLato: '"Lato", sans-serif',
+      size: {
+        px12: '12px',
+        px13: '13px',
+        px14: '14px',
+        px15: '15px',
+        px16: '16px',
+        px20: '20px',
+        px24: '24px'
+      },
+      fontWeight: {
+        weight400: 400,
+        weight500: 500,
+        weight600: 600
+      }
     }
 
     // shadows:
