@@ -101,7 +101,7 @@ const CustomInput = forwardRef(({ ...props }: PickerProps, ref: ForwardedRef<HTM
   )
 })
 
-const ModalBroker = ({ id }) => {
+const ModalContact = ({ id }) => {
 
   const [contactData, setContactData] = useState<ContactData>(initialContactData)
   const [open, setOpen] = useState<boolean>(false)
@@ -112,55 +112,73 @@ const ModalBroker = ({ id }) => {
   const [emailError, setEmailError] = useState(false)
   const [phoneError, setPhoneError] = useState(false)
   const [countryError, setCountryError] = useState(false)
+  const [emptyForm, setEmptyForm] = useState(true)
 
 
-  const validate = () => {
 
-
-    if (expresions.name.test(contactData.name) && contactData.name !== undefined && contactData.name !== "") {
-      setNameError(false)
-    } else {
-      setNameError(true)
-      setError(true)
-    }
-
-    if (expresions.email.test(contactData.email) && contactData.email !== undefined && contactData.email !== "") {
-      setEmailError(false)
-    } else {
-      setEmailError(true)
-      setError(true)
-    }
-
-    if (expresions.phone.test(contactData.phone) && contactData.phone !== undefined && contactData.phone !== "") {
-      setPhoneError(false)
-    } else {
-      setPhoneError(true)
-      setError(true)
-    }
-
-    if (contactData.country !== undefined && contactData.country !== "") {
-      setCountryError(false)
-    } else {
-      setCountryError(true)
-      setError(true)
-    }
-
-    if(!nameError  && !emailError && !phoneError && !countryError){
-      setError(false)
-    }
-    console.log(error)
-    if(!error){
-      setBtnDisable(false)
-    }else{
-      setBtnDisable(true)
-    }
-  }
-
-    useEffect(
+  useEffect(
     () => {
-      if(startValidations)
-      validate()
-    }, [contactData])
+      if (contactData.name !== undefined && contactData.name !== ""
+        && contactData.email !== undefined && contactData.email !== ""
+        && contactData.phone !== undefined && contactData.phone !== ""
+        && contactData.country !== undefined && contactData.country !== "") {
+        setEmptyForm(false)
+      } else {
+        setEmptyForm(true)
+        setError(true)
+      }
+
+      if (startValidations) {
+        if (expresions.name.test(contactData.name)) {
+          setNameError(false)
+        } else {
+          setNameError(true)
+          setError(true)
+        }
+
+        if (expresions.email.test(contactData.email)) {
+          setEmailError(false)
+        } else {
+          setEmailError(true)
+          setError(true)
+        }
+
+        if (expresions.phone.test(contactData.phone)) {
+          setPhoneError(false)
+        } else {
+          setPhoneError(true)
+          setError(true)
+        }
+
+        if (contactData.country !== undefined && contactData.country !== "") {
+          setCountryError(false)
+        } else {
+          setCountryError(true)
+          setError(true)
+        }
+
+        if (!nameError && !emailError && !phoneError && !countryError && !emptyForm) {
+          setError(false)
+        } else {
+          setError(true)
+        }
+
+      }
+      if (error)
+        setBtnDisable(true)
+      else if (!error)
+        setBtnDisable(false)
+    }, [contactData.name,
+    contactData.email,
+    contactData.phone,
+    contactData.country,
+    error,
+    nameError,
+    emailError,
+    phoneError,
+    countryError,
+    emptyForm])
+
 
   const handleChange = (field: keyof ContactData, value: ContactData[keyof ContactData]) => {
     setStartValidations(true)
@@ -368,7 +386,7 @@ const BasicInfo = () => {
               <MenuItem value='brc2'>Broker contact 2</MenuItem>
             </Select>
           </FormControl>
-          <ModalBroker />
+          <ModalContact id='modal-broker' />
         </div>
         <div className="form-col">
           <div className="title">Cedant</div>
@@ -405,13 +423,7 @@ const BasicInfo = () => {
               <MenuItem value='cedantc2'>Cedant contact 2</MenuItem>
             </Select>
           </FormControl>
-          <Button className="create-contact-btn">
-            <div className="btn-icon">
-              <Icon icon='mdi:plus-circle-outline' />
-            </div>
-
-            CREATE NEW CONTACT
-          </Button>
+          <ModalContact id='modal-broker' />
         </div>
         <div className="form-col">
           <div className="title">Business</div>
