@@ -1,5 +1,5 @@
-.login-view {
-
+.login-view .logo img{
+  max-width: 140px;
 }
 
 .login-view .background {
@@ -68,6 +68,9 @@
 
 .login-view .directions {
   justify-content: center;
+  font-family: "Inter";
+  font-size: 14px;
+  color: rgba(76, 78, 100, 0.6);
 
 }
 

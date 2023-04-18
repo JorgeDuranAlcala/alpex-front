@@ -116,7 +116,7 @@ const UserThemeOptions = (): ThemeOptions => {
     // },
     typography: {
       fontFamily:
-        '"KoHo", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji"'
+        '-apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji"'
     }
 
     // shadows:

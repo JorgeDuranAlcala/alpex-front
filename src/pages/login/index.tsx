@@ -100,9 +100,8 @@ const LoginPage = () => {
       <div className='login-form'>
         <div className='form-row title-form'>
           <div className='logo'>
-            <img alt='logo' src='/images/logos/logo-dynamic.svg' />
+            <img alt='logo' src='/images/logos/logo-alpex.svg' />
           </div>
-          <img className='title-img' alt='title' src='/images/logos/title.svg' />
         </div>
         <div className='form-row directions'>Login with your email and password.</div>
         <div className='form-row form-inputs'>
@@ -120,16 +119,10 @@ const LoginPage = () => {
                     onBlur={onBlur}
                     onChange={onChange}
                     error={Boolean(errors.email)}
-                    sx={{
-                      '& .MuiOutlinedInput-root.Mui-focused  .MuiOutlinedInput-notchedOutline': {
-                        borderColor: '#0D567B'
-                      },
-                      '& .MuiInputLabel-root.Mui-focused': { color: '#0D567B' }
-                    }}
                   />
                 )}
               />
-              {errors.email && <FormHelperText sx={{ color: 'error.main' }}>Invalid email</FormHelperText>}
+              {errors.email && <FormHelperText sx={{ color: 'error.main' }}>Enter a valid email, example: name@email.com</FormHelperText>}
             </FormControl>
             <FormControl fullWidth>
               <InputLabel htmlFor='auth-login-v2-password' error={Boolean(errors.password)}>
