@@ -1,37 +1,37 @@
 // ** React Imports
-import { useState } from 'react';
+import { useEffect, useState } from 'react'
 
 // ** MUI Imports
-import Box from '@mui/material/Box';
-import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box'
+import IconButton from '@mui/material/IconButton'
+import Typography from '@mui/material/Typography'
 import {
   DataGrid,
   GRID_CHECKBOX_SELECTION_COL_DEF,
   GridColumns,
   GridRowId,
-} from '@mui/x-data-grid';
+} from '@mui/x-data-grid'
 
 // ** Icon Imports
-import Icon from 'src/@core/components/icon';
+import Icon from 'src/@core/components/icon'
+
+// ** Custom Hooks imports
+import useAccountTable from 'src/hooks/accounts/Table/useAccountTable'
 
 // ** Custom Components Imports
-import ColumnHeader from './ColumnHeader';
-import CustomPagination from './CustomPagination';
-
-//import FilterMenu from './FilterMenu';
-import Status from './Status';
-import TableHeader from './TableHeader';
+import ColumnHeader from './ColumnHeader'
+import CustomPagination from './CustomPagination'
+import Status from './Status'
+import TableHeader from './TableHeader'
+import ModalAction from './modal'
 
 // ** Custom utilities
-import colors from 'src/views/accounts/colors';
-import fonts from 'src/views/accounts/font';
+import colors from 'src/views/accounts/colors'
+import fonts from 'src/views/accounts/font'
 
-// ** Fake data
-import data from 'src/views/accounts/data';
-import ModalAction from './modal';
 
-interface IAccount {
+
+export interface IAccount {
   id: string; 
   status: string; 
   insured: string; 
@@ -53,6 +53,14 @@ export enum EFieldColumn {
 const Table = () => {
   // ** State 
   const [selectedRows, setSelectedRows] = useState<GridRowId[]>([])
+
+  // ** Custom Hooks
+  const { accounts, getAccounts } = useAccountTable()
+
+  // ** Hooks
+  useEffect(()=>{
+    getAccounts()
+  })
 
   const handleClickColumnHeader = (field: string) => {
     console.log(field);
@@ -209,7 +217,7 @@ const Table = () => {
           autoHeight
           checkboxSelection
           disableSelectionOnClick
-          rows={data}
+          rows={accounts}
           columns={column}         
           pagination
           pageSize={10}
