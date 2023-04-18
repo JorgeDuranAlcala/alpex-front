@@ -17,6 +17,7 @@ const navigation = (): VerticalNavItemsType => {
       children: [
         {
           title: 'All',
+          icon: 'ion:file-tray-stacked',
           path: '/accounts'
         },
         {
