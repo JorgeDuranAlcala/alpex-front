@@ -39,31 +39,29 @@
   border-radius: 5px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
 }
-.login-view .title-img{
+.login-view .title-img {
   margin-left: 15px;
 }
 
-.login-view .title-form{
+.login-view .title-form {
   justify-content: center;
-  margin-bottom: 20px
+  margin-bottom: 20px;
 }
 
-
-.login-view .form-inputs{
+.login-view .form-inputs {
   max-width: 400px;
   margin: 15px 0 0;
   padding: 7px 0 0px;
 }
 
-.login-view .remember-me{
+.login-view .remember-me {
   margin-bottom: 15px;
 }
 
-.login-view .form-row{
+.login-view .form-row {
   width: 100%;
   display: flex;
   align-items: center;
-
 }
 
 .login-view .directions {
@@ -74,16 +72,14 @@
 
 }
 
-
-
-.login-view .forgot-text{
-  color: #0D567B;
+.login-view .forgot-text {
+  color: #0d567b;
   font-weight: 700;
   font-size: 16px;
   text-align: center;
   width: 100%;
+  cursor: pointer;
 }
-
 
 @media (max-width: 768px) {
   .login-view .background {
@@ -95,5 +91,4 @@
   .login-view .login-form {
     box-shadow: none;
   }
-
 }
