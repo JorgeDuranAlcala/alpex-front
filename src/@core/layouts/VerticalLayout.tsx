@@ -16,11 +16,10 @@ import themeConfig from 'src/configs/themeConfig'
 import { LayoutProps } from 'src/@core/layouts/types'
 
 // ** Components
-import AppBar from './components/vertical/appBar'
-
-// import Customizer from 'src/@core/components/customizer'
+import Customizer from 'src/@core/components/customizer'
 import ScrollToTop from 'src/@core/components/scroll-to-top'
 import Footer from './components/shared-components/footer'
+import AppBar from './components/vertical/appBar'
 import Navigation from './components/vertical/navigation'
 
 const VerticalLayoutWrapper = styled('div')({
@@ -123,8 +122,7 @@ const VerticalLayout = (props: LayoutProps) => {
       </VerticalLayoutWrapper>
 
       {/* Customizer */}
-      {/* {disableCustomizer || hidden ? null : <Customizer />} */}
-      {disableCustomizer || (hidden && null)}
+      {disableCustomizer || hidden ? null : <Customizer />}
 
       {/* Scroll to top button */}
       {scrollToTop ? (
