@@ -1,4 +1,5 @@
 // ** React Imports
+import { useRouter } from 'next/router'
 import { ReactNode, useState } from 'react'
 import Lottie from 'react-lottie'
 import loginAnimation from './animations/login-animation.json'
@@ -73,7 +74,7 @@ const LoginPage = () => {
 
   // ** Hooks
   const auth = useAuth()
-
+  const router = useRouter()
   const {
     control,
     setError,
@@ -189,7 +190,15 @@ const LoginPage = () => {
           </Button>
         </div>
         <div className='form-row'>
-          <div className='forgot-text'>Forgot your password?</div>
+          <div
+            role='button'
+            onClick={() => {
+              router.push('/forgot-password/')
+            }}
+            className='forgot-text'
+          >
+            Forgot your password?
+          </div>
         </div>
       </div>
     </div>
