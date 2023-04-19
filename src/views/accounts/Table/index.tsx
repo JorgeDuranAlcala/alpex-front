@@ -187,11 +187,14 @@ const Table = () => {
         renderHeader:({ colDef }) => <ColumnHeader colDef={colDef} showIcon={false}/>,
         renderCell: ({ row }) => (
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <IconButton size='small' sx={{ mr: 1 }}>
+                      <Icon icon='ic:baseline-login' />
+                    </IconButton>
               <ModalAction
                 renderButton={
                   (handleOpen: ()=>void) => (
                     <IconButton onClick={handleOpen} size='small' sx={{ mr: 1 }}>
-                      <Icon icon='ic:baseline-login' />
+                      <Icon icon='mdi:content-copy' />
                     </IconButton>
                   )
                 }
@@ -200,9 +203,7 @@ const Table = () => {
                 handleClickContinue={()=>{console.log('Continue')}}
                 handleClickCancel={()=>{console.log('Cancel')}}
               />
-              <IconButton size='small' sx={{ mr: 1 }}>
-                <Icon icon='mdi:content-copy' />
-              </IconButton>
+              
               <IconButton size='small' sx={{ mr: 1 }}>
                 <Icon icon='mdi:download' />
               </IconButton>

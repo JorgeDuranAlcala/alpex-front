@@ -14,10 +14,12 @@ import Icon from 'src/@core/components/icon';
 import { EStatus, EStatusString } from './Status';
 import ModalAction from './modal';
 
+// ** Custom Hooks imports
+import useAccountTable from 'src/hooks/accounts/Table/useAccountTable';
+
 enum EActions {
   DELETE_ALL = 'Delete All',
   CHANGE_STATUS = 'Change Status',
-
 }
 
 interface ITableHeader {
@@ -25,6 +27,8 @@ interface ITableHeader {
 }
 
 const TableHeader: React.FC<ITableHeader> = ({ selectedRows }) => {
+  // ** Custom Hooks
+  const { deleteAccounts, changeStatusAccounts } = useAccountTable()
 
   // ** State
   const [actionMenu, setActionMenu] = useState(false)
@@ -34,6 +38,7 @@ const TableHeader: React.FC<ITableHeader> = ({ selectedRows }) => {
   const openStatusChangeMenu = Boolean(anchorEl)
   const [showChangeStatusModal, setShowChangeStatusModal]= useState(false)
   const [textChangeStatusModal, setTextChangeStatusModal]= useState('')
+  const [changeStatusTo, setChangeStatusTo] = useState<EStatus | null>(null)
 
  // ** Handlers for Action menu
   const handleActionMenuOpen = () =>{
@@ -41,6 +46,14 @@ const TableHeader: React.FC<ITableHeader> = ({ selectedRows }) => {
   }
   const handleActionMenuClose = () =>{
     setActionMenu(false)
+    setAnchorEl(null)
+  }
+
+  const handleActionMenuOnclick = (e: React.MouseEvent<HTMLDivElement>) => {
+    const target = e.target as HTMLInputElement;
+    if (target.value === undefined) {
+      handleActionMenuClose()
+    }
   }
 
   const handleSelectedAction = async (event: SelectChangeEvent<string>) => {
@@ -61,7 +74,14 @@ const TableHeader: React.FC<ITableHeader> = ({ selectedRows }) => {
   }; 
 
    // ** Handlers for Change Status
+   const handleChangeStatusAction = () => {
+    if (changeStatusTo) {
+      changeStatusAccounts(selectedRows, changeStatusTo)
+    }
+  }
+
   const HandleChangeStatus = (newStatus: EStatus) => {
+    setChangeStatusTo(newStatus)
     handleTextChangeStatusModal(selectedRows, newStatus)
     setShowChangeStatusModal(true)
     setAnchorEl(null)
@@ -108,6 +128,10 @@ const TableHeader: React.FC<ITableHeader> = ({ selectedRows }) => {
     setTextDeleteModal(`${msg} #${textSelectedRows}?`)
   }
 
+  const handleDeleteAction = () => {
+    deleteAccounts(selectedRows)
+  }
+
   return (
     <Box
       sx={{
@@ -126,6 +150,7 @@ const TableHeader: React.FC<ITableHeader> = ({ selectedRows }) => {
           displayEmpty
           open={actionMenu}
           onOpen={handleActionMenuOpen}
+          onClick={(e)=>handleActionMenuOnclick(e)}
           onChange={handleSelectedAction}
           defaultValue=''
           sx={{ mr: 4, mb: 2 }}
@@ -165,8 +190,7 @@ const TableHeader: React.FC<ITableHeader> = ({ selectedRows }) => {
           renderButton={() => <span> </span>}
           headingText={textDeleteModal}
           text='These accounts will remain in “Deleted accounts” for 30 days and then they’ll be deleted permanently. If you want to restore them you can go to: Configuration > Deleted accounts'
-          handleClickContinue={()=>console.log('Continue')}
-          handleClickCancel={()=>{console.log('Cancel')}}
+          handleClickContinue={handleDeleteAction}
           setShow={showDeleteModal}
           onClose={()=>{
             setShowDeleteModal(false)
@@ -177,8 +201,7 @@ const TableHeader: React.FC<ITableHeader> = ({ selectedRows }) => {
           renderButton={() => <span> </span>}
           headingText={textChangeStatusModal}
           text='Do you want to proceed?'
-          handleClickContinue={()=>console.log('Continue')}
-          handleClickCancel={()=>{console.log('Cancel')}}
+          handleClickContinue={handleChangeStatusAction}
           setShow={showChangeStatusModal}
           onClose={()=>{
             setShowChangeStatusModal(false)
