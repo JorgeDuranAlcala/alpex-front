@@ -13,64 +13,80 @@ import colors from 'src/views/accounts/colors'
 import fonts from 'src/views/accounts/font'
 
 
-interface IStatus {
+export interface IComponents {
     [key:string]: ReactElement
-  }
+}
   
 interface IStatusProps {
     status: string
-  }
+}
+
+export enum EStatus {
+  PENDING = 'pending',
+  NOT_MATERIALIZED = 'notMaterialized',
+  NOT_TAKEN_UP = 'notTakenUp',
+  DECLINED = 'declined',
+  BOUND = 'bound',
+}
+
+export enum EStatusString {
+  PENDING = 'Pending',
+  NOT_MATERIALIZED = 'Not Materialized',
+  NOT_TAKEN_UP = 'Not Taken Up',
+  DECLINED = 'Declined',
+  BOUND = 'Bound',
+}
   
   const Status: React.FC<IStatusProps> = ({status}) => {
-    const statusComponents:IStatus = {
-      pending:(
+    const statusComponents:IComponents = {
+      [EStatus.PENDING]:(
         <>
           <Box component='span' sx={{ display: 'flex', mr: 2, color: colors.info.dark }}>
             <Icon icon='mdi:clock' fontSize={20} />
           </Box>
           <Typography sx={{ color: colors.info.dark, fontSize:fonts.size.px13,fontFamily:fonts.inter }}>
-            Pending
+            {EStatusString.PENDING}
           </Typography>
         </>
       ),
-      bound:(
+      [EStatus.BOUND]:(
         <>
           <Box component='span' sx={{ display: 'flex', mr: 2, color: colors.primary.light }}>
             <Icon icon='icon-park-outline:link-three' fontSize={20} />
           </Box>
           <Typography sx={{ color: colors.primary.light, fontSize:fonts.size.px13,fontFamily:fonts.inter }}>
-            Bound
+            {EStatusString.BOUND}
           </Typography>
         </>
       ),
-      notMaterialized:(
+      [EStatus.NOT_MATERIALIZED]:(
         <>
           <Box component='span' sx={{ display: 'flex', mr: 2, color: colors.warning.dark }}>
             <Icon icon='mdi:progress-helper' fontSize={20} />
           </Box>
           <Typography sx={{ color: colors.warning.dark, fontSize:fonts.size.px13,fontFamily:fonts.inter }}>
-            Not Materialized
+          {EStatusString.NOT_MATERIALIZED}
           </Typography>
         </>
       ),
-      notTakenUp:(
+      [EStatus.NOT_TAKEN_UP]:(
         <>
           <Box component='span' sx={{ display: 'flex', mr: 2, color: colors.secondary.dark }}>
           <Icon icon='custom:not-taken-up' fontSize={20} />
           </Box>
           <Typography sx={{ color: colors.secondary.dark, fontSize:fonts.size.px13,fontFamily:fonts.inter }}>
-            Not Taken Up
+          {EStatusString.NOT_TAKEN_UP}
           </Typography>
           
         </>
       ),
-      declined:(
+      [EStatus.DECLINED]:(
         <>
           <Box component='span' sx={{ display: 'flex', mr: 2, color: colors.error.dark }}>
             <Icon icon='mdi:cancel' fontSize={20} />
           </Box>
           <Typography sx={{ color: colors.error.dark, fontSize:fonts.size.px13,fontFamily:fonts.inter }}>
-            Declined
+          {EStatusString.DECLINED}
           </Typography>
         </>
       ),
