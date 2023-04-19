@@ -125,12 +125,12 @@ const App = (props: ExtendedAppProps) => {
     <Provider store={store}>
       <CacheProvider value={emotionCache}>
         <Head>
-          <title>{`${themeConfig.templateName} - Material Design React Admin Template`}</title>
+          <title>{`${themeConfig.templateName} - Dynamic Re | Your Underwriting Powerhouse`}</title>
           <meta
             name='description'
-            content={`${themeConfig.templateName} – Material Design React Admin Dashboard Template – is the most developer friendly & highly customizable Admin Dashboard Template based on MUI v5.`}
+            content={`${themeConfig.templateName} We provide property facultative and treaty reinsurance to brokers and insurance companies operating in Latin America and the Caribbean`}
           />
-          <meta name='keywords' content='Material Design, MUI, Admin Template, React Admin Template' />
+          <meta name='image' content='https://dynamicreinsurance.com/images/MexicoCity.jpg' />
           <meta name='viewport' content='initial-scale=1, width=device-width' />
         </Head>
 
