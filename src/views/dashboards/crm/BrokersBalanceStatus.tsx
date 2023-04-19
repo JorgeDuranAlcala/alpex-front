@@ -6,6 +6,7 @@ import { useTheme } from '@mui/material/styles'
 import { ApexOptions } from 'apexcharts'
 import { useState } from 'react'
 import ReactApexcharts from 'src/@core/components/react-apexcharts'
+import UserThemeOptions from 'src/layouts/UserThemeOptions'
 
 // import CustomModal from 'src/pages/components/modal'
 // import ModalReinsurers from './ModalReinsurers'
@@ -73,15 +74,21 @@ const BrokersBalanceStatus = () => {
       }
     }
   }
+  const userThemeConfig: any = Object.assign({}, UserThemeOptions())
+
+  const inter = userThemeConfig.typography?.fontFamilyInter
+  const subtitle = userThemeConfig.palette?.text.secondary
+  const title = userThemeConfig.palette?.text.primary
+  const lato = userThemeConfig.typography?.fontFamilyLato
 
   return (
     <Card sx={{ position: 'relative', width: '55%', height: '393px' }}>
       <HeaderTitle>
         <ContainerTitle>
-          <Typography variant='h6' sx={{ color: theme.palette.text.primary, fontFamily: 'Inter' }}>
+          <Typography variant='h6' sx={{ color: title, fontFamily: inter }}>
             Brokers balance status
           </Typography>
-          <Typography variant='body2' sx={{ fontFamily: 'Inter' }}>
+          <Typography variant='body2' sx={{ fontFamily: inter, color: subtitle }}>
             Overview
           </Typography>
         </ContainerTitle>
@@ -112,20 +119,42 @@ const BrokersBalanceStatus = () => {
           <ContainerAccounts>
             <ContentTextAccounts>
               <Box sx={{ width: '24px', height: '24px', backgroundColor: '#72E128', borderRadius: '4px' }} />
-              <Typography sx={{ fontSize: '16px' }}>Paid accounts:</Typography>
+              <Typography sx={{ fontSize: '16px', fontFamily: lato }}>Paid accounts:</Typography>
             </ContentTextAccounts>
-            <Typography sx={{ fontSize: '16px', fontWeight: '700', color: '#535353' }}>29</Typography>
+            <Typography
+              sx={{
+                fontSize: '16px',
+                fontWeight: '700',
+                color: userThemeConfig.palette?.text.paidsText,
+                fontFamily: lato
+              }}
+            >
+              29
+            </Typography>
           </ContainerAccounts>
           <ContainerAccounts>
             <ContentTextAccounts>
               <Box sx={{ width: '24px', height: '24px', backgroundColor: '#C4F6B3', borderRadius: '4px' }} />
-              <Typography sx={{ fontSize: '16px' }}>Unpaid accounts:</Typography>
+              <Typography sx={{ fontSize: '16px', fontFamily: lato }}>Unpaid accounts:</Typography>
             </ContentTextAccounts>
-            <Typography sx={{ fontSize: '16px', fontWeight: '700', color: '#535353' }}>21</Typography>
+            <Typography
+              sx={{
+                fontSize: '16px',
+                fontWeight: '700',
+                color: userThemeConfig.palette?.text.paidsText,
+                fontFamily: lato
+              }}
+            >
+              21
+            </Typography>
           </ContainerAccounts>
           <ContainerTotal>
-            <Typography sx={{ fontSize: '14px', fontWeight: '700', color: '#444444' }}>Total debt:</Typography>
-            <Typography sx={{ fontSize: '16px', fontWeight: '700', color: '#444444' }}>$3,500,000.00 USD</Typography>
+            <Typography sx={{ fontSize: '14px', fontWeight: '700', color: '#444444', fontFamily: lato }}>
+              Total debt:
+            </Typography>
+            <Typography sx={{ fontSize: '16px', fontWeight: '700', color: '#444444', fontFamily: lato }}>
+              $3,500,000.00 USD
+            </Typography>
           </ContainerTotal>
         </ContainerPayments>
         <ContainerCircularProgress>

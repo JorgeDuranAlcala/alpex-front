@@ -127,7 +127,8 @@ const Drawer = (props: Props) => {
           width: navCollapsed && !navHover ? collapsedNavWidth : navWidth,
           ...(!hidden && navCollapsed && navHover ? { boxShadow: 10 } : {}),
           borderRight: navigationBorderWidth === 0 ? 0 : `${navigationBorderWidth}px solid ${theme.palette.divider}`,
-          ...userNavMenuPaperStyle
+          ...userNavMenuPaperStyle,
+          backgroundColor: '#FFFFFF'
         },
         ...navMenuProps?.PaperProps
       }}

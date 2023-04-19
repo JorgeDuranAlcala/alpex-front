@@ -2,9 +2,8 @@ import { styled } from '@mui/material/styles'
 
 const Container = styled('div')({
   height: '100%',
-  width: '100%'
-
-  // backgroundColor: 'pink'
+  width: '100%',
+  marginTop: '-23px'
 })
 
 const ContainerHeader = styled('div')({

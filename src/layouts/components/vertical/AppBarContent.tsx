@@ -135,7 +135,8 @@ const AppBarContent = (props: Props) => {
         width: '100%',
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
+        height: '64px'
       }}
     >
       <Box className='actions-left' sx={{ mr: 2, display: 'flex', alignItems: 'center' }}>

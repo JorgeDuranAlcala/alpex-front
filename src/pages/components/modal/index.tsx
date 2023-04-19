@@ -4,6 +4,7 @@ import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Modal from '@mui/material/Modal'
 import { ReactNode, useState } from 'react'
+import UserThemeOptions from 'src/layouts/UserThemeOptions'
 import { ButtonClose, HeaderTitleModal } from 'src/styles/Dashboard/ModalReinsurers/modalReinsurers'
 
 interface ICustomModal {
@@ -21,10 +22,18 @@ const CustomModal = ({ width, height, bgColor, top, left, children }: ICustomMod
   const [open, setOpen] = useState(false)
   const handleOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
+  const userThemeConfig: any = Object.assign({}, UserThemeOptions())
+
+  const inter = userThemeConfig.typography?.fontFamilyInter
+  const useColor = userThemeConfig.palette?.buttonText.primary
 
   return (
     <div>
-      <Button onClick={handleOpen} variant='outlined' sx={{ width: '100%', height: '30px', fontSize: '13px' }}>
+      <Button
+        onClick={handleOpen}
+        variant='outlined'
+        sx={{ width: 'auto', height: '30px', fontSize: '13px', color: useColor, fontFamily: inter }}
+      >
         Balance Preview
       </Button>
 
