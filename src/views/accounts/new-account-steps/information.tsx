@@ -3,12 +3,13 @@ import { ForwardedRef, forwardRef, useEffect, useState } from 'react'
 // ** MUI Imports
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
 import CloseIcon from '@mui/icons-material/Close'
+import { SxProps, Theme } from '@mui/material'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import FormControl from '@mui/material/FormControl'
 import FormHelperText from '@mui/material/FormHelperText'
 import InputAdornment from '@mui/material/InputAdornment'
-import InputLabel from "@mui/material/InputLabel"
+import InputLabel from '@mui/material/InputLabel'
 import MenuItem from '@mui/material/MenuItem'
 import Modal from '@mui/material/Modal'
 import Select from '@mui/material/Select'
@@ -29,7 +30,6 @@ import { DateType } from 'src/types/forms/reactDatepickerTypes'
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
-
 
 // interface FileProp {
 //   name: string
@@ -60,6 +60,7 @@ import Icon from 'src/@core/components/icon'
 
 interface PickerProps {
   label?: string
+  sx?: SxProps<Theme>
 }
 interface BasicInfo {
   insured: string
@@ -84,7 +85,7 @@ const initialBasicInfo: BasicInfo = {
   lineOfBusiness: '',
   underwriter: '',
   leadUnderwriter: '',
-  technicalAssistant: '',
+  technicalAssistant: ''
 }
 
 interface ContactData {
@@ -98,40 +99,39 @@ const initialContactData: ContactData = {
   name: '',
   email: '',
   phone: '',
-  country: '',
-
+  country: ''
 }
 
+interface IModal {
+  id: string
+}
 const expresions = {
-
   name: /^[a-zA-ZÀ-ÿ\s]{1,40}$/, // Letras y espacios, pueden llevar acentos.
   email:
     /^(?:[^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*|"[^\n"]+")@(?:[^<>()[\].,;:\s@"]+\.)+[^<>()[\]\.,;:\s@"]{2,63}$/i,
-  phone: /^\d{10}$/, // 7 a 10 numeros.
-};
+  phone: /^\d{10}$/ // 7 a 10 numeros.
+}
 
 /* eslint-disable */
 const CustomInput = forwardRef(({ ...props }: PickerProps, ref: ForwardedRef<HTMLElement>) => {
   return (
     <TextField
-      id="date-textfield"
+      id='date-textfield'
       inputRef={ref}
       sx={{ width: { sm: '250px', xs: '170px' }, '& .MuiInputBase-input': { color: 'text.secondary' } }}
       InputProps={{
         endAdornment: (
-          <InputAdornment position="end">
+          <InputAdornment position='end'>
             <CalendarTodayIcon />
           </InputAdornment>
-        ),
+        )
       }}
       {...props}
     />
-
   )
 })
 
-
-const ModalContact = ({ id }) => {
+const ModalContact = ({ id }: IModal) => {
   const [contactData, setContactData] = useState<ContactData>(initialContactData)
   const [open, setOpen] = useState<boolean>(false)
   const [btnDisable, setBtnDisable] = useState(true)
@@ -143,61 +143,62 @@ const ModalContact = ({ id }) => {
   const [countryError, setCountryError] = useState(false)
   const [emptyForm, setEmptyForm] = useState(true)
 
+  useEffect(() => {
+    if (
+      contactData.name !== undefined &&
+      contactData.name !== '' &&
+      contactData.email !== undefined &&
+      contactData.email !== '' &&
+      contactData.phone !== undefined &&
+      contactData.phone !== '' &&
+      contactData.country !== undefined &&
+      contactData.country !== ''
+    ) {
+      setEmptyForm(false)
+    } else {
+      setEmptyForm(true)
+      setError(true)
+    }
 
-
-  useEffect(
-    () => {
-      if (contactData.name !== undefined && contactData.name !== ""
-        && contactData.email !== undefined && contactData.email !== ""
-        && contactData.phone !== undefined && contactData.phone !== ""
-        && contactData.country !== undefined && contactData.country !== "") {
-        setEmptyForm(false)
+    if (startValidations) {
+      if (expresions.name.test(contactData.name)) {
+        setNameError(false)
       } else {
-        setEmptyForm(true)
+        setNameError(true)
         setError(true)
       }
 
-      if (startValidations) {
-        if (expresions.name.test(contactData.name)) {
-          setNameError(false)
-        } else {
-          setNameError(true)
-          setError(true)
-        }
-
-        if (expresions.email.test(contactData.email)) {
-          setEmailError(false)
-        } else {
-          setEmailError(true)
-          setError(true)
-        }
-
-        if (expresions.phone.test(contactData.phone)) {
-          setPhoneError(false)
-        } else {
-          setPhoneError(true)
-          setError(true)
-        }
-
-        if (contactData.country !== undefined && contactData.country !== "") {
-          setCountryError(false)
-        } else {
-          setCountryError(true)
-          setError(true)
-        }
-
-        if (!nameError && !emailError && !phoneError && !countryError && !emptyForm) {
-          setError(false)
-        } else {
-          setError(true)
-        }
-
+      if (expresions.email.test(contactData.email)) {
+        setEmailError(false)
+      } else {
+        setEmailError(true)
+        setError(true)
       }
-      if (error)
-        setBtnDisable(true)
-      else if (!error)
-        setBtnDisable(false)
-    }, [contactData.name,
+
+      if (expresions.phone.test(contactData.phone)) {
+        setPhoneError(false)
+      } else {
+        setPhoneError(true)
+        setError(true)
+      }
+
+      if (contactData.country !== undefined && contactData.country !== '') {
+        setCountryError(false)
+      } else {
+        setCountryError(true)
+        setError(true)
+      }
+
+      if (!nameError && !emailError && !phoneError && !countryError && !emptyForm) {
+        setError(false)
+      } else {
+        setError(true)
+      }
+    }
+    if (error) setBtnDisable(true)
+    else if (!error) setBtnDisable(false)
+  }, [
+    contactData.name,
     contactData.email,
     contactData.phone,
     contactData.country,
@@ -206,13 +207,12 @@ const ModalContact = ({ id }) => {
     emailError,
     phoneError,
     countryError,
-    emptyForm])
-
+    emptyForm
+  ])
 
   const handleChange = (field: keyof ContactData, value: ContactData[keyof ContactData]) => {
     setStartValidations(true)
     setContactData({ ...contactData, [field]: value })
-
   }
 
   const handleClose = () => {
@@ -220,12 +220,12 @@ const ModalContact = ({ id }) => {
   }
 
   const handleCreateContact = () => {
-    console.log("createContact")
+    console.log('createContact')
   }
   return (
     <>
-      <Button className="create-contact-btn" onClick={() => setOpen(true)}>
-        <div className="btn-icon">
+      <Button className='create-contact-btn' onClick={() => setOpen(true)}>
+        <div className='btn-icon'>
           <Icon icon='mdi:plus-circle-outline' />
         </div>
         CREATE NEW CONTACT
@@ -234,15 +234,15 @@ const ModalContact = ({ id }) => {
         <Box
           sx={{
             position: 'absolute',
-            bgcolor: "white",
-            top: "50%",
-            left: "50%",
+            bgcolor: 'white',
+            top: '50%',
+            left: '50%',
             boxShadow: 24,
             pl: 5,
             pr: 5,
             transform: 'translate(-50%, -50%)',
             borderRadius: '10px',
-            padding: "15px"
+            padding: '15px'
           }}
         >
           <HeaderTitleModal>
@@ -251,36 +251,33 @@ const ModalContact = ({ id }) => {
               <CloseIcon />
             </ButtonClose>
           </HeaderTitleModal>
-          <div className="contact-form">
+          <div className='contact-form'>
             <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
-
               <TextField
                 autoFocus
                 label='Contact Name'
                 value={contactData.name}
-                onChange={(e) => handleChange("name", e.target.value)}
+                onChange={e => handleChange('name', e.target.value)}
               />
 
               {nameError && <FormHelperText sx={{ color: 'error.main' }}>Invalid name</FormHelperText>}
             </FormControl>
             <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
-
               <TextField
                 autoFocus
                 label='Contact email'
                 value={contactData.email}
-                onChange={(e) => handleChange('email', e.target.value)}
+                onChange={e => handleChange('email', e.target.value)}
               />
 
               {emailError && <FormHelperText sx={{ color: 'error.main' }}>Invalid field</FormHelperText>}
             </FormControl>
             <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
-
               <TextField
                 autoFocus
                 label='Contact Phone'
                 value={contactData.phone}
-                onChange={(e) => handleChange('phone', e.target.value)}
+                onChange={e => handleChange('phone', e.target.value)}
               />
 
               {phoneError && <FormHelperText sx={{ color: 'error.main' }}>Invalid field</FormHelperText>}
@@ -291,7 +288,7 @@ const ModalContact = ({ id }) => {
               <Select
                 label='Select country'
                 value={contactData.country}
-                onChange={(e) => handleChange('country', e.target.value)}
+                onChange={e => handleChange('country', e.target.value)}
                 labelId='invoice-country'
               >
                 <MenuItem value='USA'>USA</MenuItem>
@@ -307,18 +304,16 @@ const ModalContact = ({ id }) => {
                 </FormHelperText>
               )}
             </FormControl>
-
           </div>
           <Button
-            className="create-contact-modal"
+            className='create-contact-modal'
             disabled={btnDisable}
             variant='contained'
-            onClick={handleCreateContact}>
+            onClick={handleCreateContact}
+          >
             CREATE
           </Button>
-          <Button
-            className="create-contact-modal"
-            onClick={() => setOpen(false)}>
+          <Button className='create-contact-modal' onClick={() => setOpen(false)}>
             CANCEL
           </Button>
         </Box>
@@ -328,7 +323,6 @@ const ModalContact = ({ id }) => {
 }
 
 const BasicInfo = () => {
-
   const [receptionDate, setReceptionDate] = useState<DateType>(null)
   const [effectiveDate, setEffectiveDate] = useState<DateType>(null)
   const [expirationDate, setExpirationDate] = useState<DateType>(null)
@@ -340,18 +334,17 @@ const BasicInfo = () => {
 
   return (
     <>
-      <div className="title">Basic info</div>
-      <div className="form-wrapper">
-        <div className="form-col">
-          <div className="title">Insured</div>
+      <div className='title'>Basic info</div>
+      <div className='form-wrapper'>
+        <div className='form-col'>
+          <div className='title'>Insured</div>
 
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
-
             <TextField
               autoFocus
               label='insured'
               value={formData.insured}
-              onChange={(e) => handleFormChange('insured', e.target.value)}
+              onChange={e => handleFormChange('insured', e.target.value)}
             />
 
             {false && <FormHelperText sx={{ color: 'error.main' }}>Invalid field</FormHelperText>}
@@ -362,7 +355,7 @@ const BasicInfo = () => {
             <Select
               label='Country'
               value={formData.country}
-              onChange={(e) => handleFormChange('country', e.target.value)}
+              onChange={e => handleFormChange('country', e.target.value)}
               labelId='invoice-country'
             >
               <MenuItem value='USA'>USA</MenuItem>
@@ -380,15 +373,15 @@ const BasicInfo = () => {
           </FormControl>
         </div>
 
-        <div className="form-col">
-          <div className="title">Broker</div>
+        <div className='form-col'>
+          <div className='title'>Broker</div>
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <InputLabel>Select Broker</InputLabel>
 
             <Select
               label='Select Broker'
               value={formData.broker}
-              onChange={(e) => handleFormChange('broker', e.target.value)}
+              onChange={e => handleFormChange('broker', e.target.value)}
               labelId='broker'
             >
               <MenuItem value='br1'>Br1</MenuItem>
@@ -407,9 +400,8 @@ const BasicInfo = () => {
             <Select
               label='Select Broker Contact'
               value={formData.brokerContact}
-              onChange={(e) => handleFormChange('brokerContact', e.target.value)}
+              onChange={e => handleFormChange('brokerContact', e.target.value)}
               labelId='broker-contact'
-
             >
               <MenuItem value='brc1'>Broker contact 1</MenuItem>
               <MenuItem value='brc2'>Broker contact 2</MenuItem>
@@ -417,15 +409,15 @@ const BasicInfo = () => {
           </FormControl>
           <ModalContact id='modal-broker' />
         </div>
-        <div className="form-col">
-          <div className="title">Cedant</div>
+        <div className='form-col'>
+          <div className='title'>Cedant</div>
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <InputLabel>Select Cedant</InputLabel>
 
             <Select
               label='Select Cedant'
               value={formData.cedant}
-              onChange={(e) => handleFormChange('cedant', e.target.value)}
+              onChange={e => handleFormChange('cedant', e.target.value)}
               labelId='cedant'
             >
               <MenuItem value='cedant1'>cedant 1</MenuItem>
@@ -445,7 +437,7 @@ const BasicInfo = () => {
             <Select
               label='Select Cedant Contact'
               value={formData.cedantContact}
-              onChange={(e) => handleFormChange('cedantContact', e.target.value)}
+              onChange={e => handleFormChange('cedantContact', e.target.value)}
               labelId='cedant-contact'
             >
               <MenuItem value='cedantc1'>Cedant contact 1</MenuItem>
@@ -454,15 +446,15 @@ const BasicInfo = () => {
           </FormControl>
           <ModalContact id='modal-broker' />
         </div>
-        <div className="form-col">
-          <div className="title">Business</div>
+        <div className='form-col'>
+          <div className='title'>Business</div>
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <InputLabel>Line of business</InputLabel>
 
             <Select
               label='Line of Business'
               value={formData.lineOfBusiness}
-              onChange={(e) => handleFormChange('lineOfBusiness', e.target.value)}
+              onChange={e => handleFormChange('lineOfBusiness', e.target.value)}
               labelId='business'
             >
               <MenuItem value='lb1'>Lb 1</MenuItem>
@@ -476,65 +468,42 @@ const BasicInfo = () => {
             )}
           </FormControl>
         </div>
-        <div className="form-col">
-          <div className="title">Dates</div>
+        <div className='form-col'>
+          <div className='title'>Dates</div>
           <DatePickerWrapper>
-
             <DatePicker
-
               selected={receptionDate}
               shouldCloseOnSelect
               id='reception-date'
-              customInput={
-                <CustomInput
-                  label='Reception date'
-                  sx={{ mb: 2, mt: 2, width: "100%" }}
-                />
-              }
+              customInput={<CustomInput label='Reception date' sx={{ mb: 2, mt: 2, width: '100%' }} />}
               onChange={(date: Date) => setReceptionDate(date)}
-
             />
-
 
             <DatePicker
               selected={effectiveDate}
               shouldCloseOnSelect
               id='effective-date'
-              customInput={
-                <CustomInput
-                  label='Effective date'
-                  sx={{ mb: 2, mt: 2, width: "100%" }}
-                />
-              }
+              customInput={<CustomInput label='Effective date' sx={{ mb: 2, mt: 2, width: '100%' }} />}
               onChange={(date: Date) => setEffectiveDate(date)}
-
             />
             <DatePicker
               selected={expirationDate}
               shouldCloseOnSelect
               id='expiration-date'
-              customInput={
-                <CustomInput
-                  label='Expiration date'
-                  sx={{ mb: 2, mt: 2, width: "100%" }}
-                />
-              }
+              customInput={<CustomInput label='Expiration date' sx={{ mb: 2, mt: 2, width: '100%' }} />}
               onChange={(date: Date) => setExpirationDate(date)}
-
             />
           </DatePickerWrapper>
-
-
         </div>
-        <div className="form-col">
-          <div className="title">Underwriter team</div>
+        <div className='form-col'>
+          <div className='title'>Underwriter team</div>
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <InputLabel>Underwriter</InputLabel>
 
             <Select
               label='Underwriter'
               value={formData.underwriter}
-              onChange={(e) => handleFormChange('underwriter', e.target.value)}
+              onChange={e => handleFormChange('underwriter', e.target.value)}
               labelId='underwriter'
             >
               <MenuItem value='u1'>U1</MenuItem>
@@ -548,14 +517,13 @@ const BasicInfo = () => {
             <Select
               label='Lead Underwriter'
               value={formData.leadUnderwriter}
-              onChange={(e) => handleFormChange('leadUnderwriter', e.target.value)}
+              onChange={e => handleFormChange('leadUnderwriter', e.target.value)}
               labelId='lead-underwriter'
             >
               <MenuItem value='Lu1'>LU1</MenuItem>
               <MenuItem value='Lu2'>LU2</MenuItem>
               <MenuItem value='Lu3'>LU3</MenuItem>
             </Select>
-
           </FormControl>
 
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
@@ -564,7 +532,7 @@ const BasicInfo = () => {
             <Select
               label='Technical assistant'
               value={formData.technicalAssistant}
-              onChange={(e) => handleFormChange('technicalAssistant', e.target.value)}
+              onChange={e => handleFormChange('technicalAssistant', e.target.value)}
               labelId='assistant'
             >
               <MenuItem value='assistant1'>Assistant 1</MenuItem>
@@ -579,7 +547,6 @@ const BasicInfo = () => {
 }
 
 const PlacementStructure = () => {
-
   // const [formData, setFormData] = useState<PlacementData>(initialPlacementData)
   const [currency, setCurrency] = useState<string>()
   const [total, setTotal] = useState<number>()
@@ -617,8 +584,8 @@ const PlacementStructure = () => {
         break
       }
       case 'reinsuranceBrokerage': {
-        const result = reinsuranceBrokeragec * 100 / grossPremiumc
-        console.log("resulttt")
+        const result = (reinsuranceBrokeragec * 100) / grossPremiumc
+        console.log('resulttt')
         console.log(result)
         setReinsuranceBrokerageP(isFinite(result) ? result : 0)
         break
@@ -639,14 +606,14 @@ const PlacementStructure = () => {
         break
       }
       case 'frontingFee': {
-        const result = frontingFeec * 100 / grossPremiumc
+        const result = (frontingFeec * 100) / grossPremiumc
         setFrontingFeeP(isFinite(result) ? result : 0)
         break
       }
       case 'grossPremium': {
-        const resultBrokerage = reinsuranceBrokeragec * 100 / grossPremiumc
-        const resultTaxes = taxesPc * 100 / grossPremiumc
-        const resultFronting = frontingFeec * 100 / grossPremiumc
+        const resultBrokerage = (reinsuranceBrokeragec * 100) / grossPremiumc
+        const resultTaxes = (taxesPc * 100) / grossPremiumc
+        const resultFronting = (frontingFeec * 100) / grossPremiumc
         setReinsuranceBrokerageP(isFinite(resultBrokerage) ? resultBrokerage : 0)
         setTaxesP(isFinite(resultTaxes) ? resultTaxes : 0)
         setFrontingFeeP(isFinite(resultFronting) ? resultFronting : 0)
@@ -657,22 +624,20 @@ const PlacementStructure = () => {
     const taxesFinal = taxes ? taxes : 0
     const frontingFeeTotalFinal = frontingFee ? frontingFee : 0
     setNetPremium(grossPremiumc - reinsuranceBrokerageTotalFinal - taxesFinal - frontingFeeTotalFinal)
-
-
   }
 
   const handleCurrencyChange = (value: any) => {
     console.log(value)
     switch (value) {
       case 'USD':
-        setExchangeRate(18.50)
-        break;
+        setExchangeRate(18.5)
+        break
       case 'EUR':
-        setExchangeRate(20.00)
-        break;
+        setExchangeRate(20.0)
+        break
       case 'MXN':
         setExchangeRate(1)
-        break;
+        break
     }
   }
   // const handleFormChange = (field: keyof PlacementData, value: any) => {
@@ -682,16 +647,16 @@ const PlacementStructure = () => {
   // }
   return (
     <>
-      <div className="title">Placement Structure</div>
-      <div className="form-wrapper">
-        <div className="form-col">
+      <div className='title'>Placement Structure</div>
+      <div className='form-wrapper'>
+        <div className='form-col'>
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <InputLabel>Currency</InputLabel>
             <Select
               id='currency'
               label='Currency'
               value={currency}
-              onChange={(e) => {
+              onChange={e => {
                 setCurrency(e.target.value)
                 handleCurrencyChange(e.target.value)
               }}
@@ -712,15 +677,17 @@ const PlacementStructure = () => {
             <NumericFormat
               value={total}
               allowLeadingZeros
-              thousandSeparator=","
+              thousandSeparator=','
               customInput={TextField}
-              id="filled-multiline-flexible"
-              label="Total values"
+              id='filled-multiline-flexible'
+              label='Total values'
               multiline
               prefix={'$'}
               decimalScale={2}
-              variant="outlined"
-              onValueChange={(value, e) => { setTotal(value.floatValue) }}
+              variant='outlined'
+              onValueChange={(value, e) => {
+                setTotal(value.floatValue)
+              }}
             />
             {false && <FormHelperText sx={{ color: 'error.main' }}>Required Field</FormHelperText>}
           </FormControl>
@@ -728,15 +695,17 @@ const PlacementStructure = () => {
             <NumericFormat
               value={sir}
               allowLeadingZeros
-              thousandSeparator=","
+              thousandSeparator=','
               customInput={TextField}
-              id="sir"
-              label="SIR"
+              id='sir'
+              label='SIR'
               multiline
               prefix={'$'}
               decimalScale={2}
-              variant="outlined"
-              onValueChange={(value, e) => { setSir(value.floatValue) }}
+              variant='outlined'
+              onValueChange={(value, e) => {
+                setSir(value.floatValue)
+              }}
             />
             {false && <FormHelperText sx={{ color: 'error.main' }}>Required Field</FormHelperText>}
           </FormControl>
@@ -744,17 +713,18 @@ const PlacementStructure = () => {
             <NumericFormat
               value={reinsuranceBrokerageP}
               allowLeadingZeros
-              thousandSeparator=","
+              thousandSeparator=','
               customInput={TextField}
-              id="reinsurance-brokerage"
-              label="Reinsurance brokerage %"
+              id='reinsurance-brokerage'
+              label='Reinsurance brokerage %'
               multiline
               prefix={'%'}
               decimalScale={2}
-              variant="outlined"
+              variant='outlined'
               onBlur={() => calculate('reinsuranceBrokerageP')}
-              onValueChange={(value, e) => { setReinsuranceBrokerageP(value.floatValue) }}
-
+              onValueChange={(value, e) => {
+                setReinsuranceBrokerageP(value.floatValue)
+              }}
             />
             {false && <FormHelperText sx={{ color: 'error.main' }}>Required Field</FormHelperText>}
           </FormControl>
@@ -762,36 +732,39 @@ const PlacementStructure = () => {
             <NumericFormat
               value={taxesP}
               allowLeadingZeros
-              thousandSeparator=","
+              thousandSeparator=','
               customInput={TextField}
-              id="taxes-p"
-              label="Taxes %"
+              id='taxes-p'
+              label='Taxes %'
               multiline
               prefix={'%'}
               decimalScale={2}
-              variant="outlined"
+              variant='outlined'
               onBlur={() => calculate('taxesP')}
-              onValueChange={(value, e) => { setTaxesP(value.floatValue) }}
+              onValueChange={(value, e) => {
+                setTaxesP(value.floatValue)
+              }}
             />
             {false && <FormHelperText sx={{ color: 'error.main' }}>Required Field</FormHelperText>}
           </FormControl>
 
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
-
             <NumericFormat
               value={frontingFeeP}
               allowLeadingZeros
-              thousandSeparator=","
+              thousandSeparator=','
               customInput={TextField}
-              id="fronting-fee-p"
-              label="Fronting fee %"
+              id='fronting-fee-p'
+              label='Fronting fee %'
               multiline
               prefix={'%'}
               maxRows={4}
               decimalScale={2}
-              variant="outlined"
+              variant='outlined'
               onBlur={() => calculate('frontingFeeP')}
-              onValueChange={(value, e) => { setFrontingFeeP(value.floatValue) }}
+              onValueChange={(value, e) => {
+                setFrontingFeeP(value.floatValue)
+              }}
             />
             {false && <FormHelperText sx={{ color: 'error.main' }}>Required Field</FormHelperText>}
           </FormControl>
@@ -799,32 +772,33 @@ const PlacementStructure = () => {
             <NumericFormat
               value={netPremium}
               allowLeadingZeros
-              thousandSeparator=","
+              thousandSeparator=','
               customInput={TextField}
               disabled
-              id="net-premium"
-              label="Net premium"
+              id='net-premium'
+              label='Net premium'
               multiline
-              variant="outlined"
+              variant='outlined'
               decimalScale={2}
-              onValueChange={(value, e) => { setNetPremium(value.floatValue) }}
+              onValueChange={(value, e) => {
+                setNetPremium(value.floatValue)
+              }}
             />
             {false && <FormHelperText sx={{ color: 'error.main' }}>Required Field</FormHelperText>}
           </FormControl>
-
         </div>
 
-        <div className="form-col">
+        <div className='form-col'>
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <NumericFormat
               value={exchangeRate}
               allowLeadingZeros
-              thousandSeparator=","
+              thousandSeparator=','
               customInput={TextField}
-              id="exchange-rate"
-              label="Exchange rate"
+              id='exchange-rate'
+              label='Exchange rate'
               multiline
-              variant="outlined"
+              variant='outlined'
               decimalScale={2}
             />
             {false && <FormHelperText sx={{ color: 'error.main' }}>Required Field</FormHelperText>}
@@ -833,14 +807,16 @@ const PlacementStructure = () => {
             <NumericFormat
               value={limit}
               allowLeadingZeros
-              thousandSeparator=","
+              thousandSeparator=','
               customInput={TextField}
-              id="limit"
-              label="Limit"
+              id='limit'
+              label='Limit'
               multiline
-              variant="outlined"
+              variant='outlined'
               decimalScale={2}
-              onValueChange={(value, e) => { setLimit(value.floatValue) }}
+              onValueChange={(value, e) => {
+                setLimit(value.floatValue)
+              }}
             />
             {false && <FormHelperText sx={{ color: 'error.main' }}>Required Field</FormHelperText>}
           </FormControl>
@@ -848,15 +824,17 @@ const PlacementStructure = () => {
             <NumericFormat
               value={grossPremium}
               allowLeadingZeros
-              thousandSeparator=","
+              thousandSeparator=','
               customInput={TextField}
-              id="gross-premium"
-              label="Gross Premium"
+              id='gross-premium'
+              label='Gross Premium'
               multiline
-              variant="outlined"
+              variant='outlined'
               decimalScale={2}
               onBlur={() => calculate('grossPremium')}
-              onValueChange={(value, e) => { setGrossPremium(value.floatValue) }}
+              onValueChange={(value, e) => {
+                setGrossPremium(value.floatValue)
+              }}
             />
             {false && <FormHelperText sx={{ color: 'error.main' }}>Required Field</FormHelperText>}
           </FormControl>
@@ -865,15 +843,17 @@ const PlacementStructure = () => {
             <NumericFormat
               value={reinsuranceBrokerage}
               allowLeadingZeros
-              thousandSeparator=","
+              thousandSeparator=','
               customInput={TextField}
-              id="reinsurance-brokerage"
-              label="Reinsurance Brokerage"
+              id='reinsurance-brokerage'
+              label='Reinsurance Brokerage'
               multiline
-              variant="outlined"
+              variant='outlined'
               decimalScale={2}
               onBlur={() => calculate('reinsuranceBrokerage')}
-              onValueChange={(value, e) => { setReinsuranceBrokerage(value.floatValue) }}
+              onValueChange={(value, e) => {
+                setReinsuranceBrokerage(value.floatValue)
+              }}
             />
             {false && <FormHelperText sx={{ color: 'error.main' }}>Required Field</FormHelperText>}
           </FormControl>
@@ -882,15 +862,17 @@ const PlacementStructure = () => {
             <NumericFormat
               value={taxes}
               allowLeadingZeros
-              thousandSeparator=","
+              thousandSeparator=','
               customInput={TextField}
-              id="taxes"
-              label="Taxes"
+              id='taxes'
+              label='Taxes'
               multiline
-              variant="outlined"
+              variant='outlined'
               decimalScale={2}
               onBlur={() => calculate('taxes')}
-              onValueChange={(value, e) => { setTaxes(value.floatValue) }}
+              onValueChange={(value, e) => {
+                setTaxes(value.floatValue)
+              }}
             />
             {false && <FormHelperText sx={{ color: 'error.main' }}>Required Field</FormHelperText>}
           </FormControl>
@@ -898,32 +880,36 @@ const PlacementStructure = () => {
             <NumericFormat
               value={frontingFee}
               allowLeadingZeros
-              thousandSeparator=","
+              thousandSeparator=','
               customInput={TextField}
-              id="fornting-fee"
-              label="Fronting fee"
+              id='fornting-fee'
+              label='Fronting fee'
               multiline
-              variant="outlined"
+              variant='outlined'
               decimalScale={2}
               onBlur={() => calculate('frontingFee')}
-              onValueChange={(value, e) => { setFrontingFee(value.floatValue) }}
+              onValueChange={(value, e) => {
+                setFrontingFee(value.floatValue)
+              }}
             />
             {false && <FormHelperText sx={{ color: 'error.main' }}>Required Field</FormHelperText>}
           </FormControl>
         </div>
-        <div className="form-col">
+        <div className='form-col'>
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <NumericFormat
               value={attachmentPoint}
               allowLeadingZeros
-              thousandSeparator=","
+              thousandSeparator=','
               customInput={TextField}
-              id="attachment-point"
-              label="Attachment point"
+              id='attachment-point'
+              label='Attachment point'
               multiline
-              variant="outlined"
+              variant='outlined'
               decimalScale={2}
-              onValueChange={(value, e) => { setAttachmentPoint(value.floatValue) }}
+              onValueChange={(value, e) => {
+                setAttachmentPoint(value.floatValue)
+              }}
             />
             {false && <FormHelperText sx={{ color: 'error.main' }}>Required Field</FormHelperText>}
           </FormControl>
@@ -934,7 +920,6 @@ const PlacementStructure = () => {
               value={typeOfLimit}
               onChange={e => setTypeOfLimit(e.target.value)}
               labelId='type-of-limit'
-
             >
               <MenuItem value='t1'>T1</MenuItem>
               <MenuItem value='t2'>T2</MenuItem>
@@ -1039,26 +1024,28 @@ const PlacementStructure = () => {
 // }
 
 const Information = () => {
-
   const handleSubmit = () => {
-    console.log("elsubmit")
-  };
-  const { control, formState: { errors } } = useForm();
+    console.log('elsubmit')
+  }
+  const {
+    control,
+    formState: { errors }
+  } = useForm()
 
   return (
     <>
       <div className='information'>
         <form noValidate autoComplete='on' onSubmit={handleSubmit}>
-          <div className="section">
+          <div className='section'>
             <BasicInfo />
           </div>
 
-          <div className="section">
+          <div className='section'>
             <PlacementStructure />
           </div>
 
-          <div className="section">
-            <div className="title">File submit</div>
+          <div className='section'>
+            <div className='title'>File submit</div>
           </div>
         </form>
       </div>
@@ -1067,4 +1054,3 @@ const Information = () => {
 }
 
 export default Information
-
