@@ -7,6 +7,10 @@
     border-bottom: none;
 }
 
+.account-datagrid .MuiDataGrid-columnHeaderTitleContainer {
+    overflow: visible !important;
+}
+
 .account-column-header-checkbox {
     padding: 0 !important;
     padding-left: 5px !important;
@@ -33,6 +37,17 @@
     padding-left: 0 !important;
 }
 
+.account-list-item {
+    min-width: 0 !important;
+}
+
+.account-datepicker-popper-only-month .react-datepicker__navigation {
+  display: none;
+}
+
+.account-datepicker-popper-only-month .react-datepicker-year-header {
+  display: none;
+}
 
 /* - New accoun styles ----------------------------------------------------------------------------------------------  */
 
