@@ -19,11 +19,11 @@ const colors = {
     primary: '#444854DE',
     secondary: '#444854AD',
     light: 'rgba(68,72,84,0.87)',
-    disbled: 'rgba(68, 72, 84, 0.38)',
+    disabled: 'rgba(68, 72, 84, 0.38)'
   },
   action: {
-    active:'#4448548A',
-    hover: '#4448540D',
+    active: '#4448548A',
+    hover: '#4448540D'
   }
 }
 
