@@ -937,11 +937,6 @@ const FileSubmit = () => {
     inputRef.current.click();
   };
 
-  const renderFilePreview = (file) => {
-    console.log("render")
-    console.log(file)
-
-  }
 
   const handleRemoveFile = (e) => {
     e.preventDefault();
