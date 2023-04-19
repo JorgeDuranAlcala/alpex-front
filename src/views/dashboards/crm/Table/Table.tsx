@@ -7,13 +7,13 @@ import { DataGrid, GridColumns } from '@mui/x-data-grid'
 import ButtonFilter from 'src/pages/components/button-filter'
 import CustomModal from 'src/pages/components/modal'
 
+import CustomPagination from 'src/views/accounts/Table/CustomPagination'
 import colors from 'src/views/accounts/colors'
 import fonts from 'src/views/accounts/font'
-import CustomPagination from 'src/views/accounts/Table/CustomPagination'
 import ModalReinsurers from '../ModalReinsurers'
-import { brokers, data, debt, status } from './data'
 import HeaderTable from './HeaderTable'
 import Status from './Status'
+import { brokers, data, debt, status } from './data'
 
 interface INearlyPaymentStatus {
   statId: number
@@ -31,7 +31,7 @@ const column: GridColumns<INearlyPaymentStatus> = [
     field: 'insured',
     headerName: 'INSURED',
     minWidth: 150,
-    maxWidth: 191,
+    maxWidth: 210,
     type: 'string',
     align: 'left',
     disableColumnMenu: true,
@@ -67,7 +67,7 @@ const column: GridColumns<INearlyPaymentStatus> = [
     field: 'broker',
     headerName: 'BROKER',
     minWidth: 150,
-    maxWidth: 191,
+    maxWidth: 210,
     type: 'string',
     align: 'left',
     disableColumnMenu: true,
@@ -103,7 +103,7 @@ const column: GridColumns<INearlyPaymentStatus> = [
     field: 'nextDueDate',
     headerName: 'NEXT DUE DATE',
     minWidth: 150,
-    maxWidth: 191,
+    maxWidth: 210,
     type: 'string',
     align: 'left',
     disableColumnMenu: true,
@@ -139,7 +139,7 @@ const column: GridColumns<INearlyPaymentStatus> = [
     field: 'debt',
     headerName: 'DEBT',
     minWidth: 150,
-    maxWidth: 191,
+    maxWidth: 210,
     type: 'string',
     align: 'left',
     disableColumnMenu: true,
@@ -175,7 +175,7 @@ const column: GridColumns<INearlyPaymentStatus> = [
     field: 'status',
     headerName: 'STATUS',
     minWidth: 150,
-    maxWidth: 191,
+    maxWidth: 210,
     type: 'string',
     align: 'left',
     cellClassName: 'account-column-cell-pl-0',
@@ -208,8 +208,8 @@ const column: GridColumns<INearlyPaymentStatus> = [
     flex: 0.1,
     field: 'actions',
     headerName: 'ACTIONS',
-    minWidth: 150,
-    maxWidth: 191,
+    minWidth: 191,
+    maxWidth: 200,
     sortable: false,
     disableColumnMenu: true,
     cellClassName: 'account-column-cell-pl-0',
@@ -229,7 +229,7 @@ const column: GridColumns<INearlyPaymentStatus> = [
       )
     },
     renderCell: () => (
-      <CustomModal width={'41%'} height={'66.5%'} bgColor={'background.paper'} top={'50%'} left={'50%'}>
+      <CustomModal width={'41%'} height={'416px'} bgColor={'background.paper'} top={'50%'} left={'50%'}>
         <ModalReinsurers />
       </CustomModal>
 
@@ -255,7 +255,6 @@ const Table = () => {
         components={{
           Pagination: CustomPagination
         }}
-        sx={{ width: '100%' }}
       />
     </>
   )

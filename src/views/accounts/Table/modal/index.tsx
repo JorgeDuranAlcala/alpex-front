@@ -20,7 +20,7 @@ interface  IModalAction {
     headingText: string,
     text: string,
     handleClickContinue: ()=>void,
-    handleClickCancel: ()=>void,
+    handleClickCancel?: ()=>void,
     renderButton:(handleOpen: ()=>void) => JSX.Element,
     setShow?: boolean,
     onClose?: ()=>void,
@@ -29,6 +29,19 @@ interface  IModalAction {
 const ModalAction: React.FC<IModalAction> = ({ headingText,text,handleClickContinue,handleClickCancel, renderButton, onClose,setShow=false }) => {
     // ** State
     const [open, setOpen] = useState(false);
+
+    // ** handlers for continue and cancel
+    const onContinue = () => {
+        handleClose()
+        handleClickContinue()
+    }
+
+    const onCancel = () => {
+        handleClose()
+        if (handleClickCancel) {
+            handleClickCancel()
+        }
+    }
 
     // ** Handlers for opening and closing 
     const handleOpen = () => setOpen(true);
@@ -99,8 +112,8 @@ const ModalAction: React.FC<IModalAction> = ({ headingText,text,handleClickConti
                             </Typography>
                         </CardContent>
                         <CardActions sx={{display:'flex', flexDirection:'column', marginTop:'20px'}}>
-                            <Button onClick={handleClickContinue} variant="contained" size="large" sx={{width:'100%'}}>Continue</Button>
-                            <Button onClick={handleClickCancel} size="large" sx={{width:'100%', marginTop:'20px'}}>Cancel</Button>
+                            <Button onClick={onContinue} variant="contained" size="large" sx={{width:'100%'}}>Continue</Button>
+                            <Button onClick={onCancel} size="large" sx={{width:'100%', marginTop:'20px'}}>Cancel</Button>
                         </CardActions>
                     </Card>
                 </Fade>

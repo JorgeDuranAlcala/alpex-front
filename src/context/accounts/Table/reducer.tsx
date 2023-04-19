@@ -22,7 +22,7 @@ const AccountsTableContext = createContext<{
 
 const reducer = (state: IAccountsTableState, action: { type: EAccountsTableActionTypes, payload: any }) => {
   switch (action.type) {
-    case EAccountsTableActionTypes.GET_ACCOUNTS:
+    case EAccountsTableActionTypes.SET_ACCOUNTS:
       return {
         ...state,
         accounts: action.payload
