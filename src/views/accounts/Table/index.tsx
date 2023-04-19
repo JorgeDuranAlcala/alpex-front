@@ -60,7 +60,8 @@ const Table = () => {
   // ** Hooks
   useEffect(()=>{
     getAccounts()
-  })
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[])
 
   const handleClickColumnHeader = (field: string) => {
     console.log(field);
