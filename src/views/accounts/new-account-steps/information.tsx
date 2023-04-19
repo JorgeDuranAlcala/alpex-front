@@ -13,8 +13,7 @@ import MenuItem from '@mui/material/MenuItem'
 import Modal from '@mui/material/Modal'
 import Select from '@mui/material/Select'
 import TextField from '@mui/material/TextField'
-import Typography, { TypographyProps } from '@mui/material/Typography'
-import { styled } from '@mui/material/styles'
+import Typography from '@mui/material/Typography'
 import { ButtonClose, HeaderTitleModal } from 'src/styles/Dashboard/ModalReinsurers/modalReinsurers'
 
 // ** Components
@@ -32,32 +31,32 @@ import { DateType } from 'src/types/forms/reactDatepickerTypes'
 import Icon from 'src/@core/components/icon'
 
 
-interface FileProp {
-  name: string
-  type: string
-  size: number
-}
+// interface FileProp {
+//   name: string
+//   type: string
+//   size: number
+// }
 
-// Styled component for the upload image inside the dropzone area
-const Img = styled('img')(({ theme }) => ({
-  [theme.breakpoints.up('md')]: {
-    marginRight: theme.spacing(10)
-  },
-  [theme.breakpoints.down('md')]: {
-    marginBottom: theme.spacing(4)
-  },
-  [theme.breakpoints.down('sm')]: {
-    width: 250
-  }
-}))
+// // Styled component for the upload image inside the dropzone area
+// const Img = styled('img')(({ theme }) => ({
+//   [theme.breakpoints.up('md')]: {
+//     marginRight: theme.spacing(10)
+//   },
+//   [theme.breakpoints.down('md')]: {
+//     marginBottom: theme.spacing(4)
+//   },
+//   [theme.breakpoints.down('sm')]: {
+//     width: 250
+//   }
+// }))
 
-// Styled component for the heading inside the dropzone area
-const HeadingTypography = styled(Typography)<TypographyProps>(({ theme }) => ({
-  marginBottom: theme.spacing(5),
-  [theme.breakpoints.down('sm')]: {
-    marginBottom: theme.spacing(4)
-  }
-}))
+// // Styled component for the heading inside the dropzone area
+// const HeadingTypography = styled(Typography)<TypographyProps>(({ theme }) => ({
+//   marginBottom: theme.spacing(5),
+//   [theme.breakpoints.down('sm')]: {
+//     marginBottom: theme.spacing(4)
+//   }
+// }))
 
 interface PickerProps {
   label?: string
@@ -676,11 +675,11 @@ const PlacementStructure = () => {
         break;
     }
   }
-  const handleFormChange = (field: keyof PlacementData, value: any) => {
-    console.log(value)
-    // setFormData({ ...formData, [field]: value })
-    // console.log(formData)
-  }
+  // const handleFormChange = (field: keyof PlacementData, value: any) => {
+  //   console.log(value)
+  //   // setFormData({ ...formData, [field]: value })
+  //   // console.log(formData)
+  // }
   return (
     <>
       <div className="title">Placement Structure</div>
