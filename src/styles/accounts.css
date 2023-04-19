@@ -68,11 +68,15 @@
   font-size: 24px;
   color: rgba(68, 72, 84, 0.87);
   font-weight: 600;
-  margin-bottom: 30px;
+  margin-bottom: 25px;
 }
 
 .information .create-contact-btn{
   margin: 10px;
+}
+
+.information .input-file-upload {
+  display: none;
 }
 .create-contact-modal{
   width: 100%;
@@ -97,6 +101,15 @@
   color: rgba(68, 72, 84, 0.68);
   margin-bottom: 10px;
 
+}
+
+.upload-btn .file-details{
+  align-items: center;
+  display: flex;
+}
+
+.upload-btn .file-name{
+  margin: 0px 10px !important;
 }
 
 .section{
