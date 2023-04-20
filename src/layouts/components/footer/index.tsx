@@ -7,19 +7,40 @@ import Typography from '@mui/material/Typography'
 // import useMediaQuery from '@mui/material/useMediaQuery'
 // import { Theme } from '@mui/material/styles'
 
-const Footer = () => {
+interface Ifooter {
+  isLogin: boolean
+}
+
+const Footer = ({ isLogin }: Ifooter) => {
   // ** Var
   // const hidden = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'))
 
   return (
-    <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between' }}>
-      <Typography sx={{ mr: 2 }}>
-        {`© ${new Date().getFullYear()}, Made with `}
-        <Box component='span' sx={{ color: 'error.main' }}>
-          ❤️
-        </Box>
-        {` by RocketCode`}
-      </Typography>
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: isLogin ? 'row' : undefined,
+        flexWrap: 'wrap',
+        alignItems: 'center',
+        justifyContent: isLogin ? 'center' : 'space-between',
+        position: isLogin ? 'absolute' : undefined,
+        bottom: isLogin ? '3%' : undefined,
+        alignSelf: 'center',
+        width: isLogin ? '100%' : undefined,
+        zIndex: isLogin ? 100 : undefined
+      }}
+    >
+      {isLogin ? (
+        <Typography sx={{ mr: 2 }}>{`© ${new Date().getFullYear()} Una plataforma de Dynamic `}</Typography>
+      ) : (
+        <Typography sx={{ mr: 2 }}>
+          {`© ${new Date().getFullYear()}, Made with `}
+          <Box component='span' sx={{ color: 'error.main' }}>
+            ❤️
+          </Box>
+          {` by RocketCode`}
+        </Typography>
+      )}
       {/* {hidden ? null : (
         <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', '& :not(:last-child)': { mr: 4 } }}>
           <Link target='_blank' href='https://themeforest.net/licenses/standard'>

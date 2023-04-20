@@ -23,7 +23,7 @@ import VerticalAppBarContent from './components/vertical/AppBarContent'
 
 // ** Hook Import
 // import { Box, Typography } from '@mui/material'
-import { Box } from '@mui/material'
+// import { Box } from '@mui/material'
 import { useSettings } from 'src/@core/hooks/useSettings'
 import Footer from './components/footer'
 
@@ -32,14 +32,14 @@ interface Props {
   contentHeightFixed?: boolean
 }
 
-const NavHeader = () => {
-  return (
-    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', ml: 3 }}>
-      <img src='/images/logos/LogoAlpex.svg' alt='logo' width='35.66' height='40' />
-      <img src='/images/logos/Alpex.svg' alt='logo' width='51.72' height='17.84' />
-    </Box>
-  )
-}
+// const NavHeader = () => {
+//   return (
+//     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', ml: 3 }}>
+//       <img src='/images/logos/LogoAlpex.svg' alt='logo' width='35.66' height='40' />
+//       <img src='/images/logos/Alpex.svg' alt='logo' width='51.72' height='17.84' />
+//     </Box>
+//   )
+// }
 
 const UserLayout = ({ children, contentHeightFixed }: Props) => {
   // ** Hooks
@@ -74,8 +74,9 @@ const UserLayout = ({ children, contentHeightFixed }: Props) => {
           navItems: VerticalNavItems(),
           componentProps: {
             sx: { '& .nav-header': { backgroundColor: '#fff' } }
-          },
-          branding: () => <NavHeader />
+          }
+
+          // branding: () => <NavHeader />
 
           // branding: () => <AppBrand />
 
@@ -107,7 +108,7 @@ const UserLayout = ({ children, contentHeightFixed }: Props) => {
         }
       })}
       footerProps={{
-        content: () => <Footer />
+        content: () => <Footer isLogin={false} />
       }}
     >
       {children}
