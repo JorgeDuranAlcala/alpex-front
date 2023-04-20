@@ -30,6 +30,7 @@ import { useAuth } from 'src/hooks/useAuth'
 
 // ** Layout Import
 import BlankLayout from 'src/@core/layouts/BlankLayout'
+import Footer from 'src/layouts/components/footer'
 
 // ** Styled Components
 const FormControlLabel = styled(MuiFormControlLabel)<FormControlLabelProps>(({ theme }) => ({
@@ -97,6 +98,7 @@ const LoginPage = () => {
 
   return (
     <div className='login-view'>
+      <Footer isLogin={true} />
       <Background />
       <div className='login-form'>
         <div className='form-row title-form'>
@@ -123,7 +125,11 @@ const LoginPage = () => {
                   />
                 )}
               />
-              {errors.email && <FormHelperText sx={{ color: 'error.main' }}>Enter a valid email, example: name@email.com</FormHelperText>}
+              {errors.email && (
+                <FormHelperText sx={{ color: 'error.main' }}>
+                  Enter a valid email, example: name@email.com
+                </FormHelperText>
+              )}
             </FormControl>
             <FormControl fullWidth>
               <InputLabel htmlFor='auth-login-v2-password' error={Boolean(errors.password)}>
