@@ -116,3 +116,50 @@
   margin-bottom: 40px;
 }
 
+/* Comment section */
+.comments .title{
+  font-size: 24px;
+  color: rgba(68, 72, 84, 0.87);
+  font-weight: 600;
+  padding: 15px 20px;
+}
+.comments .MuiFormControl-root{
+  margin-bottom: 0px !important;
+}
+
+.comments .MuiSvgIcon-root{
+  fill: #2535A8;
+  transform: rotate(-40deg) translate(6px, -8px);
+}
+
+.comments .comment-view{
+  padding: 10px 8px;
+}
+
+.comments .user{
+  display: flex;
+  align-items: center;
+}
+
+.comments .user .avatar{
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+  margin-right: 7px;
+}
+
+.comments .user .name{
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(77, 80, 98, 0.87);
+}
+
+.comments .user .role{
+  font-size: 12px;
+  font-weight: 400;
+  color: rgba(77, 80, 98, 0.68);
+}

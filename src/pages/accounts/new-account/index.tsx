@@ -3,6 +3,7 @@ import Card from '@mui/material/Card'
 import Grid from '@mui/material/Grid'
 
 // ** Custom Components Imports
+import CommentSection from 'src/views/accounts/new-account-steps/CommentSection'
 import Information from 'src/views/accounts/new-account-steps/information'
 
 
@@ -17,6 +18,9 @@ const NewAccount = () => {
       <Card>
         <div>Accoun Stepper</div>
         <Information/>
+      </Card>
+      <Card>
+        <CommentSection/>
       </Card>
     </Grid>
   )
