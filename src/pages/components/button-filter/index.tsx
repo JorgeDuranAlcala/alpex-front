@@ -64,7 +64,7 @@ const ButtonFilter = ({ dataFilter, date, insured }: IDataFilter) => {
             maxHeight: 'auto',
             width: 'auto',
             borderRadius: '10px',
-            padding: date ? '16px' : insured ? '4px 4px 4px 16px' : '8px'
+            padding: date ? '16px' : insured ? '4px 4px 4px 16px' : '0px'
           }
         }}
       >

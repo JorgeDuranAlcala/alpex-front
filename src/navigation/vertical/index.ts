@@ -47,10 +47,10 @@ const navigation = (): VerticalNavItemsType => {
       icon: 'mdi:payments',
       children: [
         {
-          title: 'List'
-
-          // path: '/apps/invoice/list'
+          title: 'List',
+          path: '/accounts/new-account'
         },
+
         {
           title: 'Preview'
         },

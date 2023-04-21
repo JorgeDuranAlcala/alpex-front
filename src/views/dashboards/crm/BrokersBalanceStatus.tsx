@@ -82,7 +82,7 @@ const BrokersBalanceStatus = () => {
   const lato = userThemeConfig.typography?.fontFamilyLato
 
   return (
-    <Card sx={{ position: 'relative', width: '55%', height: '393px' }}>
+    <Card sx={{ position: 'relative', width: '55%', height: '100%' }}>
       <HeaderTitle>
         <ContainerTitle>
           <Typography variant='h6' sx={{ color: title, fontFamily: inter }}>
@@ -152,7 +152,7 @@ const BrokersBalanceStatus = () => {
             <Typography sx={{ fontSize: '14px', fontWeight: '700', color: '#444444', fontFamily: lato }}>
               Total debt:
             </Typography>
-            <Typography sx={{ fontSize: '16px', fontWeight: '700', color: '#444444', fontFamily: lato }}>
+            <Typography sx={{ fontSize: '15px', fontWeight: '700', color: '#444444', fontFamily: lato }}>
               $3,500,000.00 USD
             </Typography>
           </ContainerTotal>
