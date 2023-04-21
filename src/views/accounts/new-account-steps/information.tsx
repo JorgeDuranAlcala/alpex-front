@@ -1,62 +1,37 @@
-import { ForwardedRef, forwardRef, useEffect, useState } from 'react'
+import { ForwardedRef, Fragment, forwardRef, useEffect, useRef, useState } from 'react';
+import UserThemeOptions from 'src/layouts/UserThemeOptions';
 
 // ** MUI Imports
-import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
-import CloseIcon from '@mui/icons-material/Close'
-import { SxProps, Theme } from '@mui/material'
-import Box from '@mui/material/Box'
-import Button from '@mui/material/Button'
-import FormControl from '@mui/material/FormControl'
-import FormHelperText from '@mui/material/FormHelperText'
-import InputAdornment from '@mui/material/InputAdornment'
-import InputLabel from '@mui/material/InputLabel'
-import MenuItem from '@mui/material/MenuItem'
-import Modal from '@mui/material/Modal'
-import Select from '@mui/material/Select'
-import TextField from '@mui/material/TextField'
-import Typography from '@mui/material/Typography'
-import { ButtonClose, HeaderTitleModal } from 'src/styles/Dashboard/ModalReinsurers/modalReinsurers'
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import CloseIcon from '@mui/icons-material/Close';
+import { SxProps, Theme } from '@mui/material';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import FormControl from '@mui/material/FormControl';
+import FormHelperText from '@mui/material/FormHelperText';
+import IconButton from '@mui/material/IconButton';
+import InputAdornment from '@mui/material/InputAdornment';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import Modal from '@mui/material/Modal';
+import Select from '@mui/material/Select';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
+import { ButtonClose, HeaderTitleModal } from 'src/styles/Dashboard/ModalReinsurers/modalReinsurers';
 
 // ** Components
 
 // ** Third Party Imports
-import DatePicker from 'react-datepicker'
-import { useForm } from 'react-hook-form'
-import { NumericFormat } from 'react-number-format'
-import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
+import DatePicker from 'react-datepicker';
+import { useForm } from 'react-hook-form';
+import { NumericFormat } from 'react-number-format';
+import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker';
 
 // ** Types
-import { DateType } from 'src/types/forms/reactDatepickerTypes'
+import { DateType } from 'src/types/forms/reactDatepickerTypes';
 
 // ** Icon Imports
-import Icon from 'src/@core/components/icon'
-
-// interface FileProp {
-//   name: string
-//   type: string
-//   size: number
-// }
-
-// // Styled component for the upload image inside the dropzone area
-// const Img = styled('img')(({ theme }) => ({
-//   [theme.breakpoints.up('md')]: {
-//     marginRight: theme.spacing(10)
-//   },
-//   [theme.breakpoints.down('md')]: {
-//     marginBottom: theme.spacing(4)
-//   },
-//   [theme.breakpoints.down('sm')]: {
-//     width: 250
-//   }
-// }))
-
-// // Styled component for the heading inside the dropzone area
-// const HeadingTypography = styled(Typography)<TypographyProps>(({ theme }) => ({
-//   marginBottom: theme.spacing(5),
-//   [theme.breakpoints.down('sm')]: {
-//     marginBottom: theme.spacing(4)
-//   }
-// }))
+import Icon from 'src/@core/components/icon';
 
 interface PickerProps {
   label?: string
@@ -640,11 +615,7 @@ const PlacementStructure = () => {
         break
     }
   }
-  // const handleFormChange = (field: keyof PlacementData, value: any) => {
-  //   console.log(value)
-  //   // setFormData({ ...formData, [field]: value })
-  //   // console.log(formData)
-  // }
+
   return (
     <>
       <div className='title'>Placement Structure</div>
@@ -937,93 +908,88 @@ const PlacementStructure = () => {
   )
 }
 
-// const FileSubmit = () => {
+const FileSubmit = () => {
 
-//     // ** State
-//     const [files, setFiles] = useState<File[]>([])
+  // ** State
+  const [files, setFiles] = useState<File[]>([])
+  const inputRef = useRef(null);
+  const [userFile, setUserFile] = useState<File[]>([])
+  const [errorFile, setErrorFile] = useState(false);
+  const [showFile, setShowFile] = useState(false);
 
-//     // ** Hooks
-//     const { getRootProps, getInputProps } = useDropzone({
-//       maxFiles: 2,
-//       maxSize: 2000000,
-//       accept: {
-//         'image/*': ['.png', '.jpg', '.jpeg', '.gif']
-//       },
-//       onDrop: (acceptedFiles: File[]) => {
-//         setFiles(acceptedFiles.map((file: File) => Object.assign(file)))
-//       },
-//       onDropRejected: () => {
-//         toast.error('You can only upload 2 files & maximum size of 2 MB.', {
-//           duration: 2000
-//         })
-//       }
-//     })
 
-//     const renderFilePreview = (file: FileProp) => {
-//       if (file.type.startsWith('image')) {
-//         return <img width={38} height={38} alt={file.name} src={URL.createObjectURL(file as any)} />
-//       } else {
-//         return <Icon icon='mdi:file-document-outline' />
-//       }
-//     }
+  const setFilevalues = (uploadFiles: File[]) => {
+    console.log(uploadFiles?.length)
+    setUserFile(uploadFiles);
+    console.log(userFile)
+    setErrorFile(false)
+    setShowFile(true)
 
-//     const handleRemoveFile = (file: FileProp) => {
-//       const uploadedFiles = files
-//       const filtered = uploadedFiles.filter((i: FileProp) => i.name !== file.name)
-//       setFiles([...filtered])
-//     }
+  }
+  // triggers when file is selected with click
+  const onFileChange = function (e) {
+    e.preventDefault();
+    setFilevalues(e.target.files[0])
 
-//     const fileList = files.map((file: FileProp) => (
-//       <ListItem key={file.name}>
-//         <div className='file-details'>
-//           <div className='file-preview'>{renderFilePreview(file)}</div>
-//           <div>
-//             <Typography className='file-name'>{file.name}</Typography>
-//             <Typography className='file-size' variant='body2'>
-//               {Math.round(file.size / 100) / 10 > 1000 ? (((Math.round(file.size / 100) / 10000).toFixed(1)) mb ) : (((Math.round(file.size / 100) / 10).toFixed(1)) kb) }
-//             </Typography>
-//           </div>
-//         </div>
-//         <IconButton onClick={() => handleRemoveFile(file)}>
-//           <Icon icon='mdi:close' fontSize={20} />
-//         </IconButton>
-//       </ListItem>
-//     ))
+  };
 
-//     const handleRemoveAllFiles = () => {
-//       setFiles([])
-//     }
+  // triggers the input when the button is clicked
+  const onButtonClick = () => {
+    inputRef.current.click();
+  };
 
-//     return (
-//       <Fragment>
-//         <div {...getRootProps({ className: 'dropzone' })}>
-//           <input {...getInputProps()} />
-//           <Box sx={{ display: 'flex', flexDirection: ['column', 'column', 'row'], alignItems: 'center' }}>
-//             <Img width={300} alt='Upload img' src='/images/misc/upload.png' />
-//             <Box sx={{ display: 'flex', flexDirection: 'column', textAlign: ['center', 'center', 'inherit'] }}>
-//               <HeadingTypography variant='h5'>Drop files here or click to upload.</HeadingTypography>
-//               <Typography color='textSecondary'>Allowed *.jpeg, *.jpg, *.png, *.gif</Typography>
-//               <Typography color='textSecondary'>Max 2 files and max size of 2 MB</Typography>
-//             </Box>
-//           </Box>
-//         </div>
-//         {files.length ? (
-//           <Fragment>
-//             <List>{fileList}</List>
-//             <div className='buttons'>
-//               <Button color='error' variant='outlined' onClick={handleRemoveAllFiles}>
-//                 Remove All
-//               </Button>
-//               <Button variant='contained'>Upload Files</Button>
-//             </div>
-//           </Fragment>
-//         ) : null}
-//       </Fragment>
-//     )
 
-// }
+  const handleRemoveFile = (e) => {
+    e.preventDefault();
+    // const filtered = uploadedFiles.filter((i: FileProp) => i.name !== file.name)
+    setUserFile([])
+    setShowFile(false)
+  }
+
+  useEffect(
+    () => {
+      // console.log(userFile?.length)
+    }, [userFile])
+  return (
+    <Fragment>
+      <div className="upload-btn">
+        <form id="form-file-upload" onSubmit={(e) => e.preventDefault()}>
+          <input ref={inputRef} type="file" className='input-file-upload' id="input-file-upload" accept="image/*" onChange={onFileChange} />
+          <label id="label-file-upload" htmlFor="input-file-upload">
+              {showFile
+                ? <div className='file-details'>
+                  <Icon icon='mdi:file-document-outline' />
+                    <Typography className='file-name'>{userFile?.name}</Typography>
+                  <IconButton
+                   onClick={(e) =>  handleRemoveFile(e)  }>
+                    <Icon icon='mdi:close' fontSize={20} />
+                  </IconButton>
+                </div>
+                : <Button
+                  className="upload-button"
+                  onClick={onButtonClick}
+                  variant='outlined'>
+                  <div className="btn-icon">
+                    <Icon icon='mdi:upload' />
+                  </div>
+                  UPLOAD DOCUMENT
+                </Button>
+
+              }
+          </label>
+        </form>
+      </div>
+
+    </Fragment>
+  )
+
+}
 
 const Information = () => {
+
+  const userThemeConfig: any = Object.assign({}, UserThemeOptions())
+  const inter = userThemeConfig.typography?.fontFamilyInter
+
   const handleSubmit = () => {
     console.log('elsubmit')
   }
@@ -1034,7 +1000,7 @@ const Information = () => {
 
   return (
     <>
-      <div className='information'>
+      <div className='information' style={{ fontFamily: inter }}>
         <form noValidate autoComplete='on' onSubmit={handleSubmit}>
           <div className='section'>
             <BasicInfo />
@@ -1044,8 +1010,9 @@ const Information = () => {
             <PlacementStructure />
           </div>
 
-          <div className='section'>
-            <div className='title'>File submit</div>
+          <div className="section">
+            <div className="title">File submit</div>
+            <FileSubmit />
           </div>
         </form>
       </div>
