@@ -1,36 +1,37 @@
-import { ForwardedRef, Fragment, forwardRef, useEffect, useRef, useState } from 'react'
+import { ForwardedRef, Fragment, forwardRef, useEffect, useRef, useState } from 'react';
+import UserThemeOptions from 'src/layouts/UserThemeOptions';
 
 // ** MUI Imports
-import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
-import CloseIcon from '@mui/icons-material/Close'
-import { SxProps, Theme } from '@mui/material'
-import Box from '@mui/material/Box'
-import Button from '@mui/material/Button'
-import FormControl from '@mui/material/FormControl'
-import FormHelperText from '@mui/material/FormHelperText'
-import IconButton from '@mui/material/IconButton'
-import InputAdornment from '@mui/material/InputAdornment'
-import InputLabel from '@mui/material/InputLabel'
-import MenuItem from '@mui/material/MenuItem'
-import Modal from '@mui/material/Modal'
-import Select from '@mui/material/Select'
-import TextField from '@mui/material/TextField'
-import Typography from '@mui/material/Typography'
-import { ButtonClose, HeaderTitleModal } from 'src/styles/Dashboard/ModalReinsurers/modalReinsurers'
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import CloseIcon from '@mui/icons-material/Close';
+import { SxProps, Theme } from '@mui/material';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import FormControl from '@mui/material/FormControl';
+import FormHelperText from '@mui/material/FormHelperText';
+import IconButton from '@mui/material/IconButton';
+import InputAdornment from '@mui/material/InputAdornment';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import Modal from '@mui/material/Modal';
+import Select from '@mui/material/Select';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
+import { ButtonClose, HeaderTitleModal } from 'src/styles/Dashboard/ModalReinsurers/modalReinsurers';
 
 // ** Components
 
 // ** Third Party Imports
-import DatePicker from 'react-datepicker'
-import { useForm } from 'react-hook-form'
-import { NumericFormat } from 'react-number-format'
-import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
+import DatePicker from 'react-datepicker';
+import { useForm } from 'react-hook-form';
+import { NumericFormat } from 'react-number-format';
+import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker';
 
 // ** Types
-import { DateType } from 'src/types/forms/reactDatepickerTypes'
+import { DateType } from 'src/types/forms/reactDatepickerTypes';
 
 // ** Icon Imports
-import Icon from 'src/@core/components/icon'
+import Icon from 'src/@core/components/icon';
 
 interface PickerProps {
   label?: string
@@ -985,6 +986,10 @@ const FileSubmit = () => {
 }
 
 const Information = () => {
+
+  const userThemeConfig: any = Object.assign({}, UserThemeOptions())
+  const inter = userThemeConfig.typography?.fontFamilyInter
+
   const handleSubmit = () => {
     console.log('elsubmit')
   }
@@ -995,7 +1000,7 @@ const Information = () => {
 
   return (
     <>
-      <div className='information'>
+      <div className='information' style={{ fontFamily: inter }}>
         <form noValidate autoComplete='on' onSubmit={handleSubmit}>
           <div className='section'>
             <BasicInfo />
