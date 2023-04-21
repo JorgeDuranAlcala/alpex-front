@@ -6,11 +6,14 @@ import Grid from '@mui/material/Grid';
 
 // ** Custom Components Imports
 import CommentSection from 'src/views/accounts/new-account-steps/CommentSection';
-import Information from 'src/views/accounts/new-account-steps/information';
+
+// import Information from 'src/views/accounts/new-account-steps/information';
+import PaymentWarranty from 'src/views/accounts/new-account-steps/PaymentWarranty';
 
 
 const NewAccount = () => {
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [disableComments, setDisableComments] = useState(true)
 
   return (
@@ -20,7 +23,8 @@ const NewAccount = () => {
       </Card>
       <Card>
         <div>Accoun Stepper</div>
-        <Information/>
+        {/* <Information/> */}
+        <PaymentWarranty />
       </Card>
       <Card>
         <CommentSection disable={disableComments}/>

@@ -39,7 +39,7 @@ const ContainerPayments = styled('div')({
   flexDirection: 'column',
   alignSelf: 'flex-end',
   width: '54%',
-  height: '100px',
+  height: '50%',
   justifyContent: 'space-between'
 })
 
@@ -59,6 +59,8 @@ const ContentTextAccounts = styled('div')({
   alignItems: 'center',
   gap: '10px',
   marginRight: '10%'
+
+  // border: '1px solid black'
 })
 const ContainerTotal = styled('div')({
   display: 'flex',
@@ -67,6 +69,8 @@ const ContainerTotal = styled('div')({
   width: '100%',
   height: '19px',
   justifyContent: 'space-between'
+
+  // border: '1px solid black'
 })
 export {
   HeaderTitle,
