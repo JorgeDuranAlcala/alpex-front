@@ -3,6 +3,7 @@ import Box from '@mui/material/Box'
 
 // import Link from '@mui/material/Link'
 import Typography from '@mui/material/Typography'
+import UserThemeOptions from 'src/layouts/UserThemeOptions'
 
 // import useMediaQuery from '@mui/material/useMediaQuery'
 // import { Theme } from '@mui/material/styles'
@@ -14,6 +15,9 @@ interface Ifooter {
 const Footer = ({ isLogin }: Ifooter) => {
   // ** Var
   // const hidden = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'))
+  const userThemeConfig: any = Object.assign({}, UserThemeOptions())
+
+  const inter = userThemeConfig.typography?.fontFamilyInter
 
   return (
     <Box
@@ -31,9 +35,11 @@ const Footer = ({ isLogin }: Ifooter) => {
       }}
     >
       {isLogin ? (
-        <Typography sx={{ mr: 2 }}>{`© ${new Date().getFullYear()} Una plataforma de Dynamic `}</Typography>
+        <Typography
+          sx={{ mr: 2, fontFamily: inter }}
+        >{`© ${new Date().getFullYear()} Una plataforma de Dynamic `}</Typography>
       ) : (
-        <Typography sx={{ mr: 2 }}>
+        <Typography sx={{ mr: 2, fontFamily: inter }}>
           {`© ${new Date().getFullYear()}, Made with `}
           <Box component='span' sx={{ color: 'error.main' }}>
             ❤️

@@ -128,7 +128,7 @@ const column: GridColumns<INearlyPaymentStatus> = [
     renderCell: ({ row }) => (
       <Typography
         variant='body2'
-        sx={{ fontFamily: fonts.inter, fontSize: fonts.size.px14, color: colors.text.light, fontWeight: 500 }}
+        sx={{ fontFamily: fonts.inter, fontSize: fonts.size.px14, color: colors.text.light, fontWeight: 400 }}
       >
         {row.nextDueDate}
       </Typography>
@@ -164,7 +164,7 @@ const column: GridColumns<INearlyPaymentStatus> = [
     renderCell: ({ row }) => (
       <Typography
         variant='body2'
-        sx={{ fontFamily: fonts.inter, fontSize: fonts.size.px14, color: colors.text.light, fontWeight: 500 }}
+        sx={{ fontFamily: fonts.inter, fontSize: fonts.size.px14, color: colors.text.light, fontWeight: 400 }}
       >
         {row.debt}
       </Typography>

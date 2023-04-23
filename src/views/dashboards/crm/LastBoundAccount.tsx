@@ -36,7 +36,7 @@ const LastBoundAccount = () => {
         </ContainerTitle>
         <Button
           variant='outlined'
-          sx={{ width: '55%', height: '42px', fontSize: '15px', fontFamily: inter, color: useColor }}
+          sx={{ width: '60%', height: '42px', fontSize: '15px', fontFamily: inter, color: useColor }}
         >
           Go to Account
         </Button>
