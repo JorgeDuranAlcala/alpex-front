@@ -9,7 +9,6 @@ import CommentSection from 'src/views/accounts/new-account-steps/CommentSection'
 
 // import Information from 'src/views/accounts/new-account-steps/information';
 import Security from 'src/views/accounts/new-account-steps/Security'
-import Information from 'src/views/accounts/new-account-steps/information'
 
 const NewAccount = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -21,13 +20,6 @@ const NewAccount = () => {
       <Card>
         <div>Accoun Stepper</div>
         <Security />
-        <hr></hr>
-        <hr></hr>
-        <hr></hr>
-        <hr></hr>
-        <hr></hr>
-        <hr></hr>
-        <Information></Information>
         {/*<PaymentWarranty />*/}{' '}
       </Card>
       <Card>

@@ -25,6 +25,7 @@ import { NumericFormat } from 'react-number-format'
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
+import SwitchAlpex from 'src/pages/components/custom/switchs'
 
 interface PickerProps {
   label?: string
@@ -112,6 +113,7 @@ const CustomInput = forwardRef(({ ...props }: PickerProps, ref: ForwardedRef<HTM
 
 const FormSection = () => {
   const [formData, setFormData] = useState<FormInfo>(SecurityForm)
+  const [frontingFeeEnabled, setFrontingFeeEnabled] = useState(true)
 
   const handleFormChange = (field: keyof FormInfo, value: FormInfo[keyof FormInfo]) => {
     setFormData({ ...formData, [field]: value })
@@ -124,7 +126,13 @@ const FormSection = () => {
   return (
     <>
       <div className='title'>Security</div>
-      <div className='form-wrapper'>
+      <span className='switch-text'>Fronting fee </span>
+      <SwitchAlpex
+        onClick={() => {
+          setFrontingFeeEnabled(!frontingFeeEnabled)
+        }}
+      />
+      <div className='form-wrapper space-top'>
         <div className='form-col'>
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <TextField
@@ -156,16 +164,18 @@ const FormSection = () => {
 
             {false && <FormHelperText sx={{ color: 'error.main' }}>Invalid field</FormHelperText>}
           </FormControl>
-          <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
-            <TextField
-              autoFocus
-              label='Fronting fee %'
-              value={formData.FrontingFeePercent}
-              onChange={e => handleFormChange('FrontingFeePercent', e.target.value)}
-            />
+          {frontingFeeEnabled && (
+            <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
+              <TextField
+                autoFocus
+                label='Fronting fee %'
+                value={formData.FrontingFeePercent}
+                onChange={e => handleFormChange('FrontingFeePercent', e.target.value)}
+              />
 
-            {false && <FormHelperText sx={{ color: 'error.main' }}>Invalid field</FormHelperText>}
-          </FormControl>
+              {false && <FormHelperText sx={{ color: 'error.main' }}>Invalid field</FormHelperText>}
+            </FormControl>
+          )}
         </div>
 
         <div className='form-col'>
@@ -209,16 +219,18 @@ const FormSection = () => {
 
             {false && <FormHelperText sx={{ color: 'error.main' }}>Invalid field</FormHelperText>}
           </FormControl>
-          <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
-            <TextField
-              autoFocus
-              label='Fronting fee'
-              value={formData.FrontingFee}
-              onChange={e => handleFormChange('FrontingFee', e.target.value)}
-            />
+          {frontingFeeEnabled && (
+            <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
+              <TextField
+                autoFocus
+                label='Fronting fee'
+                value={formData.FrontingFee}
+                onChange={e => handleFormChange('FrontingFee', e.target.value)}
+              />
 
-            {false && <FormHelperText sx={{ color: 'error.main' }}>Invalid field</FormHelperText>}
-          </FormControl>
+              {false && <FormHelperText sx={{ color: 'error.main' }}>Invalid field</FormHelperText>}
+            </FormControl>
+          )}
         </div>
         <div className='form-col'>
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>

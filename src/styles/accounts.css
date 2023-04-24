@@ -206,3 +206,11 @@
 .form-col-input {
   width: 100%;
 }
+
+.switch-text {
+  margin-right: 40px !important;
+}
+
+.space-top {
+  margin-top: 20px;
+}
