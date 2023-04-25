@@ -29,6 +29,7 @@ const DowlandAccountInfo = () => {
   const inter = userThemeConfig.typography?.fontFamilyInter
   const useColor = userThemeConfig.palette?.buttonText.primary
   const size = userThemeConfig.typography?.size.px15
+  const textColor = userThemeConfig.palette?.text.title
 
   return (
     <Card
@@ -44,10 +45,21 @@ const DowlandAccountInfo = () => {
       }}
     >
       <HeaderTitle>
-        <Typography variant='h6' sx={{ fontFamily: 'Inter', fontSize: '20px', color: 'rgba(68, 72, 84, 0.87)' }}>
+        <Typography
+          variant='h6'
+          sx={{ fontFamily: inter, fontSize: '20px', color: textColor, letterSpacing: '0.15px', fontWeight: 500 }}
+        >
           Download accounts info
         </Typography>
-        <Typography variant='body2' sx={{ fontFamily: 'Inter', fontSize: '14px', color: 'rgba(68, 72, 84, 0.68)' }}>
+        <Typography
+          variant='body2'
+          sx={{
+            fontFamily: inter,
+            fontSize: '14px',
+            color: userThemeConfig.palette?.text.subTitle,
+            letterSpacing: '0.15px'
+          }}
+        >
           Select an option and click on the button to download
         </Typography>
       </HeaderTitle>

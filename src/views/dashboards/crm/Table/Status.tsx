@@ -53,7 +53,7 @@ const Status: React.FC<IStatusProps> = ({ status }) => {
     ),
     Partially: (
       <>
-        <ContainerStatus sx={{ backgroundColor: '#FDCE28' }}>
+        <ContainerStatus sx={{ backgroundColor: '#FFB446' }}>
           <Typography
             sx={{
               color: theme.palette.common.white,

@@ -1,5 +1,5 @@
 // ** MUI Imports
-import ListIcon from '@mui/icons-material/List'
+// import ListIcon from '@mui/icons-material/List'
 import Box from '@mui/material/Box'
 import IconButton from '@mui/material/IconButton'
 
@@ -151,7 +151,7 @@ const AppBarContent = (props: Props) => {
         {/* <LanguageDropdown settings={settings} saveSettings={saveSettings} /> */}
         {/* <ModeToggler settings={settings} saveSettings={saveSettings} /> */}
         {/* <ShortcutsDropdown settings={settings} shortcuts={shortcuts} /> */}
-        <ListIcon />
+        {/* <ListIcon /> */}
         <NotificationDropdown settings={settings} notifications={notifications} />
         <UserDropdown settings={settings} />
       </Box>

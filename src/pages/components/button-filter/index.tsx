@@ -5,6 +5,7 @@ import MenuItem from '@mui/material/MenuItem'
 
 import React, { useState } from 'react'
 import Icon from 'src/@core/components/icon'
+import UserThemeOptions from 'src/layouts/UserThemeOptions'
 import DatePickerFilter from './DatePicker'
 import SearchInput from './SearchInput'
 
@@ -21,6 +22,11 @@ const ButtonFilter = ({ dataFilter, date, insured }: IDataFilter) => {
   // const [menu, setMenu] = React.useState('');
 
   // console.log(menu);
+  const userThemeConfig: any = Object.assign({}, UserThemeOptions())
+  const inter = userThemeConfig.typography?.fontFamilyInter
+  const colorText = userThemeConfig.palette?.text.tite
+  const sizeText = userThemeConfig.typography?.size.px14
+  const weight = userThemeConfig.typography?.fontWeight.weight400
 
   const open = Boolean(anchorEl)
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -80,6 +86,13 @@ const ButtonFilter = ({ dataFilter, date, insured }: IDataFilter) => {
                 handleClose()
 
                 // setMenu(option);
+              }}
+              sx={{
+                fontFamily: inter,
+                color: colorText,
+                fontSize: sizeText,
+                fontWeight: weight,
+                letterSpacing: '0.15px'
               }}
             >
               {option}
