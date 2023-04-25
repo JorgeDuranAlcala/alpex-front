@@ -1,4 +1,5 @@
-import CloseIcon from '@mui/icons-material/Close'
+import Icon from 'src/@core/components/icon'
+
 import { IconButton, Typography } from '@mui/material'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
@@ -70,7 +71,7 @@ const CustomModal = ({ width, height, bgColor, top, left, children }: ICustomMod
             </Typography>
 
             <IconButton onClick={handleClose}>
-              <CloseIcon />
+              <Icon icon='mdi:close' fontSize={20} />
             </IconButton>
           </HeaderTitleModal>
           {children}

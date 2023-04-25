@@ -38,8 +38,9 @@ const InstallmentContainer = styled('div')({
   flexDirection: 'row',
   alignItems: 'flex-start',
   width: '100%',
-  height: '304px',
-  justifyContent: 'space-between'
+  height: '70%',
+  justifyContent: 'space-between',
+  border: '1px solid blue'
 })
 
 const NextContainer = styled('div')({
