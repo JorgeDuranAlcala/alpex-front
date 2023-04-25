@@ -214,3 +214,11 @@
 .space-top {
   margin-top: 20px;
 }
+
+.add-reinsurer {
+  width: 30%;
+}
+.icon-btn {
+  margin-right: 10px;
+  margin-top: -3px;
+}

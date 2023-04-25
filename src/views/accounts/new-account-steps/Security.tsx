@@ -1,4 +1,4 @@
-import { ForwardedRef, Fragment, forwardRef, useEffect, useRef, useState } from 'react'
+import { ForwardedRef, forwardRef, useEffect, useState } from 'react'
 import UserThemeOptions from 'src/layouts/UserThemeOptions'
 
 // ** MUI Imports
@@ -7,19 +7,16 @@ import { SxProps, Theme } from '@mui/material'
 import Button from '@mui/material/Button'
 import FormControl from '@mui/material/FormControl'
 import FormHelperText from '@mui/material/FormHelperText'
-import IconButton from '@mui/material/IconButton'
 import InputAdornment from '@mui/material/InputAdornment'
 import InputLabel from '@mui/material/InputLabel'
 import MenuItem from '@mui/material/MenuItem'
 import Select from '@mui/material/Select'
 import TextField from '@mui/material/TextField'
-import Typography from '@mui/material/Typography'
 
 // ** Components
 
 // ** Third Party Imports
 import { useForm } from 'react-hook-form'
-import { NumericFormat } from 'react-number-format'
 
 // ** Types
 
@@ -110,18 +107,20 @@ const CustomInput = forwardRef(({ ...props }: PickerProps, ref: ForwardedRef<HTM
     />
   )
 })
-
-const FormSection = () => {
-  const [formData, setFormData] = useState<FormInfo>(SecurityForm)
+//Pending types
+const FormSection = ({ index, formData, setFormData }: any) => {
   const [frontingFeeEnabled, setFrontingFeeEnabled] = useState(true)
-
   const handleFormChange = (field: keyof FormInfo, value: FormInfo[keyof FormInfo]) => {
-    setFormData({ ...formData, [field]: value })
+    const data = [...formData]
+    data[index][field] = value
+    setFormData(data)
   }
 
   useEffect(() => {
-    setFormData({ ...formData, RetroCedantContact: '' })
-  }, [formData.RetroCedant])
+    const data = [...formData]
+    data[index]['RetroCedantContact'] = ''
+    setFormData(data)
+  }, [formData[index].RetroCedant])
 
   return (
     <>
@@ -148,7 +147,7 @@ const FormSection = () => {
             <TextField
               autoFocus
               label='Share %'
-              value={formData.SharePercent}
+              value={formData[index].SharePercent}
               onChange={e => handleFormChange('SharePercent', e.target.value)}
             />
 
@@ -270,13 +269,12 @@ const FormSection = () => {
 
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <InputLabel>Select Retro Cedant contact</InputLabel>
-
             <Select
-              label='Select Retro Cedant contact'
-              value={formData.RetroCedantContact}
+              label='Select Retro Cedant contact '
+              value={formData[index].RetroCedantContact}
               onChange={e => handleFormChange('RetroCedantContact', e.target.value)}
               labelId='broker'
-              disabled={formData.RetroCedant === ''}
+              disabled={formData[index].RetroCedant === ''}
             >
               <MenuItem value=''>Select Retro Cedant contact</MenuItem>
               <MenuItem value='br1'>Br1</MenuItem>
@@ -289,7 +287,7 @@ const FormSection = () => {
               </FormHelperText>
             )}
           </FormControl>
-          {formData.RetroCedantContact !== '' && (
+          {formData[index].RetroCedantContact !== '' && (
             <>
               <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
                 <TextField
@@ -372,469 +370,11 @@ const FormSection = () => {
   )
 }
 
-const PlacementStructure = () => {
-  // const [formData, setFormData] = useState<PlacementData>(initialPlacementData)
-  const [currency, setCurrency] = useState<string>()
-  const [total, setTotal] = useState<number>()
-  const [sir, setSir] = useState<number>()
-  const [reinsuranceBrokerageP, setReinsuranceBrokerageP] = useState<number>()
-  const [taxesP, setTaxesP] = useState<number>()
-  const [frontingFeeP, setFrontingFeeP] = useState<number>()
-  const [netPremium, setNetPremium] = useState<number>()
-  const [exchangeRate, setExchangeRate] = useState<number>()
-  const [limit, setLimit] = useState<number>()
-  const [grossPremium, setGrossPremium] = useState<number>()
-  const [reinsuranceBrokerage, setReinsuranceBrokerage] = useState<number>()
-  const [taxes, setTaxes] = useState<number>()
-  const [frontingFee, setFrontingFee] = useState<number>()
-  const [attachmentPoint, setAttachmentPoint] = useState<number>()
-  const [typeOfLimit, setTypeOfLimit] = useState<string>()
-
-  const calculate = async (type: string) => {
-    console.log(type)
-    const grossPremiumc: number = grossPremium || 0
-    const reinsuranceBrokeragePc: number = reinsuranceBrokerageP || 0
-    const reinsuranceBrokeragec: number = reinsuranceBrokerage || 0
-    const taxesPc: number = taxesP || 0
-    const taxesc: number = taxes || 0
-    const frontingFeePc: number = frontingFeeP || 0
-    const frontingFeec: number = frontingFee || 0
-
-    switch (type) {
-      case 'reinsuranceBrokerageP': {
-        console.log(grossPremiumc)
-        console.log(reinsuranceBrokeragePc)
-        const result = grossPremiumc * (reinsuranceBrokeragePc / 100)
-        setReinsuranceBrokerage(isFinite(result) ? result : 0)
-
-        break
-      }
-      case 'reinsuranceBrokerage': {
-        const result = (reinsuranceBrokeragec * 100) / grossPremiumc
-        console.log('resulttt')
-        console.log(result)
-        setReinsuranceBrokerageP(isFinite(result) ? result : 0)
-        break
-      }
-      case 'taxes': {
-        const result = (taxesc * 100) / grossPremiumc
-        setTaxesP(isFinite(result) ? result : 0)
-        break
-      }
-      case 'taxesP': {
-        const result = grossPremiumc * (taxesPc / 100)
-        setTaxes(isFinite(result) ? result : 0)
-        break
-      }
-      case 'frontingFeeP': {
-        const result = grossPremiumc * (frontingFeePc / 100)
-        setFrontingFee(isFinite(result) ? result : 0)
-        break
-      }
-      case 'frontingFee': {
-        const result = (frontingFeec * 100) / grossPremiumc
-        setFrontingFeeP(isFinite(result) ? result : 0)
-        break
-      }
-      case 'grossPremium': {
-        const resultBrokerage = (reinsuranceBrokeragec * 100) / grossPremiumc
-        const resultTaxes = (taxesPc * 100) / grossPremiumc
-        const resultFronting = (frontingFeec * 100) / grossPremiumc
-        setReinsuranceBrokerageP(isFinite(resultBrokerage) ? resultBrokerage : 0)
-        setTaxesP(isFinite(resultTaxes) ? resultTaxes : 0)
-        setFrontingFeeP(isFinite(resultFronting) ? resultFronting : 0)
-        break
-      }
-    }
-    const reinsuranceBrokerageTotalFinal = reinsuranceBrokerage ? reinsuranceBrokerage : 0
-    const taxesFinal = taxes ? taxes : 0
-    const frontingFeeTotalFinal = frontingFee ? frontingFee : 0
-    setNetPremium(grossPremiumc - reinsuranceBrokerageTotalFinal - taxesFinal - frontingFeeTotalFinal)
-  }
-
-  const handleCurrencyChange = (value: any) => {
-    console.log(value)
-    switch (value) {
-      case 'USD':
-        setExchangeRate(18.5)
-        break
-      case 'EUR':
-        setExchangeRate(20.0)
-        break
-      case 'MXN':
-        setExchangeRate(1)
-        break
-    }
-  }
-
-  return (
-    <>
-      <div className='title'>Placement Structure</div>
-      <div className='form-wrapper'>
-        <div className='form-col'>
-          <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
-            <InputLabel>Currency</InputLabel>
-            <Select
-              id='currency'
-              label='Currency'
-              value={currency}
-              onChange={e => {
-                setCurrency(e.target.value)
-                handleCurrencyChange(e.target.value)
-              }}
-              labelId='currency'
-            >
-              <MenuItem value='USD'>USD</MenuItem>
-              <MenuItem value='MXN'>MXN</MenuItem>
-              <MenuItem value='EUR'>EUR</MenuItem>
-            </Select>
-            {false && (
-              <FormHelperText sx={{ color: 'error.main' }} id='invoice-country-error'>
-                Select a currency
-              </FormHelperText>
-            )}
-          </FormControl>
-
-          <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
-            <NumericFormat
-              value={total}
-              allowLeadingZeros
-              thousandSeparator=','
-              customInput={TextField}
-              id='filled-multiline-flexible'
-              label='Total values'
-              multiline
-              prefix={'$'}
-              decimalScale={2}
-              variant='outlined'
-              onValueChange={(value, e) => {
-                setTotal(value.floatValue)
-              }}
-            />
-            {false && <FormHelperText sx={{ color: 'error.main' }}>Required Field</FormHelperText>}
-          </FormControl>
-          <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
-            <NumericFormat
-              value={sir}
-              allowLeadingZeros
-              thousandSeparator=','
-              customInput={TextField}
-              id='sir'
-              label='SIR'
-              multiline
-              prefix={'$'}
-              decimalScale={2}
-              variant='outlined'
-              onValueChange={(value, e) => {
-                setSir(value.floatValue)
-              }}
-            />
-            {false && <FormHelperText sx={{ color: 'error.main' }}>Required Field</FormHelperText>}
-          </FormControl>
-          <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
-            <NumericFormat
-              value={reinsuranceBrokerageP}
-              allowLeadingZeros
-              thousandSeparator=','
-              customInput={TextField}
-              id='reinsurance-brokerage'
-              label='Reinsurance brokerage %'
-              multiline
-              prefix={'%'}
-              decimalScale={2}
-              variant='outlined'
-              onBlur={() => calculate('reinsuranceBrokerageP')}
-              onValueChange={(value, e) => {
-                setReinsuranceBrokerageP(value.floatValue)
-              }}
-            />
-            {false && <FormHelperText sx={{ color: 'error.main' }}>Required Field</FormHelperText>}
-          </FormControl>
-          <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
-            <NumericFormat
-              value={taxesP}
-              allowLeadingZeros
-              thousandSeparator=','
-              customInput={TextField}
-              id='taxes-p'
-              label='Taxes %'
-              multiline
-              prefix={'%'}
-              decimalScale={2}
-              variant='outlined'
-              onBlur={() => calculate('taxesP')}
-              onValueChange={(value, e) => {
-                setTaxesP(value.floatValue)
-              }}
-            />
-            {false && <FormHelperText sx={{ color: 'error.main' }}>Required Field</FormHelperText>}
-          </FormControl>
-
-          <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
-            <NumericFormat
-              value={frontingFeeP}
-              allowLeadingZeros
-              thousandSeparator=','
-              customInput={TextField}
-              id='fronting-fee-p'
-              label='Fronting fee %'
-              multiline
-              prefix={'%'}
-              maxRows={4}
-              decimalScale={2}
-              variant='outlined'
-              onBlur={() => calculate('frontingFeeP')}
-              onValueChange={(value, e) => {
-                setFrontingFeeP(value.floatValue)
-              }}
-            />
-            {false && <FormHelperText sx={{ color: 'error.main' }}>Required Field</FormHelperText>}
-          </FormControl>
-          <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
-            <NumericFormat
-              value={netPremium}
-              allowLeadingZeros
-              thousandSeparator=','
-              customInput={TextField}
-              disabled
-              id='net-premium'
-              label='Net premium'
-              multiline
-              variant='outlined'
-              decimalScale={2}
-              onValueChange={(value, e) => {
-                setNetPremium(value.floatValue)
-              }}
-            />
-            {false && <FormHelperText sx={{ color: 'error.main' }}>Required Field</FormHelperText>}
-          </FormControl>
-        </div>
-
-        <div className='form-col'>
-          <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
-            <NumericFormat
-              value={exchangeRate}
-              allowLeadingZeros
-              thousandSeparator=','
-              customInput={TextField}
-              id='exchange-rate'
-              label='Exchange rate'
-              multiline
-              variant='outlined'
-              decimalScale={2}
-            />
-            {false && <FormHelperText sx={{ color: 'error.main' }}>Required Field</FormHelperText>}
-          </FormControl>
-          <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
-            <NumericFormat
-              value={limit}
-              allowLeadingZeros
-              thousandSeparator=','
-              customInput={TextField}
-              id='limit'
-              label='Limit'
-              multiline
-              variant='outlined'
-              decimalScale={2}
-              onValueChange={(value, e) => {
-                setLimit(value.floatValue)
-              }}
-            />
-            {false && <FormHelperText sx={{ color: 'error.main' }}>Required Field</FormHelperText>}
-          </FormControl>
-          <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
-            <NumericFormat
-              value={grossPremium}
-              allowLeadingZeros
-              thousandSeparator=','
-              customInput={TextField}
-              id='gross-premium'
-              label='Gross Premium'
-              multiline
-              variant='outlined'
-              decimalScale={2}
-              onBlur={() => calculate('grossPremium')}
-              onValueChange={(value, e) => {
-                setGrossPremium(value.floatValue)
-              }}
-            />
-            {false && <FormHelperText sx={{ color: 'error.main' }}>Required Field</FormHelperText>}
-          </FormControl>
-
-          <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
-            <NumericFormat
-              value={reinsuranceBrokerage}
-              allowLeadingZeros
-              thousandSeparator=','
-              customInput={TextField}
-              id='reinsurance-brokerage'
-              label='Reinsurance Brokerage'
-              multiline
-              variant='outlined'
-              decimalScale={2}
-              onBlur={() => calculate('reinsuranceBrokerage')}
-              onValueChange={(value, e) => {
-                setReinsuranceBrokerage(value.floatValue)
-              }}
-            />
-            {false && <FormHelperText sx={{ color: 'error.main' }}>Required Field</FormHelperText>}
-          </FormControl>
-
-          <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
-            <NumericFormat
-              value={taxes}
-              allowLeadingZeros
-              thousandSeparator=','
-              customInput={TextField}
-              id='taxes'
-              label='Taxes'
-              multiline
-              variant='outlined'
-              decimalScale={2}
-              onBlur={() => calculate('taxes')}
-              onValueChange={(value, e) => {
-                setTaxes(value.floatValue)
-              }}
-            />
-            {false && <FormHelperText sx={{ color: 'error.main' }}>Required Field</FormHelperText>}
-          </FormControl>
-          <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
-            <NumericFormat
-              value={frontingFee}
-              allowLeadingZeros
-              thousandSeparator=','
-              customInput={TextField}
-              id='fornting-fee'
-              label='Fronting fee'
-              multiline
-              variant='outlined'
-              decimalScale={2}
-              onBlur={() => calculate('frontingFee')}
-              onValueChange={(value, e) => {
-                setFrontingFee(value.floatValue)
-              }}
-            />
-            {false && <FormHelperText sx={{ color: 'error.main' }}>Required Field</FormHelperText>}
-          </FormControl>
-        </div>
-        <div className='form-col'>
-          <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
-            <NumericFormat
-              value={attachmentPoint}
-              allowLeadingZeros
-              thousandSeparator=','
-              customInput={TextField}
-              id='attachment-point'
-              label='Attachment point'
-              multiline
-              variant='outlined'
-              decimalScale={2}
-              onValueChange={(value, e) => {
-                setAttachmentPoint(value.floatValue)
-              }}
-            />
-            {false && <FormHelperText sx={{ color: 'error.main' }}>Required Field</FormHelperText>}
-          </FormControl>
-          <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
-            <InputLabel>Type of limit</InputLabel>
-            <Select
-              label='Type of Limit'
-              value={typeOfLimit}
-              onChange={e => setTypeOfLimit(e.target.value)}
-              labelId='type-of-limit'
-            >
-              <MenuItem value='t1'>T1</MenuItem>
-              <MenuItem value='t2'>T2</MenuItem>
-              <MenuItem value='t3'>T3</MenuItem>
-            </Select>
-            {false && (
-              <FormHelperText sx={{ color: 'error.main' }} id='invoice-country-error'>
-                Select a Type of limit
-              </FormHelperText>
-            )}
-          </FormControl>
-        </div>
-      </div>
-    </>
-  )
-}
-
-const FileSubmit = () => {
-  // ** State
-  const [files, setFiles] = useState<File[]>([])
-  const inputRef = useRef(null)
-  const [userFile, setUserFile] = useState<File[]>([])
-  const [errorFile, setErrorFile] = useState(false)
-  const [showFile, setShowFile] = useState(false)
-
-  const setFilevalues = (uploadFiles: File[]) => {
-    console.log(uploadFiles?.length)
-    setUserFile(uploadFiles)
-    console.log(userFile)
-    setErrorFile(false)
-    setShowFile(true)
-  }
-  // triggers when file is selected with click
-  const onFileChange = function (e) {
-    e.preventDefault()
-    setFilevalues(e.target.files[0])
-  }
-
-  // triggers the input when the button is clicked
-  const onButtonClick = () => {
-    inputRef.current.click()
-  }
-
-  const handleRemoveFile = e => {
-    e.preventDefault()
-    // const filtered = uploadedFiles.filter((i: FileProp) => i.name !== file.name)
-    setUserFile([])
-    setShowFile(false)
-  }
-
-  useEffect(() => {
-    // console.log(userFile?.length)
-  }, [userFile])
-  return (
-    <Fragment>
-      <div className='upload-btn'>
-        <form id='form-file-upload' onSubmit={e => e.preventDefault()}>
-          <input
-            ref={inputRef}
-            type='file'
-            className='input-file-upload'
-            id='input-file-upload'
-            accept='image/*'
-            onChange={onFileChange}
-          />
-          <label id='label-file-upload' htmlFor='input-file-upload'>
-            {showFile ? (
-              <div className='file-details'>
-                <Icon icon='mdi:file-document-outline' />
-                <Typography className='file-name'>{userFile?.name}</Typography>
-                <IconButton onClick={e => handleRemoveFile(e)}>
-                  <Icon icon='mdi:close' fontSize={20} />
-                </IconButton>
-              </div>
-            ) : (
-              <Button className='upload-button' onClick={onButtonClick} variant='outlined'>
-                <div className='btn-icon'>
-                  <Icon icon='mdi:upload' />
-                </div>
-                UPLOAD DOCUMENT
-              </Button>
-            )}
-          </label>
-        </form>
-      </div>
-    </Fragment>
-  )
-}
-
 const Security = () => {
+  const [formData, setFormData] = useState<FormInfo[]>([{ ...SecurityForm }])
+
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
   const inter = userThemeConfig.typography?.fontFamilyInter
-
   const handleSubmit = () => {
     console.log('elsubmit')
   }
@@ -842,24 +382,33 @@ const Security = () => {
     control,
     formState: { errors }
   } = useForm()
+  const addNewForm = () => {
+    setFormData([...formData, { ...SecurityForm }])
+  }
 
   return (
     <>
       <div className='information' style={{ fontFamily: inter }}>
         <form noValidate autoComplete='on' onSubmit={handleSubmit}>
           <div className='section'>
-            <FormSection />
-          </div>
-
-          <div className='section'>
-            <PlacementStructure />
-          </div>
-
-          <div className='section'>
-            <div className='title'>File submit</div>
-            <FileSubmit />
+            {formData.map((_, index) => (
+              <FormSection index={index} formData={formData} setFormData={setFormData} />
+            ))}
           </div>
         </form>
+        <div className='add-reinsurer'>
+          <Button
+            type='button'
+            onClick={addNewForm}
+            variant='text'
+            color='primary'
+            size='large'
+            fullWidth
+            sx={{ justifyContent: 'start' }}
+          >
+            <Icon icon='material-symbols:add-circle-outline' fontSize={20} className='icon-btn' /> ADD REINSURER
+          </Button>
+        </div>
       </div>
     </>
   )
