@@ -71,12 +71,14 @@ const Table = () => {
 
   useEffect(() => {
     dispatch(fetchAccounts())
+    //eslint-disable-next-line
   }, [])
 
   useEffect(() => {
     setAccounts(accountsReducer.accounts || [])
     console.log(loading)
     setLoading(accountsReducer.loading)
+    //eslint-disable-next-line
   }, [accountsReducer])
 
   const column: GridColumns<IAccount> = [
