@@ -1,5 +1,2 @@
-{
-    sudo rm -r /var/www/new-front-dynamic-copy
-} || {
-    sudo mkdir /var/www/new-front-dynamic-copy
-}
+if [ -d "/var/www/new-front-dynamic-copy" ]; then sudo rm -Rf "/var/www/new-front-dynamic-copy"; fi
+sudo mkdir /var/www/new-front-dynamic-copy
