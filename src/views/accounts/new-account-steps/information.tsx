@@ -83,43 +83,29 @@ type BasicInfoProps = {
   >
 }
 
+//@OALR
+interface IPlacementStructureProps {
+  currency: string
+  total: number
+  sir: number
+  reinsuranceBrokerageP: number | undefined
+  taxesP: number | undefined
+  frontingFeeP: number | undefined
+  netPremium: number | undefined
+  exchangeRate: number
+  limit: number
+  grossPremium: number | undefined
+  reinsuranceBrokerage: number | undefined
+  taxes: number | undefined
+  frontingFee: number | undefined
+  attachmentPoint: number
+  typeOfLimit: string
+}
+
+//@OALR
 type PlacementStructureProps = {
-  placementStructure: {
-    currency: string
-    total: number
-    sir: number
-    reinsuranceBrokerageP: number | undefined
-    taxesP: number | undefined
-    frontingFeeP: number | undefined
-    netPremium: number | undefined
-    exchangeRate: number
-    limit: number
-    grossPremium: number | undefined
-    reinsuranceBrokerage: number | undefined
-    taxes: number | undefined
-    frontingFee: number | undefined
-    attachmentPoint: number
-    typeOfLimit: string
-  }
-  setPlacementStructure: React.Dispatch<
-    React.SetStateAction<{
-      currency: string
-      total: number
-      sir: number
-      reinsuranceBrokerageP: number | undefined
-      taxesP: number | undefined
-      frontingFeeP: number | undefined
-      netPremium: number | undefined
-      exchangeRate: number
-      limit: number
-      grossPremium: number | undefined
-      reinsuranceBrokerage: number | undefined
-      taxes: number | undefined
-      frontingFee: number | undefined
-      attachmentPoint: number
-      typeOfLimit: string
-    }>
-  >
+  placementStructure: IPlacementStructureProps
+  setPlacementStructure: React.Dispatch<React.SetStateAction<IPlacementStructureProps>>
   makeValidations: boolean
   resetMakeValidations: () => void
 }
@@ -1071,7 +1057,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
 
 const FileSubmit: React.FC<UserFileProps> = ({ userFile, setUserFile }) => {
   // ** State
-  const inputRef = useRef(null)
+  const inputRef = useRef<HTMLInputElement>(null)
   const [file, setFile] = useState<File[]>([])
   const [errorFile, setErrorFile] = useState(false)
   const [showFile, setShowFile] = useState(false)
@@ -1090,8 +1076,7 @@ const FileSubmit: React.FC<UserFileProps> = ({ userFile, setUserFile }) => {
 
   // triggers the input when the button is clicked
   const onButtonClick = () => {
-    //TODO REVISAR EL LINT, YA QUE LA PROPIEDAD DE inputRef.current puede ser null
-    // inputRef.current.click()
+    inputRef.current && inputRef.current.click()
   }
 
   const handleRemoveFile = (e: any) => {
@@ -1120,7 +1105,7 @@ const FileSubmit: React.FC<UserFileProps> = ({ userFile, setUserFile }) => {
             {showFile ? (
               <div className='file-details'>
                 <Icon icon='mdi:file-document-outline' />
-                <Typography className='file-name'>{file?.name}</Typography>
+                <Typography className='file-name'>{file[0].name}</Typography>
                 <IconButton onClick={e => handleRemoveFile(e)}>
                   <Icon icon='mdi:close' fontSize={20} />
                 </IconButton>
@@ -1161,7 +1146,8 @@ const Information: React.FC = () => {
     expirationDate: new Date()
   })
 
-  const [placementStructure, setPlacementStructure] = useState({
+  //@OALR
+  const [placementStructure, setPlacementStructure] = useState<IPlacementStructureProps>({
     currency: '',
     total: 0.0,
     sir: 0.0,
@@ -1178,7 +1164,7 @@ const Information: React.FC = () => {
     attachmentPoint: 0.0,
     typeOfLimit: ''
   })
-  const [userFile, setUserFile] = useState({
+  const [userFile, setUserFile] = useState<{ file: File | null }>({
     file: null
   })
 
