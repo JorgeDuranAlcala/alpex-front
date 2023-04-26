@@ -1,36 +1,36 @@
-import React, { ForwardedRef, Fragment, ReactNode, forwardRef, useEffect, useRef, useState } from 'react';
-import UserThemeOptions from 'src/layouts/UserThemeOptions';
+import React, { ForwardedRef, Fragment, ReactNode, forwardRef, useEffect, useRef, useState } from 'react'
+import UserThemeOptions from 'src/layouts/UserThemeOptions'
 
 // ** MUI Imports
-import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
-import CloseIcon from '@mui/icons-material/Close';
-import { SxProps, Theme } from '@mui/material';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import FormControl from '@mui/material/FormControl';
-import FormHelperText from '@mui/material/FormHelperText';
-import IconButton from '@mui/material/IconButton';
-import InputAdornment from '@mui/material/InputAdornment';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import Modal from '@mui/material/Modal';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
-import TextField from '@mui/material/TextField';
-import Typography from '@mui/material/Typography';
-import { ButtonClose, HeaderTitleModal } from 'src/styles/Dashboard/ModalReinsurers/modalReinsurers';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
+import CloseIcon from '@mui/icons-material/Close'
+import { SxProps, Theme } from '@mui/material'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import FormControl from '@mui/material/FormControl'
+import FormHelperText from '@mui/material/FormHelperText'
+import IconButton from '@mui/material/IconButton'
+import InputAdornment from '@mui/material/InputAdornment'
+import InputLabel from '@mui/material/InputLabel'
+import MenuItem from '@mui/material/MenuItem'
+import Modal from '@mui/material/Modal'
+import Select, { SelectChangeEvent } from '@mui/material/Select'
+import TextField from '@mui/material/TextField'
+import Typography from '@mui/material/Typography'
+import { ButtonClose, HeaderTitleModal } from 'src/styles/Dashboard/ModalReinsurers/modalReinsurers'
 
 // ** Components
 
 // ** Third Party Imports
-import DatePicker from 'react-datepicker';
-import { NumericFormat } from 'react-number-format';
-import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker';
+import DatePicker from 'react-datepicker'
+import { NumericFormat } from 'react-number-format'
+import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 
 // ** Types
 // import { DateType } from 'src/types/forms/reactDatepickerTypes';
 
 // ** Icon Imports
-import Icon from 'src/@core/components/icon';
+import Icon from 'src/@core/components/icon'
 
 interface PickerProps {
   label?: string
@@ -63,7 +63,7 @@ type BasicInfoProps = {
     receptionDate: Date
     effectiveDate: Date
     expirationDate: Date
-  };
+  }
   setBasicInfo: React.Dispatch<
     React.SetStateAction<{
       insured: string
@@ -80,61 +80,46 @@ type BasicInfoProps = {
       effectiveDate: Date
       expirationDate: Date
     }>
-  >;
-};
+  >
+}
 
+//@OALR
+interface IPlacementStructureProps {
+  currency: string
+  total: number
+  sir: number
+  reinsuranceBrokerageP: number | undefined
+  taxesP: number | undefined
+  frontingFeeP: number | undefined
+  netPremium: number | undefined
+  exchangeRate: number
+  limit: number
+  grossPremium: number | undefined
+  reinsuranceBrokerage: number | undefined
+  taxes: number | undefined
+  frontingFee: number | undefined
+  attachmentPoint: number
+  typeOfLimit: string
+}
+
+//@OALR
 type PlacementStructureProps = {
-  placementStructure: {
-    currency: string
-    total: number
-    sir: number
-    reinsuranceBrokerageP: number | undefined
-    taxesP: number | undefined
-    frontingFeeP: number | undefined
-    netPremium: number | undefined
-    exchangeRate: number
-    limit: number
-    grossPremium: number | undefined
-    reinsuranceBrokerage: number | undefined
-    taxes: number | undefined
-    frontingFee: number | undefined
-    attachmentPoint: number
-    typeOfLimit: string
-  };
-  setPlacementStructure: React.Dispatch<
-    React.SetStateAction<{
-      currency: string
-      total: number
-      sir: number
-      reinsuranceBrokerageP: number | undefined
-      taxesP: number | undefined
-      frontingFeeP: number | undefined
-      netPremium: number | undefined
-      exchangeRate: number
-      limit: number
-      grossPremium: number | undefined
-      reinsuranceBrokerage: number | undefined
-      taxes: number | undefined
-      frontingFee: number | undefined
-      attachmentPoint: number
-      typeOfLimit: string
-    }>
-  >;
-  makeValidations: boolean;
-  resetMakeValidations: () => void;
-
-};
+  placementStructure: IPlacementStructureProps
+  setPlacementStructure: React.Dispatch<React.SetStateAction<IPlacementStructureProps>>
+  makeValidations: boolean
+  resetMakeValidations: () => void
+}
 
 type UserFileProps = {
   userFile: {
     file: File | null
-  };
+  }
   setUserFile: React.Dispatch<
     React.SetStateAction<{
       file: File | null
     }>
-  >;
-};
+  >
+}
 
 const initialContactData: ContactData = {
   name: '',
@@ -142,7 +127,6 @@ const initialContactData: ContactData = {
   phone: '',
   country: ''
 }
-
 
 const expresions = {
   name: /^[a-zA-ZÀ-ÿ\s]{1,40}$/, // Letras y espacios, pueden llevar acentos.
@@ -361,36 +345,32 @@ const ModalContact = ({ id }: IModal) => {
   )
 }
 
-const BasicInfo: React.FC<BasicInfoProps> = ({
-  basicInfo,
-  setBasicInfo,
-}) => {
-
+const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo }) => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setBasicInfo({ ...basicInfo, [name]: value });
-  };
+    const { name, value } = e.target
+    setBasicInfo({ ...basicInfo, [name]: value })
+  }
 
   const handleSelectChange = (event: SelectChangeEvent<string>, child: ReactNode) => {
-    const target = event.target;
-    const name = target.name;
-    const value = target.value;
+    const target = event.target
+    const name = target.name
+    const value = target.value
     setBasicInfo({
       ...basicInfo,
       [name]: value
-    });
-  };
+    })
+  }
   const handleReceptionDateChange = (date: Date) => {
-    setBasicInfo({ ...basicInfo, receptionDate: date });
-  };
+    setBasicInfo({ ...basicInfo, receptionDate: date })
+  }
 
   const handleEffectiveDateChange = (date: Date) => {
-    setBasicInfo({ ...basicInfo, effectiveDate: date });
-  };
+    setBasicInfo({ ...basicInfo, effectiveDate: date })
+  }
 
   const handleExpirationDateChange = (date: Date) => {
-    setBasicInfo({ ...basicInfo, expirationDate: date });
-  };
+    setBasicInfo({ ...basicInfo, expirationDate: date })
+  }
 
   return (
     <>
@@ -402,7 +382,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <TextField
               autoFocus
-              name="insured"
+              name='insured'
               label='insured'
               value={basicInfo.insured}
               onChange={handleInputChange}
@@ -414,7 +394,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
             <InputLabel>Country</InputLabel>
 
             <Select
-              name="country"
+              name='country'
               label='Country'
               value={basicInfo.country}
               onChange={handleSelectChange}
@@ -441,7 +421,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
             <InputLabel>Select Broker</InputLabel>
 
             <Select
-              name="broker"
+              name='broker'
               label='Select Broker'
               value={basicInfo.broker}
               onChange={handleSelectChange}
@@ -461,7 +441,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
             <InputLabel>Select Broker Contact</InputLabel>
 
             <Select
-              name="brokerContact"
+              name='brokerContact'
               label='Select Broker Contact'
               value={basicInfo.brokerContact}
               onChange={handleSelectChange}
@@ -479,7 +459,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
             <InputLabel>Select Cedant</InputLabel>
 
             <Select
-              name="cedant"
+              name='cedant'
               label='Select Cedant'
               value={basicInfo.cedant}
               onChange={handleSelectChange}
@@ -500,7 +480,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
             <InputLabel>Select Cedant Contact</InputLabel>
 
             <Select
-              name="cedantContact"
+              name='cedantContact'
               label='Select Cedant Contact'
               value={basicInfo.cedantContact}
               onChange={handleSelectChange}
@@ -518,7 +498,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
             <InputLabel>Line of business</InputLabel>
 
             <Select
-              name="lineOfBusiness"
+              name='lineOfBusiness'
               label='Line of Business'
               value={basicInfo.lineOfBusiness}
               onChange={handleSelectChange}
@@ -568,7 +548,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
             <InputLabel>Underwriter</InputLabel>
 
             <Select
-              name="underwriter"
+              name='underwriter'
               label='Underwriter'
               value={basicInfo.underwriter}
               onChange={handleSelectChange}
@@ -583,7 +563,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
             <InputLabel>Lead underwriter</InputLabel>
 
             <Select
-              name="leadUnderwriter"
+              name='leadUnderwriter'
               label='Lead Underwriter'
               value={basicInfo.leadUnderwriter}
               onChange={handleSelectChange}
@@ -599,7 +579,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
             <InputLabel>Technical assistant</InputLabel>
 
             <Select
-              name="technicalAssistant"
+              name='technicalAssistant'
               label='Technical assistant'
               value={basicInfo.technicalAssistant}
               onChange={handleSelectChange}
@@ -708,56 +688,56 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
       frontingFee: frontingFee,
       grossPremium: grossPremium,
       netPremium: netPremium
-    });
+    })
   }
 
   const handleCurrencyChange = (e: SelectChangeEvent<string>, child: ReactNode) => {
-    const target = e.target;
-    const name = target.name;
-    const value = target.value;
+    const target = e.target
+    const name = target.name
+    const value = target.value
 
     switch (value) {
       case 'USD':
         setExchangeRate(18.5)
-        setPlacementStructure({ ...placementStructure, currency: value, exchangeRate: 18.5 });
+        setPlacementStructure({ ...placementStructure, currency: value, exchangeRate: 18.5 })
         break
       case 'EUR':
         setExchangeRate(20.0)
-        setPlacementStructure({ ...placementStructure, currency: value, exchangeRate: 20.0 });
+        setPlacementStructure({ ...placementStructure, currency: value, exchangeRate: 20.0 })
         break
       case 'MXN':
         setExchangeRate(1)
-        setPlacementStructure({ ...placementStructure, currency: value, exchangeRate: 1 });
+        setPlacementStructure({ ...placementStructure, currency: value, exchangeRate: 1 })
         break
     }
   }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, valueAsNumber } = e.target;
-    setPlacementStructure({ ...placementStructure, [name]: valueAsNumber });
-  };
+    const { name, valueAsNumber } = e.target
+    setPlacementStructure({ ...placementStructure, [name]: valueAsNumber })
+  }
 
-  const handleNumericInputChange = (value: any, e: any, ) => {
-     const { name } = e.event.target;
-     setPlacementStructure({ ...placementStructure, [name]: value });
-  };
+  const handleNumericInputChange = (value: any, e: any) => {
+    const { name } = e.event.target
+    setPlacementStructure({ ...placementStructure, [name]: value })
+  }
 
   const handleSelectChange = (e: SelectChangeEvent<string>, child: ReactNode) => {
-    const target = e.target;
-    const name = target.name;
-    const value = target.value;
+    const target = e.target
+    const name = target.name
+    const value = target.value
     setPlacementStructure({
       ...placementStructure,
       [name]: value
-    });
-  };
+    })
+  }
 
   useEffect(() => {
     if (makeValidations) {
-      console.log('La acción se realizó');
-      resetMakeValidations();
+      console.log('La acción se realizó')
+      resetMakeValidations()
     }
-  }, [makeValidations]);
+  }, [makeValidations])
 
   return (
     <>
@@ -767,7 +747,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <InputLabel>Currency</InputLabel>
             <Select
-              name="currency"
+              name='currency'
               id='currency'
               label='Currency'
               value={placementStructure.currency}
@@ -787,7 +767,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
 
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <NumericFormat
-              name="total"
+              name='total'
               value={placementStructure.total}
               allowLeadingZeros
               thousandSeparator=','
@@ -807,7 +787,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
           </FormControl>
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <NumericFormat
-              name="sir"
+              name='sir'
               value={placementStructure.sir}
               allowLeadingZeros
               thousandSeparator=','
@@ -827,7 +807,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
           </FormControl>
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <NumericFormat
-              name="reinsuranceBrokerageP"
+              name='reinsuranceBrokerageP'
               value={reinsuranceBrokerageP}
               allowLeadingZeros
               thousandSeparator=','
@@ -848,7 +828,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
           </FormControl>
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <NumericFormat
-              name="taxesP"
+              name='taxesP'
               value={taxesP}
               allowLeadingZeros
               thousandSeparator=','
@@ -870,7 +850,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
 
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <NumericFormat
-              name="frontingFeeP"
+              name='frontingFeeP'
               value={frontingFeeP}
               allowLeadingZeros
               thousandSeparator=','
@@ -892,7 +872,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
           </FormControl>
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <NumericFormat
-              name="netPremium"
+              name='netPremium'
               value={netPremium}
               allowLeadingZeros
               thousandSeparator=','
@@ -915,7 +895,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
         <div className='form-col'>
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <NumericFormat
-              name="exchangeRate"
+              name='exchangeRate'
               value={placementStructure.exchangeRate}
               allowLeadingZeros
               thousandSeparator=','
@@ -930,7 +910,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
           </FormControl>
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <NumericFormat
-              name="limit"
+              name='limit'
               value={placementStructure.limit}
               allowLeadingZeros
               thousandSeparator=','
@@ -949,7 +929,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
           </FormControl>
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <NumericFormat
-              name="grossPremium"
+              name='grossPremium'
               value={grossPremium}
               allowLeadingZeros
               thousandSeparator=','
@@ -970,7 +950,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
 
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <NumericFormat
-              name="reinsuranceBrokerage"
+              name='reinsuranceBrokerage'
               value={reinsuranceBrokerage}
               allowLeadingZeros
               thousandSeparator=','
@@ -991,7 +971,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
 
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <NumericFormat
-              name="taxes"
+              name='taxes'
               value={taxes}
               allowLeadingZeros
               thousandSeparator=','
@@ -1011,7 +991,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
           </FormControl>
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <NumericFormat
-              name="frontingFee"
+              name='frontingFee'
               value={frontingFee}
               allowLeadingZeros
               thousandSeparator=','
@@ -1033,7 +1013,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
         <div className='form-col'>
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <NumericFormat
-              name="attachmentPoint"
+              name='attachmentPoint'
               value={placementStructure.attachmentPoint}
               allowLeadingZeros
               thousandSeparator=','
@@ -1053,7 +1033,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <InputLabel>Type of limit</InputLabel>
             <Select
-              name="typeOfLimit"
+              name='typeOfLimit'
               label='Type of Limit'
               value={placementStructure.typeOfLimit}
               onChange={handleSelectChange}
@@ -1075,88 +1055,80 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
   )
 }
 
-const FileSubmit: React.FC<UserFileProps> = ({
-  userFile,
-  setUserFile,
-}) => {
-
+const FileSubmit: React.FC<UserFileProps> = ({ userFile, setUserFile }) => {
   // ** State
-  const inputRef = useRef(null);
+  const inputRef = useRef<HTMLInputElement>(null)
   const [file, setFile] = useState<File[]>([])
-  const [errorFile, setErrorFile] = useState(false);
-  const [showFile, setShowFile] = useState(false);
-
+  const [errorFile, setErrorFile] = useState(false)
+  const [showFile, setShowFile] = useState(false)
 
   const setFilevalues = (uploadFiles: File[]) => {
-    setFile(uploadFiles);
+    setFile(uploadFiles)
     setErrorFile(false)
     setShowFile(true)
-
   }
   // triggers when file is selected with click
   const onFileChange = function (e: any) {
-    e.preventDefault();
+    e.preventDefault()
     setFilevalues(e.target.files[0])
-    setUserFile({file: e.target.files[0]});
-  };
+    setUserFile({ file: e.target.files[0] })
+  }
 
   // triggers the input when the button is clicked
   const onButtonClick = () => {
-    inputRef.current.click();
-  };
-
+    inputRef.current && inputRef.current.click()
+  }
 
   const handleRemoveFile = (e: any) => {
-    e.preventDefault();
+    e.preventDefault()
     // const filtered = uploadedFiles.filter((i: FileProp) => i.name !== file.name)
-    setUserFile({file: null});
+    setUserFile({ file: null })
     setShowFile(false)
   }
 
-  useEffect(
-    () => {
-      // console.log(userFile?.length)
-    }, [userFile])
+  useEffect(() => {
+    // console.log(userFile?.length)
+  }, [userFile])
   return (
     <Fragment>
-      <div className="upload-btn">
-        <form id="form-file-upload" onSubmit={(e) => e.preventDefault()}>
-          <input ref={inputRef} type="file" className='input-file-upload' id="input-file-upload" accept="image/*" onChange={onFileChange} />
-          <label id="label-file-upload" htmlFor="input-file-upload">
-            {showFile
-              ? <div className='file-details'>
+      <div className='upload-btn'>
+        <form id='form-file-upload' onSubmit={e => e.preventDefault()}>
+          <input
+            ref={inputRef}
+            type='file'
+            className='input-file-upload'
+            id='input-file-upload'
+            accept='image/*'
+            onChange={onFileChange}
+          />
+          <label id='label-file-upload' htmlFor='input-file-upload'>
+            {showFile ? (
+              <div className='file-details'>
                 <Icon icon='mdi:file-document-outline' />
-                <Typography className='file-name'>{file?.name}</Typography>
-                <IconButton
-                  onClick={(e) => handleRemoveFile(e)}>
+                <Typography className='file-name'>{file[0].name}</Typography>
+                <IconButton onClick={e => handleRemoveFile(e)}>
                   <Icon icon='mdi:close' fontSize={20} />
                 </IconButton>
               </div>
-              : <Button
-                className="upload-button"
-                onClick={onButtonClick}
-                variant='outlined'>
-                <div className="btn-icon">
+            ) : (
+              <Button className='upload-button' onClick={onButtonClick} variant='outlined'>
+                <div className='btn-icon'>
                   <Icon icon='mdi:upload' />
                 </div>
                 UPLOAD DOCUMENT
               </Button>
-
-            }
+            )}
           </label>
         </form>
       </div>
-
     </Fragment>
   )
-
 }
 
 const Information: React.FC = () => {
-
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
   const inter = userThemeConfig.typography?.fontFamilyInter
-  const [makeValidations, setMakeValidations] = useState(false);
+  const [makeValidations, setMakeValidations] = useState(false)
 
   const [basicInfo, setBasicInfo] = useState({
     insured: '',
@@ -1171,37 +1143,37 @@ const Information: React.FC = () => {
     technicalAssistant: '',
     receptionDate: new Date(),
     effectiveDate: new Date(),
-    expirationDate: new Date(),
-  });
+    expirationDate: new Date()
+  })
 
-  const [placementStructure, setPlacementStructure] = useState({
+  //@OALR
+  const [placementStructure, setPlacementStructure] = useState<IPlacementStructureProps>({
     currency: '',
-    total: 0.00,
-    sir: 0.00,
-    reinsuranceBrokerageP: 0.00,
-    taxesP: 0.00,
-    frontingFeeP: 0.00,
-    netPremium: 0.00,
-    exchangeRate: 0.00,
-    limit: 0.00,
-    grossPremium: 0.00,
-    reinsuranceBrokerage: 0.00,
-    taxes: 0.00,
-    frontingFee: 0.00,
-    attachmentPoint: 0.00,
-    typeOfLimit: '',
-  });
-  const [userFile, setUserFile] = useState({
-    file: null,
-  });
-
+    total: 0.0,
+    sir: 0.0,
+    reinsuranceBrokerageP: 0.0,
+    taxesP: 0.0,
+    frontingFeeP: 0.0,
+    netPremium: 0.0,
+    exchangeRate: 0.0,
+    limit: 0.0,
+    grossPremium: 0.0,
+    reinsuranceBrokerage: 0.0,
+    taxes: 0.0,
+    frontingFee: 0.0,
+    attachmentPoint: 0.0,
+    typeOfLimit: ''
+  })
+  const [userFile, setUserFile] = useState<{ file: File | null }>({
+    file: null
+  })
 
   const handleSubmit = () => {
     setMakeValidations(true)
     console.log(basicInfo, placementStructure, userFile)
   }
 
-  const resetMakeValidations=()=>{
+  const resetMakeValidations = () => {
     setMakeValidations(false)
   }
 
@@ -1215,28 +1187,25 @@ const Information: React.FC = () => {
 
           <div className='section'>
             <PlacementStructure
-            placementStructure={placementStructure}
-            setPlacementStructure={setPlacementStructure}
-            makeValidations={makeValidations}
-            resetMakeValidations={resetMakeValidations} />
+              placementStructure={placementStructure}
+              setPlacementStructure={setPlacementStructure}
+              makeValidations={makeValidations}
+              resetMakeValidations={resetMakeValidations}
+            />
           </div>
 
-          <div className="section">
-            <div className="title">File submit</div>
+          <div className='section'>
+            <div className='title'>File submit</div>
             <FileSubmit userFile={userFile} setUserFile={setUserFile} />
           </div>
-          <div className="section">
-            <Button
-              className="upload-button"
-              onClick={handleSubmit}
-            >
-              <div className="btn-icon">
+          <div className='section'>
+            <Button className='upload-button' onClick={handleSubmit}>
+              <div className='btn-icon'>
                 <Icon icon='mdi:content-save' />
               </div>
               SAVE CHANGES
             </Button>
           </div>
-
         </form>
       </div>
     </>
