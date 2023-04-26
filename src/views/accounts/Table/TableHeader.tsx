@@ -20,6 +20,7 @@ import useAccountTable from 'src/hooks/accounts/Table/useAccountTable'
 import CustomAlert, { IAlert } from 'src/pages/components/custom/alerts'
 import { useAppDispatch, useAppSelector } from 'src/store'
 import { deleteAccountFilter } from 'src/store/apps/accounts'
+import { IFilters } from 'src/types/apps/accountsTypes'
 
 enum EActions {
   DELETE_ALL = 'Delete All',
@@ -97,7 +98,7 @@ const TableHeader: React.FC<ITableHeader> = ({ selectedRows, badgeData }) => {
 
   type EStatusKeys = keyof typeof EStatus
 
-  const handleDelete = filter => {
+  const handleDelete = (filter: IFilters) => {
     dispatch(deleteAccountFilter(filter.type))
   }
 
