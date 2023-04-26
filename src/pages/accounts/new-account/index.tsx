@@ -9,6 +9,7 @@ import CommentSection from 'src/views/accounts/new-account-steps/CommentSection'
 
 // import Information from 'src/views/accounts/new-account-steps/information';
 import Security from 'src/views/accounts/new-account-steps/Security'
+import FormHeader from 'src/views/accounts/new-account-steps/headers/formHeader'
 
 const NewAccount = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -16,7 +17,9 @@ const NewAccount = () => {
 
   return (
     <Grid className='new-account' item xs={12}>
-      <Card>New Account header</Card>
+      <Card>
+        <FormHeader />
+      </Card>
       <Card>
         <div>Accoun Stepper</div>
         <Security />

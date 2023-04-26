@@ -222,3 +222,146 @@
   margin-right: 10px;
   margin-top: -3px;
 }
+
+.header-menu {
+  display: block;
+  justify-content: space-between;
+  background-color: #f7f7f9;
+  height: 80px;
+  width: 80px;
+  padding-top: 20px;
+  padding-bottom: 18px;
+  text-transform: none;
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 20px;
+  /* identical to box height, or 167% */
+
+  text-align: center;
+  letter-spacing: 0.4px;
+
+  /* Light/Text/Secondary */
+
+  color: rgba(77, 80, 98, 0.68);
+}
+
+.form-header-section:first-child {
+  grid-column: span 2;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-column-gap: 0px;
+  grid-row-gap: 0px;
+}
+
+.double-gap {
+  grid-column: span 2;
+  margin-top: 20px;
+}
+
+.block {
+  display: block;
+}
+.form-header {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: 1fr;
+  grid-column-gap: 24px;
+  grid-row-gap: 0px;
+  align-items: center;
+  min-height: 80px;
+  padding: 20px;
+  padding-top: 80px;
+  padding-bottom: 0px;
+}
+.form-header2 {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: 1fr;
+  grid-column-gap: 24px;
+  grid-row-gap: 0px;
+  align-items: center;
+  min-height: 80px;
+  padding: 20px;
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 175%;
+  letter-spacing: 0.15px;
+  color: rgba(77, 80, 98, 0.38);
+  margin-right: 20px;
+}
+.header-menu span {
+  color: gray;
+  display: block;
+  width: 100%;
+  margin-top: 5px;
+}
+
+.header-form-main {
+  display: inline-block;
+}
+
+.form-header-title {
+  width: 178px;
+  height: 32px;
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 32px;
+  letter-spacing: 0.15px;
+  color: rgba(77, 80, 98, 0.87);
+  flex: none;
+  order: 0;
+  flex-grow: 0;
+  display: block;
+}
+
+.form-header-subtitle {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 32px;
+  letter-spacing: 0.15px;
+  color: rgba(77, 80, 98, 0.68);
+  flex: none;
+  order: 1;
+  align-self: stretch;
+  flex-grow: 0;
+}
+
+.blue-subtitle {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 32px;
+  letter-spacing: 0.15px;
+  color: #2535a8;
+  flex: none;
+  order: 1;
+  align-self: stretch;
+  flex-grow: 0;
+}
+.form-header-data {
+  width: 80%;
+}
+
+.form-header-title2 {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 24px;
+  line-height: 133.4%;
+  color: rgba(77, 80, 98, 0.87);
+  flex: none;
+  order: 0;
+  align-self: stretch;
+  flex-grow: 0;
+}
