@@ -1,0 +1,35 @@
+export interface InformationDto {
+  id: number
+  insured: string
+  effetiveDate: Date
+  expirationDate: Date
+  limit: number
+  attachmentPoint: number
+  reinsuranceBrokerage: number
+  taxes: number
+  taxesTotal: number
+  reinsuranceBrokerageTotal: number
+  sir: number
+  totalValues: number
+  riskClass: number
+  frontingFeeTotal: number
+  frontingFee: number
+  step: number
+  currency: string
+  exchangeRate: number
+  netPremiun: number
+  grossPremium: number
+  idAccount: number
+  idCountry: number
+  idBroker: number
+  idBrokerContact: number
+  idCedant: number
+  idCedantContact: number
+  idLineOfBussines: number
+  idTypeOfLimit: number
+  idRiskActivity: number
+  idProgram: number
+  idLeadUnderwriter: number
+  idUnderwriter: number
+  idTechnicalAssistant: number
+}
