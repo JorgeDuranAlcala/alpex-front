@@ -7,11 +7,13 @@ pipelines:
     develop:
       - step:
           name: Build and Deploy Develop
+          deployment: develop
           #   clone:
           #      enabled: false
           script:
             - apt-get update
             - printenv > .env
+            - cat .env
             - npm install
             - npm run build
             - apt-get install -y zip
@@ -41,6 +43,7 @@ pipelines:
     master:
       - step:
           name: Build and Deploy Develop
+          deployment: production
           #   clone:
           #      enabled: false
           script:
