@@ -124,7 +124,7 @@
   margin-bottom: 40px;
 }
 
-/* Comment section -------------------------------------------------------------------------------------------------*/
+/*---- Comment section ----*/
 
 .comments .title{
   font-size: 24px;
@@ -196,4 +196,62 @@
   color: rgba(77, 80, 98, 0.68);
   font-size: 16px;
   margin-left: 20px;
+}
+
+/*---- New Account Stepper ----*/
+
+.new-account-stepper{
+  width: 100%;
+}
+
+.new-account-stepper .steps{
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 10px;
+
+}
+
+.steps .step {
+  width: 25%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  background-color: rgba(255, 255, 255, 1);
+  color:rgba(77, 80, 98, 0.68);
+  border-radius: 20px;
+  padding: 8px 15px;
+}
+
+.steps .step .step-number{
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(247, 247, 249, 1);
+  color:rgba(77, 80, 98, 0.68);
+  margin-right: 10px;
+}
+
+.steps .step .step-name{
+  font-size: 16px;
+  color:rgba(77, 80, 98, 0.68);
+}
+.steps .step.active {
+  background-color: #F7F7F9;
+  color:#2535A8;
+
+}
+.steps .step.active .step-number{
+  background-color: rgba(255, 255, 255, 1);
+  color:#2535A8;
+  font-weight:700
+}
+
+.steps .step.active .step-name{
+  color:#2535A8;
+  font-weight:700
 }

@@ -48,6 +48,10 @@ interface IModal {
   id: string
 }
 
+interface UserFile {
+  file: File | null
+}
+
 type BasicInfoProps = {
   basicInfo: {
     insured: string
@@ -88,16 +92,16 @@ type PlacementStructureProps = {
     currency: string
     total: number
     sir: number
-    reinsuranceBrokerageP: number | undefined
-    taxesP: number | undefined
-    frontingFeeP: number | undefined
-    netPremium: number | undefined
+    reinsuranceBrokerageP: number
+    taxesP: number
+    frontingFeeP: number
+    netPremium: number
     exchangeRate: number
     limit: number
-    grossPremium: number | undefined
-    reinsuranceBrokerage: number | undefined
-    taxes: number | undefined
-    frontingFee: number | undefined
+    grossPremium: number
+    reinsuranceBrokerage: number
+    taxes: number
+    frontingFee: number
     attachmentPoint: number
     typeOfLimit: string
   };
@@ -106,16 +110,16 @@ type PlacementStructureProps = {
       currency: string
       total: number
       sir: number
-      reinsuranceBrokerageP: number | undefined
-      taxesP: number | undefined
-      frontingFeeP: number | undefined
-      netPremium: number | undefined
+      reinsuranceBrokerageP: number
+      taxesP: number
+      frontingFeeP: number
+      netPremium: number
       exchangeRate: number
       limit: number
-      grossPremium: number | undefined
-      reinsuranceBrokerage: number | undefined
-      taxes: number | undefined
-      frontingFee: number | undefined
+      grossPremium: number
+      reinsuranceBrokerage: number
+      taxes: number
+      frontingFee: number
       attachmentPoint: number
       typeOfLimit: string
     }>
@@ -375,6 +379,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
     const target = event.target;
     const name = target.name;
     const value = target.value;
+    console.log(event);
     setBasicInfo({
       ...basicInfo,
       [name]: value
@@ -700,14 +705,14 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
     setNetPremium(grossPremiumc - reinsuranceBrokerageTotalFinal - taxesFinal - frontingFeeTotalFinal)
     setPlacementStructure({
       ...placementStructure,
-      reinsuranceBrokerageP: reinsuranceBrokerageP,
-      reinsuranceBrokerage: reinsuranceBrokerage,
-      taxes: taxes,
-      taxesP: taxesP,
-      frontingFeeP: frontingFeeP,
-      frontingFee: frontingFee,
-      grossPremium: grossPremium,
-      netPremium: netPremium
+      reinsuranceBrokerageP: reinsuranceBrokerageP ?? 0,
+      reinsuranceBrokerage: reinsuranceBrokerage ?? 0,
+      taxes: taxes ?? 0,
+      taxesP: taxesP ?? 0,
+      frontingFeeP: frontingFeeP ?? 0,
+      frontingFee: frontingFee ?? 0,
+      grossPremium: grossPremium ?? 0,
+      netPremium: netPremium ?? 0
     });
   }
 
@@ -840,7 +845,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               variant='outlined'
               onBlur={() => calculate('reinsuranceBrokerageP')}
               onValueChange={(value, e) => {
-                setReinsuranceBrokerageP(value.floatValue)
+                setReinsuranceBrokerageP((value.floatValue)?? 0 )
                 handleNumericInputChange(value.floatValue, e)
               }}
             />
@@ -1081,13 +1086,13 @@ const FileSubmit: React.FC<UserFileProps> = ({
 }) => {
 
   // ** State
-  const inputRef = useRef(null);
-  const [file, setFile] = useState<File[]>([])
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [file, setFile] = useState<File>()
   const [errorFile, setErrorFile] = useState(false);
   const [showFile, setShowFile] = useState(false);
 
 
-  const setFilevalues = (uploadFiles: File[]) => {
+  const setFilevalues = (uploadFiles: File) => {
     setFile(uploadFiles);
     setErrorFile(false)
     setShowFile(true)
@@ -1102,7 +1107,9 @@ const FileSubmit: React.FC<UserFileProps> = ({
 
   // triggers the input when the button is clicked
   const onButtonClick = () => {
-    inputRef.current.click();
+    if (inputRef.current !== null) {
+      inputRef.current.click();
+    }
   };
 
 
@@ -1191,7 +1198,7 @@ const Information: React.FC = () => {
     attachmentPoint: 0.00,
     typeOfLimit: '',
   });
-  const [userFile, setUserFile] = useState({
+  const [userFile, setUserFile] = useState<UserFile>({
     file: null,
   });
 
