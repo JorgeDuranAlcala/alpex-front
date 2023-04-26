@@ -6,10 +6,14 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import dayjs, { Dayjs } from 'dayjs'
 import { useState } from 'react'
+import UserThemeOptions from 'src/layouts/UserThemeOptions'
 import fonts from 'src/views/accounts/font'
 
 const DatePickerFilter = () => {
   const [value, setValue] = useState<Dayjs | null>(dayjs('2022-04-17'))
+  const userThemeConfig: any = Object.assign({}, UserThemeOptions())
+  const inter = userThemeConfig.typography?.fontFamilyInter
+  const useColor = userThemeConfig.palette?.buttonText.primary
 
   return (
     <>
@@ -45,7 +49,7 @@ const DatePickerFilter = () => {
           <Box sx={{ width: '85%', border: '1px solid rgba(68, 72, 84, 0.12)' }} />
         </Box>
         <Box sx={{ mt: 4, '& > :not(style)': { width: '100%' } }}>
-          <TextField id='standard-basic' label='By month' variant='standard' />
+          <TextField id='standard-basic' label='By month' variant='standard' sx={{ fontFamily: inter }} />
         </Box>
         <Box sx={{ mt: 4, '& > :not(style)': { width: '100%' } }}>
           <TextField id='standard-basic' label='By year' variant='standard' />
@@ -56,10 +60,11 @@ const DatePickerFilter = () => {
             width: 'auto',
             height: '30px',
             fontSize: fonts.size.px13,
-            fontFamily: fonts.inter,
+            fontFamily: inter,
             mt: 6,
             left: '38%',
-            fontWeight: 500
+            fontWeight: 500,
+            color: useColor
           }}
         >
           Apply filter

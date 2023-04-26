@@ -5,7 +5,7 @@ const HeaderTitleModal = styled('div')({
   flexDirection: 'row',
   alignItems: 'center',
   paddingTop: '20px',
-  paddingRight: '10px',
+  paddingRight: '0px',
   gap: '10px',
   width: '100%',
   height: '56px',

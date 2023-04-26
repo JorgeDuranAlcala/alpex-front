@@ -8,3 +8,7 @@ export enum ACCOUNT_ROUTES {
   GET_BY_ID = 'account',
   GET_ALL = 'account/all'
 }
+
+export enum AUTH_ROUTES {
+  LOGIN = '/auth'
+}

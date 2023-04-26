@@ -66,11 +66,9 @@ const ContainerTotal = styled('div')({
   display: 'flex',
   flexDirection: 'row',
   alignItems: 'center',
-  width: '100%',
+  width: 'auto',
   height: '19px',
-  justifyContent: 'space-between'
-
-  // border: '1px solid black'
+  gap: '12%'
 })
 export {
   HeaderTitle,

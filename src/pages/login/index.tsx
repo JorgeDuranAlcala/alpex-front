@@ -72,13 +72,13 @@ const Background = () => {
 const LoginPage = () => {
   const [rememberMe, setRememberMe] = useState<boolean>(true)
   const [showPassword, setShowPassword] = useState<boolean>(false)
+  const [authError, setAuthError]=useState<boolean>(false)
 
   // ** Hooks
   const auth = useAuth()
   const router = useRouter()
   const {
     control,
-    setError,
     handleSubmit,
     formState: { errors }
   } = useForm<FormData>({
@@ -89,10 +89,7 @@ const LoginPage = () => {
   const onSubmit: SubmitHandler<FormData> = data => {
     const { email, password } = data
     auth.login({ email, password, rememberMe }, () => {
-      setError('email', {
-        type: 'manual',
-        message: 'Email or Password is invalid'
-      })
+      setAuthError(true)
     })
   }
 
@@ -130,6 +127,7 @@ const LoginPage = () => {
                   Enter a valid email, example: name@email.com
                 </FormHelperText>
               )}
+
             </FormControl>
             <FormControl fullWidth>
               <InputLabel htmlFor='auth-login-v2-password' error={Boolean(errors.password)}>
@@ -164,7 +162,12 @@ const LoginPage = () => {
               />
               {errors.password && (
                 <FormHelperText sx={{ color: 'error.main' }} id=''>
-                  {errors.password.message}
+                  Password must be at least 5 characters.
+                </FormHelperText>
+              )}
+              {authError && (
+                <FormHelperText sx={{ color: 'error.main' }}>
+                  Incorrect email or password.
                 </FormHelperText>
               )}
             </FormControl>
