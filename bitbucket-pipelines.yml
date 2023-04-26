@@ -16,7 +16,7 @@ pipelines:
             - npm install
             - npm run build
             - apt-get install -y zip
-            - zip -r application.zip build
+            - zip -r application.zip build scripts
             - pipe: atlassian/aws-code-deploy:0.2.10
               variables:
                 AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
@@ -48,7 +48,7 @@ pipelines:
           script:
             - apt-get update
             - apt-get install -y zip
-            - zip -r application.zip .
+            - zip -r application.zip build scripts
             - pipe: atlassian/aws-code-deploy:0.2.10
               variables:
                 AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
