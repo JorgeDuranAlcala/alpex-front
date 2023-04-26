@@ -7,9 +7,13 @@ import Grid from '@mui/material/Grid'
 // ** Custom Components Imports
 import CommentSection from 'src/views/accounts/new-account-steps/CommentSection'
 
-// import Information from 'src/views/accounts/new-account-steps/information';
-import Security from 'src/views/accounts/new-account-steps/Security'
-import FormHeader from 'src/views/accounts/new-account-steps/headers/formHeader'
+// import Information from 'src/views/accounts/new-account-steps/information'
+
+import PaymentWarranty from 'src/views/accounts/new-account-steps/PaymentWarranty'
+
+// import TabAccount from 'src/views/pages/account-settings/TabAccount'
+
+// import InvoiceList from 'src/pages/apps/invoice/list'
 
 const NewAccount = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -17,13 +21,13 @@ const NewAccount = () => {
 
   return (
     <Grid className='new-account' item xs={12}>
-      <Card>
-        <FormHeader />
-      </Card>
+      <Card>New Account header</Card>
       <Card>
         <div>Accoun Stepper</div>
-        <Security />
-        {/*<PaymentWarranty />*/}{' '}
+        {/* <Information /> */}
+        <PaymentWarranty />
+        {/* <TabAccount /> */}
+        {/* <InvoiceList /> */}
       </Card>
       <Card>
         <CommentSection disable={disableComments} />

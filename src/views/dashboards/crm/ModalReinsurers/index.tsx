@@ -21,7 +21,9 @@ const ModalReinsurers = () => {
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
 
   const inter = userThemeConfig.typography?.fontFamilyInter
-  const useColor = userThemeConfig.palette?.buttonText.primary
+  const textColor = userThemeConfig.palette?.text.title
+  const sizeText = userThemeConfig.typography?.size.px16
+  const weight = userThemeConfig.typography?.fontWeight.weight400
 
   return (
     <>
@@ -29,22 +31,68 @@ const ModalReinsurers = () => {
         <ContainerData>
           <HeaderColumns>
             <Column sx={{ padding: '16px 16px 16px 20px' }}>
-              <Typography>Name</Typography>
+              <Typography
+                sx={{
+                  fontFamily: inter,
+                  fontWeight: weight,
+                  fontSize: sizeText,
+                  letterSpacing: '0.15px',
+                  color: textColor
+                }}
+              >
+                Name
+              </Typography>
             </Column>
             <Column sx={{ padding: '16px 16px 16px 0px' }}>
-              <Typography>Debt to date</Typography>
+              <Typography
+                sx={{
+                  fontFamily: inter,
+                  fontWeight: weight,
+                  fontSize: sizeText,
+                  letterSpacing: '0.15px',
+                  color: textColor
+                }}
+              >
+                Debt to date
+              </Typography>
             </Column>
           </HeaderColumns>
           {rows?.map((item, index) => (
             <Row key={index} sx={{ backgroundColor: item.backgroundColor }}>
-              <ColumnLabel>{item.label}</ColumnLabel>
-              <ColumnData>{item.data}</ColumnData>
+              <ColumnLabel
+                sx={{
+                  fontFamily: inter,
+                  fontWeight: userThemeConfig.typography?.fontWeight.weight600,
+                  fontSize: sizeText,
+                  letterSpacing: '0.15px',
+                  color: textColor
+                }}
+              >
+                {item.label}
+              </ColumnLabel>
+              <ColumnData
+                sx={{
+                  fontFamily: inter,
+                  fontWeight: weight,
+                  fontSize: sizeText,
+                  letterSpacing: '0.15px',
+                  color: textColor
+                }}
+              >
+                {item.data}
+              </ColumnData>
             </Row>
           ))}
         </ContainerData>
         <Button
           variant='outlined'
-          sx={{ width: 'auto', height: '42px', fontSize: '15px', color: useColor, fontFamily: inter }}
+          sx={{
+            width: 'auto',
+            height: '42px',
+            fontSize: userThemeConfig.typography?.size.px15,
+            color: userThemeConfig.palette?.buttonText.primary,
+            fontFamily: inter
+          }}
         >
           Reinsurers balance
         </Button>
