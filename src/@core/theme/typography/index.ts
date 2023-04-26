@@ -42,7 +42,7 @@ const Typography = (theme: Theme) => {
     },
     body1: {
       letterSpacing: '0.15px',
-      color: theme.palette.text.primary
+      color: 'red'
     },
     body2: {
       lineHeight: 1.429,

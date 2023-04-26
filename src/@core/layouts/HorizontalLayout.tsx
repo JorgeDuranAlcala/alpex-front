@@ -1,9 +1,9 @@
 // ** MUI Imports
-import Fab from '@mui/material/Fab'
 import AppBar from '@mui/material/AppBar'
-import { styled } from '@mui/material/styles'
 import Box, { BoxProps } from '@mui/material/Box'
+import Fab from '@mui/material/Fab'
 import MuiToolbar, { ToolbarProps } from '@mui/material/Toolbar'
+import { styled } from '@mui/material/styles'
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
@@ -16,10 +16,10 @@ import { LayoutProps } from 'src/@core/layouts/types'
 
 // ** Components
 import Customizer from 'src/@core/components/customizer'
-import Footer from './components/shared-components/footer'
-import Navigation from './components/horizontal/navigation'
 import ScrollToTop from 'src/@core/components/scroll-to-top'
 import AppBarContent from './components/horizontal/app-bar-content'
+import Navigation from './components/horizontal/navigation'
+import Footer from './components/shared-components/footer'
 
 // ** Util Import
 import { hexToRGBA } from 'src/@core/utils/hex-to-rgba'

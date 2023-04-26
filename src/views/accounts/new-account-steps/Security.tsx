@@ -66,30 +66,6 @@ const SecurityForm: FormInfo = {
   Diference: ''
 }
 
-interface ContactData {
-  name: string
-  email: string
-  phone: string
-  country: string
-}
-
-const initialContactData: ContactData = {
-  name: '',
-  email: '',
-  phone: '',
-  country: ''
-}
-
-interface IModal {
-  id: string
-}
-const expresions = {
-  name: /^[a-zA-ZÀ-ÿ\s]{1,40}$/, // Letras y espacios, pueden llevar acentos.
-  email:
-    /^(?:[^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*|"[^\n"]+")@(?:[^<>()[\].,;:\s@"]+\.)+[^<>()[\]\.,;:\s@"]{2,63}$/i,
-  phone: /^\d{10}$/ // 7 a 10 numeros.
-}
-
 /* eslint-disable */
 const CustomInput = forwardRef(({ ...props }: PickerProps, ref: ForwardedRef<HTMLElement>) => {
   return (
