@@ -1,5 +1,5 @@
 {
-    sudo rm -r /var/www/develop-front-banksi-copy
+    sudo rm -r /var/www/new-front-dynamic-copy
 } || {
-    sudo mkdir /var/www/develop-front-banksi-copy
+    sudo mkdir /var/www/new-front-dynamic-copy
 }
