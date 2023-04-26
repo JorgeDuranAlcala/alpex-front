@@ -13,7 +13,6 @@ pipelines:
           script:
             - apt-get update
             - printenv > .env
-            - cat .env
             - npm install
             - npm run build
             - apt-get install -y zip
