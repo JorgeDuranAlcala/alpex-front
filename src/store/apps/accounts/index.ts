@@ -2,7 +2,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 
 // ** Axios Imports
-import accountsService from 'src/services/accounts/accounts.service'
+import accountsService from 'src/services/accounts/information.service'
 import { IAccounts } from 'src/types/apps/accountsTypes'
 
 export const fetchAccounts = createAsyncThunk('appAccounts/fetchAccounts', async () => {

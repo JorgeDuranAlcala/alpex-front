@@ -42,6 +42,7 @@ const statusArray = [
 ]
 
 export default function StatusSelect({ setSelectedStatus }: StatusSelect) {
+  //eslint-disable-next-line
   const [value, setValue] = useState<string | null>(null)
   const [status, setStatus] = useState('')
 
