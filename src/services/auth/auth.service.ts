@@ -1,11 +1,11 @@
 import { AUTH_ROUTES } from 'src/configs/api'
-import { AppDynamicReApiGateWay } from '../app.alpex.api-getway'
+import { AppAlpexApiGateWay } from '../app.alpex.api-getway'
 import { AuthDto } from './dtos/AuthDto'
 
 class AuthServices {
   async login(authData: AuthDto) {
     try {
-      const resp = await AppDynamicReApiGateWay.post(`${AUTH_ROUTES.LOGIN}`, {
+      const resp = await AppAlpexApiGateWay.post(`${AUTH_ROUTES.LOGIN}`, {
         ...authData
       })
 
