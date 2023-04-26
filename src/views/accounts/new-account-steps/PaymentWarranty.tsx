@@ -47,13 +47,14 @@ const PaymentWarranty = () => {
   // }
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    console.log(event.target.value)
     setCount(parseInt(event.target.value))
   }
 
   const handleKeyDown = (event: KeyboardEvent<HTMLElement>) => {
     console.log(event.key)
     if (event.key === 'Enter') {
-      setCount(Number(count) + 1)
+      setCount(count + 1)
     }
   }
 
