@@ -21,6 +21,7 @@ import TableHeader from './TableHeader'
 import ModalAction from './modal'
 
 // ** Custom utilities
+import { Link } from '@mui/material'
 import { IAlert } from 'src/pages/components/custom/alerts'
 import { useAppDispatch, useAppSelector } from 'src/store'
 import { fetchAccounts } from 'src/store/apps/accounts'
@@ -100,7 +101,7 @@ const Table = () => {
       renderHeader: ({ colDef }) => <ColumnHeader colDef={colDef} action={handleClickColumnHeader} />,
       renderCell: ({ row }) => (
         <Typography sx={{ color: colors.primary.main, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
-          {`#${row.id}`}
+          <Link href='#'>{`#${row.id}`}</Link>
         </Typography>
       )
     },
@@ -138,7 +139,9 @@ const Table = () => {
         <Typography
           sx={{ color: colors.text.primary, fontWeight: 500, fontSize: fonts.size.px14, fontFamily: fonts.inter }}
         >
-          {row.insured}
+          <Link sx={{ color: colors.text.primary }} href='#'>
+            {row.insured}
+          </Link>
         </Typography>
       )
     },

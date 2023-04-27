@@ -64,7 +64,7 @@ const UserThemeOptions = (): ThemeOptions => {
         primary: '#2535A8'
       },
       text: {
-        primary: `rgba(${mainColor}, 0.87)`,
+        primary: `rgba(${middleColor}, 0.87)`,
         secondary: `rgba(${mainColor}, 0.6)`,
         disabled: `rgba(${mainColor}, 0.38)`,
         dark: `rgba(${darkColor}, 0.87)`,
