@@ -7,7 +7,8 @@
     "build": "next build && next export -o build",
     "start": "next start",
     "export": "next export",
-    "lint": "eslint --fix \"src/**/*.{js,jsx,ts,tsx}\"",
+    "lint:fix": "eslint --fix \"src/**/*.{js,jsx,ts,tsx}\"",
+    "lint": "next lint",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\"",
     "build:icons": "tsc -b src/iconify-bundle && node src/iconify-bundle/bundle-icons-react.js"
   },
@@ -45,6 +46,7 @@
     "dayjs": "^1.11.7",
     "draft-js": "0.11.7",
     "firebase": "9.13.0",
+    "html2canvas": "^1.4.1",
     "i18next": "22.0.4",
     "i18next-browser-languagedetector": "7.0.0",
     "i18next-http-backend": "2.0.0",
