@@ -230,20 +230,10 @@ const ModalContact = ({ id }: IModal) => {
         </div>
         CREATE NEW CONTACT
       </Button>
-      <Modal open={open} onClose={handleClose}>
+      <Modal className="create-contact-modal" open={open} onClose={handleClose}>
         <Box
-          sx={{
-            position: 'absolute',
-            bgcolor: 'white',
-            top: '50%',
-            left: '50%',
-            boxShadow: 24,
-            pl: 5,
-            pr: 5,
-            transform: 'translate(-50%, -50%)',
-            borderRadius: '10px',
-            padding: '15px'
-          }}
+          className="modal-wrapper"
+
         >
           <HeaderTitleModal>
             <Typography variant='h6'>Create new contact</Typography>

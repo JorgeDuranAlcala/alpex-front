@@ -59,10 +59,12 @@
   width: 100%;
   padding: 15px;
 }
+
 .information .MuiButton-root,
 .information .MuiInputLabel-root {
   font-family: 'Inter';
 }
+
 .information .form-wrapper {
   width: 100%;
   display: flex;
@@ -78,56 +80,78 @@
   margin-bottom: 25px;
 }
 
-.information .create-contact-btn {
+.create-contact-btn {
   margin: 10px;
+}
+
+ .modal-wrapper {
+  position: absolute;
+  background-color: white;
+  top: 50%;
+  left: 50%;
+  box-shadow:
+    0px 11px 15px -7px rgba(76, 78, 100, 0.2),
+    0px 24px 38px 3px rgba(76, 78, 100, 0.14),
+    0px 9px 46px 8px rgba(76, 78, 100, 0.12);
+  transform: translate(-50%, -50%);
+  border-radius: 10px;
+  padding: 15px;
 }
 
 .information .input-file-upload {
   display: none;
 }
 
-.information .action-buttons{
+.information .action-buttons {
   display: flex;
   justify-content: flex-end;
+  flex-wrap: wrap;
   margin: 0;
 }
 
-.next-step-modal .next-modal-title{
+.next-step-modal .next-modal-title {
   font-size: 24px !important;
   margin: 0;
-    font-family: "Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji";
-    font-weight: 500;
-    font-size: 1.125rem;
-    line-height: 1.6;
-    letter-spacing: 0.15px;
-    color: rgba(77, 80, 98, 0.87);
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+  font-weight: 500;
+  font-size: 1.125rem;
+  line-height: 1.6;
+  letter-spacing: 0.15px;
+  color: rgba(77, 80, 98, 0.87);
 }
 
-.next-step-modal .next-modal-text{
+.stepper-modal .stepper-modal-text,
+.next-step-modal .next-modal-text {
   font-size: 14px;
   max-width: 560px;
   color: rgba(77, 80, 98, 0.68);
   margin-bottom: 30px;
 }
 
-.information .action-buttons .btn-next.MuiButton-root{
+.stepper-modal .stepper-modal-btn{
+ width: 100%;
+}
+
+.information .action-buttons .btn-next.MuiButton-root {
   color: #2535A8;
 }
-.information .action-buttons .btn-next.MuiButton-root.Mui-disabled{
+
+.information .action-buttons .btn-next.MuiButton-root.Mui-disabled {
   color: rgba(76, 78, 100, 0.26);
 }
-.information .action-buttons .btn-save.MuiButton-root{
+
+.information .action-buttons .btn-save.MuiButton-root {
   background-color: #64C623;
   margin-right: 10px;
 }
 
-.information .action-buttons .btn-save.MuiButton-root.Mui-disabled{
+.information .action-buttons .btn-save.MuiButton-root.Mui-disabled {
   background-color: rgba(76, 78, 100, 0.12);
   margin-right: 10px;
 }
 
 .continue-modal-btn,
-.create-contact-modal{
+.create-contact-modal {
   width: 100%;
   margin: 10px 0 !important;
 }
@@ -164,18 +188,39 @@
 .section {
   margin-bottom: 40px;
 }
-.information .error .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline{
+
+.information .error .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline {
   border: 1px solid red;
   border-radius: 10px;
 }
 
-.information .error .MuiInputLabel-root{
+.information .error .MuiInputLabel-root {
   color: red;
 }
 
-.information .error .MuiSvgIcon-root{
+.information .error .MuiSvgIcon-root {
   color: red;
 }
+
+@media (max-width: 800px) {
+  .information .form-col {
+    width: 45%;
+  }
+ .modal-wrapper {
+    min-width: 80vw;
+  }
+}
+
+@media (max-width: 550px) {
+  .information .form-col {
+    width: 100%;
+  }
+
+  .information .MuiButton-root {
+    width: 100%;
+  }
+}
+
 /*---- Comment section ----*/
 
 .comments .title {
@@ -184,6 +229,7 @@
   font-weight: 600;
   padding: 15px 20px;
 }
+
 .comments .MuiFormControl-root {
   margin-bottom: 0px !important;
 }
@@ -229,6 +275,7 @@
 .comments .message {
   padding-left: 31px;
 }
+
 .comments .message-globe {
   background-color: #f5f5f5;
   border-radius: 0px 20px 20px 20px;
@@ -252,11 +299,11 @@
 
 /*---- New Account Stepper ----*/
 
-.new-account-stepper{
+.new-account-stepper {
   width: 100%;
 }
 
-.new-account-stepper .steps{
+.new-account-stepper .steps {
   width: 100%;
   display: flex;
   align-items: center;
@@ -271,12 +318,12 @@
   align-items: center;
   justify-content: flex-start;
   background-color: rgba(255, 255, 255, 1);
-  color:rgba(77, 80, 98, 0.68);
+  color: rgba(77, 80, 98, 0.68);
   border-radius: 20px;
   padding: 8px 15px;
 }
 
-.steps .step .step-number{
+.steps .step .step-number {
   width: 25px;
   height: 25px;
   border-radius: 50%;
@@ -284,29 +331,48 @@
   align-items: center;
   justify-content: center;
   background-color: rgba(247, 247, 249, 1);
-  color:rgba(77, 80, 98, 0.68);
+  color: rgba(77, 80, 98, 0.68);
   margin-right: 10px;
 }
 
-.steps .step .step-name{
+.steps .step .step-name {
   font-size: 16px;
-  color:rgba(77, 80, 98, 0.68);
+  color: rgba(77, 80, 98, 0.68);
 }
+
 .steps .step.active {
   background-color: #F7F7F9;
-  color:#2535A8;
+  color: #2535A8;
 
 }
-.steps .step.active .step-number{
+
+.steps .step.active .step-number {
   background-color: rgba(255, 255, 255, 1);
-  color:#2535A8;
-  font-weight:700
+  color: #2535A8;
+  font-weight: 700
 }
 
-.steps .step.active .step-name{
-  color:#2535A8;
-  font-weight:700
+.steps .step.active .step-name {
+  color: #2535A8;
+  font-weight: 700
 }
+
+@media (max-width: 700px) {
+  .steps .step.active {
+    width: 100%;
+    display: flex;
+  }
+
+  .steps .step {
+    display: none;
+  }
+}
+
+@media (max-width: 550px) {}
+
+
+/* Fin Stepper */
+
 .fullwidth {
   width: 100%;
   display: grid;
@@ -329,6 +395,7 @@
 .add-reinsurer {
   width: 30%;
 }
+
 .icon-btn {
   margin-right: 10px;
   margin-top: -3px;
@@ -374,6 +441,7 @@
 .block {
   display: block;
 }
+
 .form-header {
   width: 100%;
   display: grid;
@@ -387,6 +455,7 @@
   padding-top: 80px;
   padding-bottom: 0px;
 }
+
 .form-header2 {
   width: 100%;
   display: grid;
@@ -406,6 +475,7 @@
   color: rgba(77, 80, 98, 0.38);
   margin-right: 20px;
 }
+
 .header-menu span {
   color: gray;
   display: block;
@@ -460,6 +530,7 @@
   align-self: stretch;
   flex-grow: 0;
 }
+
 .form-header-data {
   width: 80%;
 }
