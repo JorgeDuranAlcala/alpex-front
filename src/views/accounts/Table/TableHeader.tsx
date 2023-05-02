@@ -8,6 +8,7 @@ import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
 import Select, { SelectChangeEvent } from '@mui/material/Select'
 import { GridRowId } from '@mui/x-data-grid'
+import { useRouter } from 'next/router'
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
@@ -34,6 +35,7 @@ interface ITableHeader {
 
 const TableHeader: React.FC<ITableHeader> = ({ selectedRows, badgeData }) => {
   // ** Custom Hooks
+  const router = useRouter()
   const { deleteAccounts, changeStatusAccounts } = useAccountTable()
 
   const dispatch = useAppDispatch()
@@ -239,7 +241,7 @@ const TableHeader: React.FC<ITableHeader> = ({ selectedRows, badgeData }) => {
       </Box>
       <Box sx={{ marginLeft: 'auto' }}>
         {!badgeData.status ? (
-          <Button sx={{ mb: 2 }} variant='contained'>
+          <Button sx={{ mb: 2 }} variant='contained' onClick={() => router.push('/accounts/new-account')}>
             ADD ACCOUNT &nbsp; <Icon icon='mdi:plus' />
           </Button>
         ) : (
