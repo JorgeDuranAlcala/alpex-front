@@ -22,7 +22,8 @@ const FilterMenuAccountId = () => {
       dispatch(
         handleAccountFilter({
           type: 'ID',
-          value: `ID:  ${query}`
+          value: `ID:  ${query}`,
+          text: `${query}`,
         })
       )
     // eslint-disable-next-line react-hooks/exhaustive-deps
