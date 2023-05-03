@@ -5,7 +5,8 @@ import { useEffect, useState } from 'react'
 import Status from 'src/views/accounts/Table/Status'
 
 interface StatusSelect {
-  setSelectedStatus: React.Dispatch<React.SetStateAction<any>>
+  setSelectedStatus: React.Dispatch<React.SetStateAction<any>>,
+  initialStatus: string
 }
 
 const statusArray = [
@@ -41,10 +42,10 @@ const statusArray = [
   }
 ]
 
-export default function StatusSelect({ setSelectedStatus }: StatusSelect) {
+export default function StatusSelect({ setSelectedStatus, initialStatus }: StatusSelect) {
   //eslint-disable-next-line
   const [value, setValue] = useState<string | null>(null)
-  const [status, setStatus] = useState('')
+  const [status, setStatus] = useState(initialStatus)
 
   const handleChange = (event: SelectChangeEvent) => {
     setStatus(event.target.value)
@@ -65,12 +66,13 @@ export default function StatusSelect({ setSelectedStatus }: StatusSelect) {
   */
 
   return (
-    <div>
+    <div className='status-select'>
       <FormControl sx={{ m: 1, width: '100%' }} size='small'>
         <Select
+         className='status-select-input'
           labelId='demo-select-small-label'
           id='demo-select-small'
-          sx={{ background: statusArray.find(statObj => status === statObj.value)!.background }}
+          sx={{ background: "#E6EDFD", borderRadius: "20px" }}
           value={status}
           onChange={handleChange}
         >
