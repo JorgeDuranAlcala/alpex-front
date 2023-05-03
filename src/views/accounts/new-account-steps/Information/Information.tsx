@@ -34,6 +34,9 @@ interface BasicInfoInterface {
   receptionDate: Date | null
   effectiveDate: Date | null
   expirationDate: Date | null
+  industryCode: string
+  riskActivity: string
+  riskClass: string
 }
 
 interface UserFile {
@@ -65,6 +68,9 @@ const Information: React.FC<InformationProps> = ({ onStepChange }) => {
     receptionDate: null,
     effectiveDate: null,
     expirationDate: null,
+    industryCode: '',
+    riskActivity: '',
+    riskClass: '',
   });
   const [placementStructure, setPlacementStructure] = useState({
     currency: '',

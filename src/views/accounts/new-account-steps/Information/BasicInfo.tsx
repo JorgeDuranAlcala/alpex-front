@@ -55,6 +55,9 @@ interface BasicInfoErrors {
   receptionDateError: boolean,
   effectiveDateError: boolean,
   expirationDateError: boolean,
+  industryCodeError: boolean,
+  riskActivityError: boolean,
+  riskClassError: boolean,
 }
 
 
@@ -74,6 +77,9 @@ type BasicInfoProps = {
     receptionDate: Date | null
     effectiveDate: Date | null
     expirationDate: Date | null
+    industryCode: string
+    riskActivity: string
+    riskClass: string
   };
   setBasicInfo: React.Dispatch<
     React.SetStateAction<{
@@ -90,6 +96,9 @@ type BasicInfoProps = {
       receptionDate: Date | null
       effectiveDate: Date | null
       expirationDate: Date | null
+      industryCode: string
+      riskActivity: string
+      riskClass: string
     }>
   >;
   makeValidations: boolean;
@@ -319,7 +328,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
   resetMakeValidations,
   isValidForm
 }) => {
-
+  const [bussinesFields, setBussinesFields]= useState(true)
   const [errors, setErrors] = useState<BasicInfoErrors>(
     {
       insuredError: false,
@@ -333,6 +342,9 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
       receptionDateError: false,
       effectiveDateError: false,
       expirationDateError: false,
+      industryCodeError: false,
+      riskActivityError: false,
+      riskClassError: false,
     });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -349,6 +361,9 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
       ...basicInfo,
       [name]: value
     });
+    if(name=="lineOfBusiness"){
+      setBussinesFields(false)
+    }
   };
   const handleReceptionDateChange = (date: Date) => {
     setBasicInfo({ ...basicInfo, receptionDate: date });
@@ -376,7 +391,9 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
       receptionDateError: basicInfo.receptionDate === null,
       effectiveDateError: basicInfo.effectiveDate === null,
       expirationDateError: basicInfo.expirationDate === null,
-
+      industryCodeError: basicInfo.industryCode === '',
+      riskActivityError: basicInfo.riskActivity === '',
+      riskClassError: basicInfo.riskClass === '',
     };
 
     setErrors(newErrors);
@@ -547,6 +564,48 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
                 {getErrorMessage('lineOfBusinessError')}
               </FormHelperText>
             )}
+          </FormControl>
+          <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
+            <TextField
+              autoFocus
+              name="industry-code"
+              label='Industry code'
+              value={basicInfo.industryCode}
+              disabled={bussinesFields}
+              onChange={handleInputChange}
+              error={!!errors.industryCodeError}
+              helperText={getErrorMessage('industryCodeError')}
+            />
+
+
+          </FormControl>
+          <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
+            <TextField
+              autoFocus
+              name="risk-activity"
+              label='Risk activity'
+              value={basicInfo.riskActivity}
+              disabled={bussinesFields}
+              onChange={handleInputChange}
+              error={!!errors.riskActivityError}
+              helperText={getErrorMessage('riskActivityError')}
+            />
+
+
+          </FormControl>
+          <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
+            <TextField
+              autoFocus
+              name="risk-class"
+              label='Risk class'
+              value={basicInfo.riskClass}
+              disabled={bussinesFields}
+              onChange={handleInputChange}
+              error={!!errors.riskClassError}
+              helperText={getErrorMessage('riskClassError')}
+            />
+
+
           </FormControl>
         </div>
         <div className='form-col'>
