@@ -12,13 +12,12 @@ import Icon from 'src/@core/components/icon'
 import colors from 'src/views/accounts/colors'
 import fonts from 'src/views/accounts/font'
 
-
 export interface IComponents {
-    [key:string]: ReactElement
+  [key: string]: ReactElement
 }
-  
+
 interface IStatusProps {
-    status: string
+  status: string
 }
 
 export enum EStatus {
@@ -26,7 +25,7 @@ export enum EStatus {
   NOT_MATERIALIZED = 'notMaterialized',
   NOT_TAKEN_UP = 'notTakenUp',
   DECLINED = 'declined',
-  BOUND = 'bound',
+  BOUND = 'bound'
 }
 
 export enum EStatusString {
@@ -34,65 +33,64 @@ export enum EStatusString {
   NOT_MATERIALIZED = 'Not Materialized',
   NOT_TAKEN_UP = 'Not Taken Up',
   DECLINED = 'Declined',
-  BOUND = 'Bound',
+  BOUND = 'Bound'
 }
-  
-  const Status: React.FC<IStatusProps> = ({status}) => {
-    const statusComponents:IComponents = {
-      [EStatus.PENDING]:(
-        <>
-          <Box component='span' sx={{ display: 'flex', mr: 2, color: colors.info.dark }}>
-            <Icon icon='mdi:clock' fontSize={20} />
-          </Box>
-          <Typography sx={{ color: colors.info.dark, fontSize:fonts.size.px13,fontFamily:fonts.inter }}>
+
+const Status: React.FC<IStatusProps> = ({ status }) => {
+  const statusComponents: IComponents = {
+    [EStatus.PENDING]: (
+      <>
+        <Box component='span' sx={{ display: 'flex', gap: 2, color: colors.info.dark }}>
+          <Icon icon='mdi:clock' fontSize={20} />
+          <Typography sx={{ color: colors.info.dark, fontSize: fonts.size.px13, fontFamily: fonts.inter }}>
             {EStatusString.PENDING}
           </Typography>
-        </>
-      ),
-      [EStatus.BOUND]:(
-        <>
-          <Box component='span' sx={{ display: 'flex', mr: 2, color: colors.primary.light }}>
-            <Icon icon='icon-park-outline:link-three' fontSize={20} />
-          </Box>
-          <Typography sx={{ color: colors.primary.light, fontSize:fonts.size.px13,fontFamily:fonts.inter }}>
+        </Box>
+      </>
+    ),
+    [EStatus.BOUND]: (
+      <>
+        <Box component='span' sx={{ display: 'flex', gap: 2, color: colors.primary.light }}>
+          <Icon icon='icon-park-outline:link-three' fontSize={20} />
+          <Typography sx={{ color: colors.primary.light, fontSize: fonts.size.px13, fontFamily: fonts.inter }}>
             {EStatusString.BOUND}
           </Typography>
-        </>
-      ),
-      [EStatus.NOT_MATERIALIZED]:(
-        <>
-          <Box component='span' sx={{ display: 'flex', mr: 2, color: colors.warning.dark }}>
-            <Icon icon='mdi:progress-helper' fontSize={20} />
-          </Box>
-          <Typography sx={{ color: colors.warning.dark, fontSize:fonts.size.px13,fontFamily:fonts.inter }}>
-          {EStatusString.NOT_MATERIALIZED}
+        </Box>
+      </>
+    ),
+    [EStatus.NOT_MATERIALIZED]: (
+      <>
+        <Box component='span' sx={{ display: 'flex', gap: 2, color: colors.warning.dark }}>
+          <Icon icon='mdi:progress-helper' fontSize={20} />
+          <Typography sx={{ color: colors.warning.dark, fontSize: fonts.size.px13, fontFamily: fonts.inter }}>
+            {EStatusString.NOT_MATERIALIZED}
           </Typography>
-        </>
-      ),
-      [EStatus.NOT_TAKEN_UP]:(
-        <>
-          <Box component='span' sx={{ display: 'flex', mr: 2, color: colors.secondary.dark }}>
+        </Box>
+      </>
+    ),
+    [EStatus.NOT_TAKEN_UP]: (
+      <>
+        <Box component='span' sx={{ display: 'flex', gap: 2, color: colors.secondary.dark }}>
           <Icon icon='custom:not-taken-up' fontSize={20} />
-          </Box>
-          <Typography sx={{ color: colors.secondary.dark, fontSize:fonts.size.px13,fontFamily:fonts.inter }}>
-          {EStatusString.NOT_TAKEN_UP}
+          <Typography sx={{ color: colors.secondary.dark, fontSize: fonts.size.px13, fontFamily: fonts.inter }}>
+            {EStatusString.NOT_TAKEN_UP}
           </Typography>
-          
-        </>
-      ),
-      [EStatus.DECLINED]:(
-        <>
-          <Box component='span' sx={{ display: 'flex', mr: 2, color: colors.error.dark }}>
-            <Icon icon='mdi:cancel' fontSize={20} />
-          </Box>
-          <Typography sx={{ color: colors.error.dark, fontSize:fonts.size.px13,fontFamily:fonts.inter }}>
-          {EStatusString.DECLINED}
+        </Box>
+      </>
+    ),
+    [EStatus.DECLINED]: (
+      <>
+        <Box component='span' sx={{ display: 'flex', gap: 2, color: colors.error.dark }}>
+          <Icon icon='mdi:cancel' fontSize={20} />
+          <Typography sx={{ color: colors.error.dark, fontSize: fonts.size.px13, fontFamily: fonts.inter }}>
+            {EStatusString.DECLINED}
           </Typography>
-        </>
-      ),
-    }
-  
-    return statusComponents[status]
+        </Box>
+      </>
+    )
   }
 
-  export default Status
+  return statusComponents[status]
+}
+
+export default Status

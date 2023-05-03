@@ -41,8 +41,7 @@ const FormControlLabel = styled(MuiFormControlLabel)<FormControlLabelProps>(({ t
 }))
 
 const schema = yup.object().shape({
-  email: yup.string().email().required(),
-  password: yup.string().min(5).required()
+  email: yup.string().email().required()
 })
 
 type FormData = {
@@ -144,7 +143,6 @@ const LoginPage = () => {
                     label='Password'
                     onChange={onChange}
                     id='auth-login-v2-password'
-                    error={Boolean(errors.password)}
                     type={showPassword ? 'text' : 'password'}
                     endAdornment={
                       <InputAdornment position='end'>
@@ -160,11 +158,7 @@ const LoginPage = () => {
                   />
                 )}
               />
-              {errors.password && (
-                <FormHelperText sx={{ color: 'error.main' }} id=''>
-                  Password must be at least 5 characters.
-                </FormHelperText>
-              )}
+
               {authError && (
                 <FormHelperText sx={{ color: 'error.main' }}>
                   Incorrect email or password.
