@@ -5,6 +5,7 @@ import Card from '@mui/material/Card';
 import Grid from '@mui/material/Grid';
 
 // ** Custom Components Imports
+import ActionsHeader from 'src/views/accounts/new-account-steps/headers/ActionsHeader';
 import Information from 'src/views/accounts/new-account-steps/Information/Information';
 import PaymentWarranty from 'src/views/accounts/new-account-steps/PaymentWarranty';
 import Security from 'src/views/accounts/new-account-steps/Security';
@@ -18,7 +19,7 @@ import NewAccountStepper from 'src/views/components/new-accounts/NewAccountStepp
 const NewAccount = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [disableComments, setDisableComments] = useState(false)
-  const [activeStep, setActiveStep] = useState(3);
+  const [activeStep, setActiveStep] = useState(1);
 
   const handleStepChange = (step: number) => {
     setActiveStep(step);
@@ -27,7 +28,9 @@ const NewAccount = () => {
 
   return (
     <Grid className='new-account' item xs={12}>
-      <Card>New Account header</Card>
+      <Card>
+        <ActionsHeader />
+      </Card>
       <Card>
         <NewAccountStepper changeStep={activeStep} onStepChange={handleStepChange} />
         {activeStep == 1 ? <Information onStepChange={handleStepChange} /> : ""}
@@ -39,7 +42,7 @@ const NewAccount = () => {
       <Card>
         <CommentSection disable={disableComments} />
       </Card>
-    </Grid>
+    </Grid >
   )
 }
 

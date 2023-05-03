@@ -50,8 +50,99 @@
 }
 
 /* - New accoun styles ----------------------------------------------------------------------------------------------  */
+
 .new-account .MuiCard-root {
   margin: 20px 0;
+}
+/*---- Header----*/
+
+.actions-header {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.header-row{
+  width: 100%;
+  display: flex;
+  padding: 10px 5px;
+}
+
+.header-text{
+  width: 100%;
+  display: flex;
+  padding: 10px 10px 0;
+}
+
+
+.header-btn{
+  display: flex;
+  width: 20%;
+  justify-content: center;
+  align-content: center;
+  padding: 0 5px;
+}
+
+.print-btn,
+.actions-header .MuiButton-root{
+  width: 100%;
+
+}
+
+.modal-wrapper .headers,
+.modal-wrapper .history-status{
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.modal-wrapper .headers{
+  background-color: rgba(37, 53, 168, 0.05);
+}
+
+.modal-wrapper .name,
+.modal-wrapper .date{
+  min-width: 260px;
+}
+
+.modal-wrapper .name{
+  padding: 15px;
+}
+
+.modal-wrapper .header-modal-btn{
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.print-options{
+  position: absolute;
+  width: 100%;
+  max-width: 220px;
+  background-color: white;
+  padding: 15px 0;
+  border-radius: 15px;
+  box-shadow: 0px 4px 6px 1px rgba(0, 0, 0, 0.2);
+}
+
+.print-options .title{
+ padding: 0 15px;
+ margin: 5px 0 10px;
+ font-size: 14px;
+ color: rgba(77, 80, 98, 0.68);
+}
+.print-options .language{
+  cursor: pointer;
+  padding: 15px 15px 5px;
+  font-size: 16px;
+}
+
+.print-options .language:hover{
+  background-color: rgba(76, 78, 100, 0.04);
+
+}
+
+.grey-bg{
+  background-color: rgba(76, 78, 100, 0.04);
 }
 
 /*---- Information ----*/
@@ -120,6 +211,7 @@
   color: rgba(77, 80, 98, 0.87);
 }
 
+.delete-modal-text,
 .stepper-modal .stepper-modal-text,
 .next-step-modal .next-modal-text {
   font-size: 14px;
