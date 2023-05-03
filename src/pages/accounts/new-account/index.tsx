@@ -28,9 +28,10 @@ const NewAccount = () => {
 
   return (
     <Grid className='new-account' item xs={12}>
-      <Card>
-        <ActionsHeader />
-      </Card>
+      {/* "ActionsHeader" component receives the initial status of the
+      account and in order to use it as a "side header" (forms 2 to 4),
+      it is necessary to send the boolean variable "sideHeader = true". */}
+      <ActionsHeader accountStatus='PENDING' sideHeader={false} />
       <Card>
         <NewAccountStepper changeStep={activeStep} onStepChange={handleStepChange} />
         {activeStep == 1 ? <Information onStepChange={handleStepChange} /> : ""}
