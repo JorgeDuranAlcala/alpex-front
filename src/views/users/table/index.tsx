@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
-import CircularProgress from '@mui/material/CircularProgress'
 import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
 import { DataGrid, GRID_CHECKBOX_SELECTION_COL_DEF, GridColumns, GridRowId } from '@mui/x-data-grid'
@@ -16,45 +15,55 @@ import Icon from 'src/@core/components/icon'
 // ** Custom Components Imports
 import ColumnHeader from './ColumnHeader'
 import CustomPagination from './CustomPagination'
-import Status, { EStatus, EStatusString } from './Status'
 import TableHeader from './TableHeader'
-import ModalAction from './modal'
 
 // ** Custom utilities
 import { Link } from '@mui/material'
 import { IAlert } from 'src/pages/components/custom/alerts'
+import StyledChip from 'src/pages/components/custom/chips/styledChips'
 import { useAppDispatch, useAppSelector } from 'src/store'
-import { deleteAccountFilter, fetchAccounts, handleAccountFilter, resetAccountFilter } from 'src/store/apps/accounts'
+import { fetchAccounts } from 'src/store/apps/users'
 import colors from 'src/views/accounts/colors'
 import fonts from 'src/views/accounts/font'
 
-export interface IAccount {
-  id: string
-  status: string
-  insured: string
-  lob: string
-  effectiveDate: string
-  expirationDate: string
+interface IRolesUserGrid {
+  id: number
+  role: string
+  level: string
+  description: string
+  active: boolean
+}
+
+export interface IUsersGrid {
+  name: string
+  roles: IRolesUserGrid[]
+  idCompany: {
+    alias: string
+  }
+  phone: string
+  email: string
 }
 
 export enum EFieldColumn {
-  ACCOUNT_ID = 'id',
-  STATUS = 'status',
-  INSURED = 'insured',
-  LOB = 'lob',
-  EFFECTIVE_DATE = 'effectiveDate',
-  EXPIRATION_DATE = 'expirationDate'
+  NAME = 'name',
+  PHONE_NUMBER = 'phone',
+  EMAIL = 'email',
+  COMPANY = 'company',
+  ROLE = 'role'
 }
 
-interface IAccountTable {
-  status?: string
+interface IUsersTable {
+  handleView: (view: string) => void
 }
 
-const Table = ({ status } : IAccountTable ) => {
+const Table = ({ handleView }: IUsersTable) => {
   // ** State
   const [selectedRows, setSelectedRows] = useState<GridRowId[]>([])
   const [accounts, setAccounts] = useState<any>([])
   const [loading, setLoading] = useState<any>([])
+
+  //WIP
+  //eslint-disable-next-line
   const [badgeData, setBadgeData] = useState<IAlert>({
     message: '',
     status: undefined,
@@ -63,10 +72,7 @@ const Table = ({ status } : IAccountTable ) => {
 
   // **Reducers
   const dispatch = useAppDispatch()
-  const accountsReducer = useAppSelector(state => state.accounts)
-
-  // ** Custom Hooks
-  //const { accounts, getAccounts } = useAccountTable()
+  const usersReducer = useAppSelector(state => state.users)
 
   // ** Hooks
 
@@ -80,39 +86,22 @@ const Table = ({ status } : IAccountTable ) => {
   }, [])
 
   useEffect(() => {
-    dispatch(
-      resetAccountFilter()
-    )
-    if (status === undefined ) dispatch(deleteAccountFilter('Status'))
-    else{
-    const index: string = Object.keys(EStatus)[Object.values(EStatus).indexOf(status as any)];
-      dispatch(
-        handleAccountFilter({
-          type: 'status',
-          value: status,
-          text: EStatusString[index as keyof typeof EStatusString],
-          unDeleteable: true
-        })
-      )
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [status])
-  useEffect(() => {
-    setAccounts(accountsReducer.accounts || [])
+    setAccounts(usersReducer.users || [])
     console.log(loading)
-    setLoading(accountsReducer.loading)
+    setLoading(usersReducer.loading)
     //eslint-disable-next-line
-  }, [accountsReducer])
+  }, [usersReducer])
 
-  const column: GridColumns<IAccount> = [
+  //name, role, company, phone number, email
+  const column: GridColumns<IUsersGrid> = [
     {
       ...GRID_CHECKBOX_SELECTION_COL_DEF,
       headerClassName: 'account-column-header-checkbox'
     },
     {
       flex: 0.1,
-      field: EFieldColumn.ACCOUNT_ID,
-      headerName: 'ACCOUNT ID',
+      field: EFieldColumn.NAME,
+      headerName: 'NAME',
       minWidth: 150,
       maxWidth: 150,
       type: 'string',
@@ -120,17 +109,17 @@ const Table = ({ status } : IAccountTable ) => {
       disableColumnMenu: true,
       sortable: false,
       headerClassName: 'account-column-header',
-      renderHeader: ({ colDef }) => <ColumnHeader colDef={colDef} action={handleClickColumnHeader} />,
+      renderHeader: ({ colDef }) => <ColumnHeader colDef={colDef} showIcon={false} action={handleClickColumnHeader} />,
       renderCell: ({ row }) => (
         <Typography sx={{ color: colors.primary.main, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
-          <Link href='#'>{`#${row.id}`}</Link>
+          {`${row.name}`}
         </Typography>
       )
     },
     {
       flex: 0.1,
-      field: EFieldColumn.STATUS,
-      headerName: 'STATUS',
+      field: EFieldColumn.ROLE,
+      headerName: 'ROLE',
       minWidth: 150,
       maxWidth: 150,
       type: 'string',
@@ -139,17 +128,15 @@ const Table = ({ status } : IAccountTable ) => {
       disableColumnMenu: true,
       sortable: false,
       headerClassName: 'account-column-header',
-      renderHeader: ({ colDef }) => <ColumnHeader colDef={colDef} action={status === undefined ? handleClickColumnHeader : undefined} />,
+      renderHeader: ({ colDef }) => <ColumnHeader colDef={colDef} action={handleClickColumnHeader} />,
       renderCell: ({ row }) => (
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <Status status={row.status} />
-        </Box>
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>{row.roles[0]?.role || 'W/ role'}</Box>
       )
     },
     {
       flex: 0.1,
-      field: EFieldColumn.INSURED,
-      headerName: 'INSURED',
+      field: EFieldColumn.COMPANY,
+      headerName: 'COMPANY',
       minWidth: 185,
       type: 'string',
       align: 'left',
@@ -162,155 +149,70 @@ const Table = ({ status } : IAccountTable ) => {
           sx={{ color: colors.text.primary, fontWeight: 500, fontSize: fonts.size.px14, fontFamily: fonts.inter }}
         >
           <Link sx={{ color: colors.text.primary }} href='#'>
-            {row.insured}
+            <StyledChip color='primary' sx={{}} label={row.idCompany.alias || 'W/ company'} />
           </Link>
         </Typography>
       )
     },
     {
       flex: 0.1,
-      field: EFieldColumn.LOB,
-      headerName: 'LOB',
+      field: EFieldColumn.PHONE_NUMBER,
+      headerName: 'PHONE NUMBER',
       minWidth: 170,
       type: 'string',
       align: 'left',
       disableColumnMenu: true,
       sortable: false,
       headerClassName: 'account-column-header',
-      renderHeader: ({ colDef }) => <ColumnHeader colDef={colDef} action={handleClickColumnHeader} />,
+      renderHeader: ({ colDef }) => <ColumnHeader colDef={colDef} showIcon={false} action={handleClickColumnHeader} />,
       renderCell: ({ row }) => (
         <Typography sx={{ color: colors.text.secondary, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
-          {row.lob}
+          {row.phone}
         </Typography>
       )
     },
     {
       flex: 0.1,
-      field: EFieldColumn.EFFECTIVE_DATE,
-      headerName: 'EFFECTIVE DATE',
+      field: EFieldColumn.EMAIL,
+      headerName: 'EMAIL',
       minWidth: 165,
       type: 'string',
       align: 'left',
       disableColumnMenu: true,
       sortable: false,
       headerClassName: 'account-column-header',
-      renderHeader: ({ colDef }) => <ColumnHeader colDef={colDef} action={handleClickColumnHeader} />,
+      renderHeader: ({ colDef }) => <ColumnHeader colDef={colDef} showIcon={false} action={handleClickColumnHeader} />,
       renderCell: ({ row }) => (
         <Typography sx={{ color: colors.text.secondary, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
-          {row.effectiveDate}
+          {row.email}
         </Typography>
       )
     },
     {
       flex: 0.1,
-      field: EFieldColumn.EXPIRATION_DATE,
-      headerName: 'EXPIRATION DATE',
-      minWidth: 170,
-      type: 'string',
-      align: 'left',
-      disableColumnMenu: true,
-      sortable: false,
-      headerClassName: 'account-column-header',
-      renderHeader: ({ colDef }) => <ColumnHeader colDef={colDef} action={handleClickColumnHeader} />,
-      renderCell: ({ row }) => (
-        <Typography sx={{ color: colors.text.secondary, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
-          {row.expirationDate}
-        </Typography>
-      )
-    },
-    {
-      flex: 0.1,
-      field: 'actions',
-      headerName: 'ACTIONS',
-      minWidth: 150,
+      field: '',
+      headerName: '',
+      minWidth: 10,
+      maxWidth: 60,
       sortable: false,
       disableColumnMenu: true,
       cellClassName: 'account-column-cell-pl-0',
       renderHeader: ({ colDef }) => <ColumnHeader colDef={colDef} showIcon={false} />,
-      renderCell: ({ row }) => (
+      renderCell: ({}) => (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <IconButton size='small' sx={{ mr: 1 }}>
-            <Icon icon='ic:baseline-login' />
-          </IconButton>
-          <ModalAction
-            renderButton={(handleOpen: () => void) => (
-              <IconButton onClick={handleOpen} size='small' sx={{ mr: 1 }}>
-                <Icon icon='mdi:content-copy' />
-              </IconButton>
-            )}
-            headingText={`You are about to duplicate: #${row.id} ${row.insured} ${row.effectiveDate}`}
-            text='With this action you’ll have two accounts with the same information as it is right now. Do you want to proceed?'
-            handleClickContinue={() => {
-              onDuplicated(+row.id)
-            }}
-            handleClickCancel={() => {
-              console.log('Cancel')
-            }}
-          />
-
-          <IconButton
-            onClick={() => {
-              onDownload(+row.id)
-            }}
-            size='small'
-            sx={{ mr: 1 }}
-          >
-            <Icon icon='mdi:download' />
+            <Icon icon='ic:menu' />
           </IconButton>
         </Box>
       )
     }
   ]
 
-  const onDownload = (id: number) => {
-    setBadgeData({
-      message: `DOWNLOADING #${id.toLocaleString('en-US', { minimumIntegerDigits: 4, useGrouping: false })}`,
-      status: 'secondary',
-      icon: <CircularProgress size={20} color='secondary' />,
-      backgroundColor: '#828597',
-      theme: 'secondary'
-    })
-
-    setTimeout(() => {
-      setBadgeData({
-        message: `#${id.toLocaleString('en-US', {
-          minimumIntegerDigits: 4,
-          useGrouping: false
-        })} DOWNLOADED SUCCESSFULLY`,
-        status: 'success',
-        icon: <Icon icon='ic:baseline-check-circle' />
-      })
-      setTimeout(() => {
-        setBadgeData({
-          message: '',
-          status: undefined,
-          icon: undefined
-        })
-      }, 3000)
-    }, 1000)
-  }
-  const onDuplicated = (id: number) => {
-    setBadgeData({
-      message: `#${id.toLocaleString('en-US', {
-        minimumIntegerDigits: 4,
-        useGrouping: false
-      })} WAS DUPLICATED SUCCESSFULLY`,
-      status: 'success',
-      icon: <Icon icon='ic:baseline-check-circle' />
-    })
-    setTimeout(() => {
-      setBadgeData({
-        message: '',
-        status: undefined,
-        icon: undefined
-      })
-    }, 3000)
-  }
-
   return (
     <>
-      <TableHeader selectedRows={selectedRows} badgeData={badgeData} />
+      <TableHeader handleView={handleView} selectedRows={selectedRows} badgeData={badgeData} />
       <DataGrid
+        sx={{ textTransform: 'capitalize' }}
         autoHeight
         checkboxSelection
         disableSelectionOnClick

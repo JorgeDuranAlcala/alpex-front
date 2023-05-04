@@ -108,6 +108,11 @@ const navigation = (): VerticalNavItemsType => {
       ]
     },
     {
+      title: 'Users',
+      icon: 'mdi:user-group',
+      path: '/users'
+    },
+    {
       title: 'Catalogues',
       icon: 'mdi:catalogues',
       children: [

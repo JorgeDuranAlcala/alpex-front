@@ -1,4 +1,5 @@
 import { yupResolver } from '@hookform/resolvers/yup'
+import Icon from 'src/@core/components/icon'
 import * as yup from 'yup'
 
 import {
@@ -17,6 +18,7 @@ import { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import CountrySelect, { ICountry } from 'src/pages/components/custom/select/CountrySelect'
 import { StyledDescription, StyledSubtitle, StyledTitle } from 'src/pages/components/custom/typography'
+import UsersServices from 'src/services/users/users.service'
 import { UserSection } from 'src/styles/Forms/usersSection'
 
 const schema = yup.object().shape({
@@ -46,6 +48,9 @@ const UserForm: FormInfo = {
   role: '',
   dualRole: ''
 }
+
+const ADMIN_COMPANIES = ['Dynamic', 'Claims']
+
 const roles = [
   {
     label: 'Admin',
@@ -84,35 +89,65 @@ const companies = [
   }
 ]
 
-const AddUser = () => {
+interface IAddUser {
+  handleView: (view: string) => void
+}
+const AddUser = ({ handleView }: IAddUser) => {
   const {
     control,
     handleSubmit,
-    register,
+    watch,
+    setValue,
     formState: { errors }
   } = useForm<FormInfo>({
     mode: 'onBlur',
     resolver: yupResolver(schema)
   })
+  const useWatchCompany = watch('company')
+  const useWatchRole = watch('role')
+
+  const [formData, setFormData] = useState<FormInfo>(UserForm)
+  const [selectedCountry, setSelectedCountry] = useState<ICountry | null>()
+  const [dualRoleDisabled, setDualRoleDisabled] = useState<boolean>(false)
+  const [roleDisabled, setRoleDisabled] = useState<boolean>(false)
 
   useEffect(() => {
-    console.log(errors)
-  }, [errors])
+    if (ADMIN_COMPANIES.includes(useWatchCompany)) {
+      setRoleDisabled(false)
+      setValue('role', '', { shouldValidate: true })
+      setValue('dualRole', '', { shouldValidate: true })
+    } else {
+      setRoleDisabled(true)
+      setDualRoleDisabled(true)
+    }
+    //eslint-disable-next-line
+  }, [useWatchCompany])
+
+  console.log(errors)
+
+  useEffect(() => {
+    if (useWatchRole === 'admin') {
+      setDualRoleDisabled(false)
+      setValue('dualRole', '', { shouldValidate: true })
+    } else {
+      setDualRoleDisabled(true)
+    }
+    //eslint-disable-next-line
+  }, [useWatchRole])
 
   const onSubmit = (data: any) => {
     console.log(data)
+    getData()
+    handleView('list')
   }
-  const [formData, setFormData] = useState<FormInfo>(UserForm)
-  const [selectedCountry, setSelectedCountry] = useState<ICountry | null>()
-
   const handleFormChange = (field: keyof FormInfo, value: FormInfo[keyof FormInfo]) => {
     setFormData({ ...formData, [field]: value })
   }
 
-  useEffect(() => {
-    setFormData({ ...formData, role: '', dualRole: '' })
-    //eslint-disable-next-line
-  }, [formData.company])
+  const getData = async () => {
+    const data = await UsersServices.getUsers({ page: 1, take: 1 })
+    console.log(data)
+  }
 
   return (
     <>
@@ -137,7 +172,6 @@ const AddUser = () => {
                       <Controller
                         name='firstName'
                         control={control}
-                        rules={{ required: true }}
                         render={({ field: { value, onChange, onBlur } }) => (
                           <TextField
                             autoFocus
@@ -165,10 +199,8 @@ const AddUser = () => {
                       <Controller
                         name='lastName'
                         control={control}
-                        rules={{ required: true }}
                         render={({ field: { value, onChange, onBlur } }) => (
                           <TextField
-                            autoFocus
                             label='Last Name'
                             value={value}
                             onBlur={onBlur}
@@ -193,10 +225,8 @@ const AddUser = () => {
                       <Controller
                         name='email'
                         control={control}
-                        rules={{ required: true }}
                         render={({ field: { value, onChange, onBlur } }) => (
                           <TextField
-                            autoFocus
                             label='Email'
                             value={value}
                             onBlur={onBlur}
@@ -231,10 +261,8 @@ const AddUser = () => {
                       <Controller
                         name='phone'
                         control={control}
-                        rules={{ required: true }}
                         render={({ field: { value, onChange, onBlur } }) => (
                           <TextField
-                            autoFocus
                             label='Phone Number'
                             value={value}
                             onBlur={onBlur}
@@ -261,7 +289,6 @@ const AddUser = () => {
                   <Grid item xs={12}>
                     <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
                       <TextField
-                        autoFocus
                         name='Email'
                         label='Email'
                         value={formData.email}
@@ -285,7 +312,6 @@ const AddUser = () => {
                       <Controller
                         name='company'
                         control={control}
-                        rules={{ required: true }}
                         render={({ field: { value, onChange, onBlur } }) => (
                           <>
                             <InputLabel>Company</InputLabel>
@@ -313,67 +339,82 @@ const AddUser = () => {
                   <Grid item xs={12}>
                     <FormControl
                       sx={{
-                        visibility:
-                          formData.company === 'Dynamic' || formData.company === 'Claims' ? 'visible' : 'hidden',
+                        visibility: roleDisabled ? 'hidden' : 'visible',
                         mb: 2,
                         mt: 2
                       }}
                       fullWidth
                     >
-                      <InputLabel>Role</InputLabel>
-                      <Select
-                        label='Select a role'
-                        value={formData.role}
-                        onChange={e => handleFormChange('role', e.target.value)}
-                        labelId='broker'
-                      >
-                        {roles.map(rol => (
-                          <MenuItem key={rol.value} value={rol.value}>
-                            {rol.label}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                      {false && (
-                        <FormHelperText sx={{ color: 'error.main' }} id='broker-error'>
-                          Please select a role
-                        </FormHelperText>
-                      )}
+                      <Controller
+                        name='role'
+                        control={control}
+                        render={({ field: { value, onChange, onBlur } }) => (
+                          <>
+                            <InputLabel>Role</InputLabel>
+                            <Select
+                              label='Select a role'
+                              value={value}
+                              onBlur={onBlur}
+                              onChange={e => onChange(e.target.value)}
+                              labelId='broker'
+                            >
+                              {roles.map(rol => (
+                                <MenuItem key={rol.value} value={rol.value}>
+                                  {rol.label}
+                                </MenuItem>
+                              ))}
+                            </Select>
+                          </>
+                        )}
+                      />
+                      {errors.role && <FormHelperText sx={{ color: 'error.main' }}>Invalid role</FormHelperText>}
                     </FormControl>
                   </Grid>
                   <Grid item xs={12}>
-                    <FormControl
-                      fullWidth
-                      sx={{ visibility: formData.role === 'admin' ? 'visible' : 'hidden', mb: 2, mt: 2 }}
-                    >
-                      <InputLabel>Second role</InputLabel>
-                      <Select
-                        label='Select a second role'
-                        value={formData.dualRole}
-                        onChange={e => handleFormChange('dualRole', e.target.value)}
-                        labelId='broker'
-                      >
-                        {roles.map(rol => {
-                          if (rol.value === 'admin') return null
-                          else
-                            return (
-                              <MenuItem key={rol.value} value={rol.value}>
-                                {rol.label}
-                              </MenuItem>
-                            )
-                        })}
-                      </Select>
-                      {false && (
-                        <FormHelperText sx={{ color: 'error.main' }} id='broker-error'>
-                          Please select a second role
-                        </FormHelperText>
+                    <FormControl fullWidth sx={{ visibility: dualRoleDisabled ? 'hidden' : 'visible', mb: 2, mt: 2 }}>
+                      <Controller
+                        name='dualRole'
+                        control={control}
+                        render={({ field: { value, onChange, onBlur } }) => (
+                          <>
+                            <InputLabel>Role</InputLabel>
+                            <Select
+                              label='Select a role'
+                              value={value}
+                              onBlur={onBlur}
+                              onChange={e => onChange(e.target.value)}
+                              labelId='broker'
+                            >
+                              {roles.map(rol => {
+                                if (rol.value === 'admin') return null
+                                else
+                                  return (
+                                    <MenuItem key={rol.value} value={rol.value}>
+                                      {rol.label}
+                                    </MenuItem>
+                                  )
+                              })}
+                            </Select>
+                          </>
+                        )}
+                      />
+                      {errors.dualRole && (
+                        <FormHelperText sx={{ color: 'error.main' }}>Select a valid dual role</FormHelperText>
                       )}
                     </FormControl>
                   </Grid>
                 </Grid>
               </Grid>
             </UserSection>
-            <Button type='submit' variant='contained' color='primary' size='large'>
-              CONTINUE
+            <Button
+              startIcon={<Icon icon='mdi:check' />}
+              type='submit'
+              variant='outlined'
+              color='primary'
+              size='large'
+              sx={{ float: 'right' }}
+            >
+              ADD USER
             </Button>
           </form>
         </div>
