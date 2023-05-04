@@ -52,12 +52,12 @@ interface BasicInfoErrors {
   underwriterError: boolean,
   leadUnderwriterError: boolean,
   technicalAssistantError: boolean,
-  receptionDateError: boolean,
-  effectiveDateError: boolean,
-  expirationDateError: boolean,
   industryCodeError: boolean,
   riskActivityError: boolean,
   riskClassError: boolean,
+  receptionDateError: boolean,
+  effectiveDateError: boolean,
+  expirationDateError: boolean,
 }
 
 
@@ -73,13 +73,14 @@ type BasicInfoProps = {
     lineOfBusiness: string
     underwriter: string
     leadUnderwriter: string
+    industryCode: string
+    riskActivity: string
+    riskClass: string
     technicalAssistant: string
     receptionDate: Date | null
     effectiveDate: Date | null
     expirationDate: Date | null
-    industryCode: string
-    riskActivity: string
-    riskClass: string
+
   };
   setBasicInfo: React.Dispatch<
     React.SetStateAction<{
@@ -92,13 +93,14 @@ type BasicInfoProps = {
       lineOfBusiness: string
       underwriter: string
       leadUnderwriter: string
+      industryCode: string
+      riskActivity: string
+      riskClass: string
       technicalAssistant: string
       receptionDate: Date | null
       effectiveDate: Date | null
       expirationDate: Date | null
-      industryCode: string
-      riskActivity: string
-      riskClass: string
+
     }>
   >;
   makeValidations: boolean;
@@ -348,6 +350,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
     });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+
     const { name, value } = e.target;
     setBasicInfo({ ...basicInfo, [name]: value });
   };
@@ -356,7 +359,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
     const target = event.target;
     const name = target.name;
     const value = target.value;
-    console.log(event);
+
     setBasicInfo({
       ...basicInfo,
       [name]: value
@@ -388,12 +391,13 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
       underwriterError: basicInfo.underwriter === '',
       leadUnderwriterError: basicInfo.leadUnderwriter === '',
       technicalAssistantError: basicInfo.technicalAssistant === '',
-      receptionDateError: basicInfo.receptionDate === null,
-      effectiveDateError: basicInfo.effectiveDate === null,
-      expirationDateError: basicInfo.expirationDate === null,
       industryCodeError: basicInfo.industryCode === '',
       riskActivityError: basicInfo.riskActivity === '',
       riskClassError: basicInfo.riskClass === '',
+      receptionDateError: basicInfo.receptionDate === null,
+      effectiveDateError: basicInfo.effectiveDate === null,
+      expirationDateError: basicInfo.expirationDate === null,
+
     };
 
     setErrors(newErrors);
@@ -426,20 +430,19 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
       <div className='form-wrapper'>
         <div className='form-col'>
           <div className='title'>Insured</div>
-
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <TextField
               autoFocus
               name="insured"
               label='insured'
-              value={basicInfo.insured}
+              value={basicInfo.industryCode}
               onChange={handleInputChange}
-              error={!!errors.insuredError}
-              helperText={getErrorMessage('insuredError')}
+
             />
 
 
           </FormControl>
+
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }} error={errors.countryError}>
             <InputLabel>Country</InputLabel>
 
@@ -568,8 +571,8 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <TextField
               autoFocus
-              name="industry-code"
-              label='Industry code'
+              name="industryCode"
+              label='Industry Code'
               value={basicInfo.industryCode}
               disabled={bussinesFields}
               onChange={handleInputChange}
@@ -579,10 +582,11 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
 
 
           </FormControl>
+
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <TextField
               autoFocus
-              name="risk-activity"
+              name="riskActivity"
               label='Risk activity'
               value={basicInfo.riskActivity}
               disabled={bussinesFields}
@@ -596,7 +600,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <TextField
               autoFocus
-              name="risk-class"
+              name="riskClass"
               label='Risk class'
               value={basicInfo.riskClass}
               disabled={bussinesFields}

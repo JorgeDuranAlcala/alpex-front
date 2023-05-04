@@ -31,12 +31,13 @@ interface BasicInfoInterface {
   underwriter: string
   leadUnderwriter: string
   technicalAssistant: string
-  receptionDate: Date | null
-  effectiveDate: Date | null
-  expirationDate: Date | null
   industryCode: string
   riskActivity: string
   riskClass: string
+  receptionDate: Date | null
+  effectiveDate: Date | null
+  expirationDate: Date | null
+
 }
 
 interface UserFile {
@@ -65,12 +66,12 @@ const Information: React.FC<InformationProps> = ({ onStepChange }) => {
     underwriter: '',
     leadUnderwriter: '',
     technicalAssistant: '',
-    receptionDate: null,
-    effectiveDate: null,
-    expirationDate: null,
     industryCode: '',
     riskActivity: '',
     riskClass: '',
+    receptionDate: null,
+    effectiveDate: null,
+    expirationDate: null,
   });
   const [placementStructure, setPlacementStructure] = useState({
     currency: '',
