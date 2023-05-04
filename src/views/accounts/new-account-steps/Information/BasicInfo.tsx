@@ -435,9 +435,10 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               autoFocus
               name="insured"
               label='insured'
-              value={basicInfo.industryCode}
+              value={basicInfo.insured}
               onChange={handleInputChange}
-
+              error={!!errors.insuredError}
+              helperText={getErrorMessage('insuredError')}
             />
 
 
