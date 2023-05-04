@@ -31,9 +31,13 @@ interface BasicInfoInterface {
   underwriter: string
   leadUnderwriter: string
   technicalAssistant: string
+  industryCode: string
+  riskActivity: string
+  riskClass: string
   receptionDate: Date | null
   effectiveDate: Date | null
   expirationDate: Date | null
+
 }
 
 interface UserFile {
@@ -62,6 +66,9 @@ const Information: React.FC<InformationProps> = ({ onStepChange }) => {
     underwriter: '',
     leadUnderwriter: '',
     technicalAssistant: '',
+    industryCode: '',
+    riskActivity: '',
+    riskClass: '',
     receptionDate: null,
     effectiveDate: null,
     expirationDate: null,
