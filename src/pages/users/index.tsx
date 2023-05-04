@@ -2,8 +2,8 @@
 import Card from '@mui/material/Card'
 import Grid from '@mui/material/Grid'
 import { useState } from 'react'
-import Table from 'src/views/users/Table'
 import AddUser from 'src/views/users/forms/AddUser'
+import Table from 'src/views/users/table'
 
 const Users = () => {
   const [view, setView] = useState('list')

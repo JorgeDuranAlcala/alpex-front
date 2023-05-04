@@ -1,7 +1,7 @@
 // ** Custom utilities
 
-import { IComponents } from 'src/views/users/Table/Status'
-import { EFieldColumn } from 'src/views/users/Table/index'
+import { IComponents } from 'src/views/users/table/Status'
+import { EFieldColumn } from 'src/views/users/table/index'
 import FilterMenuUsers from './FilterMenuUsers'
 
 interface IFilterMenu {

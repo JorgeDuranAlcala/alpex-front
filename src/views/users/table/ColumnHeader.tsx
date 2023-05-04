@@ -14,7 +14,7 @@ import Icon from 'src/@core/components/icon'
 // ** Custom utilities
 import colors from 'src/views/accounts/colors'
 import fonts from 'src/views/accounts/font'
-import FilterMenu from 'src/views/users/Table/FilterMenu'
+import FilterMenu from 'src/views/users/table/FilterMenu'
 
 interface IColunmHeader {
   colDef: GridStateColDef
