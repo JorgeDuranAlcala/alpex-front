@@ -37,7 +37,7 @@ const DefaultPalette = (mode: PaletteMode, skin: Skin) => {
       white: whiteColor
     },
     primary: {
-      light: '#2535A8',
+      light: '#787EFF',
       main: '#0D567B',
       dark: '#0D567B',
       contrastText: whiteColor
@@ -89,7 +89,7 @@ const DefaultPalette = (mode: PaletteMode, skin: Skin) => {
       A700: '#616161'
     },
     text: {
-      primary: `rgba(${mainColor}, 1)`,
+      primary: `rgba(${mainColor}, 0.87)`,
       secondary: `rgba(${mainColor}, 0.6)`,
       disabled: `rgba(${mainColor}, 0.38)`
     },
@@ -101,7 +101,7 @@ const DefaultPalette = (mode: PaletteMode, skin: Skin) => {
     action: {
       active: `rgba(${mainColor}, 0.54)`,
       hover: `rgba(${mainColor}, 0.05)`,
-      hoverOpacity: 1,
+      hoverOpacity: 0.05,
       selected: `rgba(${mainColor}, 0.08)`,
       disabled: `rgba(${mainColor}, 0.26)`,
       disabledBackground: `rgba(${mainColor}, 0.12)`,

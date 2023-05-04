@@ -49,7 +49,8 @@ const Drawer = styled(MuiDrawer)<DrawerProps>(({ theme }) => ({
   '& .MuiDrawer-paper': {
     border: 0,
     width: 400,
-    zIndex: theme.zIndex.modal
+    zIndex: theme.zIndex.modal,
+    boxShadow: theme.shadows[9]
   }
 }))
 
