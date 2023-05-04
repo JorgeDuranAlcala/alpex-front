@@ -91,18 +91,16 @@ const AuthProvider = ({ children }: Props) => {
           const tokenDecoded = jwt.decode(response.data.token, { complete: true })
 
           // @ts-ignore
-          const { email, name, id, role } = tokenDecoded.payload
+          const { email, name, id, roles } = tokenDecoded.payload
 
           const newUserData = {
             email: email,
             fullName: name,
             id: id,
-            role: role,
+            role: roles[0].role,
             username: name,
             password: params.password
           }
-
-          console.log(newUserData)
 
           setUser({ ...newUserData })
           params.rememberMe ? window.localStorage.setItem('userData', JSON.stringify(newUserData)) : null
