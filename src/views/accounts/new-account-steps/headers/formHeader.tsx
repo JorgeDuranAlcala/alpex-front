@@ -1,7 +1,8 @@
 import { Box, Button, ListItemIcon, ListItemText, Menu, MenuItem, Modal, Typography } from '@mui/material'
 import { useState } from 'react'
 import Icon from 'src/@core/components/icon'
-import StatusSelect from 'src/pages/components/custom/select/StatusSelect'
+
+// import StatusSelect from 'src/pages/components/custom/select/StatusSelect'
 
 // ** MUI Imports
 
@@ -113,9 +114,7 @@ const FormHeader = () => {
           </div>
           <div className='form-header-section'>
             <span className='form-header-title'>Status: </span>
-            <span className='form-header-subtitle'>
-              <StatusSelect setSelectedStatus={setStatus} />{' '}
-            </span>
+            <span className='form-header-subtitle'>{/* <StatusSelect setSelectedStatus={setStatus} />{' '} */}</span>
           </div>
           <div className='form-header-section'>
             <span className='form-header-title'>Net premium:</span>
