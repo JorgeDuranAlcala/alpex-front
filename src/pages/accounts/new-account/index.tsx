@@ -41,9 +41,9 @@ const NewAccount = () => {
         {activeStep == 1 ? <Information onStepChange={handleStepChange} /> : ''}
         {activeStep == 2 ? <Security /> : ''}
         {activeStep == 3 ? <PaymentWarranty /> : ''}
-        {/* <TabAccount /> */}
+        {activeStep == 4 ? <Sublimits /> : ''}
 
-        <Sublimits />
+        {/* <TabAccount /> */}
 
         {/* <UserList /> */}
 
