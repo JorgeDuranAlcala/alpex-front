@@ -5,8 +5,16 @@ import { countries } from 'src/@fake-db/autocomplete/index'
 
 interface CountrySelect {
   setSelectedCountry: React.Dispatch<React.SetStateAction<any>>
+  otherProps?: React.CSSProperties
+  size?: 'small' | 'medium'
 }
-export default function CountrySelect({ setSelectedCountry }: CountrySelect) {
+
+export interface ICountry {
+  label: string
+  code: string
+  phone: string
+}
+export default function CountrySelect({ setSelectedCountry, size = 'small', otherProps }: CountrySelect) {
   const [value, setValue] = useState<string | null>(null)
   const [inputValue, setInputValue] = useState<string | undefined>('')
   const options = [...countries.map(country => country.label)]
@@ -30,7 +38,8 @@ export default function CountrySelect({ setSelectedCountry }: CountrySelect) {
         id='controllable-states-demo'
         options={options}
         sx={{ width: 200 }}
-        size='small'
+        style={{ ...otherProps }}
+        size={size}
         renderInput={params => <TextField {...params} />}
       />
     </div>

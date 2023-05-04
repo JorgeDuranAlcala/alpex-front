@@ -23,7 +23,8 @@ const FilterMenuInsured = () => {
       dispatch(
         handleAccountFilter({
           type: 'Insured',
-          value: `Insured:  ${query}`
+          value: `${query}`,
+          text: `Insured:  ${query}`
         })
       )
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -106,7 +106,14 @@ const FilterMenuEffectiveDate = () => {
     dispatch(
       handleAccountFilter({
         type: 'EffectiveDate',
-        value: `Effective:  ${
+        text: `Effective:  ${
+          subtype === 'fulldate'
+            ? dateTransform(effectiveDate)
+            : subtype === 'month'
+            ? dateTransform(month)
+            : dateTransform(year)
+        }`,
+        value: `${
           subtype === 'fulldate'
             ? dateTransform(effectiveDate)
             : subtype === 'month'
