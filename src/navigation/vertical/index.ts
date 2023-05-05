@@ -22,23 +22,28 @@ const navigation = (): VerticalNavItemsType => {
         },
         {
           title: 'Pending',
-          icon: 'mdi:clock'
+          icon: 'mdi:clock',
+          path: '/accounts/pending'
         },
         {
           title: 'Not Materialized',
-          icon: 'mdi:progress-helper'
+          icon: 'mdi:progress-helper',
+          path: '/accounts/not-materialized'
         },
         {
           title: 'Not Taken Up',
-          icon: 'custom:not-taken-up'
+          icon: 'custom:not-taken-up',
+          path: '/accounts/not-taken-up'
         },
         {
           title: 'Declined',
-          icon: 'mdi:cancel'
+          icon: 'mdi:cancel',
+          path: '/accounts/declined'
         },
         {
           title: 'Bound',
-          icon: 'icon-park-outline:link-three'
+          icon: 'icon-park-outline:link-three',
+          path: '/accounts/bound'
         }
       ]
     },
@@ -101,6 +106,11 @@ const navigation = (): VerticalNavItemsType => {
           title: 'Add'
         }
       ]
+    },
+    {
+      title: 'Users',
+      icon: 'mdi:user-group',
+      path: '/users'
     },
     {
       title: 'Catalogues',

@@ -37,7 +37,8 @@ const FilterMenuLobOption: React.FC<IFilterMenuLobOptionProps> = ({ lob }) => {
     dispatch(
       handleAccountFilter({
         type: 'Lob',
-        value: lob
+        value: lob,
+        text: lob
       })
     )
   }

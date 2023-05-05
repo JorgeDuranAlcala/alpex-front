@@ -16,17 +16,17 @@ import Icon from 'src/@core/components/icon'
 // ** Custom Components Imports
 import ColumnHeader from './ColumnHeader'
 import CustomPagination from './CustomPagination'
-import Status from './Status'
+import Status, { EStatus, EStatusString } from './Status'
 import TableHeader from './TableHeader'
 import ModalAction from './modal'
 
 // ** Custom utilities
 import { Link } from '@mui/material'
-import { IAlert } from 'src/pages/components/custom/alerts'
 import { useAppDispatch, useAppSelector } from 'src/store'
-import { fetchAccounts } from 'src/store/apps/accounts'
+import { deleteAccountFilter, fetchAccounts, handleAccountFilter, resetAccountFilter } from 'src/store/apps/accounts'
 import colors from 'src/views/accounts/colors'
 import fonts from 'src/views/accounts/font'
+import { IAlert } from 'src/views/custom/alerts'
 
 export interface IAccount {
   id: string
@@ -46,7 +46,11 @@ export enum EFieldColumn {
   EXPIRATION_DATE = 'expirationDate'
 }
 
-const Table = () => {
+interface IAccountTable {
+  status?: string
+}
+
+const Table = ({ status }: IAccountTable) => {
   // ** State
   const [selectedRows, setSelectedRows] = useState<GridRowId[]>([])
   const [accounts, setAccounts] = useState<any>([])
@@ -75,6 +79,22 @@ const Table = () => {
     //eslint-disable-next-line
   }, [])
 
+  useEffect(() => {
+    dispatch(resetAccountFilter())
+    if (status === undefined) dispatch(deleteAccountFilter('Status'))
+    else {
+      const index: string = Object.keys(EStatus)[Object.values(EStatus).indexOf(status as any)]
+      dispatch(
+        handleAccountFilter({
+          type: 'status',
+          value: status,
+          text: EStatusString[index as keyof typeof EStatusString],
+          unDeleteable: true
+        })
+      )
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [status])
   useEffect(() => {
     setAccounts(accountsReducer.accounts || [])
     console.log(loading)
@@ -117,7 +137,9 @@ const Table = () => {
       disableColumnMenu: true,
       sortable: false,
       headerClassName: 'account-column-header',
-      renderHeader: ({ colDef }) => <ColumnHeader colDef={colDef} action={handleClickColumnHeader} />,
+      renderHeader: ({ colDef }) => (
+        <ColumnHeader colDef={colDef} action={status === undefined ? handleClickColumnHeader : undefined} />
+      ),
       renderCell: ({ row }) => (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <Status status={row.status} />
