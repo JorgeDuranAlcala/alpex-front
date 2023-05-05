@@ -21,9 +21,10 @@ interface ITableHeader {
   selectedRows: GridRowId[]
   badgeData: IAlert
   handleView: (view: string) => void
+  setModalShow: any
 }
 
-const TableHeader: React.FC<ITableHeader> = ({ badgeData, handleView }) => {
+const TableHeader: React.FC<ITableHeader> = ({ badgeData, handleView, selectedRows, setModalShow }) => {
   // ** Custom Hooks
 
   //const { deleteAccounts, changeStatusAccounts } = useAccountTable()
@@ -66,6 +67,16 @@ const TableHeader: React.FC<ITableHeader> = ({ badgeData, handleView }) => {
           onChange={e => setSearchValue(e.target.value)}
         />
         {/* DeleteModal */}
+        {selectedRows.length > 0 && (
+          <Button
+            startIcon={<Icon icon='ic:baseline-delete-outline' fontSize={24} />}
+            variant='outlined'
+            color='error'
+            onClick={() => setModalShow(true)}
+          >
+            DELETE
+          </Button>
+        )}
       </Box>
       <Box>
         {usersReducer.filters.map((filter, index) =>
