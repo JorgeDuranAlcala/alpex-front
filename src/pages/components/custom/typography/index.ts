@@ -45,3 +45,5 @@ export const StyledSubtitle = styled('p')<StyledTypografy>(({ theme, otherProps 
   flexGrow: 0,
   ...otherProps
 }))
+
+export default StyledTitle
