@@ -1,5 +1,5 @@
 // ** React Imports
-import { createContext, useEffect, useState, ReactNode } from 'react'
+import { ReactNode, createContext, useEffect, useState } from 'react'
 
 // ** Next Import
 import { useRouter } from 'next/router'
@@ -7,11 +7,15 @@ import { useRouter } from 'next/router'
 // ** Axios
 import axios from 'axios'
 
+// ** JWT import
+import jwt from 'jsonwebtoken'
+
 // ** Config
 import authConfig from 'src/configs/auth'
 
 // ** Types
-import { AuthValuesType, RegisterParams, LoginParams, ErrCallbackType, UserDataType } from './types'
+import AuthServices from 'src/services/auth/auth.service'
+import { AuthValuesType, ErrCallbackType, LoginParams, RegisterParams, UserDataType } from './types'
 
 // ** Defaults
 const defaultProvider: AuthValuesType = {
@@ -73,25 +77,64 @@ const AuthProvider = ({ children }: Props) => {
   }, [])
 
   const handleLogin = (params: LoginParams, errorCallback?: ErrCallbackType) => {
-    axios
-      .post(authConfig.loginEndpoint, params)
+    const authServices = new AuthServices()
+
+    authServices
+      .login(params)
       .then(async response => {
-        params.rememberMe
-          ? window.localStorage.setItem(authConfig.storageTokenKeyName, response.data.accessToken)
-          : null
-        const returnUrl = router.query.returnUrl
+        if (!response.data.success) {
+          if (errorCallback) errorCallback(response.data.message)
+        } else {
+          params.rememberMe ? window.localStorage.setItem(authConfig.storageTokenKeyName, response.data.token) : null
+          const returnUrl = router.query.returnUrl
 
-        setUser({ ...response.data.userData })
-        params.rememberMe ? window.localStorage.setItem('userData', JSON.stringify(response.data.userData)) : null
+          const tokenDecoded = jwt.decode(response.data.token, { complete: true })
 
-        const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/'
+          // @ts-ignore
+          const { email, name, id, roles } = tokenDecoded.payload
 
-        router.replace(redirectURL as string)
+          const newUserData = {
+            email: email,
+            fullName: name,
+            id: id,
+            role: roles[0].role,
+            username: name,
+            password: params.password
+          }
+
+          setUser({ ...newUserData })
+          params.rememberMe ? window.localStorage.setItem('userData', JSON.stringify(newUserData)) : null
+
+          const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/'
+
+          router.replace(redirectURL as string)
+        }
       })
 
       .catch(err => {
         if (errorCallback) errorCallback(err)
       })
+
+    // axios
+    //   .post(authConfig.loginEndpoint, params)
+    //   .then(async response => {
+    //     params.rememberMe
+    //       ? window.localStorage.setItem(authConfig.storageTokenKeyName, response.data.accessToken)
+    //       : null
+    //     const returnUrl = router.query.returnUrl
+
+    //     setUser({ ...response.data.userData })
+    //     params.rememberMe ? window.localStorage.setItem('userData', JSON.stringify(response.data.userData)) : null
+
+    //     const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/'
+
+    //     router.replace(redirectURL as string)
+    //   })
+
+    //   .catch(err => {
+    //     if (errorCallback) errorCallback(err)
+    //     console.log(err)
+    //   })
   }
 
   const handleLogout = () => {

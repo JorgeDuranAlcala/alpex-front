@@ -5,16 +5,16 @@ import { useState } from 'react'
 import PerfectScrollbar from 'react-perfect-scrollbar'
 
 // ** MUI Imports
-import Radio from '@mui/material/Radio'
-import Switch from '@mui/material/Switch'
-import Divider from '@mui/material/Divider'
-import { styled } from '@mui/material/styles'
-import IconButton from '@mui/material/IconButton'
-import RadioGroup from '@mui/material/RadioGroup'
-import Typography from '@mui/material/Typography'
 import Box, { BoxProps } from '@mui/material/Box'
-import FormControlLabel from '@mui/material/FormControlLabel'
+import Divider from '@mui/material/Divider'
 import MuiDrawer, { DrawerProps } from '@mui/material/Drawer'
+import FormControlLabel from '@mui/material/FormControlLabel'
+import IconButton from '@mui/material/IconButton'
+import Radio from '@mui/material/Radio'
+import RadioGroup from '@mui/material/RadioGroup'
+import Switch from '@mui/material/Switch'
+import Typography from '@mui/material/Typography'
+import { styled } from '@mui/material/styles'
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
@@ -178,7 +178,7 @@ const Customizer = () => {
                   onClick={() => handleChange('themeColor', 'primary')}
                   sx={{
                     ml: 0,
-                    backgroundColor: '#666CFF',
+                    backgroundColor: '#2535A8',
                     ...(themeColor === 'primary' ? { boxShadow: 9 } : { '&:hover': { boxShadow: 4 } })
                   }}
                 >
