@@ -1,31 +1,32 @@
-import React, { ForwardedRef, ReactNode, forwardRef, useEffect, useState } from 'react';
-
+import React, { ForwardedRef, ReactNode, forwardRef, useEffect, useState } from 'react'
 
 // ** MUI Imports
-import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
-import CloseIcon from '@mui/icons-material/Close';
-import { SxProps, Theme } from '@mui/material';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import FormControl from '@mui/material/FormControl';
-import FormHelperText from '@mui/material/FormHelperText';
-import InputAdornment from '@mui/material/InputAdornment';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import Modal from '@mui/material/Modal';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
-import TextField from '@mui/material/TextField';
-import Typography from '@mui/material/Typography';
-import { ButtonClose, HeaderTitleModal } from 'src/styles/Dashboard/ModalReinsurers/modalReinsurers';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
+import CloseIcon from '@mui/icons-material/Close'
+import { SxProps, Theme } from '@mui/material'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import FormControl from '@mui/material/FormControl'
+import FormHelperText from '@mui/material/FormHelperText'
+import InputAdornment from '@mui/material/InputAdornment'
+import InputLabel from '@mui/material/InputLabel'
+import MenuItem from '@mui/material/MenuItem'
+import Modal from '@mui/material/Modal'
+import Select, { SelectChangeEvent } from '@mui/material/Select'
+import TextField from '@mui/material/TextField'
+import Typography from '@mui/material/Typography'
+import { ButtonClose, HeaderTitleModal } from 'src/styles/Dashboard/ModalReinsurers/modalReinsurers'
+
+//Service
+import { useAdd } from 'src/hooks/catalogs/broker/useAdd'
 
 // ** Components
-
 // ** Third Party Imports
-import DatePicker from 'react-datepicker';
-import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker';
+import DatePicker from 'react-datepicker'
+import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 
 // ** Icon Imports
-import Icon from 'src/@core/components/icon';
+import Icon from 'src/@core/components/icon'
 
 interface PickerProps {
   label?: string
@@ -44,20 +45,18 @@ interface IModal {
 }
 
 interface BasicInfoErrors {
-  insuredError: boolean,
-  countryError: boolean,
-  brokerError: boolean,
-  cedantError: boolean,
-  lineOfBusinessError: boolean,
-  underwriterError: boolean,
-  leadUnderwriterError: boolean,
-  technicalAssistantError: boolean,
-  receptionDateError: boolean,
-  effectiveDateError: boolean,
-  expirationDateError: boolean,
+  insuredError: boolean
+  countryError: boolean
+  brokerError: boolean
+  cedantError: boolean
+  lineOfBusinessError: boolean
+  underwriterError: boolean
+  leadUnderwriterError: boolean
+  technicalAssistantError: boolean
+  receptionDateError: boolean
+  effectiveDateError: boolean
+  expirationDateError: boolean
 }
-
-
 
 type BasicInfoProps = {
   basicInfo: {
@@ -74,7 +73,7 @@ type BasicInfoProps = {
     receptionDate: Date | null
     effectiveDate: Date | null
     expirationDate: Date | null
-  };
+  }
   setBasicInfo: React.Dispatch<
     React.SetStateAction<{
       insured: string
@@ -91,11 +90,11 @@ type BasicInfoProps = {
       effectiveDate: Date | null
       expirationDate: Date | null
     }>
-  >;
-  makeValidations: boolean;
-  resetMakeValidations: () => void;
-  isValidForm?: (valid: boolean) => void;
-};
+  >
+  makeValidations: boolean
+  resetMakeValidations: () => void
+  isValidForm?: (valid: boolean) => void
+}
 
 const initialContactData: ContactData = {
   name: '',
@@ -103,7 +102,6 @@ const initialContactData: ContactData = {
   phone: '',
   country: ''
 }
-
 
 const expresions = {
   name: /^[a-zA-ZÀ-ÿ\s]{1,40}$/, // Letras y espacios, pueden llevar acentos.
@@ -142,7 +140,12 @@ const ModalContact = ({ id }: IModal) => {
   const [phoneError, setPhoneError] = useState(false)
   const [countryError, setCountryError] = useState(false)
   const [emptyForm, setEmptyForm] = useState(true)
+  const { save } = useAdd()
 
+  save({
+    alias: 'dsa',
+    name: 'dsadsa'
+  })
   useEffect(() => {
     if (
       contactData.name !== undefined &&
@@ -329,51 +332,49 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
   resetMakeValidations,
   isValidForm
 }) => {
-
-  const [errors, setErrors] = useState<BasicInfoErrors>(
-    {
-      insuredError: false,
-      countryError: false,
-      brokerError: false,
-      cedantError: false,
-      lineOfBusinessError: false,
-      underwriterError: false,
-      leadUnderwriterError: false,
-      technicalAssistantError: false,
-      receptionDateError: false,
-      effectiveDateError: false,
-      expirationDateError: false,
-    });
+  const [errors, setErrors] = useState<BasicInfoErrors>({
+    insuredError: false,
+    countryError: false,
+    brokerError: false,
+    cedantError: false,
+    lineOfBusinessError: false,
+    underwriterError: false,
+    leadUnderwriterError: false,
+    technicalAssistantError: false,
+    receptionDateError: false,
+    effectiveDateError: false,
+    expirationDateError: false
+  })
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setBasicInfo({ ...basicInfo, [name]: value });
-  };
+    const { name, value } = e.target
+    setBasicInfo({ ...basicInfo, [name]: value })
+  }
 
   const handleSelectChange = (event: SelectChangeEvent<string>, child: ReactNode) => {
-    const target = event.target;
-    const name = target.name;
-    const value = target.value;
-    console.log(event);
+    const target = event.target
+    const name = target.name
+    const value = target.value
+    console.log(event)
     setBasicInfo({
       ...basicInfo,
       [name]: value
-    });
-  };
+    })
+  }
   const handleReceptionDateChange = (date: Date) => {
-    setBasicInfo({ ...basicInfo, receptionDate: date });
-  };
+    setBasicInfo({ ...basicInfo, receptionDate: date })
+  }
 
   const handleEffectiveDateChange = (date: Date) => {
-    setBasicInfo({ ...basicInfo, effectiveDate: date });
-  };
+    setBasicInfo({ ...basicInfo, effectiveDate: date })
+  }
 
   const handleExpirationDateChange = (date: Date | null) => {
-    setBasicInfo({ ...basicInfo, expirationDate: date });
-  };
+    setBasicInfo({ ...basicInfo, expirationDate: date })
+  }
 
   const validations = () => {
-    console.log("entro a la validación")
+    console.log('entro a la validación')
     const newErrors: BasicInfoErrors = {
       insuredError: basicInfo.insured === '',
       countryError: basicInfo.country === '',
@@ -385,33 +386,30 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
       technicalAssistantError: basicInfo.technicalAssistant === '',
       receptionDateError: basicInfo.receptionDate === null,
       effectiveDateError: basicInfo.effectiveDate === null,
-      expirationDateError: basicInfo.expirationDate === null,
+      expirationDateError: basicInfo.expirationDate === null
+    }
 
-    };
+    setErrors(newErrors)
 
-    setErrors(newErrors);
-
-    if (
-      Object.values(newErrors).every((error) => !error)
-    ) {
+    if (Object.values(newErrors).every(error => !error)) {
       // enviar formulario si no hay errores
-      console.log('Formulario enviado');
+      console.log('Formulario enviado')
       if (isValidForm) {
-        isValidForm(true);
+        isValidForm(true)
       }
     }
   }
 
   const getErrorMessage = (name: keyof BasicInfoErrors) => {
-    return errors[name] ? 'This field is required' : '';
-  };
+    return errors[name] ? 'This field is required' : ''
+  }
 
   useEffect(() => {
     if (makeValidations) {
-      validations();
-      resetMakeValidations();
+      validations()
+      resetMakeValidations()
     }
-  }, [makeValidations]);
+  }, [makeValidations])
 
   return (
     <>
@@ -423,21 +421,19 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <TextField
               autoFocus
-              name="insured"
+              name='insured'
               label='insured'
               value={basicInfo.insured}
               onChange={handleInputChange}
               error={!!errors.insuredError}
               helperText={getErrorMessage('insuredError')}
             />
-
-
           </FormControl>
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }} error={errors.countryError}>
             <InputLabel>Country</InputLabel>
 
             <Select
-              name="country"
+              name='country'
               label='Country'
               value={basicInfo.country}
               onChange={handleSelectChange}
@@ -464,7 +460,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
             <InputLabel>Select Broker</InputLabel>
 
             <Select
-              name="broker"
+              name='broker'
               label='Select Broker'
               value={basicInfo.broker}
               onChange={handleSelectChange}
@@ -480,11 +476,11 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               </FormHelperText>
             )}
           </FormControl>
-          <FormControl fullWidth sx={{ mb: 2, mt: 2 }}  >
+          <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <InputLabel>Select Broker Contact</InputLabel>
 
             <Select
-              name="brokerContact"
+              name='brokerContact'
               label='Select Broker Contact'
               value={basicInfo.brokerContact}
               onChange={handleSelectChange}
@@ -493,7 +489,6 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               <MenuItem value='brc1'>Broker contact 1</MenuItem>
               <MenuItem value='brc2'>Broker contact 2</MenuItem>
             </Select>
-
           </FormControl>
           <ModalContact id='modal-broker' />
         </div>
@@ -503,7 +498,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
             <InputLabel>Select Cedant</InputLabel>
 
             <Select
-              name="cedant"
+              name='cedant'
               label='Select Cedant'
               value={basicInfo.cedant}
               onChange={handleSelectChange}
@@ -524,7 +519,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
             <InputLabel>Select Cedant Contact</InputLabel>
 
             <Select
-              name="cedantContact"
+              name='cedantContact'
               label='Select Cedant Contact'
               value={basicInfo.cedantContact}
               onChange={handleSelectChange}
@@ -542,7 +537,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
             <InputLabel>Line of business</InputLabel>
 
             <Select
-              name="lineOfBusiness"
+              name='lineOfBusiness'
               label='Line of Business'
               value={basicInfo.lineOfBusiness}
               onChange={handleSelectChange}
@@ -571,12 +566,13 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               className={errors.receptionDateError ? 'error' : ''}
             />
             {errors.receptionDateError && (
-              <FormHelperText sx={{
-                color: 'error.main',
-                marginTop: "-5px",
-                marginBottom: '6px',
-                marginLeft: '10px'
-              }}
+              <FormHelperText
+                sx={{
+                  color: 'error.main',
+                  marginTop: '-5px',
+                  marginBottom: '6px',
+                  marginLeft: '10px'
+                }}
                 id='receptionDate-error'
               >
                 {getErrorMessage('receptionDateError')}
@@ -591,12 +587,13 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               className={errors.effectiveDateError ? 'error' : ''}
             />
             {errors.effectiveDateError && (
-              <FormHelperText sx={{
-                color: 'error.main',
-                marginTop: "-5px",
-                marginBottom: '5px',
-                marginLeft: '10px'
-              }}
+              <FormHelperText
+                sx={{
+                  color: 'error.main',
+                  marginTop: '-5px',
+                  marginBottom: '5px',
+                  marginLeft: '10px'
+                }}
                 id='effectiveDate-error'
               >
                 {getErrorMessage('effectiveDateError')}
@@ -611,12 +608,13 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               className={errors.expirationDateError ? 'error' : ''}
             />
             {errors.expirationDateError && (
-              <FormHelperText sx={{
-                color: 'error.main',
-                marginTop: "-5px",
-                marginBottom: '6px',
-                marginLeft: '10px'
-              }}
+              <FormHelperText
+                sx={{
+                  color: 'error.main',
+                  marginTop: '-5px',
+                  marginBottom: '6px',
+                  marginLeft: '10px'
+                }}
                 id='expirationDate-error'
               >
                 {getErrorMessage('expirationDateError')}
@@ -630,7 +628,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
             <InputLabel>Underwriter</InputLabel>
 
             <Select
-              name="underwriter"
+              name='underwriter'
               label='Underwriter'
               value={basicInfo.underwriter}
               onChange={handleSelectChange}
@@ -650,7 +648,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
             <InputLabel>Lead underwriter</InputLabel>
 
             <Select
-              name="leadUnderwriter"
+              name='leadUnderwriter'
               label='Lead Underwriter'
               value={basicInfo.leadUnderwriter}
               onChange={handleSelectChange}
@@ -671,7 +669,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
             <InputLabel>Technical assistant</InputLabel>
 
             <Select
-              name="technicalAssistant"
+              name='technicalAssistant'
               label='Technical assistant'
               value={basicInfo.technicalAssistant}
               onChange={handleSelectChange}

@@ -3,12 +3,12 @@ import { BrokerDto } from '@/services/catalogs/dtos/broker.dto'
 import { useEffect, useState } from 'react'
 
 export const useGetAll = () => {
-  const [state, setState] = useState<BrokerDto[]>()
+  const [brokers, setBrokers] = useState<BrokerDto[]>()
 
   useEffect(() => {
     BrokerService.getAll()
       .then(brokers => {
-        setState(brokers)
+        setBrokers(brokers)
       })
       .catch(error => {
         throw new Error(error)
@@ -16,6 +16,6 @@ export const useGetAll = () => {
   }, [])
 
   return {
-    state
+    brokers
   }
 }

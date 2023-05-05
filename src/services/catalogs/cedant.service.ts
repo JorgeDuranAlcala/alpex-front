@@ -25,10 +25,10 @@ class BrokerService {
     }
   }
 
-  async addBroker(broker: CedantDto): Promise<CedantDto> {
+  async add(cedant: CedantDto): Promise<CedantDto> {
     try {
       const { data } = await AppAlpexApiGateWay.post<Promise<CedantDto>>(`${BROKER_ROUTES.ADD}`, {
-        ...broker
+        ...cedant
       })
 
       return data

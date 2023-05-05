@@ -25,7 +25,7 @@ class BrokerService {
     }
   }
 
-  async addBroker(broker: BrokerDto): Promise<BrokerDto> {
+  async add(broker: Partial<BrokerDto>): Promise<BrokerDto> {
     try {
       const { data } = await AppAlpexApiGateWay.post<Promise<BrokerDto>>(`${BROKER_ROUTES.ADD}`, {
         ...broker
@@ -33,8 +33,7 @@ class BrokerService {
 
       return data
     } catch (error) {
-      const message = String(error)
-      throw new Error(message)
+      throw error
     }
   }
 
