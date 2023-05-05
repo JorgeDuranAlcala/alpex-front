@@ -23,3 +23,10 @@ export enum LINE_OF_BUSSINES_ROUTES {
   ADD = 'catalogs/lineOfBussines/add',
   UPDATE = 'catalogs/lineOfBussines'
 }
+
+export enum TYPE_OF_LIMIT_ROUTES {
+  GET_ALL = 'catalogs/typeOfLimit/all',
+  GET_BY_ID = 'catalogs/typeOfLimit',
+  ADD = 'catalogs/typeOfLimit/add',
+  UPDATE = 'catalogs/typeOfLimit'
+}

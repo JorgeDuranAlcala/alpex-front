@@ -27,7 +27,7 @@ class LineOfBussinesService {
     }
   }
 
-  async addLineOfBussines(lineOfBussines: LineOfBussinesDto): Promise<LineOfBussinesDto> {
+  async addLineOfBussines(lineOfBussines: Partial<LineOfBussinesDto>): Promise<LineOfBussinesDto> {
     try {
       const { data } = await AppAlpexApiGateWay.post<Promise<LineOfBussinesDto>>(LINE_OF_BUSSINES_ROUTES.ADD, {
         ...lineOfBussines
