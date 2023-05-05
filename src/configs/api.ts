@@ -30,3 +30,10 @@ export enum TYPE_OF_LIMIT_ROUTES {
   ADD = 'catalogs/typeOfLimit/add',
   UPDATE = 'catalogs/typeOfLimit'
 }
+
+export enum CURRENCY_ROUTES {
+  GET_ALL = 'catalogs/currency/all',
+  GET_BY_ID = 'catalogs/currency',
+  ADD = 'catalogs/currency/add',
+  UPDATE = 'catalogs/currency'
+}

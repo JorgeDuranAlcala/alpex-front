@@ -1,4 +1,4 @@
-import { TypeOfLimitDto } from 'src/services/catalogs/dtos/typeOfLimitDto'
+import { TypeOfLimitDto } from 'src/services/catalogs/dtos/TypeOfLimitDto'
 import TypeOfLimitService from 'src/services/catalogs/typeOfLimit.service'
 
 export const useUpdateTypeOfLimit = () => {

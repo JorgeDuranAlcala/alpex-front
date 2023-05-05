@@ -1,6 +1,6 @@
 import { TYPE_OF_LIMIT_ROUTES } from 'src/configs/api'
 import { AppAlpexApiGateWay } from '../app.alpex.api-getway'
-import { TypeOfLimitDto } from './dtos/typeOfLimitDto'
+import { TypeOfLimitDto } from './dtos/TypeOfLimitDto'
 
 class TypeOfLimitService {
   async getAll(): Promise<TypeOfLimitDto[]> {
