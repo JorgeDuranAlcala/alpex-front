@@ -210,9 +210,21 @@ const TableHeader: React.FC<ITableHeader> = ({ selectedRows, badgeData }) => {
       </Box>
       <Box>
         {accountsReducer.filters.map((filter, index) => (
+          filter.unDeleteable ? <Chip
+            key={index}
+            label={filter.text}
+            sx={{
+              backgroundColor: '#174BC125',
+              marginRight: '6px',
+              color: '#2535A8',
+              fontWeight: 500,
+              fontFamily: 'Inter'
+            }}
+
+          /> :
           <Chip
             key={index}
-            label={filter.value}
+            label={filter.text}
             sx={{
               backgroundColor: '#174BC125',
               marginRight: '6px',
@@ -223,7 +235,7 @@ const TableHeader: React.FC<ITableHeader> = ({ selectedRows, badgeData }) => {
             onDelete={() => {
               handleDelete(filter)
             }}
-            deleteIcon={<Icon icon='mdi:close-circle' style={{ color: '2535A8' }} />}
+            deleteIcon={ <Icon icon='mdi:close-circle' style={{ color: '2535A8' }} />}
           />
         ))}
       </Box>

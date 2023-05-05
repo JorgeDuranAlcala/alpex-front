@@ -12,3 +12,7 @@ export enum ACCOUNT_ROUTES {
 export enum AUTH_ROUTES {
   LOGIN = '/auth'
 }
+
+export enum USERS_ROUTES {
+  GET = 'user'
+}

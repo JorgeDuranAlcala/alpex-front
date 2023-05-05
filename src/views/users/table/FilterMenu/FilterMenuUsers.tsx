@@ -12,33 +12,33 @@ import { handleAccountFilter } from 'src/store/apps/accounts'
 import colors from 'src/views/accounts/colors'
 import fonts from 'src/views/accounts/font'
 
-/*enum ELob {
+/*enum EUsers {
     PROPERTY = 'property',
     FINANCIAL_LINES = 'financialLines',
     OTHER = 'other',
     OTHER2 = 'other2',
 }*/
 
-enum ELobString {
+enum EUsersString {
   PROPERTY = 'Property',
   FINANCIAL_LINES = 'Financial Lines',
   OTHER = 'Other option',
   OTHER2 = 'Other option'
 }
 
-interface IFilterMenuLobOptionProps {
-  lob: ELobString
+interface IFilterMenuUsersOptionProps {
+  Users: EUsersString
   handleClose?: () => void
 }
 
-const FilterMenuLobOption: React.FC<IFilterMenuLobOptionProps> = ({ lob }) => {
+const FilterMenuUsersOption: React.FC<IFilterMenuUsersOptionProps> = ({ Users }) => {
   const dispatch = useAppDispatch()
   const handleClick = () => {
     dispatch(
       handleAccountFilter({
-        type: 'Lob',
-        value: lob,
-        text: lob
+        type: 'Users',
+        value: Users,
+        text: Users
       })
     )
   }
@@ -55,7 +55,7 @@ const FilterMenuLobOption: React.FC<IFilterMenuLobOptionProps> = ({ lob }) => {
               textTransform: 'capitalize'
             }}
           >
-            {lob}
+            {Users}
           </Typography>
         </ListItemText>
       </MenuItem>
@@ -63,7 +63,7 @@ const FilterMenuLobOption: React.FC<IFilterMenuLobOptionProps> = ({ lob }) => {
   )
 }
 
-const FilterMenuLob = ({}) => {
+const FilterMenuUsers = ({}) => {
   return (
     <>
       <Box component={'li'} sx={{ padding: '10px 10px', display: 'block', width: '100%', borderRadius: '0' }}>
@@ -73,12 +73,12 @@ const FilterMenuLob = ({}) => {
           </Typography>
         </Box>
       </Box>
-      <FilterMenuLobOption lob={ELobString.PROPERTY} />
-      <FilterMenuLobOption lob={ELobString.FINANCIAL_LINES} />
-      <FilterMenuLobOption lob={ELobString.OTHER} />
-      <FilterMenuLobOption lob={ELobString.OTHER2} />
+      <FilterMenuUsersOption Users={EUsersString.PROPERTY} />
+      <FilterMenuUsersOption Users={EUsersString.FINANCIAL_LINES} />
+      <FilterMenuUsersOption Users={EUsersString.OTHER} />
+      <FilterMenuUsersOption Users={EUsersString.OTHER2} />
     </>
   )
 }
 
-export default FilterMenuLob
+export default FilterMenuUsers
