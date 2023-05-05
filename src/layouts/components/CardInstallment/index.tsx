@@ -1,12 +1,7 @@
 import { FormControl, TextField, Typography } from '@mui/material'
 
-// import Box from '@mui/material/Box'
-
-// import Collapse from '@mui/material/Collapse'
-
-// import { NumericFormat } from 'react-number-format'
-
-import { useState } from 'react'
+// import { useState } from 'react'
+import { NumericFormat } from 'react-number-format'
 import UserThemeOptions from 'src/layouts/UserThemeOptions'
 import RepeaterHorizontal from 'src/pages/components/repeaterHorizontal'
 import { ContainerCard, ContainerCardInputs } from '../../../styles/Forms/PaymentWarranty/paymentWarranty'
@@ -15,51 +10,80 @@ interface ICardInstallment {
   count: number
 }
 
-interface InstallmentCardData {
-  premiumPayment: string
-  payment: string
-  balanceDue: number
-  settlementDueDate: string
-}
+// type InstallmentProps = {
+//   installmentData:{
+//   premiumPayment: string
+//   payment: string
+//   balanceDue: number
+//   settlementDueDate: string
+// };
+// setInstallmentData: React.Dispatch<
+// React.SetStateAction<{
+//   premiumPayment: string
+//   payment: string
+//   balanceDue: number
+//   settlementDueDate: string
 
-const initialData: InstallmentCardData = {
-  premiumPayment: '',
-  payment: '',
-  balanceDue: 0,
-  settlementDueDate: ''
-}
+// }>;
+// >;
+// }
+
+// interface InstallmentCardData {
+//   premiumPayment: string
+//   payment: string
+//   balanceDue: number
+//   settlementDueDate: string
+// }
+
+// const initialData: InstallmentCardData = {
+//   premiumPayment: '',
+//   payment: '',
+//   balanceDue: 0,
+//   settlementDueDate: ''
+// }
+
 const CardInstallment = ({ count }: ICardInstallment) => {
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
   const textColor = userThemeConfig.palette?.text.subTitle
-  const [formData, setFormData] = useState<InstallmentCardData>(initialData)
 
-  const handleFormChange = (
-    field: keyof InstallmentCardData,
-    value: InstallmentCardData[keyof InstallmentCardData]
-  ) => {
-    setFormData({ ...formData, [field]: value })
-  }
+  // const [formData, setFormData] = useState<InstallmentCardData>(initialData)
+
+  // const [error, setError] = useState<boolean>(false)
+
+  // const handleFormChange = (
+  //   field: keyof InstallmentCardData,
+  //   value: InstallmentCardData[keyof InstallmentCardData]
+  // ) => {
+  //   setFormData({ ...formData, [field]: value })
+  // }
 
   return (
     <>
       <RepeaterHorizontal count={count}>
         {(i: number) => {
           return (
-            <ContainerCard key={i} {...(i !== 0 ? { in: true } : {})}>
+            <ContainerCard key={i}>
               <Typography variant='h6' sx={{ color: textColor }}>
                 Installment {i + 1}
               </Typography>
               <ContainerCardInputs>
                 <FormControl fullWidth>
-                  {/* <NumericFormat customInput={TextField} variant='outlined' prefix={'$'} /> */}
-                  <TextField
-                    label='Premium payment warranty'
-                    value={formData.premiumPayment}
-                    onChange={e => handleFormChange('premiumPayment', e.target.value)}
-                  />
+                  <TextField label='Premium payment warranty' />
                 </FormControl>
                 <FormControl fullWidth>
-                  <TextField label='Payment %' />
+                  <NumericFormat
+                    name='reinsuranceBrokerageP'
+                    allowLeadingZeros
+                    thousandSeparator=','
+                    customInput={TextField}
+                    id='reinsurance-brokerage'
+                    label='Payment %'
+                    multiline
+                    prefix={'%'}
+                    decimalScale={2}
+                    variant='outlined'
+                  />
+                  {/* {false && <FormHelperText sx={{ color: 'error.main' }}>Required Field</FormHelperText>} */}
                 </FormControl>
                 <FormControl fullWidth>
                   <TextField label='Balance due' />
