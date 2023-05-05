@@ -12,7 +12,7 @@ import * as yup from 'yup'
 
 // ** Layout Import
 import BlankLayout from 'src/@core/layouts/BlankLayout'
-import CountrySelect from 'src/pages/components/custom/select/CountrySelect'
+import CountrySelect from 'src/views/custom/select/CountrySelect'
 
 // ** Import Data
 const schema = yup.object().shape({

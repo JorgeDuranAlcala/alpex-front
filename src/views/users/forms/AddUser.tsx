@@ -16,10 +16,10 @@ import {
 
 import { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import CountrySelect, { ICountry } from 'src/pages/components/custom/select/CountrySelect'
-import { StyledDescription, StyledSubtitle, StyledTitle } from 'src/pages/components/custom/typography'
 import UsersServices from 'src/services/users/users.service'
 import { UserSection } from 'src/styles/Forms/usersSection'
+import CountrySelect, { ICountry } from 'src/views/custom/select/CountrySelect'
+import { StyledDescription, StyledSubtitle, StyledTitle } from 'src/views/custom/typography'
 
 const schema = yup.object().shape({
   email: yup.string().email().required(),
