@@ -22,8 +22,8 @@ import { useForm } from 'react-hook-form'
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
-import AvatarInitials from 'src/pages/components/custom/avatars'
-import SwitchAlpex from 'src/pages/components/custom/switchs'
+import AvatarInitials from 'src/views/custom/avatars'
+import SwitchAlpex from 'src/views/custom/switchs'
 
 interface PickerProps {
   label?: string

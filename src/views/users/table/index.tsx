@@ -19,12 +19,12 @@ import TableHeader from './TableHeader'
 
 // ** Custom utilities
 import { Link } from '@mui/material'
-import { IAlert } from 'src/pages/components/custom/alerts'
-import StyledChip from 'src/pages/components/custom/chips/styledChips'
 import { useAppDispatch, useAppSelector } from 'src/store'
 import { fetchAccounts } from 'src/store/apps/users'
 import colors from 'src/views/accounts/colors'
 import fonts from 'src/views/accounts/font'
+import { IAlert } from 'src/views/custom/alerts'
+import StyledChip from 'src/views/custom/chips/styledChips'
 
 interface IRolesUserGrid {
   id: number
