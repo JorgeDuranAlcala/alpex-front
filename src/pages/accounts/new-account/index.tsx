@@ -15,7 +15,11 @@ import NewAccountStepper from 'src/views/components/new-accounts/NewAccountStepp
 
 // import TabAccount from 'src/views/pages/account-settings/TabAccount'
 
-// import InvoiceList from 'src/pages/apps/invoice/list'
+import Sublimits from 'src/views/accounts/new-account-steps/Sublimits'
+
+// import UserList from 'src/pages/apps/user/list'
+
+// import InvoiceAdd from 'src/pages/apps/invoice/add'
 
 const NewAccount = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -46,8 +50,13 @@ const NewAccount = () => {
         {activeStep == 1 ? <Information onStepChange={handleStepChange} /> : ''}
         {activeStep == 2 ? <Security onStepChange={handleStepChange} /> : ''}
         {activeStep == 3 ? <PaymentWarranty /> : ''}
+        {activeStep == 4 ? <Sublimits /> : ''}
+
         {/* <TabAccount /> */}
-        {/* <InvoiceList /> */}
+
+        {/* <UserList /> */}
+
+        {/* <InvoiceAdd /> */}
       </Card>
       <Card>
         <CommentSection disable={disableComments} />
