@@ -11,17 +11,23 @@ const initialState: IUsersState = {
   filters: [],
   info: {
     count: 0,
-    page: '',
-    take: '',
+    page: 1,
+    take: 10,
     pages: 0,
     next: '',
     prev: ''
-  }
+  },
+  temporalFilters: []
 }
 
-export const fetchAccounts = createAsyncThunk('appUsersState/fetchUsers', async () => {
-  const data = await UsersServices.getUsers({ page: 1, take: 49 })
-  console.log(data)
+export const fetchAccounts = createAsyncThunk('appUsersState/fetchUsers', async (state: IUsersState = initialState) => {
+  const data = await UsersServices.getUsers({ ...state })
+
+  return data
+})
+
+export const fetchAccountsTemporal = createAsyncThunk('appUsersState/fetchUsersTemporal', async () => {
+  const data = await UsersServices.getUsers({ ...initialState, info: { ...initialState.info, take: 49 } })
 
   return data
 })
@@ -58,6 +64,12 @@ export const appUsersSlice = createSlice({
     builder.addCase(fetchAccounts.pending, state => {
       state.users = []
       state.loading = true
+    })
+
+    builder.addCase(fetchAccountsTemporal.fulfilled, (state, action) => {
+      state.loading = false
+      state.temporalFilters = action.payload.results
+      state.info = action.payload.info
     })
     builder.addCase(appUsersSlice.actions.handleUsersFilter, state => {
       state.users = []

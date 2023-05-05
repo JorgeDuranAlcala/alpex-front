@@ -10,4 +10,5 @@ export type IAccounts = {
   accounts: any[]
   loading: boolean
   filters: IFilters[]
+  formsData: any
 }
