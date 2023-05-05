@@ -10,7 +10,8 @@ export enum ACCOUNT_ROUTES {
 }
 
 export enum AUTH_ROUTES {
-  LOGIN = '/auth'
+  LOGIN = '/auth',
+  AUTH_ME = '/auth/me/'
 }
 
 export enum USERS_ROUTES {
