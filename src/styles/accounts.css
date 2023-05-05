@@ -59,7 +59,12 @@
 
 .side-header.MuiCard-root {
   width: fit-content;
-  margin: 20px 0 20px auto;
+  height: 100%;
+  margin: 0px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .actions-wrapper {
@@ -580,6 +585,12 @@
   color: rgba(77, 80, 98, 0.68);
 }
 
+.actions-header {
+  width: 100%;
+  padding: 20px 0;
+  height: 100%;
+}
+
 .form-header-section:first-child {
   grid-column: span 2;
   display: grid;
@@ -600,13 +611,14 @@
 .form-header {
   width: 100%;
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   grid-template-rows: 1fr;
   grid-column-gap: 24px;
   grid-row-gap: 0px;
   align-items: center;
   min-height: 80px;
   padding: 20px;
+  padding-top: 80px;
   padding-bottom: 0px;
 }
 
@@ -689,6 +701,22 @@
   width: 100%;
 }
 
+.form-header-grid {
+  display: grid;
+  grid-template-columns: 10fr 2fr;
+  grid-template-rows: 1fr;
+  grid-auto-rows: 1fr;
+  grid-column-gap: 24px;
+  grid-row-gap: 0px;
+  align-items: center;
+  min-height: 80px;
+  padding-top: 80px;
+  padding-bottom: 0px;
+}
+
+.form-header-grid:first-child {
+  grid-column: span 10;
+}
 .form-header-title2 {
   font-family: 'Inter';
   font-style: normal;

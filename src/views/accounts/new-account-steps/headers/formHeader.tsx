@@ -1,6 +1,7 @@
 import { Box, Button, Card, ListItemIcon, ListItemText, Menu, MenuItem, Modal, Typography } from '@mui/material'
 import { useState } from 'react'
 import Icon from 'src/@core/components/icon'
+import { useAppSelector } from 'src/store'
 import StatusSelect from 'src/views/custom/select/StatusSelect'
 import ActionsHeader from './ActionsHeader'
 
@@ -114,8 +115,11 @@ const ModalUploadImage = () => {
 
 const FormHeader = () => {
   const [status, setStatus] = useState({})
+
+  const accountsReducer = useAppSelector(state => state.accounts)
+
   return (
-    <>
+    <div className='form-header-grid'>
       <Card>
         <div className='form-header-data'>
           <div className='form-header'>
@@ -134,22 +138,25 @@ const FormHeader = () => {
             </div>
             <div className='form-header-section'>
               <span className='form-header-title'>Net premium:</span>
-              <span className='form-header-subtitle'>$5000 USD </span>
+              <span className='form-header-subtitle'>
+                ${accountsReducer.formsData.form1.placementStructure.netPremium}{' '}
+                {accountsReducer.formsData.form1.placementStructure.currency}
+              </span>
             </div>
             <div className='form-header-section'>
               <span className='form-header-title'>Registration date:</span>
               <span className='form-header-subtitle'>22 Oct 2022 </span>
             </div>
-            <div className='form-header-section'>
-              <ActionsHeader accountStatus='PENDING' sideHeader={true} />
-            </div>
-          </div>
-          <div className='form-header2'>
-            <span className=''>Created 2 hours ago</span>
           </div>
         </div>
+        <div className='form-header2'>
+          <span className=''>Created 2 hours ago</span>
+        </div>
       </Card>
-    </>
+      <div className={'actions-header'}>
+        <ActionsHeader accountStatus='PENDING' sideHeader={true} />
+      </div>
+    </div>
   )
 }
 
