@@ -12,3 +12,28 @@ export enum ACCOUNT_ROUTES {
 export enum AUTH_ROUTES {
   LOGIN = '/auth'
 }
+
+export enum USERS_ROUTES {
+  GET = 'user'
+}
+
+export enum LINE_OF_BUSSINES_ROUTES {
+  GET_ALL = 'catalogs/lineOfBussines/all',
+  GET_BY_ID = 'catalogs/lineOfBussines',
+  ADD = 'catalogs/lineOfBussines/add',
+  UPDATE = 'catalogs/lineOfBussines'
+}
+
+export enum TYPE_OF_LIMIT_ROUTES {
+  GET_ALL = 'catalogs/typeOfLimit/all',
+  GET_BY_ID = 'catalogs/typeOfLimit',
+  ADD = 'catalogs/typeOfLimit/add',
+  UPDATE = 'catalogs/typeOfLimit'
+}
+
+export enum CURRENCY_ROUTES {
+  GET_ALL = 'catalogs/currency/all',
+  GET_BY_ID = 'catalogs/currency',
+  ADD = 'catalogs/currency/add',
+  UPDATE = 'catalogs/currency'
+}

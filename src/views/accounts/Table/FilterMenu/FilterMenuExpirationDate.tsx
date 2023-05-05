@@ -106,7 +106,14 @@ const FilterMenuExpirationDate = () => {
     dispatch(
       handleAccountFilter({
         type: 'ExpirationDate',
-        value: `Expiration: ${
+        value: `${
+          subtype === 'fulldate'
+            ? dateTransform(expirationDate)
+            : subtype === 'month'
+            ? dateTransform(month)
+            : dateTransform(year)
+        }`,
+        text: `Expiration: ${
           subtype === 'fulldate'
             ? dateTransform(expirationDate)
             : subtype === 'month'
