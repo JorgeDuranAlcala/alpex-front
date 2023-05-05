@@ -3,28 +3,28 @@ import { useEffect, useState } from 'react'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
-import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
 import { DataGrid, GRID_CHECKBOX_SELECTION_COL_DEF, GridColumns, GridRowId } from '@mui/x-data-grid'
 
 // ** Icon Imports
-import Icon from 'src/@core/components/icon'
 
 // ** Custom Hooks imports
 
 // ** Custom Components Imports
+import { Icon } from '@iconify/react'
 import ColumnHeader from './ColumnHeader'
 import CustomPagination from './CustomPagination'
 import TableHeader from './TableHeader'
 
 // ** Custom utilities
-import { Link } from '@mui/material'
+import { Button, Link, ListItemText, Menu, MenuItem } from '@mui/material'
 import { useAppDispatch, useAppSelector } from 'src/store'
 import { fetchAccounts } from 'src/store/apps/users'
 import colors from 'src/views/accounts/colors'
 import fonts from 'src/views/accounts/font'
 import { IAlert } from 'src/views/custom/alerts'
 import StyledChip from 'src/views/custom/chips/styledChips'
+import ModalAction from 'src/views/custom/modal'
 
 interface IRolesUserGrid {
   id: number
@@ -35,6 +35,7 @@ interface IRolesUserGrid {
 }
 
 export interface IUsersGrid {
+  id: number
   name: string
   roles: IRolesUserGrid[]
   idCompany: {
@@ -42,6 +43,7 @@ export interface IUsersGrid {
   }
   phone: string
   email: string
+  surname: string
 }
 
 export enum EFieldColumn {
@@ -54,13 +56,17 @@ export enum EFieldColumn {
 
 interface IUsersTable {
   handleView: (view: string) => void
+  setSelectUser: (id: number | null) => void
+  modalShow: boolean
+  setModalShow: any
 }
 
-const Table = ({ handleView }: IUsersTable) => {
+const Table = ({ handleView, setSelectUser, modalShow, setModalShow }: IUsersTable) => {
   // ** State
   const [selectedRows, setSelectedRows] = useState<GridRowId[]>([])
   const [accounts, setAccounts] = useState<any>([])
   const [loading, setLoading] = useState<any>([])
+  const [selectedUser, setSelectedUser] = useState<IUsersGrid | null>(null)
 
   //WIP
   //eslint-disable-next-line
@@ -81,16 +87,26 @@ const Table = ({ handleView }: IUsersTable) => {
   }
 
   useEffect(() => {
-    dispatch(fetchAccounts())
-    //eslint-disable-next-line
-  }, [])
-
-  useEffect(() => {
     setAccounts(usersReducer.users || [])
     console.log(loading)
     setLoading(usersReducer.loading)
     //eslint-disable-next-line
-  }, [usersReducer])
+  }, [usersReducer.users])
+
+  useEffect(() => {
+    console.log(usersReducer)
+    dispatch(fetchAccounts(usersReducer))
+    //eslint-disable-next-line
+  }, [usersReducer.filters])
+
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
+  const open = Boolean(anchorEl)
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget)
+  }
+  const handleClose = () => {
+    setAnchorEl(null)
+  }
 
   //name, role, company, phone number, email
   const column: GridColumns<IUsersGrid> = [
@@ -103,7 +119,7 @@ const Table = ({ handleView }: IUsersTable) => {
       field: EFieldColumn.NAME,
       headerName: 'NAME',
       minWidth: 150,
-      maxWidth: 150,
+      maxWidth: 400,
       type: 'string',
       align: 'left',
       disableColumnMenu: true,
@@ -111,8 +127,10 @@ const Table = ({ handleView }: IUsersTable) => {
       headerClassName: 'account-column-header',
       renderHeader: ({ colDef }) => <ColumnHeader colDef={colDef} showIcon={false} action={handleClickColumnHeader} />,
       renderCell: ({ row }) => (
-        <Typography sx={{ color: colors.primary.main, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
-          {`${row.name}`}
+        <Typography
+          sx={{ color: colors.primary.main, fontSize: fonts.size.px14, fontFamily: fonts.inter, overflow: 'elipsis' }}
+        >
+          {`${row.name} ${row.surname}`}
         </Typography>
       )
     },
@@ -198,19 +216,87 @@ const Table = ({ handleView }: IUsersTable) => {
       disableColumnMenu: true,
       cellClassName: 'account-column-cell-pl-0',
       renderHeader: ({ colDef }) => <ColumnHeader colDef={colDef} showIcon={false} />,
-      renderCell: ({}) => (
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <IconButton size='small' sx={{ mr: 1 }}>
-            <Icon icon='ic:menu' />
-          </IconButton>
+      renderCell: ({ row }) => (
+        <Box sx={{ display: 'flex', alignItems: 'start' }}>
+          <Button
+            id='basic-button'
+            aria-controls={open ? 'basic-menu' : undefined}
+            aria-haspopup='true'
+            aria-expanded={open ? 'true' : undefined}
+            onClick={e => {
+              setSelectedUser(row)
+              handleClick(e)
+            }}
+            startIcon={<Icon icon='mdi:dots-vertical' fontSize={15} />}
+          />
+          <Menu
+            id='basic-menu'
+            anchorEl={anchorEl}
+            open={open}
+            onClose={handleClose}
+            MenuListProps={{
+              'aria-labelledby': 'basic-button'
+            }}
+          >
+            <MenuItem
+              onClick={() => {
+                setSelectUser(selectedUser!.id)
+              }}
+              sx={{ minWidth: '172px' }}
+            >
+              <ListItemText>Edit</ListItemText>
+              <Icon icon='mdi:pencil' fontSize={24} />
+            </MenuItem>
+            <MenuItem
+              onClick={() => {
+                setModalShow(true)
+              }}
+              sx={{ minWidth: '172px' }}
+            >
+              <ListItemText>Delete</ListItemText>
+              <Icon icon='ic:baseline-delete-outline' fontSize={24} />
+            </MenuItem>
+          </Menu>
         </Box>
       )
     }
   ]
+  const onDelete = () => {
+    setBadgeData({
+      message: `${selectedUser?.name} ${selectedUser?.surname} WAS DELETED SUCCESSFULLY`,
+      status: 'success',
+      icon: <Icon icon='ic:baseline-check-circle' />
+    })
+    setTimeout(() => {
+      setBadgeData({
+        message: '',
+        status: undefined,
+        icon: undefined
+      })
+    }, 3000)
+  }
 
   return (
     <>
-      <TableHeader handleView={handleView} selectedRows={selectedRows} badgeData={badgeData} />
+      <ModalAction
+        headingText={`Are you sure you want to delete ${selectedUser?.name} ${selectedUser?.surname}`}
+        text='This user will no longer have access to the platform.'
+        setShow={modalShow}
+        handleClickContinue={() => {
+          setModalShow(false)
+          onDelete()
+        }}
+        handleClickCancel={() => {
+          setModalShow(false)
+        }}
+        continueText='Delete'
+      />
+      <TableHeader
+        handleView={handleView}
+        selectedRows={selectedRows}
+        badgeData={badgeData}
+        setModalShow={setModalShow}
+      />
       <DataGrid
         sx={{ textTransform: 'capitalize' }}
         autoHeight

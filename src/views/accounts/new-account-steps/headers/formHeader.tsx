@@ -1,12 +1,26 @@
-import { Box, Button, ListItemIcon, ListItemText, Menu, MenuItem, Modal, Typography } from '@mui/material'
+import { Box, Button, Card, ListItemIcon, ListItemText, Menu, MenuItem, Modal, Typography } from '@mui/material'
 import { useState } from 'react'
 import Icon from 'src/@core/components/icon'
+import { useAppSelector } from 'src/store'
+import StatusSelect from 'src/views/custom/select/StatusSelect'
+import ActionsHeader from './ActionsHeader'
 
 // import StatusSelect from 'src/views/custom/select/StatusSelect'
 
 // ** MUI Imports
 
 /* eslint-disable */
+
+interface IActionsHeaderProps {
+  accountStatus: string
+  sideHeader: boolean
+}
+
+interface StatusHistory {
+  id: number
+  name: string
+  date: string
+}
 
 //Pending types
 
@@ -101,35 +115,48 @@ const ModalUploadImage = () => {
 
 const FormHeader = () => {
   const [status, setStatus] = useState({})
+
+  const accountsReducer = useAppSelector(state => state.accounts)
+
   return (
-    <>
-      <div className='form-header-data'>
-        <div className='form-header'>
-          <div className='form-header-section'>
-            <ModalUploadImage />
-            <div className='double-gap'>
-              <span className='form-header-title2'>Insured name</span>
-              <span className='block blue-subtitle'>#001</span>
+    <div className='form-header-grid'>
+      <Card>
+        <div className='form-header-data'>
+          <div className='form-header'>
+            <div className='form-header-section'>
+              <ModalUploadImage />
+              <div className='double-gap'>
+                <span className='form-header-title2'>Insured name</span>
+                <span className='block blue-subtitle'>#001</span>
+              </div>
             </div>
-          </div>
-          <div className='form-header-section'>
-            <span className='form-header-title'>Status: </span>
-            <span className='form-header-subtitle'>{/* <StatusSelect setSelectedStatus={setStatus} />{' '} */}</span>
-          </div>
-          <div className='form-header-section'>
-            <span className='form-header-title'>Net premium:</span>
-            <span className='form-header-subtitle'>$5000 USD </span>
-          </div>
-          <div className='form-header-section'>
-            <span className='form-header-title'>Registration date:</span>
-            <span className='form-header-subtitle'>22 Oct 2022 </span>
+            <div className='form-header-section'>
+              <span className='form-header-title'>Status: </span>
+              <span className='form-header-subtitle'>
+                <StatusSelect initialStatus='PENDING' setSelectedStatus={setStatus} />
+              </span>
+            </div>
+            <div className='form-header-section'>
+              <span className='form-header-title'>Net premium:</span>
+              <span className='form-header-subtitle'>
+                ${accountsReducer.formsData.form1.placementStructure.netPremium}{' '}
+                {accountsReducer.formsData.form1.placementStructure.currency}
+              </span>
+            </div>
+            <div className='form-header-section'>
+              <span className='form-header-title'>Registration date:</span>
+              <span className='form-header-subtitle'>22 Oct 2022 </span>
+            </div>
           </div>
         </div>
         <div className='form-header2'>
           <span className=''>Created 2 hours ago</span>
         </div>
+      </Card>
+      <div className={'actions-header'}>
+        <ActionsHeader accountStatus='PENDING' sideHeader={true} />
       </div>
-    </>
+    </div>
   )
 }
 

@@ -5,10 +5,11 @@ import Card from '@mui/material/Card'
 import Grid from '@mui/material/Grid'
 
 // ** Custom Components Imports
-import ActionsHeader from 'src/views/accounts/new-account-steps/headers/ActionsHeader'
 import Information from 'src/views/accounts/new-account-steps/Information/Information'
 import PaymentWarranty from 'src/views/accounts/new-account-steps/PaymentWarranty'
 import Security from 'src/views/accounts/new-account-steps/Security'
+import ActionsHeader from 'src/views/accounts/new-account-steps/headers/ActionsHeader'
+import FormHeader from 'src/views/accounts/new-account-steps/headers/formHeader'
 import CommentSection from 'src/views/components/new-accounts/CommentSection'
 import NewAccountStepper from 'src/views/components/new-accounts/NewAccountStepper'
 
@@ -35,11 +36,19 @@ const NewAccount = () => {
       {/* "ActionsHeader" component receives the initial status of the
       account and in order to use it as a "side header" (forms 2 to 4),
       it is necessary to send the boolean variable "sideHeader = true". */}
-      <ActionsHeader accountStatus='PENDING' sideHeader={false} />
+      {activeStep == 1 ? (
+        <ActionsHeader accountStatus='PENDING' sideHeader={false} />
+      ) : (
+        <>
+          {' '}
+          <FormHeader />
+        </>
+      )}
+
       <Card>
         <NewAccountStepper changeStep={activeStep} onStepChange={handleStepChange} />
         {activeStep == 1 ? <Information onStepChange={handleStepChange} /> : ''}
-        {activeStep == 2 ? <Security /> : ''}
+        {activeStep == 2 ? <Security onStepChange={handleStepChange} /> : ''}
         {activeStep == 3 ? <PaymentWarranty /> : ''}
         {activeStep == 4 ? <Sublimits /> : ''}
 

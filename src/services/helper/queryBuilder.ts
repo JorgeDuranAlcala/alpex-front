@@ -1,7 +1,7 @@
 export function queryBuilder(data: any, route: string) {
   const query = Object.keys(data)
     .map(function (key) {
-      return [key, data[key]].map(encodeURIComponent).join('=')
+      return [data[key].type, data[key].value].map(encodeURIComponent).join('=')
     })
     .join('&')
 

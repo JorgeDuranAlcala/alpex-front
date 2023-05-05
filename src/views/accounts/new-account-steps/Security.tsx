@@ -1,13 +1,12 @@
-import { ForwardedRef, forwardRef, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import UserThemeOptions from 'src/layouts/UserThemeOptions'
 
 // ** MUI Imports
-import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
-import { SxProps, Theme } from '@mui/material'
+import CloseIcon from '@mui/icons-material/Close'
+import { Box, Modal } from '@mui/material'
 import Button from '@mui/material/Button'
 import FormControl from '@mui/material/FormControl'
 import FormHelperText from '@mui/material/FormHelperText'
-import InputAdornment from '@mui/material/InputAdornment'
 import InputLabel from '@mui/material/InputLabel'
 import MenuItem from '@mui/material/MenuItem'
 import Select from '@mui/material/Select'
@@ -16,19 +15,16 @@ import TextField from '@mui/material/TextField'
 // ** Components
 
 // ** Third Party Imports
-import { useForm } from 'react-hook-form'
 
 // ** Types
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
-import AvatarInitials from 'src/views/custom/avatars'
+import { useAppDispatch } from 'src/store'
+import { updateFormsData } from 'src/store/apps/accounts'
+import { ButtonClose, HeaderTitleModal } from 'src/styles/Dashboard/ModalReinsurers/modalReinsurers'
 import SwitchAlpex from 'src/views/custom/switchs'
 
-interface PickerProps {
-  label?: string
-  sx?: SxProps<Theme>
-}
 interface FormInfo extends PreviousFormInfo {
   NetPremium: string
   SharePercent: string
@@ -66,24 +62,10 @@ const SecurityForm: FormInfo = {
   Diference: ''
 }
 
-/* eslint-disable */
-const CustomInput = forwardRef(({ ...props }: PickerProps, ref: ForwardedRef<HTMLElement>) => {
-  return (
-    <TextField
-      id='date-textfield'
-      inputRef={ref}
-      sx={{ width: { sm: '250px', xs: '170px' }, '& .MuiInputBase-input': { color: 'text.secondary' } }}
-      InputProps={{
-        endAdornment: (
-          <InputAdornment position='end'>
-            <CalendarTodayIcon />
-          </InputAdornment>
-        )
-      }}
-      {...props}
-    />
-  )
-})
+type SecurityProps = {
+  onStepChange?: (step: number) => void
+}
+
 //Pending types
 const FormSection = ({ index, formData, setFormData }: any) => {
   const [frontingFeeEnabled, setFrontingFeeEnabled] = useState(true)
@@ -97,11 +79,11 @@ const FormSection = ({ index, formData, setFormData }: any) => {
     const data = [...formData]
     data[index]['RetroCedantContact'] = ''
     setFormData(data)
+    //eslint-disable-next-line
   }, [formData[index].RetroCedant])
 
   return (
     <>
-      <div className='title'>Security</div>
       <span className='switch-text'>Fronting fee </span>
       <SwitchAlpex
         onClick={() => {
@@ -347,47 +329,108 @@ const FormSection = ({ index, formData, setFormData }: any) => {
   )
 }
 
-const Security = () => {
+const Security = ({ onStepChange }: SecurityProps) => {
   const [formData, setFormData] = useState<FormInfo[]>([{ ...SecurityForm }])
-
+  const dispatch = useAppDispatch()
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
   const inter = userThemeConfig.typography?.fontFamilyInter
-  const handleSubmit = () => {
-    console.log('elsubmit')
-  }
-  const {
-    control,
-    formState: { errors }
-  } = useForm()
+  const [open, setOpen] = useState<boolean>(false)
+
   const addNewForm = () => {
     setFormData([...formData, { ...SecurityForm }])
+  }
+
+  const handleCloseModal = () => {
+    setOpen(false)
+  }
+
+  const onNextStep = () => {
+    onStepChange!(3)
+  }
+
+  const handleNext = () => {
+    setOpen(true)
+  }
+
+  const handleSubmit = () => {
+    dispatch(updateFormsData({ form2: formData }))
   }
 
   return (
     <>
       <div className='information' style={{ fontFamily: inter }}>
+        <div className='title'>Security</div>
         <form noValidate autoComplete='on' onSubmit={handleSubmit}>
           <div className='section'>
             {formData.map((_, index) => (
-              <FormSection index={index} formData={formData} setFormData={setFormData} />
+              <>
+                {index > 0 && <hr style={{ margin: '40px 0px', backgroundColor: 'lightgray' }} />}
+                <FormSection divider index={index} formData={formData} setFormData={setFormData} />
+              </>
             ))}
           </div>
-        </form>
-        <div className='add-reinsurer'>
-          <AvatarInitials name='Juan del Rio' />
+          <div className='add-reinsurer'>
+            <Button
+              type='button'
+              onClick={addNewForm}
+              variant='text'
+              color='primary'
+              size='large'
+              fullWidth
+              sx={{ justifyContent: 'start' }}
+            >
+              <Icon icon='material-symbols:add-circle-outline' fontSize={20} className='icon-btn' /> ADD REINSURER
+            </Button>
+          </div>
+          <div className='section action-buttons' style={{ float: 'right', marginRight: 'auto', marginBottom: '20px' }}>
+            <Button className='btn-save' onClick={handleSubmit} variant='contained'>
+              <div className='btn-icon'>
+                <Icon icon='mdi:content-save' />
+              </div>
+              SAVE CHANGES
+            </Button>
+            <Button className='btn-next' onClick={handleNext}>
+              Next Step
+              <div className='btn-icon'>
+                <Icon icon='material-symbols:arrow-right-alt' />
+              </div>
+            </Button>
 
-          <Button
-            type='button'
-            onClick={addNewForm}
-            variant='text'
-            color='primary'
-            size='large'
-            fullWidth
-            sx={{ justifyContent: 'start' }}
-          >
-            <Icon icon='material-symbols:add-circle-outline' fontSize={20} className='icon-btn' /> ADD REINSURER
-          </Button>
-        </div>
+            <Modal className='next-step-modal' open={open} onClose={handleCloseModal}>
+              <Box
+                sx={{
+                  position: 'absolute',
+                  bgcolor: 'white',
+                  top: '50%',
+                  left: '50%',
+                  boxShadow: 24,
+                  pl: 5,
+                  pr: 5,
+                  transform: 'translate(-50%, -50%)',
+                  borderRadius: '10px',
+                  padding: '15px'
+                }}
+              >
+                <HeaderTitleModal>
+                  <div className='next-modal-title'>Ready to continue?</div>
+                  <ButtonClose onClick={handleCloseModal}>
+                    <CloseIcon />
+                  </ButtonClose>
+                </HeaderTitleModal>
+                <div className='next-modal-text'>
+                  You are about to advance to the next form. Make sure that all the fields have been completed with the
+                  correct information.
+                </div>
+                <Button className='continue-modal-btn' variant='contained' onClick={onNextStep}>
+                  CONTINUE
+                </Button>
+                <Button className='create-contact-modal' onClick={() => setOpen(false)}>
+                  Keep editing information
+                </Button>
+              </Box>
+            </Modal>
+          </div>
+        </form>
       </div>
     </>
   )
