@@ -69,11 +69,15 @@ type BasicInfoProps = {
     lineOfBusiness: string
     underwriter: string
     leadUnderwriter: string
+    industryCode: string
+    riskActivity: string
+    riskClass: string
     technicalAssistant: string
     receptionDate: Date | null
     effectiveDate: Date | null
     expirationDate: Date | null
-  }
+
+  };
   setBasicInfo: React.Dispatch<
     React.SetStateAction<{
       insured: string
@@ -85,10 +89,14 @@ type BasicInfoProps = {
       lineOfBusiness: string
       underwriter: string
       leadUnderwriter: string
+      industryCode: string
+      riskActivity: string
+      riskClass: string
       technicalAssistant: string
       receptionDate: Date | null
       effectiveDate: Date | null
       expirationDate: Date | null
+
     }>
   >
   makeValidations: boolean
@@ -233,20 +241,10 @@ const ModalContact = ({ id }: IModal) => {
         </div>
         CREATE NEW CONTACT
       </Button>
-      <Modal open={open} onClose={handleClose}>
+      <Modal className="create-contact-modal" open={open} onClose={handleClose}>
         <Box
-          sx={{
-            position: 'absolute',
-            bgcolor: 'white',
-            top: '50%',
-            left: '50%',
-            boxShadow: 24,
-            pl: 5,
-            pr: 5,
-            transform: 'translate(-50%, -50%)',
-            borderRadius: '10px',
-            padding: '15px'
-          }}
+          className="modal-wrapper"
+
         >
           <HeaderTitleModal>
             <Typography variant='h6'>Create new contact</Typography>
@@ -332,6 +330,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
   resetMakeValidations,
   isValidForm
 }) => {
+<<<<<<< HEAD
   const [errors, setErrors] = useState<BasicInfoErrors>({
     insuredError: false,
     countryError: false,
@@ -361,6 +360,46 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
       [name]: value
     })
   }
+=======
+  const [bussinesFields, setBussinesFields]= useState(true)
+  const [errors, setErrors] = useState<BasicInfoErrors>(
+    {
+      insuredError: false,
+      countryError: false,
+      brokerError: false,
+      cedantError: false,
+      lineOfBusinessError: false,
+      underwriterError: false,
+      leadUnderwriterError: false,
+      technicalAssistantError: false,
+      receptionDateError: false,
+      effectiveDateError: false,
+      expirationDateError: false,
+      industryCodeError: false,
+      riskActivityError: false,
+      riskClassError: false,
+    });
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+
+    const { name, value } = e.target;
+    setBasicInfo({ ...basicInfo, [name]: value });
+  };
+
+  const handleSelectChange = (event: SelectChangeEvent<string>, child: ReactNode) => {
+    const target = event.target;
+    const name = target.name;
+    const value = target.value;
+
+    setBasicInfo({
+      ...basicInfo,
+      [name]: value
+    });
+    if(name=="lineOfBusiness"){
+      setBussinesFields(false)
+    }
+  };
+>>>>>>> eaf977dcd9f1427bfa9301556bf666d7439f17a4
   const handleReceptionDateChange = (date: Date) => {
     setBasicInfo({ ...basicInfo, receptionDate: date })
   }
@@ -384,6 +423,9 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
       underwriterError: basicInfo.underwriter === '',
       leadUnderwriterError: basicInfo.leadUnderwriter === '',
       technicalAssistantError: basicInfo.technicalAssistant === '',
+      industryCodeError: basicInfo.industryCode === '',
+      riskActivityError: basicInfo.riskActivity === '',
+      riskClassError: basicInfo.riskClass === '',
       receptionDateError: basicInfo.receptionDate === null,
       effectiveDateError: basicInfo.effectiveDate === null,
       expirationDateError: basicInfo.expirationDate === null
@@ -417,7 +459,6 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
       <div className='form-wrapper'>
         <div className='form-col'>
           <div className='title'>Insured</div>
-
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <TextField
               autoFocus
@@ -429,6 +470,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               helperText={getErrorMessage('insuredError')}
             />
           </FormControl>
+
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }} error={errors.countryError}>
             <InputLabel>Country</InputLabel>
 
@@ -552,6 +594,49 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
                 {getErrorMessage('lineOfBusinessError')}
               </FormHelperText>
             )}
+          </FormControl>
+          <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
+            <TextField
+              autoFocus
+              name="industryCode"
+              label='Industry Code'
+              value={basicInfo.industryCode}
+              disabled={bussinesFields}
+              onChange={handleInputChange}
+              error={!!errors.industryCodeError}
+              helperText={getErrorMessage('industryCodeError')}
+            />
+
+
+          </FormControl>
+
+          <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
+            <TextField
+              autoFocus
+              name="riskActivity"
+              label='Risk activity'
+              value={basicInfo.riskActivity}
+              disabled={bussinesFields}
+              onChange={handleInputChange}
+              error={!!errors.riskActivityError}
+              helperText={getErrorMessage('riskActivityError')}
+            />
+
+
+          </FormControl>
+          <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
+            <TextField
+              autoFocus
+              name="riskClass"
+              label='Risk class'
+              value={basicInfo.riskClass}
+              disabled={bussinesFields}
+              onChange={handleInputChange}
+              error={!!errors.riskClassError}
+              helperText={getErrorMessage('riskClassError')}
+            />
+
+
           </FormControl>
         </div>
         <div className='form-col'>

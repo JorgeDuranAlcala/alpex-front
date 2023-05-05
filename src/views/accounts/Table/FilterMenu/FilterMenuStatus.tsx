@@ -12,7 +12,7 @@ import { useAppDispatch } from 'src/store'
 import { handleAccountFilter } from 'src/store/apps/accounts'
 import colors from 'src/views/accounts/colors'
 import fonts from 'src/views/accounts/font'
-import { EStatusString } from '../Status'
+import { EStatus, EStatusString } from '../Status'
 
 interface IFilterMenuStatusOptionProps {
   status: EStatusString
@@ -23,10 +23,12 @@ interface IFilterMenuStatusOptionProps {
 const FilterMenuStatusOption: React.FC<IFilterMenuStatusOptionProps> = ({ status, icon }) => {
   const dispatch = useAppDispatch()
   const handleClick = () => {
+    const index: string = Object.keys(EStatusString)[Object.values(EStatusString).indexOf(status)];
     dispatch(
       handleAccountFilter({
-        type: 'Status',
-        value: status
+        type: 'status',
+        value: EStatus[index as keyof typeof EStatus],
+        text: status
       })
     )
   }

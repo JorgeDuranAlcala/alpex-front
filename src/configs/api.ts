@@ -28,3 +28,7 @@ export enum CEDANT_ROUTERS {
   ADD = `/${CATALOGS}/cedant/add`,
   UPDATE = `/${CATALOGS}/cedant/`
 }
+
+export enum USERS_ROUTES {
+  GET = 'user'
+}

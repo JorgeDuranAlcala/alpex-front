@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState, useEffect, MouseEvent, useCallback } from 'react'
+import { MouseEvent, useCallback, useEffect, useState } from 'react'
 
 // ** Next Imports
 import Link from 'next/link'
@@ -8,19 +8,19 @@ import { GetStaticProps, InferGetStaticPropsType } from 'next/types'
 // ** MUI Imports
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
-import Menu from '@mui/material/Menu'
-import Grid from '@mui/material/Grid'
-import Divider from '@mui/material/Divider'
-import { DataGrid } from '@mui/x-data-grid'
-import { styled } from '@mui/material/styles'
-import MenuItem from '@mui/material/MenuItem'
-import IconButton from '@mui/material/IconButton'
-import Typography from '@mui/material/Typography'
-import CardHeader from '@mui/material/CardHeader'
-import InputLabel from '@mui/material/InputLabel'
-import FormControl from '@mui/material/FormControl'
 import CardContent from '@mui/material/CardContent'
+import CardHeader from '@mui/material/CardHeader'
+import Divider from '@mui/material/Divider'
+import FormControl from '@mui/material/FormControl'
+import Grid from '@mui/material/Grid'
+import IconButton from '@mui/material/IconButton'
+import InputLabel from '@mui/material/InputLabel'
+import Menu from '@mui/material/Menu'
+import MenuItem from '@mui/material/MenuItem'
 import Select, { SelectChangeEvent } from '@mui/material/Select'
+import Typography from '@mui/material/Typography'
+import { styled } from '@mui/material/styles'
+import { DataGrid } from '@mui/x-data-grid'
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
@@ -29,29 +29,29 @@ import Icon from 'src/@core/components/icon'
 import { useDispatch, useSelector } from 'react-redux'
 
 // ** Custom Components Imports
-import CustomChip from 'src/@core/components/mui/chip'
-import CustomAvatar from 'src/@core/components/mui/avatar'
 import CardStatisticsHorizontal from 'src/@core/components/card-statistics/card-stats-horizontal'
+import CustomAvatar from 'src/@core/components/mui/avatar'
+import CustomChip from 'src/@core/components/mui/chip'
 
 // ** Utils Import
 import { getInitials } from 'src/@core/utils/get-initials'
 
 // ** Actions Imports
-import { fetchData, deleteUser } from 'src/store/apps/user'
+import { deleteUser, fetchData } from 'src/store/apps/user'
 
 // ** Third Party Components
 import axios from 'axios'
 
 // ** Types Imports
-import { RootState, AppDispatch } from 'src/store'
-import { CardStatsType } from 'src/@fake-db/types'
-import { ThemeColor } from 'src/@core/layouts/types'
-import { UsersType } from 'src/types/apps/userTypes'
 import { CardStatsHorizontalProps } from 'src/@core/components/card-statistics/types'
+import { ThemeColor } from 'src/@core/layouts/types'
+import { CardStatsType } from 'src/@fake-db/types'
+import { AppDispatch, RootState } from 'src/store'
+import { UsersType } from 'src/types/apps/userTypes'
 
 // ** Custom Table Components Imports
-import TableHeader from 'src/views/apps/user/list/TableHeader'
 import AddUserDrawer from 'src/views/apps/user/list/AddUserDrawer'
+import TableHeader from 'src/views/apps/user/list/TableHeader'
 
 interface UserRoleType {
   [key: string]: { icon: string; color: string }
