@@ -1,0 +1,57 @@
+.catalogue-datagrid {
+  font-family: 'Inter', sans-serif !important;
+}
+
+.catalogue-datagrid .MuiDataGrid-columnHeaders {
+  border-bottom: none;
+}
+
+.catalogue-datagrid .MuiDataGrid-columnHeaderTitleContainer {
+  overflow: visible !important;
+}
+
+.catalogue-column-header-checkbox {
+  padding: 0 !important;
+  padding-left: 5px !important;
+}
+
+.catalogue-column-header {
+  border-right: 1px solid rgba(68, 72, 84, 0.12);
+}
+
+.catalogue-column-header:last-of-type {
+  border-right: none;
+}
+
+.catalogue-column-header .MuiDataGrid-columnHeaderTitleContainerContent {
+  display: block !important;
+  width: 100%;
+}
+
+.catalogue-column-header .MuiDataGrid-columnSeparator,
+.catalogue-column-header-checkbox .MuiDataGrid-columnSeparator {
+  visibility: hidden;
+}
+
+.catalogue-column-cell-pl-0 {
+  padding-left: 0 !important;
+}
+
+.catalogue-list-item {
+  min-width: 0 !important;
+}
+
+.catalogue-datepicker-popper-only-month .react-datepicker__navigation {
+  display: none;
+}
+
+.catalogue-datepicker-popper-only-month .react-datepicker-year-header {
+  display: none;
+}
+
+
+
+
+@media (max-width: 800px) {
+
+}
