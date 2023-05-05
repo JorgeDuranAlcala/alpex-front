@@ -54,6 +54,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange }) => {
   const [basicIncfoValidated, setBasicIncfoValidated] = useState(false);
   const [placementStructureValidated, setPlacementStructureValidated] = useState(false);
   const [open, setOpen] = useState<boolean>(false)
+  const [nextClicked, setNextClicked] = useState<boolean>(false)
 
   const [basicInfo, setBasicInfo] = useState<BasicInfoInterface>({
     insured: '',
@@ -109,11 +110,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange }) => {
   }
   const handleNext = () => {
     setMakeValidations(true)
-
-      if (basicIncfoValidated && placementStructureValidated) {
-        setOpen(true)
-      }
-
+    setNextClicked(true)
 
   }
 
@@ -142,6 +139,14 @@ const Information: React.FC<InformationProps> = ({ onStepChange }) => {
     setDisableSaveBtn(!isplacementStructureValid);
   }, [placementStructure]);
 
+  useEffect(()=>{
+    if(nextClicked){
+      if (basicIncfoValidated && placementStructureValidated) {
+        setOpen(true)
+      }
+    }
+
+  },[basicIncfoValidated, placementStructureValidated, nextClicked]);
 
   return (
     <>
@@ -225,7 +230,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange }) => {
                   >
                     CONTINUE
                   </Button>
-                  <Button className='create-contact-modal' onClick={() => setOpen(false)}>
+                  <Button className='create-contact-modal' onClick={() => {setOpen(false); setNextClicked(false)}}>
                     Keep editing information
                   </Button>
                 </Box>
