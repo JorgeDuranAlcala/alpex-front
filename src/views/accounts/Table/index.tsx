@@ -22,11 +22,11 @@ import ModalAction from './modal'
 
 // ** Custom utilities
 import { Link } from '@mui/material'
-import { IAlert } from 'src/pages/components/custom/alerts'
 import { useAppDispatch, useAppSelector } from 'src/store'
 import { deleteAccountFilter, fetchAccounts, handleAccountFilter, resetAccountFilter } from 'src/store/apps/accounts'
 import colors from 'src/views/accounts/colors'
 import fonts from 'src/views/accounts/font'
+import { IAlert } from 'src/views/custom/alerts'
 
 export interface IAccount {
   id: string
@@ -50,7 +50,7 @@ interface IAccountTable {
   status?: string
 }
 
-const Table = ({ status } : IAccountTable ) => {
+const Table = ({ status }: IAccountTable) => {
   // ** State
   const [selectedRows, setSelectedRows] = useState<GridRowId[]>([])
   const [accounts, setAccounts] = useState<any>([])
@@ -80,12 +80,10 @@ const Table = ({ status } : IAccountTable ) => {
   }, [])
 
   useEffect(() => {
-    dispatch(
-      resetAccountFilter()
-    )
-    if (status === undefined ) dispatch(deleteAccountFilter('Status'))
-    else{
-    const index: string = Object.keys(EStatus)[Object.values(EStatus).indexOf(status as any)];
+    dispatch(resetAccountFilter())
+    if (status === undefined) dispatch(deleteAccountFilter('Status'))
+    else {
+      const index: string = Object.keys(EStatus)[Object.values(EStatus).indexOf(status as any)]
       dispatch(
         handleAccountFilter({
           type: 'status',
@@ -139,7 +137,9 @@ const Table = ({ status } : IAccountTable ) => {
       disableColumnMenu: true,
       sortable: false,
       headerClassName: 'account-column-header',
-      renderHeader: ({ colDef }) => <ColumnHeader colDef={colDef} action={status === undefined ? handleClickColumnHeader : undefined} />,
+      renderHeader: ({ colDef }) => (
+        <ColumnHeader colDef={colDef} action={status === undefined ? handleClickColumnHeader : undefined} />
+      ),
       renderCell: ({ row }) => (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <Status status={row.status} />

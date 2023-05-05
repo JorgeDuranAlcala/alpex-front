@@ -18,10 +18,10 @@ import ModalAction from './modal'
 // ** Custom Hooks imports
 import Chip from 'src/@core/components/mui/chip'
 import useAccountTable from 'src/hooks/accounts/Table/useAccountTable'
-import CustomAlert, { IAlert } from 'src/pages/components/custom/alerts'
 import { useAppDispatch, useAppSelector } from 'src/store'
 import { deleteAccountFilter } from 'src/store/apps/accounts'
 import { IFilters } from 'src/types/apps/accountsTypes'
+import CustomAlert, { IAlert } from 'src/views/custom/alerts'
 
 enum EActions {
   DELETE_ALL = 'Delete All',
@@ -209,35 +209,37 @@ const TableHeader: React.FC<ITableHeader> = ({ selectedRows, badgeData }) => {
         />
       </Box>
       <Box>
-        {accountsReducer.filters.map((filter, index) => (
-          filter.unDeleteable ? <Chip
-            key={index}
-            label={filter.text}
-            sx={{
-              backgroundColor: '#174BC125',
-              marginRight: '6px',
-              color: '#2535A8',
-              fontWeight: 500,
-              fontFamily: 'Inter'
-            }}
-
-          /> :
-          <Chip
-            key={index}
-            label={filter.text}
-            sx={{
-              backgroundColor: '#174BC125',
-              marginRight: '6px',
-              color: '#2535A8',
-              fontWeight: 500,
-              fontFamily: 'Inter'
-            }}
-            onDelete={() => {
-              handleDelete(filter)
-            }}
-            deleteIcon={ <Icon icon='mdi:close-circle' style={{ color: '2535A8' }} />}
-          />
-        ))}
+        {accountsReducer.filters.map((filter, index) =>
+          filter.unDeleteable ? (
+            <Chip
+              key={index}
+              label={filter.text}
+              sx={{
+                backgroundColor: '#174BC125',
+                marginRight: '6px',
+                color: '#2535A8',
+                fontWeight: 500,
+                fontFamily: 'Inter'
+              }}
+            />
+          ) : (
+            <Chip
+              key={index}
+              label={filter.text}
+              sx={{
+                backgroundColor: '#174BC125',
+                marginRight: '6px',
+                color: '#2535A8',
+                fontWeight: 500,
+                fontFamily: 'Inter'
+              }}
+              onDelete={() => {
+                handleDelete(filter)
+              }}
+              deleteIcon={<Icon icon='mdi:close-circle' style={{ color: '2535A8' }} />}
+            />
+          )
+        )}
       </Box>
       <Box sx={{ marginLeft: 'auto' }}>
         {!badgeData.status ? (

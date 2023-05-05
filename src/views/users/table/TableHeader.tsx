@@ -12,10 +12,10 @@ import Icon from 'src/@core/components/icon'
 // ** Custom Hooks imports
 import { TextField } from '@mui/material'
 import Chip from 'src/@core/components/mui/chip'
-import CustomAlert, { IAlert } from 'src/pages/components/custom/alerts'
 import { useAppDispatch, useAppSelector } from 'src/store'
 import { deleteUsersFilter } from 'src/store/apps/users'
 import { IUserFilters } from 'src/types/apps/usersTypes'
+import CustomAlert, { IAlert } from 'src/views/custom/alerts'
 
 interface ITableHeader {
   selectedRows: GridRowId[]

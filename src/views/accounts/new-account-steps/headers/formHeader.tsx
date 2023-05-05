@@ -2,7 +2,7 @@ import { Box, Button, ListItemIcon, ListItemText, Menu, MenuItem, Modal, Typogra
 import { useState } from 'react'
 import Icon from 'src/@core/components/icon'
 
-// import StatusSelect from 'src/pages/components/custom/select/StatusSelect'
+// import StatusSelect from 'src/views/custom/select/StatusSelect'
 
 // ** MUI Imports
 
