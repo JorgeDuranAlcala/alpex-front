@@ -21,9 +21,9 @@ interface IModalAction {
   text: string
   handleClickContinue: () => void
   handleClickCancel?: () => void
-  renderButton: (handleOpen: () => void) => JSX.Element
   setShow?: boolean
   onClose?: () => void
+  continueText?: string
 }
 
 const ModalAction: React.FC<IModalAction> = ({
@@ -31,8 +31,8 @@ const ModalAction: React.FC<IModalAction> = ({
   text,
   handleClickContinue,
   handleClickCancel,
-  renderButton,
   onClose,
+  continueText,
   setShow = false
 }) => {
   // ** State
@@ -52,7 +52,6 @@ const ModalAction: React.FC<IModalAction> = ({
   }
 
   // ** Handlers for opening and closing
-  const handleOpen = () => setOpen(true)
   const handleClose = (event?: any, reason?: string) => {
     if (reason === 'escapeKeyDown' || reason === 'backdropClick') {
       return
@@ -64,9 +63,6 @@ const ModalAction: React.FC<IModalAction> = ({
   }
 
   // ** Component
-  const ButtonComponent: React.FC<{ onClick: () => void }> = ({ onClick }) => {
-    return renderButton(onClick)
-  }
 
   // ** Hooks
   useEffect(() => {
@@ -81,7 +77,6 @@ const ModalAction: React.FC<IModalAction> = ({
 
   return (
     <Box>
-      <ButtonComponent onClick={handleOpen} />
       <Modal
         aria-labelledby='transition-modal-title'
         aria-describedby='transition-modal-description'
@@ -119,7 +114,7 @@ const ModalAction: React.FC<IModalAction> = ({
             </CardContent>
             <CardActions sx={{ display: 'flex', flexDirection: 'column', marginTop: '20px' }}>
               <Button onClick={onContinue} variant='contained' size='large' sx={{ width: '100%' }}>
-                Continue
+                {continueText ? continueText : 'Continue'}
               </Button>
               <Button onClick={onCancel} size='large' sx={{ width: '100%', marginTop: '20px' }}>
                 Cancel

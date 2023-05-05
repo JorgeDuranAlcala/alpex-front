@@ -16,22 +16,22 @@ import {
 
 import { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import UsersServices from 'src/services/users/users.service'
+import { useAppSelector } from 'src/store'
 import { UserSection } from 'src/styles/Forms/usersSection'
 import CountrySelect, { ICountry } from 'src/views/custom/select/CountrySelect'
 import { StyledDescription, StyledSubtitle, StyledTitle } from 'src/views/custom/typography'
 
 const schema = yup.object().shape({
   email: yup.string().email().required(),
-  firstName: yup.string().required(),
-  lastName: yup.string().required(),
+  name: yup.string().required(),
+  surname: yup.string().required(),
   phone: yup.string().required(),
   company: yup.string().required()
 })
 
 interface FormInfo {
-  firstName: string
-  lastName: string
+  name: string
+  surname: string
   email: string
   phone: string
   company: string
@@ -40,8 +40,8 @@ interface FormInfo {
 }
 
 const UserForm: FormInfo = {
-  firstName: '',
-  lastName: '',
+  name: '',
+  surname: '',
   email: '',
   phone: '',
   company: '',
@@ -54,19 +54,23 @@ const ADMIN_COMPANIES = ['Dynamic', 'Claims']
 const roles = [
   {
     label: 'Admin',
-    value: 'admin'
+    value: '5'
+  },
+  {
+    label: 'Admin',
+    value: '6'
   },
   {
     label: 'Lead underwriter',
-    value: 'leadUnderwriter'
+    value: '1'
   },
   {
     label: 'Technical assistant',
-    value: 'technicalAssistant'
+    value: '2'
   },
   {
     label: 'Underwriter',
-    value: 'underwriter'
+    value: '3'
   }
 ]
 
@@ -91,13 +95,15 @@ const companies = [
 
 interface IAddUser {
   handleView: (view: string) => void
+  selectUser: number | null
 }
-const AddUser = ({ handleView }: IAddUser) => {
+const AddUser = ({ handleView, selectUser }: IAddUser) => {
   const {
     control,
     handleSubmit,
     watch,
     setValue,
+    reset,
     formState: { errors }
   } = useForm<FormInfo>({
     mode: 'onBlur',
@@ -105,11 +111,26 @@ const AddUser = ({ handleView }: IAddUser) => {
   })
   const useWatchCompany = watch('company')
   const useWatchRole = watch('role')
+  const usersReducer = useAppSelector(state => state.users)
 
   const [formData, setFormData] = useState<FormInfo>(UserForm)
   const [selectedCountry, setSelectedCountry] = useState<ICountry | null>()
   const [dualRoleDisabled, setDualRoleDisabled] = useState<boolean>(false)
   const [roleDisabled, setRoleDisabled] = useState<boolean>(false)
+  const [editable, setEditable] = useState<boolean>(false)
+  const [userData, setUserData] = useState<any>()
+
+  useEffect(() => {
+    if (selectUser !== null) setUserData(usersReducer.users.filter((user: any) => user.id === selectUser)[0])
+    //eslint-disable-next-line
+  }, [selectUser])
+
+  useEffect(() => {
+    if (userData !== undefined) {
+      reset({ ...userData })
+    }
+    //eslint-disable-next-line
+  }, [userData])
 
   useEffect(() => {
     if (ADMIN_COMPANIES.includes(useWatchCompany)) {
@@ -137,16 +158,10 @@ const AddUser = ({ handleView }: IAddUser) => {
 
   const onSubmit = (data: any) => {
     console.log(data)
-    getData()
     handleView('list')
   }
   const handleFormChange = (field: keyof FormInfo, value: FormInfo[keyof FormInfo]) => {
     setFormData({ ...formData, [field]: value })
-  }
-
-  const getData = async () => {
-    const data = await UsersServices.getUsers({ page: 1, take: 1 })
-    console.log(data)
   }
 
   return (
@@ -170,7 +185,7 @@ const AddUser = ({ handleView }: IAddUser) => {
                   <Grid item xs={12}>
                     <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
                       <Controller
-                        name='firstName'
+                        name='name'
                         control={control}
                         render={({ field: { value, onChange, onBlur } }) => (
                           <TextField
@@ -179,7 +194,7 @@ const AddUser = ({ handleView }: IAddUser) => {
                             value={value}
                             onBlur={onBlur}
                             onChange={onChange}
-                            error={Boolean(errors.firstName)}
+                            error={Boolean(errors.name)}
                             sx={{
                               '& .MuiOutlinedInput-root.Mui-focused  .MuiOutlinedInput-notchedOutline': {
                                 borderColor: '#0D567B'
@@ -189,15 +204,13 @@ const AddUser = ({ handleView }: IAddUser) => {
                           />
                         )}
                       />
-                      {errors.firstName && (
-                        <FormHelperText sx={{ color: 'error.main' }}>Invalid first name</FormHelperText>
-                      )}
+                      {errors.name && <FormHelperText sx={{ color: 'error.main' }}>Invalid first name</FormHelperText>}
                     </FormControl>
                   </Grid>
                   <Grid item xs={12}>
                     <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
                       <Controller
-                        name='lastName'
+                        name='surname'
                         control={control}
                         render={({ field: { value, onChange, onBlur } }) => (
                           <TextField
@@ -205,7 +218,7 @@ const AddUser = ({ handleView }: IAddUser) => {
                             value={value}
                             onBlur={onBlur}
                             onChange={onChange}
-                            error={Boolean(errors.lastName)}
+                            error={Boolean(errors.surname)}
                             sx={{
                               '& .MuiOutlinedInput-root.Mui-focused  .MuiOutlinedInput-notchedOutline': {
                                 borderColor: '#0D567B'
@@ -215,7 +228,7 @@ const AddUser = ({ handleView }: IAddUser) => {
                           />
                         )}
                       />
-                      {errors.lastName && (
+                      {errors.surname && (
                         <FormHelperText sx={{ color: 'error.main' }}>Invalid last name</FormHelperText>
                       )}
                     </FormControl>
@@ -241,7 +254,13 @@ const AddUser = ({ handleView }: IAddUser) => {
                           />
                         )}
                       />
-                      {errors.email && <FormHelperText sx={{ color: 'error.main' }}>Invalid email</FormHelperText>}
+                      {errors.email ? (
+                        <FormHelperText sx={{ color: 'error.main' }}>Invalid email</FormHelperText>
+                      ) : (
+                        <FormHelperText>
+                          The user will receive an automated password to this email so they can login.
+                        </FormHelperText>
+                      )}
                     </FormControl>
                   </Grid>
                 </Grid>
@@ -406,16 +425,55 @@ const AddUser = ({ handleView }: IAddUser) => {
                 </Grid>
               </Grid>
             </UserSection>
-            <Button
-              startIcon={<Icon icon='mdi:check' />}
-              type='submit'
-              variant='outlined'
-              color='primary'
-              size='large'
-              sx={{ float: 'right' }}
-            >
-              ADD USER
-            </Button>
+            {selectUser === null ? (
+              <Button
+                startIcon={<Icon icon='mdi:check' />}
+                type='submit'
+                variant='outlined'
+                color='primary'
+                size='large'
+                sx={{ float: 'right' }}
+              >
+                ADD USER
+              </Button>
+            ) : (
+              <>
+                {!editable ? (
+                  <Button
+                    startIcon={<Icon icon='mdi:pencil' />}
+                    type='button'
+                    variant='outlined'
+                    color='primary'
+                    size='large'
+                    sx={{ float: 'right', ml: 5 }}
+                    onClick={() => setEditable(true)}
+                  >
+                    EDIT
+                  </Button>
+                ) : (
+                  <Button
+                    startIcon={<Icon icon='material-symbols:save' />}
+                    type='submit'
+                    variant='outlined'
+                    color='primary'
+                    size='large'
+                    sx={{ float: 'right', ml: 5 }}
+                  >
+                    SAVE
+                  </Button>
+                )}
+                <Button
+                  startIcon={<Icon icon='ic:baseline-delete-outline' />}
+                  type='button'
+                  variant='text'
+                  color='primary'
+                  size='large'
+                  sx={{ float: 'right' }}
+                >
+                  DELETE
+                </Button>
+              </>
+            )}
           </form>
         </div>
       </div>

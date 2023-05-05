@@ -13,7 +13,8 @@ export const fetchAccounts = createAsyncThunk('appAccounts/fetchAccounts', async
 const initialState: IAccounts = {
   accounts: [],
   loading: false,
-  filters: []
+  filters: [],
+  formsData: {}
 }
 export const appAccountsSlice = createSlice({
   name: 'appAccounts',
@@ -34,8 +35,12 @@ export const appAccountsSlice = createSlice({
     deleteAccountFilter: (state, { payload }) => {
       state.filters = state.filters.filter(item => item.type !== payload)
     },
-    resetAccountFilter: (state) => {
+    resetAccountFilter: state => {
       state.filters = []
+    },
+    updateFormsData: (state, { payload }) => {
+      state.formsData = { ...state.formsData, ...payload }
+      console.log(state.formsData)
     }
   },
   extraReducers: builder => {
@@ -63,11 +68,11 @@ export const appAccountsSlice = createSlice({
     })
     builder.addCase(appAccountsSlice.actions.handleAccountFilter, state => {
       state.accounts = []
-
     })
   }
 })
 
-export const { handleAccountFilter, deleteAccountFilter, resetAccountFilter } = appAccountsSlice.actions
+export const { handleAccountFilter, deleteAccountFilter, resetAccountFilter, updateFormsData } =
+  appAccountsSlice.actions
 
 export default appAccountsSlice.reducer

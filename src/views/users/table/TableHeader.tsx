@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -13,7 +13,7 @@ import Icon from 'src/@core/components/icon'
 import { TextField } from '@mui/material'
 import Chip from 'src/@core/components/mui/chip'
 import { useAppDispatch, useAppSelector } from 'src/store'
-import { deleteUsersFilter } from 'src/store/apps/users'
+import { deleteUsersFilter, handleUsersFilter } from 'src/store/apps/users'
 import { IUserFilters } from 'src/types/apps/usersTypes'
 import CustomAlert, { IAlert } from 'src/views/custom/alerts'
 
@@ -21,9 +21,10 @@ interface ITableHeader {
   selectedRows: GridRowId[]
   badgeData: IAlert
   handleView: (view: string) => void
+  setModalShow: any
 }
 
-const TableHeader: React.FC<ITableHeader> = ({ badgeData, handleView }) => {
+const TableHeader: React.FC<ITableHeader> = ({ badgeData, handleView, selectedRows, setModalShow }) => {
   // ** Custom Hooks
 
   //const { deleteAccounts, changeStatusAccounts } = useAccountTable()
@@ -39,6 +40,12 @@ const TableHeader: React.FC<ITableHeader> = ({ badgeData, handleView }) => {
   const handleDelete = (filter: IUserFilters) => {
     dispatch(deleteUsersFilter(filter.type))
   }
+
+  useEffect(() => {
+    if (searchValue === '') dispatch(deleteUsersFilter('name'))
+    else dispatch(handleUsersFilter({ type: 'name', value: searchValue, text: searchValue }))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchValue])
 
   return (
     <Box
@@ -60,6 +67,16 @@ const TableHeader: React.FC<ITableHeader> = ({ badgeData, handleView }) => {
           onChange={e => setSearchValue(e.target.value)}
         />
         {/* DeleteModal */}
+        {selectedRows.length > 0 && (
+          <Button
+            startIcon={<Icon icon='ic:baseline-delete-outline' fontSize={24} />}
+            variant='outlined'
+            color='error'
+            onClick={() => setModalShow(true)}
+          >
+            DELETE
+          </Button>
+        )}
       </Box>
       <Box>
         {usersReducer.filters.map((filter, index) =>
@@ -84,7 +101,8 @@ const TableHeader: React.FC<ITableHeader> = ({ badgeData, handleView }) => {
                 marginRight: '6px',
                 color: '#2535A8',
                 fontWeight: 500,
-                fontFamily: 'Inter'
+                fontFamily: 'Inter',
+                textTransform: 'capitalize'
               }}
               onDelete={() => {
                 handleDelete(filter)
