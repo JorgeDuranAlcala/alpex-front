@@ -81,16 +81,17 @@ const Table = ({ handleView }: IUsersTable) => {
   }
 
   useEffect(() => {
-    dispatch(fetchAccounts())
-    //eslint-disable-next-line
-  }, [])
-
-  useEffect(() => {
     setAccounts(usersReducer.users || [])
     console.log(loading)
     setLoading(usersReducer.loading)
     //eslint-disable-next-line
-  }, [usersReducer])
+  }, [usersReducer.users])
+
+  useEffect(() => {
+    console.log(usersReducer)
+    dispatch(fetchAccounts(usersReducer))
+    //eslint-disable-next-line
+  }, [usersReducer.filters])
 
   //name, role, company, phone number, email
   const column: GridColumns<IUsersGrid> = [
