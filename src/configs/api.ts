@@ -16,3 +16,10 @@ export enum AUTH_ROUTES {
 export enum USERS_ROUTES {
   GET = 'user'
 }
+
+export enum LINE_OF_BUSSINES_ROUTES {
+  GET_ALL = 'catalogs/lineOfBussines/all',
+  GET_BY_ID = 'catalogs/lineOfBussines',
+  ADD = 'catalogs/lineOfBussines/add',
+  UPDATE = 'catalogs/lineOfBussines'
+}
