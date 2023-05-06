@@ -1,3 +1,10 @@
+export enum ROLES {
+  ADMIN = 5,
+  LEAD_UNDERWRITER = 6,
+  UNDERWRITER = 8,
+  TECHNICAL_ASSISTANT = 9
+}
+
 export enum ACCOUNT_INFORMATION_ROUTES {
   ADD = 'account/information/add',
   GET = 'account/Information',

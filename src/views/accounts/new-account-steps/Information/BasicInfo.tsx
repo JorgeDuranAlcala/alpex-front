@@ -314,10 +314,13 @@ const ModalContact = ({ id }: IModal) => {
   )
 }
 
+import { ROLES } from '@/configs/api'
 import { useGetAll as useBrokerGetAll } from 'src/hooks/catalogs/broker'
 import { useGetAllByIdBroker } from 'src/hooks/catalogs/broker-contact'
 import { useGetAll as useCedantGetAll } from 'src/hooks/catalogs/cedant'
 import { useGetAllByIdCedant } from 'src/hooks/catalogs/cedant-contact'
+import { useGetAllLineOfBussines } from 'src/hooks/catalogs/lineOfBussines'
+import { useGetByIdRole } from 'src/hooks/catalogs/users/useGetByIdRole'
 
 const BasicInfo: React.FC<BasicInfoProps> = ({
   basicInfo,
@@ -331,6 +334,10 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
   const { cedant } = useCedantGetAll()
   const { contacts: brokerContacts, findByIdBroker } = useGetAllByIdBroker()
   const { contacts: cedantContacts, findByIdCedant } = useGetAllByIdCedant()
+  const { lineOfBussines } = useGetAllLineOfBussines()
+  const { users: underwriters } = useGetByIdRole(ROLES.UNDERWRITER)
+  const { users: leadUnderwriters } = useGetByIdRole(ROLES.LEAD_UNDERWRITER)
+  const { users: technicalAssistants } = useGetByIdRole(ROLES.TECHNICAL_ASSISTANT)
 
   const [bussinesFields, setBussinesFields] = useState(true)
   const [errors, setErrors] = useState<BasicInfoErrors>({
@@ -574,9 +581,13 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               onChange={handleSelectChange}
               labelId='business'
             >
-              <MenuItem value='lb1'>Lb 1</MenuItem>
-              <MenuItem value='lb2'>Lb 2</MenuItem>
-              <MenuItem value='lb3'>Lb 3</MenuItem>
+              {lineOfBussines?.map(lineOfBussine => {
+                return (
+                  <MenuItem key={lineOfBussine.id} value={lineOfBussine.id}>
+                    {lineOfBussine.lineOfBussines}
+                  </MenuItem>
+                )
+              })}
             </Select>
             {errors.lineOfBusinessError && (
               <FormHelperText sx={{ color: 'error.main' }} id='business-error'>
@@ -702,9 +713,13 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               onChange={handleSelectChange}
               labelId='underwriter'
             >
-              <MenuItem value='u1'>U1</MenuItem>
-              <MenuItem value='u2'>U2</MenuItem>
-              <MenuItem value='u3'>U3</MenuItem>
+              {underwriters.map(underwriter => {
+                return (
+                  <MenuItem key={underwriter.id} value={underwriter.id}>
+                    {underwriter.name}
+                  </MenuItem>
+                )
+              })}
             </Select>
             {errors.underwriterError && (
               <FormHelperText sx={{ color: 'error.main' }} id='expirationDate-error'>
@@ -722,9 +737,13 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               onChange={handleSelectChange}
               labelId='lead-underwriter'
             >
-              <MenuItem value='Lu1'>LU1</MenuItem>
-              <MenuItem value='Lu2'>LU2</MenuItem>
-              <MenuItem value='Lu3'>LU3</MenuItem>
+              {leadUnderwriters.map(leadUnderwriter => {
+                return (
+                  <MenuItem key={leadUnderwriter.id} value={leadUnderwriter.id}>
+                    {leadUnderwriter.name}
+                  </MenuItem>
+                )
+              })}
             </Select>
             {errors.leadUnderwriterError && (
               <FormHelperText sx={{ color: 'error.main' }} id='expirationDate-error'>
@@ -743,9 +762,13 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               onChange={handleSelectChange}
               labelId='assistant'
             >
-              <MenuItem value='assistant1'>Assistant 1</MenuItem>
-              <MenuItem value='assistant2'>Assistant 2</MenuItem>
-              <MenuItem value='assistant3'>Assistant 3</MenuItem>
+              {technicalAssistants.map(technicalAssistant => {
+                return (
+                  <MenuItem key={technicalAssistant.id} value={technicalAssistant.id}>
+                    {technicalAssistant.name}
+                  </MenuItem>
+                )
+              })}
             </Select>
             {errors.technicalAssistantError && (
               <FormHelperText sx={{ color: 'error.main' }} id='expirationDate-error'>
