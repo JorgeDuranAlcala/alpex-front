@@ -33,8 +33,8 @@ interface IUser {
 
 interface IUsersInfo {
   count: number
-  page: string
-  take: string
+  page: number
+  take: number
   pages: number
   next: string
   prev: string
@@ -53,4 +53,5 @@ export interface IUsersState {
   loading: boolean
   filters: IUserFilters[]
   info: IUsersInfo
+  temporalFilters: IUser[]
 }

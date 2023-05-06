@@ -1,34 +1,32 @@
-import React, { useEffect, useState } from 'react';
-
+import React, { useEffect, useState } from 'react'
 
 // // ** MUI Imports
-import FormControl from '@mui/material/FormControl';
-import FormHelperText from '@mui/material/FormHelperText';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
-import TextField from '@mui/material/TextField';
+import FormControl from '@mui/material/FormControl'
+import FormHelperText from '@mui/material/FormHelperText'
+import InputLabel from '@mui/material/InputLabel'
+import MenuItem from '@mui/material/MenuItem'
+import Select, { SelectChangeEvent } from '@mui/material/Select'
+import TextField from '@mui/material/TextField'
 
 // ** Third Party Imports
-import { NumericFormat } from 'react-number-format';
-
+import { NumericFormat } from 'react-number-format'
 
 interface PlacementStructureErrors {
-  currencyError: boolean,
-  totalError: boolean,
-  reinsuranceBrokeragePError: boolean,
-  taxesPError: boolean,
-  frontingFeePError: boolean,
-  exchangeRateError: boolean,
-  limitError: boolean,
-  grossPremiumError: boolean,
-  reinsuranceBrokerageError: boolean,
-  taxesError: boolean,
-  frontingFeeError: boolean,
+  currencyError: boolean
+  totalError: boolean
+  reinsuranceBrokeragePError: boolean
+  taxesPError: boolean
+  frontingFeePError: boolean
+  exchangeRateError: boolean
+  limitError: boolean
+  grossPremiumError: boolean
+  reinsuranceBrokerageError: boolean
+  taxesError: boolean
+  frontingFeeError: boolean
   typeOfLimitError: boolean
 }
 
-type PlacementStructureProps = {
+export type PlacementStructureProps = {
   placementStructure: {
     currency: string
     total: number
@@ -45,7 +43,7 @@ type PlacementStructureProps = {
     frontingFee: number
     attachmentPoint: number
     typeOfLimit: string
-  };
+  }
   setPlacementStructure: React.Dispatch<
     React.SetStateAction<{
       currency: string
@@ -64,12 +62,11 @@ type PlacementStructureProps = {
       attachmentPoint: number
       typeOfLimit: string
     }>
-  >;
-  makeValidations: boolean;
-  resetMakeValidations: () => void;
-  isValidForm?: (valid: boolean) => void;
-
-};
+  >
+  makeValidations: boolean
+  resetMakeValidations: () => void
+  isValidForm?: (valid: boolean) => void
+}
 
 const PlacementStructure: React.FC<PlacementStructureProps> = ({
   placementStructure,
@@ -99,8 +96,8 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
     taxesError: false,
     frontingFeeError: false,
     typeOfLimitError: false
-  });
-  const calculate = async (type="any") => {
+  })
+  const calculate = async (type = 'any') => {
     const grossPremiumc: number = grossPremium || 0
     const reinsuranceBrokeragePc: number = reinsuranceBrokerageP || 0
     const reinsuranceBrokeragec: number = reinsuranceBrokerage || 0
@@ -111,7 +108,6 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
 
     switch (type) {
       case 'reinsuranceBrokerageP': {
-
         const result = grossPremiumc * (reinsuranceBrokeragePc / 100)
         setReinsuranceBrokerage(isFinite(result) ? result : 0)
 
@@ -136,7 +132,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
       case 'frontingFeeP': {
         const result = grossPremiumc * (frontingFeePc / 100)
         setFrontingFee(isFinite(result) ? result : 0)
-        console.log("frontingFee")
+        console.log('frontingFee')
         console.log(frontingFee)
         break
       }
@@ -172,45 +168,43 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
       frontingFee: frontingFee ?? 0,
       grossPremium: grossPremium ?? 0,
       netPremium: netPremium ?? 0
-    });
-
+    })
   }
 
   const handleCurrencyChange = (e: SelectChangeEvent<string>) => {
-    const target = e.target;
-    const value = target.value;
+    const target = e.target
+    const value = target.value
 
     switch (value) {
       case 'USD':
-        setPlacementStructure({ ...placementStructure, currency: value, exchangeRate: 18.5 });
+        setPlacementStructure({ ...placementStructure, currency: value, exchangeRate: 18.5 })
         break
       case 'EUR':
-        setPlacementStructure({ ...placementStructure, currency: value, exchangeRate: 20.0 });
+        setPlacementStructure({ ...placementStructure, currency: value, exchangeRate: 20.0 })
         break
       case 'MXN':
-        setPlacementStructure({ ...placementStructure, currency: value, exchangeRate: 1 });
+        setPlacementStructure({ ...placementStructure, currency: value, exchangeRate: 1 })
         break
     }
   }
 
-
-  const handleNumericInputChange = (value: any, e: any,) => {
-    const { name } = e.event.target;
-    setPlacementStructure({ ...placementStructure, [name]: value });
-  };
+  const handleNumericInputChange = (value: any, e: any) => {
+    const { name } = e.event.target
+    setPlacementStructure({ ...placementStructure, [name]: value })
+  }
 
   const handleSelectChange = (e: SelectChangeEvent<string>) => {
-    const target = e.target;
-    const name = target.name;
-    const value = target.value;
+    const target = e.target
+    const name = target.name
+    const value = target.value
     setPlacementStructure({
       ...placementStructure,
       [name]: value
-    });
-  };
+    })
+  }
 
   const validations = () => {
-    console.log("entro a la validación")
+    console.log('entro a la validación')
     const newErrors: PlacementStructureErrors = {
       currencyError: placementStructure.currency === '',
       totalError: placementStructure.total === 0,
@@ -224,44 +218,35 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
       taxesError: placementStructure.taxes === undefined,
       frontingFeeError: placementStructure.frontingFee === undefined,
       typeOfLimitError: placementStructure.typeOfLimit === ''
-    };
-    setErrors(newErrors);
+    }
+    setErrors(newErrors)
 
-    if (
-      Object.values(newErrors).every((error) => !error)
-    ) {
+    if (Object.values(newErrors).every(error => !error)) {
       // enviar formulario si no hay errores
-      console.log('Formulario enviado');
+      console.log('Formulario enviado')
       if (isValidForm) {
-        isValidForm(true);
+        isValidForm(true)
       }
     }
   }
 
   const getErrorMessage = (name: keyof PlacementStructureErrors) => {
-    return errors[name] ? 'This field is required' : '';
-  };
+    return errors[name] ? 'This field is required' : ''
+  }
 
   useEffect(() => {
     if (makeValidations) {
-      console.log('La acción se realizó');
-      validations();
-      resetMakeValidations();
+      console.log('La acción se realizó')
+      validations()
+      resetMakeValidations()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [makeValidations]);
+  }, [makeValidations])
 
   useEffect(() => {
     calculate()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [reinsuranceBrokerageP,
-    taxesP,
-    frontingFeeP,
-    netPremium,
-    grossPremium,
-    reinsuranceBrokerage,
-    taxes,
-    frontingFee]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [reinsuranceBrokerageP, taxesP, frontingFeeP, netPremium, grossPremium, reinsuranceBrokerage, taxes, frontingFee])
 
   return (
     <>
@@ -271,7 +256,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }} error={errors.currencyError}>
             <InputLabel>Currency</InputLabel>
             <Select
-              name="currency"
+              name='currency'
               id='currency'
               label='Currency'
               value={placementStructure.currency}
@@ -291,7 +276,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
 
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <NumericFormat
-              name="total"
+              name='total'
               value={placementStructure.total}
               allowLeadingZeros
               thousandSeparator=','
@@ -312,7 +297,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
           </FormControl>
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <NumericFormat
-              name="sir"
+              name='sir'
               value={placementStructure.sir}
               allowLeadingZeros
               thousandSeparator=','
@@ -327,11 +312,10 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
                 handleNumericInputChange(value.floatValue, e)
               }}
             />
-
           </FormControl>
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <NumericFormat
-              name="reinsuranceBrokerageP"
+              name='reinsuranceBrokerageP'
               value={reinsuranceBrokerageP}
               allowLeadingZeros
               thousandSeparator=','
@@ -344,17 +328,16 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               variant='outlined'
               onBlur={() => calculate('reinsuranceBrokerageP')}
               onValueChange={(value, e) => {
-                setReinsuranceBrokerageP((value.floatValue) ?? 0)
+                setReinsuranceBrokerageP(value.floatValue ?? 0)
                 handleNumericInputChange(value.floatValue, e)
               }}
               error={errors.reinsuranceBrokeragePError}
               helperText={getErrorMessage('reinsuranceBrokeragePError')}
             />
-
           </FormControl>
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <NumericFormat
-              name="taxesP"
+              name='taxesP'
               value={taxesP}
               allowLeadingZeros
               thousandSeparator=','
@@ -373,12 +356,11 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               error={errors.taxesPError}
               helperText={getErrorMessage('taxesPError')}
             />
-
           </FormControl>
 
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <NumericFormat
-              name="frontingFeeP"
+              name='frontingFeeP'
               value={frontingFeeP}
               allowLeadingZeros
               thousandSeparator=','
@@ -398,11 +380,10 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               error={errors.frontingFeePError}
               helperText={getErrorMessage('frontingFeePError')}
             />
-
           </FormControl>
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <NumericFormat
-              name="netPremium"
+              name='netPremium'
               value={netPremium}
               allowLeadingZeros
               thousandSeparator=','
@@ -417,7 +398,6 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
                 setNetPremium(value.floatValue)
                 handleNumericInputChange(value.floatValue, e)
               }}
-
             />
           </FormControl>
         </div>
@@ -425,7 +405,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
         <div className='form-col'>
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <NumericFormat
-              name="exchangeRate"
+              name='exchangeRate'
               value={placementStructure.exchangeRate}
               allowLeadingZeros
               thousandSeparator=','
@@ -442,7 +422,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
           </FormControl>
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <NumericFormat
-              name="limit"
+              name='limit'
               value={placementStructure.limit}
               allowLeadingZeros
               thousandSeparator=','
@@ -462,7 +442,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
           </FormControl>
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <NumericFormat
-              name="grossPremium"
+              name='grossPremium'
               value={grossPremium}
               allowLeadingZeros
               thousandSeparator=','
@@ -485,7 +465,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
 
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <NumericFormat
-              name="reinsuranceBrokerage"
+              name='reinsuranceBrokerage'
               value={reinsuranceBrokerage}
               allowLeadingZeros
               thousandSeparator=','
@@ -508,7 +488,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
 
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <NumericFormat
-              name="taxes"
+              name='taxes'
               value={taxes}
               allowLeadingZeros
               thousandSeparator=','
@@ -529,7 +509,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
           </FormControl>
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <NumericFormat
-              name="frontingFee"
+              name='frontingFee'
               value={frontingFee}
               allowLeadingZeros
               thousandSeparator=','
@@ -547,13 +527,12 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               error={errors.frontingFeeError}
               helperText={getErrorMessage('frontingFeeError')}
             />
-
           </FormControl>
         </div>
         <div className='form-col'>
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <NumericFormat
-              name="attachmentPoint"
+              name='attachmentPoint'
               value={placementStructure.attachmentPoint}
               allowLeadingZeros
               thousandSeparator=','
@@ -571,7 +550,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }} error={errors.typeOfLimitError}>
             <InputLabel>Type of limit</InputLabel>
             <Select
-              name="typeOfLimit"
+              name='typeOfLimit'
               label='Type of Limit'
               value={placementStructure.typeOfLimit}
               onChange={handleSelectChange}

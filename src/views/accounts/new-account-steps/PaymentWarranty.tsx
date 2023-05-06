@@ -1,6 +1,6 @@
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import SaveIcon from '@mui/icons-material/Save'
-import { Button, TextField, Typography } from '@mui/material'
+import { Button, Grid, TextField, Typography } from '@mui/material'
 import { ChangeEvent, KeyboardEvent, useState } from 'react'
 
 // import Icon from 'src/@core/components/icon'
@@ -10,7 +10,6 @@ import CardInstallment from 'src/layouts/components/CardInstallment'
 import {
   GeneralContainer,
   InputsContainer,
-  InstallmentContainer,
   NextContainer,
   TitleContainer
 } from 'src/styles/Forms/PaymentWarranty/paymentWarranty'
@@ -34,7 +33,7 @@ const PaymentWarranty = () => {
 
   // const [inceptionDate, setInceptionDate] = useState<DateType>(new Date())
 
-  const [count, setCount] = useState<number>(0)
+  const [count, setCount] = useState<string>('')
 
   // const CustomInput = forwardRef(({ ...props }: PickerProps, ref: ForwardedRef<HTMLElement>) => {
   //   return (
@@ -48,7 +47,7 @@ const PaymentWarranty = () => {
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     console.log(event.target.value)
-    setCount(parseInt(event.target.value))
+    setCount(event.target.value)
   }
 
   const handleKeyDown = (event: KeyboardEvent<HTMLElement>) => {
@@ -64,42 +63,40 @@ const PaymentWarranty = () => {
         <TitleContainer>
           <Typography variant='h5'>Payment warranty</Typography>
           <InputsContainer>
-            <TextField
-              label='Inception date'
-              sx={{ width: '32%' }}
-              value={'25/04/2023'}
-              InputProps={{
-                disabled: true
-              }}
-            />
-            <TextField
-              label='Dynamic net premium'
-              sx={{ width: '32%' }}
-              value={'1000'}
-              InputProps={{
-                disabled: true
-              }}
-            />
-            <TextField
-              label='Installments'
-              sx={{ width: '32%' }}
-              value={count}
-              onChange={handleChange}
-              onKeyDown={handleKeyDown}
-            />
+            <Grid container spacing={{ xs: 2, sm: 5, md: 5 }} rowSpacing={4} columns={12}>
+              <Grid item xs={12} sm={6} md={4}>
+                <TextField
+                  fullWidth
+                  label='Inception date'
+                  value={'25/04/2023'}
+                  InputProps={{
+                    disabled: true
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6} md={4}>
+                <TextField
+                  fullWidth
+                  label='Dynamic net premium'
+                  value={'1000'}
+                  InputProps={{
+                    disabled: true
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6} md={4}>
+                <TextField
+                  fullWidth
+                  label='Installments'
+                  value={count}
+                  onChange={handleChange}
+                  onKeyDown={handleKeyDown}
+                />
+              </Grid>
+            </Grid>
           </InputsContainer>
         </TitleContainer>
-        {/* <Button
-          size='small'
-          variant='contained'
-          startIcon={<Icon icon='mdi:plus' fontSize={20} />}
-          onClick={() => setCount(count + 1)}
-        >
-          Add Item
-        </Button> */}
-        <InstallmentContainer>
-          <CardInstallment count={count} />
-        </InstallmentContainer>
+        <CardInstallment count={parseInt(count)} />
       </GeneralContainer>
       <NextContainer>
         <Button
@@ -174,3 +171,17 @@ export default PaymentWarranty
 //     </div>
 //   );
 // }
+
+{
+  /* <Button
+          size='small'
+          variant='contained'
+          startIcon={<Icon icon='mdi:plus' fontSize={20} />}
+          onClick={() => setCount(count + 1)}
+        >
+          Add Item
+        </Button> */
+}
+{
+  /* <InstallmentContainer> */
+}

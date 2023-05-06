@@ -13,12 +13,14 @@ import PlacementStructure from './PlacementStructure'
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
+import { useAppDispatch } from 'src/store'
+import { updateFormsData } from 'src/store/apps/accounts'
 
 type InformationProps = {
   onStepChange?: (step: number) => void
 }
 
-interface BasicInfoInterface {
+export interface BasicInfoInterface {
   insured: string
   country: string
   broker: string
@@ -50,6 +52,8 @@ const Information: React.FC<InformationProps> = ({ onStepChange }) => {
   const [basicIncfoValidated, setBasicIncfoValidated] = useState(false)
   const [placementStructureValidated, setPlacementStructureValidated] = useState(false)
   const [open, setOpen] = useState<boolean>(false)
+
+  const dispatch = useAppDispatch()
 
   const [basicInfo, setBasicInfo] = useState<BasicInfoInterface>({
     insured: '',
@@ -92,6 +96,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange }) => {
 
   const handleSubmit = () => {
     setDisableNextBtn(false)
+    dispatch(updateFormsData({ form1: { basicInfo, placementStructure, userFile } }))
   }
 
   const handleCloseModal = () => {

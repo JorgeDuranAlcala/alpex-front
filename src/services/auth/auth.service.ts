@@ -15,6 +15,17 @@ class AuthServices {
       throw new Error(errMessage)
     }
   }
+
+  async authMe() {
+    try {
+      const resp = await AppAlpexApiGateWay.get(`${AUTH_ROUTES.AUTH_ME}`)
+
+      return resp
+    } catch (error) {
+      const errMessage = String(error)
+      throw new Error(errMessage)
+    }
+  }
 }
 
 export default AuthServices
