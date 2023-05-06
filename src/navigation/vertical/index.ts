@@ -6,12 +6,12 @@ const navigation = (): VerticalNavItemsType => {
     /*********************************************** News Items ReDesign *****************************************************/
     {
       title: 'Dashboard',
-      icon: 'mdi:dashboard',
+      icon: 'ic:baseline-dashboard',
       path: '/dashboards/crm'
     },
     {
       title: 'Accounts',
-      icon: 'mdi:accounts',
+      icon: 'ic:baseline-business-center',
       externalLink: true,
       path: '/accounts',
       children: [

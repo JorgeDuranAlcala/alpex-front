@@ -19,11 +19,14 @@ const RepeaterHorizontal = (props: RepeaterProps) => {
   return (
     <Tag
       style={{
-        display: 'flex',
-        flexDirection: 'row',
+        display: 'grid',
         width: '100%',
-        gap: '2%',
-        height: '304px'
+        maxHeight: '304px',
+        overflowY: 'scroll',
+        gridTemplateColumns: 'repeat(3,1fr)',
+        gridTemplateRows: 'repeat(3,1fr)',
+        gridColumnGap: '10px',
+        gridRowGap: '30px'
       }}
       {...props}
     >
