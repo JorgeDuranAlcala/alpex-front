@@ -1,6 +1,6 @@
-import { BROKER_ROUTES } from '@/configs/api'
-import { AppAlpexApiGateWay } from '@/services/app.alpex.api-getway'
-import { CedantDto } from '@/services/catalogs/dtos/cedant.dto'
+import { BROKER_ROUTES } from 'src/configs/api'
+import { AppAlpexApiGateWay } from 'src/services/app.alpex.api-getway'
+import { CedantDto } from 'src/services/catalogs/dtos/cedant.dto'
 
 class BrokerService {
   async getAll(): Promise<CedantDto[]> {
@@ -9,8 +9,7 @@ class BrokerService {
 
       return data
     } catch (error) {
-      const message = String(error)
-      throw new Error(message)
+      throw error
     }
   }
 
@@ -20,12 +19,11 @@ class BrokerService {
 
       return data
     } catch (error) {
-      const message = String(error)
-      throw new Error(message)
+      throw error
     }
   }
 
-  async add(cedant: CedantDto): Promise<CedantDto> {
+  async add(cedant: Partial<CedantDto>): Promise<CedantDto> {
     try {
       const { data } = await AppAlpexApiGateWay.post<Promise<CedantDto>>(`${BROKER_ROUTES.ADD}`, {
         ...cedant
@@ -33,8 +31,7 @@ class BrokerService {
 
       return data
     } catch (error) {
-      const message = String(error)
-      throw new Error(message)
+      throw error
     }
   }
 
@@ -46,8 +43,7 @@ class BrokerService {
 
       return data
     } catch (error) {
-      const message = String(error)
-      throw new Error(message)
+      throw error
     }
   }
 }

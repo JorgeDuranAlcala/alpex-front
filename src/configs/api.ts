@@ -29,6 +29,22 @@ export enum CEDANT_ROUTERS {
   UPDATE = `/${CATALOGS}/cedant/`
 }
 
+export enum BROKER_CONTACT_ROUTERS {
+  GET_ALL = `/${CATALOGS}/broker-contact/all`,
+  GET_BY_ID = `/${CATALOGS}//broker-contact/`,
+  ADD = `/${CATALOGS}/broker-contact/add`,
+  UPDATE = `/${CATALOGS}/broker-contact/`,
+  GET_BY_ID_BROKER = `/${CATALOGS}/broker-contact/broker/`
+}
+
+export enum CEDANT_CONTACT_ROUTERS {
+  GET_ALL = `/${CATALOGS}/cedant-contact/all`,
+  GET_BY_ID = `/${CATALOGS}/cedant-contact/`,
+  ADD = `/${CATALOGS}/cedant-contact/add`,
+  UPDATE = `/${CATALOGS}/cedant-contact/`,
+  GET_BY_ID_CEDANT = `/${CATALOGS}/cedant-contact/cedant/`
+}
+
 export enum USERS_ROUTES {
   GET = 'user'
 }

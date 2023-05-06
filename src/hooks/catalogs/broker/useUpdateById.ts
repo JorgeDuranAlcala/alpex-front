@@ -1,23 +1,22 @@
-import BrokerService from '@/services/catalogs/broker.service'
-import { BrokerDto } from '@/services/catalogs/dtos/broker.dto'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
+import CedantService from 'src/services/catalogs/broker.service'
+import { BrokerDto } from 'src/services/catalogs/dtos/broker.dto'
 
-export const useUpdateById = (id: number, body: Partial<BrokerDto>) => {
-  const [bodyState, setBody] = useState<Partial<BrokerDto>>(body)
-  const [result, setResult] = useState<BrokerDto>()
+export const useUpdateById = () => {
+  const [broker, setBroker] = useState<BrokerDto>()
 
-  useEffect(() => {
-    BrokerService.updateById(id, bodyState)
+  const update = (broker: Omit<BrokerDto, 'id'>) => {
+    CedantService.add(broker)
       .then(broker => {
-        setResult(broker)
+        setBroker(broker)
       })
       .catch(error => {
-        throw new Error(error)
+        throw error
       })
-  }, [body, id])
+  }
 
   return {
-    result,
-    setBody
+    update,
+    broker
   }
 }

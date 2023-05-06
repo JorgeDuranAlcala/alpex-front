@@ -1,9 +1,9 @@
-import BrokerService from '@/services/catalogs/broker.service'
-import { BrokerDto } from '@/services/catalogs/dtos/broker.dto'
+import CedantService from 'src/services/catalogs/broker.service'
+import { BrokerDto } from 'src/services/catalogs/dtos/broker.dto'
 
 export const useAdd = () => {
   const save = async (data: Omit<BrokerDto, 'id'>) => {
-    const broker = await BrokerService.add(data)
+    const broker = await CedantService.add(data)
 
     return broker
   }

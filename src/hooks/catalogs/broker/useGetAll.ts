@@ -1,12 +1,12 @@
-import BrokerService from '@/services/catalogs/broker.service'
-import { BrokerDto } from '@/services/catalogs/dtos/broker.dto'
 import { useEffect, useState } from 'react'
+import CedantService from 'src/services/catalogs/broker.service'
+import { BrokerDto } from 'src/services/catalogs/dtos/broker.dto'
 
 export const useGetAll = () => {
   const [brokers, setBrokers] = useState<BrokerDto[]>()
 
   useEffect(() => {
-    BrokerService.getAll()
+    CedantService.getAll()
       .then(brokers => {
         setBrokers(brokers)
       })
