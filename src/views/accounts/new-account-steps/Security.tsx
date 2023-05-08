@@ -23,7 +23,7 @@ import { updateFormsData } from 'src/store/apps/accounts'
 import { ButtonClose, HeaderTitleModal } from 'src/styles/Dashboard/ModalReinsurers/modalReinsurers'
 import SwitchAlpex from 'src/views/custom/switchs'
 
-interface FormInfo extends PreviousFormInfo {
+interface FormInfo extends BrokerFormInfo {
   [key: string]: string | boolean | undefined
   NetPremium: string
   SharePercent: string
@@ -40,12 +40,20 @@ interface FormInfo extends PreviousFormInfo {
   ContactPhone: string
   ContactCountry: string
   HasFrontingFee: boolean
+  IsGross: boolean
 }
 
 interface PreviousFormInfo {
   RecievedNetPremium?: string
   DistribuitedNetPremium?: string
   Diference?: string
+}
+
+interface BrokerFormInfo {
+  BrokerAge: string
+  Taxes: string
+  BrokerPercent: string
+  TaxesPercent: string
 }
 
 const SecurityForm: FormInfo = {
@@ -63,14 +71,16 @@ const SecurityForm: FormInfo = {
   ContactEmail: '',
   ContactPhone: '',
   ContactCountry: '',
-  HasFrontingFee: false
+  BrokerAge: '',
+  Taxes: '',
+  BrokerPercent: '',
+  TaxesPercent: '',
+  HasFrontingFee: false,
+  IsGross: false
 }
 
-interface FormSecurity {
+interface FormSecurity extends PreviousFormInfo {
   FormData: FormInfo[]
-  RecievedNetPremium: string
-  DistribuitedNetPremium: string
-  Diference: string
 }
 
 type SecurityProps = {
@@ -111,6 +121,23 @@ const schema = yup.object().shape({
   RetroCedantContact: yup.string().when('HasFrontingFee', {
     is: true,
     then: yup.string().notRequired()
+  }),
+  IsGross: yup.boolean(),
+  BrokerAge: yup.number().when('IsGross', {
+    is: true,
+    then: yup.number().required()
+  }),
+  Taxes: yup.number().when('IsGross', {
+    is: true,
+    then: yup.number().required()
+  }),
+  BrokerPercent: yup.number().when('IsGross', {
+    is: true,
+    then: yup.number().required()
+  }),
+  TaxesPercent: yup.number().when('IsGross', {
+    is: true,
+    then: yup.number().required()
   })
 })
 
@@ -125,6 +152,7 @@ interface FormSectionProps {
 interface FormInformation {
   frontingFee: number
   netPremium: number
+  grossPremium: number
 }
 
 const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }: FormSectionProps) => {
@@ -134,11 +162,13 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
   const [labelNetPremium, setLabelNetPremium] = useState<string>('Net premium at %100')
   const [formInformation, setFormInformation] = useState<FormInformation>({
     frontingFee: 0,
-    netPremium: 0
+    netPremium: 0,
+    grossPremium: 0
   })
 
   const accountData = useAppSelector(state => state.accounts)
 
+  console.log(accountData)
   const handleFormChange = (field: keyof FormInfo, value: FormInfo[keyof FormInfo]) => {
     const data = [...formData]
     data[index][field] = value
@@ -260,14 +290,17 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
 
   useEffect(() => {
     const company = companiesSelect.find(company => company.id === +formData[index].ReinsuranceCompany)
+    const data = [...formData]
+
     if (company) {
       setIsGross(company.isGross)
+      company.isGross
+        ? (data[index]['NetPremium'] = formInformation.grossPremium.toString())
+        : (data[index]['NetPremium'] = formInformation.netPremium.toString())
     } else {
       setIsGross(false)
+      data[index]['NetPremium'] = formInformation.netPremium.toString()
     }
-
-    const data = [...formData]
-    data[index]['NetPremium'] = formInformation.netPremium.toString()
     setFormData(data)
 
     if (company?.isGross) {
@@ -308,6 +341,20 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
 
             <FormHelperText sx={{ color: 'error.main' }}>{formErrors[index]?.SharePercent}</FormHelperText>
           </FormControl>
+          {isGross && (
+            <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
+              <TextField
+                autoFocus
+                label='Reinsurance brokerage %'
+                value={formData[index].BrokerAgePercent}
+                onChange={e => handleFormChange('BrokerAgePercent', e.target.value)}
+                onKeyUp={() => setValues('BrokerAgePercent')}
+              />
+
+              <FormHelperText sx={{ color: 'error.main' }}>{formErrors[index]?.BrokerAgePercent}</FormHelperText>
+            </FormControl>
+          )}
+
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <TextField
               autoFocus
@@ -319,6 +366,20 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
 
             <FormHelperText sx={{ color: 'error.main' }}>{formErrors[index]?.DynamicComissionPercent}</FormHelperText>
           </FormControl>
+          {isGross && (
+            <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
+              <TextField
+                autoFocus
+                label='Taxes %'
+                value={formData[index].TaxesPercent}
+                onChange={e => handleFormChange('TaxesPercent', e.target.value)}
+                onKeyUp={() => setValues('TaxesPercent')}
+              />
+
+              <FormHelperText sx={{ color: 'error.main' }}>{formErrors[index]?.TaxesPercent}</FormHelperText>
+            </FormControl>
+          )}
+
           {frontingFeeEnabled && (
             <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
               <TextField
@@ -363,6 +424,20 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
 
             <FormHelperText sx={{ color: 'error.main' }}>{formErrors[index]?.PremiumPerShare}</FormHelperText>
           </FormControl>
+
+          {isGross && (
+            <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
+              <TextField
+                autoFocus
+                label='Reinsurance brokerage'
+                value={formData[index].BrokerAge}
+                onChange={e => handleFormChange('BrokerAge', e.target.value)}
+              />
+
+              <FormHelperText sx={{ color: 'error.main' }}>{formErrors[index]?.BrokerAge}</FormHelperText>
+            </FormControl>
+          )}
+
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <TextField
               autoFocus
@@ -373,6 +448,18 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
 
             <FormHelperText sx={{ color: 'error.main' }}>{formErrors[index]?.DynamicComission}</FormHelperText>
           </FormControl>
+          {isGross && (
+            <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
+              <TextField
+                autoFocus
+                label='Taxes'
+                value={formData[index].Taxes}
+                onChange={e => handleFormChange('Taxes', e.target.value)}
+              />
+
+              <FormHelperText sx={{ color: 'error.main' }}>{formErrors[index]?.Taxes}</FormHelperText>
+            </FormControl>
+          )}
           {frontingFeeEnabled && (
             <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
               <TextField
