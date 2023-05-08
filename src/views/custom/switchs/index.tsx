@@ -36,6 +36,6 @@ const FormControlLabel = styled(MuiFormControlLabel)<FormControlLabelProps>(({ t
   }
 }))
 
-const SwitchAlpex = (props: any) => <FormControlLabel label='' control={<Switch defaultChecked {...props} />} />
+const SwitchAlpex = (props: any) => <FormControlLabel ref={props?.ref} label='' control={<Switch {...props} />} />
 
 export default SwitchAlpex

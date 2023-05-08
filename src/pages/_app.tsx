@@ -38,7 +38,8 @@ import ThemeComponent from 'src/@core/theme/ThemeComponent'
 import UserLayout from 'src/layouts/UserLayout'
 
 // ** Spinner Import
-import Spinner from 'src/@core/components/spinner'
+// import Spinner from 'src/@core/components/spinner'
+import Loader from 'src/layouts/components/Loader'
 
 // ** Contexts
 import { SettingsConsumer, SettingsProvider } from 'src/@core/context/settingsContext'
@@ -96,11 +97,11 @@ if (themeConfig.routingLoader) {
 
 const Guard = ({ children, authGuard, guestGuard }: GuardProps) => {
   if (guestGuard) {
-    return <GuestGuard fallback={<Spinner />}>{children}</GuestGuard>
+    return <GuestGuard fallback={<Loader />}>{children}</GuestGuard>
   } else if (!guestGuard && !authGuard) {
     return <>{children}</>
   } else {
-    return <AuthGuard fallback={<Spinner />}>{children}</AuthGuard>
+    return <AuthGuard fallback={<Loader />}>{children}</AuthGuard>
   }
 }
 

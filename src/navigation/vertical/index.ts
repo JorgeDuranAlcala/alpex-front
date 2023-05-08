@@ -6,8 +6,9 @@ const navigation = (): VerticalNavItemsType => {
     /*********************************************** News Items ReDesign *****************************************************/
     {
       title: 'Dashboard',
-      icon: 'ic:baseline-dashboard',
-      path: '/dashboards/crm'
+      icon: 'mdi:dashboard',
+      path: '/dashboards/crm',
+      externalLink: true
     },
     {
       title: 'Accounts',
