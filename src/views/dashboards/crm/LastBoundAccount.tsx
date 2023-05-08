@@ -27,7 +27,7 @@ const LastBoundAccount = () => {
   const title = userThemeConfig.palette?.text.primary
 
   return (
-    <Card sx={{ position: 'relative', width: '55%', height: '100%' }}>
+    <Card sx={{ position: 'relative', width: '100%', height: '393px' }}>
       <HeaderTitle>
         <ContainerTitle>
           <Typography variant='h6' sx={{ color: title, fontFamily: inter }}>

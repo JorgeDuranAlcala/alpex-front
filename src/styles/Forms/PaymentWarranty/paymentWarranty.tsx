@@ -7,9 +7,9 @@ const GeneralContainer = styled('div')({
   padding: '20px 20px 60px',
   gap: '40px',
   width: '100%',
-  height: '544px'
 
-  // border: '1px solid blue'
+  // height: '544px',
+  height: 'auto'
 })
 
 const TitleContainer = styled('div')({
@@ -54,6 +54,8 @@ const ContainerCard = styled('div')({
   justifyContent: 'space-between',
   width: '100%',
   height: '304px'
+
+  // border: '1px solid blue'
 })
 
 const ContainerCardInputs = styled('div')({
