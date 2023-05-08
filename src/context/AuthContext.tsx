@@ -42,20 +42,29 @@ const AuthProvider = ({ children }: Props) => {
   // ** Hooks
   const router = useRouter()
 
+  const authServices = new AuthServices()
+
   useEffect(() => {
     const initAuth = async (): Promise<void> => {
       const storedToken = window.localStorage.getItem(authConfig.storageTokenKeyName)!
       if (storedToken) {
         setLoading(true)
-        await axios
-          .get(authConfig.meEndpoint, {
-            headers: {
-              Authorization: storedToken
-            }
-          })
+        authServices
+          .authMe()
           .then(async response => {
             setLoading(false)
-            setUser({ ...response.data.userData })
+            const resUser = response.data.userData
+
+            const newUserData = {
+              email: resUser.email,
+              fullName: resUser.name,
+              id: resUser.id,
+              role: resUser.roles[0].role,
+              username: resUser.name,
+              password: resUser.password
+            }
+            console.log(newUserData)
+            setUser({ ...newUserData })
           })
           .catch(() => {
             localStorage.removeItem('userData')
@@ -67,6 +76,27 @@ const AuthProvider = ({ children }: Props) => {
               router.replace('/login')
             }
           })
+
+        // await axios
+        //   .get(authConfig.meEndpoint, {
+        //     headers: {
+        //       Authorization: storedToken
+        //     }
+        //   })
+        //   .then(async response => {
+        //     setLoading(false)
+        //     setUser({ ...response.data.userData })
+        //   })
+        //   .catch(() => {
+        //     localStorage.removeItem('userData')
+        //     localStorage.removeItem('refreshToken')
+        //     localStorage.removeItem('accessToken')
+        //     setUser(null)
+        //     setLoading(false)
+        //     if (authConfig.onTokenExpiration === 'logout' && !router.pathname.includes('login')) {
+        //       router.replace('/login')
+        //     }
+        //   })
       } else {
         setLoading(false)
       }

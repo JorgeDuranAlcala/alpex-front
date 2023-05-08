@@ -1,7 +1,7 @@
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import SaveIcon from '@mui/icons-material/Save'
-import { Button, TextField, Typography } from '@mui/material'
-import { ChangeEvent, KeyboardEvent, useState } from 'react'
+import { Button, FormHelperText, Grid, TextField, Typography } from '@mui/material'
+import { ChangeEvent, FocusEvent, useEffect, useState } from 'react'
 
 // import Icon from 'src/@core/components/icon'
 
@@ -10,19 +10,15 @@ import CardInstallment from 'src/layouts/components/CardInstallment'
 import {
   GeneralContainer,
   InputsContainer,
-  InstallmentContainer,
   NextContainer,
   TitleContainer
 } from 'src/styles/Forms/PaymentWarranty/paymentWarranty'
 
-// interface InstallmentsNumber {
-//   installments: number | string
-// }
-
-// const initialData: InstallmentsNumber = {
-//   installments: ''
-// }
-
+interface InstallmentErrors {
+  errorFieldRequired: boolean
+  erorrRangeInstallments: boolean
+  errorOnlyNumbers: boolean
+}
 const PaymentWarranty = () => {
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
 
@@ -30,33 +26,56 @@ const PaymentWarranty = () => {
   const size = userThemeConfig.typography?.size.px14
   const texButtonColor = userThemeConfig.palette?.buttonText.primary
 
-  // const [formData, setFormData] = useState<InstallmentsNumber>(initialData)
-
-  // const [inceptionDate, setInceptionDate] = useState<DateType>(new Date())
-
-  const [count, setCount] = useState<number>(0)
-
-  // const CustomInput = forwardRef(({ ...props }: PickerProps, ref: ForwardedRef<HTMLElement>) => {
-  //   return (
-  //     <TextField fullWidth inputRef={ref} sx={{ '& .MuiInputBase-input': { color: 'text.secondary' } }} {...props} />
-  //   )
-  // })
-
-  // const handleFormChange = (field: keyof InstallmentsNumber, value: InstallmentsNumber[keyof InstallmentsNumber]) => {
-  //   setFormData({ ...formData, [field]: value })
-  // }
+  const [count, setCount] = useState<string>('')
+  const [btnNext, setBtnNext] = useState<boolean>(false)
+  const [error, setError] = useState<InstallmentErrors>({
+    errorFieldRequired: false,
+    erorrRangeInstallments: false,
+    errorOnlyNumbers: false
+  })
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     console.log(event.target.value)
-    setCount(parseInt(event.target.value))
+    setCount(event.target.value)
   }
 
-  const handleKeyDown = (event: KeyboardEvent<HTMLElement>) => {
-    console.log(event.key)
-    if (event.key === 'Enter') {
-      setCount(count + 1)
+  const handleBlur = (event: FocusEvent<HTMLInputElement>) => {
+    if (event.target.value === '') {
+      setError({
+        ...error,
+        errorFieldRequired: true
+      })
+    } else {
+      setError({
+        ...error,
+        errorFieldRequired: false
+      })
     }
   }
+
+  // const regExpNumbers = /^[1-9]+$/
+
+  // const handleKeyDown = (event: KeyboardEvent<HTMLElement>) => {
+  //   console.log(event.key)
+  //   if (event.key === 'Enter') {
+  //     setCount(count + 1)
+  //   }
+  // }
+
+  useEffect(() => {
+    if (parseInt(count) === 0 || parseInt(count) > 12) {
+      setError({
+        ...error,
+        erorrRangeInstallments: true
+      })
+    } else {
+      setError({
+        ...error,
+        erorrRangeInstallments: false
+      })
+      setBtnNext(true)
+    }
+  }, [count, error])
 
   return (
     <>
@@ -64,42 +83,50 @@ const PaymentWarranty = () => {
         <TitleContainer>
           <Typography variant='h5'>Payment warranty</Typography>
           <InputsContainer>
-            <TextField
-              label='Inception date'
-              sx={{ width: '32%' }}
-              value={'25/04/2023'}
-              InputProps={{
-                disabled: true
-              }}
-            />
-            <TextField
-              label='Dynamic net premium'
-              sx={{ width: '32%' }}
-              value={'1000'}
-              InputProps={{
-                disabled: true
-              }}
-            />
-            <TextField
-              label='Installments'
-              sx={{ width: '32%' }}
-              value={count}
-              onChange={handleChange}
-              onKeyDown={handleKeyDown}
-            />
+            <Grid container spacing={{ xs: 2, sm: 5, md: 5 }} rowSpacing={4} columns={12}>
+              <Grid item xs={12} sm={6} md={4}>
+                <TextField
+                  fullWidth
+                  label='Inception date'
+                  value={'25/04/2023'}
+                  InputProps={{
+                    disabled: true
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6} md={4}>
+                <TextField
+                  fullWidth
+                  label='Dynamic net premium'
+                  value={'1000'}
+                  InputProps={{
+                    disabled: true
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6} md={4}>
+                <TextField
+                  error={error.erorrRangeInstallments || error.errorFieldRequired || error.errorOnlyNumbers}
+                  fullWidth
+                  label='Installments'
+                  value={count}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+
+                  // onKeyDown={handleKeyDown}
+                />
+                {error.errorFieldRequired && (
+                  <FormHelperText sx={{ color: 'error.main' }}>This field is required</FormHelperText>
+                )}
+                {error.erorrRangeInstallments && (
+                  <FormHelperText sx={{ color: 'error.main' }}>Can not enter 0</FormHelperText>
+                )}
+                {error.errorOnlyNumbers && <FormHelperText sx={{ color: 'error.main' }}>Only numbers</FormHelperText>}
+              </Grid>
+            </Grid>
           </InputsContainer>
         </TitleContainer>
-        {/* <Button
-          size='small'
-          variant='contained'
-          startIcon={<Icon icon='mdi:plus' fontSize={20} />}
-          onClick={() => setCount(count + 1)}
-        >
-          Add Item
-        </Button> */}
-        <InstallmentContainer>
-          <CardInstallment count={count} />
-        </InstallmentContainer>
+        <CardInstallment count={parseInt(count)} />
       </GeneralContainer>
       <NextContainer>
         <Button
@@ -117,6 +144,7 @@ const PaymentWarranty = () => {
             fontSize: userThemeConfig.typography?.size.px15,
             color: texButtonColor
           }}
+          disabled={btnNext}
         >
           Nex step &nbsp;
           <ArrowForwardIcon />
@@ -127,50 +155,3 @@ const PaymentWarranty = () => {
 }
 
 export default PaymentWarranty
-
-// import React, {
-//   useState,
-//   ChangeEvent,
-// } from 'react';
-
-// export default function DemoInput() {
-//   const [message, setMessage] = useState('');
-
-//   const [updated, setUpdated] = useState('');
-
-//   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-//     setMessage(event.target.value);
-//   };
-
-//   // const handleKeyboardEvent = (e: KeyboardEvent<HTMLImageElement>) => {
-//   //   // Do something
-//   //   console.log(e.key);
-//   //   if (e.key === 'Enter') {
-
-//   //   }
-//   // };
-//   const handleKeyDown = (event: React.KeyboardEvent<HTMLElement>) => {
-//     console.log(event.key);
-//     if (event.key === 'Enter') {
-//       setUpdated(message);
-//     }
-//   };
-
-//   return (
-//     <div>
-//       <input
-//         type="text"
-//         id="message"
-//         name="message"
-//         value={message}
-//         onChange={handleChange}
-//         defaultValue=""
-//         onKeyDown={handleKeyDown}
-//       />
-
-//       <h2>Message: {message}</h2>
-
-//       <h2>Updated: {updated}</h2>
-//     </div>
-//   );
-// }
