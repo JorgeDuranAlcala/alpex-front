@@ -6,7 +6,7 @@ const HeaderTitle = styled('div')({
   alignItems: 'flex-start',
   padding: '12px 24px 12px 0px',
   width: '100%',
-  height: '80px',
+  height: 'auto',
   gap: '4px'
 })
 
@@ -16,7 +16,13 @@ const ContainerSelectDowland = styled('div')({
   alignItems: 'center',
   width: '54%',
   height: '42px',
-  gap: '12px'
+  gap: '12px',
+  '@media (max-width:599px)': {
+    display: 'flex',
+    flexDirection: 'column',
+    height: 'auto',
+    width: '100%'
+  }
 })
 
 export { HeaderTitle, ContainerSelectDowland }
