@@ -43,7 +43,7 @@ const TableHeader: React.FC<ITableHeader> = ({ selectedRows, badgeData }) => {
       </Box>
       <Box sx={{ marginLeft: 'auto' }}>
           <Button sx={{ mb: 2 }} variant='contained' onClick={() => router.push('/catalogues/dynamic/add-broker')}>
-            ADD ACCOUNT &nbsp; <Icon icon='mdi:plus' />
+            ADD NEW BROKER &nbsp; <Icon icon='mdi:plus' />
           </Button>
       </Box>
 
