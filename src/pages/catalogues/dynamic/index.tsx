@@ -3,21 +3,21 @@ import Card from '@mui/material/Card'
 import Grid from '@mui/material/Grid'
 
 // ** Context
-import { AccountsTableContextProvider } from 'src/context/accounts/Table/reducer'
+// import { AccountsTableContextProvider } from 'src/context/accounts/Table/reducer'
 
 // ** Custom Components Imports
-import Table from 'src/views/catalogues/dynamic/Table'
+import BrokerTable from 'src/views/catalogues/dynamic/broker-table'
 
 const Catalogues = () => {
 
   return (
-    <AccountsTableContextProvider>
-      <Grid item xs={12}>
+
+    <Grid item xs={12}>
       <Card>
-        <Table />
+        <BrokerTable />
       </Card>
     </Grid>
-    </AccountsTableContextProvider>
+
   )
 }
 
