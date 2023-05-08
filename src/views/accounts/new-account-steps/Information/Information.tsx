@@ -128,7 +128,6 @@ const Information: React.FC<InformationProps> = ({ onStepChange }) => {
 
   useEffect(() => {
     const isBasicInfoValid = Object.values(basicInfo).some(value => value !== '' && value !== null)
-    console.log(basicInfo)
     setDisableSaveBtn(!isBasicInfoValid)
   }, [basicInfo])
 
