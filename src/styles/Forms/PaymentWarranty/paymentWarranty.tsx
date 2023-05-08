@@ -7,31 +7,24 @@ const GeneralContainer = styled('div')({
   padding: '20px 20px 60px',
   gap: '40px',
   width: '100%',
-  height: '544px'
 
-  // border: '1px solid blue'
+  // height: '544px',
+  height: 'auto'
 })
 
 const TitleContainer = styled('div')({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'flex-start',
-  justifyContent: 'space-between',
+  gap: '35px',
   width: '100%',
-
-  // height: '120px',
-
-  height: '26%'
-
-  // border: '1px solid red'
+  height: 'auto'
 })
 
 const InputsContainer = styled('div')({
   display: 'flex',
-  flexDirection: 'row',
   width: '100%',
-  height: '48%',
-  justifyContent: 'space-between'
+  height: 'auto'
 })
 const InstallmentContainer = styled('div')({
   display: 'flex',
@@ -39,8 +32,7 @@ const InstallmentContainer = styled('div')({
   alignItems: 'flex-start',
   width: '100%',
   height: '70%',
-  justifyContent: 'space-between',
-  border: '1px solid blue'
+  justifyContent: 'space-between'
 })
 
 const NextContainer = styled('div')({
@@ -60,8 +52,10 @@ const ContainerCard = styled('div')({
   flexDirection: 'column',
   alignItems: 'flex-start',
   justifyContent: 'space-between',
-  width: '32%',
-  height: '100%'
+  width: '100%',
+  height: '304px'
+
+  // border: '1px solid blue'
 })
 
 const ContainerCardInputs = styled('div')({

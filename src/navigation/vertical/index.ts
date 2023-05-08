@@ -7,11 +7,12 @@ const navigation = (): VerticalNavItemsType => {
     {
       title: 'Dashboard',
       icon: 'mdi:dashboard',
-      path: '/dashboards/crm'
+      path: '/dashboards/crm',
+      externalLink: true
     },
     {
       title: 'Accounts',
-      icon: 'mdi:accounts',
+      icon: 'ic:baseline-business-center',
       externalLink: true,
       path: '/accounts',
       children: [

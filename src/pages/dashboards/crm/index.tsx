@@ -1,9 +1,9 @@
 // ** MUI Imports
 
 // ** MUI Imports
-import { Typography } from '@mui/material'
+import { Grid, Typography } from '@mui/material'
 import UserThemeOptions from 'src/layouts/UserThemeOptions'
-import { Container, ContainerHeader, Frame } from 'src/styles/Dashboard/dashboard'
+import { Container, ContainerHeader } from 'src/styles/Dashboard/dashboard'
 
 import BrokersBalanceStatus from 'src/views/dashboards/crm/BrokersBalanceStatus'
 
@@ -43,10 +43,14 @@ const CrmDashboard = () => {
           Welcome to your dashboard!
         </Typography>
       </ContainerHeader>
-      <Frame>
-        <BrokersBalanceStatus />
-        <LastBoundAccount />
-      </Frame>
+      <Grid container spacing={{ xs: 2, sm: 2, md: 4 }} sx={{ mb: 4, height: 'auto' }}>
+        <Grid item xs={12} md={6} sm={6}>
+          <BrokersBalanceStatus />
+        </Grid>
+        <Grid item xs={12} md={6} sm={6}>
+          <LastBoundAccount />
+        </Grid>
+      </Grid>
       <CrmTable />
       <DowlandAccountInfo />
     </Container>

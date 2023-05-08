@@ -1,4 +1,4 @@
-.login-view .logo img{
+.login-view .logo img {
   max-width: 140px;
 }
 
@@ -66,14 +66,13 @@
 
 .login-view .directions {
   justify-content: center;
-  font-family: "Inter";
+  font-family: 'Inter';
   font-size: 14px;
   color: rgba(76, 78, 100, 0.6);
-
 }
 
 .login-view .forgot-text {
-  color: #2535A8;
+  color: #2535a8;
   font-weight: 700;
   font-size: 16px;
   text-align: center;
@@ -91,4 +90,21 @@
   .login-view .login-form {
     box-shadow: none;
   }
+}
+
+/**************************************** Container Cards Installments *****************************************************/
+.box-repeater {
+  flex-grow: 1;
+  width: 100%;
+  /* border: 1px solid red; */
+  overflow-y: scroll;
+  max-height: 304px;
+}
+
+.box-repeater::-webkit-scrollbar {
+  width: 5px;
+}
+.box-repeater::-webkit-scrollbar-thumb {
+  background-color: #2535a8;
+  border-radius: 8px;
 }

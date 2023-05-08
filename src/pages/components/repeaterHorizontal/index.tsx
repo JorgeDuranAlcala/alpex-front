@@ -1,12 +1,13 @@
 // ** Types
+import { Grid } from '@mui/material'
 import { RepeaterProps } from 'src/@core/components/repeater/types'
 
 const RepeaterHorizontal = (props: RepeaterProps) => {
   // ** Props
-  const { count, tag, children } = props
+  const { count, children } = props
 
   // ** Custom Tag
-  const Tag = tag || 'div'
+  // const Tag = tag || 'div'
 
   // ** Default Items
   const items = []
@@ -16,20 +17,33 @@ const RepeaterHorizontal = (props: RepeaterProps) => {
     items.push(children(i))
   }
 
+  console.log('Items--->', items)
+
   return (
-    <Tag
-      style={{
-        display: 'flex',
-        flexDirection: 'row',
-        width: '100%',
-        gap: '2%',
-        height: '304px'
-      }}
-      {...props}
-    >
-      {items}
-    </Tag>
+    <div className='box-repeater'>
+      <Grid container spacing={{ xs: 2, sm: 3, md: 3 }} rowSpacing={7} columns={12}>
+        {items}
+      </Grid>
+    </div>
   )
 }
 
 export default RepeaterHorizontal
+
+// return (
+//   <Tag
+//     style={{
+//       display: 'grid',
+//       width: '100%',
+//       maxHeight: '304px',
+//       overflowY: 'scroll',
+//       gridTemplateColumns: 'repeat(3,1fr)',
+//       gridTemplateRows: 'repeat(3,1fr)',
+//       gridColumnGap: '10px',
+//       gridRowGap: '30px'
+//     }}
+//     {...props}
+//   >
+//     {items}
+//   </Tag>
+// )
