@@ -44,9 +44,9 @@ interface FormInfo extends BrokerFormInfo {
 }
 
 interface PreviousFormInfo {
-  RecievedNetPremium?: string
-  DistribuitedNetPremium?: string
-  Diference?: string
+  RecievedNetPremium: string
+  DistribuitedNetPremium: string
+  Diference: string
 }
 
 interface BrokerFormInfo {
@@ -61,7 +61,7 @@ const SecurityForm: FormInfo = {
   SharePercent: '',
   DynamicComissionPercent: '',
   FrontingFee: '',
-  ReinsuranceCompany: '',
+  ReinsuranceCompany: '-1',
   PremiumPerShare: '',
   DynamicComission: '',
   FrontingFeePercent: '',
@@ -106,7 +106,7 @@ const schema = yup.object().shape({
     is: true,
     then: yup.number().required()
   }),
-  ReinsuranceCompany: yup.string().test('is-valid', 'This field is required', value => value !== '-1'),
+  ReinsuranceCompany: yup.string().test('is-valid', 'This field is required', value => value !== '-2'),
   PremiumPerShare: yup.number().required(),
   DynamicComission: yup.number().required(),
   FrontingFeePercent: yup.number().when('HasFrontingFee', {
@@ -125,19 +125,23 @@ const schema = yup.object().shape({
   IsGross: yup.boolean(),
   BrokerAge: yup.number().when('IsGross', {
     is: true,
-    then: yup.number().required()
+    then: yup.number().required(),
+    otherwise: yup.number().notRequired()
   }),
   Taxes: yup.number().when('IsGross', {
     is: true,
-    then: yup.number().required()
+    then: yup.number().required(),
+    otherwise: yup.number().notRequired()
   }),
   BrokerAgePercent: yup.number().when('IsGross', {
     is: true,
-    then: yup.number().required()
+    then: yup.number().required(),
+    otherwise: yup.number().notRequired()
   }),
   TaxesPercent: yup.number().when('IsGross', {
     is: true,
-    then: yup.number().required()
+    then: yup.number().required(),
+    otherwise: yup.number().notRequired()
   })
 })
 
@@ -167,8 +171,6 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
   })
 
   const accountData = useAppSelector(state => state.accounts)
-
-  console.log(accountData)
   const handleFormChange = (field: keyof FormInfo, value: FormInfo[keyof FormInfo]) => {
     const data = [...formData]
     data[index][field] = value
@@ -289,6 +291,10 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
       case 'BrokerAgePercent':
         data[index]['BrokerAge'] = validateNumber(((+BrokerAgePercent * +premiumPerShare) / 100).toString())
         break
+
+      case 'RetroCedant':
+        data[index]['RetroCedantContact'] = ''
+        break
     }
 
     setFormData(data)
@@ -322,6 +328,11 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
   }, [formData[index].BrokerAge])
 
   useEffect(() => {
+    setValues('RetroCedant')
+    //eslint-disable-next-line
+  }, [formData[index].RetroCedant])
+
+  useEffect(() => {
     calculateAvaliableReinsurers()
     //eslint-disable-next-line
   }, [formData])
@@ -333,10 +344,10 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
 
   useEffect(() => {
     const data = [...formData]
-    data[index]['RetroCedantContact'] = ''
+    data[index]['IsGross'] = isGross
     setFormData(data)
     //eslint-disable-next-line
-  }, [formData[index].RetroCedant])
+  }, [isGross])
 
   useEffect(() => {
     const company = companiesSelect.find(company => company.id === +formData[index].ReinsuranceCompany)
@@ -641,7 +652,13 @@ const Security = ({ onStepChange }: SecurityProps) => {
   })
   const [enableNextStep, setEnableNextStep] = useState<boolean>(false)
   const [open, setOpen] = useState<boolean>(false)
+  const [formInformation, setFormInformation] = useState<FormInformation>({
+    frontingFee: 0,
+    netPremium: 0,
+    grossPremium: 0
+  })
 
+  const accountData = useAppSelector(state => state.accounts)
   const dispatch = useAppDispatch()
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
 
@@ -678,8 +695,13 @@ const Security = ({ onStepChange }: SecurityProps) => {
           handleSuccess()
         })
         .catch(function (err) {
-          err.inner.forEach((e: any) => {
+          console.log(err)
+
+          err?.inner?.forEach((e: any) => {
             data[index][e.path] = e.message
+            console.log(e.path, e.message)
+            console.log(formData)
+
             setFormErrors(data)
           })
           setEnableNextStep(false)
@@ -687,10 +709,48 @@ const Security = ({ onStepChange }: SecurityProps) => {
     })
   }
 
+  const calculateDistribuitedNetPremium = () => {
+    let DistribuitedNetPremium = 0
+    let sumSharePercent = 0
+    let sumGrossShare = 0
+    formData.forEach(form => {
+      DistribuitedNetPremium =
+        +form.BrokerAge + +form.Taxes + +form.DynamicComission + +form.FrontingFee + +form.NetInsurancePremium
+      if (!form.IsGross) sumSharePercent += +form.SharePercent
+      else sumGrossShare += +form.PremiumPerShare
+    })
+    const recievedNetPremium = (sumSharePercent * +formInformation.netPremium) / 100 + sumGrossShare
+
+    setAllFormData({
+      ...allFormData,
+      DistribuitedNetPremium: DistribuitedNetPremium.toString(),
+      RecievedNetPremium: recievedNetPremium.toString()
+    })
+  }
+
   const handleSuccess = () => {
-    dispatch(updateFormsData({ form2: formData }))
+    dispatch(updateFormsData({ form2: allFormData }))
     setEnableNextStep(true)
   }
+
+  useEffect(() => {
+    const data = accountData.formsData.form1.placementStructure as FormInformation
+    setFormInformation(data)
+    //eslint-disable-next-line
+  }, [accountData.formsData.form1])
+
+  useEffect(() => {
+    calculateDistribuitedNetPremium()
+    //eslint-disable-next-line
+  }, [formData])
+
+  useEffect(() => {
+    setAllFormData({
+      ...allFormData,
+      Diference: (+allFormData.RecievedNetPremium - +allFormData.DistribuitedNetPremium).toString()
+    })
+    //eslint-disable-next-line
+  }, [allFormData.DistribuitedNetPremium, allFormData.RecievedNetPremium])
 
   return (
     <>
