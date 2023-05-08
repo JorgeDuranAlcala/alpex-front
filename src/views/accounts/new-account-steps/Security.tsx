@@ -52,7 +52,7 @@ interface PreviousFormInfo {
 interface BrokerFormInfo {
   BrokerAge: string
   Taxes: string
-  BrokerPercent: string
+  BrokerAgePercent: string
   TaxesPercent: string
 }
 
@@ -73,7 +73,7 @@ const SecurityForm: FormInfo = {
   ContactCountry: '',
   BrokerAge: '',
   Taxes: '',
-  BrokerPercent: '',
+  BrokerAgePercent: '',
   TaxesPercent: '',
   HasFrontingFee: false,
   IsGross: false
@@ -131,7 +131,7 @@ const schema = yup.object().shape({
     is: true,
     then: yup.number().required()
   }),
-  BrokerPercent: yup.number().when('IsGross', {
+  BrokerAgePercent: yup.number().when('IsGross', {
     is: true,
     then: yup.number().required()
   }),
@@ -221,33 +221,73 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
     const dynamicComission = data[index]['DynamicComission']
     const sharePercent = data[index]['SharePercent']
     const dynamicComissionPercent = data[index]['DynamicComissionPercent']
+    const BrokerAge = data[index]['BrokerAge']
+    const Taxes = data[index]['Taxes']
+    const BrokerAgePercent = data[index]['BrokerAgePercent']
+    const TaxesPercent = data[index]['TaxesPercent']
+
+    let NetInsurancePremium = ''
+    if (isGross) {
+      NetInsurancePremium = validateNumber(
+        (+premiumPerShare - +dynamicComission - +Taxes - +BrokerAge).toString(),
+        true
+      )
+    } else {
+      NetInsurancePremium = validateNumber((+premiumPerShare - +dynamicComission).toString(), true)
+    }
 
     switch (field) {
       case 'NetPremium':
         data[index]['SharePercent'] = '100'
         data[index]['PremiumPerShare'] = totalNetPremium
         break
+
       case 'SharePercent':
         data[index]['PremiumPerShare'] = validateNumber(((+sharePercent * +totalNetPremium) / 100).toString())
         break
+
       case 'PremiumPerShare':
         data[index]['SharePercent'] = validateNumber(((+premiumPerShare / +totalNetPremium) * 100).toString())
-        data[index]['NetInsurancePremium'] = validateNumber((+premiumPerShare - +dynamicComission).toString(), true)
+        data[index]['NetInsurancePremium'] = NetInsurancePremium
         data[index]['DynamicComissionPercent'] = '100'
-        data[index]['DynamicComission'] = premiumPerShare
         data[index]['FrontingFeePercent'] = '100'
+        data[index]['TaxesPercent'] = isGross ? '100' : ''
+        data[index]['BrokerAgePercent'] = isGross ? '100' : ''
+        data[index]['Taxes'] = isGross ? premiumPerShare : ''
+        data[index]['BrokerAge'] = isGross ? premiumPerShare : ''
         data[index]['FrontingFee'] = premiumPerShare
+        data[index]['DynamicComission'] = premiumPerShare
         break
+
       case 'DynamicComission':
-        data[index]['NetInsurancePremium'] = validateNumber((+premiumPerShare - +dynamicComission).toString(), true)
+        data[index]['NetInsurancePremium'] = NetInsurancePremium
         data[index]['DynamicComissionPercent'] = validateNumber(
           ((+dynamicComission / +premiumPerShare) * 100).toString()
         )
         break
+
       case 'DynamicComissionPercent':
         data[index]['DynamicComission'] = validateNumber(
           ((+dynamicComissionPercent * +premiumPerShare) / 100).toString()
         )
+        break
+
+      case 'Taxes':
+        data[index]['NetInsurancePremium'] = NetInsurancePremium
+        data[index]['TaxesPercent'] = validateNumber(((+Taxes / +premiumPerShare) * 100).toString())
+        break
+
+      case 'TaxesPercent':
+        data[index]['Taxes'] = validateNumber(((+TaxesPercent * +premiumPerShare) / 100).toString())
+        break
+
+      case 'BrokerAge':
+        data[index]['NetInsurancePremium'] = NetInsurancePremium
+        data[index]['BrokerAgePercent'] = validateNumber(((+BrokerAge / +premiumPerShare) * 100).toString())
+        break
+
+      case 'BrokerAgePercent':
+        data[index]['BrokerAge'] = validateNumber(((+BrokerAgePercent * +premiumPerShare) / 100).toString())
         break
     }
 
@@ -270,6 +310,16 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
     setValues('DynamicComission')
     //eslint-disable-next-line
   }, [formData[index].DynamicComission])
+
+  useEffect(() => {
+    setValues('Taxes')
+    //eslint-disable-next-line
+  }, [formData[index].Taxes])
+
+  useEffect(() => {
+    setValues('BrokerAge')
+    //eslint-disable-next-line
+  }, [formData[index].BrokerAge])
 
   useEffect(() => {
     calculateAvaliableReinsurers()
