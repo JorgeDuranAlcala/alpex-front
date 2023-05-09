@@ -118,18 +118,13 @@ const navigation = (): VerticalNavItemsType => {
       icon: 'mdi:catalogues',
       children: [
         {
-          title: 'List'
+          title: 'Dynamic',
+          path: '/catalogues/dynamic'
 
           // path: '/apps/invoice/list'
         },
         {
-          title: 'Preview'
-        },
-        {
-          title: 'Edit'
-        },
-        {
-          title: 'Add'
+          title: 'Claims/claims'
         }
       ]
     },
