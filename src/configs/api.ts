@@ -57,6 +57,13 @@ export enum USERS_ROUTES {
   GET = 'user'
 }
 
+export enum COUNTRY_ROUTERS {
+  GET_ALL = `/${CATALOGS}/country/all`,
+  GET_BY_ID = `/${CATALOGS}/country`,
+  ADD = `/${CATALOGS}/country/add`,
+  UPDATE = `/${CATALOGS}/country`
+}
+
 export enum LINE_OF_BUSSINES_ROUTES {
   GET_ALL = 'catalogs/lineOfBussines/all',
   GET_BY_ID = 'catalogs/lineOfBussines',
@@ -76,4 +83,11 @@ export enum CURRENCY_ROUTES {
   GET_BY_ID = 'catalogs/currency',
   ADD = 'catalogs/currency/add',
   UPDATE = 'catalogs/currency'
+}
+
+export enum RISK_ACTIVITY_ROUTES {
+  GET_ALL = `/${CATALOGS}/risk-activity/all`,
+  GET_BY_ID = `/${CATALOGS}/risk-activity/`,
+  ADD = `/${CATALOGS}/risk-activity/add`,
+  UPDATE = `/${CATALOGS}/risk-activity/`
 }

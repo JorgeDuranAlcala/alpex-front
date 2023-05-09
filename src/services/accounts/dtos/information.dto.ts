@@ -1,8 +1,9 @@
 export interface InformationDto {
   id: number
   insured: string
-  effetiveDate: Date
-  expirationDate: Date
+  effetiveDate: Date | null
+  expirationDate: Date | null
+  receptionDate: Date | null
   limit: number
   attachmentPoint: number
   reinsuranceBrokerage: number
@@ -28,7 +29,6 @@ export interface InformationDto {
   idLineOfBussines: number
   idTypeOfLimit: number
   idRiskActivity: number
-  idProgram: number
   idLeadUnderwriter: number
   idUnderwriter: number
   idTechnicalAssistant: number

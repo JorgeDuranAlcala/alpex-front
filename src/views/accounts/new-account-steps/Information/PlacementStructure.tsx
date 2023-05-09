@@ -181,9 +181,8 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
   const handleCurrencyChange = (e: SelectChangeEvent<string>) => {
     const target = e.target
     const value = target.value
-    const code = currencies[Number(value)]?.code || 'USD'
 
-    switch (code) {
+    switch (value) {
       case 'USD':
         setPlacementStructure({ ...placementStructure, currency: value, exchangeRate: 18.5 })
         break
@@ -273,7 +272,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
             >
               {currencies?.map(currency => {
                 return (
-                  <MenuItem key={currency.code} value={currency.id}>
+                  <MenuItem key={currency.code} value={currency.code}>
                     {currency.code}
                   </MenuItem>
                 )

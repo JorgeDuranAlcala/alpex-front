@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import UserThemeOptions from 'src/layouts/UserThemeOptions'
 
+// Hooks
+import { useAddInformation } from 'src/hooks/accounts/information'
+
 // // ** MUI Imports
 import CloseIcon from '@mui/icons-material/Close'
 import Box from '@mui/material/Box'
@@ -33,7 +36,7 @@ export interface BasicInfoInterface {
   technicalAssistant: string
   industryCode: string
   riskActivity: string
-  riskClass: string
+  riskClass: number
   receptionDate: Date | null
   effectiveDate: Date | null
   expirationDate: Date | null
@@ -48,10 +51,12 @@ const Information: React.FC<InformationProps> = ({ onStepChange }) => {
   const inter = userThemeConfig.typography?.fontFamilyInter
   const [makeValidations, setMakeValidations] = useState(false)
   const [disableSaveBtn, setDisableSaveBtn] = useState(true)
-  const [disableNextBtn, setDisableNextBtn] = useState(true)
+  const [disableNextBtn, setDisableNextBtn] = useState(false)
   const [basicIncfoValidated, setBasicIncfoValidated] = useState(false)
   const [placementStructureValidated, setPlacementStructureValidated] = useState(false)
   const [open, setOpen] = useState<boolean>(false)
+
+  const { addInformation } = useAddInformation()
 
   const dispatch = useAppDispatch()
 
@@ -68,7 +73,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange }) => {
     technicalAssistant: '',
     industryCode: '',
     riskActivity: '',
-    riskClass: '',
+    riskClass: 0,
     receptionDate: null,
     effectiveDate: null,
     expirationDate: null
@@ -94,9 +99,46 @@ const Information: React.FC<InformationProps> = ({ onStepChange }) => {
     file: null
   })
 
+  const saveInformation = () => {
+    addInformation({
+      insured: basicInfo.insured,
+      idCountry: Number(basicInfo.country),
+      idBroker: Number(basicInfo.broker),
+      idBrokerContact: Number(basicInfo.brokerContact),
+      idCedant: Number(basicInfo.cedant),
+      idCedantContact: Number(basicInfo.cedantContact),
+      idLineOfBussines: Number(basicInfo.lineOfBusiness),
+      idRiskActivity: Number(basicInfo.industryCode),
+      effetiveDate: basicInfo.effectiveDate,
+      expirationDate: basicInfo.expirationDate,
+      receptionDate: basicInfo.receptionDate,
+      idLeadUnderwriter: Number(basicInfo.leadUnderwriter),
+      idTechnicalAssistant: Number(basicInfo.technicalAssistant),
+      idUnderwriter: Number(basicInfo.underwriter),
+      riskClass: basicInfo.riskClass,
+      currency: placementStructure.currency,
+      exchangeRate: placementStructure.exchangeRate,
+      attachmentPoint: placementStructure.attachmentPoint,
+      frontingFee: placementStructure.frontingFee,
+      frontingFeeTotal: placementStructure.frontingFeeP,
+      grossPremium: placementStructure.grossPremium,
+      limit: placementStructure.limit,
+      netPremiun: placementStructure.netPremium,
+      reinsuranceBrokerage: placementStructure.reinsuranceBrokerage,
+      reinsuranceBrokerageTotal: placementStructure.reinsuranceBrokerageP,
+      sir: placementStructure.sir,
+      taxes: placementStructure.taxes,
+      taxesTotal: placementStructure.taxesP,
+      totalValues: placementStructure.total,
+      idTypeOfLimit: Number(placementStructure.typeOfLimit),
+      step: 1
+    })
+  }
+
   const handleSubmit = () => {
     setDisableNextBtn(false)
     dispatch(updateFormsData({ form1: { basicInfo, placementStructure, userFile } }))
+    saveInformation()
   }
 
   const handleCloseModal = () => {
@@ -104,7 +146,10 @@ const Information: React.FC<InformationProps> = ({ onStepChange }) => {
   }
 
   const onNextStep = () => {
+    setDisableNextBtn(false)
+    dispatch(updateFormsData({ form1: { basicInfo, placementStructure, userFile } }))
     if (onStepChange) {
+      saveInformation()
       onStepChange(2)
     }
   }
