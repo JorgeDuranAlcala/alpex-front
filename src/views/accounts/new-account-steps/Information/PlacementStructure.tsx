@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from 'react'
 
+//Hooks
+import { useGetAllCurrencies } from 'src/hooks/catalogs/currency'
+import { useGetAllTypeOfLimit } from 'src/hooks/catalogs/typeOfLimit'
+
 // // ** MUI Imports
 import FormControl from '@mui/material/FormControl'
 import FormHelperText from '@mui/material/FormHelperText'
@@ -75,6 +79,9 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
   resetMakeValidations,
   isValidForm
 }) => {
+  const { currencies } = useGetAllCurrencies()
+  const { typesOfLimits } = useGetAllTypeOfLimit()
+
   const [reinsuranceBrokerageP, setReinsuranceBrokerageP] = useState<number>()
   const [taxesP, setTaxesP] = useState<number>()
   const [frontingFeeP, setFrontingFeeP] = useState<number>()
@@ -174,15 +181,16 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
   const handleCurrencyChange = (e: SelectChangeEvent<string>) => {
     const target = e.target
     const value = target.value
+    const code = currencies[Number(value)]?.code || 'USD'
 
-    switch (value) {
+    switch (code) {
       case 'USD':
         setPlacementStructure({ ...placementStructure, currency: value, exchangeRate: 18.5 })
         break
-      case 'EUR':
+      case 'MXN':
         setPlacementStructure({ ...placementStructure, currency: value, exchangeRate: 20.0 })
         break
-      case 'MXN':
+      case 'EUR':
         setPlacementStructure({ ...placementStructure, currency: value, exchangeRate: 1 })
         break
     }
@@ -263,9 +271,13 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               onChange={handleCurrencyChange}
               labelId='currency'
             >
-              <MenuItem value='USD'>USD</MenuItem>
-              <MenuItem value='MXN'>MXN</MenuItem>
-              <MenuItem value='EUR'>EUR</MenuItem>
+              {currencies?.map(currency => {
+                return (
+                  <MenuItem key={currency.code} value={currency.id}>
+                    {currency.code}
+                  </MenuItem>
+                )
+              })}
             </Select>
             {errors.currencyError && (
               <FormHelperText sx={{ color: 'error.main' }} id='invoice-country-error'>
@@ -556,9 +568,13 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               onChange={handleSelectChange}
               labelId='type-of-limit'
             >
-              <MenuItem value='t1'>T1</MenuItem>
-              <MenuItem value='t2'>T2</MenuItem>
-              <MenuItem value='t3'>T3</MenuItem>
+              {typesOfLimits?.map(limit => {
+                return (
+                  <MenuItem key={limit.id} value={limit.id}>
+                    {limit.name}
+                  </MenuItem>
+                )
+              })}
             </Select>
             {errors.typeOfLimitError && (
               <FormHelperText sx={{ color: 'error.main' }} id='invoice-country-error'>
