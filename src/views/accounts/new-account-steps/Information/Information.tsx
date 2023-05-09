@@ -52,6 +52,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange }) => {
   const [basicIncfoValidated, setBasicIncfoValidated] = useState(false)
   const [placementStructureValidated, setPlacementStructureValidated] = useState(false)
   const [open, setOpen] = useState<boolean>(false)
+  const [nextClicked, setNextClicked] = useState<boolean>(false)
 
   const dispatch = useAppDispatch()
 
@@ -110,10 +111,8 @@ const Information: React.FC<InformationProps> = ({ onStepChange }) => {
   }
   const handleNext = () => {
     setMakeValidations(true)
+    setNextClicked(true)
 
-    if (basicIncfoValidated && placementStructureValidated) {
-      setOpen(true)
-    }
   }
 
   const resetMakeValidations = () => {
@@ -128,7 +127,6 @@ const Information: React.FC<InformationProps> = ({ onStepChange }) => {
 
   useEffect(() => {
     const isBasicInfoValid = Object.values(basicInfo).some(value => value !== '' && value !== null)
-    console.log(basicInfo)
     setDisableSaveBtn(!isBasicInfoValid)
   }, [basicInfo])
 
@@ -138,6 +136,16 @@ const Information: React.FC<InformationProps> = ({ onStepChange }) => {
     )
     setDisableSaveBtn(!isplacementStructureValid)
   }, [placementStructure])
+
+  useEffect(()=>{
+    if(nextClicked){
+      if (basicIncfoValidated && placementStructureValidated) {
+        setOpen(true)
+      }
+    }
+
+  },[basicIncfoValidated, placementStructureValidated, nextClicked]);
+
 
   return (
     <>
@@ -181,39 +189,44 @@ const Information: React.FC<InformationProps> = ({ onStepChange }) => {
               </div>
             </Button>
 
-            <Modal className='next-step-modal' open={open} onClose={handleCloseModal}>
-              <Box
-                sx={{
-                  position: 'absolute',
-                  bgcolor: 'white',
-                  top: '50%',
-                  left: '50%',
-                  boxShadow: 24,
-                  pl: 5,
-                  pr: 5,
-                  transform: 'translate(-50%, -50%)',
-                  borderRadius: '10px',
-                  padding: '15px'
-                }}
-              >
-                <HeaderTitleModal>
-                  <div className='next-modal-title'>Ready to continue?</div>
-                  <ButtonClose onClick={handleCloseModal}>
-                    <CloseIcon />
-                  </ButtonClose>
-                </HeaderTitleModal>
-                <div className='next-modal-text'>
-                  You are about to advance to the next form. Make sure that all the fields have been completed with the
-                  correct information.
-                </div>
-                <Button className='continue-modal-btn' variant='contained' onClick={onNextStep}>
-                  CONTINUE
-                </Button>
-                <Button className='create-contact-modal' onClick={() => setOpen(false)}>
-                  Keep editing information
-                </Button>
-              </Box>
-            </Modal>
+              <Modal className="next-step-modal" open={open} onClose={handleCloseModal}>
+                <Box
+                  sx={{
+                    position: 'absolute',
+                    bgcolor: 'white',
+                    top: '50%',
+                    left: '50%',
+                    boxShadow: 24,
+                    pl: 5,
+                    pr: 5,
+                    transform: 'translate(-50%, -50%)',
+                    borderRadius: '10px',
+                    padding: '15px'
+                  }}
+                >
+                  <HeaderTitleModal>
+                    <div className="next-modal-title" >Ready to continue?</div>
+                    <ButtonClose onClick={handleCloseModal}>
+                      <CloseIcon />
+                    </ButtonClose>
+                  </HeaderTitleModal>
+                  <div className='next-modal-text'>
+                    You are about to advance to the next form. Make sure that all the fields have been completed with the correct information.
+                  </div>
+                  <Button
+                    className='continue-modal-btn'
+                    variant='contained'
+                    onClick={onNextStep}
+                  >
+                    CONTINUE
+                  </Button>
+                  <Button className='create-contact-modal' onClick={() => {setOpen(false); setNextClicked(false)}}>
+                    Keep editing information
+                  </Button>
+                </Box>
+              </Modal>
+
+
           </div>
         </form>
       </div>

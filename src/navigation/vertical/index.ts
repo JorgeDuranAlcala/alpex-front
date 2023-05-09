@@ -117,18 +117,13 @@ const navigation = (): VerticalNavItemsType => {
       icon: 'ic:sharp-menu-book',
       children: [
         {
-          title: 'List'
+          title: 'Dynamic',
+          path: '/catalogues/dynamic'
 
           // path: '/apps/invoice/list'
         },
         {
-          title: 'Preview'
-        },
-        {
-          title: 'Edit'
-        },
-        {
-          title: 'Add'
+          title: 'Claims/claims'
         }
       ]
     },

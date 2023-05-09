@@ -1,3 +1,10 @@
+export enum ROLES {
+  ADMIN = 5,
+  LEAD_UNDERWRITER = 6,
+  UNDERWRITER = 8,
+  TECHNICAL_ASSISTANT = 9
+}
+
 export enum ACCOUNT_INFORMATION_ROUTES {
   ADD = 'account/information/add',
   GET = 'account/Information',
@@ -12,6 +19,36 @@ export enum ACCOUNT_ROUTES {
 export enum AUTH_ROUTES {
   LOGIN = '/auth',
   AUTH_ME = '/auth/me/'
+}
+
+export enum BROKER_ROUTES {
+  GET_ALL = 'catalogs/broker/all',
+  GET_BY_ID = 'catalogs/broker',
+  ADD = 'catalogs/broker/add',
+  UPDATE = 'catalogs/broker'
+}
+
+export enum CEDANT_ROUTERS {
+  GET_ALL = 'catalogs/cedant/all',
+  GET_BY_ID = 'catalogs/cedant',
+  ADD = 'catalogs/cedant/add',
+  UPDATE = 'catalogs/cedant'
+}
+
+export enum BROKER_CONTACT_ROUTERS {
+  GET_ALL = 'catalogs/broker-contact/all',
+  GET_BY_ID = 'catalogs//broker-contact',
+  ADD = 'catalogs/broker-contact/add',
+  UPDATE = 'catalogs/broker-contact',
+  GET_BY_ID_BROKER = 'catalogs/broker-contact/broker'
+}
+
+export enum CEDANT_CONTACT_ROUTERS {
+  GET_ALL = 'catalogs/cedant-contact/all',
+  GET_BY_ID = 'catalogs/cedant-contact',
+  ADD = 'catalogs/cedant-contact/add',
+  UPDATE = 'catalogs/cedant-contact',
+  GET_BY_ID_CEDANT = 'catalogs/cedant-contact/cedant'
 }
 
 export enum USERS_ROUTES {
@@ -37,4 +74,18 @@ export enum CURRENCY_ROUTES {
   GET_BY_ID = 'catalogs/currency',
   ADD = 'catalogs/currency/add',
   UPDATE = 'catalogs/currency'
+}
+
+export enum REINSURANCE_COMPANY_ROUTES {
+  GET_ALL = 'catalogs/reinsuranceCompany/all',
+  GET_BY_ID = 'catalogs/reinsuranceCompany',
+  ADD = 'catalogs/reinsuranceCompany/add',
+  UPDATE = 'catalogs/reinsuranceCompany'
+}
+
+export enum RETRO_CEDANT_ROUTES {
+  GET_ALL = 'catalogs/retroCedant/all',
+  GET_BY_ID = 'catalogs/retroCedant',
+  ADD = 'catalogs/retroCedant/add',
+  UPDATE = 'catalogs/retroCedant'
 }
