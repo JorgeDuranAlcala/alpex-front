@@ -37,7 +37,7 @@ export enum CEDANT_ROUTERS {
 
 export enum BROKER_CONTACT_ROUTERS {
   GET_ALL = 'catalogs/broker-contact/all',
-  GET_BY_ID = 'catalogs//broker-contact',
+  GET_BY_ID = 'catalogs/broker-contact',
   ADD = 'catalogs/broker-contact/add',
   UPDATE = 'catalogs/broker-contact',
   GET_BY_ID_BROKER = 'catalogs/broker-contact/broker'
@@ -53,6 +53,13 @@ export enum CEDANT_CONTACT_ROUTERS {
 
 export enum USERS_ROUTES {
   GET = 'user'
+}
+
+export enum COUNTRY_ROUTERS {
+  GET_ALL = 'catalogs/country/all',
+  GET_BY_ID = 'catalogs/country',
+  ADD = 'catalogs/country/add',
+  UPDATE = `catalogs/country`
 }
 
 export enum LINE_OF_BUSSINES_ROUTES {
@@ -74,6 +81,13 @@ export enum CURRENCY_ROUTES {
   GET_BY_ID = 'catalogs/currency',
   ADD = 'catalogs/currency/add',
   UPDATE = 'catalogs/currency'
+}
+
+export enum RISK_ACTIVITY_ROUTES {
+  GET_ALL = 'catalogs/risk-activity/all',
+  GET_BY_ID = 'catalogs/risk-activity/',
+  ADD = 'catalogs/risk-activity/add',
+  UPDATE = 'catalogs/risk-activity/'
 }
 
 export enum REINSURANCE_COMPANY_ROUTES {
