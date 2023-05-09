@@ -23,7 +23,7 @@ import { updateFormsData } from 'src/store/apps/accounts'
 import { ButtonClose, HeaderTitleModal } from 'src/styles/Dashboard/ModalReinsurers/modalReinsurers'
 import SwitchAlpex from 'src/views/custom/switchs'
 
-interface FormInfo extends PreviousFormInfo {
+interface FormInfo extends BrokerFormInfo {
   [key: string]: string | boolean | undefined
   NetPremium: string
   SharePercent: string
@@ -40,12 +40,20 @@ interface FormInfo extends PreviousFormInfo {
   ContactPhone: string
   ContactCountry: string
   HasFrontingFee: boolean
+  IsGross: boolean
 }
 
 interface PreviousFormInfo {
-  RecievedNetPremium?: string
-  DistribuitedNetPremium?: string
-  Diference?: string
+  RecievedNetPremium: string
+  DistribuitedNetPremium: string
+  Diference: string
+}
+
+interface BrokerFormInfo {
+  BrokerAge: string
+  Taxes: string
+  BrokerAgePercent: string
+  TaxesPercent: string
 }
 
 const SecurityForm: FormInfo = {
@@ -53,7 +61,7 @@ const SecurityForm: FormInfo = {
   SharePercent: '',
   DynamicComissionPercent: '',
   FrontingFee: '',
-  ReinsuranceCompany: '',
+  ReinsuranceCompany: '-1',
   PremiumPerShare: '',
   DynamicComission: '',
   FrontingFeePercent: '',
@@ -63,14 +71,16 @@ const SecurityForm: FormInfo = {
   ContactEmail: '',
   ContactPhone: '',
   ContactCountry: '',
-  HasFrontingFee: false
+  BrokerAge: '',
+  Taxes: '',
+  BrokerAgePercent: '',
+  TaxesPercent: '',
+  HasFrontingFee: false,
+  IsGross: false
 }
 
-interface FormSecurity {
+interface FormSecurity extends PreviousFormInfo {
   FormData: FormInfo[]
-  RecievedNetPremium: string
-  DistribuitedNetPremium: string
-  Diference: string
 }
 
 type SecurityProps = {
@@ -96,7 +106,7 @@ const schema = yup.object().shape({
     is: true,
     then: yup.number().required()
   }),
-  ReinsuranceCompany: yup.string().test('is-valid', 'This field is required', value => value !== '-1'),
+  ReinsuranceCompany: yup.string().test('is-valid', 'This field is required', value => value !== '-2'),
   PremiumPerShare: yup.number().required(),
   DynamicComission: yup.number().required(),
   FrontingFeePercent: yup.number().when('HasFrontingFee', {
@@ -111,6 +121,27 @@ const schema = yup.object().shape({
   RetroCedantContact: yup.string().when('HasFrontingFee', {
     is: true,
     then: yup.string().notRequired()
+  }),
+  IsGross: yup.boolean(),
+  BrokerAge: yup.number().when('IsGross', {
+    is: true,
+    then: yup.number().required(),
+    otherwise: yup.number().notRequired()
+  }),
+  Taxes: yup.number().when('IsGross', {
+    is: true,
+    then: yup.number().required(),
+    otherwise: yup.number().notRequired()
+  }),
+  BrokerAgePercent: yup.number().when('IsGross', {
+    is: true,
+    then: yup.number().required(),
+    otherwise: yup.number().notRequired()
+  }),
+  TaxesPercent: yup.number().when('IsGross', {
+    is: true,
+    then: yup.number().required(),
+    otherwise: yup.number().notRequired()
   })
 })
 
@@ -125,6 +156,7 @@ interface FormSectionProps {
 interface FormInformation {
   frontingFee: number
   netPremium: number
+  grossPremium: number
 }
 
 const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }: FormSectionProps) => {
@@ -134,11 +166,11 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
   const [labelNetPremium, setLabelNetPremium] = useState<string>('Net premium at %100')
   const [formInformation, setFormInformation] = useState<FormInformation>({
     frontingFee: 0,
-    netPremium: 0
+    netPremium: 0,
+    grossPremium: 0
   })
 
   const accountData = useAppSelector(state => state.accounts)
-
   const handleFormChange = (field: keyof FormInfo, value: FormInfo[keyof FormInfo]) => {
     const data = [...formData]
     data[index][field] = value
@@ -191,33 +223,77 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
     const dynamicComission = data[index]['DynamicComission']
     const sharePercent = data[index]['SharePercent']
     const dynamicComissionPercent = data[index]['DynamicComissionPercent']
+    const BrokerAge = data[index]['BrokerAge']
+    const Taxes = data[index]['Taxes']
+    const BrokerAgePercent = data[index]['BrokerAgePercent']
+    const TaxesPercent = data[index]['TaxesPercent']
+
+    let NetInsurancePremium = ''
+    if (isGross) {
+      NetInsurancePremium = validateNumber(
+        (+premiumPerShare - +dynamicComission - +Taxes - +BrokerAge).toString(),
+        true
+      )
+    } else {
+      NetInsurancePremium = validateNumber((+premiumPerShare - +dynamicComission).toString(), true)
+    }
 
     switch (field) {
       case 'NetPremium':
         data[index]['SharePercent'] = '100'
         data[index]['PremiumPerShare'] = totalNetPremium
         break
+
       case 'SharePercent':
         data[index]['PremiumPerShare'] = validateNumber(((+sharePercent * +totalNetPremium) / 100).toString())
         break
+
       case 'PremiumPerShare':
         data[index]['SharePercent'] = validateNumber(((+premiumPerShare / +totalNetPremium) * 100).toString())
-        data[index]['NetInsurancePremium'] = validateNumber((+premiumPerShare - +dynamicComission).toString(), true)
+        data[index]['NetInsurancePremium'] = NetInsurancePremium
         data[index]['DynamicComissionPercent'] = '100'
-        data[index]['DynamicComission'] = premiumPerShare
         data[index]['FrontingFeePercent'] = '100'
+        data[index]['TaxesPercent'] = isGross ? '100' : ''
+        data[index]['BrokerAgePercent'] = isGross ? '100' : ''
+        data[index]['Taxes'] = isGross ? premiumPerShare : ''
+        data[index]['BrokerAge'] = isGross ? premiumPerShare : ''
         data[index]['FrontingFee'] = premiumPerShare
+        data[index]['DynamicComission'] = premiumPerShare
         break
+
       case 'DynamicComission':
-        data[index]['NetInsurancePremium'] = validateNumber((+premiumPerShare - +dynamicComission).toString(), true)
+        data[index]['NetInsurancePremium'] = NetInsurancePremium
         data[index]['DynamicComissionPercent'] = validateNumber(
           ((+dynamicComission / +premiumPerShare) * 100).toString()
         )
         break
+
       case 'DynamicComissionPercent':
         data[index]['DynamicComission'] = validateNumber(
           ((+dynamicComissionPercent * +premiumPerShare) / 100).toString()
         )
+        break
+
+      case 'Taxes':
+        data[index]['NetInsurancePremium'] = NetInsurancePremium
+        data[index]['TaxesPercent'] = validateNumber(((+Taxes / +premiumPerShare) * 100).toString())
+        break
+
+      case 'TaxesPercent':
+        data[index]['Taxes'] = validateNumber(((+TaxesPercent * +premiumPerShare) / 100).toString())
+        break
+
+      case 'BrokerAge':
+        data[index]['NetInsurancePremium'] = NetInsurancePremium
+        data[index]['BrokerAgePercent'] = validateNumber(((+BrokerAge / +premiumPerShare) * 100).toString())
+        break
+
+      case 'BrokerAgePercent':
+        data[index]['BrokerAge'] = validateNumber(((+BrokerAgePercent * +premiumPerShare) / 100).toString())
+        break
+
+      case 'RetroCedant':
+        data[index]['RetroCedantContact'] = ''
         break
     }
 
@@ -242,6 +318,21 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
   }, [formData[index].DynamicComission])
 
   useEffect(() => {
+    setValues('Taxes')
+    //eslint-disable-next-line
+  }, [formData[index].Taxes])
+
+  useEffect(() => {
+    setValues('BrokerAge')
+    //eslint-disable-next-line
+  }, [formData[index].BrokerAge])
+
+  useEffect(() => {
+    setValues('RetroCedant')
+    //eslint-disable-next-line
+  }, [formData[index].RetroCedant])
+
+  useEffect(() => {
     calculateAvaliableReinsurers()
     //eslint-disable-next-line
   }, [formData])
@@ -253,21 +344,24 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
 
   useEffect(() => {
     const data = [...formData]
-    data[index]['RetroCedantContact'] = ''
+    data[index]['IsGross'] = isGross
     setFormData(data)
     //eslint-disable-next-line
-  }, [formData[index].RetroCedant])
+  }, [isGross])
 
   useEffect(() => {
     const company = companiesSelect.find(company => company.id === +formData[index].ReinsuranceCompany)
+    const data = [...formData]
+
     if (company) {
       setIsGross(company.isGross)
+      company.isGross
+        ? (data[index]['NetPremium'] = formInformation.grossPremium.toString())
+        : (data[index]['NetPremium'] = formInformation.netPremium.toString())
     } else {
       setIsGross(false)
+      data[index]['NetPremium'] = formInformation.netPremium.toString()
     }
-
-    const data = [...formData]
-    data[index]['NetPremium'] = formInformation.netPremium.toString()
     setFormData(data)
 
     if (company?.isGross) {
@@ -308,6 +402,20 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
 
             <FormHelperText sx={{ color: 'error.main' }}>{formErrors[index]?.SharePercent}</FormHelperText>
           </FormControl>
+          {isGross && (
+            <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
+              <TextField
+                autoFocus
+                label='Reinsurance brokerage %'
+                value={formData[index].BrokerAgePercent}
+                onChange={e => handleFormChange('BrokerAgePercent', e.target.value)}
+                onKeyUp={() => setValues('BrokerAgePercent')}
+              />
+
+              <FormHelperText sx={{ color: 'error.main' }}>{formErrors[index]?.BrokerAgePercent}</FormHelperText>
+            </FormControl>
+          )}
+
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <TextField
               autoFocus
@@ -319,6 +427,20 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
 
             <FormHelperText sx={{ color: 'error.main' }}>{formErrors[index]?.DynamicComissionPercent}</FormHelperText>
           </FormControl>
+          {isGross && (
+            <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
+              <TextField
+                autoFocus
+                label='Taxes %'
+                value={formData[index].TaxesPercent}
+                onChange={e => handleFormChange('TaxesPercent', e.target.value)}
+                onKeyUp={() => setValues('TaxesPercent')}
+              />
+
+              <FormHelperText sx={{ color: 'error.main' }}>{formErrors[index]?.TaxesPercent}</FormHelperText>
+            </FormControl>
+          )}
+
           {frontingFeeEnabled && (
             <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
               <TextField
@@ -363,6 +485,20 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
 
             <FormHelperText sx={{ color: 'error.main' }}>{formErrors[index]?.PremiumPerShare}</FormHelperText>
           </FormControl>
+
+          {isGross && (
+            <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
+              <TextField
+                autoFocus
+                label='Reinsurance brokerage'
+                value={formData[index].BrokerAge}
+                onChange={e => handleFormChange('BrokerAge', e.target.value)}
+              />
+
+              <FormHelperText sx={{ color: 'error.main' }}>{formErrors[index]?.BrokerAge}</FormHelperText>
+            </FormControl>
+          )}
+
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <TextField
               autoFocus
@@ -373,6 +509,18 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
 
             <FormHelperText sx={{ color: 'error.main' }}>{formErrors[index]?.DynamicComission}</FormHelperText>
           </FormControl>
+          {isGross && (
+            <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
+              <TextField
+                autoFocus
+                label='Taxes'
+                value={formData[index].Taxes}
+                onChange={e => handleFormChange('Taxes', e.target.value)}
+              />
+
+              <FormHelperText sx={{ color: 'error.main' }}>{formErrors[index]?.Taxes}</FormHelperText>
+            </FormControl>
+          )}
           {frontingFeeEnabled && (
             <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
               <TextField
@@ -504,7 +652,13 @@ const Security = ({ onStepChange }: SecurityProps) => {
   })
   const [enableNextStep, setEnableNextStep] = useState<boolean>(false)
   const [open, setOpen] = useState<boolean>(false)
+  const [formInformation, setFormInformation] = useState<FormInformation>({
+    frontingFee: 0,
+    netPremium: 0,
+    grossPremium: 0
+  })
 
+  const accountData = useAppSelector(state => state.accounts)
   const dispatch = useAppDispatch()
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
 
@@ -541,8 +695,13 @@ const Security = ({ onStepChange }: SecurityProps) => {
           handleSuccess()
         })
         .catch(function (err) {
-          err.inner.forEach((e: any) => {
+          console.log(err)
+
+          err?.inner?.forEach((e: any) => {
             data[index][e.path] = e.message
+            console.log(e.path, e.message)
+            console.log(formData)
+
             setFormErrors(data)
           })
           setEnableNextStep(false)
@@ -550,10 +709,48 @@ const Security = ({ onStepChange }: SecurityProps) => {
     })
   }
 
+  const calculateDistribuitedNetPremium = () => {
+    let DistribuitedNetPremium = 0
+    let sumSharePercent = 0
+    let sumGrossShare = 0
+    formData.forEach(form => {
+      DistribuitedNetPremium =
+        +form.BrokerAge + +form.Taxes + +form.DynamicComission + +form.FrontingFee + +form.NetInsurancePremium
+      if (!form.IsGross) sumSharePercent += +form.SharePercent
+      else sumGrossShare += +form.PremiumPerShare
+    })
+    const recievedNetPremium = (sumSharePercent * +formInformation.netPremium) / 100 + sumGrossShare
+
+    setAllFormData({
+      ...allFormData,
+      DistribuitedNetPremium: DistribuitedNetPremium.toString(),
+      RecievedNetPremium: recievedNetPremium.toString()
+    })
+  }
+
   const handleSuccess = () => {
-    dispatch(updateFormsData({ form2: formData }))
+    dispatch(updateFormsData({ form2: allFormData }))
     setEnableNextStep(true)
   }
+
+  useEffect(() => {
+    const data = accountData.formsData.form1.placementStructure as FormInformation
+    setFormInformation(data)
+    //eslint-disable-next-line
+  }, [accountData.formsData.form1])
+
+  useEffect(() => {
+    calculateDistribuitedNetPremium()
+    //eslint-disable-next-line
+  }, [formData])
+
+  useEffect(() => {
+    setAllFormData({
+      ...allFormData,
+      Diference: (+allFormData.RecievedNetPremium - +allFormData.DistribuitedNetPremium).toString()
+    })
+    //eslint-disable-next-line
+  }, [allFormData.DistribuitedNetPremium, allFormData.RecievedNetPremium])
 
   return (
     <>
