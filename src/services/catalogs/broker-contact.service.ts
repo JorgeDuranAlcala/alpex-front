@@ -58,7 +58,7 @@ class BrokerContactService {
   async findByIdBroker(idBroker: number): Promise<BrokerContactDto[]> {
     try {
       const { data } = await AppAlpexApiGateWay.get<Promise<BrokerContactDto[]>>(
-        `${BROKER_CONTACT_ROUTERS.GET_BY_ID_BROKER}${idBroker}`
+        `${BROKER_CONTACT_ROUTERS.GET_BY_ID_BROKER}/${idBroker}`
       )
 
       return data
