@@ -37,7 +37,7 @@ export enum CEDANT_ROUTERS {
 
 export enum BROKER_CONTACT_ROUTERS {
   GET_ALL = 'catalogs/broker-contact/all',
-  GET_BY_ID = 'catalogs//broker-contact',
+  GET_BY_ID = 'catalogs/broker-contact',
   ADD = 'catalogs/broker-contact/add',
   UPDATE = 'catalogs/broker-contact',
   GET_BY_ID_BROKER = 'catalogs/broker-contact/broker'
