@@ -1,3 +1,6 @@
+import { useState } from 'react'
+
+
 // ** MUI Imports
 import Card from '@mui/material/Card'
 import Grid from '@mui/material/Grid'
@@ -7,14 +10,27 @@ import Grid from '@mui/material/Grid'
 
 // ** Custom Components Imports
 import BrokerTable from 'src/views/catalogues/dynamic/broker-table'
+import CataloguesTabs from './CataloguesTabs'
 
 const Catalogues = () => {
+  const [activeTab, setActiveTab] = useState(1)
+
+  const handleTabChange = (tab: number) => {
+    setActiveTab(tab)
+    console.log(tab)
+  }
 
   return (
 
     <Grid item xs={12}>
       <Card>
-        <BrokerTable />
+        <CataloguesTabs onTabChange={handleTabChange}/>
+        {activeTab == 1 ? <BrokerTable /> : ''}
+        {activeTab == 2 ? <div>Reinsurers</div> : ''}
+        {activeTab == 3 ? <div>Cedants</div> : ''}
+        {activeTab == 4 ? <div>Retro cedants</div> : ''}
+        {activeTab == 5 ? <div>Countries & Currencies</div> : ''}
+        {activeTab == 6 ? <div>Types of limit</div> : ''}
       </Card>
     </Grid>
 
