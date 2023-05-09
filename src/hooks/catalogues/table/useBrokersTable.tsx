@@ -15,14 +15,16 @@ import brokersService from 'src/services/catalogues/brokers.service'
 
 // ** Custom utilities
 
-const useAccountTable = () => {
+const useBrokersTable = () => {
   // const { dispatch } = useContext(BrokersTableContext)
 
-  const getAccounts = async () => {
+  const getBrokerList = async () => {
     try {
-      const response = await brokersService.getAccounts()
+
+      const response = await brokersService.getBrokerList()
 
       return response
+
     } catch (error) {
       console.error(error)
     }
@@ -37,9 +39,9 @@ const useAccountTable = () => {
   }
 
   return {
-    getAccounts,
+    getBrokerList,
     deleteBroker,
   }
 }
 
-export default useAccountTable
+export default useBrokersTable
