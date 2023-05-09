@@ -185,7 +185,7 @@ const VerticalNavGroup = (props: Props) => {
       }
     } else
       return {
-        color: parent && item.children ? 'text.secondary' : 'text.primary'
+        color: parent && item.children ? 'text.secondary' : 'rgba(87, 90, 111, 0.54)'
       }
   }
 
