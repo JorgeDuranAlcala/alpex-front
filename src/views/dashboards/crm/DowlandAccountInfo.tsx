@@ -36,12 +36,12 @@ const DowlandAccountInfo = () => {
       sx={{
         position: 'relative',
         width: '100%',
-        height: '178px',
+        height: 'auto',
         marginTop: '16px',
         padding: '20px',
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: 'space-between'
+        gap: '12px'
       }}
     >
       <HeaderTitle>
@@ -65,7 +65,7 @@ const DowlandAccountInfo = () => {
       </HeaderTitle>
       <ContainerSelectDowland>
         <Select
-          sx={{ width: '71%', height: '100%' }}
+          sx={{ width: '71%', height: '100%', '@media (max-width:599px)': { width: '100%', height: '38px' } }}
           value={broker}
           displayEmpty
           onChange={e => {
@@ -82,7 +82,14 @@ const DowlandAccountInfo = () => {
         </Select>
         <Button
           variant='outlined'
-          sx={{ width: '29%', height: '100%', color: useColor, fontFamily: inter, fontSize: size }}
+          sx={{
+            width: '29%',
+            height: '100%',
+            color: useColor,
+            fontFamily: inter,
+            fontSize: size,
+            '@media (max-width:599px)': { width: '100%', height: '38px' }
+          }}
           startIcon={<FileDownloadIcon />}
         >
           Download

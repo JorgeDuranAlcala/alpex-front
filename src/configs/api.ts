@@ -21,36 +21,34 @@ export enum AUTH_ROUTES {
   AUTH_ME = '/auth/me/'
 }
 
-const CATALOGS = 'catalogs'
-
 export enum BROKER_ROUTES {
-  GET_ALL = `/${CATALOGS}/broker/all`,
-  GET_BY_ID = `/${CATALOGS}/broker/`,
-  ADD = `/${CATALOGS}/broker/add`,
-  UPDATE = `/${CATALOGS}/broker/`
+  GET_ALL = 'catalogs/broker/all',
+  GET_BY_ID = 'catalogs/broker',
+  ADD = 'catalogs/broker/add',
+  UPDATE = 'catalogs/broker'
 }
 
 export enum CEDANT_ROUTERS {
-  GET_ALL = `/${CATALOGS}/cedant/all`,
-  GET_BY_ID = `/${CATALOGS}/cedant/`,
-  ADD = `/${CATALOGS}/cedant/add`,
-  UPDATE = `/${CATALOGS}/cedant/`
+  GET_ALL = 'catalogs/cedant/all',
+  GET_BY_ID = 'catalogs/cedant',
+  ADD = 'catalogs/cedant/add',
+  UPDATE = 'catalogs/cedant'
 }
 
 export enum BROKER_CONTACT_ROUTERS {
-  GET_ALL = `/${CATALOGS}/broker-contact/all`,
-  GET_BY_ID = `/${CATALOGS}//broker-contact/`,
-  ADD = `/${CATALOGS}/broker-contact/add`,
-  UPDATE = `/${CATALOGS}/broker-contact/`,
-  GET_BY_ID_BROKER = `/${CATALOGS}/broker-contact/broker/`
+  GET_ALL = 'catalogs/broker-contact/all',
+  GET_BY_ID = 'catalogs//broker-contact',
+  ADD = 'catalogs/broker-contact/add',
+  UPDATE = 'catalogs/broker-contact',
+  GET_BY_ID_BROKER = 'catalogs/broker-contact/broker'
 }
 
 export enum CEDANT_CONTACT_ROUTERS {
-  GET_ALL = `/${CATALOGS}/cedant-contact/all`,
-  GET_BY_ID = `/${CATALOGS}/cedant-contact/`,
-  ADD = `/${CATALOGS}/cedant-contact/add`,
-  UPDATE = `/${CATALOGS}/cedant-contact/`,
-  GET_BY_ID_CEDANT = `/${CATALOGS}/cedant-contact/cedant/`
+  GET_ALL = 'catalogs/cedant-contact/all',
+  GET_BY_ID = 'catalogs/cedant-contact',
+  ADD = 'catalogs/cedant-contact/add',
+  UPDATE = 'catalogs/cedant-contact',
+  GET_BY_ID_CEDANT = 'catalogs/cedant-contact/cedant'
 }
 
 export enum USERS_ROUTES {
@@ -58,10 +56,10 @@ export enum USERS_ROUTES {
 }
 
 export enum COUNTRY_ROUTERS {
-  GET_ALL = `/${CATALOGS}/country/all`,
-  GET_BY_ID = `/${CATALOGS}/country`,
-  ADD = `/${CATALOGS}/country/add`,
-  UPDATE = `/${CATALOGS}/country`
+  GET_ALL = 'catalogs/country/all',
+  GET_BY_ID = 'catalogs/country',
+  ADD = 'catalogs/country/add',
+  UPDATE = `catalogs/country`
 }
 
 export enum LINE_OF_BUSSINES_ROUTES {
@@ -86,8 +84,22 @@ export enum CURRENCY_ROUTES {
 }
 
 export enum RISK_ACTIVITY_ROUTES {
-  GET_ALL = `/${CATALOGS}/risk-activity/all`,
-  GET_BY_ID = `/${CATALOGS}/risk-activity/`,
-  ADD = `/${CATALOGS}/risk-activity/add`,
-  UPDATE = `/${CATALOGS}/risk-activity/`
+  GET_ALL = 'catalogs/risk-activity/all',
+  GET_BY_ID = 'catalogs/risk-activity/',
+  ADD = 'catalogs/risk-activity/add',
+  UPDATE = 'catalogs/risk-activity/'
+}
+
+export enum REINSURANCE_COMPANY_ROUTES {
+  GET_ALL = 'catalogs/reinsuranceCompany/all',
+  GET_BY_ID = 'catalogs/reinsuranceCompany',
+  ADD = 'catalogs/reinsuranceCompany/add',
+  UPDATE = 'catalogs/reinsuranceCompany'
+}
+
+export enum RETRO_CEDANT_ROUTES {
+  GET_ALL = 'catalogs/retroCedant/all',
+  GET_BY_ID = 'catalogs/retroCedant',
+  ADD = 'catalogs/retroCedant/add',
+  UPDATE = 'catalogs/retroCedant'
 }

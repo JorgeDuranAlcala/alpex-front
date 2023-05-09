@@ -5,7 +5,8 @@ import { useEffect } from 'react'
 import { useRouter } from 'next/router'
 
 // ** Spinner Import
-import Spinner from 'src/@core/components/spinner'
+// import Spinner from 'src/@core/components/spinner'
+import Loader from 'src/layouts/components/Loader'
 
 // ** Hook Imports
 import { useAuth } from 'src/hooks/useAuth'
@@ -33,7 +34,7 @@ const Home = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  return <Spinner sx={{ height: '100%' }} />
+  return <Loader sx={{ height: '100%' }} />
 }
 
 export default Home

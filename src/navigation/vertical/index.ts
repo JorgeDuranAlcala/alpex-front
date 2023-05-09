@@ -6,8 +6,9 @@ const navigation = (): VerticalNavItemsType => {
     /*********************************************** News Items ReDesign *****************************************************/
     {
       title: 'Dashboard',
-      icon: 'ic:baseline-dashboard',
-      path: '/dashboards/crm'
+      icon: 'mdi:dashboard',
+      path: '/dashboards/crm',
+      externalLink: true
     },
     {
       title: 'Accounts',
@@ -117,18 +118,13 @@ const navigation = (): VerticalNavItemsType => {
       icon: 'mdi:catalogues',
       children: [
         {
-          title: 'List'
+          title: 'Dynamic',
+          path: '/catalogues/dynamic'
 
           // path: '/apps/invoice/list'
         },
         {
-          title: 'Preview'
-        },
-        {
-          title: 'Edit'
-        },
-        {
-          title: 'Add'
+          title: 'Claims/claims'
         }
       ]
     },

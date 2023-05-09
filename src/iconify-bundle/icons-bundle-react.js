@@ -6,7 +6,7 @@ addCollection({
   icons: {
     /*********************************************** News icons ReDesign ******************************************************/
     dashboard: {
-      body: '<path fill="currentColor" d="M0 10H8V0H0V10ZM0 18H8V12H0V18ZM10 18H18V8H10V18ZM10 0V6H18V0H10Z"/>'
+      body: '<svg  viewBox="0 0 24 24"><path fill="currentColor" d="M0 10H8V0H0V10ZM0 18H8V12H0V18ZM10 18H18V8H10V18ZM10 0V6H18V0H10Z"/></svg>'
     },
     accounts: {
       body: '<path d="M8 13V12H1.01L1 16C1 17.11 1.89 18 3 18H17C18.11 18 19 17.11 19 16V12H12V13H8ZM18 4H13.99V2L11.99 0H7.99L5.99 2V4H2C0.9 4 0 4.9 0 6V9C0 10.11 0.89 11 2 11H8V9H12V11H18C19.1 11 20 10.1 20 9V6C20 4.9 19.1 4 18 4ZM12 4H8V2H12V4Z" fill="#444854" fill-opacity="0.54"/>'
