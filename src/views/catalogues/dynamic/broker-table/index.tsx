@@ -134,7 +134,7 @@ const Table = () => {
     return data
   }
 
-  const searchBrokers = (value: string)=>{ //must be replaced with the respective broker service
+  const searchBrokers = (value: string) => { //must be replaced with the respective broker service
     console.log("Call search service", value)
   }
 
@@ -162,24 +162,29 @@ const Table = () => {
 
   return (
     <>
-     <div className='outter-wrapper'>
-      <div className='broker-list'>
-        <TableHeader onDeleteRows={()=>{setOpenDeleteRows(true)}} onSearch={searchBrokers} onClickBtn={() => router.push('/catalogues/dynamic/add-broker')}/>
-        <DataGrid
-          autoHeight
-          checkboxSelection
-          disableSelectionOnClick
-          rows={brokerList}
-          columns={column}
-          pagination
-          pageSize={10}
-          components={{
-            Pagination: CustomPagination
-          }}
-          className={'catalogue-datagrid'}
-          onSelectionModelChange={rows => setSelectedRows(rows)}
-        />
-      </div>
+      <div className='outter-wrapper'>
+      <TableHeader
+            onDeleteRows={() => { setOpenDeleteRows(true) }}
+            onSearch={searchBrokers}
+            textBtn="ADD NEW BROKER"
+            onClickBtn={() => router.push('/catalogues/dynamic/add-broker')} />
+        <div className='broker-list'>
+
+          <DataGrid
+            autoHeight
+            checkboxSelection
+            disableSelectionOnClick
+            rows={brokerList}
+            columns={column}
+            pagination
+            pageSize={10}
+            components={{
+              Pagination: CustomPagination
+            }}
+            className={'catalogue-datagrid'}
+            onSelectionModelChange={rows => setSelectedRows(rows)}
+          />
+        </div>
 
       </div>
 
@@ -217,37 +222,37 @@ const Table = () => {
       </Modal>
 
       <Modal
-          className='delete-modal'
-          open={openDeleteRows}
-          onClose={() => {
-            setOpenDeleteRows(false)
-          }}
-        >
-          <Box className='modal-wrapper'>
-            <HeaderTitleModal>
-              <Typography variant='h6'sx={{maxWidth: "450px"}}>Are you sure you want to delete the selected Brokers?</Typography>
-              <ButtonClose
-                onClick={() => {
-                  setOpenDeleteRows(false)
-                }}
-              >
-                <CloseIcon />
-              </ButtonClose>
-            </HeaderTitleModal>
-            <div className='delete-modal-text'>This action can’t be undone.</div>
-            <Button className='header-modal-btn' variant='contained' onClick={deleteRows}>
-              DELETE
-            </Button>
-            <Button
-              className='close-modal header-modal-btn'
+        className='delete-modal'
+        open={openDeleteRows}
+        onClose={() => {
+          setOpenDeleteRows(false)
+        }}
+      >
+        <Box className='modal-wrapper'>
+          <HeaderTitleModal>
+            <Typography variant='h6' sx={{ maxWidth: "450px" }}>Are you sure you want to delete the selected Brokers?</Typography>
+            <ButtonClose
               onClick={() => {
                 setOpenDeleteRows(false)
               }}
             >
-              CANCEL
-            </Button>
-          </Box>
-        </Modal>
+              <CloseIcon />
+            </ButtonClose>
+          </HeaderTitleModal>
+          <div className='delete-modal-text'>This action can’t be undone.</div>
+          <Button className='header-modal-btn' variant='contained' onClick={deleteRows}>
+            DELETE
+          </Button>
+          <Button
+            className='close-modal header-modal-btn'
+            onClick={() => {
+              setOpenDeleteRows(false)
+            }}
+          >
+            CANCEL
+          </Button>
+        </Box>
+      </Modal>
 
     </>
   )

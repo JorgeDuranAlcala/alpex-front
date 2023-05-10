@@ -17,9 +17,10 @@ interface ITableHeader {
   onDeleteRows?: () => void
   onSearch: (value: string) => void;
   onClickBtn:() => void
+  textBtn: string
 }
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const TableHeader: React.FC<ITableHeader> = ({ onDeleteRows, onSearch, onClickBtn }) => {
+const TableHeader: React.FC<ITableHeader> = ({ onDeleteRows, onSearch, onClickBtn, textBtn }) => {
   // ** Custom Hooks
   const [search, setSearch] = useState('')
 
@@ -32,6 +33,7 @@ const TableHeader: React.FC<ITableHeader> = ({ onDeleteRows, onSearch, onClickBt
 
 return (
     <Box
+      className='header-wrapper'
       sx={{
         p: 5,
         pb: 3,
@@ -41,7 +43,7 @@ return (
         alignItems: 'center'
       }}
     >
-      <Box>
+      <Box className='header-item'>
         <div className='search-wrapper'>
           <input
           className='input-search'
@@ -51,7 +53,7 @@ return (
           onChange={searchInputChange} />
         </div>
       </Box>
-      {onDeleteRows ? <Box>
+      {onDeleteRows ? <Box className='header-item '>
         <Button
           className='delete-button'
           onClick={onDeleteRows}
@@ -65,9 +67,9 @@ return (
 
       </Box> : ''}
 
-      <Box sx={{ marginLeft: 'auto' }}>
-        <Button sx={{ mb: 2 }} variant='contained' onClick={onClickBtn}>
-          ADD NEW BROKER &nbsp; <Icon icon='mdi:plus' />
+      <Box className='header-item ' sx={{ marginLeft: 'auto' }}>
+        <Button className='action-button' sx={{ mb: 2 }} variant='contained' onClick={onClickBtn}>
+          {textBtn} &nbsp; <Icon icon='mdi:plus' />
         </Button>
       </Box>
 
