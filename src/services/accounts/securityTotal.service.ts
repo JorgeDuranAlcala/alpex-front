@@ -3,7 +3,7 @@ import { AppAlpexApiGateWay } from '../app.alpex.api-getway'
 import { SecurityTotalDto } from './dtos/securityTotal.dto'
 
 class SecurityTotalService {
-  async addSecurity(securityTotalIn: Partial<SecurityTotalDto>): Promise<SecurityTotalDto> {
+  async addSecurityTotal(securityTotalIn: Partial<SecurityTotalDto>): Promise<SecurityTotalDto> {
     try {
       const { data } = await AppAlpexApiGateWay.post<Promise<SecurityTotalDto>>(ACCOUNT_SECURITY_TOTAL_ROUTES.ADD, {
         ...securityTotalIn
