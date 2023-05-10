@@ -20,7 +20,7 @@ class AccountServices {
    * @param information
    * @returns
    */
-  async addInformation(information: InformationDto) {
+  async addInformation(information: Partial<InformationDto>) {
     try {
       const { data } = await AppAlpexApiGateWay.post(`${ACCOUNT_INFORMATION_ROUTES.ADD}`, {
         ...information

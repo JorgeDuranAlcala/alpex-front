@@ -17,7 +17,8 @@ import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
 import { ButtonClose, HeaderTitleModal } from 'src/styles/Dashboard/ModalReinsurers/modalReinsurers'
 
-// ** Components
+//hooks para base info y  modal contac
+import { useGetAll as useCountyGetAll } from 'src/hooks/catalogs/country'
 
 // ** Third Party Imports
 import DatePicker from 'react-datepicker'
@@ -72,7 +73,7 @@ type BasicInfoProps = {
     leadUnderwriter: string
     industryCode: string
     riskActivity: string
-    riskClass: string
+    riskClass: number
     technicalAssistant: string
     receptionDate: Date | null
     effectiveDate: Date | null
@@ -91,7 +92,7 @@ type BasicInfoProps = {
       leadUnderwriter: string
       industryCode: string
       riskActivity: string
-      riskClass: string
+      riskClass: number
       technicalAssistant: string
       receptionDate: Date | null
       effectiveDate: Date | null
@@ -320,7 +321,8 @@ import { useGetAllByIdBroker } from 'src/hooks/catalogs/broker-contact'
 import { useGetAll as useCedantGetAll } from 'src/hooks/catalogs/cedant'
 import { useGetAllByIdCedant } from 'src/hooks/catalogs/cedant-contact'
 import { useGetAllLineOfBussines } from 'src/hooks/catalogs/lineOfBussines'
-import { useGetByIdRole } from 'src/hooks/catalogs/users/useGetByIdRole'
+import { useGetAllRiskActivities } from 'src/hooks/catalogs/riskActivity'
+import { useGetByIdRole } from 'src/hooks/catalogs/users/'
 
 const BasicInfo: React.FC<BasicInfoProps> = ({
   basicInfo,
@@ -330,10 +332,12 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
   isValidForm
 }) => {
   //cargamos la información de los catálogos de base de datos
+  const { countries } = useCountyGetAll()
   const { brokers } = useBrokerGetAll()
   const { cedant } = useCedantGetAll()
   const { contacts: brokerContacts, findByIdBroker } = useGetAllByIdBroker()
   const { contacts: cedantContacts, findByIdCedant } = useGetAllByIdCedant()
+  const { riskActivities } = useGetAllRiskActivities()
   const { lineOfBussines } = useGetAllLineOfBussines()
   const { users: underwriters } = useGetByIdRole(ROLES.UNDERWRITER)
   const { users: leadUnderwriters } = useGetByIdRole(ROLES.LEAD_UNDERWRITER)
@@ -367,17 +371,39 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
     const name = target.name
     const value = target.value
 
-    setBasicInfo({
-      ...basicInfo,
-      [name]: value
-    })
+    let basicInfoTem = { ...basicInfo }
+
     if (name == 'lineOfBusiness') {
       setBussinesFields(false)
     }
 
-    if (name === 'broker') findByIdBroker(Number(value))
-    if (name === 'cedant') findByIdCedant(Number(value))
+    if (name === 'broker') {
+      //reset del  valor del contact
+      basicInfoTem.brokerContact = ''
+      findByIdBroker(Number(value))
+    }
+    if (name === 'cedant') {
+      //reset del  valor del contact
+      basicInfoTem.cedantContact = ''
+      findByIdCedant(Number(value))
+    }
+
+    if (name === 'industryCode') {
+      const riskActivity = riskActivities.find(r => r.id === Number(value))
+      if (riskActivity) {
+        basicInfoTem.riskActivity = riskActivity.riskActivity
+        basicInfoTem.riskClass = riskActivity.class
+      }
+    }
+
+    basicInfoTem = {
+      ...basicInfoTem,
+      [name]: value
+    }
+
+    setBasicInfo(basicInfoTem)
   }
+
   const handleReceptionDateChange = (date: Date) => {
     setBasicInfo({ ...basicInfo, receptionDate: date })
   }
@@ -403,7 +429,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
       technicalAssistantError: basicInfo.technicalAssistant === '',
       industryCodeError: basicInfo.industryCode === '',
       riskActivityError: basicInfo.riskActivity === '',
-      riskClassError: basicInfo.riskClass === '',
+      riskClassError: basicInfo.riskClass === 0,
       receptionDateError: basicInfo.receptionDate === null,
       effectiveDateError: basicInfo.effectiveDate === null,
       expirationDateError: basicInfo.expirationDate === null
@@ -459,11 +485,13 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               onChange={handleSelectChange}
               labelId='invoice-country'
             >
-              <MenuItem value='USA'>USA</MenuItem>
-              <MenuItem value='UK'>UK</MenuItem>
-              <MenuItem value='Russia'>Russia</MenuItem>
-              <MenuItem value='Australia'>Australia</MenuItem>
-              <MenuItem value='Canada'>Canada</MenuItem>
+              {countries?.map(country => {
+                return (
+                  <MenuItem key={country.id} value={country.id}>
+                    {country.name}
+                  </MenuItem>
+                )
+              })}
             </Select>
 
             {errors.countryError && (
@@ -590,22 +618,33 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               })}
             </Select>
             {errors.lineOfBusinessError && (
-              <FormHelperText sx={{ color: 'error.main' }} id='business-error'>
-                {getErrorMessage('lineOfBusinessError')}
+              <FormHelperText sx={{ color: 'error.main' }} id='industryCode-error'>
+                {getErrorMessage('industryCodeError')}
               </FormHelperText>
             )}
           </FormControl>
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
-            <TextField
-              autoFocus
+            <InputLabel>Industry code</InputLabel>
+            <Select
               name='industryCode'
               label='Industry Code'
               value={basicInfo.industryCode}
-              disabled={bussinesFields}
-              onChange={handleInputChange}
-              error={!!errors.industryCodeError}
-              helperText={getErrorMessage('industryCodeError')}
-            />
+              onChange={handleSelectChange}
+              labelId='industryCode'
+            >
+              {riskActivities?.map(riskActivities => {
+                return (
+                  <MenuItem key={riskActivities.id} value={riskActivities.id}>
+                    {riskActivities.industryCode} / {riskActivities.riskActivity}
+                  </MenuItem>
+                )
+              })}
+            </Select>
+            {errors.industryCodeError && (
+              <FormHelperText sx={{ color: 'error.main' }} id='business-error'>
+                {getErrorMessage('lineOfBusinessError')}
+              </FormHelperText>
+            )}
           </FormControl>
 
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
@@ -643,6 +682,10 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               customInput={<CustomInput label='Reception date' sx={{ mb: 2, mt: 2, width: '100%' }} />}
               onChange={handleReceptionDateChange}
               className={errors.receptionDateError ? 'error' : ''}
+              showTimeSelect
+              timeFormat='HH:mm'
+              timeIntervals={15}
+              dateFormat='MM/dd/yyyy h:mm aa'
             />
             {errors.receptionDateError && (
               <FormHelperText
@@ -664,6 +707,10 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               customInput={<CustomInput label='Effective date' sx={{ mb: 2, mt: 2, width: '100%' }} />}
               onChange={handleEffectiveDateChange}
               className={errors.effectiveDateError ? 'error' : ''}
+              showTimeSelect
+              timeFormat='HH:mm'
+              timeIntervals={15}
+              dateFormat='MM/dd/yyyy h:mm aa'
             />
             {errors.effectiveDateError && (
               <FormHelperText
@@ -685,6 +732,10 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               customInput={<CustomInput label='Expiration date' sx={{ mb: 2, mt: 2, width: '100%' }} />}
               onChange={handleExpirationDateChange}
               className={errors.expirationDateError ? 'error' : ''}
+              showTimeSelect
+              timeFormat='HH:mm'
+              timeIntervals={15}
+              dateFormat='MM/dd/yyyy h:mm aa'
             />
             {errors.expirationDateError && (
               <FormHelperText
