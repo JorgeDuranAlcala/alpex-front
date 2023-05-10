@@ -7,24 +7,23 @@ import Grid from '@mui/material/Grid'
 // import { AccountsTableContextProvider } from 'src/context/accounts/Table/reducer'
 
 // ** Custom Components Imports
+import AddBroker from 'src/views/catalogues/dynamic/add-broker/AddBroker'
+import BrokerContacts from 'src/views/catalogues/dynamic/add-broker/BrokerContacts'
 
-
-const AddBroker = () => {
-
-
+const AddBrokerView = () => {
 
   return (
 
     <Grid item xs={12}>
-      <Card>
-        New Broker
+      <Card sx={{marginBottom: '15px'}}>
+        <AddBroker />
       </Card>
       <Card>
-        Contacts
+       <BrokerContacts />
       </Card>
     </Grid>
 
   )
 }
 
-export default AddBroker
+export default AddBrokerView
