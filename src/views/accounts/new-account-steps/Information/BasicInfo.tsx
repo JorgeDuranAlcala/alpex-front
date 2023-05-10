@@ -221,9 +221,6 @@ const ModalContact = ({ id }: IModal) => {
     setContactData({ ...contactData, [field]: value })
   }
 
-  const handleClose = () => {
-    setOpen(false)
-  }
 
   const handleCreateContact = () => {
     console.log('createContact')
@@ -236,11 +233,11 @@ const ModalContact = ({ id }: IModal) => {
         </div>
         CREATE NEW CONTACT
       </Button>
-      <Modal className='create-contact-modal' open={open} onClose={handleClose}>
+      <Modal className='create-contact-modal' open={open} onClose={() => setOpen(true)}>
         <Box className='modal-wrapper'>
           <HeaderTitleModal>
             <Typography variant='h6'>Create new contact</Typography>
-            <ButtonClose onClick={handleClose}>
+            <ButtonClose onClick={() => setOpen(true)}>
               <CloseIcon />
             </ButtonClose>
           </HeaderTitleModal>

@@ -49,6 +49,7 @@
   display: none;
 } */
 
+ /*----TABLE HEADER----*/
 
 .search-wrapper {
   width: 100%;
@@ -69,9 +70,6 @@
   margin-right: 30px;
 }
 
-@media (max-width: 800px) {
-
-}
 
 .delete-button.MuiButton-root{
   color:red;
@@ -82,6 +80,32 @@
 }
 .delete-button.MuiButton-root.MuiButton-outlinedPrimary:hover{
   background-color: rgb(255 0 0 / 8%);
+}
+
+@media (max-width: 700px) {
+
+  .header-wrapper{
+    display: flex;
+    flex-direction: column-reverse;
+  }
+  .header-item{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .delete-button.MuiButton-root,
+  .header-item .action-button.MuiButton-root{
+    width: 100%;
+    margin-bottom: 15px;
+  }
+
+
+  .input-search{
+    width: 100%;
+    margin-right: 0;
+  }
 }
 
 /* ------ CATALOGUES TABS ------ */
@@ -254,6 +278,20 @@
   color: rgba(130, 133, 151, 1);
 }
 
+@media (max-width: 800px) {
+  .add-broker .ccreate-broker-btn.MuiButton-root,
+  .add-broker .edit-broker-btn.MuiButton-root,
+  .add-broker .delete-broker-btn.MuiButton-root{
+    width: 100%;
+  }
+  .add-broker .edit-broker-btn{
+    margin-left: 0;
+    margin-top: 10px;
+  }
+  .add-broker .action-buttons{
+    flex-wrap: wrap;
+  }
+}
 /*---- BROKER CONTACT LIST  ----*/
 
 .contacts-wrapper{
@@ -277,3 +315,5 @@
   margin-bottom: 10px;
   padding: 0 15px 15px;
 }
+
+

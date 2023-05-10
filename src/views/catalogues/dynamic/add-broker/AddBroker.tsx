@@ -4,9 +4,7 @@ import { useEffect, useState } from 'react'
 // ** MUI Imports
 
 import CloseIcon from '@mui/icons-material/Close'
-import { Box, Button, Modal, Typography } from '@mui/material'
-import FormControl from '@mui/material/FormControl'
-import TextField from '@mui/material/TextField'
+import { Box, Button, FormControl, Modal, TextField, Typography } from '@mui/material'
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
