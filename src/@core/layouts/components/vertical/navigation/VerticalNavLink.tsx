@@ -101,7 +101,7 @@ const VerticalNavLink = ({
       }
     } else
       return {
-        color: parent ? 'text.secondary' : 'text.primary'
+        color: parent ? 'text.secondary' : 'rgba(87, 90, 111, 0.54)'
       }
   }
 

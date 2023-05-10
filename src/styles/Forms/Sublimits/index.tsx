@@ -69,10 +69,8 @@ const ContainerCard = styled('div')({
   display: 'flex',
   flexDirection: 'column',
   width: '100%',
-
-  // height: '810px',
-  height: '662px',
-  justifyContent: 'space-between'
+  gap: '20px',
+  height: 'auto'
 
   // border: '1px solid blue'
 })
@@ -84,7 +82,6 @@ const HeaderCard = styled('div')({
   alingItems: 'center',
   justifyContent: 'center',
   width: '100%',
-  height: '48px',
   background: '#2535A8',
   boxShadow: '0px 4px 8px -4px rgba(76, 78, 100, 0.42)',
   borderRadius: '8px'
@@ -94,25 +91,34 @@ const ContentCard = styled('div')({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'flex-start',
-
-  // border: '1px solid black',
   width: '100%',
+  height: 'auto',
+  gap: '24px'
 
-  // height: '742px',
-  height: '594px',
-
-  justifyContent: 'space-between'
+  // border: '1px solid red',
 })
 
 const SubContainer = styled('div')({
   display: 'flex',
   width: '100%',
-
-  // border: '1px solid black',
   flexDirection: 'column',
-  justifyContent: 'space-between',
+  gap: '8px',
   alignItems: 'flex-star'
+
+  // border: '1px solid black'
 })
+
+const InputForm = styled('div')({
+  display: 'flex',
+  alignItems: 'center',
+  flexDirection: 'row',
+  justifyContent: 'center',
+  width: '100%',
+  borderRadius: '8px',
+  border: '1px solid rgba(87, 90, 111, 0.22)',
+  height: '58px'
+})
+
 export {
   GeneralContainerSublimits,
   ContainerTitleSublimits,
@@ -122,5 +128,6 @@ export {
   HeaderCard,
   ContentCard,
   SubContainer,
-  NextContainer
+  NextContainer,
+  InputForm
 }
