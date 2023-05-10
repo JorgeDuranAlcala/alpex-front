@@ -3,11 +3,9 @@ import { AppAlpexApiGateWay } from '../app.alpex.api-getway'
 import { SecurityDto } from './dtos/security.dto'
 
 class SecurityService {
-  async addSecurity(securityIn: Partial<SecurityDto[]>): Promise<SecurityDto[]> {
+  async addSecurity(securitiesIn: Partial<SecurityDto>[]): Promise<SecurityDto[]> {
     try {
-      const { data } = await AppAlpexApiGateWay.post<Promise<SecurityDto[]>>(ACCOUNT_SECURITY_ROUTES.ADD, {
-        ...securityIn
-      })
+      const { data } = await AppAlpexApiGateWay.post<Promise<SecurityDto[]>>(ACCOUNT_SECURITY_ROUTES.ADD, securitiesIn)
 
       return data
     } catch (error) {
@@ -29,11 +27,9 @@ class SecurityService {
     }
   }
 
-  async updateById(update: Partial<SecurityDto[]>): Promise<SecurityDto[]> {
+  async update(update: Partial<SecurityDto>[]): Promise<SecurityDto[]> {
     try {
-      const { data } = await AppAlpexApiGateWay.put<Promise<SecurityDto[]>>(ACCOUNT_SECURITY_ROUTES.UPDATE, {
-        ...update
-      })
+      const { data } = await AppAlpexApiGateWay.put<Promise<SecurityDto[]>>(ACCOUNT_SECURITY_ROUTES.UPDATE, update)
 
       return data
     } catch (error) {
