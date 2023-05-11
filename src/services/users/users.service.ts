@@ -8,7 +8,8 @@ class UsersServices {
   async getUsers(usersData: IUsersState, urlQ?: string) {
     try {
       const url = urlQ ? urlQ : queryBuilder(usersData.filters, USERS_ROUTES.GET)
-      const { data } = await AppAlpexApiGateWay.get(`${url}`)
+      const { data } = await AppAlpexApiGateWay.get(`${url}&take=${usersData.info.take}&page=${usersData.info.page}`)
+      console.log(data, 'data')
 
       return data
     } catch (error) {
