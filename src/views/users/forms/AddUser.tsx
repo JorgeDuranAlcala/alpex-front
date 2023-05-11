@@ -171,7 +171,7 @@ const AddUser = ({ selectUser }: IAddUser) => {
         idCompany: +2,
         roles: [
           {
-            id: 5
+            id: 6
           }
         ],
         areaCode: selectedCountry?.phone || ''
@@ -188,7 +188,7 @@ const AddUser = ({ selectUser }: IAddUser) => {
         idCompany: +2,
         roles: [
           {
-            id: 5
+            id: 6
           }
         ],
         areaCode: selectedCountry?.phone || ''

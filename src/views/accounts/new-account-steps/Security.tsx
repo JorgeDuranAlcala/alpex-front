@@ -17,9 +17,11 @@ import TextField from '@mui/material/TextField'
 import companiesSelect from 'src/mocks/companies'
 
 // ** Icon Imports
+import { useAddSecurities } from '@/hooks/accounts/security'
+import { useAddSecurityTotal } from '@/hooks/accounts/securityTotal'
+import { SecurityDto } from '@/services/accounts/dtos/security.dto'
 import Icon from 'src/@core/components/icon'
-import { useAppDispatch, useAppSelector } from 'src/store'
-import { updateFormsData } from 'src/store/apps/accounts'
+import { useAppSelector } from 'src/store'
 import { ButtonClose, HeaderTitleModal } from 'src/styles/Dashboard/ModalReinsurers/modalReinsurers'
 import SwitchAlpex from 'src/views/custom/switchs'
 
@@ -662,6 +664,8 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
 const Security = ({ onStepChange }: SecurityProps) => {
   const [formData, setFormData] = useState<FormInfo[]>([{ ...SecurityForm }])
   const [formErrors, setFormErrors] = useState<FormInfo[]>([{ ...SecurityForm }])
+  const { saveSecurityTotal } = useAddSecurityTotal()
+  const { saveSecurities } = useAddSecurities()
 
   //WIP - This is the data that will be sent to the backend
   //eslint-disable-next-line
@@ -680,7 +684,6 @@ const Security = ({ onStepChange }: SecurityProps) => {
   })
 
   const accountData = useAppSelector(state => state.accounts)
-  const dispatch = useAppDispatch()
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
 
   const inter = userThemeConfig.typography?.fontFamilyInter
@@ -750,9 +753,45 @@ const Security = ({ onStepChange }: SecurityProps) => {
     })
   }
 
+  const saveInformation = () => {
+    const forms: Partial<SecurityDto>[] = formData.map(form => {
+      return {
+        netPremiumat100: +form.NetPremium || 0,
+        share: +form.SharePercent || 0,
+        frontingFeeActive: form.HasFrontingFee || false,
+        dynamicCommission: +form.DynamicComission || 0,
+        frontingFee: +form.FrontingFee || 0,
+        netReinsurancepremium: +form.NetInsurancePremium || 0,
+        taxes: +form.Taxes || 0,
+        reinsuranceBrokerage: +form.BrokerAge || 0,
+        active: true,
+        idCReinsuranceCompany: null,
+        idCRetroCedant: +form.RetroCedant || null,
+        idCRetroCedantContact: +form.RetroCedantContact || null,
+        idEndorsement: null,
+        idAccount: +accountData.formsData.form1.id,
+        receivedNetPremium: +allFormData.RecievedNetPremium,
+        distributedNetPremium: +allFormData.DistribuitedNetPremium,
+        difference: +allFormData.Diference
+      }
+    })
+    const saveTotal = saveSecurityTotal({
+      receivedNetPremium: +allFormData.RecievedNetPremium,
+      distributedNetPremium: +allFormData.DistribuitedNetPremium,
+      difference: +allFormData.Diference,
+      idAccount: +accountData.formsData.form1.id
+    })
+
+    const saveAll = saveSecurities(forms)
+
+    console.log(saveTotal, saveAll)
+  }
+
   const handleSuccess = () => {
-    dispatch(updateFormsData({ form2: allFormData }))
-    setEnableNextStep(true)
+    saveInformation()
+
+    // dispatch(updateFormsData({ form2: allFormData }))
+    // setEnableNextStep(true)
   }
 
   useEffect(() => {
