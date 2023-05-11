@@ -19,6 +19,8 @@ import companiesSelect from 'src/mocks/companies'
 // ** Icon Imports
 import { useAddSecurities } from '@/hooks/accounts/security'
 import { useAddSecurityTotal } from '@/hooks/accounts/securityTotal'
+import { useGetAllReinsuranceCompanies } from '@/hooks/catalogs/reinsuranceCompany'
+import { useGetAllRetroCedants } from '@/hooks/catalogs/retroCedant'
 import { SecurityDto } from '@/services/accounts/dtos/security.dto'
 import { updateFormsData } from '@/store/apps/accounts'
 import Icon from 'src/@core/components/icon'
@@ -71,9 +73,9 @@ const SecurityForm: FormInfo = {
   NetInsurancePremium: '',
   RetroCedant: '',
   RetroCedantContact: '',
-  ContactEmail: '',
-  ContactPhone: '',
-  ContactCountry: '',
+  ContactEmail: 'mail@example.com',
+  ContactPhone: '55618475268',
+  ContactCountry: 'Mexico',
   BrokerAge: '',
   Taxes: '',
   BrokerAgePercent: '',
@@ -172,6 +174,13 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
     netPremium: 0,
     grossPremium: 0
   })
+
+  const { retroCedants } = useGetAllRetroCedants()
+  const { reinsuranceCompany } = useGetAllReinsuranceCompanies()
+
+  useEffect(() => {
+    console.log({ retroCedants }, { reinsuranceCompany })
+  }, [retroCedants, reinsuranceCompany])
 
   const accountData = useAppSelector(state => state.accounts)
   const handleFormChange = (field: keyof FormInfo, value: FormInfo[keyof FormInfo]) => {
@@ -584,9 +593,9 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
                 labelId='broker'
               >
                 <MenuItem value=''>Select Retro cedant</MenuItem>
-                <MenuItem value='br1'>Br1</MenuItem>
-                <MenuItem value='br2'>Br2</MenuItem>
-                <MenuItem value='br3'>Br3</MenuItem>
+                <MenuItem value='br1'>Retro cedant 1</MenuItem>
+                <MenuItem value='br2'>Retro cedant 2</MenuItem>
+                <MenuItem value='br3'>Retro cedant 3</MenuItem>
               </Select>
               <FormHelperText sx={{ color: 'error.main' }}>{formErrors[index]?.RetroCedant}</FormHelperText>
             </FormControl>
@@ -603,9 +612,9 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
                 disabled={formData[index].RetroCedant === ''}
               >
                 <MenuItem value=''>Select Retro Cedant contact</MenuItem>
-                <MenuItem value='br1'>Br1</MenuItem>
-                <MenuItem value='br2'>Br2</MenuItem>
-                <MenuItem value='br3'>Br3</MenuItem>
+                <MenuItem value='1'>Contact 1</MenuItem>
+                <MenuItem value='2'>Contact 2</MenuItem>
+                <MenuItem value='3'>Contact 3</MenuItem>
               </Select>
               <FormHelperText
                 onClick={() => console.log(formData[index].RetroCedantContact)}
@@ -667,9 +676,6 @@ const Security = ({ onStepChange }: SecurityProps) => {
   const [formErrors, setFormErrors] = useState<FormInfo[]>([{ ...SecurityForm }])
   const { saveSecurityTotal } = useAddSecurityTotal()
   const { saveSecurities } = useAddSecurities()
-
-  //WIP - This is the data that will be sent to the backend
-  //eslint-disable-next-line
   const [allFormData, setAllFormData] = useState<FormSecurity>({
     FormData: formData,
     RecievedNetPremium: '',
@@ -768,8 +774,8 @@ const Security = ({ onStepChange }: SecurityProps) => {
         reinsuranceBrokerage: +form.BrokerAge || 0,
         active: true,
         idCReinsuranceCompany: null,
-        idCRetroCedant: +form.RetroCedant || null,
-        idCRetroCedantContact: +form.RetroCedantContact || null,
+        idCRetroCedant: null,
+        idCRetroCedantContact: null,
         idEndorsement: null,
         idAccount: +accountData.formsData.form1.id,
         receivedNetPremium: +allFormData.RecievedNetPremium,
