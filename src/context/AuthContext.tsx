@@ -46,16 +46,12 @@ const AuthProvider = ({ children }: Props) => {
 
   useEffect(() => {
     const initAuth = async (): Promise<void> => {
-      let storedToken
-
-      if (typeof window !== 'undefined') {
-        storedToken = window.localStorage.getItem(authConfig.storageTokenKeyName)!
-      }
+      const storedToken = window.localStorage.getItem(authConfig.storageTokenKeyName)!
 
       if (storedToken) {
         setLoading(true)
         authServices
-          .authMe()
+          .authMe(storedToken)
           .then(async response => {
             setLoading(false)
             const resUser = response.data.userData
@@ -72,11 +68,9 @@ const AuthProvider = ({ children }: Props) => {
             setUser({ ...newUserData })
           })
           .catch(() => {
-            if (typeof window !== 'undefined') {
-              window.localStorage.removeItem('userData')
-              window.localStorage.removeItem('refreshToken')
-              window.localStorage.removeItem('accessToken')
-            }
+            localStorage.removeItem('userData')
+            localStorage.removeItem('refreshToken')
+            localStorage.removeItem('accessToken')
             setUser(null)
             setLoading(false)
             if (authConfig.onTokenExpiration === 'logout' && !router.pathname.includes('login')) {
@@ -122,14 +116,12 @@ const AuthProvider = ({ children }: Props) => {
         if (!response.data.success) {
           if (errorCallback) errorCallback(response.data.message)
         } else {
-          if (typeof window !== 'undefined') {
-            window.localStorage.setItem(authConfig.storageTokenKeyName, response.data.token)
+          window.localStorage.setItem(authConfig.storageTokenKeyName, response.data.token)
 
-            if (params.rememberMe) {
-              window.localStorage.setItem('loginEmail', params.email)
-            } else {
-              window.localStorage.removeItem('loginEmail')
-            }
+          if (params.rememberMe) {
+            window.localStorage.setItem('loginEmail', params.email)
+          } else {
+            window.localStorage.removeItem('loginEmail')
           }
 
           const returnUrl = router.query.returnUrl
@@ -150,9 +142,7 @@ const AuthProvider = ({ children }: Props) => {
 
           setUser({ ...newUserData })
 
-          if (typeof window !== 'undefined') {
-            window.localStorage.setItem('userData', JSON.stringify(newUserData))
-          }
+          window.localStorage.setItem('userData', JSON.stringify(newUserData))
 
           const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/'
 
@@ -188,10 +178,8 @@ const AuthProvider = ({ children }: Props) => {
 
   const handleLogout = () => {
     setUser(null)
-    if (typeof window !== 'undefined') {
-      window.localStorage.removeItem('userData')
-      window.localStorage.removeItem(authConfig.storageTokenKeyName)
-    }
+    window.localStorage.removeItem('userData')
+    window.localStorage.removeItem(authConfig.storageTokenKeyName)
     router.push('/login')
   }
 

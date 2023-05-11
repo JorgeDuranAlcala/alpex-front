@@ -2,7 +2,7 @@ import axios from 'axios'
 
 let accessToken = ''
 if (typeof window !== 'undefined') {
-  accessToken = `Bearer ${window.localStorage.getItem('accessToken')}` || ''
+  accessToken = `Bearer ${localStorage.getItem('accessToken')}` || ''
 }
 
 export const AppAlpexApiGateWay = axios.create({
