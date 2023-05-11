@@ -46,7 +46,12 @@ const AuthProvider = ({ children }: Props) => {
 
   useEffect(() => {
     const initAuth = async (): Promise<void> => {
-      const storedToken = window.localStorage.getItem(authConfig.storageTokenKeyName)!
+      let storedToken
+
+      if (typeof window !== 'undefined') {
+        storedToken = window.localStorage.getItem(authConfig.storageTokenKeyName)!
+      }
+
       if (storedToken) {
         setLoading(true)
         authServices
@@ -67,9 +72,11 @@ const AuthProvider = ({ children }: Props) => {
             setUser({ ...newUserData })
           })
           .catch(() => {
-            localStorage.removeItem('userData')
-            localStorage.removeItem('refreshToken')
-            localStorage.removeItem('accessToken')
+            if (typeof window !== 'undefined') {
+              window.localStorage.removeItem('userData')
+              window.localStorage.removeItem('refreshToken')
+              window.localStorage.removeItem('accessToken')
+            }
             setUser(null)
             setLoading(false)
             if (authConfig.onTokenExpiration === 'logout' && !router.pathname.includes('login')) {
@@ -115,7 +122,16 @@ const AuthProvider = ({ children }: Props) => {
         if (!response.data.success) {
           if (errorCallback) errorCallback(response.data.message)
         } else {
-          params.rememberMe ? window.localStorage.setItem(authConfig.storageTokenKeyName, response.data.token) : null
+          if (typeof window !== 'undefined') {
+            window.localStorage.setItem(authConfig.storageTokenKeyName, response.data.token)
+
+            if (params.rememberMe) {
+              window.localStorage.setItem('loginEmail', params.email)
+            } else {
+              window.localStorage.removeItem('loginEmail')
+            }
+          }
+
           const returnUrl = router.query.returnUrl
 
           const tokenDecoded = jwt.decode(response.data.token, { complete: true })
@@ -133,7 +149,10 @@ const AuthProvider = ({ children }: Props) => {
           }
 
           setUser({ ...newUserData })
-          params.rememberMe ? window.localStorage.setItem('userData', JSON.stringify(newUserData)) : null
+
+          if (typeof window !== 'undefined') {
+            window.localStorage.setItem('userData', JSON.stringify(newUserData))
+          }
 
           const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/'
 
@@ -169,8 +188,10 @@ const AuthProvider = ({ children }: Props) => {
 
   const handleLogout = () => {
     setUser(null)
-    window.localStorage.removeItem('userData')
-    window.localStorage.removeItem(authConfig.storageTokenKeyName)
+    if (typeof window !== 'undefined') {
+      window.localStorage.removeItem('userData')
+      window.localStorage.removeItem(authConfig.storageTokenKeyName)
+    }
     router.push('/login')
   }
 
