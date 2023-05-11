@@ -20,6 +20,7 @@ import companiesSelect from 'src/mocks/companies'
 import { useAddSecurities } from '@/hooks/accounts/security'
 import { useAddSecurityTotal } from '@/hooks/accounts/securityTotal'
 import { SecurityDto } from '@/services/accounts/dtos/security.dto'
+import { updateFormsData } from '@/store/apps/accounts'
 import Icon from 'src/@core/components/icon'
 import { useAppSelector } from 'src/store'
 import { ButtonClose, HeaderTitleModal } from 'src/styles/Dashboard/ModalReinsurers/modalReinsurers'
@@ -683,6 +684,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
     grossPremium: 0
   })
 
+  const dispatch = useAppDispatch()
   const accountData = useAppSelector(state => state.accounts)
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
 
@@ -789,9 +791,8 @@ const Security = ({ onStepChange }: SecurityProps) => {
 
   const handleSuccess = () => {
     saveInformation()
-
-    // dispatch(updateFormsData({ form2: allFormData }))
-    // setEnableNextStep(true)
+    dispatch(updateFormsData({ form2: allFormData }))
+    setEnableNextStep(true)
   }
 
   useEffect(() => {
