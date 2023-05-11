@@ -58,7 +58,7 @@ class CedantContactService {
   async findByIdCedant(idBroker: number): Promise<CedantContactDto[]> {
     try {
       const { data } = await AppAlpexApiGateWay.get<Promise<CedantContactDto[]>>(
-        `${CEDANT_CONTACT_ROUTERS.GET_BY_ID_CEDANT}${idBroker}`
+        `${CEDANT_CONTACT_ROUTERS.GET_BY_ID_CEDANT}/${idBroker}`
       )
 
       return data
