@@ -22,7 +22,7 @@ import { useAddSecurityTotal } from '@/hooks/accounts/securityTotal'
 import { SecurityDto } from '@/services/accounts/dtos/security.dto'
 import { updateFormsData } from '@/store/apps/accounts'
 import Icon from 'src/@core/components/icon'
-import { useAppSelector } from 'src/store'
+import { useAppDispatch, useAppSelector } from 'src/store'
 import { ButtonClose, HeaderTitleModal } from 'src/styles/Dashboard/ModalReinsurers/modalReinsurers'
 import SwitchAlpex from 'src/views/custom/switchs'
 
