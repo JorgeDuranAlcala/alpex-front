@@ -1,20 +1,20 @@
 export interface SecurityDto {
-  id: number
-  netPremiumat100: number
+  id: number | null
+  netPremiumat100: number | null
   share: number | null
   frontingFeeActive: boolean | null
-  dynamicCommission: number
-  frontingFee: number
-  netReinsurancepremium: number
-  taxes: number
-  reinsuranceBrokerage: number
-  receivedNetPremium: number
-  distributedNetPremium: number
-  difference: number
+  dynamicCommission: number | null
+  frontingFee: number | null
+  netReinsurancepremium: number | null
+  taxes: number | null
+  reinsuranceBrokerage: number | null
+  receivedNetPremium: number | null
+  distributedNetPremium: number | null
+  difference: number | null
   active: boolean | null
-  idCReinsuranceCompany: number
-  idCRetroCedant: number
-  idCRetroCedantContact: number
-  idEndorsement: number
-  idAccount: number
+  idCReinsuranceCompany: number | null
+  idCRetroCedant: number | null
+  idCRetroCedantContact: number | null
+  idEndorsement: number | null
+  idAccount: number | null
 }
