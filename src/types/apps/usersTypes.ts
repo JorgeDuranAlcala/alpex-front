@@ -49,6 +49,7 @@ export type IUserFilters = {
 }
 
 export interface IUsersState {
+  current: IUser | null
   users: IUser[]
   loading: boolean
   filters: IUserFilters[]

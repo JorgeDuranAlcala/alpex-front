@@ -12,11 +12,6 @@ export enum AUTH_ROUTES {
   AUTH_ME = '/auth/me/'
 }
 
-// ==== USER
-export enum USERS_ROUTES {
-  GET = 'user'
-}
-
 // ==== ACCOUNT
 export enum ACCOUNT_ROUTES {
   GET_BY_ID = 'account',
@@ -71,6 +66,13 @@ export enum CEDANT_CONTACT_ROUTERS {
   UPDATE = 'catalogs/cedant-contact',
   GET_BY_ID_CEDANT = 'catalogs/cedant-contact/cedant'
 }
+
+export enum USERS_ROUTES {
+  GET = 'user',
+  ADD = 'user',
+  UPDATE = 'user'
+}
+
 export enum COUNTRY_ROUTERS {
   GET_ALL = 'catalogs/country/all',
   GET_BY_ID = 'catalogs/country',
@@ -113,9 +115,22 @@ export enum REINSURANCE_COMPANY_ROUTES {
   UPDATE = 'catalogs/reinsuranceCompany'
 }
 
+export enum COMPANY_ROUTES {
+  GET_ALL = 'catalogs/Company/all',
+  GET_BY_ID = 'catalogs/Company',
+  ADD = 'catalogs/Company/add',
+  UPDATE = 'catalogs/Company'
+}
+
 export enum RETRO_CEDANT_ROUTES {
   GET_ALL = 'catalogs/retroCedant/all',
   GET_BY_ID = 'catalogs/retroCedant',
   ADD = 'catalogs/retroCedant/add',
   UPDATE = 'catalogs/retroCedant'
+}
+
+export enum INSTALLMENT_ROUTERS {
+  GET_ALL = 'account/installment/',
+  ADD = 'account/installment/add',
+  UPDATE = 'account/installment/update'
 }
