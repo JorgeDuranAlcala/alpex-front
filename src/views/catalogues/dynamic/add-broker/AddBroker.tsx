@@ -10,7 +10,7 @@ import { Box, Button, FormControl, Modal, TextField, Typography } from '@mui/mat
 import Icon from 'src/@core/components/icon'
 
 // ** Custom Imports
-import { ButtonClose, HeaderTitleModal } from 'src/styles/Dashboard/ModalReinsurers/modalReinsurers'
+import { ButtonClose, HeaderTitleModal } from 'src/styles/modal/modal.styled'
 import { IBroker } from '../broker-table'
 
 const AddBroker = () => {
@@ -18,6 +18,38 @@ const AddBroker = () => {
   const [isBrokerSaved, setIsBrokerSaved] = useState(false)
   const [disableAddBroker, setDisableAddBroker] = useState(true)
   const [openDelete, setOpenDelete] = useState(false)
+  const [showAlert, setShowAlert] = useState(true);
+  const [alertType, setAlertType] = useState('');
+  const [alertText, setAlertText] = useState('');
+  const [alertIcon, setAlertIcon] = useState('');
+  const triggerAlert = (type: string) => {
+    setAlertType(type)
+
+    switch (type) {
+      case 'success':
+        setAlertText('NEW BROKER ADDED')
+        setAlertIcon('mdi:check-circle-outline')
+        break;
+      case 'error':
+        setAlertText('UNKNOWN ERROR, TRY AGAIN')
+        setAlertIcon('mdi:alert-circle-outline')
+        break;
+      case 'warn':
+        setAlertText('NO INTERNET CONNECTION')
+        setAlertIcon('mdi:alert-outline')
+        break;
+      default:
+        break
+    }
+
+    setShowAlert(true);
+
+    setTimeout(() => {
+      setShowAlert(false);
+    }, 5000);
+
+
+  };
 
   const addBroker = () => { //Call to add broker service
     console.log("call add broker service", newBroker.id)
@@ -26,6 +58,10 @@ const AddBroker = () => {
 
   const editBroker = () => { //Call to edit broker service
     console.log("call edit broker service", newBroker.id)
+    triggerAlert('success')
+
+    // triggerAlert('error')
+    // triggerAlert('warn')
   }
 
   const deleteBroker = () => { //Call to delete broker service
@@ -46,13 +82,22 @@ const AddBroker = () => {
     <>
       <div className='add-broker'>
         <div className="inner-row">
-          <div className="title">{isBrokerSaved ? "Broker details" : "Add Broker" }</div>
+          <div className="title">{isBrokerSaved ? "Broker details" : "Add Broker"}</div>
+        </div>
+        <div className='inner-row'>
+          {showAlert &&
+            <div className={`${alertType} add-broker-alert`}>
+              <div className='btn-icon'>
+                <Icon icon={alertIcon} />
+              </div>
+              {alertText}
+            </div>}
         </div>
         <div className="inner-row">
           <div className="description">
-            {isBrokerSaved?
-             'You can edit the information below. In ‘Contacts’ you can add one or more contacts for this Broker.'
-             : "You can fill out the information below to Add a Broker. In ‘Contacts’ you can add one or morecontacts for this Broker."}
+            {isBrokerSaved ?
+              'You can edit the information below. In ‘Contacts’ you can add one or more contacts for this Broker.'
+              : "You can fill out the information below to Add a Broker. In ‘Contacts’ you can add one or morecontacts for this Broker."}
 
           </div>
         </div>
@@ -96,41 +141,41 @@ const AddBroker = () => {
             </div>
           }
           <Modal
-          className='delete-modal'
-          open={openDelete}
-          onClose={() => {
-            setOpenDelete(false)
-          }}
-        >
-          <Box className='modal-wrapper'>
-            <HeaderTitleModal>
-              <Typography
-              variant='h6'
-              sx={{maxWidth: "450px"}}
-            >
-              Are you sure you want to delete {newBroker.name}?</Typography>
-              <ButtonClose
+            className='delete-modal'
+            open={openDelete}
+            onClose={() => {
+              setOpenDelete(false)
+            }}
+          >
+            <Box className='modal-wrapper'>
+              <HeaderTitleModal>
+                <Typography
+                  variant='h6'
+                  sx={{ maxWidth: "450px" }}
+                >
+                  Are you sure you want to delete {newBroker.name}?</Typography>
+                <ButtonClose
+                  onClick={() => {
+                    setOpenDelete(false)
+                  }}
+                >
+                  <CloseIcon />
+                </ButtonClose>
+              </HeaderTitleModal>
+              <div className='delete-modal-text'>This action can’t be undone.</div>
+              <Button className='header-modal-btn' variant='contained' onClick={deleteBroker}>
+                DELETE
+              </Button>
+              <Button
+                className='close-modal header-modal-btn'
                 onClick={() => {
                   setOpenDelete(false)
                 }}
               >
-                <CloseIcon />
-              </ButtonClose>
-            </HeaderTitleModal>
-            <div className='delete-modal-text'>This action can’t be undone.</div>
-            <Button className='header-modal-btn' variant='contained' onClick={deleteBroker}>
-              DELETE
-            </Button>
-            <Button
-              className='close-modal header-modal-btn'
-              onClick={() => {
-                setOpenDelete(false)
-              }}
-            >
-              CANCEL
-            </Button>
-          </Box>
-        </Modal>
+                CANCEL
+              </Button>
+            </Box>
+          </Modal>
         </div>
 
       </div>

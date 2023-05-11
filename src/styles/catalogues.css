@@ -50,7 +50,9 @@
 } */
 
  /*----TABLE HEADER----*/
-
+.table-header{
+  position: relative;
+}
 .search-wrapper {
   width: 100%;
   display: flex;
@@ -80,6 +82,43 @@
 }
 .delete-button.MuiButton-root.MuiButton-outlinedPrimary:hover{
   background-color: rgb(255 0 0 / 8%);
+}
+
+.add-broker-alert,
+.contacts-alert{
+  position: absolute;
+  height: 54px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 5px 10px;
+  z-index: 2;
+  border-radius: 8px;
+}
+
+.add-broker-alert{
+  top: -43px;
+  right: 2px;
+}
+
+.contacts-alert{
+  bottom: 120px;
+  right: 17px;
+}
+
+.success{
+  background-color: #EEFBE5;
+  color: #72E128;
+}
+
+.error{
+  background-color: #ffebeb;
+  color: #FF4D49;
+}
+
+.warn{
+  background-color: #fff7eb;
+  color: #FFB446;
 }
 
 @media (max-width: 700px) {
@@ -261,6 +300,7 @@
   width: 100%;
   display: flex;
   flex-wrap: wrap;
+  position: relative;
 }
 
 .add-broker .action-buttons{

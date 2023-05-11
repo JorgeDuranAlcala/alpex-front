@@ -10,8 +10,10 @@ import { DataGrid, GRID_CHECKBOX_SELECTION_COL_DEF, GridColumns, GridRowId } fro
 import FormHelperText from '@mui/material/FormHelperText'
 
 // ** Custom Imports
-import { ButtonClose, HeaderTitleModal } from 'src/styles/Dashboard/ModalReinsurers/modalReinsurers'
+import { ButtonClose, HeaderTitleModal } from 'src/styles/modal/modal.styled'
 
+// ** Icon Imports
+import Icon from 'src/@core/components/icon'
 
 // ** Custom Components Imports
 import CustomPagination from '../CustomPagination'
@@ -59,6 +61,40 @@ const BrokerContacts = () => {
   const [countryError, setCountryError] = useState(false)
   const [emptyForm, setEmptyForm] = useState(true)
   const [btnDisable, setBtnDisable] = useState(true)
+  const [showAlert, setShowAlert] = useState(true);
+  const [alertType, setAlertType] = useState('');
+  const [alertText, setAlertText] = useState('');
+  const [alertIcon, setAlertIcon] = useState('');
+
+
+  const triggerAlert = (type: string) => {
+    setAlertType(type)
+
+    switch (type) {
+      case 'success':
+        setAlertText('NEW BROKER ADDED')
+        setAlertIcon('mdi:check-circle-outline')
+        break;
+      case 'error':
+        setAlertText('UNKNOWN ERROR, TRY AGAIN')
+        setAlertIcon('mdi:alert-circle-outline')
+        break;
+      case 'warn':
+        setAlertText('NO INTERNET CONNECTION')
+        setAlertIcon('mdi:alert-outline')
+        break;
+      default:
+        break
+    }
+
+    setShowAlert(true);
+
+    setTimeout(() => {
+      setShowAlert(false);
+    }, 5000);
+
+
+  };
 
   const column: GridColumns<IContact> = [
     {
@@ -205,6 +241,11 @@ const BrokerContacts = () => {
   const handleCreateContact = () => {
     console.log('Cal create contact service', contactData)
     setOpenNewContact(false)
+
+    triggerAlert("success")
+
+    // triggerAlert("error")
+    // triggerAlert("warn")
   }
 
   useEffect(() => {
@@ -290,11 +331,21 @@ const BrokerContacts = () => {
           to this specific Broker, you can add one
           or more contacts.
         </div>
-        <TableHeader
-          onSearch={searchContacts}
-          textBtn="ADD NEW CONTACT"
-          onClickBtn={() => { setOpenNewContact(true) }}
-        />
+        <div className='table-header'>
+          <TableHeader
+            onSearch={searchContacts}
+            textBtn="ADD NEW CONTACT"
+            onClickBtn={() => { setOpenNewContact(true) }}
+          />
+          {showAlert &&
+            <div className={`${alertType} contacts-alert`}>
+              <div className='btn-icon'>
+                <Icon icon={alertIcon} />
+              </div>
+              {alertText}
+            </div>}
+        </div>
+
         <div className='contact-list'>
 
           <DataGrid
