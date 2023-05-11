@@ -1,18 +1,18 @@
 // ** React Imports
-import { useState, SyntheticEvent, Fragment } from 'react'
+import { Fragment, SyntheticEvent, useState } from 'react'
 
 // ** Next Import
 import { useRouter } from 'next/router'
 
 // ** MUI Imports
-import Box from '@mui/material/Box'
-import Menu from '@mui/material/Menu'
-import Badge from '@mui/material/Badge'
 import Avatar from '@mui/material/Avatar'
+import Badge from '@mui/material/Badge'
+import Box from '@mui/material/Box'
 import Divider from '@mui/material/Divider'
+import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
-import { styled } from '@mui/material/styles'
 import Typography from '@mui/material/Typography'
+import { styled } from '@mui/material/styles'
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
@@ -61,20 +61,20 @@ const UserDropdown = (props: Props) => {
     setAnchorEl(null)
   }
 
-  const styles = {
-    py: 2,
-    px: 4,
-    width: '100%',
-    display: 'flex',
-    alignItems: 'center',
-    color: 'text.primary',
-    textDecoration: 'none',
-    '& svg': {
-      mr: 2,
-      fontSize: '1.375rem',
-      color: 'text.primary'
-    }
-  }
+  // const styles = {
+  //   py: 2,
+  //   px: 4,
+  //   width: '100%',
+  //   display: 'flex',
+  //   alignItems: 'center',
+  //   color: 'text.primary',
+  //   textDecoration: 'none',
+  //   '& svg': {
+  //     mr: 2,
+  //     fontSize: '1.375rem',
+  //     color: 'text.primary'
+  //   }
+  // }
 
   const handleLogout = () => {
     logout()
@@ -129,7 +129,8 @@ const UserDropdown = (props: Props) => {
           </Box>
         </Box>
         <Divider sx={{ mt: '0 !important' }} />
-        <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose('/pages/user-profile/profile')}>
+
+        {/* <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose('/pages/user-profile/profile')}>
           <Box sx={styles}>
             <Icon icon='mdi:account-outline' />
             Profile
@@ -146,9 +147,9 @@ const UserDropdown = (props: Props) => {
             <Icon icon='mdi:message-outline' />
             Chat
           </Box>
-        </MenuItem>
-        <Divider />
-        <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose('/pages/account-settings/account')}>
+        </MenuItem> */}
+        {/* <Divider /> */}
+        {/* <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose('/pages/account-settings/account')}>
           <Box sx={styles}>
             <Icon icon='mdi:cog-outline' />
             Settings
@@ -166,7 +167,7 @@ const UserDropdown = (props: Props) => {
             FAQ
           </Box>
         </MenuItem>
-        <Divider />
+        <Divider /> */}
         <MenuItem
           onClick={handleLogout}
           sx={{ py: 2, '& svg': { mr: 2, fontSize: '1.375rem', color: 'text.primary' } }}

@@ -6,7 +6,6 @@ export const useEditUser = (userPut: UsersPutDto | null) => {
   const [user, setUser] = useState<UsersGetDto[]>([])
 
   useEffect(() => {
-    console.log('userPut', userPut)
     if (!userPut) return
     UserService.editUser(userPut)
       .then(user => {

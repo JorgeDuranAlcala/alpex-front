@@ -9,7 +9,6 @@ class UsersServices {
     try {
       const url = urlQ ? urlQ : queryBuilder(usersData.filters, USERS_ROUTES.GET)
       const { data } = await AppAlpexApiGateWay.get(`${url}&take=${usersData.info.take}&page=${usersData.info.page}`)
-      console.log(data, 'data')
 
       return data
     } catch (error) {
@@ -33,7 +32,6 @@ class UsersServices {
       const { data } = await AppAlpexApiGateWay.post<Promise<UsersGetDto[]>>(`${USERS_ROUTES.ADD}`, {
         ...user
       })
-      console.log({ data }, 'post')
 
       return data
     } catch (error) {
@@ -43,12 +41,9 @@ class UsersServices {
 
   async editUser(user: Partial<UsersPutDto>): Promise<UsersGetDto[]> {
     try {
-      console.log({ user }, 'PUT')
-
       const { data } = await AppAlpexApiGateWay.put<Promise<UsersGetDto[]>>(`${USERS_ROUTES.UPDATE}`, {
         ...user
       })
-      console.log({ data }, 'PUT')
 
       return data
     } catch (error) {
@@ -61,7 +56,6 @@ class UsersServices {
       const { data } = await AppAlpexApiGateWay.post<Promise<UsersGetDto[]>>(`${USERS_ROUTES.ADD}`, {
         ...user
       })
-      console.log({ data }, 'post')
 
       return data
     } catch (error) {

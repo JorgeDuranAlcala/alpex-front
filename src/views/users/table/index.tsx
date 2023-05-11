@@ -93,7 +93,6 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
   }, [usersReducer.users])
 
   useEffect(() => {
-    console.log(usersReducer)
     dispatch(fetchAccounts(usersReducer))
     //eslint-disable-next-line
   }, [usersReducer.filters])

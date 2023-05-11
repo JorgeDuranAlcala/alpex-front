@@ -1,8 +1,21 @@
+// ==== ROLES
 export enum ROLES {
   ADMIN = 5,
   LEAD_UNDERWRITER = 6,
   UNDERWRITER = 8,
   TECHNICAL_ASSISTANT = 9
+}
+
+// ==== AUTH
+export enum AUTH_ROUTES {
+  LOGIN = '/auth',
+  AUTH_ME = '/auth/me/'
+}
+
+// ==== ACCOUNT
+export enum ACCOUNT_ROUTES {
+  GET_BY_ID = 'account',
+  GET_ALL = 'account/all'
 }
 
 export enum ACCOUNT_INFORMATION_ROUTES {
@@ -11,16 +24,19 @@ export enum ACCOUNT_INFORMATION_ROUTES {
   UPDATE = 'account/Information'
 }
 
-export enum ACCOUNT_ROUTES {
-  GET_BY_ID = 'account',
-  GET_ALL = 'account/all'
+export enum ACCOUNT_SECURITY_ROUTES {
+  ADD = 'account/security/add',
+  GET_BY_ID_ACCOUNT = 'account/security',
+  UPDATE = 'account/security/update'
 }
 
-export enum AUTH_ROUTES {
-  LOGIN = '/auth',
-  AUTH_ME = '/auth/me/'
+export enum ACCOUNT_SECURITY_TOTAL_ROUTES {
+  ADD = 'account/securityTotal/add',
+  GET_BY_ID_ACCOUNT = 'account/securityTotal',
+  UPDATE = 'account/securityTotal'
 }
 
+// ==== CATALOGS
 export enum BROKER_ROUTES {
   GET_ALL = 'catalogs/broker/all',
   GET_BY_ID = 'catalogs/broker',
