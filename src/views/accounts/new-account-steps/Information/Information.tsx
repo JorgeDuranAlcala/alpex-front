@@ -6,10 +6,8 @@ import { useAddInformation } from 'src/hooks/accounts/information'
 
 // // ** MUI Imports
 import CloseIcon from '@mui/icons-material/Close'
-import Box from '@mui/material/Box'
-import Button from '@mui/material/Button'
-import Modal from '@mui/material/Modal'
-import { ButtonClose, HeaderTitleModal } from 'src/styles/Dashboard/ModalReinsurers/modalReinsurers'
+import { Box, Button, Modal } from '@mui/material'
+import { ButtonClose, HeaderTitleModal } from 'src/styles/modal/modal.styled'
 import BasicInfo from './BasicInfo'
 import FileSubmit from './FileSubmit'
 import PlacementStructure from './PlacementStructure'

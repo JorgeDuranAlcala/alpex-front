@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import Icon from 'src/@core/components/icon';
 import UserThemeOptions from 'src/layouts/UserThemeOptions';
 
 
@@ -7,21 +8,23 @@ interface TabsProps {
   onTabChange?: (step: number) => void;
 }
 
-
-
-
-
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const CataloguesTabs = ({ changeTab = 1, onTabChange }: TabsProps) => {
 
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
   const inter = userThemeConfig.typography?.fontFamilyInter
   const [activeTab, setActiveTab] = useState(1)
+  const [showTabOptions, setShowTabOptions] = useState(false)
 
 
-  const handleTabClick = (step: number) => {
-    setActiveTab(step);
+  const handleTabClick = (tab: number) => {
+    setActiveTab(tab);
   };
+
+  const setTabMobile = (tab: number) =>{
+    setActiveTab(tab)
+    setShowTabOptions(!showTabOptions)
+  }
 
   useEffect(() => {
     if (onTabChange)
@@ -69,7 +72,41 @@ const CataloguesTabs = ({ changeTab = 1, onTabChange }: TabsProps) => {
             <div className="tab-name">TYPES OF LIMIT</div>
           </div>
         </div>
+        <div
+          className='mobile-btns'
+          onClick={() => {
+            setShowTabOptions(!showTabOptions)
+          }}>
+          <Icon icon='mdi:dots-vertical' />
+
+        </div>
+        {showTabOptions ? (
+          <div className='mobile-tabs'>
+
+            <div className='tab-mobile' onClick={() => { setTabMobile(1) }}>
+              Brokers
+            </div>
+            <div className='tab-mobile' onClick={() =>{setTabMobile(2)}}>
+              Reinsurers
+            </div>
+            <div className='tab-mobile' onClick={() => { setTabMobile(3) }}>
+              Cedants
+            </div>
+            <div className='tab-mobile' onClick={() =>{setTabMobile(4)}}>
+              Retro Cedants
+            </div>
+            <div className='tab-mobile' onClick={() => { setTabMobile(5) }}>
+              Countries & Currencies
+            </div>
+            <div className='tab-mobile' onClick={() =>{setTabMobile(6)}}>
+              Types of Limit
+            </div>
+          </div>
+        ) : (
+          ''
+        )}
       </div>
+
     </>
   )
 }

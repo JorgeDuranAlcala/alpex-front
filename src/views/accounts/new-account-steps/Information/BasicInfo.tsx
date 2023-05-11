@@ -3,19 +3,18 @@ import React, { ForwardedRef, ReactNode, forwardRef, useEffect, useState } from 
 // ** MUI Imports
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
 import CloseIcon from '@mui/icons-material/Close'
-import { SxProps, Theme } from '@mui/material'
-import Box from '@mui/material/Box'
-import Button from '@mui/material/Button'
-import FormControl from '@mui/material/FormControl'
-import FormHelperText from '@mui/material/FormHelperText'
-import InputAdornment from '@mui/material/InputAdornment'
-import InputLabel from '@mui/material/InputLabel'
-import MenuItem from '@mui/material/MenuItem'
-import Modal from '@mui/material/Modal'
+import {
+  Box,
+  Button,
+  FormControl,
+  FormHelperText,
+  InputAdornment,
+  InputLabel,
+  MenuItem,
+  Modal, SxProps, TextField, Theme, Typography
+} from '@mui/material'
 import Select, { SelectChangeEvent } from '@mui/material/Select'
-import TextField from '@mui/material/TextField'
-import Typography from '@mui/material/Typography'
-import { ButtonClose, HeaderTitleModal } from 'src/styles/Dashboard/ModalReinsurers/modalReinsurers'
+import { ButtonClose, HeaderTitleModal } from 'src/styles/modal/modal.styled'
 
 //hooks para base info y  modal contac
 import { useGetAll as useCountyGetAll } from 'src/hooks/catalogs/country'
@@ -221,9 +220,6 @@ const ModalContact = ({ id }: IModal) => {
     setContactData({ ...contactData, [field]: value })
   }
 
-  const handleClose = () => {
-    setOpen(false)
-  }
 
   const handleCreateContact = () => {
     console.log('createContact')
@@ -236,11 +232,11 @@ const ModalContact = ({ id }: IModal) => {
         </div>
         CREATE NEW CONTACT
       </Button>
-      <Modal className='create-contact-modal' open={open} onClose={handleClose}>
+      <Modal className='create-contact-modal' open={open} onClose={() => setOpen(true)}>
         <Box className='modal-wrapper'>
           <HeaderTitleModal>
             <Typography variant='h6'>Create new contact</Typography>
-            <ButtonClose onClick={handleClose}>
+            <ButtonClose onClick={() => setOpen(true)}>
               <CloseIcon />
             </ButtonClose>
           </HeaderTitleModal>
