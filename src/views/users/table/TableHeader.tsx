@@ -1,5 +1,5 @@
 // ** React Imports
-import { useEffect, useState } from 'react'
+import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -20,7 +20,7 @@ import CustomAlert, { IAlert } from 'src/views/custom/alerts'
 interface ITableHeader {
   selectedRows: GridRowId[]
   badgeData: IAlert
-  handleView: (view: string) => void
+  handleView: Dispatch<SetStateAction<number>>
   setModalShow: any
 }
 
@@ -114,12 +114,7 @@ const TableHeader: React.FC<ITableHeader> = ({ badgeData, handleView, selectedRo
       </Box>
       <Box sx={{ marginLeft: 'auto' }}>
         {!badgeData.status ? (
-          <Button
-            startIcon={<Icon icon='mdi:plus' />}
-            sx={{ mb: 2 }}
-            variant='contained'
-            onClick={() => handleView('add')}
-          >
+          <Button startIcon={<Icon icon='mdi:plus' />} sx={{ mb: 2 }} variant='contained' onClick={() => handleView(1)}>
             ADD USER &nbsp;
           </Button>
         ) : (

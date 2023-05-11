@@ -1,5 +1,5 @@
 import { ROLES, USERS_ROUTES } from 'src/configs/api'
-import { UsersGetDto } from 'src/services/users/dtos/UsersDto'
+import { UsersGetDto, UsersPostDto, UsersPutDto } from 'src/services/users/dtos/UsersDto'
 import { IUsersState } from 'src/types/apps/usersTypes'
 import { AppAlpexApiGateWay } from '../app.alpex.api-getway'
 import { queryBuilder } from '../helper/queryBuilder'
@@ -20,6 +20,47 @@ class UsersServices {
   async getUserByIdRole(idRole: ROLES) {
     try {
       const { data } = await AppAlpexApiGateWay.get<Promise<UsersGetDto[]>>(`${USERS_ROUTES.GET}/${idRole}`)
+
+      return data
+    } catch (error) {
+      throw error
+    }
+  }
+
+  async addUser(user: Partial<UsersPostDto>): Promise<UsersGetDto[]> {
+    try {
+      const { data } = await AppAlpexApiGateWay.post<Promise<UsersGetDto[]>>(`${USERS_ROUTES.ADD}`, {
+        ...user
+      })
+      console.log({ data }, 'post')
+
+      return data
+    } catch (error) {
+      throw error
+    }
+  }
+
+  async editUser(user: Partial<UsersPutDto>): Promise<UsersGetDto[]> {
+    try {
+      console.log({ user }, 'PUT')
+
+      const { data } = await AppAlpexApiGateWay.put<Promise<UsersGetDto[]>>(`${USERS_ROUTES.UPDATE}`, {
+        ...user
+      })
+      console.log({ data }, 'PUT')
+
+      return data
+    } catch (error) {
+      throw error
+    }
+  }
+
+  async deleteUsers(user: number[]): Promise<UsersGetDto[]> {
+    try {
+      const { data } = await AppAlpexApiGateWay.post<Promise<UsersGetDto[]>>(`${USERS_ROUTES.ADD}`, {
+        ...user
+      })
+      console.log({ data }, 'post')
 
       return data
     } catch (error) {

@@ -1,39 +1,86 @@
 // ** MUI Imports
+import { handleSelectUser } from '@/store/apps/users'
 import Card from '@mui/material/Card'
 import Grid from '@mui/material/Grid'
-import { useState } from 'react'
+import { SyntheticEvent, useEffect, useState } from 'react'
+import { useDispatch } from 'react-redux'
+import TabHeader from 'src/views/custom/tabMenu/TabHeader'
+import TabMenu, { ITabsInfo } from 'src/views/custom/tabMenu/TabMenu'
 import AddUser from 'src/views/users/forms/AddUser'
-
 import Table from 'src/views/users/table'
 
 const Users = () => {
-  const [view, setView] = useState('list')
   const [selectUser, setSelectUser] = useState<number | null>(null)
-  const [modalShow, setModalShow] = useState<boolean>(false)
+  const [value, setValue] = useState(0)
+  const [tabsInfo, setTabsInfo] = useState<ITabsInfo[]>([])
+  const dispatch = useDispatch()
 
-  const handleView = (view: string) => {
-    setView(view)
+  const handleChange = (event: SyntheticEvent, newValue: number) => {
+    setValue(newValue)
   }
 
-  const handleSelectUser = (id: number | null) => {
+  const handleSelectUserFunc = (id: number | null) => {
     setSelectUser(id)
-    setView('add')
+    setValue(2)
+    dispatch(handleSelectUser(id))
   }
+
+  useEffect(() => {
+    console.log(selectUser)
+  }, [selectUser])
+
+  const tabsInfoMock: ITabsInfo[] = [
+    {
+      label: 'Accounts',
+      active: true,
+      component: (
+        <>
+          <Table setSelectUser={handleSelectUserFunc} handleView={setValue} />
+        </>
+      )
+    },
+    {
+      label: 'New accounts',
+      active: true,
+      component: (
+        <>
+          <AddUser selectUser={false} />
+        </>
+      )
+    },
+    {
+      label: 'Edit accounts',
+      active: true,
+      isDeleteable: true,
+      component: (
+        <>
+          <AddUser selectUser={true} />
+        </>
+      )
+    }
+  ]
+
+  useEffect(() => {
+    setTabsInfo(tabsInfoMock)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
-    <Grid item xs={12} sx={{ minHeight: '100%' }}>
-      <Card sx={{ minHeight: '100%', padding: '16px' }}>
-        {view === 'add' && <AddUser selectUser={selectUser} handleView={handleView} />}
-        {view === 'list' && (
-          <Table
-            modalShow={modalShow}
-            setModalShow={setModalShow}
-            setSelectUser={handleSelectUser}
-            handleView={handleView}
-          />
-        )}
-      </Card>
-    </Grid>
+    <>
+      <Grid item xs={12} sx={{ minHeight: '100%' }}>
+        <TabHeader
+          setTabsInfo={setTabsInfo}
+          setValue={setValue}
+          value={value}
+          handleChange={handleChange}
+          tabsInfo={tabsInfo}
+        />
+
+        <Card sx={{ minHeight: '100%', padding: '16px' }}>
+          <TabMenu value={value} tabsInfo={tabsInfo} />
+        </Card>
+      </Grid>
+    </>
   )
 }
 

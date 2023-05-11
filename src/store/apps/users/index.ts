@@ -8,6 +8,7 @@ import { IUsersState } from 'src/types/apps/usersTypes'
 const initialState: IUsersState = {
   users: [],
   loading: false,
+  current: null,
   filters: [],
   info: {
     count: 0,
@@ -48,6 +49,9 @@ export const appUsersSlice = createSlice({
         })
       }
     },
+    handleSelectUser: (state, { payload }) => {
+      if (payload !== null) state.current = state.users.filter((user: any) => user.id === payload)[0]
+    },
     deleteUsersFilter: (state, { payload }) => {
       state.filters = state.filters.filter(item => item.type !== payload)
     },
@@ -77,6 +81,6 @@ export const appUsersSlice = createSlice({
   }
 })
 
-export const { handleUsersFilter, deleteUsersFilter, resetUsersFilter } = appUsersSlice.actions
+export const { handleUsersFilter, handleSelectUser, deleteUsersFilter, resetUsersFilter } = appUsersSlice.actions
 
 export default appUsersSlice.reducer

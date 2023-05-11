@@ -52,7 +52,9 @@ export enum CEDANT_CONTACT_ROUTERS {
 }
 
 export enum USERS_ROUTES {
-  GET = 'user'
+  GET = 'user',
+  ADD = 'user',
+  UPDATE = 'user'
 }
 
 export enum COUNTRY_ROUTERS {
@@ -95,6 +97,13 @@ export enum REINSURANCE_COMPANY_ROUTES {
   GET_BY_ID = 'catalogs/reinsuranceCompany',
   ADD = 'catalogs/reinsuranceCompany/add',
   UPDATE = 'catalogs/reinsuranceCompany'
+}
+
+export enum COMPANY_ROUTES {
+  GET_ALL = 'catalogs/Company/all',
+  GET_BY_ID = 'catalogs/Company',
+  ADD = 'catalogs/Company/add',
+  UPDATE = 'catalogs/Company'
 }
 
 export enum RETRO_CEDANT_ROUTES {

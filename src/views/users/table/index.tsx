@@ -1,5 +1,5 @@
 // ** React Imports
-import { useEffect, useState } from 'react'
+import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -55,18 +55,17 @@ export enum EFieldColumn {
 }
 
 interface IUsersTable {
-  handleView: (view: string) => void
+  handleView: Dispatch<SetStateAction<number>>
   setSelectUser: (id: number | null) => void
-  modalShow: boolean
-  setModalShow: any
 }
 
-const Table = ({ handleView, setSelectUser, modalShow, setModalShow }: IUsersTable) => {
+const Table = ({ handleView, setSelectUser }: IUsersTable) => {
   // ** State
   const [selectedRows, setSelectedRows] = useState<GridRowId[]>([])
   const [accounts, setAccounts] = useState<any>([])
   const [loading, setLoading] = useState<any>([])
   const [selectedUser, setSelectedUser] = useState<IUsersGrid | null>(null)
+  const [modalShow, setModalShow] = useState<boolean>(false)
 
   //WIP
   //eslint-disable-next-line

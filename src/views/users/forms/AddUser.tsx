@@ -14,6 +14,10 @@ import {
   TextField
 } from '@mui/material'
 
+import { useGetAllCompanies } from '@/hooks/catalogs/company/getAllCompanies'
+import { useEditUser } from '@/hooks/catalogs/users'
+import { useAddUser } from '@/hooks/catalogs/users/addUser'
+import { UsersPostDto, UsersPutDto } from '@/services/users/dtos/UsersDto'
 import { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useAppSelector } from 'src/store'
@@ -94,10 +98,9 @@ const companies = [
 ]
 
 interface IAddUser {
-  handleView: (view: string) => void
-  selectUser: number | null
+  selectUser: boolean
 }
-const AddUser = ({ handleView, selectUser }: IAddUser) => {
+const AddUser = ({ selectUser }: IAddUser) => {
   const {
     control,
     handleSubmit,
@@ -118,19 +121,20 @@ const AddUser = ({ handleView, selectUser }: IAddUser) => {
   const [dualRoleDisabled, setDualRoleDisabled] = useState<boolean>(false)
   const [roleDisabled, setRoleDisabled] = useState<boolean>(false)
   const [editable, setEditable] = useState<boolean>(false)
-  const [userData, setUserData] = useState<any>()
+  const [userPost, setUserPost] = useState<UsersPostDto | null>(null)
+  const [userEdit, setUserEdit] = useState<UsersPutDto | null>(null)
+
+  const addUser = useAddUser(userPost)
+  const editUser = useEditUser(userEdit)
+
+  const { company } = useGetAllCompanies()
 
   useEffect(() => {
-    if (selectUser !== null) setUserData(usersReducer.users.filter((user: any) => user.id === selectUser)[0])
-    //eslint-disable-next-line
-  }, [selectUser])
-
-  useEffect(() => {
-    if (userData !== undefined) {
-      reset({ ...userData })
+    if (usersReducer.current !== undefined && usersReducer.current !== null && selectUser) {
+      reset({ ...usersReducer.current })
     }
     //eslint-disable-next-line
-  }, [userData])
+  }, [usersReducer.current])
 
   useEffect(() => {
     if (ADMIN_COMPANIES.includes(useWatchCompany)) {
@@ -157,9 +161,51 @@ const AddUser = ({ handleView, selectUser }: IAddUser) => {
   }, [useWatchRole])
 
   const onSubmit = (data: any) => {
-    console.log(data)
-    handleView('list')
+    if (selectUser) {
+      const dataToSend: UsersPutDto = {
+        id: usersReducer.current?.id || 1,
+        name: data.name || '',
+        surname: data.surname || '',
+        email: data.email || '',
+        phone: data.phone || '',
+        idCompany: +2,
+        roles: [
+          {
+            id: 5
+          }
+        ],
+        areaCode: selectedCountry?.phone || ''
+      }
+      alert('edit')
+
+      setUserEdit(dataToSend)
+    } else {
+      const dataToSend: UsersPostDto = {
+        name: data.name || '',
+        surname: data.surname || '',
+        email: data.email || '',
+        phone: data.phone || '',
+        idCompany: +2,
+        roles: [
+          {
+            id: 5
+          }
+        ],
+        areaCode: selectedCountry?.phone || ''
+      }
+      setUserPost(dataToSend)
+    }
   }
+
+  useEffect(() => {
+    console.log(addUser)
+    console.log(editUser)
+
+    //eslint-disable-next-line
+  }, [addUser, editUser])
+
+  console.log({ company })
+
   const handleFormChange = (field: keyof FormInfo, value: FormInfo[keyof FormInfo]) => {
     setFormData({ ...formData, [field]: value })
   }
@@ -187,9 +233,9 @@ const AddUser = ({ handleView, selectUser }: IAddUser) => {
                       <Controller
                         name='name'
                         control={control}
+                        defaultValue={''}
                         render={({ field: { value, onChange, onBlur } }) => (
                           <TextField
-                            autoFocus
                             label='First Name'
                             value={value}
                             onBlur={onBlur}
@@ -212,6 +258,7 @@ const AddUser = ({ handleView, selectUser }: IAddUser) => {
                       <Controller
                         name='surname'
                         control={control}
+                        defaultValue={''}
                         render={({ field: { value, onChange, onBlur } }) => (
                           <TextField
                             label='Last Name'
@@ -238,6 +285,7 @@ const AddUser = ({ handleView, selectUser }: IAddUser) => {
                       <Controller
                         name='email'
                         control={control}
+                        defaultValue={''}
                         render={({ field: { value, onChange, onBlur } }) => (
                           <TextField
                             label='Email'
@@ -267,7 +315,7 @@ const AddUser = ({ handleView, selectUser }: IAddUser) => {
 
                 <Grid container item xs={12} md={6} spacing={2}>
                   <Grid item xs={12}>
-                    <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
+                    <FormControl fullWidth defaultValue={''} sx={{ mb: 2, mt: 2 }}>
                       <CountrySelect
                         size='medium'
                         otherProps={{ width: '100%' }}
@@ -279,6 +327,7 @@ const AddUser = ({ handleView, selectUser }: IAddUser) => {
                     <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
                       <Controller
                         name='phone'
+                        defaultValue={''}
                         control={control}
                         render={({ field: { value, onChange, onBlur } }) => (
                           <TextField
@@ -306,7 +355,7 @@ const AddUser = ({ handleView, selectUser }: IAddUser) => {
                     </FormControl>
                   </Grid>
                   <Grid item xs={12}>
-                    <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
+                    <FormControl defaultValue={''} fullWidth sx={{ mb: 2, mt: 2 }}>
                       <TextField
                         name='Email'
                         label='Email'
@@ -331,6 +380,7 @@ const AddUser = ({ handleView, selectUser }: IAddUser) => {
                       <Controller
                         name='company'
                         control={control}
+                        defaultValue={''}
                         render={({ field: { value, onChange, onBlur } }) => (
                           <>
                             <InputLabel>Company</InputLabel>
@@ -357,6 +407,7 @@ const AddUser = ({ handleView, selectUser }: IAddUser) => {
                 <Grid container item xs={12} md={6} spacing={2}>
                   <Grid item xs={12}>
                     <FormControl
+                      defaultValue={''}
                       sx={{
                         visibility: roleDisabled ? 'hidden' : 'visible',
                         mb: 2,
@@ -392,6 +443,7 @@ const AddUser = ({ handleView, selectUser }: IAddUser) => {
                   <Grid item xs={12}>
                     <FormControl fullWidth sx={{ visibility: dualRoleDisabled ? 'hidden' : 'visible', mb: 2, mt: 2 }}>
                       <Controller
+                        defaultValue={''}
                         name='dualRole'
                         control={control}
                         render={({ field: { value, onChange, onBlur } }) => (
@@ -425,7 +477,7 @@ const AddUser = ({ handleView, selectUser }: IAddUser) => {
                 </Grid>
               </Grid>
             </UserSection>
-            {selectUser === null ? (
+            {!selectUser ? (
               <Button
                 startIcon={<Icon icon='mdi:check' />}
                 type='submit'
