@@ -36,6 +36,12 @@ export enum ACCOUNT_SECURITY_TOTAL_ROUTES {
   UPDATE = 'account/securityTotal'
 }
 
+export enum ACCOUNT_SUBLIMIT_ROUTES {
+  ADD = 'account/sublimit/add',
+  GET_BY_ID_ACCOUNT = 'account/sublimit',
+  UPDATE = 'account/sublimit/update'
+}
+
 // ==== CATALOGS
 export enum BROKER_ROUTES {
   GET_ALL = 'catalogs/broker/all',
