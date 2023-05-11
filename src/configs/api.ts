@@ -119,3 +119,9 @@ export enum RETRO_CEDANT_ROUTES {
   ADD = 'catalogs/retroCedant/add',
   UPDATE = 'catalogs/retroCedant'
 }
+
+export enum INSTALLMENT_ROUTERS {
+  GET_ALL = 'account/installment/',
+  ADD = 'account/installment/add',
+  UPDATE = 'account/installment/update'
+}
