@@ -49,7 +49,10 @@
   display: none;
 } */
 
-
+ /*----TABLE HEADER----*/
+.table-header{
+  position: relative;
+}
 .search-wrapper {
   width: 100%;
   display: flex;
@@ -69,9 +72,6 @@
   margin-right: 30px;
 }
 
-@media (max-width: 800px) {
-
-}
 
 .delete-button.MuiButton-root{
   color:red;
@@ -84,10 +84,74 @@
   background-color: rgb(255 0 0 / 8%);
 }
 
+.add-broker-alert,
+.contacts-alert{
+  position: absolute;
+  height: 54px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 5px 10px;
+  z-index: 2;
+  border-radius: 8px;
+}
+
+.add-broker-alert{
+  top: -43px;
+  right: 2px;
+}
+
+.contacts-alert{
+  bottom: 120px;
+  right: 17px;
+}
+
+.success{
+  background-color: #EEFBE5;
+  color: #72E128;
+}
+
+.error{
+  background-color: #ffebeb;
+  color: #FF4D49;
+}
+
+.warn{
+  background-color: #fff7eb;
+  color: #FFB446;
+}
+
+@media (max-width: 700px) {
+
+  .header-wrapper{
+    display: flex;
+    flex-direction: column-reverse;
+  }
+  .header-item{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .delete-button.MuiButton-root,
+  .header-item .action-button.MuiButton-root{
+    width: 100%;
+    margin-bottom: 15px;
+  }
+
+
+  .input-search{
+    width: 100%;
+    margin-right: 0;
+  }
+}
+
 /* ------ CATALOGUES TABS ------ */
 
 .catalogue-tabs {
   width: 100%;
+  position: relative;
 }
 
 .catalogue-tabs .tabs {
@@ -118,7 +182,7 @@
 
 .tabs .tab-btn.active {
   color: #2535a8;
-
+  cursor:default;
 }
 
 .tabs .tab-btn.active .tab-name {
@@ -142,6 +206,40 @@
   width: 100%;
   border-bottom: 2px solid #2535a8;
 }
+.catalogue-tabs .mobile-btns{
+  display: none;
+  position: absolute;
+  cursor: pointer;
+  right: 8px;
+  bottom: 8px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background-color: rgba(37, 53, 168, 0.05);
+}
+
+
+.mobile-tabs {
+  position: absolute;
+  z-index: 1;
+  width: 100%;
+  background-color: white;
+  padding: 15px 0;
+  border-radius: 15px;
+  box-shadow: 0px 4px 6px 1px rgba(0, 0, 0, 0.2);
+}
+
+
+
+.mobile-tabs .tab-mobile {
+  cursor: pointer;
+  padding: 15px 15px 5px;
+  font-size: 16px;
+}
+
+.mobile-tabs .tab-mobile:hover {
+  background-color: rgba(76, 78, 100, 0.04);
+}
 
 /* .tab-btn.active:hover::before {
   width: 100%;
@@ -156,4 +254,106 @@
   .tabs .tab-btn {
     display: none;
   }
+
+  .catalogue-tabs .mobile-btns{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 }
+
+
+/*---- BROKER LIST ----*/
+
+.outter-wrapper{
+  overflow-y: hidden;
+  overflow-x: scroll;
+}
+
+.broker-list{
+  min-width: 750px;
+}
+
+/*---- ADD BROKER ----*/
+.add-broker{
+  padding: 15px;
+}
+
+.add-broker .title{
+  font-size:  24px;
+  color: rgba(77, 80, 98, 0.87);
+  margin-bottom: 10px;
+}
+
+.add-broker .subtitle{
+  font-size:  20px;
+  color: rgba(77, 80, 98, 0.87)
+}
+
+.add-broker .description{
+  font-size: 16px;
+  color: rgba(77, 80, 98, 0.68);
+  margin-bottom: 30px;
+}
+.subtitle,
+.add-broker .inner-row{
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  position: relative;
+}
+
+.add-broker .action-buttons{
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 10px 0px 0px;
+}
+.add-broker .edit-broker-btn{
+  margin-left: 15px;
+}
+
+.add-broker .delete-broker-btn.MuiButton-root{
+  color: rgba(130, 133, 151, 1);
+}
+
+@media (max-width: 800px) {
+  .add-broker .ccreate-broker-btn.MuiButton-root,
+  .add-broker .edit-broker-btn.MuiButton-root,
+  .add-broker .delete-broker-btn.MuiButton-root{
+    width: 100%;
+  }
+  .add-broker .edit-broker-btn{
+    margin-left: 0;
+    margin-top: 10px;
+  }
+  .add-broker .action-buttons{
+    flex-wrap: wrap;
+  }
+}
+/*---- BROKER CONTACT LIST  ----*/
+
+.contacts-wrapper{
+  overflow-y: hidden;
+  overflow-x: scroll;
+}
+
+.contact-list{
+  min-width: 750px;
+}
+
+.contacts-wrapper .title{
+  font-size:  24px;
+  color: rgba(77, 80, 98, 0.87);
+  padding: 15px;
+}
+
+.contacts-wrapper .description{
+  font-size: 16px;
+  color: rgba(77, 80, 98, 0.68);
+  margin-bottom: 10px;
+  padding: 0 15px 15px;
+}
+
+

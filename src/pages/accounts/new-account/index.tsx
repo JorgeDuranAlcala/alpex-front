@@ -9,13 +9,13 @@ import Information from 'src/views/accounts/new-account-steps/Information/Inform
 import PaymentWarranty from 'src/views/accounts/new-account-steps/PaymentWarranty'
 import Security from 'src/views/accounts/new-account-steps/Security'
 import ActionsHeader from 'src/views/accounts/new-account-steps/headers/ActionsHeader'
-import FormHeader from 'src/views/accounts/new-account-steps/headers/formHeader'
 import CommentSection from 'src/views/components/new-accounts/CommentSection'
 import NewAccountStepper from 'src/views/components/new-accounts/NewAccountStepper'
 
 // import TabAccount from 'src/views/pages/account-settings/TabAccount'
 
 import Sublimits from 'src/views/accounts/new-account-steps/Sublimits'
+import FormHeader from 'src/views/accounts/new-account-steps/headers/formHeader'
 
 // import UserList from 'src/pages/apps/user/list'
 
@@ -49,7 +49,7 @@ const NewAccount = () => {
         <NewAccountStepper changeStep={activeStep} onStepChange={handleStepChange} />
         {activeStep == 1 ? <Information onStepChange={handleStepChange} /> : ''}
         {activeStep == 2 ? <Security onStepChange={handleStepChange} /> : ''}
-        {activeStep == 3 ? <PaymentWarranty /> : ''}
+        {activeStep == 3 ? <PaymentWarranty onStepChange={handleStepChange} /> : ''}
         {activeStep == 4 ? <Sublimits /> : ''}
 
         {/* <TabAccount /> */}
