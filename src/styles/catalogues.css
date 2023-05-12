@@ -84,7 +84,7 @@
   background-color: rgb(255 0 0 / 8%);
 }
 
-.add-broker-alert,
+.add-new-alert,
 .contacts-alert{
   position: absolute;
   height: 54px;
@@ -96,7 +96,7 @@
   border-radius: 8px;
 }
 
-.add-broker-alert{
+.add-new-alert{
   top: -43px;
   right: 2px;
 }
@@ -263,72 +263,78 @@
 }
 
 
-/*---- BROKER LIST ----*/
+/*---- BROKER LIST & REINSURER LIST ----*/
 
 .outter-wrapper{
   overflow-y: hidden;
   overflow-x: scroll;
 }
 
+.reinsurer-list,
 .broker-list{
   min-width: 750px;
 }
 
 /*---- ADD BROKER ----*/
-.add-broker{
+
+.add-new{
   padding: 15px;
 }
 
-.add-broker .title{
+.add-new .title{
   font-size:  24px;
   color: rgba(77, 80, 98, 0.87);
   margin-bottom: 10px;
 }
 
-.add-broker .subtitle{
+.add-new .subtitle{
   font-size:  20px;
   color: rgba(77, 80, 98, 0.87)
 }
 
-.add-broker .description{
+.add-new .description{
   font-size: 16px;
   color: rgba(77, 80, 98, 0.68);
   margin-bottom: 30px;
 }
 .subtitle,
-.add-broker .inner-row{
+.add-new .inner-row{
   width: 100%;
   display: flex;
   flex-wrap: wrap;
   position: relative;
 }
 
-.add-broker .action-buttons{
+.add-new .action-buttons{
   width: 100%;
   display: flex;
   justify-content: flex-end;
   align-items: center;
   padding: 10px 0px 0px;
 }
-.add-broker .edit-broker-btn{
+
+.add-new .edit-broker-btn{
   margin-left: 15px;
 }
 
-.add-broker .delete-broker-btn.MuiButton-root{
+.add-new .delete-broker-btn.MuiButton-root{
   color: rgba(130, 133, 151, 1);
 }
 
 @media (max-width: 800px) {
-  .add-broker .ccreate-broker-btn.MuiButton-root,
-  .add-broker .edit-broker-btn.MuiButton-root,
-  .add-broker .delete-broker-btn.MuiButton-root{
+
+  .add-new .ccreate-broker-btn.MuiButton-root,
+  .add-new .edit-broker-btn.MuiButton-root,
+  .add-new .delete-broker-btn.MuiButton-root{
     width: 100%;
   }
-  .add-broker .edit-broker-btn{
+
+  .add-new .edit-broker-btn{
     margin-left: 0;
     margin-top: 10px;
   }
-  .add-broker .action-buttons{
+
+  .add-new .action-buttons{
     flex-wrap: wrap;
   }
 }

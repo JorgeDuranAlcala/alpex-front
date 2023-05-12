@@ -9,6 +9,7 @@ import Grid from '@mui/material/Grid'
 // import { AccountsTableContextProvider } from 'src/context/accounts/Table/reducer'
 
 // ** Custom Components Imports
+import ReinsurersTable from '@/views/catalogues/dynamic/reinsurers-table'
 import BrokerTable from 'src/views/catalogues/dynamic/broker-table'
 import CataloguesTabs from './CataloguesTabs'
 
@@ -26,7 +27,7 @@ const Catalogues = () => {
       <Card>
         <CataloguesTabs onTabChange={handleTabChange}/>
         {activeTab == 1 ? <BrokerTable /> : ''}
-        {activeTab == 2 ? <div>Reinsurers</div> : ''}
+        {activeTab == 2 ? <ReinsurersTable /> : ''}
         {activeTab == 3 ? <div>Cedants</div> : ''}
         {activeTab == 4 ? <div>Retro cedants</div> : ''}
         {activeTab == 5 ? <div>Countries & Currencies</div> : ''}
