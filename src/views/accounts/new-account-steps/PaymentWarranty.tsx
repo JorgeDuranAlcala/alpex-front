@@ -76,11 +76,6 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
   const accountData = useAppSelector(state => state.accounts)
   const idAccount = accountData.formsData.form1.id
 
-  // const { account } = useFindAccountById(idAccount)
-  // const informations = account.informations[0]
-  // const security = account.securityTotal
-  // console.log({ idAccount, informations, security })
-
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setCount(event.target.value)
   }
