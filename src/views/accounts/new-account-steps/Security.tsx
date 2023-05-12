@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { forwardRef, useEffect, useRef, useState } from 'react'
 import UserThemeOptions from 'src/layouts/UserThemeOptions'
 import * as yup from 'yup'
 
@@ -13,16 +13,16 @@ import MenuItem from '@mui/material/MenuItem'
 import Select from '@mui/material/Select'
 import TextField from '@mui/material/TextField'
 
-// ** MOCKS IMPORT
-import companiesSelect from 'src/mocks/companies'
-
 // ** Icon Imports
+import { useGetAccountById } from '@/hooks/accounts/forms'
 import { useAddSecurities } from '@/hooks/accounts/security'
 import { useAddSecurityTotal } from '@/hooks/accounts/securityTotal'
+import { useGetAllByIdCedant } from '@/hooks/catalogs/cedant-contact'
 import { useGetAllReinsuranceCompanies } from '@/hooks/catalogs/reinsuranceCompany'
 import { useGetAllRetroCedants } from '@/hooks/catalogs/retroCedant'
 import { SecurityDto } from '@/services/accounts/dtos/security.dto'
 import { updateFormsData } from '@/store/apps/accounts'
+import { NumericFormat, NumericFormatProps } from 'react-number-format'
 import Icon from 'src/@core/components/icon'
 import { useAppDispatch, useAppSelector } from 'src/store'
 import { ButtonClose, HeaderTitleModal } from 'src/styles/Dashboard/ModalReinsurers/modalReinsurers'
@@ -102,53 +102,75 @@ yup.setLocale({
   }
 })
 
-const schema = yup.object().shape({
-  HasFrontingFee: yup.boolean(),
-  NetPremium: yup.number().required(),
-  SharePercent: yup.number().required(),
-  DynamicComissionPercent: yup.number().required(),
-  FrontingFee: yup.number().when('HasFrontingFee', {
-    is: true,
-    then: yup.number().required()
-  }),
-  ReinsuranceCompany: yup.string().test('is-valid', 'This field is required', value => value !== '-2'),
-  PremiumPerShare: yup.number().required(),
-  DynamicComission: yup.number().required(),
-  FrontingFeePercent: yup.number().when('HasFrontingFee', {
-    is: true,
-    then: yup.number().required('This field is required zxx')
-  }),
-  NetInsurancePremium: yup.number().required(),
-  RetroCedant: yup.string().when('HasFrontingFee', {
-    is: true,
-    then: yup.string().required()
-  }),
-  RetroCedantContact: yup.string().when('HasFrontingFee', {
-    is: true,
-    then: yup.string().notRequired()
-  }),
-  IsGross: yup.boolean(),
-  BrokerAge: yup.number().when('IsGross', {
-    is: true,
-    then: yup.number().required(),
-    otherwise: yup.number().notRequired()
-  }),
-  Taxes: yup.number().when('IsGross', {
-    is: true,
-    then: yup.number().required(),
-    otherwise: yup.number().notRequired()
-  }),
-  BrokerAgePercent: yup.number().when('IsGross', {
-    is: true,
-    then: yup.number().required(),
-    otherwise: yup.number().notRequired()
-  }),
-  TaxesPercent: yup.number().when('IsGross', {
-    is: true,
-    then: yup.number().required(),
-    otherwise: yup.number().notRequired()
-  })
-})
+const schema = yup.object().shape(
+  {
+    HasFrontingFee: yup.boolean(),
+    IsGross: yup.boolean(),
+    NetPremium: yup.number().required(),
+    SharePercent: yup.number().required(),
+    DynamicComissionPercent: yup.number().required(),
+    FrontingFee: yup.number().when('HasFrontingFee', {
+      is: true,
+      then: yup.number().required()
+    }),
+    ReinsuranceCompany: yup.string().test('is-valid', 'This field is required', value => value !== '-1'),
+    PremiumPerShare: yup.number().required(),
+    DynamicComission: yup.number().required(),
+    FrontingFeePercent: yup.number().when('HasFrontingFee', {
+      is: true,
+      then: yup.number().required('This field is required')
+    }),
+    NetInsurancePremium: yup
+      .number()
+      .required()
+      .test('Is positive?', 'ERROR: The number must be greater than 0!', value => {
+        const valueVal = value || 0
+
+        return +valueVal > 0
+      }),
+    RetroCedant: yup.string().when('HasFrontingFee', {
+      is: true,
+      then: yup.string().required()
+    }),
+    RetroCedantContact: yup.string().when('HasFrontingFee', {
+      is: true,
+      then: yup.string().notRequired()
+    }),
+    BrokerAge: yup
+      .number()
+      .transform((_, val) => (val === Number(val) ? val : null))
+      .nullable()
+      .when('IsGross', {
+        is: true,
+        then: yup.number().required()
+      }),
+    Taxes: yup
+      .number()
+      .transform((_, val) => (val === Number(val) ? val : null))
+      .nullable()
+      .when('IsGross', {
+        is: true,
+        then: yup.number().required()
+      }),
+    BrokerAgePercent: yup
+      .number()
+      .transform((_, val) => (val === Number(val) ? val : null))
+      .nullable()
+      .when('IsGross', {
+        is: true,
+        then: yup.number().required()
+      }),
+    TaxesPercent: yup
+      .number()
+      .transform((_, val) => (val === Number(val) ? val : null))
+      .nullable()
+      .when('IsGross', {
+        is: true,
+        then: yup.number().required()
+      })
+  },
+  [['IsGross', 'frontingFeeEnabled']]
+)
 
 interface FormSectionProps {
   index: number
@@ -163,9 +185,37 @@ interface FormInformation {
   netPremium: number
   grossPremium: number
 }
+interface CustomProps {
+  onChange: (event: { target: { name: string; value: string } }) => void
+  name: string
+  prefix: string
+}
+
+const NumericFormatCustom = forwardRef<NumericFormatProps, CustomProps>(function NumericFormatCustom(props, ref) {
+  const { onChange, prefix, ...other } = props
+
+  return (
+    <NumericFormat
+      {...other}
+      getInputRef={ref}
+      onValueChange={values => {
+        onChange({
+          target: {
+            name: props.name,
+            value: values.value
+          }
+        })
+      }}
+      thousandSeparator
+      valueIsNumericString
+      prefix={prefix ? prefix : '$'}
+    />
+  )
+})
 
 const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }: FormSectionProps) => {
   const [frontingFeeEnabled, setFrontingFeeEnabled] = useState(true)
+  const [companiesSelect, setCompaniesSelect] = useState<any[]>([])
   const [avaliableReinsurers, setAvaliableReinsurers] = useState<typeof companiesSelect>(companiesSelect)
   const [isGross, setIsGross] = useState<boolean>(false)
   const [labelNetPremium, setLabelNetPremium] = useState<string>('Net premium at %100')
@@ -175,12 +225,25 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
     grossPremium: 0
   })
 
+  useEffect(() => {
+    console.log({ formErrors }, { formData })
+  }, [formErrors])
+
   const { retroCedants } = useGetAllRetroCedants()
   const { reinsuranceCompany } = useGetAllReinsuranceCompanies()
+  const { findByIdCedant, contacts } = useGetAllByIdCedant()
 
   useEffect(() => {
-    console.log({ retroCedants }, { reinsuranceCompany })
-  }, [retroCedants, reinsuranceCompany])
+    const companies = reinsuranceCompany?.map(company => {
+      return {
+        id: company.id,
+        name: company.name,
+        isGross: company.special,
+        active: true
+      }
+    })
+    setCompaniesSelect(companies || [])
+  }, [reinsuranceCompany])
 
   const accountData = useAppSelector(state => state.accounts)
   const handleFormChange = (field: keyof FormInfo, value: FormInfo[keyof FormInfo]) => {
@@ -217,13 +280,16 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
 
   const handleIsNet = () => {
     setLabelNetPremium('Net premium at %100')
-    if (formInformation.frontingFee <= 0 || isGross) !frontingFeeEnabled && handleSwitch()
-    else frontingFeeEnabled && handleSwitch()
+    if (+formInformation.frontingFee <= 0) {
+      !frontingFeeEnabled && handleSwitch()
+    } else {
+      frontingFeeEnabled && handleSwitch()
+    }
   }
 
   const validateNumber = (value: string, allowZero = false) => {
-    const result = isNaN(+value) || +value <= 0 ? (+value === 0 && allowZero ? 0 : '') : Math.round(+value * 100) / 100
-    console.log(result)
+    const result =
+      isNaN(+value) || +value <= 0 ? (allowZero ? Math.round(+value * 100) / 100 : '') : Math.round(+value * 100) / 100
 
     return result.toString()
   }
@@ -251,6 +317,12 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
     } else {
       NetInsurancePremium = validateNumber((+premiumPerShare - +dynamicComission - +FrontingFee).toString(), true)
     }
+    const dataError = [...formErrors]
+
+    if (+NetInsurancePremium < 0) dataError[index]['NetInsurancePremium'] = 'ERROR: The number must be greater than 0!'
+    else dataError[index]['NetInsurancePremium'] = ''
+    setFormErrors(dataError)
+    setFormErrors(formErrors)
 
     switch (field) {
       case 'NetPremium':
@@ -356,6 +428,7 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
 
   useEffect(() => {
     setValues('RetroCedant')
+    findByIdCedant(+formData[index].RetroCedant)
     //eslint-disable-next-line
   }, [formData[index].RetroCedant])
 
@@ -367,7 +440,7 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
   useEffect(() => {
     calculateAvaliableReinsurers()
     //eslint-disable-next-line
-  }, [formData])
+  }, [formData, companiesSelect])
 
   useEffect(() => {
     const data = accountData.formsData.form1.placementStructure as FormInformation
@@ -419,6 +492,9 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
               autoFocus
               label={labelNetPremium}
               value={formData[index].NetPremium}
+              InputProps={{
+                inputComponent: NumericFormatCustom as any
+              }}
               onChange={e => handleFormChange('NetPremium', e.target.value)}
             />
             <FormHelperText sx={{ color: 'error.main' }}>{formErrors[index]?.NetPremium}</FormHelperText>
@@ -429,6 +505,12 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
               label='Share %'
               value={formData[index].SharePercent}
               onChange={e => handleFormChange('SharePercent', e.target.value)}
+              InputProps={{
+                inputComponent: NumericFormatCustom as any
+              }}
+              inputProps={{
+                prefix: '%'
+              }}
               onKeyUp={() => setValues('SharePercent')}
             />
 
@@ -440,6 +522,12 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
                 autoFocus
                 label='Reinsurance brokerage %'
                 value={formData[index].BrokerAgePercent}
+                InputProps={{
+                  inputComponent: NumericFormatCustom as any
+                }}
+                inputProps={{
+                  prefix: '%'
+                }}
                 onChange={e => handleFormChange('BrokerAgePercent', e.target.value)}
                 onKeyUp={() => setValues('BrokerAgePercent')}
               />
@@ -453,6 +541,12 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
               autoFocus
               label='Dynamic comission %'
               value={formData[index].DynamicComissionPercent}
+              InputProps={{
+                inputComponent: NumericFormatCustom as any
+              }}
+              inputProps={{
+                prefix: '%'
+              }}
               onChange={e => handleFormChange('DynamicComissionPercent', e.target.value)}
               onKeyUp={() => setValues('DynamicComissionPercent')}
             />
@@ -464,6 +558,12 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
               <TextField
                 autoFocus
                 label='Taxes %'
+                InputProps={{
+                  inputComponent: NumericFormatCustom as any
+                }}
+                inputProps={{
+                  prefix: '%'
+                }}
                 value={formData[index].TaxesPercent}
                 onChange={e => handleFormChange('TaxesPercent', e.target.value)}
                 onKeyUp={() => setValues('TaxesPercent')}
@@ -479,6 +579,12 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
                 autoFocus
                 label='Fronting fee %'
                 value={formData[index].FrontingFeePercent}
+                InputProps={{
+                  inputComponent: NumericFormatCustom as any
+                }}
+                inputProps={{
+                  prefix: '%'
+                }}
                 onChange={e => handleFormChange('FrontingFeePercent', e.target.value)}
                 onKeyUp={() => setValues('FrontingFeePercent')}
               />
@@ -513,6 +619,9 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
               autoFocus
               label='Premium per share'
               value={formData[index].PremiumPerShare}
+              InputProps={{
+                inputComponent: NumericFormatCustom as any
+              }}
               onChange={e => handleFormChange('PremiumPerShare', e.target.value)}
             />
 
@@ -525,6 +634,9 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
                 autoFocus
                 label='Reinsurance brokerage'
                 value={formData[index].BrokerAge}
+                InputProps={{
+                  inputComponent: NumericFormatCustom as any
+                }}
                 onChange={e => handleFormChange('BrokerAge', e.target.value)}
               />
 
@@ -537,6 +649,9 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
               autoFocus
               label='Dynamic comission'
               value={formData[index].DynamicComission}
+              InputProps={{
+                inputComponent: NumericFormatCustom as any
+              }}
               onChange={e => handleFormChange('DynamicComission', e.target.value)}
             />
 
@@ -548,6 +663,9 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
                 autoFocus
                 label='Taxes'
                 value={formData[index].Taxes}
+                InputProps={{
+                  inputComponent: NumericFormatCustom as any
+                }}
                 onChange={e => handleFormChange('Taxes', e.target.value)}
               />
 
@@ -560,6 +678,9 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
                 autoFocus
                 label='Fronting fee'
                 value={formData[index].FrontingFee}
+                InputProps={{
+                  inputComponent: NumericFormatCustom as any
+                }}
                 onChange={e => handleFormChange('FrontingFee', e.target.value)}
               />
 
@@ -574,6 +695,9 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
               fullWidth
               label='Net reinsurance premium'
               value={formData[index].NetInsurancePremium}
+              InputProps={{
+                inputComponent: NumericFormatCustom as any
+              }}
               onChange={e => handleFormChange('NetInsurancePremium', e.target.value)}
             />
 
@@ -593,9 +717,11 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
                 labelId='broker'
               >
                 <MenuItem value=''>Select Retro cedant</MenuItem>
-                <MenuItem value='br1'>Retro cedant 1</MenuItem>
-                <MenuItem value='br2'>Retro cedant 2</MenuItem>
-                <MenuItem value='br3'>Retro cedant 3</MenuItem>
+                {retroCedants?.map(cedant => (
+                  <MenuItem key={cedant.name} value={cedant.id}>
+                    {cedant.name}
+                  </MenuItem>
+                ))}
               </Select>
               <FormHelperText sx={{ color: 'error.main' }}>{formErrors[index]?.RetroCedant}</FormHelperText>
             </FormControl>
@@ -612,9 +738,11 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
                 disabled={formData[index].RetroCedant === ''}
               >
                 <MenuItem value=''>Select Retro Cedant contact</MenuItem>
-                <MenuItem value='1'>Contact 1</MenuItem>
-                <MenuItem value='2'>Contact 2</MenuItem>
-                <MenuItem value='3'>Contact 3</MenuItem>
+                {contacts?.map(contact => (
+                  <MenuItem key={contact.name} value={contact.id}>
+                    {contact.name}
+                  </MenuItem>
+                ))}
               </Select>
               <FormHelperText
                 onClick={() => console.log(formData[index].RetroCedantContact)}
@@ -633,6 +761,9 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
                   label='Contact email'
                   size='small'
                   value={formData[index].ContactEmail}
+                  InputProps={{
+                    inputComponent: NumericFormatCustom as any
+                  }}
                   onChange={e => handleFormChange('ContactEmail', e.target.value)}
                 />
 
@@ -646,6 +777,9 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
                   size='small'
                   label='Contact phone'
                   value={formData[index].ContactPhone}
+                  InputProps={{
+                    inputComponent: NumericFormatCustom as any
+                  }}
                   onChange={e => handleFormChange('ContactPhone', e.target.value)}
                 />
 
@@ -658,6 +792,9 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
                   size='small'
                   label='Contact country'
                   value={formData[index].ContactCountry}
+                  InputProps={{
+                    inputComponent: NumericFormatCustom as any
+                  }}
                   onChange={e => handleFormChange('ContactCountry', e.target.value)}
                 />
 
@@ -694,6 +831,12 @@ const Security = ({ onStepChange }: SecurityProps) => {
   const accountData = useAppSelector(state => state.accounts)
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
 
+  const { account } = useGetAccountById(62)
+
+  useEffect(() => {
+    console.log(account)
+  }, [account])
+
   const inter = userThemeConfig.typography?.fontFamilyInter
 
   const addNewForm = () => {
@@ -720,7 +863,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
   const validate = async () => {
     formData.forEach((form, index) => {
       const data = [...formErrors]
-      data[index] = { ...SecurityForm }
+      data[index] = { ...SecurityForm, ReinsuranceCompany: '' }
       schema
         .validate(form, { abortEarly: false })
         .then(function () {
@@ -731,8 +874,6 @@ const Security = ({ onStepChange }: SecurityProps) => {
 
           err?.inner?.forEach((e: any) => {
             data[index][e.path] = e.message
-            console.log(e.path, e.message)
-            console.log(formData)
 
             setFormErrors(data)
           })
@@ -761,7 +902,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
     })
   }
 
-  const saveInformation = () => {
+  const saveInformation = async () => {
     const forms: Partial<SecurityDto>[] = formData.map(form => {
       return {
         netPremiumat100: +form.NetPremium || 0,
@@ -783,14 +924,14 @@ const Security = ({ onStepChange }: SecurityProps) => {
         difference: +allFormData.Diference
       }
     })
-    const saveTotal = saveSecurityTotal({
+    const saveTotal = await saveSecurityTotal({
       receivedNetPremium: +allFormData.RecievedNetPremium,
       distributedNetPremium: +allFormData.DistribuitedNetPremium,
       difference: +allFormData.Diference,
       idAccount: +accountData.formsData.form1.id
     })
 
-    const saveAll = saveSecurities(forms)
+    const saveAll = await saveSecurities(forms)
 
     console.log(saveTotal, saveAll)
   }
