@@ -64,7 +64,7 @@ const AuthProvider = ({ children }: Props) => {
               username: resUser.name,
               password: resUser.password
             }
-            console.log(newUserData)
+
             setUser({ ...newUserData })
           })
           .catch(() => {
