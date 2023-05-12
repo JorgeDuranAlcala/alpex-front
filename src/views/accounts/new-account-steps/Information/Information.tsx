@@ -48,8 +48,8 @@ const Information: React.FC<InformationProps> = ({ onStepChange }) => {
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
   const inter = userThemeConfig.typography?.fontFamilyInter
   const [makeValidations, setMakeValidations] = useState(false)
-  const [disableSaveBtn, setDisableSaveBtn] = useState(true)
-  const [disableNextBtn, setDisableNextBtn] = useState(false)
+  const [disableSaveBtn, setDisableSaveBtn] = useState(false)
+  const [disableNextBtn, setDisableNextBtn] = useState(true)
   const [basicIncfoValidated, setBasicIncfoValidated] = useState(false)
   const [placementStructureValidated, setPlacementStructureValidated] = useState(false)
   const [open, setOpen] = useState<boolean>(false)
@@ -135,13 +135,15 @@ const Information: React.FC<InformationProps> = ({ onStepChange }) => {
       step: 1
     })
 
-    dispatch(updateFormsData({ form1: { basicInfo, placementStructure, userFile, id: res.account.id } }))
+    return res
   }
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     setDisableNextBtn(false)
-    dispatch(updateFormsData({ form1: { basicInfo, placementStructure, userFile } }))
-    saveInformation()
+    const res = await saveInformation()
+    if (res) {
+      dispatch(updateFormsData({ form1: { basicInfo, placementStructure, userFile, id: res.account.id } }))
+    }
   }
 
   const handleCloseModal = () => {
@@ -150,16 +152,15 @@ const Information: React.FC<InformationProps> = ({ onStepChange }) => {
 
   const onNextStep = () => {
     setDisableNextBtn(false)
-    dispatch(updateFormsData({ form1: { basicInfo, placementStructure, userFile } }))
     if (onStepChange) {
       saveInformation()
-
       onStepChange(2)
     }
   }
-  const handleNext = () => {
-    setMakeValidations(true)
+  const handleNext = async () => {
+    await setMakeValidations(true)
     setNextClicked(true)
+    handleNextStep()
   }
 
   const resetMakeValidations = () => {
@@ -184,13 +185,13 @@ const Information: React.FC<InformationProps> = ({ onStepChange }) => {
     setDisableSaveBtn(!isplacementStructureValid)
   }, [placementStructure])
 
-  useEffect(() => {
+  const handleNextStep = () => {
     if (nextClicked) {
       if (basicIncfoValidated && placementStructureValidated) {
         setOpen(true)
       }
     }
-  }, [basicIncfoValidated, placementStructureValidated, nextClicked])
+  }
 
   return (
     <>
@@ -251,7 +252,11 @@ const Information: React.FC<InformationProps> = ({ onStepChange }) => {
               >
                 <HeaderTitleModal>
                   <div className='next-modal-title'>Ready to continue?</div>
-                  <ButtonClose onClick={handleCloseModal}>
+                  <ButtonClose
+                    onClick={() => {
+                      setOpen(false)
+                    }}
+                  >
                     <CloseIcon />
                   </ButtonClose>
                 </HeaderTitleModal>

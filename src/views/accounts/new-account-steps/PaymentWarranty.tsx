@@ -132,6 +132,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
       })
       setBtnNext(true)
     }
+    //eslint-disable-next-line react-hooks/exhaustive-deps
   }, [count])
 
   return (
