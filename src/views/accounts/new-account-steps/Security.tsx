@@ -225,10 +225,6 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
     grossPremium: 0
   })
 
-  useEffect(() => {
-    console.log({ formErrors }, { formData })
-  }, [formErrors])
-
   const { retroCedants } = useGetAllRetroCedants()
   const { reinsuranceCompany } = useGetAllReinsuranceCompanies()
   const { findByIdCedant, contacts } = useGetAllByIdCedant()
