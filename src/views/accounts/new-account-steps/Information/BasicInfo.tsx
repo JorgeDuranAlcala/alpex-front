@@ -1,4 +1,5 @@
-import React, { ForwardedRef, ReactNode, forwardRef, useEffect, useState } from 'react'
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import React, { ForwardedRef, ReactNode, forwardRef, useEffect, useState } from 'react' //ReactNode
 
 // ** MUI Imports
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
@@ -11,9 +12,13 @@ import {
   InputAdornment,
   InputLabel,
   MenuItem,
-  Modal, SxProps, TextField, Theme, Typography
+  Modal,
+  SxProps,
+  TextField,
+  Theme,
+  Typography
 } from '@mui/material'
-import Select, { SelectChangeEvent } from '@mui/material/Select'
+import Select, { SelectChangeEvent } from '@mui/material/Select' //SelectChangeEvent
 import { ButtonClose, HeaderTitleModal } from 'src/styles/modal/modal.styled'
 
 //hooks para base info y  modal contac
@@ -220,7 +225,6 @@ const ModalContact = ({ id }: IModal) => {
     setContactData({ ...contactData, [field]: value })
   }
 
-
   const handleCreateContact = () => {
     console.log('createContact')
   }
@@ -313,9 +317,9 @@ const ModalContact = ({ id }: IModal) => {
 
 import { ROLES } from '@/configs/api'
 import { useGetAll as useBrokerGetAll } from 'src/hooks/catalogs/broker'
-import { useGetAllByIdBroker } from 'src/hooks/catalogs/broker-contact'
+import { useGetAllByIdBroker } from 'src/hooks/catalogs/broker-contact/'
 import { useGetAll as useCedantGetAll } from 'src/hooks/catalogs/cedant'
-import { useGetAllByIdCedant } from 'src/hooks/catalogs/cedant-contact'
+import { useGetAllByCedant } from 'src/hooks/catalogs/cedant-contact'
 import { useGetAllLineOfBussines } from 'src/hooks/catalogs/lineOfBussines'
 import { useGetAllRiskActivities } from 'src/hooks/catalogs/riskActivity'
 import { useGetByIdRole } from 'src/hooks/catalogs/users/'
@@ -331,8 +335,8 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
   const { countries } = useCountyGetAll()
   const { brokers } = useBrokerGetAll()
   const { cedant } = useCedantGetAll()
-  const { contacts: brokerContacts, findByIdBroker } = useGetAllByIdBroker()
-  const { contacts: cedantContacts, findByIdCedant } = useGetAllByIdCedant()
+  const { brokerContacts, setIdBroker } = useGetAllByIdBroker()
+  const { contacts: cedantContacts, setIdCedant } = useGetAllByCedant()
   const { riskActivities } = useGetAllRiskActivities()
   const { lineOfBussines } = useGetAllLineOfBussines()
   const { users: underwriters } = useGetByIdRole(ROLES.UNDERWRITER)
@@ -376,12 +380,12 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
     if (name === 'broker') {
       //reset del  valor del contact
       basicInfoTem.brokerContact = ''
-      findByIdBroker(Number(value))
+      setIdBroker(Number(value))
     }
     if (name === 'cedant') {
       //reset del  valor del contact
       basicInfoTem.cedantContact = ''
-      findByIdCedant(Number(value))
+      setIdCedant(Number(value))
     }
 
     if (name === 'industryCode') {
@@ -481,13 +485,14 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               onChange={handleSelectChange}
               labelId='invoice-country'
             >
-              {countries?.map(country => {
-                return (
-                  <MenuItem key={country.id} value={country.id}>
-                    {country.name}
-                  </MenuItem>
-                )
-              })}
+              {countries.length > 0 &&
+                countries.map(country => {
+                  return (
+                    <MenuItem key={country.id} value={country.id}>
+                      {country.name}
+                    </MenuItem>
+                  )
+                })}
             </Select>
 
             {errors.countryError && (
@@ -510,13 +515,14 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               onChange={handleSelectChange}
               labelId='broker'
             >
-              {brokers?.map(broker => {
-                return (
-                  <MenuItem key={broker.id} value={broker.id}>
-                    {broker.name}
-                  </MenuItem>
-                )
-              })}
+              {brokers.length > 0 &&
+                brokers.map(broker => {
+                  return (
+                    <MenuItem key={broker.id} value={broker.id}>
+                      {broker.name}
+                    </MenuItem>
+                  )
+                })}
             </Select>
             {errors.brokerError && (
               <FormHelperText sx={{ color: 'error.main' }} id='broker-error'>
@@ -534,13 +540,14 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               onChange={handleSelectChange}
               labelId='broker-contact'
             >
-              {brokerContacts?.map(contact => {
-                return (
-                  <MenuItem key={contact.id} value={contact.id}>
-                    {contact.name}
-                  </MenuItem>
-                )
-              })}
+              {brokerContacts.length > 0 &&
+                brokerContacts.map(contact => {
+                  return (
+                    <MenuItem key={contact.id} value={contact.id}>
+                      {contact.name}
+                    </MenuItem>
+                  )
+                })}
             </Select>
           </FormControl>
           <ModalContact id='modal-broker' />
@@ -557,13 +564,14 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               onChange={handleSelectChange}
               labelId='cedant'
             >
-              {cedant?.map(cedant => {
-                return (
-                  <MenuItem key={cedant.id} value={cedant.id}>
-                    {cedant.name}
-                  </MenuItem>
-                )
-              })}
+              {cedant.length > 0 &&
+                cedant.map(cedant => {
+                  return (
+                    <MenuItem key={cedant.id} value={cedant.id}>
+                      {cedant.name}
+                    </MenuItem>
+                  )
+                })}
             </Select>
 
             {errors.cedantError && (
@@ -582,13 +590,14 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               onChange={handleSelectChange}
               labelId='cedant-contact'
             >
-              {cedantContacts?.map(contact => {
-                return (
-                  <MenuItem key={contact.id} value={contact.id}>
-                    {contact.name}
-                  </MenuItem>
-                )
-              })}
+              {cedantContacts.length > 0 &&
+                cedantContacts.map(contact => {
+                  return (
+                    <MenuItem key={contact.id} value={contact.id}>
+                      {contact.name}
+                    </MenuItem>
+                  )
+                })}
             </Select>
           </FormControl>
           <ModalContact id='modal-broker' />
@@ -605,13 +614,14 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               onChange={handleSelectChange}
               labelId='business'
             >
-              {lineOfBussines?.map(lineOfBussine => {
-                return (
-                  <MenuItem key={lineOfBussine.id} value={lineOfBussine.id}>
-                    {lineOfBussine.lineOfBussines}
-                  </MenuItem>
-                )
-              })}
+              {lineOfBussines.length > 0 &&
+                lineOfBussines.map(lineOfBussine => {
+                  return (
+                    <MenuItem key={lineOfBussine.id} value={lineOfBussine.id}>
+                      {lineOfBussine.lineOfBussines}
+                    </MenuItem>
+                  )
+                })}
             </Select>
             {errors.lineOfBusinessError && (
               <FormHelperText sx={{ color: 'error.main' }} id='industryCode-error'>
@@ -628,13 +638,14 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               onChange={handleSelectChange}
               labelId='industryCode'
             >
-              {riskActivities?.map(riskActivities => {
-                return (
-                  <MenuItem key={riskActivities.id} value={riskActivities.id}>
-                    {riskActivities.industryCode} / {riskActivities.riskActivity}
-                  </MenuItem>
-                )
-              })}
+              {riskActivities.length > 0 &&
+                riskActivities.map(riskActivities => {
+                  return (
+                    <MenuItem key={riskActivities.id} value={riskActivities.id}>
+                      {riskActivities.industryCode} / {riskActivities.riskActivity}
+                    </MenuItem>
+                  )
+                })}
             </Select>
             {errors.industryCodeError && (
               <FormHelperText sx={{ color: 'error.main' }} id='business-error'>
@@ -760,13 +771,14 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               onChange={handleSelectChange}
               labelId='underwriter'
             >
-              {underwriters.map(underwriter => {
-                return (
-                  <MenuItem key={underwriter.id} value={underwriter.id}>
-                    {underwriter.name}
-                  </MenuItem>
-                )
-              })}
+              {underwriters.length > 0 &&
+                underwriters.map(underwriter => {
+                  return (
+                    <MenuItem key={underwriter.id} value={underwriter.id}>
+                      {underwriter.name}
+                    </MenuItem>
+                  )
+                })}
             </Select>
             {errors.underwriterError && (
               <FormHelperText sx={{ color: 'error.main' }} id='expirationDate-error'>
@@ -784,13 +796,14 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               onChange={handleSelectChange}
               labelId='lead-underwriter'
             >
-              {leadUnderwriters.map(leadUnderwriter => {
-                return (
-                  <MenuItem key={leadUnderwriter.id} value={leadUnderwriter.id}>
-                    {leadUnderwriter.name}
-                  </MenuItem>
-                )
-              })}
+              {leadUnderwriters.length > 0 &&
+                leadUnderwriters.map(leadUnderwriter => {
+                  return (
+                    <MenuItem key={leadUnderwriter.id} value={leadUnderwriter.id}>
+                      {leadUnderwriter.name}
+                    </MenuItem>
+                  )
+                })}
             </Select>
             {errors.leadUnderwriterError && (
               <FormHelperText sx={{ color: 'error.main' }} id='expirationDate-error'>
@@ -809,13 +822,14 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               onChange={handleSelectChange}
               labelId='assistant'
             >
-              {technicalAssistants.map(technicalAssistant => {
-                return (
-                  <MenuItem key={technicalAssistant.id} value={technicalAssistant.id}>
-                    {technicalAssistant.name}
-                  </MenuItem>
-                )
-              })}
+              {technicalAssistants.length > 0 &&
+                technicalAssistants.map(technicalAssistant => {
+                  return (
+                    <MenuItem key={technicalAssistant.id} value={technicalAssistant.id}>
+                      {technicalAssistant.name}
+                    </MenuItem>
+                  )
+                })}
             </Select>
             {errors.technicalAssistantError && (
               <FormHelperText sx={{ color: 'error.main' }} id='expirationDate-error'>

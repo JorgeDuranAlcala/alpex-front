@@ -1,1 +1,1 @@
-export * from './useGetAllByCedant'
+export { default as useGetAllByCedant } from './useGetAllByCedant'
