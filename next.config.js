@@ -14,6 +14,10 @@ const withTM = require('next-transpile-modules')([
 
 module.exports = withTM({
   trailingSlash: true,
+  publicRuntimeConfig: {
+    // Will be available on both server and client
+    staticFolder: '/public'
+  },
   reactStrictMode: false,
   experimental: {
     esmExternals: false

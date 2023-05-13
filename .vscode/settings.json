@@ -19,7 +19,7 @@
   // Extension: ESLint
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true,
-    "source.organizeImports": false,
+    "source.organizeImports": true,
   },
   "eslint.validate": [
     "javascript",
@@ -33,6 +33,7 @@
   "npm.packageManager": "yarn",
   // Extension: cSpell
   "cSpell.words": [
+    "cedant",
     "Customizer"
   ],
   "search-node-modules.path": "node_modules",

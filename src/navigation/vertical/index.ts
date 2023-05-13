@@ -3,7 +3,153 @@ import { VerticalNavItemsType } from 'src/@core/layouts/types'
 
 const navigation = (): VerticalNavItemsType => {
   return [
+    /*********************************************** News Items ReDesign *****************************************************/
     {
+      title: 'Dashboard',
+      icon: 'ic:baseline-dashboard',
+      path: '/dashboards/crm'
+    },
+    {
+      title: 'Accounts',
+      icon: 'ic:baseline-business-center',
+      externalLink: true,
+      path: '/accounts',
+      children: [
+        {
+          title: 'All',
+          icon: 'ion:file-tray-stacked',
+          path: '/accounts'
+        },
+        {
+          title: 'Pending',
+          icon: 'mdi:clock',
+          path: '/accounts/pending'
+        },
+        {
+          title: 'Not Materialized',
+          icon: 'mdi:progress-helper',
+          path: '/accounts/not-materialized'
+        },
+        {
+          title: 'Not Taken Up',
+          icon: 'custom:not-taken-up',
+          path: '/accounts/not-taken-up'
+        },
+        {
+          title: 'Declined',
+          icon: 'mdi:cancel',
+          path: '/accounts/declined'
+        },
+        {
+          title: 'Bound',
+          icon: 'icon-park-outline:link-three',
+          path: '/accounts/bound'
+        }
+      ]
+    },
+    {
+      title: 'Payments',
+      icon: 'ic:baseline-payments',
+      children: [
+        {
+          title: 'List',
+          path: '/accounts/new-account'
+        },
+
+        {
+          title: 'Preview'
+        },
+        {
+          title: 'Edit'
+        },
+        {
+          title: 'Add'
+        }
+      ]
+    },
+    {
+      title: 'Renewals',
+      icon: 'ic:baseline-autorenew',
+      children: [
+        {
+          title: 'List'
+
+          // path: '/apps/invoice/list'
+        },
+        {
+          title: 'Preview'
+        },
+        {
+          title: 'Edit'
+        },
+        {
+          title: 'Add'
+        }
+      ]
+    },
+    {
+      title: 'Claims',
+      icon: 'ic:baseline-content-paste',
+      children: [
+        {
+          title: 'List'
+
+          // path: '/apps/invoice/list'
+        },
+        {
+          title: 'Preview'
+        },
+        {
+          title: 'Edit'
+        },
+        {
+          title: 'Add'
+        }
+      ]
+    },
+    {
+      title: 'Users',
+      icon: 'mdi:user-group',
+      path: '/users'
+    },
+    {
+      title: 'Catalogues',
+      icon: 'ic:sharp-menu-book',
+      children: [
+        {
+          title: 'Dynamic',
+          path: '/catalogues/dynamic'
+
+          // path: '/apps/invoice/list'
+        },
+        {
+          title: 'Claims/claims'
+        }
+      ]
+    },
+    {
+      title: 'Configuration',
+      icon: 'mdi:settings-outline',
+      children: [
+        {
+          title: 'List'
+
+          // path: '/apps/invoice/list'
+        },
+        {
+          title: 'Preview'
+        },
+        {
+          title: 'Edit'
+        },
+        {
+          title: 'Add'
+        }
+      ]
+    }
+
+    /***********************************************************************************************************************/
+    /*{
       title: 'Dashboards',
       icon: 'mdi:home-outline',
       badgeContent: 'new',
@@ -350,7 +496,7 @@ const navigation = (): VerticalNavItemsType => {
       icon: 'mdi:google-circles-extended'
     },
     {
-      
+
       title: 'Cards',
       icon: 'mdi:credit-card-outline',
       children: [
@@ -618,7 +764,7 @@ const navigation = (): VerticalNavItemsType => {
           path: 'https://pixinvent.com/demo/materialize-mui-react-nextjs-admin-template/documentation'
         }
       ]
-    }
+    }*/
   ]
 }
 

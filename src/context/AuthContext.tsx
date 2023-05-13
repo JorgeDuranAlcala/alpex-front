@@ -1,5 +1,5 @@
 // ** React Imports
-import { createContext, useEffect, useState, ReactNode } from 'react'
+import { ReactNode, createContext, useEffect, useState } from 'react'
 
 // ** Next Import
 import { useRouter } from 'next/router'
@@ -7,11 +7,15 @@ import { useRouter } from 'next/router'
 // ** Axios
 import axios from 'axios'
 
+// ** JWT import
+import jwt from 'jsonwebtoken'
+
 // ** Config
 import authConfig from 'src/configs/auth'
 
 // ** Types
-import { AuthValuesType, RegisterParams, LoginParams, ErrCallbackType, UserDataType } from './types'
+import AuthServices from 'src/services/auth/auth.service'
+import { AuthValuesType, ErrCallbackType, LoginParams, RegisterParams, UserDataType } from './types'
 
 // ** Defaults
 const defaultProvider: AuthValuesType = {
@@ -38,20 +42,30 @@ const AuthProvider = ({ children }: Props) => {
   // ** Hooks
   const router = useRouter()
 
+  const authServices = new AuthServices()
+
   useEffect(() => {
     const initAuth = async (): Promise<void> => {
       const storedToken = window.localStorage.getItem(authConfig.storageTokenKeyName)!
+
       if (storedToken) {
         setLoading(true)
-        await axios
-          .get(authConfig.meEndpoint, {
-            headers: {
-              Authorization: storedToken
-            }
-          })
+        authServices
+          .authMe(storedToken)
           .then(async response => {
             setLoading(false)
-            setUser({ ...response.data.userData })
+            const resUser = response.data.userData
+
+            const newUserData = {
+              email: resUser.email,
+              fullName: resUser.name,
+              id: resUser.id,
+              role: resUser.roles[0].role,
+              username: resUser.name,
+              password: resUser.password
+            }
+
+            setUser({ ...newUserData })
           })
           .catch(() => {
             localStorage.removeItem('userData')
@@ -63,6 +77,27 @@ const AuthProvider = ({ children }: Props) => {
               router.replace('/login')
             }
           })
+
+        // await axios
+        //   .get(authConfig.meEndpoint, {
+        //     headers: {
+        //       Authorization: storedToken
+        //     }
+        //   })
+        //   .then(async response => {
+        //     setLoading(false)
+        //     setUser({ ...response.data.userData })
+        //   })
+        //   .catch(() => {
+        //     localStorage.removeItem('userData')
+        //     localStorage.removeItem('refreshToken')
+        //     localStorage.removeItem('accessToken')
+        //     setUser(null)
+        //     setLoading(false)
+        //     if (authConfig.onTokenExpiration === 'logout' && !router.pathname.includes('login')) {
+        //       router.replace('/login')
+        //     }
+        //   })
       } else {
         setLoading(false)
       }
@@ -73,25 +108,72 @@ const AuthProvider = ({ children }: Props) => {
   }, [])
 
   const handleLogin = (params: LoginParams, errorCallback?: ErrCallbackType) => {
-    axios
-      .post(authConfig.loginEndpoint, params)
+    const authServices = new AuthServices()
+
+    authServices
+      .login(params)
       .then(async response => {
-        params.rememberMe
-          ? window.localStorage.setItem(authConfig.storageTokenKeyName, response.data.accessToken)
-          : null
-        const returnUrl = router.query.returnUrl
+        if (!response.data.success) {
+          if (errorCallback) errorCallback(response.data.message)
+        } else {
+          window.localStorage.setItem(authConfig.storageTokenKeyName, response.data.token)
 
-        setUser({ ...response.data.userData })
-        params.rememberMe ? window.localStorage.setItem('userData', JSON.stringify(response.data.userData)) : null
+          if (params.rememberMe) {
+            window.localStorage.setItem('loginEmail', params.email)
+          } else {
+            window.localStorage.removeItem('loginEmail')
+          }
 
-        const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/'
+          const returnUrl = router.query.returnUrl
 
-        router.replace(redirectURL as string)
+          const tokenDecoded = jwt.decode(response.data.token, { complete: true })
+
+          // @ts-ignore
+          const { email, name, id, roles } = tokenDecoded.payload
+
+          const newUserData = {
+            email: email,
+            fullName: name,
+            id: id,
+            role: roles[0].role,
+            username: name,
+            password: params.password
+          }
+
+          setUser({ ...newUserData })
+
+          window.localStorage.setItem('userData', JSON.stringify(newUserData))
+
+          const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/'
+
+          router.replace(redirectURL as string)
+        }
       })
 
       .catch(err => {
         if (errorCallback) errorCallback(err)
       })
+
+    // axios
+    //   .post(authConfig.loginEndpoint, params)
+    //   .then(async response => {
+    //     params.rememberMe
+    //       ? window.localStorage.setItem(authConfig.storageTokenKeyName, response.data.accessToken)
+    //       : null
+    //     const returnUrl = router.query.returnUrl
+
+    //     setUser({ ...response.data.userData })
+    //     params.rememberMe ? window.localStorage.setItem('userData', JSON.stringify(response.data.userData)) : null
+
+    //     const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/'
+
+    //     router.replace(redirectURL as string)
+    //   })
+
+    //   .catch(err => {
+    //     if (errorCallback) errorCallback(err)
+    //     console.log(err)
+    //   })
   }
 
   const handleLogout = () => {
