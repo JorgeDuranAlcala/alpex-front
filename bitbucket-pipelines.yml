@@ -42,7 +42,7 @@ pipelines:
     master:
       - step:
           name: Build and Deploy Develop
-          deployment: develop
+          deployment: production
           #   clone:
           #      enabled: false
           script:
