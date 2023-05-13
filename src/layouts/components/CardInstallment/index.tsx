@@ -12,8 +12,9 @@ import { ContainerCard, ContainerCardInputs } from '../../../styles/Forms/Paymen
 import { InstallmentDto } from 'src/services/accounts/dtos/installments.dto'
 
 interface GlobalInfo {
-  dynamic: number
-  inceptionDate: Date
+  receivedNetPremium: number
+  inceptionDate: Date | null
+  idAccount: number
 }
 interface ICardInstallment {
   index: number
@@ -55,26 +56,26 @@ const CardInstallment = ({ index, installment, onChangeList, globalInfo }: ICard
     balanceDue: installment.balanceDue,
     premiumPaymentWarranty: installment.premiumPaymentWarranty,
     settlementDueDate: installment.settlementDueDate,
-    idAccount: 1,
+    idAccount: globalInfo.idAccount,
     id: 0
   })
 
-  const { dynamic, inceptionDate } = globalInfo
+  const { receivedNetPremium, inceptionDate } = globalInfo
 
   const handleNumericInputChange = (value: any, e: any) => {
     const { name } = e.event.target
 
     const formDataTemp = { ...formData }
 
-    if (name === 'premiumPaymentWarranty') {
+    if (name === 'premiumPaymentWarranty' && inceptionDate) {
       formDataTemp.premiumPaymentWarranty = value
       const days = formDataTemp.premiumPaymentWarranty * 24 * 60 * 60 * 1000
       formDataTemp.settlementDueDate = new Date(inceptionDate.getTime() + days)
     }
 
-    if (name === 'paymentPercentage') {
+    if (name === 'paymentPercentage' && receivedNetPremium) {
       formDataTemp.paymentPercentage = value
-      formDataTemp.balanceDue = dynamic * (formDataTemp.paymentPercentage / 100)
+      formDataTemp.balanceDue = receivedNetPremium * (formDataTemp.paymentPercentage / 100)
     }
 
     setFormData({ ...formDataTemp, [name]: value })
