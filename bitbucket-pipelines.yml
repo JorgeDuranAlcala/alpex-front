@@ -42,13 +42,16 @@ pipelines:
     master:
       - step:
           name: Build and Deploy Develop
-          deployment: production
+          deployment: develop
           #   clone:
           #      enabled: false
           script:
             - apt-get update
+            - printenv > .env
+            - npm install
+            - npm run build
             - apt-get install -y zip
-            - zip -r application.zip build scripts
+            - zip -r application.zip build scripts appspec.yml
             - pipe: atlassian/aws-code-deploy:0.2.10
               variables:
                 AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
