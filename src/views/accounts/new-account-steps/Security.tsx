@@ -17,7 +17,7 @@ import TextField from '@mui/material/TextField'
 import { useGetAccountById } from '@/hooks/accounts/forms'
 import { useAddSecurities } from '@/hooks/accounts/security'
 import { useAddSecurityTotal } from '@/hooks/accounts/securityTotal'
-import { useGetAllByIdCedant } from '@/hooks/catalogs/cedant-contact'
+import { useGetAllByCedant } from '@/hooks/catalogs/cedant-contact'
 import { useGetAllReinsuranceCompanies } from '@/hooks/catalogs/reinsuranceCompany'
 import { useGetAllRetroCedants } from '@/hooks/catalogs/retroCedant'
 import { SecurityDto } from '@/services/accounts/dtos/security.dto'
@@ -252,7 +252,7 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
 
   const { retroCedants } = useGetAllRetroCedants()
   const { reinsuranceCompany } = useGetAllReinsuranceCompanies()
-  const { findByIdCedant, contacts } = useGetAllByIdCedant()
+  const { setIdCedant, contacts } = useGetAllByCedant()
 
   useEffect(() => {
     const companies = reinsuranceCompany?.map(company => {
@@ -449,7 +449,7 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
 
   useEffect(() => {
     setValues('RetroCedant')
-    findByIdCedant(+formData[index].RetroCedant)
+    setIdCedant(+formData[index].RetroCedant)
     //eslint-disable-next-line
   }, [formData[index].RetroCedant])
 

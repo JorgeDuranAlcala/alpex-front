@@ -1,19 +1,21 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import BrokerContactService from 'src/services/catalogs/broker-contact.service'
 import { BrokerContactDto } from 'src/services/catalogs/dtos/broker-contact.dto'
 
-export const useGetAllByIdBroker = () => {
-  const [contacts, setContacts] = useState<BrokerContactDto[]>()
-
-  const findByIdBroker = async (idBroker: number): Promise<BrokerContactDto[]> => {
-    const contacts = await BrokerContactService.findByIdBroker(idBroker)
-    setContacts(contacts)
-
-    return contacts
+const useGetAllByIdBroker = () => {
+  const [brokerContacts, setBrokerContacts] = useState<BrokerContactDto[]>([])
+  const [idBroker, setIdBroker] = useState<null | number>(null)
+  const findByIdBroker = (idBroker: number) => {
+    BrokerContactService.findByIdBroker(idBroker).then(setBrokerContacts)
   }
+  useEffect(() => {
+    console.log(idBroker)
+    idBroker && findByIdBroker(idBroker)
+  }, [idBroker])
 
   return {
-    contacts,
-    findByIdBroker
+    brokerContacts,
+    setIdBroker
   }
 }
+export default useGetAllByIdBroker

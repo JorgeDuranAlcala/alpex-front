@@ -6,6 +6,7 @@ import Grid from '@mui/material/Grid'
 
 // ** Custom Components Imports
 import Information from 'src/views/accounts/new-account-steps/Information/Information'
+
 import PaymentWarranty from 'src/views/accounts/new-account-steps/PaymentWarranty'
 import Security from 'src/views/accounts/new-account-steps/Security'
 import ActionsHeader from 'src/views/accounts/new-account-steps/headers/ActionsHeader'
@@ -31,6 +32,22 @@ const NewAccount = () => {
     console.log(step)
   }
 
+  const StepForm = ({ step }: { step: number }) => {
+    switch (step) {
+      case 1:
+        return <Information onStepChange={handleStepChange} />
+
+      case 2:
+        return <Security onStepChange={handleStepChange} />
+      case 3:
+        return <PaymentWarranty onStepChange={handleStepChange} />
+      case 4:
+        return <Sublimits />
+      default:
+        return <></>
+    }
+  }
+
   return (
     <Grid className='new-account' item xs={12}>
       {/* "ActionsHeader" component receives the initial status of the
@@ -40,18 +57,13 @@ const NewAccount = () => {
         <ActionsHeader accountStatus='PENDING' sideHeader={false} />
       ) : (
         <>
-          {' '}
           <FormHeader />
         </>
       )}
 
       <Card>
         <NewAccountStepper changeStep={activeStep} onStepChange={handleStepChange} />
-        {activeStep == 1 ? <Information onStepChange={handleStepChange} /> : ''}
-        {activeStep == 2 ? <Security onStepChange={handleStepChange} /> : ''}
-        {activeStep == 3 ? <PaymentWarranty onStepChange={handleStepChange} /> : ''}
-        {activeStep == 4 ? <Sublimits /> : ''}
-
+        <StepForm step={activeStep} />
         {/* <TabAccount /> */}
 
         {/* <UserList /> */}

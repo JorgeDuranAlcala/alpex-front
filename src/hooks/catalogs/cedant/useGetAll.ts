@@ -3,7 +3,7 @@ import { CedantDto } from '@/services/catalogs/dtos/cedant.dto'
 import { useEffect, useState } from 'react'
 
 export const useGetAll = () => {
-  const [cedant, setCedant] = useState<CedantDto[]>()
+  const [cedant, setCedant] = useState<CedantDto[]>([])
 
   useEffect(() => {
     CedantService.getAll()

@@ -17,7 +17,8 @@ import {
 } from 'src/styles/Forms/PaymentWarranty/paymentWarranty'
 
 //hooks
-import { useAddInstallments } from 'src/hooks/accounts/installments/useAdd'
+import { useAddInstallments } from 'src/hooks/accounts/installments'
+import { useAppSelector } from 'src/store'
 
 //dtos
 import { InstallmentDto } from 'src/services/accounts/dtos/installments.dto'
@@ -55,27 +56,14 @@ const CustomInput = forwardRef(({ ...props }: PickerProps, ref: ForwardedRef<HTM
   )
 })
 
-const useAccountInformation = () => {
-  return {
-    information: {
-      effectiveDate: new Date()
-    },
-    security: {
-      dynamicNetPremium: 7000000
-    }
-  }
-}
-
 const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
 
   const inter = userThemeConfig.typography?.fontFamilyInter
   const size = userThemeConfig.typography?.size.px14
   const texButtonColor = userThemeConfig.palette?.buttonText.primary
-  const { information, security } = useAccountInformation()
   const [installmentsList, setInstallmentList] = useState<InstallmentDto[]>([])
 
-  // const [paymentEnviroments, setPaymentEnviroments] = useState<PaymentEnvironmentsVariables>()
   const [count, setCount] = useState<string>('0')
   const [, setBtnNext] = useState<boolean>(false)
   const [error, setError] = useState<InstallmentErrors>({
@@ -85,6 +73,8 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
   })
 
   const { addInstallments } = useAddInstallments()
+  const accountData = useAppSelector(state => state.accounts)
+  const idAccount = accountData.formsData.form1.id
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setCount(event.target.value)
@@ -144,7 +134,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
             <Grid container spacing={{ xs: 2, sm: 5, md: 5 }} rowSpacing={4} columns={12}>
               <Grid item xs={12} sm={6} md={4}>
                 <DatePicker
-                  selected={information.effectiveDate}
+                  selected={new Date()}
                   shouldCloseOnSelect
                   id='reception-date'
                   showTimeSelect
@@ -160,7 +150,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
                 <TextField
                   fullWidth
                   label='Dynamic net premium'
-                  value={security.dynamicNetPremium}
+                  value={700000}
                   InputProps={{
                     disabled: true
                   }}
@@ -201,8 +191,9 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
               }
               onChangeList={handleItemChange}
               globalInfo={{
-                dynamic: security.dynamicNetPremium,
-                inceptionDate: information.effectiveDate
+                receivedNetPremium: 7000,
+                inceptionDate: new Date(),
+                idAccount: idAccount
               }}
               key={index}
             />
