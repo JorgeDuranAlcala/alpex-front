@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import UserThemeOptions from 'src/layouts/UserThemeOptions'
 
+// Hooks
+import { useAddInformation } from 'src/hooks/accounts/information'
+
 // // ** MUI Imports
 import CloseIcon from '@mui/icons-material/Close'
-import Box from '@mui/material/Box'
-import Button from '@mui/material/Button'
-import Modal from '@mui/material/Modal'
-import { ButtonClose, HeaderTitleModal } from 'src/styles/Dashboard/ModalReinsurers/modalReinsurers'
+import { Box, Button, Modal } from '@mui/material'
+import { ButtonClose, HeaderTitleModal } from 'src/styles/modal/modal.styled'
 import BasicInfo from './BasicInfo'
 import FileSubmit from './FileSubmit'
 import PlacementStructure from './PlacementStructure'
@@ -33,7 +34,7 @@ export interface BasicInfoInterface {
   technicalAssistant: string
   industryCode: string
   riskActivity: string
-  riskClass: string
+  riskClass: number
   receptionDate: Date | null
   effectiveDate: Date | null
   expirationDate: Date | null
@@ -47,11 +48,14 @@ const Information: React.FC<InformationProps> = ({ onStepChange }) => {
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
   const inter = userThemeConfig.typography?.fontFamilyInter
   const [makeValidations, setMakeValidations] = useState(false)
-  const [disableSaveBtn, setDisableSaveBtn] = useState(true)
+  const [disableSaveBtn, setDisableSaveBtn] = useState(false)
   const [disableNextBtn, setDisableNextBtn] = useState(true)
   const [basicIncfoValidated, setBasicIncfoValidated] = useState(false)
   const [placementStructureValidated, setPlacementStructureValidated] = useState(false)
   const [open, setOpen] = useState<boolean>(false)
+  const [nextClicked, setNextClicked] = useState<boolean>(false)
+
+  const { addInformation } = useAddInformation()
 
   const dispatch = useAppDispatch()
 
@@ -68,7 +72,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange }) => {
     technicalAssistant: '',
     industryCode: '',
     riskActivity: '',
-    riskClass: '',
+    riskClass: 0,
     receptionDate: null,
     effectiveDate: null,
     expirationDate: null
@@ -94,9 +98,52 @@ const Information: React.FC<InformationProps> = ({ onStepChange }) => {
     file: null
   })
 
-  const handleSubmit = () => {
+  const saveInformation = async () => {
+    //ALLOW NULLS
+
+    const res = await addInformation({
+      insured: basicInfo.insured,
+      idCountry: Number(basicInfo.country),
+      idBroker: Number(basicInfo.broker),
+      idBrokerContact: Number(basicInfo.brokerContact),
+      idCedant: Number(basicInfo.cedant),
+      idCedantContact: Number(basicInfo.cedantContact),
+      idLineOfBussines: Number(basicInfo.lineOfBusiness),
+      idRiskActivity: Number(basicInfo.industryCode),
+      effetiveDate: basicInfo.effectiveDate,
+      expirationDate: basicInfo.expirationDate,
+      receptionDate: basicInfo.receptionDate,
+      idLeadUnderwriter: Number(basicInfo.leadUnderwriter),
+      idTechnicalAssistant: Number(basicInfo.technicalAssistant),
+      idUnderwriter: Number(basicInfo.underwriter),
+      riskClass: basicInfo.riskClass,
+      currency: placementStructure.currency,
+      exchangeRate: placementStructure.exchangeRate,
+      attachmentPoint: placementStructure.attachmentPoint,
+      frontingFee: placementStructure.frontingFee,
+      frontingFeeTotal: placementStructure.frontingFeeP,
+      grossPremium: placementStructure.grossPremium,
+      limit: placementStructure.limit,
+      netPremiun: placementStructure.netPremium,
+      reinsuranceBrokerage: placementStructure.reinsuranceBrokerage,
+      reinsuranceBrokerageTotal: placementStructure.reinsuranceBrokerageP,
+      sir: placementStructure.sir,
+      taxes: placementStructure.taxes,
+      taxesTotal: placementStructure.taxesP,
+      totalValues: placementStructure.total,
+      idTypeOfLimit: Number(placementStructure.typeOfLimit),
+      step: 1
+    })
+
+    return res
+  }
+
+  const handleSubmit = async () => {
     setDisableNextBtn(false)
-    dispatch(updateFormsData({ form1: { basicInfo, placementStructure, userFile } }))
+    const res = await saveInformation()
+    if (res) {
+      dispatch(updateFormsData({ form1: { basicInfo, placementStructure, userFile, id: res.account.id } }))
+    }
   }
 
   const handleCloseModal = () => {
@@ -104,16 +151,16 @@ const Information: React.FC<InformationProps> = ({ onStepChange }) => {
   }
 
   const onNextStep = () => {
+    setDisableNextBtn(false)
     if (onStepChange) {
+      saveInformation()
       onStepChange(2)
     }
   }
-  const handleNext = () => {
-    setMakeValidations(true)
-
-    if (basicIncfoValidated && placementStructureValidated) {
-      setOpen(true)
-    }
+  const handleNext = async () => {
+    await setMakeValidations(true)
+    setNextClicked(true)
+    handleNextStep()
   }
 
   const resetMakeValidations = () => {
@@ -137,6 +184,14 @@ const Information: React.FC<InformationProps> = ({ onStepChange }) => {
     )
     setDisableSaveBtn(!isplacementStructureValid)
   }, [placementStructure])
+
+  const handleNextStep = () => {
+    if (nextClicked) {
+      if (basicIncfoValidated && placementStructureValidated) {
+        setOpen(true)
+      }
+    }
+  }
 
   return (
     <>
@@ -197,7 +252,11 @@ const Information: React.FC<InformationProps> = ({ onStepChange }) => {
               >
                 <HeaderTitleModal>
                   <div className='next-modal-title'>Ready to continue?</div>
-                  <ButtonClose onClick={handleCloseModal}>
+                  <ButtonClose
+                    onClick={() => {
+                      setOpen(false)
+                    }}
+                  >
                     <CloseIcon />
                   </ButtonClose>
                 </HeaderTitleModal>
@@ -208,7 +267,13 @@ const Information: React.FC<InformationProps> = ({ onStepChange }) => {
                 <Button className='continue-modal-btn' variant='contained' onClick={onNextStep}>
                   CONTINUE
                 </Button>
-                <Button className='create-contact-modal' onClick={() => setOpen(false)}>
+                <Button
+                  className='create-contact-modal'
+                  onClick={() => {
+                    setOpen(false)
+                    setNextClicked(false)
+                  }}
+                >
                   Keep editing information
                 </Button>
               </Box>

@@ -64,6 +64,7 @@ import 'src/iconify-bundle/icons-bundle-react'
 
 // ** Global css styles
 import 'src/styles/accounts.css'
+import 'src/styles/catalogues.css'
 import '../../styles/forgottenpassword.css'
 import '../../styles/globals.css'
 import '../../styles/login.css'

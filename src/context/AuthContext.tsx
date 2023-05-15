@@ -47,10 +47,11 @@ const AuthProvider = ({ children }: Props) => {
   useEffect(() => {
     const initAuth = async (): Promise<void> => {
       const storedToken = window.localStorage.getItem(authConfig.storageTokenKeyName)!
+
       if (storedToken) {
         setLoading(true)
         authServices
-          .authMe()
+          .authMe(storedToken)
           .then(async response => {
             setLoading(false)
             const resUser = response.data.userData
@@ -63,7 +64,7 @@ const AuthProvider = ({ children }: Props) => {
               username: resUser.name,
               password: resUser.password
             }
-            console.log(newUserData)
+
             setUser({ ...newUserData })
           })
           .catch(() => {
@@ -115,7 +116,14 @@ const AuthProvider = ({ children }: Props) => {
         if (!response.data.success) {
           if (errorCallback) errorCallback(response.data.message)
         } else {
-          params.rememberMe ? window.localStorage.setItem(authConfig.storageTokenKeyName, response.data.token) : null
+          window.localStorage.setItem(authConfig.storageTokenKeyName, response.data.token)
+
+          if (params.rememberMe) {
+            window.localStorage.setItem('loginEmail', params.email)
+          } else {
+            window.localStorage.removeItem('loginEmail')
+          }
+
           const returnUrl = router.query.returnUrl
 
           const tokenDecoded = jwt.decode(response.data.token, { complete: true })
@@ -133,7 +141,8 @@ const AuthProvider = ({ children }: Props) => {
           }
 
           setUser({ ...newUserData })
-          params.rememberMe ? window.localStorage.setItem('userData', JSON.stringify(newUserData)) : null
+
+          window.localStorage.setItem('userData', JSON.stringify(newUserData))
 
           const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/'
 

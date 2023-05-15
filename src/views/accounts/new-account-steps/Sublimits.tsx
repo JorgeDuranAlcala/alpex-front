@@ -1,27 +1,28 @@
+import GenericCard from '@/layouts/components/SublimitsCards/GenericCard'
 import CheckIcon from '@mui/icons-material/Check'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import SaveIcon from '@mui/icons-material/Save'
-import { Box, Button, Checkbox, FormControl, Grid, MenuItem, Select, TextField, Typography } from '@mui/material'
+import {
+  Box,
+  Button,
+  Checkbox,
+  FormControl,
+  Grid,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+  TextField,
+  Typography
+} from '@mui/material'
 import { useState } from 'react'
 import UserThemeOptions from 'src/layouts/UserThemeOptions'
-
-// import { useState } from 'react'
-import SublimitCard from 'src/layouts/components/CardSublimit'
-
-// import { experimentalStyled as styled } from '@mui/material/styles'
+import SublimitCard, { RenderFormGeneric } from 'src/layouts/components/CardSublimit'
 import {
   ContainerTitleSublimits,
   GeneralContainerSublimits,
   InputsContainerSublimits,
   NextContainer
 } from 'src/styles/Forms/Sublimits'
-
-// type wind = {
-//   sublimit:number
-//   percent:number
-//   minimun:number
-
-// }
 
 const ITEM_HEIGHT = 60
 const ITEM_PADDING_TOP = 8
@@ -44,18 +45,32 @@ const coverage = [
   { id: 6, label: 'Machinery breakdown' },
   { id: 7, label: 'AMIT & SRCC' },
   { id: 8, label: 'Electronic Equipment' },
-  { id: 9, label: 'Business Interruption / Machinery Breakdown ' }
+  { id: 9, label: 'Business Interruption Machinery Breakdown' }
 ]
 
 const Sublimits = () => {
-  const [checked, setChecked] = useState([0])
-
-  const handleToggle = (value: number) => () => {
+  const forms = GenericCard
+  console.log(forms)
+  const [checked, setChecked] = useState<number[]>([])
+  const [coverageSelect, setCoverageSelect] = useState<any>('')
+  const [availableOptions, setAvailableOptions] = useState<any[]>(coverage)
+  const [filteredOptions, setFilteredOptions] = useState<any[]>([])
+  console.log('Selected', availableOptions)
+  console.log('Pusheados', filteredOptions)
+  const [formsCheck] = useState<RenderFormGeneric[]>([])
+  console.log('arrayForms--->', formsCheck)
+  const handleToggle = (value: number, label: string) => () => {
+    console.log(label)
     const currentIndex = checked.indexOf(value)
     const newChecked = [...checked]
 
     if (currentIndex === -1) {
       newChecked.push(value)
+      formsCheck.push({
+        type: value,
+        components: forms,
+        title: label
+      })
     } else {
       newChecked.splice(currentIndex, 1)
     }
@@ -63,6 +78,25 @@ const Sublimits = () => {
     setChecked(newChecked)
   }
 
+  const handleChangeSelect = (event: SelectChangeEvent<string[]>) => {
+    const selectedValue = event.target.value
+    console.log(selectedValue)
+    setCoverageSelect(selectedValue)
+    setAvailableOptions(availableOptions.filter(option => option.label !== selectedValue))
+    const filter = availableOptions.filter(option => option.label === selectedValue)
+    if (!filteredOptions.some(item => item.label === filter[0]?.label)) {
+      setFilteredOptions(current => current.concat(filter))
+    } else return
+  }
+
+  const addOption = (name: string) => {
+    const add = filteredOptions.filter(obj => obj.label === name)
+    if (!availableOptions.some(item => item.label === add[0].label)) {
+      setAvailableOptions(availableOptions.concat(add))
+    } else {
+      return
+    }
+  }
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
 
   const inter = userThemeConfig.typography?.fontFamilyInter
@@ -87,12 +121,34 @@ const Sublimits = () => {
                 sx={{ width: '48.5%', outline: 'none' }}
                 IconComponent={KeyboardArrowDownIcon}
                 MenuProps={MenuProps}
+                value={coverageSelect}
+                displayEmpty
+                onChange={handleChangeSelect}
+                renderValue={selected => {
+                  if ((selected as unknown as string[]).length === 0) {
+                    return (
+                      <Typography
+                        sx={{
+                          color: texButtonColor,
+                          fontSize: userThemeConfig.typography?.size.px15,
+                          fontWeight: 500,
+                          letterSpacing: '0.46px'
+                        }}
+                      >
+                        ADD COVERAGE
+                      </Typography>
+                    )
+                  }
+
+                  return selected as unknown as string[]
+                }}
               >
-                {coverage &&
-                  coverage.map((item, index) => (
+                {availableOptions &&
+                  availableOptions.map((item, index) => (
                     <MenuItem
+                      value={item.label}
                       role={undefined}
-                      onClick={handleToggle(item.id)}
+                      onClick={handleToggle(item.id, item.label)}
                       key={index}
                       sx={{
                         height: '50px',
@@ -123,9 +179,21 @@ const Sublimits = () => {
         </ContainerTitleSublimits>
         <Box sx={{ flexGrow: 1, mt: 6, width: '100%' }}>
           <Grid container spacing={{ xs: 2, sm: 5.3, md: 5.3 }} rowSpacing={12} columns={{ xs: 4, sm: 8, md: 12 }}>
-            {Array.from(Array(3)).map((_, index) => (
+            {formsCheck.map((item, index) => (
               <Grid item xs={12} sm={4} md={4} key={index}>
-                <SublimitCard />
+                <SublimitCard
+                  components={
+                    <item.components
+                      state={item.state}
+                      setState={item.setState}
+                      title={item.title}
+                      deleteForm={() => addOption(item.title ?? '')}
+                    />
+                  }
+                  state={item.state}
+                  setState={item.setState}
+                  type={item.type}
+                />
               </Grid>
             ))}
           </Grid>

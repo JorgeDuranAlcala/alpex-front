@@ -6,9 +6,8 @@ const navigation = (): VerticalNavItemsType => {
     /*********************************************** News Items ReDesign *****************************************************/
     {
       title: 'Dashboard',
-      icon: 'mdi:dashboard',
-      path: '/dashboards/crm',
-      externalLink: true
+      icon: 'ic:baseline-dashboard',
+      path: '/dashboards/crm'
     },
     {
       title: 'Accounts',
@@ -50,7 +49,7 @@ const navigation = (): VerticalNavItemsType => {
     },
     {
       title: 'Payments',
-      icon: 'mdi:payments',
+      icon: 'ic:baseline-payments',
       children: [
         {
           title: 'List',
@@ -70,7 +69,7 @@ const navigation = (): VerticalNavItemsType => {
     },
     {
       title: 'Renewals',
-      icon: 'mdi:renewals',
+      icon: 'ic:baseline-autorenew',
       children: [
         {
           title: 'List'
@@ -90,7 +89,7 @@ const navigation = (): VerticalNavItemsType => {
     },
     {
       title: 'Claims',
-      icon: 'mdi:claims',
+      icon: 'ic:baseline-content-paste',
       children: [
         {
           title: 'List'
@@ -115,27 +114,22 @@ const navigation = (): VerticalNavItemsType => {
     },
     {
       title: 'Catalogues',
-      icon: 'mdi:catalogues',
+      icon: 'ic:sharp-menu-book',
       children: [
         {
-          title: 'List'
+          title: 'Dynamic',
+          path: '/catalogues/dynamic'
 
           // path: '/apps/invoice/list'
         },
         {
-          title: 'Preview'
-        },
-        {
-          title: 'Edit'
-        },
-        {
-          title: 'Add'
+          title: 'Claims/claims'
         }
       ]
     },
     {
       title: 'Configuration',
-      icon: 'mdi:configuration',
+      icon: 'mdi:settings-outline',
       children: [
         {
           title: 'List'
