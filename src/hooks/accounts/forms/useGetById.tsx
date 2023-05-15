@@ -5,6 +5,7 @@ export const useGetAccountById = (id: number) => {
   const [account, setAccount] = useState<any>()
 
   useEffect(() => {
+    if (!id || account) return
     AccountServices.getAccountById(id)
       .then(accounts => {
         setAccount(accounts)
@@ -12,6 +13,7 @@ export const useGetAccountById = (id: number) => {
       .catch((error: Error) => {
         throw error
       })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id])
 
   return {

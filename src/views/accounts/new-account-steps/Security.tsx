@@ -106,22 +106,47 @@ const schema = yup.object().shape(
   {
     HasFrontingFee: yup.boolean(),
     IsGross: yup.boolean(),
-    NetPremium: yup.number().required(),
-    SharePercent: yup.number().required(),
-    DynamicComissionPercent: yup.number().required(),
-    FrontingFee: yup.number().when('HasFrontingFee', {
-      is: true,
-      then: yup.number().required()
-    }),
+    NetPremium: yup
+      .number()
+      .transform((_, val) => (val === Number(val) ? val : null))
+      .required(),
+    SharePercent: yup
+      .number()
+      .transform((_, val) => (val === Number(val) ? val : null))
+      .required(),
+    DynamicComissionPercent: yup
+      .number()
+      .transform((_, val) => (val === Number(val) ? val : null))
+      .required(),
+    FrontingFee: yup
+      .number()
+      .transform((_, val) => (val === Number(val) ? val : null))
+      .when('HasFrontingFee', {
+        is: true,
+        then: yup.number().required()
+      }),
     ReinsuranceCompany: yup.string().test('is-valid', 'This field is required', value => value !== '-1'),
-    PremiumPerShare: yup.number().required(),
-    DynamicComission: yup.number().required(),
-    FrontingFeePercent: yup.number().when('HasFrontingFee', {
-      is: true,
-      then: yup.number().required('This field is required')
-    }),
+    PremiumPerShare: yup
+      .number()
+      .transform((_, val) => (val === Number(val) ? val : null))
+      .required(),
+    DynamicComission: yup
+      .number()
+      .transform((_, val) => (val === Number(val) ? val : null))
+      .required(),
+    FrontingFeePercent: yup
+      .number()
+      .transform((_, val) => (val === Number(val) ? val : null))
+      .when('HasFrontingFee', {
+        is: true,
+        then: yup
+          .number()
+          .transform((_, val) => (val === Number(val) ? val : null))
+          .required('This field is required')
+      }),
     NetInsurancePremium: yup
       .number()
+      .transform((_, val) => (val === Number(val) ? val : null))
       .required()
       .test('Is positive?', 'ERROR: The number must be greater than 0!', value => {
         const valueVal = value || 0

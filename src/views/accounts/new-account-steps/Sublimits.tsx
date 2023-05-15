@@ -1,4 +1,7 @@
-import GenericCard from '@/layouts/components/SublimitsCards/GenericCard'
+import { useGetAccountById } from '@/hooks/accounts/forms'
+import { useAddSublimits } from '@/hooks/accounts/sublimit'
+import GenericCard, { FormGenericCard } from '@/layouts/components/SublimitsCards/GenericCard'
+import { useAppSelector } from '@/store'
 import CheckIcon from '@mui/icons-material/Check'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import SaveIcon from '@mui/icons-material/Save'
@@ -14,7 +17,7 @@ import {
   TextField,
   Typography
 } from '@mui/material'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import UserThemeOptions from 'src/layouts/UserThemeOptions'
 import SublimitCard, { RenderFormGeneric } from 'src/layouts/components/CardSublimit'
 import {
@@ -23,6 +26,7 @@ import {
   InputsContainerSublimits,
   NextContainer
 } from 'src/styles/Forms/Sublimits'
+import * as yup from 'yup'
 
 const ITEM_HEIGHT = 60
 const ITEM_PADDING_TOP = 8
@@ -48,17 +52,91 @@ const coverage = [
   { id: 9, label: 'Business Interruption Machinery Breakdown' }
 ]
 
+yup.setLocale({
+  mixed: {
+    required: 'This field is required',
+    notType: 'This field must be a number'
+  },
+  number: {
+    min: 'This field must be greater than ${min}',
+    max: 'This field must be less than ${max}'
+  }
+})
+
+const schema = yup.object().shape({
+  sublimit: yup
+    .number()
+    .transform((_, val) => (val === Number(val) ? val : null))
+    .test('Validate sublimit', 'Sublimit cannot be greater than limit', (value, context) => {
+      const val = value || 0
+      console.log(context.parent.account)
+      const limit = context.parent.account.informations[0].limit || 0
+
+      return +val <= +limit
+    })
+    .required()
+})
+
+const initialValues = {
+  sublimit: 0,
+  percentage: 0,
+  price: 0,
+  minimunPrice: 0,
+  days: 0,
+  priceInterruption: 0,
+  coinsurance: 0,
+  index: -1
+}
 const Sublimits = () => {
+  const validate = (form: any) => {
+    schema
+      .validate({ ...form, account }, { abortEarly: false })
+      .then(function () {
+        //handleSuccess()
+      })
+      .catch(function (err) {
+        console.log(err)
+
+        err?.inner?.forEach((e: any) => {
+          console.log(e.path, e.message)
+
+          // data[index][e.path] = e.message
+          //  setFormErrors(data)
+        })
+
+        //setEnableNextStep(false)
+      })
+  }
+
   const forms = GenericCard
   console.log(forms)
   const [checked, setChecked] = useState<number[]>([])
+  const [allFormData, setAllFormData] = useState<FormGenericCard[]>([])
   const [coverageSelect, setCoverageSelect] = useState<any>('')
   const [availableOptions, setAvailableOptions] = useState<any[]>(coverage)
   const [filteredOptions, setFilteredOptions] = useState<any[]>([])
+  const [formInformationData, setFormInformationData] = useState<any>({})
+  const accountData = useAppSelector(state => state.accounts)
+  const { account } = useGetAccountById(formInformationData?.id)
+  const { saveSublimits } = useAddSublimits()
+
+  useEffect(() => {
+    if (accountData.formsData.form1?.id) setFormInformationData(accountData.formsData.form1)
+  }, [accountData])
+
   console.log('Selected', availableOptions)
   console.log('Pusheados', filteredOptions)
   const [formsCheck] = useState<RenderFormGeneric[]>([])
   console.log('arrayForms--->', formsCheck)
+
+  const handleOnChangeForm = (value: string | number, path: string, index: number) => {
+    const data = allFormData
+    data[index][path as keyof FormGenericCard] = +value
+    data[index].index = index
+    validate(data[index])
+    setAllFormData(data)
+  }
+
   const handleToggle = (value: number, label: string) => () => {
     console.log(label)
     const currentIndex = checked.indexOf(value)
@@ -66,10 +144,13 @@ const Sublimits = () => {
 
     if (currentIndex === -1) {
       newChecked.push(value)
+      allFormData.push({ ...initialValues })
       formsCheck.push({
         type: value,
         components: forms,
-        title: label
+        title: label,
+        handleOnChangeForm: handleOnChangeForm,
+        formInformation: account
       })
     } else {
       newChecked.splice(currentIndex, 1)
@@ -89,8 +170,27 @@ const Sublimits = () => {
     } else return
   }
 
-  const addOption = (name: string) => {
+  const handleSubmit = () => {
+    const dataToSubmit = allFormData.map(item => {
+      return {
+        sublimit: item.sublimit,
+        at100: true,
+        yes: true,
+        luc: true,
+        typeDeductible: 'none',
+        typeBi: 'days',
+        coinsurance: item.coinsurance,
+        AccountId: formInformationData.id
+      }
+    })
+    saveSublimits(dataToSubmit)
+  }
+
+  const addOption = (name: string, index: number) => {
+    formsCheck.splice(index, 1)
+    allFormData.splice(index, 1)
     const add = filteredOptions.filter(obj => obj.label === name)
+
     if (!availableOptions.some(item => item.label === add[0].label)) {
       setAvailableOptions(availableOptions.concat(add))
     } else {
@@ -111,7 +211,10 @@ const Sublimits = () => {
           <InputsContainerSublimits>
             <TextField
               sx={{ width: '48.5%' }}
-              value={'Limit'}
+              value={account.informations[0].limit || 'Limit'}
+              disabled
+              name='Limit'
+              label='Limit'
               InputProps={{
                 disabled: true
               }}
@@ -187,12 +290,18 @@ const Sublimits = () => {
                       state={item.state}
                       setState={item.setState}
                       title={item.title}
-                      deleteForm={() => addOption(item.title ?? '')}
+                      deleteForm={() => addOption(item.title ?? '', index)}
+                      handleOnChangeForm={item.handleOnChangeForm}
+                      index={index}
+                      formInformation={item.formInformation}
                     />
                   }
                   state={item.state}
                   setState={item.setState}
                   type={item.type}
+                  handleOnChangeForm={item.handleOnChangeForm}
+                  index={index}
+                  formInformation={item.formInformation}
                 />
               </Grid>
             ))}
@@ -204,6 +313,7 @@ const Sublimits = () => {
           variant='contained'
           color='success'
           sx={{ mr: 2, fontFamily: inter, fontSize: size, letterSpacing: '0.4px' }}
+          onClick={handleSubmit}
         >
           <SaveIcon /> &nbsp; Save changes
         </Button>

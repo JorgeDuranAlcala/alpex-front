@@ -17,7 +17,7 @@ import {
   TextField,
   Typography
 } from '@mui/material'
-import { ChangeEvent, useState } from 'react'
+import { ChangeEvent, useEffect, useState } from 'react'
 import { NumericFormat } from 'react-number-format'
 import Icon from 'src/@core/components/icon'
 import { ContainerCard, ContentCard, HeaderCard, InputForm, SubContainer } from 'src/styles/Forms/Sublimits'
@@ -38,6 +38,7 @@ export type FormGenericCard = {
   days: number
   priceInterruption: number
   coinsurance: number
+  index?: number
 }
 
 const initialData: FormGenericCard = {
@@ -50,8 +51,15 @@ const initialData: FormGenericCard = {
   coinsurance: 0
 }
 
-const GenericCard: React.FC<RenderFormGeneric> = ({ title, deleteForm }: RenderFormGeneric) => {
-  console.log(title)
+const GenericCard: React.FC<RenderFormGeneric> = ({
+  title,
+  deleteForm,
+  handleOnChangeForm = () => {
+    console.log('')
+  },
+  formInformation,
+  index = 0
+}: RenderFormGeneric) => {
   const [dataForm, setDataForm] = useState<FormGenericCard>(initialData)
   const [selectedValueRadio, setSelectedValueRadio] = useState<string>('')
   const [errors] = useState<FormErrors>({
@@ -63,11 +71,17 @@ const GenericCard: React.FC<RenderFormGeneric> = ({ title, deleteForm }: RenderF
   const handleNumericInputChange = (value: any, e: any) => {
     const { name } = e.event.target
     setDataForm({ ...dataForm, [name]: value })
+    handleOnChangeForm(value, name, index)
+    console.log(formInformation || 'no hay data')
   }
   const handleChangeRadio = (event: ChangeEvent<HTMLInputElement>) => {
     setSelectedValueRadio(event.target.value)
     console.log(event.target.value)
   }
+
+  useEffect(() => {
+    console.log('dataForm', dataForm)
+  }, [dataForm])
 
   const [option, setOption] = useState('')
   const options = [
