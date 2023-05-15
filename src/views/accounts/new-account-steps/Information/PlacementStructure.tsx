@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 //Hooks
 import { useGetAllCurrencies } from 'src/hooks/catalogs/currency'
@@ -104,102 +104,79 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
     frontingFeeError: false,
     typeOfLimitError: false
   })
+  const calculate = async (type = 'any') => {
+    const grossPremiumc: number = grossPremium || 0
+    const reinsuranceBrokeragePc: number = reinsuranceBrokerageP || 0
+    const reinsuranceBrokeragec: number = reinsuranceBrokerage || 0
+    const taxesPc: number = taxesP || 0
+    const taxesc: number = taxes || 0
+    const frontingFeePc: number = frontingFeeP || 0
+    const frontingFeec: number = frontingFee || 0
 
-  const calculate = useCallback(
-    (type = 'any') => {
-      const grossPremiumc: number = grossPremium || 0
-      const reinsuranceBrokeragePc: number = reinsuranceBrokerageP || 0
-      const reinsuranceBrokeragec: number = reinsuranceBrokerage || 0
-      const taxesPc: number = taxesP || 0
-      const taxesc: number = taxes || 0
-      const frontingFeePc: number = frontingFeeP || 0
-      const frontingFeec: number = frontingFee || 0
+    switch (type) {
+      case 'reinsuranceBrokerageP': {
+        const result = grossPremiumc * (reinsuranceBrokeragePc / 100)
+        setReinsuranceBrokerage(isFinite(result) ? result : 0)
 
-      switch (type) {
-        case 'reinsuranceBrokerageP': {
-          const result = grossPremiumc * (reinsuranceBrokeragePc / 100)
-
-          setReinsuranceBrokerage(isFinite(result) ? result : 0)
-
-          break
-        }
-        case 'reinsuranceBrokerage': {
-          const result = (reinsuranceBrokeragec * 100) / grossPremiumc
-
-          setReinsuranceBrokerageP(isFinite(result) ? result : 0)
-          break
-        }
-        case 'taxes': {
-          const result = (taxesc * 100) / grossPremiumc
-
-          setTaxesP(isFinite(result) ? result : 0)
-          break
-        }
-        case 'taxesP': {
-          const result = grossPremiumc * (taxesPc / 100)
-
-          setTaxes(isFinite(result) ? result : 0)
-          break
-        }
-        case 'frontingFeeP': {
-          const result = grossPremiumc * (frontingFeePc / 100)
-
-          setFrontingFee(isFinite(result) ? result : 0)
-          console.log('frontingFee')
-          console.log(frontingFee)
-          break
-        }
-        case 'frontingFee': {
-          const result = (frontingFeec * 100) / grossPremiumc
-
-          setFrontingFeeP(isFinite(result) ? result : 0)
-          break
-        }
-        case 'grossPremium': {
-          const resultBrokerage = (reinsuranceBrokeragec * 100) / grossPremiumc
-          const resultTaxes = (taxesPc * 100) / grossPremiumc
-          const resultFronting = (frontingFeec * 100) / grossPremiumc
-
-          setReinsuranceBrokerageP(isFinite(resultBrokerage) ? resultBrokerage : 0)
-          setTaxesP(isFinite(resultTaxes) ? resultTaxes : 0)
-          setFrontingFeeP(isFinite(resultFronting) ? resultFronting : 0)
-          break
-        }
-        default:
-          break
+        break
       }
-      const reinsuranceBrokerageTotalFinal = reinsuranceBrokerage ? reinsuranceBrokerage : 0
-      const taxesFinal = taxes ? taxes : 0
-      const frontingFeeTotalFinal = frontingFee ? frontingFee : 0
+      case 'reinsuranceBrokerage': {
+        const result = (reinsuranceBrokeragec * 100) / grossPremiumc
 
-      setNetPremium(grossPremiumc - reinsuranceBrokerageTotalFinal - taxesFinal - frontingFeeTotalFinal)
-      console.log(frontingFee)
-
-      setPlacementStructure({
-        ...placementStructure,
-        reinsuranceBrokerageP: reinsuranceBrokerageP ?? 0,
-        reinsuranceBrokerage: reinsuranceBrokerage ?? 0,
-        taxes: taxes ?? 0,
-        taxesP: taxesP ?? 0,
-        frontingFeeP: frontingFeeP ?? 0,
-        frontingFee: frontingFee ?? 0,
-        grossPremium: grossPremium ?? 0,
-        netPremium: netPremium ?? 0
-      })
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [
-      frontingFee,
-      frontingFeeP,
-      grossPremium,
-      netPremium,
-      reinsuranceBrokerage,
-      reinsuranceBrokerageP,
-      setPlacementStructure,
-      taxes,
-      taxesP
-    ]
-  )
+        setReinsuranceBrokerageP(isFinite(result) ? result : 0)
+        break
+      }
+      case 'taxes': {
+        const result = (taxesc * 100) / grossPremiumc
+        setTaxesP(isFinite(result) ? result : 0)
+        break
+      }
+      case 'taxesP': {
+        const result = grossPremiumc * (taxesPc / 100)
+        setTaxes(isFinite(result) ? result : 0)
+        break
+      }
+      case 'frontingFeeP': {
+        const result = grossPremiumc * (frontingFeePc / 100)
+        setFrontingFee(isFinite(result) ? result : 0)
+        console.log('frontingFee')
+        console.log(frontingFee)
+        break
+      }
+      case 'frontingFee': {
+        const result = (frontingFeec * 100) / grossPremiumc
+        setFrontingFeeP(isFinite(result) ? result : 0)
+        break
+      }
+      case 'grossPremium': {
+        const resultBrokerage = (reinsuranceBrokeragec * 100) / grossPremiumc
+        const resultTaxes = (taxesPc * 100) / grossPremiumc
+        const resultFronting = (frontingFeec * 100) / grossPremiumc
+        setReinsuranceBrokerageP(isFinite(resultBrokerage) ? resultBrokerage : 0)
+        setTaxesP(isFinite(resultTaxes) ? resultTaxes : 0)
+        setFrontingFeeP(isFinite(resultFronting) ? resultFronting : 0)
+        break
+      }
+      default:
+        break
+    }
+    const reinsuranceBrokerageTotalFinal = reinsuranceBrokerage ? reinsuranceBrokerage : 0
+    const taxesFinal = taxes ? taxes : 0
+    const frontingFeeTotalFinal = frontingFee ? frontingFee : 0
+    setNetPremium(grossPremiumc - reinsuranceBrokerageTotalFinal - taxesFinal - frontingFeeTotalFinal)
+    console.log(frontingFee)
+    setPlacementStructure({
+      ...placementStructure,
+      reinsuranceBrokerageP: reinsuranceBrokerageP ?? 0,
+      reinsuranceBrokerage: reinsuranceBrokerage ?? 0,
+      taxes: taxes ?? 0,
+      taxesP: taxesP ?? 0,
+      frontingFeeP: frontingFeeP ?? 0,
+      frontingFee: frontingFee ?? 0,
+      grossPremium: grossPremium ?? 0,
+      netPremium: netPremium ?? 0
+    })
+  }
 
   const handleCurrencyChange = (e: SelectChangeEvent<string>) => {
     const target = e.target
@@ -275,7 +252,8 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
 
   useEffect(() => {
     calculate()
-  }, [calculate])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [reinsuranceBrokerageP, taxesP, frontingFeeP, netPremium, grossPremium, reinsuranceBrokerage, taxes, frontingFee])
 
   return (
     <>
