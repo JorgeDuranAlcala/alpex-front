@@ -22,6 +22,7 @@ module.exports = withTM({
   experimental: {
     esmExternals: false
   },
+  swcMinify: false,
   webpack: config => {
     config.resolve.alias = {
       ...config.resolve.alias,
