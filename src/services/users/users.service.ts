@@ -1,5 +1,5 @@
 import { ROLES, USERS_ROUTES } from 'src/configs/api'
-import { UsersGetDto, UsersPostDto, UsersPutDto } from 'src/services/users/dtos/UsersDto'
+import { UsersDeleteDto, UsersGetDto, UsersPostDto, UsersPutDto } from 'src/services/users/dtos/UsersDto'
 import { IUsersState } from 'src/types/apps/usersTypes'
 import { AppAlpexApiGateWay } from '../app.alpex.api-getway'
 import { queryBuilder } from '../helper/queryBuilder'
@@ -42,7 +42,10 @@ class UsersServices {
   async editUser(user: Partial<UsersPutDto>): Promise<UsersGetDto[]> {
     try {
       const { data } = await AppAlpexApiGateWay.put<Promise<UsersGetDto[]>>(`${USERS_ROUTES.UPDATE}`, {
-        ...user
+        ...user,
+        headers: {
+          'x-api-key': 'ZlExQKG0xPB673L3B6hClORm6oPaKcer'
+        }
       })
 
       return data
@@ -51,10 +54,13 @@ class UsersServices {
     }
   }
 
-  async deleteUsers(user: number[]): Promise<UsersGetDto[]> {
+  async deleteUsers(user: Partial<UsersDeleteDto>): Promise<UsersGetDto[]> {
     try {
-      const { data } = await AppAlpexApiGateWay.post<Promise<UsersGetDto[]>>(`${USERS_ROUTES.ADD}`, {
-        ...user
+      const { data } = await AppAlpexApiGateWay.post<Promise<UsersGetDto[]>>(`${USERS_ROUTES.DELETE}`, {
+        ...user,
+        headers: {
+          'x-api-key': 'ZlExQKG0xPB673L3B6hClORm6oPaKcer'
+        }
       })
 
       return data

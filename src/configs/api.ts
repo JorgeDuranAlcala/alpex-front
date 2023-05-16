@@ -123,7 +123,8 @@ export enum COMPANY_ROUTES {
   GET_ALL = 'catalogs/Company/all',
   GET_BY_ID = 'catalogs/Company',
   ADD = 'catalogs/Company/add',
-  UPDATE = 'catalogs/Company'
+  UPDATE = 'catalogs/Company',
+  ROLES = 'catalogs/role/all'
 }
 
 export enum RETRO_CEDANT_ROUTES {
