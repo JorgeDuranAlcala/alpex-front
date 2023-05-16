@@ -1,3 +1,5 @@
+'use client'
+
 import React, { useEffect, useState } from 'react'
 
 //Hooks
@@ -195,8 +197,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
     }
   }
 
-  const handleNumericInputChange = (value: any, e: any) => {
-    const { name } = e.event.target
+  const handleNumericInputChange = (value: any, name: string) => {
     setPlacementStructure({ ...placementStructure, [name]: value })
   }
 
@@ -300,8 +301,8 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               variant='outlined'
               error={errors.totalError}
               helperText={getErrorMessage('totalError')}
-              onValueChange={(value, e) => {
-                handleNumericInputChange(value.floatValue, e)
+              onValueChange={value => {
+                handleNumericInputChange(value.floatValue, 'total')
               }}
             />
             {false && <FormHelperText sx={{ color: 'error.main' }}>Required Field</FormHelperText>}
@@ -319,8 +320,8 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               prefix={'$'}
               decimalScale={2}
               variant='outlined'
-              onValueChange={(value, e) => {
-                handleNumericInputChange(value.floatValue, e)
+              onValueChange={value => {
+                handleNumericInputChange(value.floatValue, 'sir')
               }}
             />
           </FormControl>
@@ -338,9 +339,9 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               decimalScale={2}
               variant='outlined'
               onBlur={() => calculate('reinsuranceBrokerageP')}
-              onValueChange={(value, e) => {
+              onValueChange={value => {
                 setReinsuranceBrokerageP(value.floatValue ?? 0)
-                handleNumericInputChange(value.floatValue, e)
+                handleNumericInputChange(value.floatValue, 'reinsuranceBrokerageP')
               }}
               error={errors.reinsuranceBrokeragePError}
               helperText={getErrorMessage('reinsuranceBrokeragePError')}
@@ -360,9 +361,9 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               decimalScale={2}
               variant='outlined'
               onBlur={() => calculate('taxesP')}
-              onValueChange={(value, e) => {
+              onValueChange={value => {
                 setTaxesP(value.floatValue)
-                handleNumericInputChange(value.floatValue, e)
+                handleNumericInputChange(value.floatValue, 'taxesP')
               }}
               error={errors.taxesPError}
               helperText={getErrorMessage('taxesPError')}
@@ -384,9 +385,9 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               decimalScale={2}
               variant='outlined'
               onBlur={() => calculate('frontingFeeP')}
-              onValueChange={(value, e) => {
+              onValueChange={value => {
                 setFrontingFeeP(value.floatValue)
-                handleNumericInputChange(value.floatValue, e)
+                handleNumericInputChange(value.floatValue, 'frontingFeeP')
               }}
               error={errors.frontingFeePError}
               helperText={getErrorMessage('frontingFeePError')}
@@ -405,9 +406,9 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               multiline
               variant='outlined'
               decimalScale={2}
-              onValueChange={(value, e) => {
+              onValueChange={value => {
                 setNetPremium(value.floatValue)
-                handleNumericInputChange(value.floatValue, e)
+                handleNumericInputChange(value.floatValue, 'netPremium')
               }}
             />
           </FormControl>
@@ -443,8 +444,8 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               multiline
               variant='outlined'
               decimalScale={2}
-              onValueChange={(value, e) => {
-                handleNumericInputChange(value.floatValue, e)
+              onValueChange={value => {
+                handleNumericInputChange(value.floatValue, 'limit')
               }}
               error={errors.limitError}
               helperText={getErrorMessage('limitError')}
@@ -464,9 +465,9 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               variant='outlined'
               decimalScale={2}
               onBlur={() => calculate('grossPremium')}
-              onValueChange={(value, e) => {
+              onValueChange={value => {
                 setGrossPremium(value.floatValue)
-                handleNumericInputChange(value.floatValue, e)
+                handleNumericInputChange(value.floatValue, 'grossPremium')
               }}
               error={errors.grossPremiumError}
               helperText={getErrorMessage('grossPremiumError')}
@@ -487,9 +488,9 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               variant='outlined'
               decimalScale={2}
               onBlur={() => calculate('reinsuranceBrokerage')}
-              onValueChange={(value, e) => {
+              onValueChange={value => {
                 setReinsuranceBrokerage(value.floatValue)
-                handleNumericInputChange(value.floatValue, e)
+                handleNumericInputChange(value.floatValue, 'reinsuranceBrokerage')
               }}
               error={errors.reinsuranceBrokerageError}
               helperText={getErrorMessage('reinsuranceBrokerageError')}
@@ -510,9 +511,9 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               variant='outlined'
               decimalScale={2}
               onBlur={() => calculate('taxes')}
-              onValueChange={(value, e) => {
+              onValueChange={value => {
                 setTaxes(value.floatValue)
-                handleNumericInputChange(value.floatValue, e)
+                handleNumericInputChange(value.floatValue, 'taxes')
               }}
               error={errors.taxesError}
               helperText={getErrorMessage('taxesError')}
@@ -531,9 +532,9 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               variant='outlined'
               decimalScale={2}
               onBlur={() => calculate('frontingFee')}
-              onValueChange={(value, e) => {
+              onValueChange={value => {
                 setFrontingFee(value.floatValue)
-                handleNumericInputChange(value.floatValue, e)
+                handleNumericInputChange(value.floatValue, 'frontingFee')
               }}
               error={errors.frontingFeeError}
               helperText={getErrorMessage('frontingFeeError')}
@@ -553,8 +554,8 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               multiline
               variant='outlined'
               decimalScale={2}
-              onValueChange={(value, e) => {
-                handleNumericInputChange(value.floatValue, e)
+              onValueChange={value => {
+                handleNumericInputChange(value.floatValue, 'attachmentPoint')
               }}
             />
           </FormControl>
