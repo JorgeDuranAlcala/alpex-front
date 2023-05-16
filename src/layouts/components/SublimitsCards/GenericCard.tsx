@@ -122,6 +122,7 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
     } else {
       setDataForm({ ...dataForm, sublimit: 0 })
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [checked])
 
   const options = [
