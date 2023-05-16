@@ -66,13 +66,16 @@ const AuthProvider = ({ children }: Props) => {
             }
 
             setUser({ ...newUserData })
+            console.log('Resp auth/me', response)
           })
-          .catch(() => {
+          .catch(error => {
+            setLoading(false)
+            console.log('Error auth/me', error)
+
             localStorage.removeItem('userData')
             localStorage.removeItem('refreshToken')
             localStorage.removeItem('accessToken')
             setUser(null)
-            setLoading(false)
             if (authConfig.onTokenExpiration === 'logout' && !router.pathname.includes('login')) {
               router.replace('/login')
             }

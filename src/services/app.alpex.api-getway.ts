@@ -1,9 +1,10 @@
 import axios from 'axios'
 
-let accessToken = ''
-if (typeof window !== 'undefined') {
-  accessToken = `Bearer ${localStorage.getItem('accessToken')}` || ''
-}
+const accessToken = `Bearer ${window.localStorage.getItem('accessToken')}` || ''
+
+// if (typeof window !== 'undefined') {
+//   accessToken = `Bearer ${localStorage.getItem('accessToken')}` || ''
+// }
 
 export const AppAlpexApiGateWay = axios.create({
   baseURL: process.env.NEXT_PUBLIC_APP_ALPEX_API_GATEWAY,
