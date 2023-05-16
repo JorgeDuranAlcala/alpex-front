@@ -144,5 +144,6 @@ export enum INSTALLMENT_ROUTERS {
 export enum USERS_ROUTES {
   GET = 'user',
   ADD = 'user',
-  UPDATE = 'user'
+  UPDATE = 'user',
+  DELETE = 'user'
 }
