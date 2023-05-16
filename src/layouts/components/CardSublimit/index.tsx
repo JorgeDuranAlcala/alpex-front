@@ -7,7 +7,7 @@ export interface RenderFormGeneric {
   state?: any
   setState?: (data: any) => {}
   deleteForm?: (data: any) => {}
-  handleOnChangeForm?: (value: string | number, path: string, index: number) => void
+  handleOnChangeForm?: (value: string | number | boolean, path: string, index: number) => void
   index?: number
   formInformation: any
 }

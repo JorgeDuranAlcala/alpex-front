@@ -108,19 +108,19 @@ const schema = yup.object().shape(
     IsGross: yup.boolean(),
     NetPremium: yup
       .number()
-      .transform((_, val) => (val === Number(val) ? val : null))
+      .transform(value => (isNaN(value) ? undefined : value))
       .required(),
     SharePercent: yup
       .number()
-      .transform((_, val) => (val === Number(val) ? val : null))
+      .transform(value => (isNaN(value) ? undefined : value))
       .required(),
     DynamicComissionPercent: yup
       .number()
-      .transform((_, val) => (val === Number(val) ? val : null))
+      .transform(value => (isNaN(value) ? undefined : value))
       .required(),
     FrontingFee: yup
       .number()
-      .transform((_, val) => (val === Number(val) ? val : null))
+      .transform(value => (isNaN(value) ? undefined : value))
       .when('HasFrontingFee', {
         is: true,
         then: yup.number().required()
@@ -128,25 +128,25 @@ const schema = yup.object().shape(
     ReinsuranceCompany: yup.string().test('is-valid', 'This field is required', value => value !== '-1'),
     PremiumPerShare: yup
       .number()
-      .transform((_, val) => (val === Number(val) ? val : null))
+      .transform(value => (isNaN(value) ? undefined : value))
       .required(),
     DynamicComission: yup
       .number()
-      .transform((_, val) => (val === Number(val) ? val : null))
+      .transform(value => (isNaN(value) ? undefined : value))
       .required(),
     FrontingFeePercent: yup
       .number()
-      .transform((_, val) => (val === Number(val) ? val : null))
+      .transform(value => (isNaN(value) ? undefined : value))
       .when('HasFrontingFee', {
         is: true,
         then: yup
           .number()
-          .transform((_, val) => (val === Number(val) ? val : null))
+          .transform(value => (isNaN(value) ? undefined : value))
           .required('This field is required')
       }),
     NetInsurancePremium: yup
       .number()
-      .transform((_, val) => (val === Number(val) ? val : null))
+      .transform(value => (isNaN(value) ? undefined : value))
       .required()
       .test('Is positive?', 'ERROR: The number must be greater than 0!', value => {
         const valueVal = value || 0
@@ -163,7 +163,7 @@ const schema = yup.object().shape(
     }),
     BrokerAge: yup
       .number()
-      .transform((_, val) => (val === Number(val) ? val : null))
+      .transform(value => (isNaN(value) ? undefined : value))
       .nullable()
       .when('IsGross', {
         is: true,
@@ -171,7 +171,7 @@ const schema = yup.object().shape(
       }),
     Taxes: yup
       .number()
-      .transform((_, val) => (val === Number(val) ? val : null))
+      .transform(value => (isNaN(value) ? undefined : value))
       .nullable()
       .when('IsGross', {
         is: true,
@@ -179,7 +179,7 @@ const schema = yup.object().shape(
       }),
     BrokerAgePercent: yup
       .number()
-      .transform((_, val) => (val === Number(val) ? val : null))
+      .transform(value => (isNaN(value) ? undefined : value))
       .nullable()
       .when('IsGross', {
         is: true,
@@ -187,7 +187,7 @@ const schema = yup.object().shape(
       }),
     TaxesPercent: yup
       .number()
-      .transform((_, val) => (val === Number(val) ? val : null))
+      .transform(value => (isNaN(value) ? undefined : value))
       .nullable()
       .when('IsGross', {
         is: true,
@@ -895,7 +895,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
 
           err?.inner?.forEach((e: any) => {
             data[index][e.path] = e.message
-
+            console.log(e.path, e.message)
             setFormErrors(data)
           })
           setEnableNextStep(false)
