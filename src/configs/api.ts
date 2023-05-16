@@ -42,6 +42,10 @@ export enum ACCOUNT_SUBLIMIT_ROUTES {
   UPDATE = 'account/sublimit/update'
 }
 
+export enum ACCOUNT_STEP_FORM_DELETE_ROUTES {
+  DEL = 'account/deleteInfo'
+}
+
 // ==== CATALOGS
 export enum BROKER_ROUTES {
   GET_ALL = 'catalogs/broker/all',
@@ -71,12 +75,6 @@ export enum CEDANT_CONTACT_ROUTERS {
   ADD = 'catalogs/cedant-contact/add',
   UPDATE = 'catalogs/cedant-contact',
   GET_BY_ID_CEDANT = 'catalogs/cedant-contact/cedant'
-}
-
-export enum USERS_ROUTES {
-  GET = 'user',
-  ADD = 'user',
-  UPDATE = 'user'
 }
 
 export enum COUNTRY_ROUTERS {
@@ -125,7 +123,8 @@ export enum COMPANY_ROUTES {
   GET_ALL = 'catalogs/Company/all',
   GET_BY_ID = 'catalogs/Company',
   ADD = 'catalogs/Company/add',
-  UPDATE = 'catalogs/Company'
+  UPDATE = 'catalogs/Company',
+  ROLES = 'catalogs/role/all'
 }
 
 export enum RETRO_CEDANT_ROUTES {
@@ -139,4 +138,11 @@ export enum INSTALLMENT_ROUTERS {
   GET_ALL = 'account/installment/',
   ADD = 'account/installment/add',
   UPDATE = 'account/installment/update'
+}
+
+// ==== CATALOGS
+export enum USERS_ROUTES {
+  GET = 'user',
+  ADD = 'user',
+  UPDATE = 'user'
 }

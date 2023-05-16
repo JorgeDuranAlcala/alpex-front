@@ -10,6 +10,7 @@ export interface UsersGetDto {
 interface Roles {
   id: number
 }
+
 export interface UsersPostDto {
   name: string
   phone: string
@@ -29,4 +30,8 @@ export interface UsersPutDto {
   email: string
   roles: Roles[]
   idCompany: number
+}
+
+export interface UsersDeleteDto {
+  idUsersList: number[]
 }
