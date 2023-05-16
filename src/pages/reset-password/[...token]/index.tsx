@@ -44,11 +44,7 @@ const Background = () => {
   )
 }
 
-export interface ForgotPasswordProps {
-  token: string[]
-}
-
-const ForgotPasswordPage = ({ token }: ForgotPasswordProps) => {
+const ForgotPasswordPage = () => {
   const router = useRouter()
   console.log(router.query.token)
   const {
