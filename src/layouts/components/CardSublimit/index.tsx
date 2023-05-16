@@ -7,9 +7,10 @@ export interface RenderFormGeneric {
   state?: any
   setState?: (data: any) => {}
   deleteForm?: (data: any) => {}
-  handleOnChangeForm?: (value: string | number | boolean, path: string, index: number) => void
+  handleOnChangeForm?: (value: any, index: number) => void
   index?: number
   formInformation: any
+  formErrors: any
 }
 
 const SublimitCard: React.FC<RenderFormGeneric> = ({ components }: RenderFormGeneric) => {
