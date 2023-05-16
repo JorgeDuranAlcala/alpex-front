@@ -76,7 +76,8 @@ export enum CEDANT_CONTACT_ROUTERS {
 export enum USERS_ROUTES {
   GET = 'user',
   ADD = 'user',
-  UPDATE = 'user'
+  UPDATE = 'user',
+  DELETE = 'user/delete'
 }
 
 export enum COUNTRY_ROUTERS {
@@ -125,7 +126,8 @@ export enum COMPANY_ROUTES {
   GET_ALL = 'catalogs/Company/all',
   GET_BY_ID = 'catalogs/Company',
   ADD = 'catalogs/Company/add',
-  UPDATE = 'catalogs/Company'
+  UPDATE = 'catalogs/Company',
+  ROLES = 'catalogs/role/all'
 }
 
 export enum RETRO_CEDANT_ROUTES {

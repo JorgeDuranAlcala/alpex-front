@@ -15,6 +15,7 @@ import {
 } from '@mui/material'
 
 import { useGetAllCompanies } from '@/hooks/catalogs/company/getAllCompanies'
+import { useGetAllRoles } from '@/hooks/catalogs/roles/getAllRoles'
 import { useEditUser } from '@/hooks/catalogs/users'
 import { useAddUser } from '@/hooks/catalogs/users/addUser'
 import { UsersPostDto, UsersPutDto } from '@/services/users/dtos/UsersDto'
@@ -53,49 +54,8 @@ const UserForm: FormInfo = {
   dualRole: ''
 }
 
-const ADMIN_COMPANIES = ['Dynamic', 'Claims']
-
-const roles = [
-  {
-    label: 'Admin',
-    value: '5'
-  },
-  {
-    label: 'Admin',
-    value: '6'
-  },
-  {
-    label: 'Lead underwriter',
-    value: '1'
-  },
-  {
-    label: 'Technical assistant',
-    value: '2'
-  },
-  {
-    label: 'Underwriter',
-    value: '3'
-  }
-]
-
-const companies = [
-  {
-    label: 'Dynamic',
-    value: 'Dynamic'
-  },
-  {
-    label: 'Claims',
-    value: 'Claims'
-  },
-  {
-    label: 'ReinsuranceCompany1',
-    value: 'Reinsurance1'
-  },
-  {
-    label: 'ReinsuranceCompany2',
-    value: 'Reinsurance2'
-  }
-]
+// const ADMIN_COMPANIES = ['dynamic', 'claims']
+const ADMIN_COMPANIES = ['3', '4']
 
 interface IAddUser {
   selectUser: boolean
@@ -123,11 +83,16 @@ const AddUser = ({ selectUser }: IAddUser) => {
   const [editable, setEditable] = useState<boolean>(false)
   const [userPost, setUserPost] = useState<UsersPostDto | null>(null)
   const [userEdit, setUserEdit] = useState<UsersPutDto | null>(null)
+  const [idCompany, setIdCompany] = useState<string>('')
+  const [idRole, setIdRole] = useState<string>('')
+  const [informativeIdRole, setInformativeIdRole] = useState<string>('')
 
   const addUser = useAddUser(userPost)
   const editUser = useEditUser(userEdit)
 
   const { company } = useGetAllCompanies()
+
+  const { roles } = useGetAllRoles()
 
   useEffect(() => {
     if (usersReducer.current !== undefined && usersReducer.current !== null && selectUser) {
@@ -151,7 +116,7 @@ const AddUser = ({ selectUser }: IAddUser) => {
   console.log(errors)
 
   useEffect(() => {
-    if (useWatchRole === 'admin') {
+    if (useWatchRole === '5') {
       setDualRoleDisabled(false)
       setValue('dualRole', '', { shouldValidate: true })
     } else {
@@ -168,10 +133,13 @@ const AddUser = ({ selectUser }: IAddUser) => {
         surname: data.surname || '',
         email: data.email || '',
         phone: data.phone || '',
-        idCompany: +2,
+        idCompany: parseInt(idCompany),
         roles: [
           {
-            id: 6
+            id: parseInt(idRole) || 0
+          },
+          {
+            id: parseInt(informativeIdRole) || 0
           }
         ],
         areaCode: selectedCountry?.phone || ''
@@ -179,21 +147,26 @@ const AddUser = ({ selectUser }: IAddUser) => {
       alert('edit')
 
       setUserEdit(dataToSend)
+      reset()
     } else {
       const dataToSend: UsersPostDto = {
         name: data.name || '',
         surname: data.surname || '',
         email: data.email || '',
         phone: data.phone || '',
-        idCompany: +2,
+        idCompany: parseInt(idCompany),
         roles: [
           {
-            id: 6
+            id: parseInt(idRole) || 0
+          },
+          {
+            id: parseInt(informativeIdRole) || 0
           }
         ],
         areaCode: selectedCountry?.phone || ''
       }
       setUserPost(dataToSend)
+      reset()
     }
   }
 
@@ -205,6 +178,11 @@ const AddUser = ({ selectUser }: IAddUser) => {
   }, [addUser, editUser])
 
   console.log({ company })
+  console.log({ roles })
+
+  console.log('IDCompany--->', idCompany)
+  console.log('IDRole--->', idRole)
+  console.log('InformativeIDRole--->', informativeIdRole)
 
   const handleFormChange = (field: keyof FormInfo, value: FormInfo[keyof FormInfo]) => {
     setFormData({ ...formData, [field]: value })
@@ -388,12 +366,15 @@ const AddUser = ({ selectUser }: IAddUser) => {
                               label='Company'
                               value={value}
                               onBlur={onBlur}
-                              onChange={e => onChange(e.target.value)}
+                              onChange={e => {
+                                onChange(e.target.value)
+                                setIdCompany(e.target.value)
+                              }}
                               labelId='broker'
                             >
-                              {companies.map(company => (
-                                <MenuItem key={company.value} value={company.value}>
-                                  {company.label}
+                              {company?.map(company => (
+                                <MenuItem key={company.name} value={company.id.toString()}>
+                                  {company.alias}
                                 </MenuItem>
                               ))}
                             </Select>
@@ -425,12 +406,15 @@ const AddUser = ({ selectUser }: IAddUser) => {
                               label='Select a role'
                               value={value}
                               onBlur={onBlur}
-                              onChange={e => onChange(e.target.value)}
+                              onChange={e => {
+                                onChange(e.target.value)
+                                setIdRole(e.target.value)
+                              }}
                               labelId='broker'
                             >
-                              {roles.map(rol => (
-                                <MenuItem key={rol.value} value={rol.value}>
-                                  {rol.label}
+                              {roles?.map(rol => (
+                                <MenuItem key={rol.id} value={rol.id.toString()}>
+                                  {rol.role}
                                 </MenuItem>
                               ))}
                             </Select>
@@ -453,15 +437,18 @@ const AddUser = ({ selectUser }: IAddUser) => {
                               label='Select a role'
                               value={value}
                               onBlur={onBlur}
-                              onChange={e => onChange(e.target.value)}
+                              onChange={e => {
+                                onChange(e.target.value)
+                                setInformativeIdRole(e.target.value)
+                              }}
                               labelId='broker'
                             >
-                              {roles.map(rol => {
-                                if (rol.value === 'admin') return null
+                              {roles?.map(rol => {
+                                if (rol.role === 'admin') return null
                                 else
                                   return (
-                                    <MenuItem key={rol.value} value={rol.value}>
-                                      {rol.label}
+                                    <MenuItem key={rol.id} value={rol.id.toString()}>
+                                      {rol.role}
                                     </MenuItem>
                                   )
                               })}
