@@ -9,8 +9,14 @@ import { DataGrid, GRID_CHECKBOX_SELECTION_COL_DEF, GridColumns, GridRowId } fro
 // ** Icon Imports
 
 // ** Custom Hooks imports
+// import { useDeleteUser } from '@/hooks/catalogs/users/deleteUser'
+
+// import { UsersDeleteDto } from '@/services/users/dtos/UsersDto'
 
 // ** Custom Components Imports
+
+// ** Custom Components Imports
+
 import { Icon } from '@iconify/react'
 import ColumnHeader from './ColumnHeader'
 import CustomPagination from './CustomPagination'
@@ -67,6 +73,11 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
   const [selectedUser, setSelectedUser] = useState<IUsersGrid | null>(null)
   const [modalShow, setModalShow] = useState<boolean>(false)
 
+  // const [idDeleteUser,setIdDeleteUser] = useState<UsersDeleteDto | null>([])
+
+  // console.log('Id_User--->', selectedUser?.id)
+  // console.log('Id_Useeeer--->',idDeleteUser)
+
   //WIP
   //eslint-disable-next-line
   const [badgeData, setBadgeData] = useState<IAlert>({
@@ -80,6 +91,8 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
   const usersReducer = useAppSelector(state => state.users)
 
   // ** Hooks
+  //  const deleteUser = useDeleteUser([5])
+  //  console.log(deleteUser)
 
   const handleClickColumnHeader = (field: string) => {
     alert(field)

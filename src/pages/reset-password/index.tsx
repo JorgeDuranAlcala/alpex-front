@@ -1,12 +1,13 @@
 // ** React Imports
+import loginAnimation from '@/pages/reset-password/animations/login-animation.json'
 import { useRouter } from 'next/router'
 import { ReactNode, useState } from 'react'
 import Lottie from 'react-lottie'
-import loginAnimation from './animations/login-animation.json'
 
 // ** MUI Components
 
 // ** Layout Import
+
 import { yupResolver } from '@hookform/resolvers/yup'
 import { Icon } from '@iconify/react'
 import { Button, FormControl, IconButton, InputAdornment, InputLabel, OutlinedInput, Typography } from '@mui/material'
@@ -42,8 +43,10 @@ const Background = () => {
     </div>
   )
 }
+
 const ForgotPasswordPage = () => {
   const router = useRouter()
+  console.log(router.query.token)
   const {
     control,
     handleSubmit,
