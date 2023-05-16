@@ -139,8 +139,8 @@ const FormHeader = () => {
             <div className='form-header-section'>
               <span className='form-header-title'>Net premium:</span>
               <span className='form-header-subtitle'>
-                ${accountsReducer.formsData.form1.placementStructure.netPremium}{' '}
-                {accountsReducer.formsData.form1.placementStructure.currency}
+                ${accountsReducer.formsData.form1?.placementStructure?.netPremium}{' '}
+                {accountsReducer.formsData.form1?.placementStructure?.currency}
               </span>
             </div>
             <div className='form-header-section'>

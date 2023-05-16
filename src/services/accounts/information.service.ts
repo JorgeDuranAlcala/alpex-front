@@ -29,7 +29,7 @@ class AccountServices {
       return data
     } catch (error) {
       const message = String(error)
-      throw new Error(message)
+      console.log(message)
     }
   }
 
@@ -45,7 +45,7 @@ class AccountServices {
       return data
     } catch (error) {
       const message = String(error)
-      throw new Error(message)
+      console.log(message)
     }
   }
 
