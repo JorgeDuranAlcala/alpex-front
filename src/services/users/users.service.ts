@@ -56,7 +56,7 @@ class UsersServices {
 
   async deleteUsers(user: Partial<UsersDeleteDto>): Promise<UsersGetDto[]> {
     try {
-      const { data } = await AppAlpexApiGateWay.post<Promise<UsersGetDto[]>>(`${USERS_ROUTES.DELETE}`, {
+      const { data } = await AppAlpexApiGateWay.post<Promise<UsersGetDto[]>>(USERS_ROUTES.DELETE, {
         ...user,
         headers: {
           'x-api-key': 'ZlExQKG0xPB673L3B6hClORm6oPaKcer'
