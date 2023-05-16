@@ -365,11 +365,11 @@ const ReinsurerContacts = () => {
         </div>
 
       </div>
-      <Modal className='create-contact-modal' open={openNewContact} onClose={() => setOpenNewContact(true)}>
+      <Modal className='create-contact-modal' open={openNewContact} onClose={() => setOpenNewContact(false)}>
         <Box className='modal-wrapper'>
           <HeaderTitleModal>
             <Typography variant='h6'>Create new contact</Typography>
-            <ButtonClose onClick={() => setOpenNewContact(true)}>
+            <ButtonClose onClick={() => setOpenNewContact(false)}>
               <CloseIcon />
             </ButtonClose>
           </HeaderTitleModal>

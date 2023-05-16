@@ -362,4 +362,58 @@
   padding: 0 15px 15px;
 }
 
+/* ------ CONTACT ACTIONS & BINDER ACTIONS ------ */
 
+.actions-wrapper {
+  width: 100%;
+  position: relative;
+}
+
+
+
+.actions-menu {
+  position: absolute;
+  z-index: 1;
+  width: 100%;
+  background-color: white;
+  padding: 15px 0;
+  border-radius: 15px;
+  box-shadow: 0px 4px 6px 1px rgba(0, 0, 0, 0.2);
+}
+
+
+
+.actions-menu .menu-option {
+  cursor: pointer;
+  padding: 15px 15px 5px;
+  font-size: 16px;
+}
+
+.actions-menu .menu-option:hover {
+  background-color: rgba(76, 78, 100, 0.04);
+}
+
+
+@media (max-width: 700px) {
+
+
+  .actions-wrapper .actions-menu{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}
+
+/* ---- ADD BINDER ----*/
+
+.reference-number .MuiOutlinedInput-root{
+  min-width: 500px;
+}
+
+
+@media (max-width: 700px) {
+
+  .reference-number .MuiOutlinedInput-root{
+    min-width: unset;
+  }
+}
