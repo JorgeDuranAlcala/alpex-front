@@ -2,7 +2,7 @@ import { CEDANT_ROUTERS } from 'src/configs/api'
 import { AppAlpexApiGateWay } from 'src/services/app.alpex.api-getway'
 import { CedantDto } from 'src/services/catalogs/dtos/cedant.dto'
 
-class BrokerService {
+class CedantService {
   async getAll(): Promise<CedantDto[]> {
     try {
       const { data } = await AppAlpexApiGateWay.get<Promise<CedantDto[]>>(CEDANT_ROUTERS.GET_ALL)
@@ -48,4 +48,4 @@ class BrokerService {
   }
 }
 
-export default new BrokerService()
+export default new CedantService()
