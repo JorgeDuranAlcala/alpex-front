@@ -66,7 +66,7 @@ const SecurityForm: FormInfo = {
   SharePercent: '',
   DynamicComissionPercent: '',
   FrontingFee: '',
-  ReinsuranceCompany: '-1',
+  ReinsuranceCompany: '',
   PremiumPerShare: '',
   DynamicComission: '',
   FrontingFeePercent: '',
@@ -113,10 +113,14 @@ const schema = yup.object().shape(
     SharePercent: yup
       .number()
       .transform(value => (isNaN(value) ? undefined : value))
+      .test('max 100', 'This field must be less than 100', value => Number(value) <= 100)
+      .min(0, 'This field must be greater than 0')
       .required(),
     DynamicComissionPercent: yup
       .number()
       .transform(value => (isNaN(value) ? undefined : value))
+      .test('max 100', 'This field must be less than 100', value => Number(value) <= 100)
+      .min(0, 'This field must be greater than 0')
       .required(),
     FrontingFee: yup
       .number()
@@ -125,10 +129,15 @@ const schema = yup.object().shape(
         is: true,
         then: yup.number().required()
       }),
-    ReinsuranceCompany: yup.string().test('is-valid', 'This field is required', value => value !== '-1'),
+    ReinsuranceCompany: yup
+      .string()
+      .test('is-valid', 'This field is required', value => value !== '-1')
+      .required(),
     PremiumPerShare: yup
       .number()
       .transform(value => (isNaN(value) ? undefined : value))
+      .test('max 100', 'This field must be less than 100', value => Number(value) <= 100)
+      .min(0, 'This field must be greater than 0')
       .required(),
     DynamicComission: yup
       .number()
@@ -137,6 +146,8 @@ const schema = yup.object().shape(
     FrontingFeePercent: yup
       .number()
       .transform(value => (isNaN(value) ? undefined : value))
+      .test('max 100', 'This field must be less than 100', value => Number(value) <= 100)
+      .min(0, 'This field must be greater than 0')
       .when('HasFrontingFee', {
         is: true,
         then: yup
@@ -180,6 +191,8 @@ const schema = yup.object().shape(
     BrokerAgePercent: yup
       .number()
       .transform(value => (isNaN(value) ? undefined : value))
+      .test('max 100', 'This field must be less than 100', value => Number(value) <= 100)
+      .min(0, 'This field must be greater than 0')
       .nullable()
       .when('IsGross', {
         is: true,
@@ -188,6 +201,8 @@ const schema = yup.object().shape(
     TaxesPercent: yup
       .number()
       .transform(value => (isNaN(value) ? undefined : value))
+      .test('max 100', 'This field must be less than 100', value => Number(value) <= 100)
+      .min(0, 'This field must be greater than 0')
       .nullable()
       .when('IsGross', {
         is: true,
@@ -344,28 +359,31 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
     else dataError[index]['NetInsurancePremium'] = ''
     setFormErrors(dataError)
     setFormErrors(formErrors)
+    if (+totalNetPremium === 0) {
+      data[index]['NetPremium'] = formInformation.netPremium.toString()
+    }
 
     switch (field) {
       case 'NetPremium':
-        data[index]['SharePercent'] = '100'
-        data[index]['PremiumPerShare'] = totalNetPremium
+        data[index]['PremiumPerShare'] = validateNumber(((+sharePercent * +totalNetPremium) / 100).toString())
         break
 
       case 'SharePercent':
+        data[index]['NetInsurancePremium'] = NetInsurancePremium
         data[index]['PremiumPerShare'] = validateNumber(((+sharePercent * +totalNetPremium) / 100).toString())
         break
 
       case 'PremiumPerShare':
-        data[index]['SharePercent'] = validateNumber(((+premiumPerShare / +totalNetPremium) * 100).toString())
         data[index]['NetInsurancePremium'] = NetInsurancePremium
-        data[index]['DynamicComissionPercent'] = '100'
-        data[index]['FrontingFeePercent'] = '100'
-        data[index]['TaxesPercent'] = isGross ? '100' : ''
-        data[index]['BrokerAgePercent'] = isGross ? '100' : ''
-        data[index]['Taxes'] = isGross ? premiumPerShare : ''
-        data[index]['BrokerAge'] = isGross ? premiumPerShare : ''
-        data[index]['FrontingFee'] = premiumPerShare
-        data[index]['DynamicComission'] = premiumPerShare
+        data[index]['SharePercent'] = validateNumber(((+premiumPerShare / +totalNetPremium) * 100).toString())
+        data[index]['Taxes'] = isGross ? validateNumber(((+TaxesPercent * +premiumPerShare) / 100).toString()) : ''
+        data[index]['BrokerAge'] = isGross
+          ? validateNumber(((+BrokerAgePercent * +premiumPerShare) / 100).toString())
+          : ''
+        data[index]['FrontingFee'] = validateNumber(((+FrontingFeePercent * +premiumPerShare) / 100).toString())
+        data[index]['DynamicComission'] = validateNumber(
+          ((+dynamicComissionPercent * +premiumPerShare) / 100).toString()
+        )
 
         break
 
@@ -496,6 +514,13 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
     //eslint-disable-next-line
   }, [formData[index].ReinsuranceCompany])
 
+  useEffect(() => {
+    const data = [...formData]
+    data[index].NetPremium = formInformation.netPremium.toString()
+    setFormData(data)
+    //eslint-disable-next-line
+  }, [])
+
   const switchAlpex = useRef(null)
 
   return (
@@ -516,6 +541,7 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
               InputProps={{
                 inputComponent: NumericFormatCustom as any
               }}
+              defaultValue={formInformation.netPremium.toString()}
               onChange={e => handleFormChange('NetPremium', e.target.value)}
             />
             <FormHelperText sx={{ color: 'error.main' }}>{formErrors[index]?.NetPremium}</FormHelperText>
@@ -620,12 +646,10 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
             <InputLabel>Reinsurance companies</InputLabel>
 
             <Select
-              label='Select a reinsurance company'
               value={formData[index].ReinsuranceCompany}
               onChange={e => handleFormChange('ReinsuranceCompany', e.target.value)}
               labelId='broker'
             >
-              <MenuItem value='-1'>Select a reinsurance company</MenuItem>
               {avaliableReinsurers.map(reinsurer => (
                 <MenuItem key={reinsurer.id} value={reinsurer.id}>
                   {reinsurer.name}
@@ -737,7 +761,6 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
                 }}
                 labelId='broker'
               >
-                <MenuItem value=''>Select Retro cedant</MenuItem>
                 {retroCedants?.map(cedant => (
                   <MenuItem key={cedant.name} value={cedant.id}>
                     {cedant.name}
@@ -758,7 +781,6 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
                 labelId='broker'
                 disabled={formData[index].RetroCedant === ''}
               >
-                <MenuItem value=''>Select Retro Cedant contact</MenuItem>
                 {contacts?.map(contact => (
                   <MenuItem key={contact.name} value={contact.id}>
                     {contact.name}
@@ -884,7 +906,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
   const validate = async () => {
     formData.forEach((form, index) => {
       const data = [...formErrors]
-      data[index] = { ...SecurityForm, ReinsuranceCompany: '' }
+      data[index] = { ...SecurityForm }
       schema
         .validate(form, { abortEarly: false })
         .then(function () {
@@ -895,7 +917,6 @@ const Security = ({ onStepChange }: SecurityProps) => {
 
           err?.inner?.forEach((e: any) => {
             data[index][e.path] = e.message
-            console.log(e.path, e.message)
             setFormErrors(data)
           })
           setEnableNextStep(false)
@@ -904,7 +925,6 @@ const Security = ({ onStepChange }: SecurityProps) => {
   }
 
   const calculateDistribuitedNetPremium = () => {
-    console.log(formInformation)
     let DistribuitedNetPremium = 0
     let sumSharePercent = 0
     let sumGrossShare = 0

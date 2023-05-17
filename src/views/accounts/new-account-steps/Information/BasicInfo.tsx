@@ -236,11 +236,11 @@ const ModalContact = ({ id }: IModal) => {
         </div>
         CREATE NEW CONTACT
       </Button>
-      <Modal className='create-contact-modal' open={open} onClose={() => setOpen(true)}>
+      <Modal className='create-contact-modal' open={open} onClose={() => setOpen(false)}>
         <Box className='modal-wrapper'>
           <HeaderTitleModal>
             <Typography variant='h6'>Create new contact</Typography>
-            <ButtonClose onClick={() => setOpen(true)}>
+            <ButtonClose onClick={() => setOpen(false)}>
               <CloseIcon />
             </ButtonClose>
           </HeaderTitleModal>
