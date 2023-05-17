@@ -10,6 +10,7 @@ const initialState: IAccountsState = {
   loading: false,
   filters: [],
   current: null,
+  formsData: null,
 
   // formsData: {},
   info: {
@@ -63,9 +64,8 @@ export const appAccountsSlice = createSlice({
     },
 
     updateFormsData: (state, { payload }) => {
-      // state.formsData = { ...state.formsData, ...payload }
-      // console.log(state.formsData)
-      console.log(state, payload)
+      state.formsData = { ...state.formsData, ...payload }
+      console.log(state.formsData)
     }
   },
   extraReducers: builder => {
