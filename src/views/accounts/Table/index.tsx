@@ -95,10 +95,29 @@ const Table = ({ status }: IAccountTable) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status])
+
   useEffect(() => {
-    setAccounts(accountsReducer.accounts || [])
-    console.log(loading)
     setLoading(accountsReducer.loading)
+
+    const formatedRows = []
+    console.log('losAccounts', accountsReducer.accounts)
+    const rawRows = accountsReducer.accounts
+    if (rawRows && rawRows.length > 0) {
+      for (const rawRow of rawRows) {
+        formatedRows.push({
+          id: rawRow.id,
+          status: rawRow.idAccountStatus.status.toLowerCase(),
+          insured: rawRow?.informations[0]?.insured,
+          lob: rawRow?.informations[0]?.idLineOfBussines?.lineOfBussines,
+          effectiveDate: rawRow?.informations[0]?.effetiveDate,
+          expirationDate: rawRow?.informations[0]?.expirationDate
+        })
+      }
+    }
+
+    console.log(formatedRows)
+
+    setAccounts(formatedRows || [])
     //eslint-disable-next-line
   }, [accountsReducer])
 

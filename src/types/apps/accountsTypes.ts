@@ -11,6 +11,20 @@ export type IAccounts = {
   loading: boolean
   filters: IFilters[]
   formsData: any
+  id: number
+  idAccountStatus: {
+    status: string
+  }
+  informations: [
+    {
+      insured: string
+      idLineOfBussines: {
+        lineOfBussines: string
+      }
+      effetiveDate: string
+      expirationDate: string
+    }
+  ]
 }
 
 interface IAccountsInfo {
@@ -32,7 +46,7 @@ export type IAccountFilters = {
 
 export interface IAccountsState {
   current: IAccounts | null
-  users: IAccounts[]
+  accounts: IAccounts[]
   loading: boolean
   filters: IAccountFilters[]
   info: IAccountsInfo
