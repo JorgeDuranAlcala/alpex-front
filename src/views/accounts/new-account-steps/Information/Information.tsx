@@ -25,9 +25,9 @@ export interface BasicInfoInterface {
   insured: string
   country: string
   broker: string
-  brokerContact: string
+  brokerContact: number
   cedant: string
-  cedantContact: string
+  cedantContact: number
   lineOfBusiness: string
   underwriter: string
   leadUnderwriter: string
@@ -63,9 +63,9 @@ const Information: React.FC<InformationProps> = ({ onStepChange }) => {
     insured: '',
     country: '',
     broker: '',
-    brokerContact: '',
+    brokerContact: 0,
     cedant: '',
-    cedantContact: '',
+    cedantContact: 0,
     lineOfBusiness: '',
     underwriter: '',
     leadUnderwriter: '',
@@ -94,9 +94,11 @@ const Information: React.FC<InformationProps> = ({ onStepChange }) => {
     attachmentPoint: 0.0,
     typeOfLimit: ''
   })
-  const [userFile, setUserFile] = useState<UserFile>({
-    file: null
-  })
+  const [userFile, setUserFile] = useState<UserFile[]>([
+    {
+      file: null
+    }
+  ])
 
   const saveInformation = async () => {
     //ALLOW NULLS
