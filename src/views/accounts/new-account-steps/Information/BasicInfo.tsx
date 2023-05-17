@@ -11,7 +11,11 @@ import {
   InputAdornment,
   InputLabel,
   MenuItem,
-  Modal, SxProps, TextField, Theme, Typography
+  Modal,
+  SxProps,
+  TextField,
+  Theme,
+  Typography
 } from '@mui/material'
 import Select, { SelectChangeEvent } from '@mui/material/Select'
 import { ButtonClose, HeaderTitleModal } from 'src/styles/modal/modal.styled'
@@ -219,7 +223,6 @@ const ModalContact = ({ id }: IModal) => {
     setStartValidations(true)
     setContactData({ ...contactData, [field]: value })
   }
-
 
   const handleCreateContact = () => {
     console.log('createContact')
@@ -649,7 +652,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               name='riskActivity'
               label='Risk activity'
               value={basicInfo.riskActivity}
-              disabled={bussinesFields}
+              disabled={true}
               onChange={handleInputChange}
               error={!!errors.riskActivityError}
               helperText={getErrorMessage('riskActivityError')}
@@ -661,7 +664,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               name='riskClass'
               label='Risk class'
               value={basicInfo.riskClass}
-              disabled={bussinesFields}
+              disabled={true}
               onChange={handleInputChange}
               error={!!errors.riskClassError}
               helperText={getErrorMessage('riskClassError')}
