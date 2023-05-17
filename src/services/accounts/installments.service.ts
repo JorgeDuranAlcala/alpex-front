@@ -1,11 +1,20 @@
 import { INSTALLMENT_ROUTERS } from 'src/configs/api'
 import { AppAlpexApiGateWay } from '../app.alpex.api-getway'
+import { AppAlpexApiGateWayNoToken } from '../app.alpex.api-getway-no-jwt'
 import { InstallmentDto } from './dtos/installments.dto'
 
 class SecurityService {
-  async addInstallments(securitiesIn: Partial<InstallmentDto>[]): Promise<InstallmentDto[]> {
+  async addInstallments(securitiesIn: Partial<InstallmentDto>[], jwtToken: string): Promise<InstallmentDto[]> {
     try {
-      const { data } = await AppAlpexApiGateWay.post<Promise<InstallmentDto[]>>(INSTALLMENT_ROUTERS.ADD, securitiesIn)
+      const { data } = await AppAlpexApiGateWayNoToken.post<Promise<InstallmentDto[]>>(
+        INSTALLMENT_ROUTERS.ADD,
+        securitiesIn,
+        {
+          headers: {
+            Authorization: `Bearer ${jwtToken}`
+          }
+        }
+      )
 
       return data
     } catch (error) {
