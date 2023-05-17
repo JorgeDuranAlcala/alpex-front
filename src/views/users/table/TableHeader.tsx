@@ -28,7 +28,6 @@ const TableHeader: React.FC<ITableHeader> = ({ badgeData, handleView, selectedRo
   // ** Custom Hooks
 
   //const { deleteAccounts, changeStatusAccounts } = useAccountTable()
-
   const dispatch = useAppDispatch()
   const usersReducer = useAppSelector(state => state.users)
 
