@@ -23,9 +23,9 @@ export interface InformationDto {
   idAccount: number
   idCountry: number
   idBroker: number
-  idBrokerContact: number
+  idBrokerContact: number | null
   idCedant: number
-  idCedantContact: number
+  idCedantContact: number | null
   idLineOfBussines: number
   idTypeOfLimit: number
   idRiskActivity: number
