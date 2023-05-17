@@ -18,7 +18,21 @@ import Icon from 'src/@core/components/icon'
 import { ButtonClose, HeaderTitleModal } from 'src/styles/modal/modal.styled'
 
 //Hooks
+import { useAddBrokerContact } from 'src/hooks/catalogs/broker-contact'
+import { useAddCedantContact } from 'src/hooks/catalogs/cedant-contact'
 import { useGetAllCountries } from 'src/hooks/catalogs/country'
+
+//interfaces
+import { BasicInfoInterface } from 'src/views/accounts/new-account-steps/Information/Information'
+
+type Service = 'broker' | 'cedant'
+
+interface Props {
+  service: Service
+  id: number
+  updateContacts: (id: number) => void
+  setIdCreated: React.Dispatch<React.SetStateAction<BasicInfoInterface>>
+}
 
 interface ContactData {
   name: string
@@ -41,7 +55,7 @@ const expresions = {
   phone: /^\d{10}$/ // 7 a 10 numeros.
 }
 
-export const ModalContact = () => {
+export const ModalContact = ({ id, service, updateContacts, setIdCreated }: Props) => {
   const [contactData, setContactData] = useState<ContactData>(initialContactData)
   const [open, setOpen] = useState<boolean>(false)
   const [btnDisable, setBtnDisable] = useState(true)
@@ -54,6 +68,10 @@ export const ModalContact = () => {
   const [emptyForm, setEmptyForm] = useState(true)
 
   const { countries } = useGetAllCountries()
+  const { saveBrokerContact } = useAddBrokerContact()
+  const { saveCedantContact } = useAddCedantContact()
+
+  // const {  saveCedant } = useAddCedant()
 
   const closeModal = () => {
     setOpen(false)
@@ -65,6 +83,43 @@ export const ModalContact = () => {
     setEmptyForm(false)
     setStartValidations(false)
     setBtnDisable(true)
+  }
+
+  const saveContact = async () => {
+    switch (service) {
+      case 'broker':
+        const contactBroker = await saveBrokerContact({
+          email: contactData.email,
+          name: contactData.name,
+          phone: contactData.phone,
+          idCCountry: Number(contactData.country),
+          idCBroker: id
+        })
+
+        setIdCreated(state => ({
+          ...state,
+          brokerContact: contactBroker.id
+        }))
+        break
+
+      case 'cedant':
+        const contactCedant = await saveCedantContact({
+          email: contactData.email,
+          name: contactData.name,
+          phone: contactData.phone,
+          idCCountry: Number(contactData.country),
+          idCCedant: id
+        })
+
+        setIdCreated(state => ({
+          ...state,
+          cedantContact: contactCedant.id
+        }))
+        break
+    }
+
+    await updateContacts(id)
+    closeModal()
   }
 
   useEffect(() => {
@@ -138,10 +193,6 @@ export const ModalContact = () => {
   const handleChange = (field: keyof ContactData, value: ContactData[keyof ContactData]) => {
     setStartValidations(true)
     setContactData({ ...contactData, [field]: value })
-  }
-
-  const handleCreateContact = () => {
-    console.log('createContact')
   }
 
   return (
@@ -222,12 +273,7 @@ export const ModalContact = () => {
               )}
             </FormControl>
           </div>
-          <Button
-            className='create-contact-modal'
-            disabled={btnDisable}
-            variant='contained'
-            onClick={handleCreateContact}
-          >
+          <Button className='create-contact-modal' disabled={btnDisable} variant='contained' onClick={saveContact}>
             CREATE
           </Button>
           <Button className='create-contact-modal' onClick={closeModal}>

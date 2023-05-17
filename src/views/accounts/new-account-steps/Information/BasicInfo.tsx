@@ -52,9 +52,9 @@ type BasicInfoProps = {
     insured: string
     country: string
     broker: string
-    brokerContact: string
+    brokerContact: number
     cedant: string
-    cedantContact: string
+    cedantContact: number
     lineOfBusiness: string
     underwriter: string
     leadUnderwriter: string
@@ -71,9 +71,9 @@ type BasicInfoProps = {
       insured: string
       country: string
       broker: string
-      brokerContact: string
+      brokerContact: number
       cedant: string
-      cedantContact: string
+      cedantContact: number
       lineOfBusiness: string
       underwriter: string
       leadUnderwriter: string
@@ -130,8 +130,8 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
   const { countries } = useCountyGetAll()
   const { brokers } = useBrokerGetAll()
   const { cedant } = useCedantGetAll()
-  const { brokerContacts, setIdBroker } = useGetAllByIdBroker()
-  const { contacts: cedantContacts, setIdCedant } = useGetAllByCedant()
+  const { brokerContacts, setIdBroker, findByIdBroker } = useGetAllByIdBroker()
+  const { contacts: cedantContacts, setIdCedant, findByIdCedant } = useGetAllByCedant()
   const { riskActivities } = useGetAllRiskActivities()
   const { lineOfBussines } = useGetAllLineOfBussines()
   const { users: underwriters } = useGetByIdRole(ROLES.UNDERWRITER)
@@ -156,6 +156,14 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
     riskClassError: false
   })
 
+  const updateBrokerContact = async (id: number) => {
+    await findByIdBroker(id)
+  }
+
+  const updateCedantContact = async (id: number) => {
+    await findByIdCedant(id)
+  }
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     setBasicInfo({ ...basicInfo, [name]: value })
@@ -174,12 +182,12 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
 
     if (name === 'broker') {
       //reset del  valor del contact
-      basicInfoTem.brokerContact = ''
+      basicInfoTem.brokerContact = 0
       setIdBroker(Number(value))
     }
     if (name === 'cedant') {
       //reset del  valor del contact
-      basicInfoTem.cedantContact = ''
+      basicInfoTem.cedantContact = 0
       setIdCedant(Number(value))
     }
 
@@ -331,7 +339,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
             <Select
               name='brokerContact'
               label='Select Broker Contact'
-              value={basicInfo.brokerContact}
+              value={`${basicInfo.brokerContact == 0 ? '' : basicInfo.brokerContact}`}
               onChange={handleSelectChange}
               labelId='broker-contact'
             >
@@ -345,7 +353,12 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
                 })}
             </Select>
           </FormControl>
-          <ModalContact />
+          <ModalContact
+            service={'broker'}
+            id={Number(basicInfo.broker)}
+            updateContacts={updateBrokerContact}
+            setIdCreated={setBasicInfo}
+          />
         </div>
         <div className='form-col'>
           <div className='title'>Cedant</div>
@@ -381,7 +394,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
             <Select
               name='cedantContact'
               label='Select Cedant Contact'
-              value={basicInfo.cedantContact}
+              value={`${basicInfo.cedantContact == 0 ? '' : basicInfo.cedantContact}`}
               onChange={handleSelectChange}
               labelId='cedant-contact'
             >
@@ -395,7 +408,12 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
                 })}
             </Select>
           </FormControl>
-          <ModalContact />
+          <ModalContact
+            service={'cedant'}
+            id={Number(basicInfo.cedant)}
+            updateContacts={updateCedantContact}
+            setIdCreated={setBasicInfo}
+          />
         </div>
         <div className='form-col'>
           <div className='title'>Business</div>
