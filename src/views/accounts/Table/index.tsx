@@ -61,8 +61,6 @@ const Table = ({ status }: IAccountTable) => {
     icon: undefined
   })
 
-  console.log("Id's Selected--->", selectedRows)
-
   // **Reducers
   const dispatch = useAppDispatch()
   const accountsReducer = useAppSelector(state => state.accounts)
