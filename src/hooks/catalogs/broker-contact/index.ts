@@ -1,3 +1,2 @@
-export * from './index'
 export * from './useGetAll'
-export * from './useGetAllByIdBroker'
+export { default as useGetAllByIdBroker } from './useGetAllByIdBroker'

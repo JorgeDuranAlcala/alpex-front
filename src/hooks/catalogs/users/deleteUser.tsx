@@ -1,24 +1,22 @@
 import { useEffect, useState } from 'react'
-import { UsersGetDto, UsersPostDto } from 'src/services/users/dtos/UsersDto'
+import { UsersDeleteDto, UsersGetDto } from 'src/services/users/dtos/UsersDto'
 import UserService from 'src/services/users/users.service'
 
-export const useAddUser = () => {
+export const useDeleteUser = (userDelete: UsersDeleteDto) => {
   const [user, setUser] = useState<UsersGetDto[]>([])
-  const [userPost, setUserPost] = useState<UsersPostDto | null>()
 
   useEffect(() => {
-    if (!userPost) return
-    UserService.addUser(userPost)
+    if (!userDelete) return
+    UserService.deleteUsers(userDelete)
       .then(user => {
         setUser(user)
       })
       .catch(error => {
         throw error
       })
-  }, [userPost])
+  }, [userDelete])
 
   return {
-    user,
-    setUserPost
+    user
   }
 }

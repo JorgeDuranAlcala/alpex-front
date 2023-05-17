@@ -2,6 +2,12 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import Icon from 'src/@core/components/icon'
 import * as yup from 'yup'
 
+import { useGetAllCompanies } from '@/hooks/catalogs/company/getAllCompanies'
+import { useGetAllRoles } from '@/hooks/catalogs/roles/getAllRoles'
+import { useEditUser } from '@/hooks/catalogs/users'
+import { useAddUser } from '@/hooks/catalogs/users/addUser'
+import { UsersPostDto, UsersPutDto } from '@/services/users/dtos/UsersDto'
+import { fetchAccounts } from '@/store/apps/users'
 import {
   Button,
   FormControl,
@@ -13,14 +19,10 @@ import {
   Select,
   TextField
 } from '@mui/material'
-
-import { useGetAllCompanies } from '@/hooks/catalogs/company/getAllCompanies'
-import { useEditUser } from '@/hooks/catalogs/users'
-import { useAddUser } from '@/hooks/catalogs/users/addUser'
-import { UsersPostDto, UsersPutDto } from '@/services/users/dtos/UsersDto'
 import { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import { useAppSelector } from 'src/store'
+import { useAppDispatch, useAppSelector } from 'src/store'
+
 import { UserSection } from 'src/styles/Forms/usersSection'
 import CountrySelect, { ICountry } from 'src/views/custom/select/CountrySelect'
 import { StyledDescription, StyledSubtitle, StyledTitle } from 'src/views/custom/typography'
@@ -52,50 +54,19 @@ const UserForm: FormInfo = {
   role: '',
   dualRole: ''
 }
+const initialForm: UsersPutDto = {
+  id: 1,
+  name: '',
+  surname: '',
+  email: '',
+  phone: '',
+  idCompany: 0,
+  roles: [],
+  areaCode: ''
+}
 
-const ADMIN_COMPANIES = ['Dynamic', 'Claims']
-
-const roles = [
-  {
-    label: 'Admin',
-    value: '5'
-  },
-  {
-    label: 'Admin',
-    value: '6'
-  },
-  {
-    label: 'Lead underwriter',
-    value: '1'
-  },
-  {
-    label: 'Technical assistant',
-    value: '2'
-  },
-  {
-    label: 'Underwriter',
-    value: '3'
-  }
-]
-
-const companies = [
-  {
-    label: 'Dynamic',
-    value: 'Dynamic'
-  },
-  {
-    label: 'Claims',
-    value: 'Claims'
-  },
-  {
-    label: 'ReinsuranceCompany1',
-    value: 'Reinsurance1'
-  },
-  {
-    label: 'ReinsuranceCompany2',
-    value: 'Reinsurance2'
-  }
-]
+// const ADMIN_COMPANIES = ['dynamic', 'claims']
+const ADMIN_COMPANIES = ['3', '4']
 
 interface IAddUser {
   selectUser: boolean
@@ -112,22 +83,74 @@ const AddUser = ({ selectUser }: IAddUser) => {
     mode: 'onBlur',
     resolver: yupResolver(schema)
   })
+
   const useWatchCompany = watch('company')
   const useWatchRole = watch('role')
   const usersReducer = useAppSelector(state => state.users)
-
+  const dispatch = useAppDispatch()
   const [formData, setFormData] = useState<FormInfo>(UserForm)
   const [selectedCountry, setSelectedCountry] = useState<ICountry | null>()
   const [dualRoleDisabled, setDualRoleDisabled] = useState<boolean>(false)
   const [roleDisabled, setRoleDisabled] = useState<boolean>(false)
   const [editable, setEditable] = useState<boolean>(false)
-  const [userPost, setUserPost] = useState<UsersPostDto | null>(null)
-  const [userEdit, setUserEdit] = useState<UsersPutDto | null>(null)
 
-  const addUser = useAddUser(userPost)
-  const editUser = useEditUser(userEdit)
+  const [idCompany, setIdCompany] = useState<string>('')
+  const [idRole, setIdRole] = useState<string>('')
+  const [informativeIdRole, setInformativeIdRole] = useState<string>('')
+
+  const { setUserPost } = useAddUser()
+  const { setUserPut } = useEditUser()
 
   const { company } = useGetAllCompanies()
+
+  const { roles } = useGetAllRoles()
+
+  const onSubmit = (data: any) => {
+    if (selectUser) {
+      const dataToSend: UsersPutDto = {
+        id: usersReducer.current?.id || 1,
+        name: data.name || '',
+        surname: data.surname || '',
+        email: data.email || '',
+        phone: data.phone || '',
+        idCompany: parseInt(idCompany),
+        roles: [
+          {
+            id: parseInt(idRole) || 0
+          },
+          {
+            id: parseInt(informativeIdRole) || 0
+          }
+        ],
+        areaCode: selectedCountry?.phone || ''
+      }
+      setUserPut(dataToSend)
+    } else {
+      const dataToSend: UsersPostDto = {
+        name: data.name || '',
+        surname: data.surname || '',
+        email: data.email || '',
+        phone: data.phone || '',
+        idCompany: parseInt(idCompany),
+        roles: [
+          {
+            id: parseInt(idRole) || 0
+          },
+          {
+            id: parseInt(informativeIdRole) || 0
+          }
+        ],
+        areaCode: selectedCountry?.phone || ''
+      }
+      setUserPost(dataToSend)
+      dispatch(fetchAccounts(usersReducer))
+      reset({ ...initialForm })
+    }
+  }
+
+  const handleFormChange = (field: keyof FormInfo, value: FormInfo[keyof FormInfo]) => {
+    setFormData({ ...formData, [field]: value })
+  }
 
   useEffect(() => {
     if (usersReducer.current !== undefined && usersReducer.current !== null && selectUser) {
@@ -148,10 +171,8 @@ const AddUser = ({ selectUser }: IAddUser) => {
     //eslint-disable-next-line
   }, [useWatchCompany])
 
-  console.log(errors)
-
   useEffect(() => {
-    if (useWatchRole === 'admin') {
+    if (useWatchRole === '5') {
       setDualRoleDisabled(false)
       setValue('dualRole', '', { shouldValidate: true })
     } else {
@@ -160,55 +181,10 @@ const AddUser = ({ selectUser }: IAddUser) => {
     //eslint-disable-next-line
   }, [useWatchRole])
 
-  const onSubmit = (data: any) => {
-    if (selectUser) {
-      const dataToSend: UsersPutDto = {
-        id: usersReducer.current?.id || 1,
-        name: data.name || '',
-        surname: data.surname || '',
-        email: data.email || '',
-        phone: data.phone || '',
-        idCompany: +2,
-        roles: [
-          {
-            id: 6
-          }
-        ],
-        areaCode: selectedCountry?.phone || ''
-      }
-      alert('edit')
-
-      setUserEdit(dataToSend)
-    } else {
-      const dataToSend: UsersPostDto = {
-        name: data.name || '',
-        surname: data.surname || '',
-        email: data.email || '',
-        phone: data.phone || '',
-        idCompany: +2,
-        roles: [
-          {
-            id: 6
-          }
-        ],
-        areaCode: selectedCountry?.phone || ''
-      }
-      setUserPost(dataToSend)
-    }
-  }
-
-  useEffect(() => {
-    console.log(addUser)
-    console.log(editUser)
-
-    //eslint-disable-next-line
-  }, [addUser, editUser])
-
-  console.log({ company })
-
-  const handleFormChange = (field: keyof FormInfo, value: FormInfo[keyof FormInfo]) => {
-    setFormData({ ...formData, [field]: value })
-  }
+  // useEffect(() => {
+  //   dispatch(fetchAccounts(usersReducer))
+  //   //eslint-disable-next-line
+  // }, [usersReducer.filters])
 
   return (
     <>
@@ -388,12 +364,15 @@ const AddUser = ({ selectUser }: IAddUser) => {
                               label='Company'
                               value={value}
                               onBlur={onBlur}
-                              onChange={e => onChange(e.target.value)}
+                              onChange={e => {
+                                onChange(e.target.value)
+                                setIdCompany(e.target.value)
+                              }}
                               labelId='broker'
                             >
-                              {companies.map(company => (
-                                <MenuItem key={company.value} value={company.value}>
-                                  {company.label}
+                              {company?.map(company => (
+                                <MenuItem key={company.name} value={company.id.toString()}>
+                                  {company.alias}
                                 </MenuItem>
                               ))}
                             </Select>
@@ -425,12 +404,15 @@ const AddUser = ({ selectUser }: IAddUser) => {
                               label='Select a role'
                               value={value}
                               onBlur={onBlur}
-                              onChange={e => onChange(e.target.value)}
+                              onChange={e => {
+                                onChange(e.target.value)
+                                setIdRole(e.target.value)
+                              }}
                               labelId='broker'
                             >
-                              {roles.map(rol => (
-                                <MenuItem key={rol.value} value={rol.value}>
-                                  {rol.label}
+                              {roles?.map(rol => (
+                                <MenuItem key={rol.id} value={rol.id.toString()}>
+                                  {rol.role}
                                 </MenuItem>
                               ))}
                             </Select>
@@ -453,15 +435,18 @@ const AddUser = ({ selectUser }: IAddUser) => {
                               label='Select a role'
                               value={value}
                               onBlur={onBlur}
-                              onChange={e => onChange(e.target.value)}
+                              onChange={e => {
+                                onChange(e.target.value)
+                                setInformativeIdRole(e.target.value)
+                              }}
                               labelId='broker'
                             >
-                              {roles.map(rol => {
-                                if (rol.value === 'admin') return null
+                              {roles?.map(rol => {
+                                if (rol.role === 'admin') return null
                                 else
                                   return (
-                                    <MenuItem key={rol.value} value={rol.value}>
-                                      {rol.label}
+                                    <MenuItem key={rol.id} value={rol.id.toString()}>
+                                      {rol.role}
                                     </MenuItem>
                                   )
                               })}
