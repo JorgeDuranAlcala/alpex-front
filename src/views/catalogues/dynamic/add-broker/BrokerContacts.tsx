@@ -72,7 +72,7 @@ const BrokerContacts = () => {
 
     switch (type) {
       case 'success':
-        setAlertText('NEW BROKER ADDED')
+        setAlertText('NEW CONTACT ADDED')
         setAlertIcon('mdi:check-circle-outline')
         break;
       case 'error':
