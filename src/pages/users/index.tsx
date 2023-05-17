@@ -31,7 +31,7 @@ const Users = () => {
 
   const tabsInfoMock: ITabsInfo[] = [
     {
-      label: 'Accounts',
+      label: 'Users',
       active: true,
       component: (
         <>
@@ -40,7 +40,7 @@ const Users = () => {
       )
     },
     {
-      label: 'New accounts',
+      label: 'New user',
       active: true,
       component: (
         <>
@@ -49,7 +49,7 @@ const Users = () => {
       )
     },
     {
-      label: 'Edit accounts',
+      label: 'Edit User',
       active: true,
       isDeleteable: true,
       component: (
