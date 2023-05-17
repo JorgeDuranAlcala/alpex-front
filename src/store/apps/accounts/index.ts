@@ -64,9 +64,8 @@ export const appAccountsSlice = createSlice({
     },
 
     updateFormsData: (state, { payload }) => {
-      // state.formsData = { ...state.formsData, ...payload }
-      // console.log(state.formsData)
-      console.log(state, payload)
+      state.formsData = { ...state.formsData, ...payload }
+      console.log(state.formsData)
     }
   },
   extraReducers: builder => {
