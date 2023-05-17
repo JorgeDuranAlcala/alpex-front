@@ -16,7 +16,7 @@ import Icon from 'src/@core/components/icon'
 // ** Custom Components Imports
 import ColumnHeader from './ColumnHeader'
 import CustomPagination from './CustomPagination'
-import Status, { EStatus, EStatusString } from './Status'
+import Status, { EStatusString } from './Status'
 import TableHeader from './TableHeader'
 import ModalAction from './modal'
 
@@ -54,7 +54,7 @@ const Table = ({ status }: IAccountTable) => {
   // ** State
   const [selectedRows, setSelectedRows] = useState<GridRowId[]>([])
   const [accounts, setAccounts] = useState<any>([])
-  const [loading, setLoading] = useState<any>([])
+  const [, setLoading] = useState<any>([])
   const [badgeData, setBadgeData] = useState<IAlert>({
     message: '',
     status: undefined,
@@ -83,7 +83,7 @@ const Table = ({ status }: IAccountTable) => {
     dispatch(resetAccountFilter())
     if (status === undefined) dispatch(deleteAccountFilter('Status'))
     else {
-      const index: string = Object.keys(EStatus)[Object.values(EStatus).indexOf(status as any)]
+      const index: string = Object.keys(EStatusString)[Object.values(EStatusString).indexOf(status as any)]
       dispatch(
         handleAccountFilter({
           type: 'status',
@@ -106,7 +106,7 @@ const Table = ({ status }: IAccountTable) => {
       for (const rawRow of rawRows) {
         formatedRows.push({
           id: rawRow.id,
-          status: rawRow.idAccountStatus.status.toLowerCase(),
+          status: rawRow.idAccountStatus.status,
           insured: rawRow?.informations[0]?.insured,
           lob: rawRow?.informations[0]?.idLineOfBussines?.lineOfBussines,
           effectiveDate: rawRow?.informations[0]?.effetiveDate,
