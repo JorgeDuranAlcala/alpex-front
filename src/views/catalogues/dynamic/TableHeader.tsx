@@ -1,34 +1,33 @@
 // ** React Imports
-import { useState } from 'react'
+import { useState } from 'react';
 
 // ** MUI Imports
-import { Box, Button } from '@mui/material'
+import { Box, Button } from '@mui/material';
 
 // ** Icon Imports
-import Icon from 'src/@core/components/icon'
+import Icon from 'src/@core/components/icon';
 
 // ** Styled Components imports
-import fonts from 'src/views/accounts/font'
-
-
+import fonts from 'src/views/accounts/font';
 
 
 interface ITableHeader {
-  onDeleteRows?: () => void
+  onDeleteRows?: () => void;
+  deleteBtn?: boolean;
   onSearch: (value: string) => void;
   onClickBtn:() => void
   textBtn: string
 }
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const TableHeader: React.FC<ITableHeader> = ({ onDeleteRows, onSearch, onClickBtn, textBtn }) => {
+const TableHeader: React.FC<ITableHeader> = ({ onDeleteRows, deleteBtn = false, onSearch, onClickBtn, textBtn }) => {
   // ** Custom Hooks
   const [search, setSearch] = useState('')
 
+  // const [showDeleteBtn, setShowDeleteBtn] = useState(false)
   const searchInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(event.target.value);
     onSearch(event.target.value);
   };
-
 
 
 return (
@@ -53,7 +52,7 @@ return (
           onChange={searchInputChange} />
         </div>
       </Box>
-      {onDeleteRows ? <Box className='header-item '>
+      {deleteBtn ? <Box className='header-item '>
         <Button
           className='delete-button'
           onClick={onDeleteRows}

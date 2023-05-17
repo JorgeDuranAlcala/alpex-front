@@ -233,6 +233,12 @@ const ReinsurerBinders = () => {
     setOpenDelete(false)
   }
 
+  const deleteRows = () => {  //must be replaced with the respective broker service
+    // const newBinderList = // Service return new list
+    // setBinderList(newBinderList)
+    // setOpenDelete(false)
+  }
+
   const handleCreateBinder = () => {//must be replaced with the respective broker service
     console.log('Cal create contact service', binderData)
     setOpenNewBinder(false)
@@ -305,6 +311,8 @@ const ReinsurerBinders = () => {
         <div className='table-header'>
           <TableHeader
             onSearch={searchBinders}
+            onDeleteRows={deleteRows}
+            selectedRows={selectedRows}
             textBtn="ADD NEW CONTACT"
             onClickBtn={() => { setOpenNewBinder(true) }}
           />
@@ -332,7 +340,8 @@ const ReinsurerBinders = () => {
               Pagination: CustomPagination
             }}
             className={'catalogue-datagrid'}
-            onSelectionModelChange={rows => setSelectedRows(rows)}
+            onSelectionModelChange={rows => {setSelectedRows(rows)
+            console.log(selectedRows.length)}}
           />
         </div>
 
