@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useRef, useState } from 'react'
+import React, { Fragment, useRef, useState } from 'react'
 
 // // ** MUI Imports
 
@@ -8,15 +8,9 @@ import Button from '@mui/material/Button'
 import { IconButton, Typography } from '@mui/material'
 import Icon from 'src/@core/components/icon'
 
-type UserFileProps = {
-  userFile: {
-    file: File | null
-  }
-  setUserFile: React.Dispatch<
-    React.SetStateAction<{
-      file: File | null
-    }>
-  >
+interface UserFileProps {
+  userFile: any
+  setUserFile: React.Dispatch<React.SetStateAction<any>>
 }
 
 const FileSubmit: React.FC<UserFileProps> = ({ setUserFile }) => {
@@ -49,13 +43,6 @@ const FileSubmit: React.FC<UserFileProps> = ({ setUserFile }) => {
     setFile([...file])
     file.length < 1 && setShowFile(false)
   }
-
-  useEffect(() => {
-    console.log(file, 'aasdasdasd1')
-    file.map((fileElement, index) => {
-      console.log(fileElement, 'aasdasdasd')
-    })
-  }, [file])
 
   return (
     <Fragment>

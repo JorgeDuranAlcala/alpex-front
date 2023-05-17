@@ -140,7 +140,7 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dataForm])
   useEffect(() => {
-    console.log({ formErrors, index, error: formErrors[index] })
+    console.log({ errorForm })
     setErrorForm(formErrors[index] || {})
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formErrors])

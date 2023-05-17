@@ -82,11 +82,10 @@ const schema = yup.object().shape({
   sublimit: yup
     .number()
     .transform((_, val) => (val === Number(val) ? val : null))
-    .test('Validate sublimit', 'Sublimit cannot be greater than limit', (value, context) => {
+    .test('Validate sublimit', 'Sublimit cannot be greater than limit', value => {
       const val = value || 0
       const limit = 10000 || 0
 
-      // context.parent.account.informations[0].limit
       return +val <= +limit
     })
     .required()
