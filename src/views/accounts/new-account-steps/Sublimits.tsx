@@ -235,7 +235,7 @@ const Sublimits = () => {
         typeDeductible: 'none',
         typeBi: 'days',
         coinsurance: item.coinsurance,
-        AccountId: formInformationData.id
+        idAccount: formInformationData.id
       }
     })
     saveSublimits(dataToSubmit)
