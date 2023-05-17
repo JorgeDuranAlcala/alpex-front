@@ -133,6 +133,7 @@ const AddUser = ({ selectUser }: IAddUser) => {
         areaCode: selectedCountry?.phone || ''
       }
       setUserPut(dataToSend)
+      dispatch(fetchAccounts(usersReducer))
     } else {
       const dataToSend: UsersPostDto = {
         name: data.name || '',
