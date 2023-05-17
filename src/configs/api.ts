@@ -140,10 +140,15 @@ export enum INSTALLMENT_ROUTERS {
   UPDATE = 'account/installment/update'
 }
 
+export enum ACCOUNT_STATUS_ROUTERS {
+  GET_ALL = 'account/account-status/all',
+  GET_BY_ID = 'account/account-status/'
+}
+
 // ==== USER
 export enum USERS_ROUTES {
   GET = 'user',
   ADD = 'user',
   UPDATE = 'user',
-  DELETE = 'user'
+  DELETE = 'user/delete'
 }

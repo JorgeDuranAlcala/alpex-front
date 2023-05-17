@@ -114,14 +114,22 @@ const AddUser = ({ selectUser }: IAddUser) => {
         email: data.email || '',
         phone: data.phone || '',
         idCompany: parseInt(idCompany),
-        roles: [
-          {
-            id: parseInt(idRole) || 0
-          },
-          {
-            id: parseInt(informativeIdRole) || 0
-          }
-        ],
+        roles: parseInt(idRole)
+          ? [
+              {
+                id: parseInt(idRole)
+              }
+            ]
+          : parseInt(idRole) && parseInt(informativeIdRole)
+          ? [
+              {
+                id: parseInt(idRole)
+              },
+              {
+                id: parseInt(informativeIdRole)
+              }
+            ]
+          : [],
         areaCode: selectedCountry?.phone || ''
       }
       setUserPut(dataToSend)
@@ -132,14 +140,22 @@ const AddUser = ({ selectUser }: IAddUser) => {
         email: data.email || '',
         phone: data.phone || '',
         idCompany: parseInt(idCompany),
-        roles: [
-          {
-            id: parseInt(idRole) || 0
-          },
-          {
-            id: parseInt(informativeIdRole) || 0
-          }
-        ],
+        roles: parseInt(idRole)
+          ? [
+              {
+                id: parseInt(idRole)
+              }
+            ]
+          : parseInt(idRole) && parseInt(informativeIdRole)
+          ? [
+              {
+                id: parseInt(idRole)
+              },
+              {
+                id: parseInt(informativeIdRole)
+              }
+            ]
+          : [],
         areaCode: selectedCountry?.phone || ''
       }
       setUserPost(dataToSend)
