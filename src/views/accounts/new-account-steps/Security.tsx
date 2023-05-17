@@ -136,7 +136,6 @@ const schema = yup.object().shape(
     PremiumPerShare: yup
       .number()
       .transform(value => (isNaN(value) ? undefined : value))
-      .test('max 100', 'This field must be less than 100', value => Number(value) <= 100)
       .min(0, 'This field must be greater than 0')
       .required(),
     DynamicComission: yup
