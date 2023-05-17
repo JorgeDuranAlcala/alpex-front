@@ -23,7 +23,7 @@ import colors from 'src/views/accounts/colors'
 import fonts from 'src/views/accounts/font'
 
 export interface IBinder {
-  id: number
+  id: number | undefined
   referenceNumber: string
 
 }
@@ -36,56 +36,39 @@ const initialData: IBinder = {
 
 const ReinsurerBinders = () => {
   // ** State
+
+
+  // Handle Data
+  const [binderList, setBinderList] = useState<IBinder[]>([])
+  const [binderData, setBinderData] = useState<IBinder>(initialData)
+  const [currentBinder, setCurrentBinder] = useState<IBinder | null>(null);
+  const [selectedRow, setSelectedRow] = useState<IBinder | null>(null);
+  const [binderToDelete, setBinderToDelete] = useState<number | undefined>(0)
+
+  //Handle View
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [selectedRows, setSelectedRows] = useState<GridRowId[]>([])
-  const [binderList, setBinderList] = useState<IBinder[]>([])
-  const [openNewBinder, setOpenNewBinder] = useState(false)
-  const [binderData, setBinderData] = useState<IBinder>(initialData)
+  const [btnDisable, setBtnDisable] = useState(true)
+  const [btnEditDisable, setBtnEditDisable] = useState(true)
+
+  // Handle new binder validations
   const [startValidations, setStartValidations] = useState(false)
   const [error, setError] = useState(true)
-  const [btnDisable, setBtnDisable] = useState(true)
+
+  //Handle edit binder validations
+  const [startEditValidations, setStartEditValidations] = useState(false)
+  const [errorEdit, setErrorEdit] = useState(true)
+
+  // Handle modals
+  const [openNewBinder, setOpenNewBinder] = useState(false)
   const [openEdit, setOpenEdit] = useState(false)
   const [openDelete, setOpenDelete] = useState(false)
-  const [selectedRow, setSelectedRow] = useState<IBinder | null>(null);
-  const [binderToDelete, setBinderToDelete] = useState(0)
 
+  // Handle alerts
   const [showAlert, setShowAlert] = useState(true);
   const [alertType, setAlertType] = useState('');
   const [alertText, setAlertText] = useState('');
   const [alertIcon, setAlertIcon] = useState('');
-
-
-  const triggerAlert = (type: string) => {
-    setAlertType(type)
-
-    switch (type) {
-      case 'success':
-        setAlertText('NEW BINDER ADDED')
-        setAlertIcon('mdi:check-circle-outline')
-        break;
-      case 'error':
-        setAlertText('UNKNOWN ERROR, TRY AGAIN')
-        setAlertIcon('mdi:alert-circle-outline')
-        break;
-      case 'warn':
-        setAlertText('NO INTERNET CONNECTION')
-        setAlertIcon('mdi:alert-outline')
-        break;
-      default:
-        break
-    }
-
-    setShowAlert(true);
-
-    setTimeout(() => {
-      setShowAlert(false);
-    }, 5000);
-
-
-  };
-  const handleRowClick = (row: any) => {
-    setSelectedRow(row);
-  };
 
   const column: GridColumns<IBinder> = [
     {
@@ -120,68 +103,86 @@ const ReinsurerBinders = () => {
     {
       flex: 0.1,
       field: 'actions',
-      headerName: 'ACTIONS',
-      minWidth: 150,
+      headerName: 'Actions',
+      minWidth: 70,
+      maxWidth: 70,
       sortable: false,
       align: 'right',
       disableColumnMenu: true,
       cellClassName: 'catalogue-column-cell-pl-0',
       renderHeader: ({ }) => (
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative' }}>
-          <Typography
-            component={'span'}
-            sx={{ color: colors.text.primary, fontWeight: 500, fontSize: fonts.size.px12, fontFamily: fonts.inter }}
-          >
-            ACTIONS
-          </Typography>
-
         </Box>),
 
-      renderCell: ({row}) =>{
+      renderCell: ({ row }) => {
         const showActions = row === selectedRow;
-        if(showActions){
-          console.log(row)
-        }
 
         return (
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', }}>
-          <div className='actions-wrapper'>
-             <IconButton
-            onClick={() => {
-              if (showActions) {
-                setSelectedRow(null);
-              } else {
-                setSelectedRow(row);
-              }
-            }
-            }
-            size='small'
-            sx={{ mr: 1 }}
-          >
-            <Icon icon='mdi:dots-vertical' />
-          </IconButton>
-          {showActions &&
-          <div className='actions-menu'>
-
-            <div className='menu-option' onClick={() => {
-               setSelectedRow(null);
-
-              setOpenEdit(true) }}>
-              Edit
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', }}>
+            <div className='actions-wrapper'>
+              <IconButton
+                onClick={() => {
+                  if (showActions) {
+                    setSelectedRow(null);
+                  } else {
+                    setSelectedRow(row);
+                  }
+                }}
+                size='small'
+                sx={{ mr: 1 }}
+              >
+                <Icon icon='mdi:dots-vertical' />
+              </IconButton>
+              {showActions &&
+                <div className='actions-menu'>
+                  <div className='menu-option' onClick={() => handleEditBinder(row)}>
+                    Edit
+                  </div>
+                  <div className='menu-option' onClick={() => handleDeleteBinder(row.id)}>
+                    Delete
+                  </div>
+                </div>}
             </div>
-            <div className='menu-option' onClick={() =>{
-              setSelectedRow(null);
 
-              setOpenDelete(true)}}>
-              Delete
-            </div>
-          </div> }
-          </div>
-
-        </Box>
-      )}
+          </Box>
+        )
+      }
     }
   ]
+
+  const triggerAlert = (type: string) => {
+    setAlertType(type)
+
+    switch (type) {
+      case 'success':
+        setAlertText('NEW BINDER ADDED')
+        setAlertIcon('mdi:check-circle-outline')
+        break;
+      case 'error':
+        setAlertText('UNKNOWN ERROR, TRY AGAIN')
+        setAlertIcon('mdi:alert-circle-outline')
+        break;
+      case 'warn':
+        setAlertText('NO INTERNET CONNECTION')
+        setAlertIcon('mdi:alert-outline')
+        break;
+      default:
+        break
+    }
+
+    setShowAlert(true);
+
+    setTimeout(() => {
+      setShowAlert(false);
+    }, 5000);
+
+
+  };
+
+  // const handleRowClick = (row: any) => {
+  //   setSelectedRow(row);
+  //   console.log("handle row")
+  // };
 
   const getContactList = () => { //must be replaced with the respective broker service
     const data: IBinder[] = []
@@ -204,22 +205,35 @@ const ReinsurerBinders = () => {
     setBinderData({ ...binderData, [field]: value })
   }
 
+  const handleDeleteBinder = (id: number | undefined) => {
+    setBinderToDelete(id);
+    setSelectedRow(null);
+    setOpenDelete(true);
+  }
+
+  const handleEditBinder = (row: IBinder) => {
+    console.log(row)
+    setCurrentBinder(row)
+    setSelectedRow(null);
+    setOpenEdit(true)
+  }
+
   const searchBinders = (value: string) => { //must be replaced with the respective broker service
     console.log("Call search service", value)
   }
 
-  const openDeleteModal = (id: number) => { // aqui me quede
-    setBinderToDelete(id)
-    setOpenDelete(true)
+  const editBinder = () => { //must be replaced with the respective broker service
+    console.log("call method to edit Binder", currentBinder)
+    setOpenEdit(false)
   }
 
   const deleteBinder = () => {  //must be replaced with the respective broker service
-    const newBinderList = binderList.filter(binder => binder.id !== binderToDelete.toString())
+    const newBinderList = binderList.filter(binder => binder.id !== binderToDelete)
     setBinderList(newBinderList)
     setOpenDelete(false)
   }
 
-  const handleCreateContact = () => {
+  const handleCreateBinder = () => {//must be replaced with the respective broker service
     console.log('Cal create contact service', binderData)
     setOpenNewBinder(false)
 
@@ -230,7 +244,7 @@ const ReinsurerBinders = () => {
   }
 
   useEffect(() => {
-    if ( binderData.referenceNumber == undefined ) {
+    if (binderData.referenceNumber == undefined) {
       setError(true)
     }
 
@@ -247,7 +261,29 @@ const ReinsurerBinders = () => {
   }, [
     binderData.referenceNumber,
     error,
+  ])
 
+  useEffect(() => {
+    if (currentBinder) {
+      if (currentBinder.referenceNumber == undefined) {
+        setErrorEdit(true)
+      }
+
+      if (startEditValidations) {
+        if (currentBinder.referenceNumber.length < 14) {
+          setErrorEdit(true)
+        } else {
+          setErrorEdit(false)
+        }
+      }
+      if (errorEdit) setBtnEditDisable(true)
+      else if (!errorEdit) setBtnEditDisable(false)
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    currentBinder?.referenceNumber,
+    errorEdit,
   ])
 
   useEffect(() => {
@@ -256,14 +292,15 @@ const ReinsurerBinders = () => {
   }, [])
 
 
+
   return (
     <>
       <div className='contacts-wrapper'>
         <div className='title'>Binder</div>
         <div className='description'>
-        Here you will find the Binders linked to
-        this specific Reinsurer, you can add one
-        or more Binders.
+          Here you will find the Binders linked to
+          this specific Reinsurer, you can add one
+          or more Binders.
         </div>
         <div className='table-header'>
           <TableHeader
@@ -287,7 +324,7 @@ const ReinsurerBinders = () => {
             checkboxSelection
             disableSelectionOnClick
             rows={binderList}
-            onRowClick={(params) => handleRowClick(params.row)}
+
             columns={column}
             pagination
             pageSize={10}
@@ -326,7 +363,7 @@ const ReinsurerBinders = () => {
             className='create-contact-modal'
             disabled={btnDisable}
             variant='contained'
-            onClick={handleCreateContact}
+            onClick={handleCreateBinder}
           >
             CREATE
           </Button>
@@ -363,6 +400,44 @@ const ReinsurerBinders = () => {
               setOpenDelete(false)
             }}
           >
+            CANCEL
+          </Button>
+        </Box>
+      </Modal>
+      <Modal className='create-contact-modal' open={openEdit} onClose={() => setOpenEdit(false)}>
+        <Box className='modal-wrapper'>
+          <HeaderTitleModal>
+            <Typography variant='h6'>Add Binder</Typography>
+            <ButtonClose onClick={() => setOpenEdit(false)}>
+              <CloseIcon />
+            </ButtonClose>
+          </HeaderTitleModal>
+          <div className='contact-form'>
+            <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
+              <TextField
+                autoFocus
+                className='reference-number'
+                label='Reference Number'
+                value={currentBinder?.referenceNumber}
+                onChange={e => {
+                  setCurrentBinder({ id: currentBinder?.id, referenceNumber: e.target.value })
+                  setStartEditValidations(true)
+                }}
+              />
+
+              {errorEdit && <FormHelperText sx={{ color: 'error.main' }}>Invalid Reference Number</FormHelperText>}
+            </FormControl>
+
+          </div>
+          <Button
+            className='create-contact-modal'
+            disabled={btnEditDisable}
+            variant='contained'
+            onClick={editBinder}
+          >
+            EDIT
+          </Button>
+          <Button className='create-contact-modal' onClick={() => setOpenEdit(false)}>
             CANCEL
           </Button>
         </Box>

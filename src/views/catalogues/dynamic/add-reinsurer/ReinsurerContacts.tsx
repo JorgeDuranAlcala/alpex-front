@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 
 // ** MUI Imports
 import CloseIcon from '@mui/icons-material/Close'
-import { Box, Button, FormControl, InputLabel, MenuItem, Modal, TextField, Typography } from '@mui/material'
+import { Box, Button, FormControl, IconButton, InputLabel, MenuItem, Modal, TextField, Typography } from '@mui/material'
 import Select from '@mui/material/Select'
 import { DataGrid, GRID_CHECKBOX_SELECTION_COL_DEF, GridColumns, GridRowId } from '@mui/x-data-grid'
 
@@ -47,12 +47,22 @@ const expresions = {
 }
 
 const ReinsurerContacts = () => {
-  // ** State
+  // Const declatation :
+
+  // Handle Data
+  const [contactList, setContactList] = useState<IContact[]>([])
+  const [newContactData, setNewContactData] = useState<IContact>(initialNewContact) //saves the new contact data
+  const [currentContact, setCurrentContact] = useState<IContact>(initialNewContact); //saves the row data to be edited
+  const [selectedRow, setSelectedRow] = useState<IContact | null>(null); // saves the row wehen user click on actions button
+  const [contactToDelete, setContactToDelete] = useState(0) //Saves id of contact to be deleted.
+
+  // Handle view
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [selectedRows, setSelectedRows] = useState<GridRowId[]>([])
-  const [contactList, setContactList] = useState<IContact[]>([])
-  const [openNewContact, setOpenNewContact] = useState(false)
-  const [contactData, setContactData] = useState<IContact>(initialNewContact)
+  const [btnDisable, setBtnDisable] = useState(true)
+  const [btnEditDisable, setBtnEditDisable] = useState(true)
+
+  // Handle new contact validations
   const [startValidations, setStartValidations] = useState(false)
   const [error, setError] = useState(true)
   const [nameError, setNameError] = useState(false)
@@ -60,43 +70,28 @@ const ReinsurerContacts = () => {
   const [phoneError, setPhoneError] = useState(false)
   const [countryError, setCountryError] = useState(false)
   const [emptyForm, setEmptyForm] = useState(true)
-  const [btnDisable, setBtnDisable] = useState(true)
+
+  // Handle edit contact validations
+  const [startEditValidations, setStartEditValidations] = useState(false)
+  const [editError, setEditError] = useState(true)
+  const [editNameError, setEditNameError] = useState(false)
+  const [editEmailError, setEditEmailError] = useState(false)
+  const [editPhoneError, setEditPhoneError] = useState(false)
+  const [editCountryError, setEditCountryError] = useState(false)
+  const [emptyEditForm, setEmptyEditForm] = useState(true)
+
+  // Handle modals
+  const [openNewContact, setOpenNewContact] = useState(false)
+  const [openEdit, setOpenEdit] = useState(false)
+  const [openDelete, setOpenDelete] = useState(false)
+
+  // Handle Alerts
   const [showAlert, setShowAlert] = useState(true);
   const [alertType, setAlertType] = useState('');
   const [alertText, setAlertText] = useState('');
   const [alertIcon, setAlertIcon] = useState('');
 
-
-  const triggerAlert = (type: string) => {
-    setAlertType(type)
-
-    switch (type) {
-      case 'success':
-        setAlertText('NEW CONTACT ADDED')
-        setAlertIcon('mdi:check-circle-outline')
-        break;
-      case 'error':
-        setAlertText('UNKNOWN ERROR, TRY AGAIN')
-        setAlertIcon('mdi:alert-circle-outline')
-        break;
-      case 'warn':
-        setAlertText('NO INTERNET CONNECTION')
-        setAlertIcon('mdi:alert-outline')
-        break;
-      default:
-        break
-    }
-
-    setShowAlert(true);
-
-    setTimeout(() => {
-      setShowAlert(false);
-    }, 5000);
-
-
-  };
-
-  const column: GridColumns<IContact> = [
+const column: GridColumns<IContact> = [
     {
       ...GRID_CHECKBOX_SELECTION_COL_DEF,
       headerClassName: 'account-column-header-checkbox'
@@ -207,11 +202,111 @@ const ReinsurerContacts = () => {
         </Typography>
       )
     },
+    {
+      flex: 0.1,
+      field: 'actions',
+      headerName: 'ACTIONS',
+      minWidth: 50,
+      maxWidth: 70,
+      type: 'string',
+      align: 'left',
+      disableColumnMenu: true,
+      sortable: false,
+      headerClassName: 'reinsurer-contacts-header',
+      renderHeader: () => <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative' }}>
 
+      </Box>,
+      renderCell: ({row}) =>{
+        const showActions = row === selectedRow;
+
+        return (
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', }}>
+          <div className='actions-wrapper'>
+             <IconButton
+            onClick={() => {
+              if (showActions) {
+                setSelectedRow(null);
+              } else {
+                setSelectedRow(row);
+              }
+            }
+            }
+            size='small'
+            sx={{ mr: 1 }}
+          >
+            <Icon icon='mdi:dots-vertical' />
+          </IconButton>
+          {showActions &&
+          <div className='actions-menu'>
+
+            <div className='menu-option' onClick={() => handleEditContact(row)}>
+              Edit
+            </div>
+            <div className='menu-option' onClick={() => handleDeleteContact(row.id)}>
+              Delete
+            </div>
+          </div> }
+          </div>
+
+        </Box>
+      )}
+    },
 
   ]
 
-  const getContactList = () => { //must be replaced with the respective broker service
+  const triggerAlert = (type: string) => {
+    setAlertType(type)
+
+    switch (type) {
+      case 'success':
+        setAlertText('NEW CONTACT ADDED')
+        setAlertIcon('mdi:check-circle-outline')
+        break;
+      case 'error':
+        setAlertText('UNKNOWN ERROR, TRY AGAIN')
+        setAlertIcon('mdi:alert-circle-outline')
+        break;
+      case 'warn':
+        setAlertText('NO INTERNET CONNECTION')
+        setAlertIcon('mdi:alert-outline')
+        break;
+      default:
+        break
+    }
+
+    setShowAlert(true);
+
+    setTimeout(() => {
+      setShowAlert(false);
+    }, 5000);
+
+
+  };
+
+  const handleChangeModal = (field: keyof IContact, value: IContact[keyof IContact]) => {
+    setStartValidations(true)
+    setNewContactData({ ...newContactData, [field]: value })
+  }
+
+  const handleEditModal = (field: keyof IContact, value: IContact[keyof IContact]) => {
+    setStartEditValidations(true)
+    setCurrentContact({ ...currentContact, [field]: value })
+  }
+
+  const handleDeleteContact = (id: number) => {
+    setContactToDelete(id);
+    setSelectedRow(null);
+    setOpenDelete(true);
+  }
+
+  const handleEditContact = (row: IContact) => {
+    console.log(row)
+    setCurrentContact(row)
+    setSelectedRow(null);
+    setOpenEdit(true)
+  }
+
+  const getContactList = () => { //must be replaced with the respective reinsurers service
     const data: IContact[] = []
 
     for (let index = 1; index <= 100; index++) {
@@ -230,16 +325,12 @@ const ReinsurerContacts = () => {
     return data
   }
 
-  const handleChangeModal = (field: keyof IContact, value: IContact[keyof IContact]) => {
-    setStartValidations(true)
-    setContactData({ ...contactData, [field]: value })
-  }
-
-  const searchContacts = (value: string) => { //must be replaced with the respective broker service
+  const searchContacts = (value: string) => { //must be replaced with the respective reinsurers service
     console.log("Call search service", value)
   }
-  const handleCreateContact = () => {
-    console.log('Cal create contact service', contactData)
+
+  const createContact = () => {//must be replaced with the respective reinsurers service
+    console.log('Cal create contact service', newContactData)
     setOpenNewContact(false)
 
     triggerAlert("success")
@@ -248,16 +339,27 @@ const ReinsurerContacts = () => {
     // triggerAlert("warn")
   }
 
+  const editContact = () => { //must be replaced with the respective reinsurers service
+    console.log("call method to edit contact", currentContact)
+    setOpenEdit(false)
+  }
+
+  const deleteContact = () => {  //must be replaced with the respective reinsurers service
+    const newContactList = contactList.filter(contact => contact.id !== contactToDelete)
+    setContactList(newContactList)
+    setOpenDelete(false)
+  }
+
   useEffect(() => {
     if (
-      contactData.name !== undefined &&
-      contactData.name !== '' &&
-      contactData.email !== undefined &&
-      contactData.email !== '' &&
-      contactData.phone !== undefined &&
-      contactData.phone !== '' &&
-      contactData.country !== undefined &&
-      contactData.country !== ''
+      newContactData.name !== undefined &&
+      newContactData.name !== '' &&
+      newContactData.email !== undefined &&
+      newContactData.email !== '' &&
+      newContactData.phone !== undefined &&
+      newContactData.phone !== '' &&
+      newContactData.country !== undefined &&
+      newContactData.country !== ''
     ) {
       setEmptyForm(false)
     } else {
@@ -266,28 +368,28 @@ const ReinsurerContacts = () => {
     }
 
     if (startValidations) {
-      if (expresions.name.test(contactData.name)) {
+      if (expresions.name.test(newContactData.name)) {
         setNameError(false)
       } else {
         setNameError(true)
         setError(true)
       }
 
-      if (expresions.email.test(contactData.email)) {
+      if (expresions.email.test(newContactData.email)) {
         setEmailError(false)
       } else {
         setEmailError(true)
         setError(true)
       }
 
-      if (expresions.phone.test(contactData.phone)) {
+      if (expresions.phone.test(newContactData.phone)) {
         setPhoneError(false)
       } else {
         setPhoneError(true)
         setError(true)
       }
 
-      if (contactData.country !== undefined && contactData.country !== '') {
+      if (newContactData.country !== undefined && newContactData.country !== '') {
         setCountryError(false)
       } else {
         setCountryError(true)
@@ -304,16 +406,85 @@ const ReinsurerContacts = () => {
     else if (!error) setBtnDisable(false)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    contactData.name,
-    contactData.email,
-    contactData.phone,
-    contactData.country,
+    newContactData.name,
+    newContactData.email,
+    newContactData.phone,
+    newContactData.country,
     error,
     nameError,
     emailError,
     phoneError,
     countryError,
     emptyForm
+  ])
+
+  useEffect(() => {
+    if (
+      currentContact.name !== undefined &&
+      currentContact.name !== '' &&
+      currentContact.email !== undefined &&
+      currentContact.email !== '' &&
+      currentContact.phone !== undefined &&
+      currentContact.phone !== '' &&
+      currentContact.country !== undefined &&
+      currentContact.country !== ''
+    ) {
+      setEmptyEditForm(false)
+    } else {
+      setEmptyEditForm(true)
+      setEditError(true)
+    }
+
+    if (startEditValidations) {
+      if (expresions.name.test(currentContact.name)) {
+        setEditNameError(false)
+      } else {
+        setEditNameError(true)
+        setEditError(true)
+      }
+
+      if (expresions.email.test(currentContact.email)) {
+        setEditEmailError(false)
+      } else {
+        setEditEmailError(true)
+        setEditError(true)
+      }
+
+      if (expresions.phone.test(currentContact.phone)) {
+        setEditPhoneError(false)
+      } else {
+        setEditPhoneError(true)
+        setEditError(true)
+      }
+
+      if (currentContact.country !== undefined && currentContact.country !== '') {
+        setEditCountryError(false)
+      } else {
+        setEditCountryError(true)
+        setEditError(true)
+      }
+
+      if (!editNameError && !editEmailError && !editPhoneError && !editCountryError && !emptyEditForm) {
+        setEditError(false)
+      } else {
+        setEditError(true)
+      }
+    }
+    if (editError) setBtnEditDisable(true)
+    else if (!editError) setBtnEditDisable(false)
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    currentContact.name,
+    currentContact.email,
+    currentContact.phone,
+    currentContact.country,
+    editError,
+    editNameError,
+    editEmailError,
+    editPhoneError,
+    editCountryError,
+    emptyEditForm
   ])
 
   useEffect(() => {
@@ -378,7 +549,7 @@ const ReinsurerContacts = () => {
               <TextField
                 autoFocus
                 label='Contact Name'
-                value={contactData.name}
+                value={newContactData.name}
                 onChange={e => handleChangeModal('name', e.target.value)}
               />
 
@@ -388,7 +559,7 @@ const ReinsurerContacts = () => {
               <TextField
                 autoFocus
                 label='Contact email'
-                value={contactData.email}
+                value={newContactData.email}
                 onChange={e => handleChangeModal('email', e.target.value)}
               />
 
@@ -398,7 +569,7 @@ const ReinsurerContacts = () => {
               <TextField
                 autoFocus
                 label='Contact Phone'
-                value={contactData.phone}
+                value={newContactData.phone}
                 onChange={e => handleChangeModal('phone', e.target.value)}
               />
 
@@ -409,7 +580,7 @@ const ReinsurerContacts = () => {
 
               <Select
                 label='Select country'
-                value={contactData.country}
+                value={newContactData.country}
                 onChange={e => handleChangeModal('country', e.target.value)}
                 labelId='invoice-country'
               >
@@ -431,7 +602,7 @@ const ReinsurerContacts = () => {
             className='create-contact-modal'
             disabled={btnDisable}
             variant='contained'
-            onClick={handleCreateContact}
+            onClick={createContact}
           >
             CREATE
           </Button>
@@ -440,7 +611,113 @@ const ReinsurerContacts = () => {
           </Button>
         </Box>
       </Modal>
+      <Modal
+        className='delete-modal'
+        open={openDelete}
+        onClose={() => {
+          setOpenDelete(false)
+        }}
+      >
+        <Box className='modal-wrapper'>
+          <HeaderTitleModal>
+            <Typography variant='h6' sx={{ maxWidth: "450px" }}>Are you sure you want to delete this Contact?</Typography>
+            <ButtonClose
+              onClick={() => {
+                setOpenDelete(false)
+              }}
+            >
+              <CloseIcon />
+            </ButtonClose>
+          </HeaderTitleModal>
+          <div className='delete-modal-text'>This action can’t be undone.</div>
+          <Button className='header-modal-btn' variant='contained' onClick={deleteContact}>
+            DELETE
+          </Button>
+          <Button
+            className='close-modal header-modal-btn'
+            onClick={() => {
+              setOpenDelete(false)
+            }}
+          >
+            CANCEL
+          </Button>
+        </Box>
+      </Modal>
+      <Modal className='create-contact-modal' open={openEdit} onClose={() => setOpenEdit(false)}>
+        <Box className='modal-wrapper'>
+          <HeaderTitleModal>
+            <Typography variant='h6'>Edit contact</Typography>
+            <ButtonClose onClick={() => setOpenEdit(false)}>
+              <CloseIcon />
+            </ButtonClose>
+          </HeaderTitleModal>
+          <div className='contact-form'>
+            <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
+              <TextField
+                autoFocus
+                label='Contact Name'
+                value={currentContact.name}
+                onChange={e => handleEditModal('name', e.target.value)}
+              />
 
+              {editNameError && <FormHelperText sx={{ color: 'error.main' }}>Invalid name</FormHelperText>}
+            </FormControl>
+            <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
+              <TextField
+                autoFocus
+                label='Contact email'
+                value={currentContact.email}
+                onChange={e => handleEditModal('email', e.target.value)}
+              />
+
+              {editEmailError && <FormHelperText sx={{ color: 'error.main' }}>Invalid field</FormHelperText>}
+            </FormControl>
+            <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
+              <TextField
+                autoFocus
+                label='Contact Phone'
+                value={currentContact.phone}
+                onChange={e => handleEditModal('phone', e.target.value)}
+              />
+
+              {editPhoneError && <FormHelperText sx={{ color: 'error.main' }}>Invalid field</FormHelperText>}
+            </FormControl>
+            <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
+              <InputLabel>Select country</InputLabel>
+
+              <Select
+                label='Select country'
+                value={currentContact.country}
+                onChange={e => handleEditModal('country', e.target.value)}
+                labelId='invoice-country'
+              >
+                <MenuItem value='USA'>USA</MenuItem>
+                <MenuItem value='UK'>UK</MenuItem>
+                <MenuItem value='Russia'>Russia</MenuItem>
+                <MenuItem value='Australia'>Australia</MenuItem>
+                <MenuItem value='Canada'>Canada</MenuItem>
+              </Select>
+
+              {editCountryError && (
+                <FormHelperText sx={{ color: 'error.main' }} id='invoice-country-error'>
+                  Select a country
+                </FormHelperText>
+              )}
+            </FormControl>
+          </div>
+          <Button
+            className='create-contact-modal'
+            disabled={btnEditDisable}
+            variant='contained'
+            onClick={editContact}
+          >
+            EDIT
+          </Button>
+          <Button className='create-contact-modal' onClick={() => setOpenNewContact(false)}>
+            CANCEL
+          </Button>
+        </Box>
+      </Modal>
     </>
   )
 }

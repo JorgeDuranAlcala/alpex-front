@@ -1,9 +1,19 @@
-import { useEffect, useState } from 'react'
+import { ChangeEvent, useEffect, useState } from 'react'
 
 // ** MUI Imports
 
 import CloseIcon from '@mui/icons-material/Close'
-import { Box, Button, FormControl, Modal, TextField, Typography } from '@mui/material'
+import {
+  Box,
+  Button,
+  FormControl,
+  FormControlLabel,
+  Modal,
+  Radio,
+  RadioGroup,
+  TextField,
+  Typography
+} from '@mui/material'
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
@@ -21,6 +31,7 @@ const AddReinsurer = () => {
   const [alertType, setAlertType] = useState('');
   const [alertText, setAlertText] = useState('');
   const [alertIcon, setAlertIcon] = useState('');
+  const [suscriptionValue, setSuscriptionValue] = useState('gross-premium')
 
   const triggerAlert = (type: string) => {
     setAlertType(type)
@@ -67,6 +78,10 @@ const AddReinsurer = () => {
     setOpenDelete(false)
   }
 
+  const handleChangeRadio = (event: ChangeEvent<HTMLInputElement>) => {
+    setSuscriptionValue((event.target as HTMLInputElement).value)
+  }
+
   useEffect(() => {
     if (newReinsurer.name !== '') {
       setDisableAddReinsurer(false)
@@ -111,6 +126,13 @@ const AddReinsurer = () => {
             />
 
           </FormControl>
+          <div className='inner-row'>
+          <div className="subtitle">Subscription under</div>
+          <RadioGroup row aria-label='controlled' name='controlled' value={suscriptionValue} onChange={handleChangeRadio}>
+          <FormControlLabel value='gross-premium' control={<Radio />} label='Gross premium' />
+          <FormControlLabel value='net-premium' control={<Radio />} label='Net premium' />
+        </RadioGroup>
+          </div>
           {isReinsurerSaved ?
             <div className='action-buttons'>
               <Button className='delete-reinsurer-btn' onClick={() => { setOpenDelete(true) }}>

@@ -40,6 +40,7 @@
 .catalogue-list-item {
   min-width: 0 !important;
 }
+
 /*
 .catalogue-datepicker-popper-only-month .react-datepicker__navigation {
   display: none;
@@ -49,10 +50,11 @@
   display: none;
 } */
 
- /*----TABLE HEADER----*/
-.table-header{
+/*----TABLE HEADER----*/
+.table-header {
   position: relative;
 }
+
 .search-wrapper {
   width: 100%;
   display: flex;
@@ -60,7 +62,7 @@
   align-items: center;
 }
 
-.input-search{
+.input-search {
   width: 300px;
   height: 42px;
   outline: none;
@@ -73,19 +75,21 @@
 }
 
 
-.delete-button.MuiButton-root{
-  color:red;
+.delete-button.MuiButton-root {
+  color: red;
   border: 1px solid rgb(255 0 0 / 50%);
 }
-.delete-button.MuiButton-root:hover{
+
+.delete-button.MuiButton-root:hover {
   border: 1px solid rgb(255 0 0 / 50%);
 }
-.delete-button.MuiButton-root.MuiButton-outlinedPrimary:hover{
+
+.delete-button.MuiButton-root.MuiButton-outlinedPrimary:hover {
   background-color: rgb(255 0 0 / 8%);
 }
 
 .add-new-alert,
-.contacts-alert{
+.contacts-alert {
   position: absolute;
   height: 54px;
   display: flex;
@@ -96,38 +100,39 @@
   border-radius: 8px;
 }
 
-.add-new-alert{
+.add-new-alert {
   top: -43px;
   right: 2px;
 }
 
-.contacts-alert{
+.contacts-alert {
   bottom: 120px;
   right: 17px;
 }
 
-.success{
+.success {
   background-color: #EEFBE5;
   color: #72E128;
 }
 
-.error{
+.error {
   background-color: #ffebeb;
   color: #FF4D49;
 }
 
-.warn{
+.warn {
   background-color: #fff7eb;
   color: #FFB446;
 }
 
 @media (max-width: 700px) {
 
-  .header-wrapper{
+  .header-wrapper {
     display: flex;
     flex-direction: column-reverse;
   }
-  .header-item{
+
+  .header-item {
     width: 100%;
     display: flex;
     justify-content: center;
@@ -135,13 +140,13 @@
   }
 
   .delete-button.MuiButton-root,
-  .header-item .action-button.MuiButton-root{
+  .header-item .action-button.MuiButton-root {
     width: 100%;
     margin-bottom: 15px;
   }
 
 
-  .input-search{
+  .input-search {
     width: 100%;
     margin-right: 0;
   }
@@ -182,7 +187,7 @@
 
 .tabs .tab-btn.active {
   color: #2535a8;
-  cursor:default;
+  cursor: default;
 }
 
 .tabs .tab-btn.active .tab-name {
@@ -192,8 +197,8 @@
 
 
 .tab-btn::before {
-  bottom:0;
-  left:0;
+  bottom: 0;
+  left: 0;
   content: "";
   position: absolute;
   width: 0px;
@@ -206,7 +211,8 @@
   width: 100%;
   border-bottom: 2px solid #2535a8;
 }
-.catalogue-tabs .mobile-btns{
+
+.catalogue-tabs .mobile-btns {
   display: none;
   position: absolute;
   cursor: pointer;
@@ -255,7 +261,7 @@
     display: none;
   }
 
-  .catalogue-tabs .mobile-btns{
+  .catalogue-tabs .mobile-btns {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -265,47 +271,48 @@
 
 /*---- BROKER LIST & REINSURER LIST ----*/
 
-.outter-wrapper{
+.outter-wrapper {
   overflow-y: hidden;
   overflow-x: scroll;
 }
 
 .reinsurer-list,
-.broker-list{
+.broker-list {
   min-width: 750px;
 }
 
 /*---- ADD BROKER ----*/
 
-.add-new{
+.add-new {
   padding: 15px;
 }
 
-.add-new .title{
-  font-size:  24px;
+.add-new .title {
+  font-size: 24px;
   color: rgba(77, 80, 98, 0.87);
   margin-bottom: 10px;
 }
 
-.add-new .subtitle{
-  font-size:  20px;
+.add-new .subtitle {
+  font-size: 20px;
   color: rgba(77, 80, 98, 0.87)
 }
 
-.add-new .description{
+.add-new .description {
   font-size: 16px;
   color: rgba(77, 80, 98, 0.68);
   margin-bottom: 30px;
 }
+
 .subtitle,
-.add-new .inner-row{
+.add-new .inner-row {
   width: 100%;
   display: flex;
   flex-wrap: wrap;
   position: relative;
 }
 
-.add-new .action-buttons{
+.add-new .action-buttons {
   width: 100%;
   display: flex;
   justify-content: flex-end;
@@ -313,11 +320,11 @@
   padding: 10px 0px 0px;
 }
 
-.add-new .edit-broker-btn{
+.add-new .edit-broker-btn {
   margin-left: 15px;
 }
 
-.add-new .delete-broker-btn.MuiButton-root{
+.add-new .delete-broker-btn.MuiButton-root {
   color: rgba(130, 133, 151, 1);
 }
 
@@ -325,37 +332,38 @@
 
   .add-new .ccreate-broker-btn.MuiButton-root,
   .add-new .edit-broker-btn.MuiButton-root,
-  .add-new .delete-broker-btn.MuiButton-root{
+  .add-new .delete-broker-btn.MuiButton-root {
     width: 100%;
   }
 
-  .add-new .edit-broker-btn{
+  .add-new .edit-broker-btn {
     margin-left: 0;
     margin-top: 10px;
   }
 
-  .add-new .action-buttons{
+  .add-new .action-buttons {
     flex-wrap: wrap;
   }
 }
+
 /*---- BROKER CONTACT LIST  ----*/
 
-.contacts-wrapper{
+.contacts-wrapper {
   overflow-y: hidden;
   overflow-x: scroll;
 }
 
-.contact-list{
+.contact-list {
   min-width: 750px;
 }
 
-.contacts-wrapper .title{
-  font-size:  24px;
+.contacts-wrapper .title {
+  font-size: 24px;
   color: rgba(77, 80, 98, 0.87);
   padding: 15px;
 }
 
-.contacts-wrapper .description{
+.contacts-wrapper .description {
   font-size: 16px;
   color: rgba(77, 80, 98, 0.68);
   margin-bottom: 10px;
@@ -363,6 +371,10 @@
 }
 
 /* ------ CONTACT ACTIONS & BINDER ACTIONS ------ */
+
+.contact-list .MuiDataGrid-cell{
+  overflow: inherit !important;
+}
 
 .actions-wrapper {
   width: 100%;
@@ -373,10 +385,11 @@
 
 .actions-menu {
   position: absolute;
-  z-index: 1;
   width: 100%;
+  min-width: 90px;
+  left: -87px;
   background-color: white;
-  padding: 15px 0;
+  padding: 0px 0px 10px;
   border-radius: 15px;
   box-shadow: 0px 4px 6px 1px rgba(0, 0, 0, 0.2);
 }
@@ -397,7 +410,7 @@
 @media (max-width: 700px) {
 
 
-  .actions-wrapper .actions-menu{
+  .actions-wrapper .actions-menu {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -406,14 +419,14 @@
 
 /* ---- ADD BINDER ----*/
 
-.reference-number .MuiOutlinedInput-root{
+.reference-number .MuiOutlinedInput-root {
   min-width: 500px;
 }
 
 
 @media (max-width: 700px) {
 
-  .reference-number .MuiOutlinedInput-root{
+  .reference-number .MuiOutlinedInput-root {
     min-width: unset;
   }
 }
