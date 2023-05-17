@@ -186,13 +186,13 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
 
     switch (value) {
       case 'USD':
-        setPlacementStructure({ ...placementStructure, currency: value, exchangeRate: 18.5 })
+        setPlacementStructure({ ...placementStructure, currency: value, exchangeRate: 1 })
         break
       case 'MXN':
-        setPlacementStructure({ ...placementStructure, currency: value, exchangeRate: 20.0 })
+        setPlacementStructure({ ...placementStructure, currency: value, exchangeRate: 0.057 })
         break
       case 'EUR':
-        setPlacementStructure({ ...placementStructure, currency: value, exchangeRate: 1 })
+        setPlacementStructure({ ...placementStructure, currency: value, exchangeRate: 1.09 })
         break
     }
   }
