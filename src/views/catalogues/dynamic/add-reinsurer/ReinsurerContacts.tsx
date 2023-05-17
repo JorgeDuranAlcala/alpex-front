@@ -300,7 +300,6 @@ const column: GridColumns<IContact> = [
   }
 
   const handleEditContact = (row: IContact) => {
-    console.log(row)
     setCurrentContact(row)
     setSelectedRow(null);
     setOpenEdit(true)
