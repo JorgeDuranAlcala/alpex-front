@@ -145,5 +145,5 @@ export enum USERS_ROUTES {
   GET = 'user',
   ADD = 'user',
   UPDATE = 'user',
-  DELETE = 'user'
+  DELETE = 'user/delete'
 }
