@@ -2,6 +2,12 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import Icon from 'src/@core/components/icon'
 import * as yup from 'yup'
 
+import { useGetAllCompanies } from '@/hooks/catalogs/company/getAllCompanies'
+import { useGetAllRoles } from '@/hooks/catalogs/roles/getAllRoles'
+import { useEditUser } from '@/hooks/catalogs/users'
+import { useAddUser } from '@/hooks/catalogs/users/addUser'
+import { UsersPostDto, UsersPutDto } from '@/services/users/dtos/UsersDto'
+import { fetchAccounts } from '@/store/apps/users'
 import {
   Button,
   FormControl,
@@ -13,15 +19,10 @@ import {
   Select,
   TextField
 } from '@mui/material'
-
-import { useGetAllCompanies } from '@/hooks/catalogs/company/getAllCompanies'
-import { useGetAllRoles } from '@/hooks/catalogs/roles/getAllRoles'
-import { useEditUser } from '@/hooks/catalogs/users'
-import { useAddUser } from '@/hooks/catalogs/users/addUser'
-import { UsersPostDto, UsersPutDto } from '@/services/users/dtos/UsersDto'
 import { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import { useAppSelector } from 'src/store'
+import { useAppDispatch, useAppSelector } from 'src/store'
+
 import { UserSection } from 'src/styles/Forms/usersSection'
 import CountrySelect, { ICountry } from 'src/views/custom/select/CountrySelect'
 import { StyledDescription, StyledSubtitle, StyledTitle } from 'src/views/custom/typography'
@@ -53,6 +54,16 @@ const UserForm: FormInfo = {
   role: '',
   dualRole: ''
 }
+const initialForm: UsersPutDto = {
+  id: 1,
+  name: '',
+  surname: '',
+  email: '',
+  phone: '',
+  idCompany: 0,
+  roles: [],
+  areaCode: ''
+}
 
 // const ADMIN_COMPANIES = ['dynamic', 'claims']
 const ADMIN_COMPANIES = ['3', '4']
@@ -72,58 +83,27 @@ const AddUser = ({ selectUser }: IAddUser) => {
     mode: 'onBlur',
     resolver: yupResolver(schema)
   })
+
   const useWatchCompany = watch('company')
   const useWatchRole = watch('role')
   const usersReducer = useAppSelector(state => state.users)
-
+  const dispatch = useAppDispatch()
   const [formData, setFormData] = useState<FormInfo>(UserForm)
   const [selectedCountry, setSelectedCountry] = useState<ICountry | null>()
   const [dualRoleDisabled, setDualRoleDisabled] = useState<boolean>(false)
   const [roleDisabled, setRoleDisabled] = useState<boolean>(false)
   const [editable, setEditable] = useState<boolean>(false)
-  const [userPost, setUserPost] = useState<UsersPostDto | null>(null)
-  const [userEdit, setUserEdit] = useState<UsersPutDto | null>(null)
+
   const [idCompany, setIdCompany] = useState<string>('')
   const [idRole, setIdRole] = useState<string>('')
   const [informativeIdRole, setInformativeIdRole] = useState<string>('')
 
-  const addUser = useAddUser(userPost)
-  const editUser = useEditUser(userEdit)
+  const { setUserPost } = useAddUser()
+  const { setUserPut } = useEditUser()
 
   const { company } = useGetAllCompanies()
 
   const { roles } = useGetAllRoles()
-
-  useEffect(() => {
-    if (usersReducer.current !== undefined && usersReducer.current !== null && selectUser) {
-      reset({ ...usersReducer.current })
-    }
-    //eslint-disable-next-line
-  }, [usersReducer.current])
-
-  useEffect(() => {
-    if (ADMIN_COMPANIES.includes(useWatchCompany)) {
-      setRoleDisabled(false)
-      setValue('role', '', { shouldValidate: true })
-      setValue('dualRole', '', { shouldValidate: true })
-    } else {
-      setRoleDisabled(true)
-      setDualRoleDisabled(true)
-    }
-    //eslint-disable-next-line
-  }, [useWatchCompany])
-
-  console.log(errors)
-
-  useEffect(() => {
-    if (useWatchRole === '5') {
-      setDualRoleDisabled(false)
-      setValue('dualRole', '', { shouldValidate: true })
-    } else {
-      setDualRoleDisabled(true)
-    }
-    //eslint-disable-next-line
-  }, [useWatchRole])
 
   const onSubmit = (data: any) => {
     if (selectUser) {
@@ -144,10 +124,7 @@ const AddUser = ({ selectUser }: IAddUser) => {
         ],
         areaCode: selectedCountry?.phone || ''
       }
-      alert('edit')
-
-      setUserEdit(dataToSend)
-      reset()
+      setUserPut(dataToSend)
     } else {
       const dataToSend: UsersPostDto = {
         name: data.name || '',
@@ -166,27 +143,48 @@ const AddUser = ({ selectUser }: IAddUser) => {
         areaCode: selectedCountry?.phone || ''
       }
       setUserPost(dataToSend)
-      reset()
+      dispatch(fetchAccounts(usersReducer))
+      reset({ ...initialForm })
     }
   }
-
-  useEffect(() => {
-    console.log(addUser)
-    console.log(editUser)
-
-    //eslint-disable-next-line
-  }, [addUser, editUser])
-
-  console.log({ company })
-  console.log({ roles })
-
-  console.log('IDCompany--->', idCompany)
-  console.log('IDRole--->', idRole)
-  console.log('InformativeIDRole--->', informativeIdRole)
 
   const handleFormChange = (field: keyof FormInfo, value: FormInfo[keyof FormInfo]) => {
     setFormData({ ...formData, [field]: value })
   }
+
+  useEffect(() => {
+    if (usersReducer.current !== undefined && usersReducer.current !== null && selectUser) {
+      reset({ ...usersReducer.current })
+    }
+    //eslint-disable-next-line
+  }, [usersReducer.current])
+
+  useEffect(() => {
+    if (ADMIN_COMPANIES.includes(useWatchCompany)) {
+      setRoleDisabled(false)
+      setValue('role', '', { shouldValidate: true })
+      setValue('dualRole', '', { shouldValidate: true })
+    } else {
+      setRoleDisabled(true)
+      setDualRoleDisabled(true)
+    }
+    //eslint-disable-next-line
+  }, [useWatchCompany])
+
+  useEffect(() => {
+    if (useWatchRole === '5') {
+      setDualRoleDisabled(false)
+      setValue('dualRole', '', { shouldValidate: true })
+    } else {
+      setDualRoleDisabled(true)
+    }
+    //eslint-disable-next-line
+  }, [useWatchRole])
+
+  // useEffect(() => {
+  //   dispatch(fetchAccounts(usersReducer))
+  //   //eslint-disable-next-line
+  // }, [usersReducer.filters])
 
   return (
     <>
