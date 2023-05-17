@@ -10,6 +10,7 @@ const initialState: IAccountsState = {
   loading: false,
   filters: [],
   current: null,
+  formsData: null,
 
   // formsData: {},
   info: {
@@ -60,12 +61,12 @@ export const appAccountsSlice = createSlice({
     },
     resetAccountFilter: state => {
       state.filters = []
-    }
+    },
 
-    // updateFormsData: (state, { payload }) => {
-    //   state.formsData = { ...state.formsData, ...payload }
-    //   console.log(state.formsData)
-    // }
+    updateFormsData: (state, { payload }) => {
+      state.formsData = { ...state.formsData, ...payload }
+      console.log(state.formsData)
+    }
   },
   extraReducers: builder => {
     builder.addCase(fetchAccounts.fulfilled, (state, action) => {
