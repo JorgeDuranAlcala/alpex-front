@@ -9,9 +9,7 @@ import { DataGrid, GRID_CHECKBOX_SELECTION_COL_DEF, GridColumns, GridRowId } fro
 // ** Icon Imports
 
 // ** Custom Hooks imports
-// import { useDeleteUser } from '@/hooks/catalogs/users/deleteUser'
-
-// import { UsersDeleteDto } from '@/services/users/dtos/UsersDto'
+import { useDeleteUser } from '@/hooks/catalogs/users/deleteUser'
 
 // ** Custom Components Imports
 
@@ -73,11 +71,6 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
   const [selectedUser, setSelectedUser] = useState<IUsersGrid | null>(null)
   const [modalShow, setModalShow] = useState<boolean>(false)
 
-  // const [idDeleteUser,setIdDeleteUser] = useState<UsersDeleteDto | null>([])
-
-  // console.log('Id_User--->', selectedUser?.id)
-  // console.log('Id_Useeeer--->',idDeleteUser)
-
   //WIP
   //eslint-disable-next-line
   const [badgeData, setBadgeData] = useState<IAlert>({
@@ -89,10 +82,12 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
   // **Reducers
   const dispatch = useAppDispatch()
   const usersReducer = useAppSelector(state => state.users)
+  console.log('Redux_Store--->', usersReducer.users)
 
   // ** Hooks
-  //  const deleteUser = useDeleteUser([5])
-  //  console.log(deleteUser)
+  const { deleteUser } = useDeleteUser()
+
+  // console.log(deleteUser)
 
   const handleClickColumnHeader = (field: string) => {
     alert(field)
@@ -112,11 +107,19 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const open = Boolean(anchorEl)
+
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget)
   }
   const handleClose = () => {
     setAnchorEl(null)
+  }
+  const handleRowOptionsClose = () => {
+    setAnchorEl(null)
+  }
+  const handleDelete = () => {
+    deleteUser({ idUsersList: [selectedUser!.id] })
+    handleRowOptionsClose()
   }
 
   //name, role, company, phone number, email
@@ -296,6 +299,7 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
         handleClickContinue={() => {
           setModalShow(false)
           onDelete()
+          handleDelete()
         }}
         handleClickCancel={() => {
           setModalShow(false)

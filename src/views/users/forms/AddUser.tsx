@@ -134,20 +134,28 @@ const AddUser = ({ selectUser }: IAddUser) => {
         email: data.email || '',
         phone: data.phone || '',
         idCompany: parseInt(idCompany),
-        roles: [
-          {
-            id: parseInt(idRole) || 0
-          },
-          {
-            id: parseInt(informativeIdRole) || 0
-          }
-        ],
+        roles: parseInt(idRole)
+          ? [
+              {
+                id: parseInt(idRole)
+              }
+            ]
+          : parseInt(idRole) && parseInt(informativeIdRole)
+          ? [
+              {
+                id: parseInt(idRole)
+              },
+              {
+                id: parseInt(informativeIdRole)
+              }
+            ]
+          : [],
         areaCode: selectedCountry?.phone || ''
       }
       alert('edit')
 
       setUserEdit(dataToSend)
-      reset()
+      reset({ ...usersReducer.current })
     } else {
       const dataToSend: UsersPostDto = {
         name: data.name || '',
@@ -155,18 +163,26 @@ const AddUser = ({ selectUser }: IAddUser) => {
         email: data.email || '',
         phone: data.phone || '',
         idCompany: parseInt(idCompany),
-        roles: [
-          {
-            id: parseInt(idRole) || 0
-          },
-          {
-            id: parseInt(informativeIdRole) || 0
-          }
-        ],
+        roles: parseInt(idRole)
+          ? [
+              {
+                id: parseInt(idRole)
+              }
+            ]
+          : parseInt(idRole) && parseInt(informativeIdRole)
+          ? [
+              {
+                id: parseInt(idRole)
+              },
+              {
+                id: parseInt(informativeIdRole)
+              }
+            ]
+          : [],
         areaCode: selectedCountry?.phone || ''
       }
       setUserPost(dataToSend)
-      reset()
+      reset({ ...usersReducer.current })
     }
   }
 
