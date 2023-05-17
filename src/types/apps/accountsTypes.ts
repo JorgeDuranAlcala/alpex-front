@@ -45,6 +45,7 @@ export type IAccountFilters = {
 }
 
 export interface IAccountsState {
+  formsData: any
   current: IAccounts | null
   accounts: IAccounts[]
   loading: boolean
