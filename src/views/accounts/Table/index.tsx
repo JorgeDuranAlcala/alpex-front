@@ -16,7 +16,7 @@ import Icon from 'src/@core/components/icon'
 // ** Custom Components Imports
 import ColumnHeader from './ColumnHeader'
 import CustomPagination from './CustomPagination'
-import Status, { EStatus, EStatusString } from './Status'
+import Status, { EStatusString } from './Status'
 import TableHeader from './TableHeader'
 import ModalAction from './modal'
 
@@ -54,7 +54,7 @@ const Table = ({ status }: IAccountTable) => {
   // ** State
   const [selectedRows, setSelectedRows] = useState<GridRowId[]>([])
   const [accounts, setAccounts] = useState<any>([])
-  const [loading, setLoading] = useState<any>([])
+  const [, setLoading] = useState<any>([])
   const [badgeData, setBadgeData] = useState<IAlert>({
     message: '',
     status: undefined,
@@ -83,7 +83,7 @@ const Table = ({ status }: IAccountTable) => {
     dispatch(resetAccountFilter())
     if (status === undefined) dispatch(deleteAccountFilter('Status'))
     else {
-      const index: string = Object.keys(EStatus)[Object.values(EStatus).indexOf(status as any)]
+      const index: string = Object.keys(EStatusString)[Object.values(EStatusString).indexOf(status as any)]
       dispatch(
         handleAccountFilter({
           type: 'status',
@@ -95,10 +95,29 @@ const Table = ({ status }: IAccountTable) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status])
+
   useEffect(() => {
-    setAccounts(accountsReducer.accounts || [])
-    console.log(loading)
     setLoading(accountsReducer.loading)
+
+    const formatedRows = []
+    console.log('losAccounts', accountsReducer.accounts)
+    const rawRows = accountsReducer.accounts
+    if (rawRows && rawRows.length > 0) {
+      for (const rawRow of rawRows) {
+        formatedRows.push({
+          id: rawRow.id,
+          status: rawRow.idAccountStatus.status,
+          insured: rawRow?.informations[0]?.insured,
+          lob: rawRow?.informations[0]?.idLineOfBussines?.lineOfBussines,
+          effectiveDate: rawRow?.informations[0]?.effetiveDate,
+          expirationDate: rawRow?.informations[0]?.expirationDate
+        })
+      }
+    }
+
+    console.log(formatedRows)
+
+    setAccounts(formatedRows || [])
     //eslint-disable-next-line
   }, [accountsReducer])
 
