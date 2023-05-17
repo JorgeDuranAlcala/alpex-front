@@ -2,20 +2,43 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 
 // ** Axios Imports
-import accountsService from 'src/services/accounts/information.service'
-import { IAccounts } from 'src/types/apps/accountsTypes'
+import accountsService from 'src/services/accounts/account.service'
+import { IAccountsState } from 'src/types/apps/accountsTypes'
 
-export const fetchAccounts = createAsyncThunk('appAccounts/fetchAccounts', async () => {
-  const response: any = await new Promise(res => setTimeout(async () => res(await accountsService.getAccounts()), 300))
-
-  return response
-})
-const initialState: IAccounts = {
+const initialState: IAccountsState = {
   accounts: [],
   loading: false,
   filters: [],
-  formsData: {}
+  current: null,
+
+  // formsData: {},
+  info: {
+    count: 0,
+    page: 1,
+    take: 10,
+    pages: 0,
+    next: '',
+    prev: ''
+  },
+  temporalFilters: []
 }
+export const fetchAccounts = createAsyncThunk(
+  'appAccounts/fetchAccounts',
+  async (state: IAccountsState = initialState) => {
+    const response: any = await new Promise(res =>
+      setTimeout(async () => res(await accountsService.getAccounts({ ...state })), 300)
+    )
+
+    return response
+  }
+)
+
+export const fetchAccountsTemporal = createAsyncThunk('appUsersState/fetchUsersTemporal', async () => {
+  const data = await accountsService.getAccounts({ ...initialState, info: { ...initialState.info, take: 49 } })
+
+  return data
+})
+
 export const appAccountsSlice = createSlice({
   name: 'appAccounts',
   initialState,
@@ -37,34 +60,43 @@ export const appAccountsSlice = createSlice({
     },
     resetAccountFilter: state => {
       state.filters = []
-    },
-    updateFormsData: (state, { payload }) => {
-      state.formsData = { ...state.formsData, ...payload }
-      console.log(state.formsData)
     }
+
+    // updateFormsData: (state, { payload }) => {
+    //   state.formsData = { ...state.formsData, ...payload }
+    //   console.log(state.formsData)
+    // }
   },
   extraReducers: builder => {
     builder.addCase(fetchAccounts.fulfilled, (state, action) => {
+      // state.loading = false
+      // const account = action.payload.filter((item: any) => {
+      //   if (state.filters.length) {
+      //     let matchesFilter = true
+      //     state.filters.forEach(filter => {
+      //       if (!item[filter.type].includes(filter.value)) {
+      //         matchesFilter = false
+      //       }
+      //     })
+
+      //     return matchesFilter
+      //   }
+
+      //   return true
+      // })
+      // state.accounts = account
       state.loading = false
-      const account = action.payload.filter((item: any) => {
-        if (state.filters.length) {
-          let matchesFilter = true
-          state.filters.forEach(filter => {
-            if (!item[filter.type].includes(filter.value)) {
-              matchesFilter = false
-            }
-          })
-
-          return matchesFilter
-        }
-
-        return true
-      })
-      state.accounts = account
+      state.accounts = action.payload.results
+      state.info = action.payload.info
     })
     builder.addCase(fetchAccounts.pending, state => {
       state.accounts = []
       state.loading = true
+    })
+    builder.addCase(fetchAccountsTemporal.fulfilled, (state, action) => {
+      state.loading = false
+      state.temporalFilters = action.payload.results
+      state.info = action.payload.info
     })
     builder.addCase(appAccountsSlice.actions.handleAccountFilter, state => {
       state.accounts = []
