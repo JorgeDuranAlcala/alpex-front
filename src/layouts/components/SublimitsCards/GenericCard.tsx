@@ -65,14 +65,14 @@ const initialData: FormGenericCard = {
 const GenericCard: React.FC<RenderFormGeneric> = ({
   title,
   deleteForm,
-  handleOnChangeForm = () => {
-    console.log('')
-  },
+  handleOnChangeForm,
   formInformation,
-  index = 0
+  index = 0,
+  formErrors
 }: RenderFormGeneric) => {
   const [dataForm, setDataForm] = useState<FormGenericCard>(initialData)
   const [selectedValueRadio, setSelectedValueRadio] = useState<string>('')
+  const [errorForm, setErrorForm] = useState({})
   const [errors] = useState<FormErrors>({
     minError: false,
     coinsuranceError: false,
@@ -84,9 +84,6 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
   const handleNumericInputChange = (value: any, e: any) => {
     const { name } = e
     setDataForm({ ...dataForm, [name]: value })
-    handleOnChangeForm(value, name, index)
-    handleOnChangeForm(checked, 'at100', index)
-    handleOnChangeForm(dataForm.typeDeductibleRadio || '', 'typeDeductibleRadio', index)
   }
 
   const handleChangeRadio = (event: ChangeEvent<HTMLInputElement>) => {
@@ -116,15 +113,6 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
       : setDataForm({ ...dataForm, yes: false, luc: true })
   }
 
-  useEffect(() => {
-    if (checked) {
-      setDataForm({ ...dataForm, sublimit: formInformation?.informations[0].limit })
-    } else {
-      setDataForm({ ...dataForm, sublimit: 0 })
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [checked])
-
   const options = [
     { name: 'Select option', value: '' },
     { name: 'Loss', value: 'Loss' },
@@ -139,6 +127,23 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
   const size = userThemeConfig.typography?.size.px16
   const textColor = userThemeConfig.palette?.text.subTitle
+  useEffect(() => {
+    if (checked) {
+      setDataForm({ ...dataForm, sublimit: +formInformation?.informations[0].limit })
+    } else {
+      setDataForm({ ...dataForm, sublimit: 0 })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [checked])
+  useEffect(() => {
+    if (dataForm) handleOnChangeForm(dataForm, index)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dataForm])
+  useEffect(() => {
+    console.log({ errorForm })
+    setErrorForm(formErrors[index] || {})
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formErrors])
 
   return (
     <ContainerCard>
@@ -183,6 +188,7 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
                 handleNumericInputChange(value.floatValue, { name: 'sublimit' })
               }}
             />
+            <FormHelperText sx={{ color: 'error.main' }}>{formErrors[index]?.sublimit}</FormHelperText>
           </FormControl>
           <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', paddingRight: '8px', width: '88px' }}>
             <Checkbox
@@ -204,7 +210,7 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
           <SubContainer sx={{ height: 'auto' }}>
             <RadioGroup
               aria-labelledby='demo-radio-buttons-group-label'
-              defaultValue='female'
+              defaultValue='yes'
               name='radio-buttons-group'
               onChange={(_, val) => handleChangeRadioYesLuc(val)}
               sx={{
@@ -231,7 +237,7 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
             </Typography>
             <RadioGroup
               aria-labelledby='demo-radio-buttons-group-label'
-              defaultValue='female'
+              defaultValue='none'
               name='radio-buttons-group'
               sx={{ height: '100%', gap: '10px' }}
             >
@@ -244,7 +250,7 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
                   height: '58px'
                 }}
                 value='none'
-                control={<Radio sx={{ mr: 2 }} value='none' onChange={handleChangeRadio} />}
+                control={<Radio sx={{ mr: 2 }} value='none' defaultChecked onChange={handleChangeRadio} />}
                 label='None'
               />
               <InputForm>
@@ -272,6 +278,7 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
                     handleNumericInputChange(value.floatValue, { name: 'percentage' })
                   }}
                 />
+                <FormHelperText sx={{ color: 'error.main' }}>{formErrors[index]?.percentage}</FormHelperText>
               </InputForm>
               {selectedValueRadio === 'percentage' ? (
                 <>
@@ -292,6 +299,7 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
                         handleNumericInputChange(value.floatValue, { name: 'min' })
                       }}
                     />
+                    <FormHelperText sx={{ color: 'error.main' }}>{formErrors[index]?.min}</FormHelperText>
                   </FormControl>
                   <FormControl fullWidth>
                     <InputLabel id='controlled-select-label'>Aplicable over</InputLabel>
@@ -311,6 +319,7 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
                         </MenuItem>
                       ))}
                     </Select>
+                    <FormHelperText sx={{ color: 'error.main' }}>{formErrors[index]?.typeDeductible}</FormHelperText>
                   </FormControl>
                 </>
               ) : null}
@@ -340,6 +349,7 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
                     handleNumericInputChange(value.floatValue, { name: 'price' })
                   }}
                 />
+                <FormHelperText sx={{ color: 'error.main' }}>{formErrors[index]?.price}</FormHelperText>
               </InputForm>
             </RadioGroup>
           </SubContainer>
@@ -368,7 +378,7 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
             </Typography>
             <RadioGroup
               aria-labelledby='demo-radio-buttons-group-label'
-              defaultValue='female'
+              defaultValue='BIDays'
               name='radio-buttons-group'
               sx={{ height: '100%', gap: '10px', mt: 1 }}
               onChange={(_, val) => handleChangeRadioBI(val)}
@@ -394,6 +404,8 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
                     handleNumericInputChange(value.floatValue, { name: 'days' })
                   }}
                 />
+                <FormHelperText sx={{ color: 'error.main' }}>{formErrors[index]?.days}</FormHelperText>
+
                 {false && <FormHelperText sx={{ color: 'error.main' }}>Required Field</FormHelperText>}
               </InputForm>
 
@@ -418,6 +430,7 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
                     handleNumericInputChange(value.floatValue, { name: 'priceInterruption' })
                   }}
                 />
+                <FormHelperText sx={{ color: 'error.main' }}>{formErrors[index]?.priceInterruption}</FormHelperText>
               </InputForm>
             </RadioGroup>
           </SubContainer>
@@ -448,6 +461,7 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
               handleNumericInputChange(value.floatValue, { name: 'coinsurance' })
             }}
           />
+          <FormHelperText sx={{ color: 'error.main' }}>{formErrors[index]?.coinsurance}</FormHelperText>
         </SubContainer>
       </ContentCard>
     </ContainerCard>

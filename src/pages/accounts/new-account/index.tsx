@@ -36,7 +36,6 @@ const NewAccount = () => {
     switch (step) {
       case 1:
         return <Information onStepChange={handleStepChange} />
-
       case 2:
         return <Security onStepChange={handleStepChange} />
       case 3:

@@ -236,11 +236,11 @@ const ModalContact = ({ id }: IModal) => {
         </div>
         CREATE NEW CONTACT
       </Button>
-      <Modal className='create-contact-modal' open={open} onClose={() => setOpen(true)}>
+      <Modal className='create-contact-modal' open={open} onClose={() => setOpen(false)}>
         <Box className='modal-wrapper'>
           <HeaderTitleModal>
             <Typography variant='h6'>Create new contact</Typography>
-            <ButtonClose onClick={() => setOpen(true)}>
+            <ButtonClose onClick={() => setOpen(false)}>
               <CloseIcon />
             </ButtonClose>
           </HeaderTitleModal>
@@ -660,7 +660,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               name='riskActivity'
               label='Risk activity'
               value={basicInfo.riskActivity}
-              disabled={bussinesFields}
+              disabled={true}
               onChange={handleInputChange}
               error={!!errors.riskActivityError}
               helperText={getErrorMessage('riskActivityError')}
@@ -672,7 +672,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               name='riskClass'
               label='Risk class'
               value={basicInfo.riskClass}
-              disabled={bussinesFields}
+              disabled={true}
               onChange={handleInputChange}
               error={!!errors.riskClassError}
               helperText={getErrorMessage('riskClassError')}

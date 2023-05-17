@@ -82,9 +82,9 @@ const schema = yup.object().shape({
   sublimit: yup
     .number()
     .transform((_, val) => (val === Number(val) ? val : null))
-    .test('Validate sublimit', 'Sublimit cannot be greater than limit', (value, context) => {
+    .test('Validate sublimit', 'Sublimit cannot be greater than limit', value => {
       const val = value || 0
-      const limit = context.parent.account.informations[0].limit || 0
+      const limit = 10000 || 0
 
       return +val <= +limit
     })
@@ -101,7 +101,13 @@ const schema = yup.object().shape({
 
       return +val <= 100
     })
-    .required(),
+    .nullable()
+    .when('typeDeductibleRadio', {
+      is: (typeDeductibleRadio: string) => {
+        return typeDeductibleRadio === 'percentage'
+      },
+      then: yup.number().required('Field is required').min(1)
+    }),
   price: yup
     .number()
     .transform((_, val) => (val === Number(val) ? val : null))
@@ -110,7 +116,7 @@ const schema = yup.object().shape({
       is: (typeDeductibleRadio: string) => {
         return typeDeductibleRadio === 'price'
       }, //just an e.g. you can return a function
-      then: yup.number().required('Field is required')
+      then: yup.number().required('Field is required').min(1)
     }),
   min: yup
     .number()
@@ -118,16 +124,52 @@ const schema = yup.object().shape({
     .nullable()
     .when('typeDeductibleRadio', {
       is: (typeDeductibleRadio: string) => {
-        return typeDeductibleRadio === 'porcentage'
+        return typeDeductibleRadio === 'percentage'
       },
-      then: yup.number().required('Field is required')
+      then: yup.number().required('Field is required').min(1)
     }),
   typeDeductible: yup.string().when('typeDeductibleRadio', {
     is: (typeDeductibleRadio: string) => {
-      return typeDeductibleRadio === 'porcentage'
+      return typeDeductibleRadio === 'percentage'
     },
     then: yup.string().required('Field is required')
-  })
+  }),
+  typeBi: yup.string().notRequired(),
+  days: yup
+    .number()
+    .transform((_, val) => (val === Number(val) ? val : null))
+    .nullable()
+    .test('Validate days', 'Days cannot be greater than 999', value => {
+      const val = value || 0
+
+      return +val <= 999
+    })
+    .when('typeBi', {
+      is: (typeBi: string) => {
+        return typeBi === 'BIDays'
+      },
+      then: yup.number().required('Field is required').min(1)
+    }),
+  priceInterruption: yup
+    .number()
+    .transform((_, val) => (val === Number(val) ? val : null))
+    .nullable()
+    .when('typeBi', {
+      is: (typeBi: string) => {
+        return typeBi === 'BIPrice'
+      },
+      then: yup.number().required('Field is required').min(1)
+    }),
+  coinsurance: yup
+    .number()
+    .transform((_, val) => (val === Number(val) ? val : null))
+    .test('Validate coinsurance', 'Coinsurance cannot be greater than 100', value => {
+      const val = value || 0
+
+      return +val <= 100
+    })
+    .required()
+    .min(1)
 })
 
 const initialValues = {
@@ -149,6 +191,7 @@ const Sublimits = () => {
   const forms = GenericCard
   const [checked, setChecked] = useState<number[]>([])
   const [allFormData, setAllFormData] = useState<any[]>([])
+  const [formErrors, setFormErrors] = useState<any[]>([])
   const [coverageSelect, setCoverageSelect] = useState<any>('')
   const [availableOptions, setAvailableOptions] = useState<any[]>(coverage)
   const [filteredOptions, setFilteredOptions] = useState<any[]>([])
@@ -163,33 +206,37 @@ const Sublimits = () => {
 
   const [formsCheck] = useState<RenderFormGeneric[]>([])
 
-  const handleOnChangeForm = (value: string | number | boolean, path: string, index: number) => {
+  const handleOnChangeForm = (value: any, index: number) => {
     const data = allFormData
-    data[index][path] = value
+    data[index] = value
     data[index].index = index
-    console.log(data)
-    validate(data[index])
+    validate(data[index], index)
     setAllFormData(data)
   }
+  const validate = (form: any, index: number) => {
+    const dataError = { ...initialValues }
+    Object.keys(dataError).forEach(function (key) {
+      // @ts-ignore
+      dataError[key] = null
+    })
+    const data = formErrors
+    data[index] = dataError
 
-  useEffect(() => {
-    console.log('allFormData', allFormData)
-  }, [allFormData])
-  const validate = (form: any) => {
     schema
       .validate({ ...form, account }, { abortEarly: false })
       .then(function () {
-        // alert('valid')
+        console.log('ok')
+        const removeItem = data.filter((errors, i) => i !== index)
+        setFormErrors(removeItem)
       })
       .catch(function (err) {
-        console.log(err)
-        alert('invalid')
-        err?.inner?.forEach((e: any) => {
-          console.log(e.path, e.message)
+        for (const error of err?.inner) {
+          console.log(error)
+          data[index][error.path] = error.message
+          console.log(data)
+        }
 
-          // data[index][e.path] = e.message
-          //  setFormErrors(data)
-        })
+        setFormErrors(data)
 
         //setEnableNextStep(false)
       })
@@ -201,12 +248,14 @@ const Sublimits = () => {
     if (currentIndex === -1) {
       newChecked.push(value)
       allFormData.push({ ...initialValues })
+      formErrors.push({ ...initialValues })
       formsCheck.push({
         type: value,
         components: forms,
         title: label,
         handleOnChangeForm: handleOnChangeForm,
-        formInformation: account
+        formInformation: account,
+        formErrors: formErrors
       })
     } else {
       newChecked.splice(currentIndex, 1)
@@ -235,7 +284,7 @@ const Sublimits = () => {
         typeDeductible: 'none',
         typeBi: 'days',
         coinsurance: item.coinsurance,
-        AccountId: formInformationData.id
+        idAccount: formInformationData.id
       }
     })
     saveSublimits(dataToSubmit)
@@ -349,14 +398,9 @@ const Sublimits = () => {
                       handleOnChangeForm={item.handleOnChangeForm}
                       index={index}
                       formInformation={item.formInformation}
+                      formErrors={formErrors}
                     />
                   }
-                  state={item.state}
-                  setState={item.setState}
-                  type={item.type}
-                  handleOnChangeForm={item.handleOnChangeForm}
-                  index={index}
-                  formInformation={item.formInformation}
                 />
               </Grid>
             ))}

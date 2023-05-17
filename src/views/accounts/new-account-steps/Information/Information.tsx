@@ -94,9 +94,11 @@ const Information: React.FC<InformationProps> = ({ onStepChange }) => {
     attachmentPoint: 0.0,
     typeOfLimit: ''
   })
-  const [userFile, setUserFile] = useState<UserFile>({
-    file: null
-  })
+  const [userFile, setUserFile] = useState<UserFile[]>([
+    {
+      file: null
+    }
+  ])
 
   const saveInformation = async () => {
     //ALLOW NULLS
@@ -153,7 +155,6 @@ const Information: React.FC<InformationProps> = ({ onStepChange }) => {
   const onNextStep = () => {
     setDisableNextBtn(false)
     if (onStepChange) {
-      saveInformation()
       onStepChange(2)
     }
   }
