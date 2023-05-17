@@ -5,7 +5,7 @@ export function useLocalStorage(key: string, isJSON: boolean) {
 
   useEffect(() => {
     const stored = localStorage.getItem(key)
-    console.log(`Stored "${key}": ${stored}`)
+
     if (stored) {
       if (isJSON) {
         setValue(JSON.parse(stored))

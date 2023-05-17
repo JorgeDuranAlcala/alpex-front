@@ -1,13 +1,22 @@
 import { ACCOUNT_SECURITY_TOTAL_ROUTES } from 'src/configs/api'
 import { AppAlpexApiGateWay } from '../app.alpex.api-getway'
+import { AppAlpexApiGateWayNoToken } from '../app.alpex.api-getway-no-jwt'
 import { SecurityTotalDto } from './dtos/securityTotal.dto'
 
 class SecurityTotalService {
-  async addSecurityTotal(securityTotalIn: Partial<SecurityTotalDto>): Promise<SecurityTotalDto> {
+  async addSecurityTotal(securityTotalIn: Partial<SecurityTotalDto>, jwtToken: string): Promise<SecurityTotalDto> {
     try {
-      const { data } = await AppAlpexApiGateWay.post<Promise<SecurityTotalDto>>(ACCOUNT_SECURITY_TOTAL_ROUTES.ADD, {
-        ...securityTotalIn
-      })
+      const { data } = await AppAlpexApiGateWayNoToken.post<Promise<SecurityTotalDto>>(
+        ACCOUNT_SECURITY_TOTAL_ROUTES.ADD,
+        {
+          ...securityTotalIn
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${jwtToken}`
+          }
+        }
+      )
 
       return data
     } catch (error) {

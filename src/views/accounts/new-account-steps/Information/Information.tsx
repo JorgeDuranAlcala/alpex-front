@@ -153,7 +153,6 @@ const Information: React.FC<InformationProps> = ({ onStepChange }) => {
   const onNextStep = () => {
     setDisableNextBtn(false)
     if (onStepChange) {
-      saveInformation()
       onStepChange(2)
     }
   }
