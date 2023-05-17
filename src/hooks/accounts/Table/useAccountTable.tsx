@@ -9,22 +9,21 @@ import EAccountsTableActionTypes from 'src/context/accounts/Table/actionTypes'
 import AccountsTableContext from 'src/context/accounts/Table/reducer'
 
 // ** Services
-import accountsService from 'src/services/accounts/information.service'
+import accountsService from 'src/services/accounts/account.service'
 
 // ** Custom utilities
+import { IAccountsState } from '@/types/apps/accountsTypes'
 import { EStatus } from 'src/views/accounts/Table/Status'
 
 const useAccountTable = () => {
   const { state, dispatch } = useContext(AccountsTableContext)
   const { accounts } = state
 
-  const getAccounts = async () => {
+  const getAccounts = async (usersData: IAccountsState, urlQ?: string) => {
     try {
-      const response = await accountsService.getAccounts()
-      dispatch({
-        type: EAccountsTableActionTypes.SET_ACCOUNTS,
-        payload: response
-      })
+      const response = await accountsService.getAccounts(usersData, urlQ)
+
+      return response
     } catch (error) {
       console.error(error)
     }

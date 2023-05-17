@@ -1,7 +1,9 @@
 import { AppAlpexApiGateWay } from '../app.alpex.api-getway'
 
 //Routes
+import { IAccountsState } from '@/types/apps/accountsTypes'
 import { ACCOUNT_ROUTES } from '../../configs/api'
+import { queryBuilder } from '../helper/queryBuilder'
 
 /**
  *  service responsible of the  account methods
@@ -27,9 +29,12 @@ class AccountServices {
    * get the all accounts actives
    * @returns
    */
-  async getAccounts() {
+  async getAccounts(accountsData: IAccountsState, urlQ?: string) {
     try {
-      const { data } = await AppAlpexApiGateWay.get(`${ACCOUNT_ROUTES.GET_ALL}`)
+      const url = urlQ ? urlQ : queryBuilder(accountsData.filters, ACCOUNT_ROUTES.GET_ALL)
+      const { data } = await AppAlpexApiGateWay.get(
+        `${url}&take=${accountsData.info.take}&page=${accountsData.info.page}`
+      )
 
       return data
     } catch (error) {

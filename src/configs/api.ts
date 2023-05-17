@@ -140,7 +140,7 @@ export enum INSTALLMENT_ROUTERS {
   UPDATE = 'account/installment/update'
 }
 
-// ==== CATALOGS
+// ==== USER
 export enum USERS_ROUTES {
   GET = 'user',
   ADD = 'user',
