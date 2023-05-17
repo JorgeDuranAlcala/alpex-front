@@ -21,6 +21,7 @@ import { useAddInstallments } from 'src/hooks/accounts/installments'
 import { useAppSelector } from 'src/store'
 
 //dtos
+import { useGetAccountById } from '@/hooks/accounts/forms'
 import { InstallmentDto } from 'src/services/accounts/dtos/installments.dto'
 
 interface InstallmentErrors {
@@ -75,6 +76,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
   const { addInstallments } = useAddInstallments()
   const accountData = useAppSelector(state => state.accounts)
   const idAccount = accountData.formsData.form1.id
+  const { account } = useGetAccountById(idAccount)
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setCount(event.target.value)
@@ -134,7 +136,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
             <Grid container spacing={{ xs: 2, sm: 5, md: 5 }} rowSpacing={4} columns={12}>
               <Grid item xs={12} sm={6} md={4}>
                 <DatePicker
-                  selected={new Date()}
+                  selected={account.informations[0].effectiveDate}
                   shouldCloseOnSelect
                   id='reception-date'
                   showTimeSelect
@@ -150,7 +152,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
                 <TextField
                   fullWidth
                   label='Dynamic net premium'
-                  value={700000}
+                  value={account.securityTotal.receivesNetPremium}
                   InputProps={{
                     disabled: true
                   }}
@@ -191,8 +193,8 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
               }
               onChangeList={handleItemChange}
               globalInfo={{
-                receivedNetPremium: 7000,
-                inceptionDate: new Date(),
+                receivedNetPremium: account.securityTotal.receivesNetPremium,
+                inceptionDate: account.informations[0].effectiveDate,
                 idAccount: idAccount
               }}
               key={index}
