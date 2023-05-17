@@ -84,8 +84,9 @@ const schema = yup.object().shape({
     .transform((_, val) => (val === Number(val) ? val : null))
     .test('Validate sublimit', 'Sublimit cannot be greater than limit', (value, context) => {
       const val = value || 0
-      const limit = context.parent.account.informations[0].limit || 0
+      const limit = 10000 || 0
 
+      // context.parent.account.informations[0].limit
       return +val <= +limit
     })
     .required()
@@ -217,7 +218,7 @@ const Sublimits = () => {
     const dataError = { ...initialValues }
     Object.keys(dataError).forEach(function (key) {
       // @ts-ignore
-      dataError[key] = undefined
+      dataError[key] = null
     })
     const data = formErrors
     data[index] = dataError
@@ -226,13 +227,17 @@ const Sublimits = () => {
       .validate({ ...form, account }, { abortEarly: false })
       .then(function () {
         console.log('ok')
+        const removeItem = data.filter((errors, i) => i !== index)
+        setFormErrors(removeItem)
       })
       .catch(function (err) {
-        err?.inner?.forEach((e: any) => {
-          data[index][e.path] = e.message
+        for (const error of err?.inner) {
+          console.log(error)
+          data[index][error.path] = error.message
           console.log(data)
-          setFormErrors(data)
-        })
+        }
+
+        setFormErrors(data)
 
         //setEnableNextStep(false)
       })
@@ -397,13 +402,6 @@ const Sublimits = () => {
                       formErrors={formErrors}
                     />
                   }
-                  state={item.state}
-                  setState={item.setState}
-                  type={item.type}
-                  handleOnChangeForm={item.handleOnChangeForm}
-                  index={index}
-                  formInformation={item.formInformation}
-                  formErrors={formErrors}
                 />
               </Grid>
             ))}

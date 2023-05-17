@@ -65,15 +65,14 @@ const initialData: FormGenericCard = {
 const GenericCard: React.FC<RenderFormGeneric> = ({
   title,
   deleteForm,
-  handleOnChangeForm = () => {
-    console.log('')
-  },
+  handleOnChangeForm,
   formInformation,
   index = 0,
   formErrors
 }: RenderFormGeneric) => {
   const [dataForm, setDataForm] = useState<FormGenericCard>(initialData)
   const [selectedValueRadio, setSelectedValueRadio] = useState<string>('')
+  const [errorForm, setErrorForm] = useState({})
   const [errors] = useState<FormErrors>({
     minError: false,
     coinsuranceError: false,
@@ -86,11 +85,6 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
     const { name } = e
     setDataForm({ ...dataForm, [name]: value })
   }
-
-  useEffect(() => {
-    if (dataForm) handleOnChangeForm(dataForm, index)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dataForm])
 
   const handleChangeRadio = (event: ChangeEvent<HTMLInputElement>) => {
     setSelectedValueRadio(event.target.value)
@@ -119,15 +113,6 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
       : setDataForm({ ...dataForm, yes: false, luc: true })
   }
 
-  useEffect(() => {
-    if (checked) {
-      setDataForm({ ...dataForm, sublimit: +formInformation?.informations[0].limit })
-    } else {
-      setDataForm({ ...dataForm, sublimit: 0 })
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [checked])
-
   const options = [
     { name: 'Select option', value: '' },
     { name: 'Loss', value: 'Loss' },
@@ -142,6 +127,23 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
   const size = userThemeConfig.typography?.size.px16
   const textColor = userThemeConfig.palette?.text.subTitle
+  useEffect(() => {
+    if (checked) {
+      setDataForm({ ...dataForm, sublimit: +formInformation?.informations[0].limit })
+    } else {
+      setDataForm({ ...dataForm, sublimit: 0 })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [checked])
+  useEffect(() => {
+    if (dataForm) handleOnChangeForm(dataForm, index)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dataForm])
+  useEffect(() => {
+    console.log({ formErrors, index, error: formErrors[index] })
+    setErrorForm(formErrors[index] || {})
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formErrors])
 
   return (
     <ContainerCard>

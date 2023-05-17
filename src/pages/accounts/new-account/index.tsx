@@ -35,14 +35,14 @@ const NewAccount = () => {
   const StepForm = ({ step }: { step: number }) => {
     switch (step) {
       case 1:
-        return <Information onStepChange={handleStepChange} />
+        return <Sublimits />
 
       case 2:
         return <Security onStepChange={handleStepChange} />
       case 3:
         return <PaymentWarranty onStepChange={handleStepChange} />
       case 4:
-        return <Sublimits />
+        return <Information onStepChange={handleStepChange} />
       default:
         return <></>
     }
