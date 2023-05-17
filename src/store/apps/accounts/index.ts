@@ -60,12 +60,13 @@ export const appAccountsSlice = createSlice({
     },
     resetAccountFilter: state => {
       state.filters = []
-    }
+    },
 
-    // updateFormsData: (state, { payload }) => {
-    //   state.formsData = { ...state.formsData, ...payload }
-    //   console.log(state.formsData)
-    // }
+    updateFormsData: (state, { payload }) => {
+      // state.formsData = { ...state.formsData, ...payload }
+      // console.log(state.formsData)
+      console.log(state, payload)
+    }
   },
   extraReducers: builder => {
     builder.addCase(fetchAccounts.fulfilled, (state, action) => {
