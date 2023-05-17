@@ -338,6 +338,11 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               prefix={'%'}
               decimalScale={2}
               variant='outlined'
+              isAllowed={values => {
+                const { floatValue } = values
+
+                return (floatValue! >= 0 && floatValue! <= 100) || floatValue === undefined
+              }}
               onBlur={() => calculate('reinsuranceBrokerageP')}
               onValueChange={value => {
                 setReinsuranceBrokerageP(value.floatValue ?? 0)
@@ -361,6 +366,11 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               decimalScale={2}
               variant='outlined'
               onBlur={() => calculate('taxesP')}
+              isAllowed={values => {
+                const { floatValue } = values
+
+                return (floatValue! >= 0 && floatValue! <= 100) || floatValue === undefined
+              }}
               onValueChange={value => {
                 setTaxesP(value.floatValue)
                 handleNumericInputChange(value.floatValue, 'taxesP')
@@ -385,6 +395,11 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               decimalScale={2}
               variant='outlined'
               onBlur={() => calculate('frontingFeeP')}
+              isAllowed={values => {
+                const { floatValue } = values
+
+                return (floatValue! >= 0 && floatValue! <= 100) || floatValue === undefined
+              }}
               onValueChange={value => {
                 setFrontingFeeP(value.floatValue)
                 handleNumericInputChange(value.floatValue, 'frontingFeeP')
@@ -488,6 +503,12 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               variant='outlined'
               decimalScale={2}
               onBlur={() => calculate('reinsuranceBrokerage')}
+              isAllowed={values => {
+                const { floatValue } = values
+                const upLimit = grossPremium || 0
+
+                return (floatValue! >= 0 && floatValue! <= upLimit) || floatValue === undefined
+              }}
               onValueChange={value => {
                 setReinsuranceBrokerage(value.floatValue)
                 handleNumericInputChange(value.floatValue, 'reinsuranceBrokerage')
@@ -511,6 +532,12 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               variant='outlined'
               decimalScale={2}
               onBlur={() => calculate('taxes')}
+              isAllowed={values => {
+                const { floatValue } = values
+                const upLimit = grossPremium || 0
+
+                return (floatValue! >= 0 && floatValue! <= upLimit) || floatValue === undefined
+              }}
               onValueChange={value => {
                 setTaxes(value.floatValue)
                 handleNumericInputChange(value.floatValue, 'taxes')
@@ -532,6 +559,12 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               variant='outlined'
               decimalScale={2}
               onBlur={() => calculate('frontingFee')}
+              isAllowed={values => {
+                const { floatValue } = values
+                const upLimit = grossPremium || 0
+
+                return (floatValue! >= 0 && floatValue! <= upLimit) || floatValue === undefined
+              }}
               onValueChange={value => {
                 setFrontingFee(value.floatValue)
                 handleNumericInputChange(value.floatValue, 'frontingFee')
