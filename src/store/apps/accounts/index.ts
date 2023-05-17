@@ -10,6 +10,7 @@ const initialState: IAccountsState = {
   loading: false,
   filters: [],
   current: null,
+  formsData: null,
 
   // formsData: {},
   info: {
