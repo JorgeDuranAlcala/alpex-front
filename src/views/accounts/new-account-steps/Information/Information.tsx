@@ -228,19 +228,19 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
 
       setPlacementStructure({
         currency: information.currency || '',
-        total: information.totalValues || 0.0,
-        sir: information.sir || 0.0,
-        reinsuranceBrokerageP: information.reinsuranceBrokerageTotal || 0.0,
-        taxesP: information.taxes || 0.0,
-        frontingFeeP: information.frontingFeeTotal || 0.0,
-        netPremium: information.netPremiun || 0.0,
-        exchangeRate: information.exchangeRate || 0.0,
-        limit: information.exchangeRate || 0.0,
-        grossPremium: information.exchangeRate || 0.0,
-        reinsuranceBrokerage: information.exchangeRate || 0.0,
-        taxes: information.exchangeRate || 0.0,
-        frontingFee: information.exchangeRate || 0.0,
-        attachmentPoint: information.exchangeRate || 0.0,
+        total: Number(information.totalValues) || 0.0,
+        sir: Number(information.sir) || 0.0,
+        reinsuranceBrokerageP: Number(information.reinsuranceBrokerageTotal) || 0.0,
+        taxesP: Number(information.taxesTotal) || 0.0,
+        frontingFeeP: Number(information.frontingFeeTotal) || 0.0,
+        netPremium: Number(information.netPremiun) || 0.0,
+        exchangeRate: Number(information.exchangeRate) || 0.0,
+        limit: Number(information.limit) || 0.0,
+        grossPremium: Number(information.grossPremium) || 0.0,
+        reinsuranceBrokerage: Number(information.reinsuranceBrokerage) || 0.0,
+        taxes: Number(information.taxes) || 0.0,
+        frontingFee: Number(information.frontingFee) || 0.0,
+        attachmentPoint: Number(information.attachmentPoint) || 0.0,
         typeOfLimit: information.idTypeOfLimit || ''
       })
     }
