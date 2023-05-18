@@ -152,3 +152,9 @@ export enum USERS_ROUTES {
   UPDATE = 'user',
   DELETE = 'user/delete'
 }
+
+// ==== RECOVERY PASSWORD
+export enum RECOVER_PASSWORD_ROUTES {
+  NOTIFICATION = 'notification/recovery-password',
+  UPDATE = 'user/update-password'
+}

@@ -12,6 +12,8 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import * as yup from 'yup'
 
+import { useNotificationPassword } from '@/hooks/recoverPassword/recoveryPassword'
+
 // ** Layout Import
 import BlankLayout from 'src/@core/layouts/BlankLayout'
 
@@ -35,9 +37,12 @@ const EmailStep1 = ({ handleVariant }: EmailStep1) => {
     resolver: yupResolver(schema)
   })
 
+  const { recoveryPassword } = useNotificationPassword()
+
   const onSubmit: SubmitHandler<FormData> = data => {
     const { email } = data
     if (email) handleVariant('email', 2)
+    recoveryPassword({ email: email })
   }
 
   return (

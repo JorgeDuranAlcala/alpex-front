@@ -141,8 +141,6 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
       case 'frontingFeeP': {
         const result = grossPremiumc * (frontingFeePc / 100)
         setFrontingFee(isFinite(result) ? result : 0)
-        console.log('frontingFee')
-        console.log(frontingFee)
         break
       }
       case 'frontingFee': {
@@ -166,7 +164,6 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
     const taxesFinal = taxes ? taxes : 0
     const frontingFeeTotalFinal = frontingFee ? frontingFee : 0
     setNetPremium(grossPremiumc - reinsuranceBrokerageTotalFinal - taxesFinal - frontingFeeTotalFinal)
-    console.log(frontingFee)
     setPlacementStructure({
       ...placementStructure,
       reinsuranceBrokerageP: reinsuranceBrokerageP ?? 0,

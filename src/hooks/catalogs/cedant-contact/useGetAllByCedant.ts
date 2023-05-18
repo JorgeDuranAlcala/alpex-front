@@ -15,7 +15,8 @@ const useGetAllByIdCedant = () => {
 
   return {
     contacts,
-    setIdCedant
+    setIdCedant,
+    findByIdCedant
   }
 }
 
