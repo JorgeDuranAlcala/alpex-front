@@ -6,6 +6,7 @@ import { useSelector } from 'react-redux'
 import { TypedUseSelectorHook, useDispatch } from 'react-redux'
 import accounts from 'src/store/apps/accounts'
 import calendar from 'src/store/apps/calendar'
+import brokers from 'src/store/apps/catalogs/brokers'
 import chat from 'src/store/apps/chat'
 import email from 'src/store/apps/email'
 import invoice from 'src/store/apps/invoice'
@@ -22,7 +23,8 @@ export const store = configureStore({
     calendar,
     permissions,
     accounts,
-    users
+    users,
+    brokers
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
