@@ -20,8 +20,8 @@ export enum ACCOUNT_ROUTES {
 
 export enum ACCOUNT_INFORMATION_ROUTES {
   ADD = 'account/information/add',
-  GET = 'account/Information',
-  UPDATE = 'account/Information'
+  GET = 'account/information',
+  UPDATE = 'account/information'
 }
 
 export enum ACCOUNT_SECURITY_ROUTES {

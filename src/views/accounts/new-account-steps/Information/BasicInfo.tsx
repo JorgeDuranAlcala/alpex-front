@@ -50,18 +50,18 @@ interface BasicInfoErrors {
 type BasicInfoProps = {
   basicInfo: {
     insured: string
-    country: string
-    broker: string
-    brokerContact: number
-    cedant: string
-    cedantContact: number
-    lineOfBusiness: string
-    underwriter: string
-    leadUnderwriter: string
-    industryCode: string
+    country: number | string
+    broker: number | string
+    brokerContact: number | null | string
+    cedant: number | string
+    cedantContact: number | null | string
+    lineOfBusiness: number | string
+    underwriter: number | string
+    leadUnderwriter: number | string
+    industryCode: number | string
     riskActivity: string
     riskClass: number
-    technicalAssistant: string
+    technicalAssistant: number | string
     receptionDate: Date | null
     effectiveDate: Date | null
     expirationDate: Date | null
@@ -69,18 +69,18 @@ type BasicInfoProps = {
   setBasicInfo: React.Dispatch<
     React.SetStateAction<{
       insured: string
-      country: string
-      broker: string
-      brokerContact: number
-      cedant: string
-      cedantContact: number
-      lineOfBusiness: string
-      underwriter: string
-      leadUnderwriter: string
-      industryCode: string
+      country: number | string
+      broker: number | string
+      brokerContact: number | null | string
+      cedant: number | string
+      cedantContact: number | null | string
+      lineOfBusiness: number | string
+      underwriter: number | string
+      leadUnderwriter: number | string
+      industryCode: number | string
       riskActivity: string
       riskClass: number
-      technicalAssistant: string
+      technicalAssistant: number | string
       receptionDate: Date | null
       effectiveDate: Date | null
       expirationDate: Date | null
@@ -182,12 +182,12 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
 
     if (name === 'broker') {
       //reset del  valor del contact
-      basicInfoTem.brokerContact = 0
+      basicInfoTem.brokerContact = ''
       setIdBroker(Number(value))
     }
     if (name === 'cedant') {
       //reset del  valor del contact
-      basicInfoTem.cedantContact = 0
+      basicInfoTem.cedantContact = ''
       setIdCedant(Number(value))
     }
 
@@ -271,6 +271,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               autoFocus
               name='insured'
               label='insured'
+              defaultValue=''
               value={basicInfo.insured}
               onChange={handleInputChange}
               error={!!errors.insuredError}
@@ -284,7 +285,8 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
             <Select
               name='country'
               label='Country'
-              value={basicInfo.country}
+              defaultValue={''}
+              value={String(basicInfo.country)}
               onChange={handleSelectChange}
               labelId='invoice-country'
             >
@@ -314,7 +316,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
             <Select
               name='broker'
               label='Select Broker'
-              value={basicInfo.broker}
+              value={String(basicInfo.broker)}
               onChange={handleSelectChange}
               labelId='broker'
             >
@@ -339,7 +341,8 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
             <Select
               name='brokerContact'
               label='Select Broker Contact'
-              value={`${basicInfo.brokerContact == 0 ? '' : basicInfo.brokerContact}`}
+              value={String(basicInfo.brokerContact)}
+              defaultValue=''
               onChange={handleSelectChange}
               labelId='broker-contact'
             >
@@ -368,7 +371,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
             <Select
               name='cedant'
               label='Select Cedant'
-              value={basicInfo.cedant}
+              value={String(basicInfo.cedant)}
               onChange={handleSelectChange}
               labelId='cedant'
             >
@@ -396,6 +399,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               label='Select Cedant Contact'
               value={`${basicInfo.cedantContact == 0 ? '' : basicInfo.cedantContact}`}
               onChange={handleSelectChange}
+              defaultValue=''
               labelId='cedant-contact'
             >
               {cedantContacts.length > 0 &&
@@ -423,7 +427,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
             <Select
               name='lineOfBusiness'
               label='Line of Business'
-              value={basicInfo.lineOfBusiness}
+              value={String(basicInfo.lineOfBusiness)}
               onChange={handleSelectChange}
               labelId='business'
             >
@@ -447,7 +451,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
             <Select
               name='industryCode'
               label='Industry Code'
-              value={basicInfo.industryCode}
+              value={String(basicInfo.industryCode)}
               onChange={handleSelectChange}
               labelId='industryCode'
             >
@@ -580,7 +584,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
             <Select
               name='underwriter'
               label='Underwriter'
-              value={basicInfo.underwriter}
+              value={String(basicInfo.underwriter)}
               onChange={handleSelectChange}
               labelId='underwriter'
             >
@@ -605,7 +609,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
             <Select
               name='leadUnderwriter'
               label='Lead Underwriter'
-              value={basicInfo.leadUnderwriter}
+              value={String(basicInfo.leadUnderwriter)}
               onChange={handleSelectChange}
               labelId='lead-underwriter'
             >
@@ -631,7 +635,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
             <Select
               name='technicalAssistant'
               label='Technical assistant'
-              value={basicInfo.technicalAssistant}
+              value={String(basicInfo.technicalAssistant)}
               onChange={handleSelectChange}
               labelId='assistant'
             >
