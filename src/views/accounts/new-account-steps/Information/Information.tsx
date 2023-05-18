@@ -72,7 +72,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   const inter = userThemeConfig.typography?.fontFamilyInter
   const [makeValidations, setMakeValidations] = useState(false)
   const [disableSaveBtn, setDisableSaveBtn] = useState(false)
-  const [disableNextBtn, setDisableNextBtn] = useState(true)
+  const [, setDisableNextBtn] = useState(true)
   const [basicIncfoValidated, setBasicIncfoValidated] = useState(false)
   const [placementStructureValidated, setPlacementStructureValidated] = useState(false)
   const [open, setOpen] = useState<boolean>(false)
@@ -268,9 +268,10 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
     setOpen(false)
   }
 
-  const onNextStep = () => {
+  const onNextStep = async () => {
     setDisableNextBtn(false)
     if (onStepChange) {
+      await handleSaveInformation()
       onStepChange(2)
     }
   }
@@ -350,7 +351,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
               </div>
               SAVE CHANGES
             </Button>
-            <Button className='btn-next' onClick={handleNext} disabled={disableNextBtn}>
+            <Button className='btn-next' onClick={handleNext}>
               Next Step
               <div className='btn-icon'>
                 <Icon icon='material-symbols:arrow-right-alt' />

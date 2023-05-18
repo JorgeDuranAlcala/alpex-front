@@ -169,7 +169,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
     setBasicInfo({ ...basicInfo, [name]: value })
   }
 
-  const handleSelectChange = (event: SelectChangeEvent<string>, child: ReactNode) => {
+  const handleSelectChange = (event: SelectChangeEvent<string>, child?: ReactNode) => {
     const target = event.target
     const name = target.name
     const value = target.value
@@ -220,7 +220,6 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
   }
 
   const validations = () => {
-    console.log('entro a la validación')
     const newErrors: BasicInfoErrors = {
       insuredError: basicInfo.insured === '',
       countryError: basicInfo.country === '',
@@ -241,8 +240,6 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
     setErrors(newErrors)
 
     if (Object.values(newErrors).every(error => !error)) {
-      // enviar formulario si no hay errores
-      console.log('Formulario enviado')
       if (isValidForm) {
         isValidForm(true)
       }
@@ -252,6 +249,26 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
   const getErrorMessage = (name: keyof BasicInfoErrors) => {
     return errors[name] ? 'This field is required' : ''
   }
+
+  useEffect(() => {
+    let riskActivity = {
+      riskActivity: '',
+      riskClass: 0
+    }
+
+    const industryCode = riskActivities.find(r => r.id === Number(basicInfo.industryCode))
+
+    if (industryCode) {
+      riskActivity.riskActivity = industryCode.riskActivity
+      riskActivity.riskClass = industryCode.class
+    }
+
+    setBasicInfo(state => ({
+      ...state,
+      riskActivity: riskActivity.riskActivity,
+      riskClass: riskActivity.riskClass
+    }))
+  }, [basicInfo.industryCode, riskActivities])
 
   useEffect(() => {
     if (makeValidations) {
