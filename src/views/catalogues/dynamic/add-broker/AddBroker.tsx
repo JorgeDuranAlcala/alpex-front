@@ -80,7 +80,7 @@ const AddBroker = () => {
 
   return (
     <>
-      <div className='add-broker'>
+      <div className='add-new'>
         <div className="inner-row">
           <div className="title">{isBrokerSaved ? "Broker details" : "Add Broker"}</div>
         </div>

@@ -23,7 +23,6 @@ const TableHeader: React.FC<ITableHeader> = ({ onDeleteRows, deleteBtn = false, 
   // ** Custom Hooks
   const [search, setSearch] = useState('')
 
-  // const [showDeleteBtn, setShowDeleteBtn] = useState(false)
   const searchInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(event.target.value);
     onSearch(event.target.value);

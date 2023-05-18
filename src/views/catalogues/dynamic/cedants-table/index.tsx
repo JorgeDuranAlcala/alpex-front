@@ -24,20 +24,20 @@ import TableHeader from '../TableHeader'
 import colors from 'src/views/accounts/colors'
 import fonts from 'src/views/accounts/font'
 
-export interface IReinsurer {
+export interface ICedant {
   id: string
   name: string
 }
 
 
-const ReinsurersTable = () => {
+const CedantsTable = () => {
   // ** State
   const [selectedRows, setSelectedRows] = useState<GridRowId[]>([])
-  const [reinsurerList, setReinsurerList] = useState<IReinsurer[]>([])
+  const [cedantList, setCedantList] = useState<ICedant[]>([])
 
   const [openDelete, setOpenDelete] = useState(false)
   const [openDeleteRows, setOpenDeleteRows] = useState(false)
-  const [reinsurerToDelete, setReinsurerToDelete] = useState(0)
+  const [cedantToDelete, setCedantToDelete] = useState(0)
 
   const router = useRouter()
 
@@ -48,15 +48,15 @@ const ReinsurersTable = () => {
   // })
 
 
-  const column: GridColumns<IReinsurer> = [
+  const column: GridColumns<ICedant> = [
     {
       ...GRID_CHECKBOX_SELECTION_COL_DEF,
       headerClassName: 'catalogue-column-header-checkbox'
     },
     {
       flex: 0.5,
-      field: 'reinsurerName',
-      headerName: 'Reinsurer Name',
+      field: 'cedantName',
+      headerName: 'Cedant Name',
       minWidth: 170,
       type: 'string',
       align: 'left',
@@ -69,7 +69,7 @@ const ReinsurersTable = () => {
             component={'span'}
             sx={{ color: colors.text.primary, fontWeight: 500, fontSize: fonts.size.px12, fontFamily: fonts.inter }}
           >
-            REINSURER NAME
+            CEDANT NAME
           </Typography>
 
         </Box>),
@@ -118,12 +118,12 @@ const ReinsurersTable = () => {
     }
   ]
 
-  const getBrokerList = () => { //must be replaced with the respective broker service
-    const data: IReinsurer[] = []
+  const getCedantList = () => { //must be replaced with the respective broker service
+    const data: ICedant[] = []
 
     for (let index = 1; index <= 100; index++) {
       const id = index.toString()
-      const name = `Reinsurer ${index}`
+      const name = `Cedant ${index}`
 
       data.push({
         id,
@@ -134,7 +134,7 @@ const ReinsurersTable = () => {
     return data
   }
 
-  const searchReinsurer = (value: string) => { //must be replaced with the respective broker service
+  const searchCedant = (value: string) => { //must be replaced with the respective broker service
     console.log("Call search service", value)
   }
 
@@ -144,18 +144,18 @@ const ReinsurersTable = () => {
   }
 
   const openDeleteModal = (id: number) => {
-    setReinsurerToDelete(id)
+    setCedantToDelete(id)
     setOpenDelete(true)
   }
 
-  const deleteSingleBroker = () => {  //must be replaced with the respective broker service
-    const newBrokerList = reinsurerList.filter(reinsurer => reinsurer.id !== reinsurerToDelete.toString())
-    setReinsurerList(newBrokerList)
+  const deleteSingleCedant = () => {  //must be replaced with the respective broker service
+    const newBrokerList = cedantList.filter(cedant => cedant.id !== cedantToDelete.toString())
+    setCedantList(newBrokerList)
     setOpenDelete(false)
   }
 
   useEffect(() => {
-    setReinsurerList(getBrokerList)
+    setCedantList(getCedantList)
     //eslint-disable-next-line
   }, [])
 
@@ -165,16 +165,17 @@ const ReinsurersTable = () => {
       <div className='outter-wrapper'>
       <TableHeader
             onDeleteRows={() => { setOpenDeleteRows(true) }}
-            onSearch={searchReinsurer}
-            textBtn="ADD NEW REINSURER"
-            onClickBtn={() => router.push('/catalogues/dynamic/add-reinsurer')} />
-      <div className='reinsurer-list'>
+            deleteBtn={selectedRows.length > 0 ? true : false}
+            onSearch={searchCedant}
+            textBtn="ADD NEW CEDANT"
+            onClickBtn={() => router.push('/catalogues/dynamic/add-cedant')} />
+      <div className='cedant-list'>
 
           <DataGrid
             autoHeight
             checkboxSelection
             disableSelectionOnClick
-            rows={reinsurerList}
+            rows={cedantList}
             columns={column}
             pagination
             pageSize={10}
@@ -197,7 +198,7 @@ const ReinsurersTable = () => {
       >
         <Box className='modal-wrapper'>
           <HeaderTitleModal>
-            <Typography variant='h6'>Are you sure you want to delete this reinsurer?</Typography>
+            <Typography variant='h6'>Are you sure you want to delete this cedant?</Typography>
             <ButtonClose
               onClick={() => {
                 setOpenDelete(false)
@@ -207,7 +208,7 @@ const ReinsurersTable = () => {
             </ButtonClose>
           </HeaderTitleModal>
           <div className='delete-modal-text'>This action can’t be undone.</div>
-          <Button className='header-modal-btn' variant='contained' onClick={deleteSingleBroker}>
+          <Button className='header-modal-btn' variant='contained' onClick={deleteSingleCedant}>
             DELETE
           </Button>
           <Button
@@ -230,7 +231,7 @@ const ReinsurersTable = () => {
       >
         <Box className='modal-wrapper'>
           <HeaderTitleModal>
-            <Typography variant='h6' sx={{ maxWidth: "450px" }}>Are you sure you want to delete the selected Reinsurers?</Typography>
+            <Typography variant='h6' sx={{ maxWidth: "450px" }}>Are you sure you want to delete the selected Cedants?</Typography>
             <ButtonClose
               onClick={() => {
                 setOpenDeleteRows(false)
@@ -258,4 +259,4 @@ const ReinsurersTable = () => {
   )
 }
 
-export default ReinsurersTable
+export default CedantsTable
