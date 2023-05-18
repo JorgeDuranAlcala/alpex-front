@@ -73,8 +73,6 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
   const [selectedUser, setSelectedUser] = useState<IUsersGrid | null>(null)
   const [modalShow, setModalShow] = useState<boolean>(false)
   const [idMultiple, setIdMultiple] = useState<any>([])
-  console.log("Id's User_Selected-->", selectedRows)
-  console.log("Id's User_SelectedCopy-->", idMultiple)
 
   //WIP
   //eslint-disable-next-line
@@ -87,7 +85,8 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
   // **Reducers
   const dispatch = useAppDispatch()
   const usersReducer = useAppSelector(state => state.users)
-  console.log('Redux_Store--->', usersReducer.users)
+
+  // console.log('Redux_Store--->', usersReducer.users)
 
   // ** Hooks
   const { deleteUser } = useDeleteUser()
