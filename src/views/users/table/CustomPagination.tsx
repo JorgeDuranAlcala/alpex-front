@@ -26,7 +26,7 @@ const CustomPagination = () => {
         onChange={(event, value) => handleDispatch(event, value)}
       />
       <Typography sx={{ marginRight: '1rem' }}>
-        {(page + 1) * pageSize - pageSize + 1}-{(page + 1) * pageSize} of {rowCount}
+        {page * pageSize - pageSize + 1}-{page * pageSize} of {rowCount}
       </Typography>
     </>
   )
