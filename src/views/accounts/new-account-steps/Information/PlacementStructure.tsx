@@ -48,7 +48,7 @@ export type PlacementStructureProps = {
     taxes: number
     frontingFee: number
     attachmentPoint: number
-    typeOfLimit: string
+    typeOfLimit: string | number
   }
   setPlacementStructure: React.Dispatch<
     React.SetStateAction<{
@@ -66,7 +66,7 @@ export type PlacementStructureProps = {
       taxes: number
       frontingFee: number
       attachmentPoint: number
-      typeOfLimit: string
+      typeOfLimit: string | number
     }>
   >
   makeValidations: boolean
@@ -594,7 +594,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
             <Select
               name='typeOfLimit'
               label='Type of Limit'
-              value={placementStructure.typeOfLimit}
+              value={String(placementStructure.typeOfLimit)}
               onChange={handleSelectChange}
               labelId='type-of-limit'
             >
