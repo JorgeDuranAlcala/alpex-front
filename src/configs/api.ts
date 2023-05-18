@@ -51,7 +51,9 @@ export enum BROKER_ROUTES {
   GET_ALL = 'catalogs/broker/all',
   GET_BY_ID = 'catalogs/broker',
   ADD = 'catalogs/broker/add',
-  UPDATE = 'catalogs/broker'
+  UPDATE = 'catalogs/broker',
+  GET = 'catalogs/broker',
+  DELETE = 'catalogs/broker/delete'
 }
 
 export enum CEDANT_ROUTERS {
