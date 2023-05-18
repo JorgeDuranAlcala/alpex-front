@@ -10,9 +10,7 @@ const initialState: IAccountsState = {
   loading: false,
   filters: [],
   current: null,
-  formsData: null,
-
-  // formsData: {},
+  formsData: {},
   info: {
     count: 0,
     page: 1,
@@ -23,22 +21,38 @@ const initialState: IAccountsState = {
   },
   temporalFilters: []
 }
+
 export const fetchAccounts = createAsyncThunk(
   'appAccounts/fetchAccounts',
   async (state: IAccountsState = initialState) => {
-    const response: any = await new Promise(res =>
-      setTimeout(async () => res(await accountsService.getAccounts({ ...state })), 300)
-    )
+    const formatedFilters = []
+    const rawFilters = state.filters
 
-    return response
+    console.log('stateFilter', state.filters)
+
+    if (rawFilters && rawFilters.length > 0) {
+      for (const rawFilter of rawFilters) {
+        if (rawFilter.type === 'status') {
+          formatedFilters.push({
+            type: rawFilter.type,
+            value: String(rawFilter.text),
+            text: rawFilter.text
+          })
+        } else {
+          formatedFilters.push({
+            type: rawFilter.type,
+            value: rawFilter.value,
+            text: rawFilter.text
+          })
+        }
+      }
+    }
+
+    const data = await accountsService.getAccounts({ ...state, filters: formatedFilters })
+
+    return data
   }
 )
-
-export const fetchAccountsTemporal = createAsyncThunk('appUsersState/fetchUsersTemporal', async () => {
-  const data = await accountsService.getAccounts({ ...initialState, info: { ...initialState.info, take: 49 } })
-
-  return data
-})
 
 export const appAccountsSlice = createSlice({
   name: 'appAccounts',
@@ -71,11 +85,11 @@ export const appAccountsSlice = createSlice({
   extraReducers: builder => {
     builder.addCase(fetchAccounts.fulfilled, (state, action) => {
       // state.loading = false
-      // const account = action.payload.filter((item: any) => {
+      // const account = action.payload.results.filter((item: any) => {
       //   if (state.filters.length) {
       //     let matchesFilter = true
       //     state.filters.forEach(filter => {
-      //       if (!item[filter.type].includes(filter.value)) {
+      //       if (!formatStatus(item.idAccountStatus[filter.type]).includes(filter.value)) {
       //         matchesFilter = false
       //       }
       //     })
@@ -86,6 +100,7 @@ export const appAccountsSlice = createSlice({
       //   return true
       // })
       // state.accounts = account
+      // state.info = action.payload.info
       state.loading = false
       state.accounts = action.payload.results
       state.info = action.payload.info
@@ -93,11 +108,6 @@ export const appAccountsSlice = createSlice({
     builder.addCase(fetchAccounts.pending, state => {
       state.accounts = []
       state.loading = true
-    })
-    builder.addCase(fetchAccountsTemporal.fulfilled, (state, action) => {
-      state.loading = false
-      state.temporalFilters = action.payload.results
-      state.info = action.payload.info
     })
     builder.addCase(appAccountsSlice.actions.handleAccountFilter, state => {
       state.accounts = []

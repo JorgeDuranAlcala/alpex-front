@@ -11,6 +11,8 @@ import { DataGrid, GRID_CHECKBOX_SELECTION_COL_DEF, GridColumns, GridRowId } fro
 // ** Custom Hooks imports
 import { useDeleteUser } from '@/hooks/catalogs/users/deleteUser'
 
+// import { UsersDeleteDto } from '@/services/users/dtos/UsersDto'
+
 // ** Custom Components Imports
 
 // ** Custom Components Imports
@@ -70,6 +72,7 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
   const [loading, setLoading] = useState<any>([])
   const [selectedUser, setSelectedUser] = useState<IUsersGrid | null>(null)
   const [modalShow, setModalShow] = useState<boolean>(false)
+  const [idMultiple, setIdMultiple] = useState<any>([])
 
   //WIP
   //eslint-disable-next-line
@@ -82,7 +85,8 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
   // **Reducers
   const dispatch = useAppDispatch()
   const usersReducer = useAppSelector(state => state.users)
-  console.log('Redux_Store--->', usersReducer.users)
+
+  // console.log('Redux_Store--->', usersReducer.users)
 
   // ** Hooks
   const { deleteUser } = useDeleteUser()
@@ -95,7 +99,7 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
 
   useEffect(() => {
     setAccounts(usersReducer.users || [])
-    console.log(loading)
+    console.log('Loading--->', loading)
     setLoading(usersReducer.loading)
     //eslint-disable-next-line
   }, [usersReducer.users])
@@ -114,12 +118,14 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
   const handleClose = () => {
     setAnchorEl(null)
   }
-  const handleRowOptionsClose = () => {
-    setAnchorEl(null)
-  }
+
   const handleDelete = () => {
-    deleteUser({ idUsersList: [selectedUser!.id] })
-    handleRowOptionsClose()
+    if (selectedRows.length > 1) {
+      deleteUser({ idUsersList: idMultiple })
+    } else {
+      deleteUser({ idUsersList: [selectedUser!.id] })
+    }
+    dispatch(fetchAccounts(usersReducer))
   }
 
   //name, role, company, phone number, email
@@ -325,7 +331,10 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
           Pagination: CustomPagination
         }}
         className={'account-datagrid'}
-        onSelectionModelChange={rows => setSelectedRows(rows)}
+        onSelectionModelChange={rows => {
+          setSelectedRows(rows)
+          setIdMultiple(rows)
+        }}
       />
     </>
   )
