@@ -64,7 +64,7 @@ class AccountServices {
    * @param information
    * @returns
    */
-  async updatedInformaById(idAccount: number, information: InformationDto) {
+  async updatedInformaById(idAccount: number, information: Partial<InformationDto>) {
     try {
       const { data } = await AppAlpexApiGateWay.put(`${ACCOUNT_INFORMATION_ROUTES.UPDATE}/${idAccount}`, {
         ...information

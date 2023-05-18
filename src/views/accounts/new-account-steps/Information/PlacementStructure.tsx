@@ -48,7 +48,7 @@ export type PlacementStructureProps = {
     taxes: number
     frontingFee: number
     attachmentPoint: number
-    typeOfLimit: string
+    typeOfLimit: string | number
   }
   setPlacementStructure: React.Dispatch<
     React.SetStateAction<{
@@ -66,7 +66,7 @@ export type PlacementStructureProps = {
       taxes: number
       frontingFee: number
       attachmentPoint: number
-      typeOfLimit: string
+      typeOfLimit: string | number
     }>
   >
   makeValidations: boolean
@@ -84,11 +84,11 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
   const { currencies } = useGetAllCurrencies()
   const { typesOfLimits } = useGetAllTypeOfLimit()
 
-  const [reinsuranceBrokerageP, setReinsuranceBrokerageP] = useState<number>()
+  const [reinsuranceBrokerageP, setReinsuranceBrokerageP] = useState<number>(placementStructure.reinsuranceBrokerage)
   const [taxesP, setTaxesP] = useState<number>()
   const [frontingFeeP, setFrontingFeeP] = useState<number>()
   const [netPremium, setNetPremium] = useState<number>()
-  const [grossPremium, setGrossPremium] = useState<number>()
+  const [grossPremium, setGrossPremium] = useState<number>(placementStructure.grossPremium)
   const [reinsuranceBrokerage, setReinsuranceBrokerage] = useState<number>()
   const [taxes, setTaxes] = useState<number>()
   const [frontingFee, setFrontingFee] = useState<number>()
@@ -209,7 +209,6 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
   }
 
   const validations = () => {
-    console.log('entro a la validación')
     const newErrors: PlacementStructureErrors = {
       currencyError: placementStructure.currency === '',
       totalError: placementStructure.total === 0,
@@ -228,7 +227,6 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
 
     if (Object.values(newErrors).every(error => !error)) {
       // enviar formulario si no hay errores
-      console.log('Formulario enviado')
       if (isValidForm) {
         isValidForm(true)
       }
@@ -241,7 +239,6 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
 
   useEffect(() => {
     if (makeValidations) {
-      console.log('La acción se realizó')
       validations()
       resetMakeValidations()
     }
@@ -252,6 +249,18 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
     calculate()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reinsuranceBrokerageP, taxesP, frontingFeeP, netPremium, grossPremium, reinsuranceBrokerage, taxes, frontingFee])
+
+  useEffect(() => {
+    setGrossPremium(placementStructure.grossPremium)
+    setTaxes(placementStructure.taxes)
+    setTaxesP(placementStructure.taxesP)
+    setFrontingFee(placementStructure.frontingFee)
+    setFrontingFeeP(placementStructure.frontingFeeP)
+    setReinsuranceBrokerageP(placementStructure.reinsuranceBrokerageP)
+    setReinsuranceBrokerage(placementStructure.reinsuranceBrokerage)
+    setNetPremium(placementStructure.netPremium)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [placementStructure.grossPremium])
 
   return (
     <>
@@ -478,7 +487,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               decimalScale={2}
               onBlur={() => calculate('grossPremium')}
               onValueChange={value => {
-                setGrossPremium(value.floatValue)
+                setGrossPremium(value.floatValue ?? 0)
                 handleNumericInputChange(value.floatValue, 'grossPremium')
               }}
               error={errors.grossPremiumError}
@@ -594,7 +603,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
             <Select
               name='typeOfLimit'
               label='Type of Limit'
-              value={placementStructure.typeOfLimit}
+              value={String(placementStructure.typeOfLimit)}
               onChange={handleSelectChange}
               labelId='type-of-limit'
             >

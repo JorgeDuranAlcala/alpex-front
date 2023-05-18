@@ -15,7 +15,7 @@ export interface InformationDto {
   riskClass: number
   frontingFeeTotal: number
   frontingFee: number
-  step: number
+  step?: number
   currency: string
   exchangeRate: number
   netPremiun: number

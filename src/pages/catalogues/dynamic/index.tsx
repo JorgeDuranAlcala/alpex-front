@@ -11,6 +11,10 @@ import Grid from '@mui/material/Grid'
 // ** Custom Components Imports
 import ReinsurersTable from '@/views/catalogues/dynamic/reinsurers-table'
 import BrokerTable from 'src/views/catalogues/dynamic/broker-table'
+import CedantsTable from 'src/views/catalogues/dynamic/cedants-table'
+import CountriesCurrencies from 'src/views/catalogues/dynamic/countries-currencies'
+import RetroCedantsTable from 'src/views/catalogues/dynamic/retrocedants-table'
+import TypesOfLimit from 'src/views/catalogues/dynamic/types-of-limit'
 import CataloguesTabs from './CataloguesTabs'
 
 const Catalogues = () => {
@@ -24,14 +28,14 @@ const Catalogues = () => {
   return (
 
     <Grid item xs={12}>
-      <Card>
+      <Card sx={{overflow: 'inherit'}}>
         <CataloguesTabs onTabChange={handleTabChange}/>
         {activeTab == 1 ? <BrokerTable /> : ''}
         {activeTab == 2 ? <ReinsurersTable /> : ''}
-        {activeTab == 3 ? <div>Cedants</div> : ''}
-        {activeTab == 4 ? <div>Retro cedants</div> : ''}
-        {activeTab == 5 ? <div>Countries & Currencies</div> : ''}
-        {activeTab == 6 ? <div>Types of limit</div> : ''}
+        {activeTab == 3 ? <CedantsTable/> : ''}
+        {activeTab == 4 ? <RetroCedantsTable/> : ''}
+        {activeTab == 5 ? <CountriesCurrencies/> : ''}
+        {activeTab == 6 ? <TypesOfLimit/> : ''}
       </Card>
     </Grid>
 
