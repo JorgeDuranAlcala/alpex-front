@@ -312,7 +312,7 @@ const ReinsurerBinders = () => {
           <TableHeader
             onSearch={searchBinders}
             onDeleteRows={deleteRows}
-            selectedRows={selectedRows}
+            deleteBtn={selectedRows.length > 0 ? true : false}
             textBtn="ADD NEW CONTACT"
             onClickBtn={() => { setOpenNewBinder(true) }}
           />
