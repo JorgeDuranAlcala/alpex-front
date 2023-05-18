@@ -87,6 +87,16 @@ const FilterMenuExpirationDate = () => {
       : date!.toLocaleDateString('en-US', { year: 'numeric' })
   }
 
+  const dateTransformNumber = (date: DateType) => {
+    if (!date) return ''
+
+    return date!.toLocaleDateString('en-CA', {
+      year: 'numeric',
+      day: '2-digit',
+      month: '2-digit'
+    })
+  }
+
   useEffect(() => {
     if (subtype === 'fulldate') {
       setMonth(null)
@@ -105,14 +115,16 @@ const FilterMenuExpirationDate = () => {
   const handleClick = () => {
     dispatch(
       handleAccountFilter({
-        type: 'ExpirationDate',
-        value: `${
-          subtype === 'fulldate'
-            ? dateTransform(expirationDate)
-            : subtype === 'month'
-            ? dateTransform(month)
-            : dateTransform(year)
-        }`,
+        type: 'expirationDate',
+        value: `${dateTransformNumber(expirationDate)}`,
+
+        // value: `${
+        //   subtype === 'fulldate'
+        //     ? dateTransform(expirationDate)
+        //     : subtype === 'month'
+        //     ? dateTransform(month)
+        //     : dateTransform(year)
+        // }`,
         text: `Expiration: ${
           subtype === 'fulldate'
             ? dateTransform(expirationDate)
