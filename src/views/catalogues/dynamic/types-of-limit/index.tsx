@@ -3,6 +3,10 @@ import { useEffect, useState } from 'react'
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
 
+// Customed imports
+// import AddEditModal from '@/views/components/modals/add-edit-modal'
+// import DeleteModal from '@/views/components/modals/delete-modal'
+
 export interface ITypes {
   id: number
   name: string
@@ -11,12 +15,19 @@ export interface ITypes {
 const TypesOFLimit = () => {
   // Handle Data
   const [types, setTypes] = useState<ITypes[]>([])
-  const [selectedType, setSelectedType] = useState<ITypes | null>(null)
-  const [, setCurrentType] = useState<ITypes | null>(null)
-  const [, setTypeToDelete] = useState<number | undefined>(0)
+  const [selectedType, setSelectedType] = useState<ITypes | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [currentType, setCurrentType] = useState<ITypes | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [typeToDelete, setTypeToDelete] = useState<number | undefined>(0)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [openAdd,setOpenAdd]= useState(false)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [openEdit,setOpenEdit]= useState(false)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [openDelete,setOpenDelete]= useState(false)
 
-  const getTypes = () => {
-    //Call to edit broker service
+  const getTypes = () => { //Call to edit broker service
     const data: ITypes[] = [
       { id: 1, name: 'Type of Limit' },
       { id: 2, name: 'Type of Limit' },
@@ -29,26 +40,16 @@ const TypesOFLimit = () => {
 
   const handleEditType = (type: ITypes) => {
     setCurrentType(type)
-    setSelectedType(null)
-
-    // setOpenEdit(true)
+    setSelectedType(null);
+    setOpenEdit(true)
   }
 
   const handleDeleteType = (id: number | undefined) => {
-    setTypeToDelete(id)
-    setSelectedType(null)
-
-    // setOpenDelete(true);
+    setTypeToDelete(id);
+    setSelectedType(null);
+    setOpenDelete(true);
   }
 
-  // const editCountry = () => {
-
-  //   console.log(currentType)
-  // }
-
-  // const deleteCountry = () => {
-  //   console.log(typeToDelete)
-  // }
 
   // const getCurrencies = () => { //Call to add broker service
   //   console.log("call add reinsurer service", newReinsurer.id)
@@ -74,7 +75,12 @@ const TypesOFLimit = () => {
               <div className='description'>You can add a type by clicking the plus button.</div>
             </div>
             <div className='add-btn'>
-              <Icon icon='mdi:plus-circle' />
+            <Icon
+                icon='mdi:plus-circle'
+                onClick={() => {
+                  setOpenAdd(true)
+                }}
+              />
             </div>
           </div>
           <div className='block-list'>

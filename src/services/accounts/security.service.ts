@@ -4,7 +4,7 @@ import { AppAlpexApiGateWayNoToken } from '../app.alpex.api-getway-no-jwt'
 import { SecurityDto } from './dtos/security.dto'
 
 class SecurityService {
-  async addSecurity(securitiesIn: Partial<SecurityDto>[], jwtToken: string): Promise<SecurityDto[]> {
+  async addSecurity(securitiesIn: Partial<SecurityDto>[], jwtToken: string): Promise<SecurityDto[] | string> {
     try {
       const { data } = await AppAlpexApiGateWayNoToken.post<Promise<SecurityDto[]>>(
         ACCOUNT_SECURITY_ROUTES.ADD,
@@ -18,8 +18,7 @@ class SecurityService {
 
       return data
     } catch (error) {
-      const message = String(error)
-      throw new Error(message)
+      return 'error'
     }
   }
 
