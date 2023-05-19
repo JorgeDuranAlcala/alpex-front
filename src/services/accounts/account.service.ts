@@ -1,6 +1,7 @@
 import { AppAlpexApiGateWay } from '../app.alpex.api-getway'
 
 //Routes
+import { IAccountsState } from '@/types/apps/accountsTypes'
 import { ACCOUNT_ROUTES } from '../../configs/api'
 
 /**
