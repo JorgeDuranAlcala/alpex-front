@@ -976,8 +976,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
   const accountData = useAppSelector(state => state.accounts)
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
 
-  const { account, setAccountId } = useGetAccountById()
-
+  const { setAccountId } = useGetAccountById()
 
   useEffect(() => {
     accountData.formsData.form1.id && setAccountId(accountData.formsData.form1.id)
