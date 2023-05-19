@@ -10,7 +10,7 @@ import Lottie from 'react-lottie'
 
 // ** Layout Import
 
-// import { useUpdatePassword } from '@/hooks/recoverPassword/updatePassword'
+import { useUpdatePassword } from '@/hooks/recoverPassword/updatePassword'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { Icon } from '@iconify/react'
 import { Button, FormControl, IconButton, InputAdornment, InputLabel, OutlinedInput, Typography } from '@mui/material'
@@ -21,12 +21,12 @@ import * as yup from 'yup'
 
 type FormData = {
   password: string
-  confirmPassword: string
+  passwordConfirm: string
 }
 
 const schema = yup.object().shape({
   password: yup.string().min(5).required(),
-  confirmPassword: yup.string().min(5).required()
+  passwordConfirm: yup.string().min(5).required()
 })
 const Background = () => {
   const defaultOptions = {
@@ -49,7 +49,8 @@ const Background = () => {
 
 const ForgotPasswordPage = () => {
   const router = useRouter()
-  console.log(router.query.token)
+
+  // console.log(router.query.token)
   const {
     control,
     handleSubmit,
@@ -60,21 +61,19 @@ const ForgotPasswordPage = () => {
     resolver: yupResolver(schema)
   })
 
-  // const url = window.location.search
-  // const parsedUrl = queryString.parse(url)
-  // const token = parsedUrl.token
-  // const token =
-  //   'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiMWU3ZDkyMS1hOThjLTQ2MGEtOWEzNy0wYzc3NjExYjU1NjIiLCJzdWIiOiJhZG1pbi1ycmhoIiwiZXhwIjoxNjc4ODkzMjE4LCJpYXQiOjE2Nzg4OTE0MTh9.RkXlULEIDSjhW4qHFblZtjgI7L5elAsnXoL0H0AzSy_ZZOM-DAlxpMW6UQvWU8Asvoosq0CY8cH5PESkv-bbvOECrN8mtEhatZ7Lcq4DdSH-TI8dAvDZasW3yC8KApvcps5iM1T15wyk1UwTpjrDyjaxNCL0Hff53EZVHxXuxh1K2P3BLWnEKCwZshSRSCPsO_1VtGJVdAHi9R0HyaFVjTa-yBqoayF1hh592HZKuL6nu0vb_x2nkS9jsHkgr7Y7RUrViC6KV_4jJ_pL6cuhDDIqhLWMUFBxK66EQ9XsRzKp0bQiN8sqjAW2z7LIlZCIH0mOL4kuyi7pQjAGqcsP6g'
-  // console.log('Token--->', token)
-  // const { updatePass } = useUpdatePassword()
+  const { setToken, setUpdatePassword } = useUpdatePassword()
 
   const onSubmit: SubmitHandler<FormData> = data => {
-    console.log(data.password)
-    if (data.password !== data.confirmPassword)
-      setError('confirmPassword', {
+    console.log(data?.password)
+    console.log(data?.passwordConfirm)
+    if (data.password !== data.passwordConfirm)
+      setError('passwordConfirm', {
         type: 'manual',
         message: 'Password does not match'
       })
+
+    setUpdatePassword({ password: data?.password, passwordConfirm: data?.passwordConfirm })
+    setToken(router.query.token)
   }
   const [showPassword, setShowPassword] = useState<boolean>(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false)
@@ -133,7 +132,7 @@ const ForgotPasswordPage = () => {
                 Confirm password
               </InputLabel>
               <Controller
-                name='confirmPassword'
+                name='passwordConfirm'
                 control={control}
                 rules={{ required: true }}
                 render={({ field: { value, onChange, onBlur } }) => (
@@ -143,7 +142,7 @@ const ForgotPasswordPage = () => {
                     label='Confirm password'
                     onChange={onChange}
                     id='auth-login-v2-confirmPassword'
-                    error={Boolean(errors.confirmPassword)}
+                    error={Boolean(errors.passwordConfirm)}
                     type={showConfirmPassword ? 'text' : 'password'}
                     endAdornment={
                       <InputAdornment position='end'>
@@ -159,9 +158,9 @@ const ForgotPasswordPage = () => {
                   />
                 )}
               />
-              {errors.confirmPassword && (
+              {errors.passwordConfirm && (
                 <FormHelperText sx={{ color: 'error.main' }} id=''>
-                  {errors.confirmPassword.message}
+                  {errors.passwordConfirm.message}
                 </FormHelperText>
               )}
             </FormControl>

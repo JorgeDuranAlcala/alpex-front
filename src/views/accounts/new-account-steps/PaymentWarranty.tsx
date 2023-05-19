@@ -76,7 +76,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
   const { addInstallments } = useAddInstallments()
   const accountData = useAppSelector(state => state.accounts)
   const idAccount = accountData.formsData.form1.id
-  const { account } = useGetAccountById(idAccount)
+  const { account, setAccountId } = useGetAccountById()
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setCount(event.target.value)
@@ -126,6 +126,9 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
     }
     //eslint-disable-next-line react-hooks/exhaustive-deps
   }, [count])
+  useEffect(() => {
+    idAccount && setAccountId(idAccount)
+  }, [idAccount, setAccountId])
 
   return (
     <>
@@ -136,7 +139,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
             <Grid container spacing={{ xs: 2, sm: 5, md: 5 }} rowSpacing={4} columns={12}>
               <Grid item xs={12} sm={6} md={4}>
                 <DatePicker
-                  selected={account.informations[0].effectiveDate}
+                  selected={account ? new Date(account?.informations[0].effetiveDate) : null}
                   shouldCloseOnSelect
                   id='reception-date'
                   showTimeSelect
@@ -152,7 +155,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
                 <TextField
                   fullWidth
                   label='Dynamic net premium'
-                  value={account.securityTotal.receivesNetPremium}
+                  value={account ? account.securityTotal.receivedNetPremium : null}
                   InputProps={{
                     disabled: true
                   }}
@@ -193,9 +196,9 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
               }
               onChangeList={handleItemChange}
               globalInfo={{
-                receivedNetPremium: account.securityTotal.receivesNetPremium,
-                inceptionDate: account.informations[0].effectiveDate,
-                idAccount: idAccount
+                receivedNetPremium: account ? account.securityTotal.receivedNetPremium : '',
+                inceptionDate: account ? new Date(account.informations[0].effetiveDate) : null,
+                idAccount: account ? idAccount : ''
               }}
               key={index}
             />

@@ -17,6 +17,7 @@ import FileSubmit from './FileSubmit'
 import PlacementStructure from './PlacementStructure'
 
 // ** Icon Imports
+import CustomAlert, { IAlert } from '@/views/custom/alerts'
 import Icon from 'src/@core/components/icon'
 import { useAppDispatch, useAppSelector } from 'src/store'
 import { updateFormsData } from 'src/store/apps/accounts'
@@ -80,6 +81,12 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   const [open, setOpen] = useState<boolean>(false)
   const [nextClicked, setNextClicked] = useState<boolean>(false)
   const [userId, setUserId] = useState<number | null>(null)
+  const [badgeData, setBadgeData] = useState<IAlert>({
+    message: '',
+    theme: 'success',
+    open: false,
+    status: 'error'
+  })
 
   //store
   const idAccount = useAppSelector(state => state.accounts?.formsData?.form1?.id)
@@ -204,6 +211,38 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
       idTypeOfLimit: Number(placementStructure.typeOfLimit),
       step: 1
     })
+    if (typeof res === 'string' && res === 'error') {
+      setBadgeData({
+        message: 'Error saving data',
+        theme: 'error',
+        open: true,
+        status: 'error',
+        icon: <Icon style={{ color: '#FF4D49' }} icon='icon-park-outline:error' />
+      })
+      setTimeout(() => {
+        setBadgeData({
+          message: 'Saved successfully',
+          theme: 'success',
+          open: false,
+          status: 'error'
+        })
+      }, 5000)
+    } else {
+      setBadgeData({
+        message: 'The information has been saved',
+        theme: 'success',
+        open: true,
+        status: 'error'
+      })
+      setTimeout(() => {
+        setBadgeData({
+          message: 'Saved successfully',
+          theme: 'success',
+          open: false,
+          status: 'error'
+        })
+      }, 5000)
+    }
 
     return res
   }
@@ -319,6 +358,9 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   return (
     <>
       <div className='information' style={{ fontFamily: inter }}>
+        <div style={{ width: 'fit-content', float: 'right' }}>
+          <CustomAlert {...badgeData} />
+        </div>
         <form noValidate autoComplete='on' onSubmit={handleNextStep}>
           <div className='section'>
             <BasicInfo

@@ -22,7 +22,9 @@ export const useAddInformation = () => {
 
       return information
     } catch (error) {
-      throw error
+      console.log('[addInformation] Error', error)
+
+      throw new Error('error')
     }
   }
 

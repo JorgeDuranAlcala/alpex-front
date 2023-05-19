@@ -22,6 +22,7 @@ import { useGetAllReinsuranceCompanies } from '@/hooks/catalogs/reinsuranceCompa
 import { useGetAllRetroCedants } from '@/hooks/catalogs/retroCedant'
 import { SecurityDto } from '@/services/accounts/dtos/security.dto'
 import { updateFormsData } from '@/store/apps/accounts'
+import CustomAlert, { IAlert } from '@/views/custom/alerts'
 import { NumericFormat, NumericFormatProps } from 'react-number-format'
 import Icon from 'src/@core/components/icon'
 import { useAppDispatch, useAppSelector } from 'src/store'
@@ -537,7 +538,9 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
   }, [formData[index].NetPremium])
 
   useEffect(() => {
-    setValues('PremiumPerShare')
+    setTimeout(() => {
+      setValues('PremiumPerShare')
+    }, 100)
     //eslint-disable-next-line
   }, [formData[index].PremiumPerShare])
 
@@ -602,10 +605,14 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
       data[index]['NetPremium'] = formInformation.netPremium.toString()
       setValues('NetPremium')
     }
+    setFormData(data)
+    setValues('NetPremium')
+    setValues('SharePercent')
 
     if (company?.isGross) {
       handleIsGross()
     } else handleIsNet()
+
     //eslint-disable-next-line
   }, [formData[index].ReinsuranceCompany])
 
@@ -965,16 +972,22 @@ const Security = ({ onStepChange }: SecurityProps) => {
     netPremium: 0,
     grossPremium: 0
   })
+  const [badgeData, setBadgeData] = useState<IAlert>({
+    message: '',
+    theme: 'success',
+    open: false,
+    status: 'error'
+  })
 
   const dispatch = useAppDispatch()
   const accountData = useAppSelector(state => state.accounts)
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
 
-  const { account } = useGetAccountById(62)
+  const { setAccountId } = useGetAccountById()
 
   useEffect(() => {
-    console.log(account)
-  }, [account])
+    accountData.formsData.form1.id && setAccountId(accountData.formsData.form1.id)
+  }, [accountData.formsData.form1.id, setAccountId])
 
   const inter = userThemeConfig.typography?.fontFamilyInter
 
@@ -1085,7 +1098,38 @@ const Security = ({ onStepChange }: SecurityProps) => {
 
     const saveAll = await saveSecurities(forms)
 
-    console.log(saveTotal, saveAll)
+    if (saveAll === 'error' || saveTotal === 'error') {
+      setBadgeData({
+        message: 'Error saving data',
+        theme: 'error',
+        open: true,
+        status: 'error',
+        icon: <Icon style={{ color: '#FF4D49' }} icon='icon-park-outline:error' />
+      })
+      setTimeout(() => {
+        setBadgeData({
+          message: 'Saved successfully',
+          theme: 'success',
+          open: false,
+          status: 'error'
+        })
+      }, 5000)
+    } else {
+      setBadgeData({
+        message: 'The information has been saved',
+        theme: 'success',
+        open: true,
+        status: 'error'
+      })
+      setTimeout(() => {
+        setBadgeData({
+          message: 'Saved successfully',
+          theme: 'success',
+          open: false,
+          status: 'error'
+        })
+      }, 5000)
+    }
   }
 
   const handleSuccess = () => {
@@ -1116,6 +1160,9 @@ const Security = ({ onStepChange }: SecurityProps) => {
     <>
       <div className='information' style={{ fontFamily: inter }}>
         <div className='title'>Security</div>
+        <div style={{ width: 'fit-content', float: 'right' }}>
+          <CustomAlert {...badgeData} />
+        </div>
         <form noValidate autoComplete='on' onSubmit={handleSubmit}>
           <div className='section'>
             {formData.map((_, index) => (
