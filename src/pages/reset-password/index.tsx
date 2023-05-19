@@ -66,7 +66,6 @@ const ForgotPasswordPage = () => {
   const onSubmit: SubmitHandler<FormData> = data => {
     console.log(data?.password)
     console.log(data?.passwordConfirm)
-    debugger
     if (data.password !== data.passwordConfirm)
       setError('passwordConfirm', {
         type: 'manual',
