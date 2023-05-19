@@ -16,11 +16,12 @@ import Icon from 'src/@core/components/icon'
 // ** Custom Components Imports
 import ColumnHeader from './ColumnHeader'
 import CustomPagination from './CustomPagination'
-import Status, { EStatusString } from './Status'
+import Status, { EStatus, EStatusString } from './Status'
 import TableHeader from './TableHeader'
 import ModalAction from './modal'
 
 // ** Custom utilities
+import { formatStatus } from '@/utils/formatStatus'
 import { Link } from '@mui/material'
 import { useAppDispatch, useAppSelector } from 'src/store'
 import { deleteAccountFilter, fetchAccounts, handleAccountFilter, resetAccountFilter } from 'src/store/apps/accounts'
@@ -75,15 +76,15 @@ const Table = ({ status }: IAccountTable) => {
   }
 
   useEffect(() => {
-    dispatch(fetchAccounts())
+    dispatch(fetchAccounts(accountsReducer))
     //eslint-disable-next-line
-  }, [])
+  }, [accountsReducer.filters])
 
   useEffect(() => {
     dispatch(resetAccountFilter())
     if (status === undefined) dispatch(deleteAccountFilter('Status'))
     else {
-      const index: string = Object.keys(EStatusString)[Object.values(EStatusString).indexOf(status as any)]
+      const index: string = Object.keys(EStatus)[Object.values(EStatus).indexOf(status as any)]
       dispatch(
         handleAccountFilter({
           type: 'status',
@@ -100,13 +101,13 @@ const Table = ({ status }: IAccountTable) => {
     setLoading(accountsReducer.loading)
 
     const formatedRows = []
-    console.log('losAccounts', accountsReducer.accounts)
     const rawRows = accountsReducer.accounts
+
     if (rawRows && rawRows.length > 0) {
       for (const rawRow of rawRows) {
         formatedRows.push({
           id: rawRow.id,
-          status: rawRow.idAccountStatus.status,
+          status: formatStatus(rawRow.idAccountStatus.status),
           insured: rawRow?.informations[0]?.insured,
           lob: rawRow?.informations[0]?.idLineOfBussines?.lineOfBussines,
           effectiveDate: rawRow?.informations[0]?.effetiveDate,
@@ -114,8 +115,6 @@ const Table = ({ status }: IAccountTable) => {
         })
       }
     }
-
-    console.log(formatedRows)
 
     setAccounts(formatedRows || [])
     //eslint-disable-next-line

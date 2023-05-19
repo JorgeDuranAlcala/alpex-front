@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 // ** MUI Imports
 import { Box, Button } from '@mui/material';
@@ -8,28 +8,39 @@ import { Box, Button } from '@mui/material';
 import Icon from 'src/@core/components/icon';
 
 // ** Styled Components imports
+import { useAppDispatch } from '@/store';
+import { deleteBrokersFilter, handleBrokersFilter } from '@/store/apps/catalogs/brokers';
 import fonts from 'src/views/accounts/font';
 
-
 interface ITableHeader {
-  onDeleteRows?: () => void;
+  onDeleteRows?: () => void
   deleteBtn?: boolean;
-  onSearch: (value: string) => void;
-  onClickBtn:() => void
+  onSearch: (value: string) => void
+  onClickBtn: () => void
   textBtn: string
 }
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const TableHeader: React.FC<ITableHeader> = ({ onDeleteRows, deleteBtn = false, onSearch, onClickBtn, textBtn }) => {
-  // ** Custom Hooks
-  const [search, setSearch] = useState('')
+  // ** State
+  // const [search, setSearch] = useState('')
+  const [searchValue, setSearchValue] = useState('')
 
-  const searchInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearch(event.target.value);
-    onSearch(event.target.value);
-  };
+  const dispatch = useAppDispatch()
 
+  /* const usersReducer = useAppSelector(state => state.brokers) */
 
-return (
+  /* const searchInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(event.target.value)
+    onSearch(event.target.value)
+  }
+ */
+  useEffect(() => {
+    if (searchValue === '') dispatch(deleteBrokersFilter('name'))
+    else dispatch(handleBrokersFilter({ type: 'name', value: searchValue, text: searchValue }))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchValue])
+
+  return (
     <Box
       className='header-wrapper'
       sx={{
@@ -44,11 +55,12 @@ return (
       <Box className='header-item'>
         <div className='search-wrapper'>
           <input
-          className='input-search'
-          placeholder='Search'
-          value={search}
-          style={{ fontFamily: fonts.inter }}
-          onChange={searchInputChange} />
+            className='input-search'
+            placeholder='Search'
+            value={searchValue}
+            style={{ fontFamily: fonts.inter }}
+            onChange={e => setSearchValue(e.target.value)}
+          />
         </div>
       </Box>
       {deleteBtn ? <Box className='header-item '>

@@ -38,7 +38,7 @@ export enum EStatusString {
 
 const Status: React.FC<IStatusProps> = ({ status }) => {
   const statusComponents: IComponents = {
-    [EStatusString.PENDING]: (
+    [EStatus.PENDING]: (
       <>
         <Box
           component='span'
@@ -67,7 +67,7 @@ const Status: React.FC<IStatusProps> = ({ status }) => {
         </Box>
       </>
     ),
-    [EStatusString.BOUND]: (
+    [EStatus.BOUND]: (
       <>
         <Box
           component='span'
@@ -80,7 +80,7 @@ const Status: React.FC<IStatusProps> = ({ status }) => {
         </Box>
       </>
     ),
-    [EStatusString.NOT_MATERIALIZED]: (
+    [EStatus.NOT_MATERIALIZED]: (
       <>
         <Box
           component='span'
@@ -93,7 +93,7 @@ const Status: React.FC<IStatusProps> = ({ status }) => {
         </Box>
       </>
     ),
-    [EStatusString.NOT_TAKEN_UP]: (
+    [EStatus.NOT_TAKEN_UP]: (
       <>
         <Box
           component='span'
@@ -106,7 +106,7 @@ const Status: React.FC<IStatusProps> = ({ status }) => {
         </Box>
       </>
     ),
-    [EStatusString.DECLINED]: (
+    [EStatus.DECLINED]: (
       <>
         <Box
           component='span'

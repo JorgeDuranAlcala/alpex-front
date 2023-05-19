@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 
-
 // ** MUI Imports
 
 import CloseIcon from '@mui/icons-material/Close'
@@ -13,15 +12,30 @@ import Icon from 'src/@core/components/icon'
 import { ButtonClose, HeaderTitleModal } from 'src/styles/modal/modal.styled'
 import { IBroker } from '../broker-table'
 
+// Hooks
+import { useUpdateById } from '@/hooks/catalogs/broker'
+import { useDeleteBroker } from '@/hooks/catalogs/broker/useDelete'
+import { useAppDispatch, useAppSelector } from '@/store'
+import { fetchBrokers } from '@/store/apps/catalogs/brokers'
+import { useAddBroker } from 'src/hooks/catalogs/broker/useAdd'
+
 const AddBroker = () => {
-  const [newBroker, setNewBroker] = useState<IBroker>({ id: "0", name: '' })
+  const [newBroker, setNewBroker] = useState<IBroker>({ id: 0, name: '' })
   const [isBrokerSaved, setIsBrokerSaved] = useState(false)
   const [disableAddBroker, setDisableAddBroker] = useState(true)
   const [openDelete, setOpenDelete] = useState(false)
-  const [showAlert, setShowAlert] = useState(true);
-  const [alertType, setAlertType] = useState('');
-  const [alertText, setAlertText] = useState('');
-  const [alertIcon, setAlertIcon] = useState('');
+  const [showAlert, setShowAlert] = useState(true)
+  const [alertType, setAlertType] = useState('')
+  const [alertText, setAlertText] = useState('')
+  const [alertIcon, setAlertIcon] = useState('')
+
+  const { saveBroker } = useAddBroker()
+  const { deleteBroker: deleteBrokers } = useDeleteBroker()
+  const { update } = useUpdateById()
+
+  const dispatch = useAppDispatch()
+  const brokerReducer = useAppSelector(state => state.brokers)
+
   const triggerAlert = (type: string) => {
     setAlertType(type)
 
@@ -29,43 +43,54 @@ const AddBroker = () => {
       case 'success':
         setAlertText('NEW BROKER ADDED')
         setAlertIcon('mdi:check-circle-outline')
-        break;
+        break
       case 'error':
         setAlertText('UNKNOWN ERROR, TRY AGAIN')
         setAlertIcon('mdi:alert-circle-outline')
-        break;
+        break
       case 'warn':
         setAlertText('NO INTERNET CONNECTION')
         setAlertIcon('mdi:alert-outline')
-        break;
+        break
       default:
         break
     }
 
-    setShowAlert(true);
+    setShowAlert(true)
 
     setTimeout(() => {
-      setShowAlert(false);
-    }, 5000);
-
-
-  };
-
-  const addBroker = () => { //Call to add broker service
-    console.log("call add broker service", newBroker.id)
-    setIsBrokerSaved(true)
+      setShowAlert(false)
+    }, 5000)
   }
 
-  const editBroker = () => { //Call to edit broker service
-    console.log("call edit broker service", newBroker.id)
-    triggerAlert('success')
-
-    // triggerAlert('error')
-    // triggerAlert('warn')
+  const addBroker = async () => {
+    const result = await saveBroker({ name: newBroker.name })
+    if (result) {
+      setNewBroker({ id: result.id, name: result.name })
+      triggerAlert('success')
+      dispatch(fetchBrokers(brokerReducer))
+      setIsBrokerSaved(true)
+    }
   }
 
-  const deleteBroker = () => { //Call to delete broker service
-    console.log("call delete broker service", newBroker.id)
+  const editBroker = async () => {
+    const result = await update(newBroker.id, newBroker)
+    if (result) {
+      setNewBroker({ id: result.id, name: result.name })
+      dispatch(fetchBrokers(brokerReducer))
+      setIsBrokerSaved(true)
+      triggerAlert('success')
+    } else {
+      triggerAlert('error')
+    }
+  }
+
+  const deleteBroker = async () => {
+    const result = await deleteBrokers({ idDeleteList: [newBroker.id] })
+    if (result) {
+      triggerAlert('success')
+      dispatch(fetchBrokers(brokerReducer))
+    }
     setOpenDelete(false)
   }
 
@@ -75,34 +100,33 @@ const AddBroker = () => {
     } else {
       setDisableAddBroker(true)
     }
-
   }, [newBroker])
 
   return (
     <>
       <div className='add-new'>
-        <div className="inner-row">
-          <div className="title">{isBrokerSaved ? "Broker details" : "Add Broker"}</div>
+        <div className='inner-row'>
+          <div className='title'>{isBrokerSaved ? 'Broker details' : 'Add Broker'}</div>
         </div>
         <div className='inner-row'>
-          {showAlert &&
-            <div className={`${alertType} add-broker-alert`}>
+          {showAlert && (
+            <div className={`${alertType} add-new-alert`}>
               <div className='btn-icon'>
                 <Icon icon={alertIcon} />
               </div>
               {alertText}
-            </div>}
+            </div>
+          )}
         </div>
-        <div className="inner-row">
-          <div className="description">
-            {isBrokerSaved ?
-              'You can edit the information below. In ‘Contacts’ you can add one or more contacts for this Broker.'
-              : "You can fill out the information below to Add a Broker. In ‘Contacts’ you can add one or morecontacts for this Broker."}
-
+        <div className='inner-row'>
+          <div className='description'>
+            {isBrokerSaved
+              ? 'You can edit the information below. In ‘Contacts’ you can add one or more contacts for this Broker.'
+              : 'You can fill out the information below to Add a Broker. In ‘Contacts’ you can add one or morecontacts for this Broker.'}
           </div>
         </div>
-        <div className="inner-row">
-          <div className="subtitle">Basic Info</div>
+        <div className='inner-row'>
+          <div className='subtitle'>Basic Info</div>
 
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <TextField
@@ -111,11 +135,15 @@ const AddBroker = () => {
               value={newBroker.name}
               onChange={e => setNewBroker({ ...newBroker, ['name']: e.target.value })}
             />
-
           </FormControl>
-          {isBrokerSaved ?
+          {isBrokerSaved ? (
             <div className='action-buttons'>
-              <Button className='delete-broker-btn' onClick={() => { setOpenDelete(true) }}>
+              <Button
+                className='delete-broker-btn'
+                onClick={() => {
+                  setOpenDelete(true)
+                }}
+              >
                 <div className='btn-icon'>
                   <Icon icon='mdi:delete-outline' />
                 </div>
@@ -126,20 +154,18 @@ const AddBroker = () => {
                   <Icon icon='mdi:pencil' />
                 </div>
                 EDIT
-              </Button></div> :
+              </Button>
+            </div>
+          ) : (
             <div className='action-buttons'>
-              <Button
-                className='create-contact-btn'
-                onClick={addBroker}
-                disabled={disableAddBroker}
-              >
+              <Button className='create-contact-btn' onClick={addBroker} disabled={disableAddBroker}>
                 <div className='btn-icon'>
                   <Icon icon='mdi:check' />
                 </div>
                 ADD BROKER
               </Button>
             </div>
-          }
+          )}
           <Modal
             className='delete-modal'
             open={openDelete}
@@ -149,11 +175,9 @@ const AddBroker = () => {
           >
             <Box className='modal-wrapper'>
               <HeaderTitleModal>
-                <Typography
-                  variant='h6'
-                  sx={{ maxWidth: "450px" }}
-                >
-                  Are you sure you want to delete {newBroker.name}?</Typography>
+                <Typography variant='h6' sx={{ maxWidth: '450px' }}>
+                  Are you sure you want to delete {newBroker.name}?
+                </Typography>
                 <ButtonClose
                   onClick={() => {
                     setOpenDelete(false)
@@ -177,11 +201,8 @@ const AddBroker = () => {
             </Box>
           </Modal>
         </div>
-
       </div>
     </>
-
-
   )
 }
 
