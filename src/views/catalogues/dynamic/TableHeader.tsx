@@ -1,26 +1,28 @@
 // ** React Imports
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react';
 
 // ** MUI Imports
-import { Box, Button } from '@mui/material'
+import { Box, Button } from '@mui/material';
 
 // ** Icon Imports
-import Icon from 'src/@core/components/icon'
+import Icon from 'src/@core/components/icon';
 
 // ** Styled Components imports
-import { useAppDispatch } from '@/store'
-import { deleteBrokersFilter, handleBrokersFilter } from '@/store/apps/catalogs/brokers'
-import fonts from 'src/views/accounts/font'
+import { useAppDispatch } from '@/store';
+import { deleteBrokersFilter, handleBrokersFilter } from '@/store/apps/catalogs/brokers';
+import fonts from 'src/views/accounts/font';
 
 interface ITableHeader {
   onDeleteRows?: () => void
+  deleteBtn?: boolean;
   onSearch: (value: string) => void
   onClickBtn: () => void
   textBtn: string
 }
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const TableHeader: React.FC<ITableHeader> = ({ onDeleteRows, onSearch, onClickBtn, textBtn }) => {
+const TableHeader: React.FC<ITableHeader> = ({ onDeleteRows, deleteBtn = false, onSearch, onClickBtn, textBtn }) => {
   // ** State
+  // const [search, setSearch] = useState('')
   const [searchValue, setSearchValue] = useState('')
 
   const dispatch = useAppDispatch()
@@ -61,18 +63,19 @@ const TableHeader: React.FC<ITableHeader> = ({ onDeleteRows, onSearch, onClickBt
           />
         </div>
       </Box>
-      {onDeleteRows ? (
-        <Box className='header-item '>
-          <Button className='delete-button' onClick={onDeleteRows} variant='outlined'>
-            <div className='btn-icon'>
-              <Icon icon='mdi:delete-outline' />
-            </div>
-            DELETE
-          </Button>
-        </Box>
-      ) : (
-        ''
-      )}
+      {deleteBtn ? <Box className='header-item '>
+        <Button
+          className='delete-button'
+          onClick={onDeleteRows}
+          variant='outlined'
+        >
+          <div className='btn-icon'>
+            <Icon icon='mdi:delete-outline' />
+          </div>
+          DELETE
+        </Button>
+
+      </Box> : ''}
 
       <Box className='header-item ' sx={{ marginLeft: 'auto' }}>
         <Button className='action-button' sx={{ mb: 2 }} variant='contained' onClick={onClickBtn}>
