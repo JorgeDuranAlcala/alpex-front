@@ -532,6 +532,9 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               onChange={handleReceptionDateChange}
               className={errors.receptionDateError ? 'error' : ''}
               showTimeSelect
+              showMonthDropdown
+              showYearDropdown
+              showDisabledMonthNavigation
               timeFormat='HH:mm'
               timeIntervals={15}
               dateFormat='MM/dd/yyyy h:mm aa'
@@ -557,6 +560,9 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               onChange={handleEffectiveDateChange}
               className={errors.effectiveDateError ? 'error' : ''}
               showTimeSelect
+              showMonthDropdown
+              showYearDropdown
+              showDisabledMonthNavigation
               timeFormat='HH:mm'
               timeIntervals={15}
               dateFormat='MM/dd/yyyy h:mm aa'
@@ -582,6 +588,9 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               onChange={handleExpirationDateChange}
               className={errors.expirationDateError ? 'error' : ''}
               showTimeSelect
+              showMonthDropdown
+              showYearDropdown
+              showDisabledMonthNavigation
               timeFormat='HH:mm'
               timeIntervals={15}
               dateFormat='MM/dd/yyyy h:mm aa'

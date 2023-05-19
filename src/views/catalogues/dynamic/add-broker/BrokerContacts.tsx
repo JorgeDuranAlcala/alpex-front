@@ -65,7 +65,7 @@ const BrokerContacts = () => {
   const [alertType, setAlertType] = useState('');
   const [alertText, setAlertText] = useState('');
   const [alertIcon, setAlertIcon] = useState('');
-
+  const [openDeleteRows, setOpenDeleteRows] = useState(false)
 
   const triggerAlert = (type: string) => {
     setAlertType(type)
@@ -251,7 +251,7 @@ const BrokerContacts = () => {
   const deleteRows = () => {  //must be replaced with the respective broker service
     // const newContactList = // Service return new list
     // setContactList(newBinderList)
-    // setOpenDelete(false)
+     setOpenDeleteRows(false)
   }
 
 
@@ -341,7 +341,9 @@ const BrokerContacts = () => {
         <div className='table-header'>
           <TableHeader
             onSearch={searchContacts}
-            onDeleteRows={deleteRows}
+            onDeleteRows={() => {
+              setOpenDeleteRows(true)
+            }}
             deleteBtn={selectedRows.length > 0 ? true : false}
             textBtn="ADD NEW CONTACT"
             onClickBtn={() => { setOpenNewContact(true) }}
@@ -374,11 +376,11 @@ const BrokerContacts = () => {
         </div>
 
       </div>
-      <Modal className='create-contact-modal' open={openNewContact} onClose={() => setOpenNewContact(true)}>
+      <Modal className='create-contact-modal' open={openNewContact} onClose={() => setOpenNewContact(false)}>
         <Box className='modal-wrapper'>
           <HeaderTitleModal>
             <Typography variant='h6'>Create new contact</Typography>
-            <ButtonClose onClick={() => setOpenNewContact(true)}>
+            <ButtonClose onClick={() => setOpenNewContact(false)}>
               <CloseIcon />
             </ButtonClose>
           </HeaderTitleModal>
@@ -449,7 +451,40 @@ const BrokerContacts = () => {
           </Button>
         </Box>
       </Modal>
-
+      <Modal
+        className='delete-modal'
+        open={openDeleteRows}
+        onClose={() => {
+          setOpenDeleteRows(false)
+        }}
+      >
+        <Box className='modal-wrapper'>
+          <HeaderTitleModal>
+            <Typography variant='h6' sx={{ maxWidth: '450px' }}>
+              Are you sure you want to delete the selected Brokers?
+            </Typography>
+            <ButtonClose
+              onClick={() => {
+                setOpenDeleteRows(false)
+              }}
+            >
+              <CloseIcon />
+            </ButtonClose>
+          </HeaderTitleModal>
+          <div className='delete-modal-text'>This action can’t be undone.</div>
+          <Button className='header-modal-btn' variant='contained' onClick={deleteRows}>
+            DELETE
+          </Button>
+          <Button
+            className='close-modal header-modal-btn'
+            onClick={() => {
+              setOpenDeleteRows(false)
+            }}
+          >
+            CANCEL
+          </Button>
+        </Box>
+      </Modal>
     </>
   )
 }

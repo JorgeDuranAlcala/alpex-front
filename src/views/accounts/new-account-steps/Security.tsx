@@ -22,6 +22,7 @@ import { useGetAllReinsuranceCompanies } from '@/hooks/catalogs/reinsuranceCompa
 import { useGetAllRetroCedants } from '@/hooks/catalogs/retroCedant'
 import { SecurityDto } from '@/services/accounts/dtos/security.dto'
 import { updateFormsData } from '@/store/apps/accounts'
+import CustomAlert, { IAlert } from '@/views/custom/alerts'
 import { NumericFormat, NumericFormatProps } from 'react-number-format'
 import Icon from 'src/@core/components/icon'
 import { useAppDispatch, useAppSelector } from 'src/store'
@@ -102,12 +103,79 @@ yup.setLocale({
   }
 })
 
+const schemaNetPremium = yup.object().shape(
+  {
+    HasFrontingFee: yup.boolean(),
+    IsGross: yup.boolean(),
+    NetPremium: yup
+      .number()
+      .optional()
+      .transform(value => (isNaN(value) ? undefined : value))
+      .required(),
+    SharePercent: yup
+      .number()
+      .transform(value => (isNaN(value) ? undefined : value))
+      .test('max 100', 'This field must be less than 100', value => Number(value) <= 100)
+      .min(0, 'This field must be greater than 0')
+      .required(),
+    DynamicComissionPercent: yup
+      .number()
+      .transform(value => (isNaN(value) ? undefined : value))
+      .test('max 100', 'This field must be less than 100', value => Number(value) <= 100)
+      .min(0, 'This field must be greater than 0')
+      .required(),
+    FrontingFee: yup
+      .number()
+      .transform(value => (isNaN(value) ? undefined : value))
+      .when('HasFrontingFee', {
+        is: true,
+        then: yup.number().required()
+      }),
+    ReinsuranceCompany: yup
+      .string()
+      .test('is-valid', 'This field is required', value => value !== '-1')
+      .required(),
+    PremiumPerShare: yup
+      .number()
+      .transform(value => (isNaN(value) ? undefined : value))
+      .min(0, 'This field must be greater than 0')
+      .required(),
+    DynamicComission: yup
+      .number()
+      .transform(value => (isNaN(value) ? undefined : value))
+      .required(),
+    FrontingFeePercent: yup
+      .number()
+      .transform(value => (isNaN(value) ? undefined : value))
+      .test('max 100', 'This field must be less than 100', value => Number(value) <= 100)
+      .min(0, 'This field must be greater than 0')
+      .when('HasFrontingFee', {
+        is: true,
+        then: yup
+          .number()
+          .transform(value => (isNaN(value) ? undefined : value))
+          .required('This field is required')
+      }),
+    NetInsurancePremium: yup
+      .number()
+      .transform(value => (isNaN(value) ? undefined : value))
+      .required()
+      .test('Is positive?', 'ERROR: The number must be greater than 0!', value => {
+        const valueVal = value || 0
+
+        return +valueVal > 0
+      })
+  },
+  [['IsGross', 'frontingFeeEnabled']]
+)
+
 const schema = yup.object().shape(
   {
     HasFrontingFee: yup.boolean(),
     IsGross: yup.boolean(),
     NetPremium: yup
       .number()
+      .optional()
       .transform(value => (isNaN(value) ? undefined : value))
       .required(),
     SharePercent: yup
@@ -329,6 +397,19 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
     return result.toString()
   }
 
+  const resetValues = () => {
+    const data = [...formData]
+
+    data[index]['DynamicComissionPercent'] = '' + 0
+    data[index]['DynamicComission'] = '' + 0
+
+    data[index]['BrokerAge'] = '' + 0
+    data[index]['BrokerAgePercent'] = '' + 0
+
+    data[index]['TaxesPercent'] = '' + 0
+    data[index]['Taxes'] = '' + 0
+  }
+
   const setValues = (field: keyof FormInfo) => {
     const data = formData.map(obj => ({ ...obj }))
     const totalNetPremium = data[index]['NetPremium']
@@ -365,11 +446,15 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
     switch (field) {
       case 'NetPremium':
         data[index]['PremiumPerShare'] = validateNumber(((+sharePercent * +totalNetPremium) / 100).toString())
+
+        // console.log(data[index]['PremiumPerShare'])
+
         break
 
       case 'SharePercent':
         data[index]['NetInsurancePremium'] = NetInsurancePremium
         data[index]['PremiumPerShare'] = validateNumber(((+sharePercent * +totalNetPremium) / 100).toString())
+
         break
 
       case 'PremiumPerShare':
@@ -432,8 +517,8 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
     if (!frontingFeeEnabled) {
       data[index]['FrontingFeePercent'] = '0'
       data[index]['FrontingFee'] = '0'
+      console.log(data[index]['PremiumPerShare'])
     }
-
     setFormData(data)
   }
 
@@ -445,7 +530,9 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
   }, [formData[index].NetPremium])
 
   useEffect(() => {
-    setValues('PremiumPerShare')
+    setTimeout(() => {
+      setValues('PremiumPerShare')
+    }, 100)
     //eslint-disable-next-line
   }, [formData[index].PremiumPerShare])
 
@@ -497,19 +584,28 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
     const data = [...formData]
 
     if (company) {
+      resetValues()
       setIsGross(company.isGross)
       company.isGross
         ? (data[index]['NetPremium'] = formInformation.grossPremium.toString())
         : (data[index]['NetPremium'] = formInformation.netPremium.toString())
+
+      setValues('NetPremium')
+      setValues('PremiumPerShare')
     } else {
       setIsGross(false)
       data[index]['NetPremium'] = formInformation.netPremium.toString()
+      setValues('NetPremium')
+      setValues('PremiumPerShare')
     }
     setFormData(data)
+    setValues('NetPremium')
+    setValues('SharePercent')
 
     if (company?.isGross) {
       handleIsGross()
     } else handleIsNet()
+
     //eslint-disable-next-line
   }, [formData[index].ReinsuranceCompany])
 
@@ -742,6 +838,7 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
               InputProps={{
                 inputComponent: NumericFormatCustom as any
               }}
+              disabled={true}
               onChange={e => handleFormChange('NetInsurancePremium', e.target.value)}
             />
 
@@ -868,16 +965,23 @@ const Security = ({ onStepChange }: SecurityProps) => {
     netPremium: 0,
     grossPremium: 0
   })
+  const [badgeData, setBadgeData] = useState<IAlert>({
+    message: '',
+    theme: 'success',
+    open: false,
+    status: 'error'
+  })
 
   const dispatch = useAppDispatch()
   const accountData = useAppSelector(state => state.accounts)
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
 
-  const { account } = useGetAccountById(62)
+  const { account, setAccountId } = useGetAccountById()
+
 
   useEffect(() => {
-    console.log(account)
-  }, [account])
+    accountData.formsData.form1.id && setAccountId(accountData.formsData.form1.id)
+  }, [accountData.formsData.form1.id, setAccountId])
 
   const inter = userThemeConfig.typography?.fontFamilyInter
 
@@ -906,20 +1010,46 @@ const Security = ({ onStepChange }: SecurityProps) => {
     formData.forEach((form, index) => {
       const data = [...formErrors]
       data[index] = { ...SecurityForm }
-      schema
-        .validate(form, { abortEarly: false })
-        .then(function () {
-          handleSuccess()
-        })
-        .catch(function (err) {
-          console.log(err)
 
-          err?.inner?.forEach((e: any) => {
-            data[index][e.path] = e.message
-            setFormErrors(data)
+      if (form.IsGross) {
+        schema
+          .validate(form, { abortEarly: false })
+          .then(function () {
+            console.log('dsadsa2')
+
+            handleSuccess()
           })
-          setEnableNextStep(false)
-        })
+          .catch(function (err) {
+            console.log('dsadsa4')
+
+            console.log(err)
+
+            err?.inner?.forEach((e: any) => {
+              data[index][e.path] = e.message
+              setFormErrors(data)
+            })
+            setEnableNextStep(false)
+          })
+      } else {
+        schemaNetPremium
+          .validate(form, { abortEarly: false })
+          .then(function () {
+            console.log('dsadsa2')
+
+            handleSuccess()
+          })
+          .catch(function (err) {
+            console.log('dsadsa4')
+
+            console.log(err)
+
+            err?.inner?.forEach((e: any) => {
+              data[index][e.path] = e.message
+              setFormErrors(data)
+            })
+            setEnableNextStep(false)
+          })
+      }
     })
   }
 
@@ -928,6 +1058,8 @@ const Security = ({ onStepChange }: SecurityProps) => {
     let sumSharePercent = 0
     let sumGrossShare = 0
     formData.forEach(form => {
+      console.log(form)
+
       DistribuitedNetPremium +=
         +form.BrokerAge + +form.Taxes + +form.DynamicComission + +form.FrontingFee + +form.NetInsurancePremium
       if (!form.IsGross) sumSharePercent += +form.SharePercent
@@ -973,10 +1105,43 @@ const Security = ({ onStepChange }: SecurityProps) => {
 
     const saveAll = await saveSecurities(forms)
 
-    console.log(saveTotal, saveAll)
+    if (saveAll === 'error' || saveTotal === 'error') {
+      setBadgeData({
+        message: 'Error saving data',
+        theme: 'error',
+        open: true,
+        status: 'error',
+        icon: <Icon style={{ color: '#FF4D49' }} icon='icon-park-outline:error' />
+      })
+      setTimeout(() => {
+        setBadgeData({
+          message: 'Saved successfully',
+          theme: 'success',
+          open: false,
+          status: 'error'
+        })
+      }, 5000)
+    } else {
+      setBadgeData({
+        message: 'The information has been saved',
+        theme: 'success',
+        open: true,
+        status: 'error'
+      })
+      setTimeout(() => {
+        setBadgeData({
+          message: 'Saved successfully',
+          theme: 'success',
+          open: false,
+          status: 'error'
+        })
+      }, 5000)
+    }
   }
 
   const handleSuccess = () => {
+    console.log('dsadsa')
+
     saveInformation()
     dispatch(updateFormsData({ form2: allFormData }))
     setEnableNextStep(true)
@@ -1005,12 +1170,16 @@ const Security = ({ onStepChange }: SecurityProps) => {
     <>
       <div className='information' style={{ fontFamily: inter }}>
         <div className='title'>Security</div>
+        <div style={{ width: 'fit-content', float: 'right' }}>
+          <CustomAlert {...badgeData} />
+        </div>
         <form noValidate autoComplete='on' onSubmit={handleSubmit}>
           <div className='section'>
             {formData.map((_, index) => (
               <>
                 {index > 0 && <hr style={{ margin: '40px 0px', backgroundColor: 'lightgray' }} />}
                 <FormSection
+                  key={index}
                   index={index}
                   formData={formData}
                   setFormData={setFormData}
