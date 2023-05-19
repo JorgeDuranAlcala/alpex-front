@@ -3,10 +3,11 @@ import { Alert } from '@mui/material'
 export interface IAlert {
   status: 'success' | 'error' | 'secondary' | 'warning' | undefined
   message: string
-  icon: JSX.Element | undefined
+  icon?: JSX.Element | undefined
   backgroundColor?: string
   fontColor?: string
   theme?: 'success' | 'secondary'
+  open?: boolean
 }
 
 const customTheme = {
@@ -22,16 +23,20 @@ const customTheme = {
 
 const CustomAlert = (props: IAlert) => {
   return (
-    <Alert
-      sx={{
-        backgroundColor: props.theme ? customTheme[props.theme] || '' : props.backgroundColor,
-        color: props.fontColor,
-        fontWeight: 500
-      }}
-      icon={props.icon || ''}
-    >
-      {props.message}
-    </Alert>
+    <>
+      {props.open && (
+        <Alert
+          sx={{
+            backgroundColor: props.theme ? customTheme[props.theme] || '' : props.backgroundColor,
+            color: props.fontColor,
+            fontWeight: 500
+          }}
+          icon={props.icon || ''}
+        >
+          {props.message}
+        </Alert>
+      )}
+    </>
   )
 }
 
