@@ -48,7 +48,7 @@ export type PlacementStructureProps = {
     taxes: number
     frontingFee: number
     attachmentPoint: number
-    typeOfLimit: string | number
+    typeOfLimit: string | number | null
   }
   setPlacementStructure: React.Dispatch<
     React.SetStateAction<{
@@ -66,7 +66,7 @@ export type PlacementStructureProps = {
       taxes: number
       frontingFee: number
       attachmentPoint: number
-      typeOfLimit: string | number
+      typeOfLimit: string | number | null
     }>
   >
   makeValidations: boolean
@@ -78,7 +78,6 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
   placementStructure,
   setPlacementStructure,
   makeValidations,
-  resetMakeValidations,
   isValidForm
 }) => {
   const { currencies } = useGetAllCurrencies()
@@ -240,10 +239,9 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
   useEffect(() => {
     if (makeValidations) {
       validations()
-      resetMakeValidations()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [makeValidations])
+  }, [makeValidations, placementStructure])
 
   useEffect(() => {
     calculate()
