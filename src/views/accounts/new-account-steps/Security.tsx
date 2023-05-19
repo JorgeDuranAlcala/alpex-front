@@ -399,6 +399,9 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
   const resetValues = () => {
     const data = [...formData]
 
+    data[index]['SharePercent'] = '' + 0
+    data[index]['PremiumPerShare'] = '' + 0
+
     data[index]['DynamicComissionPercent'] = '' + 0
     data[index]['DynamicComission'] = '' + 0
 
@@ -407,6 +410,8 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
 
     data[index]['TaxesPercent'] = '' + 0
     data[index]['Taxes'] = '' + 0
+
+    data[index]['NetInsurancePremium'] = '' + 0
   }
 
   const setValues = (field: keyof FormInfo) => {
@@ -422,25 +427,30 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
     const TaxesPercent = data[index]['TaxesPercent']
     const FrontingFee = data[index]['FrontingFee']
     const FrontingFeePercent = data[index]['FrontingFeePercent']
-
     let NetInsurancePremium = ''
-    if (isGross) {
-      NetInsurancePremium = validateNumber(
-        (+premiumPerShare - +dynamicComission - +Taxes - +BrokerAge - +FrontingFee).toString(),
-        true
-      )
-    } else {
-      NetInsurancePremium = validateNumber((+premiumPerShare - +dynamicComission - +FrontingFee).toString(), true)
-    }
-    const dataError = [...formErrors]
 
-    if (+NetInsurancePremium < 0) dataError[index]['NetInsurancePremium'] = 'ERROR: The number must be greater than 0!'
-    else dataError[index]['NetInsurancePremium'] = ''
-    setFormErrors(dataError)
-    setFormErrors(formErrors)
-    if (+totalNetPremium === 0) {
-      data[index]['NetPremium'] = formInformation.netPremium.toString()
+    const calculateNetInsurancePremium = () => {
+      if (isGross) {
+        NetInsurancePremium = validateNumber(
+          (+premiumPerShare - +dynamicComission - +Taxes - +BrokerAge - +FrontingFee).toString(),
+          true
+        )
+      } else {
+        NetInsurancePremium = validateNumber((+premiumPerShare - +dynamicComission - +FrontingFee).toString(), true)
+      }
+      const dataError = [...formErrors]
+
+      if (+NetInsurancePremium < 0)
+        dataError[index]['NetInsurancePremium'] = 'ERROR: The number must be greater than 0!'
+      else dataError[index]['NetInsurancePremium'] = ''
+      setFormErrors(dataError)
+      setFormErrors(formErrors)
+      if (+totalNetPremium === 0) {
+        data[index]['NetPremium'] = formInformation.netPremium.toString()
+      }
     }
+
+    calculateNetInsurancePremium()
 
     switch (field) {
       case 'NetPremium':
@@ -451,6 +461,7 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
       case 'SharePercent':
         data[index]['NetInsurancePremium'] = NetInsurancePremium
         data[index]['PremiumPerShare'] = validateNumber(((+sharePercent * +totalNetPremium) / 100).toString())
+
         break
 
       case 'PremiumPerShare':
@@ -514,6 +525,7 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
       data[index]['FrontingFeePercent'] = '0'
       data[index]['FrontingFee'] = '0'
     }
+
     setFormData(data)
   }
 
@@ -577,6 +589,7 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
     const data = [...formData]
 
     if (company) {
+      setIsGross(true)
       resetValues()
       setIsGross(company.isGross)
       company.isGross
@@ -584,12 +597,10 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
         : (data[index]['NetPremium'] = formInformation.netPremium.toString())
 
       setValues('NetPremium')
-      setValues('PremiumPerShare')
     } else {
       setIsGross(false)
       data[index]['NetPremium'] = formInformation.netPremium.toString()
       setValues('NetPremium')
-      setValues('PremiumPerShare')
     }
 
     if (company?.isGross) {
