@@ -43,10 +43,7 @@ class UsersServices {
   async editUser(user: Partial<UsersPutDto>): Promise<UsersGetDto[]> {
     try {
       const { data } = await AppAlpexApiGateWay.put<Promise<UsersGetDto[]>>(`${USERS_ROUTES.UPDATE}`, {
-        ...user,
-        headers: {
-          'x-api-key': 'ZlExQKG0xPB673L3B6hClORm6oPaKcer'
-        }
+        ...user
       })
 
       return data
@@ -58,10 +55,7 @@ class UsersServices {
   async deleteUsers(user: Partial<UsersDeleteDto>): Promise<UsersGetDto[]> {
     try {
       const { data } = await AppAlpexApiGateWay.post<Promise<UsersGetDto[]>>(USERS_ROUTES.DELETE, {
-        ...user,
-        headers: {
-          'x-api-key': 'ZlExQKG0xPB673L3B6hClORm6oPaKcer'
-        }
+        ...user
       })
 
       return data
