@@ -136,8 +136,8 @@ const FormHeader = () => {
             <div className='form-header-section'>
               <ModalUploadImage />
               <div className='double-gap'>
-                <span className='form-header-title2'>{account.basicInfo.insured}</span>
-                <span className='block blue-subtitle'>#{account.id}</span>
+                <span className='form-header-title2'>{account?.basicInfo?.insured}</span>
+                <span className='block blue-subtitle'>#{account?.id}</span>
               </div>
             </div>
             <div className='form-header-section'>
@@ -149,12 +149,12 @@ const FormHeader = () => {
             <div className='form-header-section'>
               <span className='form-header-title'>Net premium:</span>
               <span className='form-header-subtitle'>
-                ${account.placementStructure?.netPremium} {account.placementStructure?.currency}
+                ${account?.placementStructure?.netPremium} {account?.placementStructure?.currency}
               </span>
             </div>
             <div className='form-header-section'>
               <span className='form-header-title'>Registration date:</span>
-              <span className='form-header-subtitle'>{formatDate(account.basicInfo.effectiveDate)}</span>
+              <span className='form-header-subtitle'>{formatDate(account?.basicInfo.effectiveDate)}</span>
             </div>
           </div>
         </div>

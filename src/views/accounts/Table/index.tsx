@@ -11,6 +11,9 @@ import { DataGrid, GRID_CHECKBOX_SELECTION_COL_DEF, GridColumns, GridRowId } fro
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
 
+// ** Next Import
+import { useRouter } from 'next/router'
+
 // ** Custom Hooks imports
 
 // ** Custom Components Imports
@@ -69,9 +72,10 @@ const Table = ({ status }: IAccountTable) => {
 
   // ** Custom Hooks
   //const { accounts, getAccounts } = useAccountTable()
-  const { duplicateAccounts } = useAccountTable()
+  const { duplicateAccounts, getAccounts } = useAccountTable()
 
   // ** Hooks
+  const router = useRouter()
 
   const handleClickColumnHeader = (field: string) => {
     alert(field)
@@ -249,7 +253,13 @@ const Table = ({ status }: IAccountTable) => {
       renderHeader: ({ colDef }) => <ColumnHeader colDef={colDef} showIcon={false} />,
       renderCell: ({ row }) => (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <IconButton size='small' sx={{ mr: 1 }}>
+          <IconButton
+            onClick={() => {
+              onEdit(+row.id)
+            }}
+            size='small'
+            sx={{ mr: 1 }}
+          >
             <Icon icon='ic:baseline-login' />
           </IconButton>
           <ModalAction
@@ -282,6 +292,7 @@ const Table = ({ status }: IAccountTable) => {
     }
   ]
 
+  // ACTIONS buttons functions
   const onDownload = (id: number) => {
     setBadgeData({
       message: `DOWNLOADING #${id.toLocaleString('en-US', { minimumIntegerDigits: 4, useGrouping: false })}`,
@@ -309,6 +320,7 @@ const Table = ({ status }: IAccountTable) => {
       }, 3000)
     }, 1000)
   }
+
   const onDuplicated = async (id: number) => {
     await duplicateAccounts([id])
 
@@ -327,6 +339,36 @@ const Table = ({ status }: IAccountTable) => {
         icon: undefined
       })
     }, 3000)
+  }
+
+  const onEdit = async (id: number) => {
+    const res = await getAccounts({
+      formsData: null,
+      accounts: [],
+      loading: false,
+      filters: [
+        {
+          type: 'idAccount',
+          value: String(id)
+        }
+      ],
+      info: {
+        count: 0,
+        next: '',
+        page: 1,
+        pages: 12,
+        prev: '',
+        take: 1
+      },
+      temporalFilters: [],
+      current: null
+    })
+
+    const foundAccount = res.results[0]
+
+    console.log(foundAccount)
+
+    router.push(`/accounts/new-account/?&idAccount=${id}`)
   }
 
   return (
