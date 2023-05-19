@@ -197,11 +197,14 @@ const Sublimits = () => {
   const [filteredOptions, setFilteredOptions] = useState<any[]>([])
   const [formInformationData, setFormInformationData] = useState<any>({})
   const accountData = useAppSelector(state => state.accounts)
-  const { account } = useGetAccountById(formInformationData?.id)
+  const { account, setAccountId } = useGetAccountById()
   const { saveSublimits } = useAddSublimits()
 
   useEffect(() => {
-    if (accountData.formsData.form1?.id) setFormInformationData(accountData.formsData.form1)
+    if (accountData.formsData.form1?.id) {
+      setAccountId(accountData.formsData.form1.id)
+      setFormInformationData(accountData.formsData.form1)
+    }
   }, [accountData])
 
   const [formsCheck] = useState<RenderFormGeneric[]>([])

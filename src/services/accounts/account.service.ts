@@ -1,8 +1,9 @@
 import { AppAlpexApiGateWay } from '../app.alpex.api-getway'
 
 //Routes
+import { ACCOUNT_ROUTES } from '@/configs/api'
+import { queryBuilder } from '@/services/helper/queryBuilder'
 import { IAccountsState } from '@/types/apps/accountsTypes'
-import { ACCOUNT_ROUTES } from '../../configs/api'
 
 /**
  *  service responsible of the  account methods

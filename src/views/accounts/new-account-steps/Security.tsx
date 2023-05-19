@@ -962,11 +962,12 @@ const Security = ({ onStepChange }: SecurityProps) => {
   const accountData = useAppSelector(state => state.accounts)
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
 
-  const { account } = useGetAccountById(62)
+  const { account, setAccountId } = useGetAccountById()
 
+  console.log(account)
   useEffect(() => {
-    console.log(account)
-  }, [account])
+    accountData.formsData.form1.id && setAccountId(accountData.formsData.form1.id)
+  }, [accountData.formsData.form1.id, setAccountId])
 
   const inter = userThemeConfig.typography?.fontFamilyInter
 
