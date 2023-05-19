@@ -81,7 +81,9 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   const [nextClicked, setNextClicked] = useState<boolean>(false)
   const [userId, setUserId] = useState<number | null>(null)
 
+  //store
   const idAccount = useAppSelector(state => state.accounts?.formsData?.form1?.id)
+
   const { getInformaByIdAccount } = useFindInformationByIdAccount()
   const { addInformation } = useAddInformation()
   const { updateInformationByIdAccount } = useUpdateInformationByIdAccount()
@@ -249,9 +251,9 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   }
 
   const handleSaveInformation = async () => {
-    if (userId) {
+    if (idAccount) {
       await updateInformation()
-      dispatch(updateFormsData({ form1: { basicInfo, placementStructure, userFile, id: userId } }))
+      dispatch(updateFormsData({ form1: { basicInfo, placementStructure, userFile, id: idAccount } }))
       onIsNewAccountChange(false)
     } else {
       const res = await saveInformation()
@@ -263,10 +265,6 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
 
   //Evento que controla el evento de continuar
   const handleNextStep = async () => {
-    setMakeValidations(true)
-    setNextClicked(true)
-    setMakeValidationsPlacement(true)
-
     if (nextClicked) {
       if (basicIncfoValidated && placementStructureValidated) {
         await handleSaveInformation()
@@ -281,7 +279,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
     setMakeValidations(true)
     setNextClicked(true)
 
-    if (nextClicked) {
+    if (nextClicked && basicIncfoValidated) {
       await handleSaveInformation()
     }
     handleCloseModal()
@@ -295,6 +293,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
     setNextClicked(true)
     setOpen(true)
     setMakeValidations(true)
+    setMakeValidationsPlacement(true)
   }
 
   const resetMakeValidations = () => {

@@ -446,8 +446,6 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
       case 'NetPremium':
         data[index]['PremiumPerShare'] = validateNumber(((+sharePercent * +totalNetPremium) / 100).toString())
 
-        // console.log(data[index]['PremiumPerShare'])
-
         break
 
       case 'SharePercent':
@@ -515,7 +513,6 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
     if (!frontingFeeEnabled) {
       data[index]['FrontingFeePercent'] = '0'
       data[index]['FrontingFee'] = '0'
-      console.log(data[index]['PremiumPerShare'])
     }
     setFormData(data)
   }
@@ -950,7 +947,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
     DistribuitedNetPremium: '',
     Diference: ''
   })
-  const [enableNextStep, setEnableNextStep] = useState<boolean>(false)
+
   const [open, setOpen] = useState<boolean>(false)
   const [formInformation, setFormInformation] = useState<FormInformation>({
     frontingFee: 0,
@@ -980,7 +977,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
   }
 
   const onNextStep = () => {
-    onStepChange!(3)
+    validate(true)
   }
 
   const handleNext = () => {
@@ -991,7 +988,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
     validate()
   }
 
-  const validate = async () => {
+  const validate = async (isNextStep?: boolean) => {
     formData.forEach((form, index) => {
       const data = [...formErrors]
       data[index] = { ...SecurityForm }
@@ -1000,39 +997,28 @@ const Security = ({ onStepChange }: SecurityProps) => {
         schema
           .validate(form, { abortEarly: false })
           .then(function () {
-            console.log('dsadsa2')
-
             handleSuccess()
+
+            if (isNextStep) onStepChange!(3)
           })
           .catch(function (err) {
-            console.log('dsadsa4')
-
-            console.log(err)
-
             err?.inner?.forEach((e: any) => {
               data[index][e.path] = e.message
               setFormErrors(data)
             })
-            setEnableNextStep(false)
           })
       } else {
         schemaNetPremium
           .validate(form, { abortEarly: false })
           .then(function () {
-            console.log('dsadsa2')
-
             handleSuccess()
+            if (isNextStep) onStepChange!(3)
           })
           .catch(function (err) {
-            console.log('dsadsa4')
-
-            console.log(err)
-
             err?.inner?.forEach((e: any) => {
               data[index][e.path] = e.message
               setFormErrors(data)
             })
-            setEnableNextStep(false)
           })
       }
     })
@@ -1043,8 +1029,6 @@ const Security = ({ onStepChange }: SecurityProps) => {
     let sumSharePercent = 0
     let sumGrossShare = 0
     formData.forEach(form => {
-      console.log(form)
-
       DistribuitedNetPremium +=
         +form.BrokerAge + +form.Taxes + +form.DynamicComission + +form.FrontingFee + +form.NetInsurancePremium
       if (!form.IsGross) sumSharePercent += +form.SharePercent
@@ -1094,11 +1078,8 @@ const Security = ({ onStepChange }: SecurityProps) => {
   }
 
   const handleSuccess = () => {
-    console.log('dsadsa')
-
     saveInformation()
     dispatch(updateFormsData({ form2: allFormData }))
-    setEnableNextStep(true)
   }
 
   useEffect(() => {
@@ -1181,13 +1162,13 @@ const Security = ({ onStepChange }: SecurityProps) => {
             </Button>
           </div>
           <div className='section action-buttons' style={{ float: 'right', marginRight: 'auto', marginBottom: '20px' }}>
-            <Button className='btn-save' onClick={validate} variant='contained'>
+            <Button className='btn-save' onClick={() => validate()} variant='contained'>
               <div className='btn-icon'>
                 <Icon icon='mdi:content-save' />
               </div>
               SAVE CHANGES
             </Button>
-            <Button className='btn-next' disabled={!enableNextStep} onClick={handleNext}>
+            <Button className='btn-next' onClick={handleNext}>
               Next Step
               <div className='btn-icon'>
                 <Icon icon='material-symbols:arrow-right-alt' />

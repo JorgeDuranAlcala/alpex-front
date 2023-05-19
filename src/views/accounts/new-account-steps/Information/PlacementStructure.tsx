@@ -71,7 +71,7 @@ export type PlacementStructureProps = {
   >
   makeValidations: boolean
   resetMakeValidations: () => void
-  isValidForm?: (valid: boolean) => void
+  isValidForm: (valid: boolean) => void
 }
 
 const PlacementStructure: React.FC<PlacementStructureProps> = ({
@@ -226,9 +226,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
 
     if (Object.values(newErrors).every(error => !error)) {
       // enviar formulario si no hay errores
-      if (isValidForm) {
-        isValidForm(true)
-      }
+      isValidForm(true)
     }
   }
 
