@@ -66,7 +66,7 @@ const SecurityForm: FormInfo = {
   SharePercent: '',
   DynamicComissionPercent: '',
   FrontingFee: '',
-  ReinsuranceCompany: '-1',
+  ReinsuranceCompany: '',
   PremiumPerShare: '',
   DynamicComission: '',
   FrontingFeePercent: '',
@@ -102,26 +102,128 @@ yup.setLocale({
   }
 })
 
+const schemaNetPremium = yup.object().shape(
+  {
+    HasFrontingFee: yup.boolean(),
+    IsGross: yup.boolean(),
+    NetPremium: yup
+      .number()
+      .optional()
+      .transform(value => (isNaN(value) ? undefined : value))
+      .required(),
+    SharePercent: yup
+      .number()
+      .transform(value => (isNaN(value) ? undefined : value))
+      .test('max 100', 'This field must be less than 100', value => Number(value) <= 100)
+      .min(0, 'This field must be greater than 0')
+      .required(),
+    DynamicComissionPercent: yup
+      .number()
+      .transform(value => (isNaN(value) ? undefined : value))
+      .test('max 100', 'This field must be less than 100', value => Number(value) <= 100)
+      .min(0, 'This field must be greater than 0')
+      .required(),
+    FrontingFee: yup
+      .number()
+      .transform(value => (isNaN(value) ? undefined : value))
+      .when('HasFrontingFee', {
+        is: true,
+        then: yup.number().required()
+      }),
+    ReinsuranceCompany: yup
+      .string()
+      .test('is-valid', 'This field is required', value => value !== '-1')
+      .required(),
+    PremiumPerShare: yup
+      .number()
+      .transform(value => (isNaN(value) ? undefined : value))
+      .min(0, 'This field must be greater than 0')
+      .required(),
+    DynamicComission: yup
+      .number()
+      .transform(value => (isNaN(value) ? undefined : value))
+      .required(),
+    FrontingFeePercent: yup
+      .number()
+      .transform(value => (isNaN(value) ? undefined : value))
+      .test('max 100', 'This field must be less than 100', value => Number(value) <= 100)
+      .min(0, 'This field must be greater than 0')
+      .when('HasFrontingFee', {
+        is: true,
+        then: yup
+          .number()
+          .transform(value => (isNaN(value) ? undefined : value))
+          .required('This field is required')
+      }),
+    NetInsurancePremium: yup
+      .number()
+      .transform(value => (isNaN(value) ? undefined : value))
+      .required()
+      .test('Is positive?', 'ERROR: The number must be greater than 0!', value => {
+        const valueVal = value || 0
+
+        return +valueVal > 0
+      })
+  },
+  [['IsGross', 'frontingFeeEnabled']]
+)
+
 const schema = yup.object().shape(
   {
     HasFrontingFee: yup.boolean(),
     IsGross: yup.boolean(),
-    NetPremium: yup.number().required(),
-    SharePercent: yup.number().required(),
-    DynamicComissionPercent: yup.number().required(),
-    FrontingFee: yup.number().when('HasFrontingFee', {
-      is: true,
-      then: yup.number().required()
-    }),
-    ReinsuranceCompany: yup.string().test('is-valid', 'This field is required', value => value !== '-1'),
-    PremiumPerShare: yup.number().required(),
-    DynamicComission: yup.number().required(),
-    FrontingFeePercent: yup.number().when('HasFrontingFee', {
-      is: true,
-      then: yup.number().required('This field is required')
-    }),
+    NetPremium: yup
+      .number()
+      .optional()
+      .transform(value => (isNaN(value) ? undefined : value))
+      .required(),
+    SharePercent: yup
+      .number()
+      .transform(value => (isNaN(value) ? undefined : value))
+      .test('max 100', 'This field must be less than 100', value => Number(value) <= 100)
+      .min(0, 'This field must be greater than 0')
+      .required(),
+    DynamicComissionPercent: yup
+      .number()
+      .transform(value => (isNaN(value) ? undefined : value))
+      .test('max 100', 'This field must be less than 100', value => Number(value) <= 100)
+      .min(0, 'This field must be greater than 0')
+      .required(),
+    FrontingFee: yup
+      .number()
+      .transform(value => (isNaN(value) ? undefined : value))
+      .when('HasFrontingFee', {
+        is: true,
+        then: yup.number().required()
+      }),
+    ReinsuranceCompany: yup
+      .string()
+      .test('is-valid', 'This field is required', value => value !== '-1')
+      .required(),
+    PremiumPerShare: yup
+      .number()
+      .transform(value => (isNaN(value) ? undefined : value))
+      .min(0, 'This field must be greater than 0')
+      .required(),
+    DynamicComission: yup
+      .number()
+      .transform(value => (isNaN(value) ? undefined : value))
+      .required(),
+    FrontingFeePercent: yup
+      .number()
+      .transform(value => (isNaN(value) ? undefined : value))
+      .test('max 100', 'This field must be less than 100', value => Number(value) <= 100)
+      .min(0, 'This field must be greater than 0')
+      .when('HasFrontingFee', {
+        is: true,
+        then: yup
+          .number()
+          .transform(value => (isNaN(value) ? undefined : value))
+          .required('This field is required')
+      }),
     NetInsurancePremium: yup
       .number()
+      .transform(value => (isNaN(value) ? undefined : value))
       .required()
       .test('Is positive?', 'ERROR: The number must be greater than 0!', value => {
         const valueVal = value || 0
@@ -138,7 +240,7 @@ const schema = yup.object().shape(
     }),
     BrokerAge: yup
       .number()
-      .transform((_, val) => (val === Number(val) ? val : null))
+      .transform(value => (isNaN(value) ? undefined : value))
       .nullable()
       .when('IsGross', {
         is: true,
@@ -146,7 +248,7 @@ const schema = yup.object().shape(
       }),
     Taxes: yup
       .number()
-      .transform((_, val) => (val === Number(val) ? val : null))
+      .transform(value => (isNaN(value) ? undefined : value))
       .nullable()
       .when('IsGross', {
         is: true,
@@ -154,7 +256,9 @@ const schema = yup.object().shape(
       }),
     BrokerAgePercent: yup
       .number()
-      .transform((_, val) => (val === Number(val) ? val : null))
+      .transform(value => (isNaN(value) ? undefined : value))
+      .test('max 100', 'This field must be less than 100', value => Number(value) <= 100)
+      .min(0, 'This field must be greater than 0')
       .nullable()
       .when('IsGross', {
         is: true,
@@ -162,7 +266,9 @@ const schema = yup.object().shape(
       }),
     TaxesPercent: yup
       .number()
-      .transform((_, val) => (val === Number(val) ? val : null))
+      .transform(value => (isNaN(value) ? undefined : value))
+      .test('max 100', 'This field must be less than 100', value => Number(value) <= 100)
+      .min(0, 'This field must be greater than 0')
       .nullable()
       .when('IsGross', {
         is: true,
@@ -290,6 +396,19 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
     return result.toString()
   }
 
+  const resetValues = () => {
+    const data = [...formData]
+
+    data[index]['DynamicComissionPercent'] = '' + 0
+    data[index]['DynamicComission'] = '' + 0
+
+    data[index]['BrokerAge'] = '' + 0
+    data[index]['BrokerAgePercent'] = '' + 0
+
+    data[index]['TaxesPercent'] = '' + 0
+    data[index]['Taxes'] = '' + 0
+  }
+
   const setValues = (field: keyof FormInfo) => {
     const data = formData.map(obj => ({ ...obj }))
     const totalNetPremium = data[index]['NetPremium']
@@ -319,28 +438,34 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
     else dataError[index]['NetInsurancePremium'] = ''
     setFormErrors(dataError)
     setFormErrors(formErrors)
+    if (+totalNetPremium === 0) {
+      data[index]['NetPremium'] = formInformation.netPremium.toString()
+    }
 
     switch (field) {
       case 'NetPremium':
-        data[index]['SharePercent'] = '100'
-        data[index]['PremiumPerShare'] = totalNetPremium
+        data[index]['PremiumPerShare'] = validateNumber(((+sharePercent * +totalNetPremium) / 100).toString())
+
+        // console.log(data[index]['PremiumPerShare'])
+
         break
 
       case 'SharePercent':
+        data[index]['NetInsurancePremium'] = NetInsurancePremium
         data[index]['PremiumPerShare'] = validateNumber(((+sharePercent * +totalNetPremium) / 100).toString())
         break
 
       case 'PremiumPerShare':
-        data[index]['SharePercent'] = validateNumber(((+premiumPerShare / +totalNetPremium) * 100).toString())
         data[index]['NetInsurancePremium'] = NetInsurancePremium
-        data[index]['DynamicComissionPercent'] = '100'
-        data[index]['FrontingFeePercent'] = '100'
-        data[index]['TaxesPercent'] = isGross ? '100' : ''
-        data[index]['BrokerAgePercent'] = isGross ? '100' : ''
-        data[index]['Taxes'] = isGross ? premiumPerShare : ''
-        data[index]['BrokerAge'] = isGross ? premiumPerShare : ''
-        data[index]['FrontingFee'] = premiumPerShare
-        data[index]['DynamicComission'] = premiumPerShare
+        data[index]['SharePercent'] = validateNumber(((+premiumPerShare / +totalNetPremium) * 100).toString())
+        data[index]['Taxes'] = isGross ? validateNumber(((+TaxesPercent * +premiumPerShare) / 100).toString()) : ''
+        data[index]['BrokerAge'] = isGross
+          ? validateNumber(((+BrokerAgePercent * +premiumPerShare) / 100).toString())
+          : ''
+        data[index]['FrontingFee'] = validateNumber(((+FrontingFeePercent * +premiumPerShare) / 100).toString())
+        data[index]['DynamicComission'] = validateNumber(
+          ((+dynamicComissionPercent * +premiumPerShare) / 100).toString()
+        )
 
         break
 
@@ -390,8 +515,8 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
     if (!frontingFeeEnabled) {
       data[index]['FrontingFeePercent'] = '0'
       data[index]['FrontingFee'] = '0'
+      console.log(data[index]['PremiumPerShare'])
     }
-
     setFormData(data)
   }
 
@@ -455,21 +580,33 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
     const data = [...formData]
 
     if (company) {
+      resetValues()
       setIsGross(company.isGross)
       company.isGross
         ? (data[index]['NetPremium'] = formInformation.grossPremium.toString())
         : (data[index]['NetPremium'] = formInformation.netPremium.toString())
+
+      setValues('NetPremium')
+      setValues('PremiumPerShare')
     } else {
       setIsGross(false)
       data[index]['NetPremium'] = formInformation.netPremium.toString()
+      setValues('NetPremium')
+      setValues('PremiumPerShare')
     }
-    setFormData(data)
 
     if (company?.isGross) {
       handleIsGross()
     } else handleIsNet()
     //eslint-disable-next-line
   }, [formData[index].ReinsuranceCompany])
+
+  useEffect(() => {
+    const data = [...formData]
+    data[index].NetPremium = formInformation.netPremium.toString()
+    setFormData(data)
+    //eslint-disable-next-line
+  }, [])
 
   const switchAlpex = useRef(null)
 
@@ -491,6 +628,7 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
               InputProps={{
                 inputComponent: NumericFormatCustom as any
               }}
+              defaultValue={formInformation.netPremium.toString()}
               onChange={e => handleFormChange('NetPremium', e.target.value)}
             />
             <FormHelperText sx={{ color: 'error.main' }}>{formErrors[index]?.NetPremium}</FormHelperText>
@@ -595,12 +733,10 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
             <InputLabel>Reinsurance companies</InputLabel>
 
             <Select
-              label='Select a reinsurance company'
               value={formData[index].ReinsuranceCompany}
               onChange={e => handleFormChange('ReinsuranceCompany', e.target.value)}
               labelId='broker'
             >
-              <MenuItem value='-1'>Select a reinsurance company</MenuItem>
               {avaliableReinsurers.map(reinsurer => (
                 <MenuItem key={reinsurer.id} value={reinsurer.id}>
                   {reinsurer.name}
@@ -694,6 +830,7 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
               InputProps={{
                 inputComponent: NumericFormatCustom as any
               }}
+              disabled={true}
               onChange={e => handleFormChange('NetInsurancePremium', e.target.value)}
             />
 
@@ -712,7 +849,6 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
                 }}
                 labelId='broker'
               >
-                <MenuItem value=''>Select Retro cedant</MenuItem>
                 {retroCedants?.map(cedant => (
                   <MenuItem key={cedant.name} value={cedant.id}>
                     {cedant.name}
@@ -733,7 +869,6 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
                 labelId='broker'
                 disabled={formData[index].RetroCedant === ''}
               >
-                <MenuItem value=''>Select Retro Cedant contact</MenuItem>
                 {contacts?.map(contact => (
                   <MenuItem key={contact.name} value={contact.id}>
                     {contact.name}
@@ -859,31 +994,57 @@ const Security = ({ onStepChange }: SecurityProps) => {
   const validate = async () => {
     formData.forEach((form, index) => {
       const data = [...formErrors]
-      data[index] = { ...SecurityForm, ReinsuranceCompany: '' }
-      schema
-        .validate(form, { abortEarly: false })
-        .then(function () {
-          handleSuccess()
-        })
-        .catch(function (err) {
-          console.log(err)
+      data[index] = { ...SecurityForm }
 
-          err?.inner?.forEach((e: any) => {
-            data[index][e.path] = e.message
+      if (form.IsGross) {
+        schema
+          .validate(form, { abortEarly: false })
+          .then(function () {
+            console.log('dsadsa2')
 
-            setFormErrors(data)
+            handleSuccess()
           })
-          setEnableNextStep(false)
-        })
+          .catch(function (err) {
+            console.log('dsadsa4')
+
+            console.log(err)
+
+            err?.inner?.forEach((e: any) => {
+              data[index][e.path] = e.message
+              setFormErrors(data)
+            })
+            setEnableNextStep(false)
+          })
+      } else {
+        schemaNetPremium
+          .validate(form, { abortEarly: false })
+          .then(function () {
+            console.log('dsadsa2')
+
+            handleSuccess()
+          })
+          .catch(function (err) {
+            console.log('dsadsa4')
+
+            console.log(err)
+
+            err?.inner?.forEach((e: any) => {
+              data[index][e.path] = e.message
+              setFormErrors(data)
+            })
+            setEnableNextStep(false)
+          })
+      }
     })
   }
 
   const calculateDistribuitedNetPremium = () => {
-    console.log(formInformation)
     let DistribuitedNetPremium = 0
     let sumSharePercent = 0
     let sumGrossShare = 0
     formData.forEach(form => {
+      console.log(form)
+
       DistribuitedNetPremium +=
         +form.BrokerAge + +form.Taxes + +form.DynamicComission + +form.FrontingFee + +form.NetInsurancePremium
       if (!form.IsGross) sumSharePercent += +form.SharePercent
@@ -933,6 +1094,8 @@ const Security = ({ onStepChange }: SecurityProps) => {
   }
 
   const handleSuccess = () => {
+    console.log('dsadsa')
+
     saveInformation()
     dispatch(updateFormsData({ form2: allFormData }))
     setEnableNextStep(true)
@@ -967,6 +1130,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
               <>
                 {index > 0 && <hr style={{ margin: '40px 0px', backgroundColor: 'lightgray' }} />}
                 <FormSection
+                  key={index}
                   index={index}
                   formData={formData}
                   setFormData={setFormData}

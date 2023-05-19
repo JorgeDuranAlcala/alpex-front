@@ -20,8 +20,8 @@ export enum ACCOUNT_ROUTES {
 
 export enum ACCOUNT_INFORMATION_ROUTES {
   ADD = 'account/information/add',
-  GET = 'account/Information',
-  UPDATE = 'account/Information'
+  GET = 'account/information',
+  UPDATE = 'account/information'
 }
 
 export enum ACCOUNT_SECURITY_ROUTES {
@@ -51,7 +51,9 @@ export enum BROKER_ROUTES {
   GET_ALL = 'catalogs/broker/all',
   GET_BY_ID = 'catalogs/broker',
   ADD = 'catalogs/broker/add',
-  UPDATE = 'catalogs/broker'
+  UPDATE = 'catalogs/broker',
+  GET = 'catalogs/broker',
+  DELETE = 'catalogs/broker/delete'
 }
 
 export enum CEDANT_ROUTERS {
@@ -140,9 +142,21 @@ export enum INSTALLMENT_ROUTERS {
   UPDATE = 'account/installment/update'
 }
 
-// ==== CATALOGS
+export enum ACCOUNT_STATUS_ROUTERS {
+  GET_ALL = 'account/account-status/all',
+  GET_BY_ID = 'account/account-status/'
+}
+
+// ==== USER
 export enum USERS_ROUTES {
   GET = 'user',
   ADD = 'user',
-  UPDATE = 'user'
+  UPDATE = 'user',
+  DELETE = 'user/delete'
+}
+
+// ==== RECOVERY PASSWORD
+export enum RECOVER_PASSWORD_ROUTES {
+  NOTIFICATION = 'notification/recovery-password',
+  UPDATE = 'user/update-password'
 }

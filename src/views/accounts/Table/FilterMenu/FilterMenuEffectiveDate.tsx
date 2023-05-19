@@ -87,6 +87,16 @@ const FilterMenuEffectiveDate = () => {
       : date!.toLocaleDateString('en-US', { year: 'numeric' })
   }
 
+  const dateTransformNumber = (date: DateType) => {
+    if (!date) return ''
+
+    return date!.toLocaleDateString('en-CA', {
+      year: 'numeric',
+      day: '2-digit',
+      month: '2-digit'
+    })
+  }
+
   useEffect(() => {
     if (subtype === 'fulldate') {
       setMonth(null)
@@ -105,7 +115,7 @@ const FilterMenuEffectiveDate = () => {
   const handleClick = () => {
     dispatch(
       handleAccountFilter({
-        type: 'EffectiveDate',
+        type: 'effectiveDate',
         text: `Effective:  ${
           subtype === 'fulldate'
             ? dateTransform(effectiveDate)
@@ -113,13 +123,15 @@ const FilterMenuEffectiveDate = () => {
             ? dateTransform(month)
             : dateTransform(year)
         }`,
-        value: `${
-          subtype === 'fulldate'
-            ? dateTransform(effectiveDate)
-            : subtype === 'month'
-            ? dateTransform(month)
-            : dateTransform(year)
-        }`,
+        value: `${dateTransformNumber(effectiveDate)}`,
+
+        // value: `${
+        //   subtype === 'fulldate'
+        //     ? dateTransform(effectiveDate)
+        //     : subtype === 'month'
+        //     ? dateTransform(month)
+        //     : dateTransform(year)
+        // }`,
         subtype
       })
     )

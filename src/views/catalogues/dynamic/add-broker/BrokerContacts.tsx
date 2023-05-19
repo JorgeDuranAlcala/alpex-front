@@ -72,7 +72,7 @@ const BrokerContacts = () => {
 
     switch (type) {
       case 'success':
-        setAlertText('NEW BROKER ADDED')
+        setAlertText('NEW CONTACT ADDED')
         setAlertIcon('mdi:check-circle-outline')
         break;
       case 'error':
@@ -248,6 +248,13 @@ const BrokerContacts = () => {
     // triggerAlert("warn")
   }
 
+  const deleteRows = () => {  //must be replaced with the respective broker service
+    // const newContactList = // Service return new list
+    // setContactList(newBinderList)
+    // setOpenDelete(false)
+  }
+
+
   useEffect(() => {
     if (
       contactData.name !== undefined &&
@@ -334,6 +341,8 @@ const BrokerContacts = () => {
         <div className='table-header'>
           <TableHeader
             onSearch={searchContacts}
+            onDeleteRows={deleteRows}
+            deleteBtn={selectedRows.length > 0 ? true : false}
             textBtn="ADD NEW CONTACT"
             onClickBtn={() => { setOpenNewContact(true) }}
           />

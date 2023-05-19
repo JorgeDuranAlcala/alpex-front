@@ -21,6 +21,7 @@ import TableHeader from './TableHeader'
 import ModalAction from './modal'
 
 // ** Custom utilities
+import { formatStatus } from '@/utils/formatStatus'
 import { Link } from '@mui/material'
 import { useAppDispatch, useAppSelector } from 'src/store'
 import { deleteAccountFilter, fetchAccounts, handleAccountFilter, resetAccountFilter } from 'src/store/apps/accounts'
@@ -54,7 +55,7 @@ const Table = ({ status }: IAccountTable) => {
   // ** State
   const [selectedRows, setSelectedRows] = useState<GridRowId[]>([])
   const [accounts, setAccounts] = useState<any>([])
-  const [loading, setLoading] = useState<any>([])
+  const [, setLoading] = useState<any>([])
   const [badgeData, setBadgeData] = useState<IAlert>({
     message: '',
     status: undefined,
@@ -75,9 +76,9 @@ const Table = ({ status }: IAccountTable) => {
   }
 
   useEffect(() => {
-    dispatch(fetchAccounts())
+    dispatch(fetchAccounts(accountsReducer))
     //eslint-disable-next-line
-  }, [])
+  }, [accountsReducer.filters])
 
   useEffect(() => {
     dispatch(resetAccountFilter())
@@ -95,10 +96,27 @@ const Table = ({ status }: IAccountTable) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status])
+
   useEffect(() => {
-    setAccounts(accountsReducer.accounts || [])
-    console.log(loading)
     setLoading(accountsReducer.loading)
+
+    const formatedRows = []
+    const rawRows = accountsReducer.accounts
+
+    if (rawRows && rawRows.length > 0) {
+      for (const rawRow of rawRows) {
+        formatedRows.push({
+          id: rawRow.id,
+          status: formatStatus(rawRow.idAccountStatus.status),
+          insured: rawRow?.informations[0]?.insured,
+          lob: rawRow?.informations[0]?.idLineOfBussines?.lineOfBussines,
+          effectiveDate: rawRow?.informations[0]?.effetiveDate,
+          expirationDate: rawRow?.informations[0]?.expirationDate
+        })
+      }
+    }
+
+    setAccounts(formatedRows || [])
     //eslint-disable-next-line
   }, [accountsReducer])
 

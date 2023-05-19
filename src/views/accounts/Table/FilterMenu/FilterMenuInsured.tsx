@@ -22,7 +22,7 @@ const FilterMenuInsured = () => {
     else
       dispatch(
         handleAccountFilter({
-          type: 'Insured',
+          type: 'insured',
           value: `${query}`,
           text: `Insured:  ${query}`
         })

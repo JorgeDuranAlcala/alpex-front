@@ -1,5 +1,9 @@
 export interface BrokerDto {
   id: number
-  alias: string
+  alias?: string
   name: string
+}
+
+export interface BrokersDeleteDto {
+  idDeleteList: number[]
 }

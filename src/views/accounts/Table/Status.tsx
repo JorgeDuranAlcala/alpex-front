@@ -40,24 +40,28 @@ const Status: React.FC<IStatusProps> = ({ status }) => {
   const statusComponents: IComponents = {
     [EStatus.PENDING]: (
       <>
-        <Box component='span' sx={{
-          display: 'flex',
-          gap: 2,
-          color: colors.primary.main,
-          alignItems: 'center',
-          overflow: 'hidden'
-        }}>
-          <Icon icon='mdi:clock' fontSize={20} />
-          <Typography sx={{
-            fontSize: fonts.size.px16,
-            fontFamily: fonts.inter,
+        <Box
+          component='span'
+          sx={{
+            display: 'flex',
+            gap: 2,
+            color: colors.primary.main,
             alignItems: 'center',
-            '&.MuiTypography-root': {
-              color: '#174BC1',
-              fontWeight: '500'
-            }
-
-          }}>
+            overflow: 'hidden'
+          }}
+        >
+          <Icon icon='mdi:clock' fontSize={20} />
+          <Typography
+            sx={{
+              fontSize: fonts.size.px16,
+              fontFamily: fonts.inter,
+              alignItems: 'center',
+              '&.MuiTypography-root': {
+                color: '#174BC1',
+                fontWeight: '500'
+              }
+            }}
+          >
             {EStatusString.PENDING}
           </Typography>
         </Box>
@@ -65,7 +69,10 @@ const Status: React.FC<IStatusProps> = ({ status }) => {
     ),
     [EStatus.BOUND]: (
       <>
-        <Box component='span' sx={{ overflow: 'hidden', display: 'flex', gap: 2, color: colors.primary.light, alignContent: 'center' }}>
+        <Box
+          component='span'
+          sx={{ overflow: 'hidden', display: 'flex', gap: 2, color: colors.primary.light, alignContent: 'center' }}
+        >
           <Icon icon='icon-park-outline:link-three' fontSize={20} />
           <Typography sx={{ color: colors.primary.light, fontSize: fonts.size.px16, fontFamily: fonts.inter }}>
             {EStatusString.BOUND}
@@ -75,7 +82,10 @@ const Status: React.FC<IStatusProps> = ({ status }) => {
     ),
     [EStatus.NOT_MATERIALIZED]: (
       <>
-        <Box component='span' sx={{ overflow: 'hidden', display: 'flex', gap: 2, color: colors.warning.dark, alignContent: 'center' }}>
+        <Box
+          component='span'
+          sx={{ overflow: 'hidden', display: 'flex', gap: 2, color: colors.warning.dark, alignContent: 'center' }}
+        >
           <Icon icon='mdi:progress-helper' fontSize={20} />
           <Typography sx={{ color: colors.warning.dark, fontSize: fonts.size.px16, fontFamily: fonts.inter }}>
             {EStatusString.NOT_MATERIALIZED}
@@ -85,7 +95,10 @@ const Status: React.FC<IStatusProps> = ({ status }) => {
     ),
     [EStatus.NOT_TAKEN_UP]: (
       <>
-        <Box component='span' sx={{ overflow: 'hidden', display: 'flex', gap: 2, color: colors.secondary.dark, alignContent: 'center' }}>
+        <Box
+          component='span'
+          sx={{ overflow: 'hidden', display: 'flex', gap: 2, color: colors.secondary.dark, alignContent: 'center' }}
+        >
           <Icon icon='custom:not-taken-up' fontSize={20} />
           <Typography sx={{ color: colors.secondary.dark, fontSize: fonts.size.px16, fontFamily: fonts.inter }}>
             {EStatusString.NOT_TAKEN_UP}
@@ -95,7 +108,10 @@ const Status: React.FC<IStatusProps> = ({ status }) => {
     ),
     [EStatus.DECLINED]: (
       <>
-        <Box component='span' sx={{ overflow: 'hidden', display: 'flex', gap: 2, color: colors.error.dark, alignContent: 'center' }}>
+        <Box
+          component='span'
+          sx={{ overflow: 'hidden', display: 'flex', gap: 2, color: colors.error.dark, alignContent: 'center' }}
+        >
           <Icon icon='mdi:cancel' fontSize={20} />
           <Typography sx={{ color: colors.error.dark, fontSize: fonts.size.px16, fontFamily: fonts.inter }}>
             {EStatusString.DECLINED}

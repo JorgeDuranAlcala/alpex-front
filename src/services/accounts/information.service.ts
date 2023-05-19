@@ -1,4 +1,5 @@
 import { AppAlpexApiGateWay } from '../app.alpex.api-getway'
+import { AppAlpexApiGateWayNoToken } from '../app.alpex.api-getway-no-jwt'
 
 import { ACCOUNT_INFORMATION_ROUTES } from '../../configs/api'
 
@@ -20,16 +21,24 @@ class AccountServices {
    * @param information
    * @returns
    */
-  async addInformation(information: Partial<InformationDto>) {
+  async addInformation(information: Partial<InformationDto>, jwtToken: string) {
     try {
-      const { data } = await AppAlpexApiGateWay.post(`${ACCOUNT_INFORMATION_ROUTES.ADD}`, {
-        ...information
-      })
+      const { data } = await AppAlpexApiGateWayNoToken.post(
+        `${ACCOUNT_INFORMATION_ROUTES.ADD}`,
+        {
+          ...information
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${jwtToken}`
+          }
+        }
+      )
 
       return data
     } catch (error) {
       const message = String(error)
-      throw new Error(message)
+      console.log(message)
     }
   }
 
@@ -45,7 +54,7 @@ class AccountServices {
       return data
     } catch (error) {
       const message = String(error)
-      throw new Error(message)
+      console.log(message)
     }
   }
 
@@ -55,7 +64,7 @@ class AccountServices {
    * @param information
    * @returns
    */
-  async updatedInformaById(idAccount: number, information: InformationDto) {
+  async updatedInformaById(idAccount: number, information: Partial<InformationDto>) {
     try {
       const { data } = await AppAlpexApiGateWay.put(`${ACCOUNT_INFORMATION_ROUTES.UPDATE}/${idAccount}`, {
         ...information

@@ -25,6 +25,7 @@ import FormHeader from 'src/views/accounts/new-account-steps/headers/formHeader'
 const NewAccount = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [disableComments, setDisableComments] = useState(false)
+  const [isNewAccount, setIsNewAccount] = useState<boolean>(true)
   const [activeStep, setActiveStep] = useState(1)
 
   const handleStepChange = (step: number) => {
@@ -32,11 +33,14 @@ const NewAccount = () => {
     console.log(step)
   }
 
+  const handleIsNewAccountChange = (status: boolean) => {
+    setIsNewAccount(status)
+  }
+
   const StepForm = ({ step }: { step: number }) => {
     switch (step) {
       case 1:
-        return <Information onStepChange={handleStepChange} />
-
+        return <Information onStepChange={handleStepChange} onIsNewAccountChange={handleIsNewAccountChange} />
       case 2:
         return <Security onStepChange={handleStepChange} />
       case 3:
@@ -53,7 +57,7 @@ const NewAccount = () => {
       {/* "ActionsHeader" component receives the initial status of the
       account and in order to use it as a "side header" (forms 2 to 4),
       it is necessary to send the boolean variable "sideHeader = true". */}
-      {activeStep == 1 ? (
+      {activeStep == 1 && isNewAccount ? (
         <ActionsHeader accountStatus='PENDING' sideHeader={false} />
       ) : (
         <>
@@ -63,6 +67,7 @@ const NewAccount = () => {
 
       <Card>
         <NewAccountStepper changeStep={activeStep} onStepChange={handleStepChange} />
+        {}
         <StepForm step={activeStep} />
         {/* <TabAccount /> */}
 

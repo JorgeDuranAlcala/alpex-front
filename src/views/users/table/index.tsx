@@ -9,7 +9,7 @@ import { DataGrid, GRID_CHECKBOX_SELECTION_COL_DEF, GridColumns, GridRowId } fro
 // ** Icon Imports
 
 // ** Custom Hooks imports
-// import { useDeleteUser } from '@/hooks/catalogs/users/deleteUser'
+import { useDeleteUser } from '@/hooks/catalogs/users/deleteUser'
 
 // import { UsersDeleteDto } from '@/services/users/dtos/UsersDto'
 
@@ -72,11 +72,7 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
   const [loading, setLoading] = useState<any>([])
   const [selectedUser, setSelectedUser] = useState<IUsersGrid | null>(null)
   const [modalShow, setModalShow] = useState<boolean>(false)
-
-  // const [idDeleteUser,setIdDeleteUser] = useState<UsersDeleteDto | null>([])
-
-  // console.log('Id_User--->', selectedUser?.id)
-  // console.log('Id_Useeeer--->',idDeleteUser)
+  const [idMultiple, setIdMultiple] = useState<any>([])
 
   //WIP
   //eslint-disable-next-line
@@ -90,9 +86,12 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
   const dispatch = useAppDispatch()
   const usersReducer = useAppSelector(state => state.users)
 
+  // console.log('Redux_Store--->', usersReducer.users)
+
   // ** Hooks
-  //  const deleteUser = useDeleteUser([5])
-  //  console.log(deleteUser)
+  const { deleteUser } = useDeleteUser()
+
+  // console.log(deleteUser)
 
   const handleClickColumnHeader = (field: string) => {
     alert(field)
@@ -100,7 +99,7 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
 
   useEffect(() => {
     setAccounts(usersReducer.users || [])
-    console.log(loading)
+    console.log('Loading--->', loading)
     setLoading(usersReducer.loading)
     //eslint-disable-next-line
   }, [usersReducer.users])
@@ -112,11 +111,21 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const open = Boolean(anchorEl)
+
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget)
   }
   const handleClose = () => {
     setAnchorEl(null)
+  }
+
+  const handleDelete = () => {
+    if (selectedRows.length > 1) {
+      deleteUser({ idUsersList: idMultiple })
+    } else {
+      deleteUser({ idUsersList: [selectedUser!.id] })
+    }
+    dispatch(fetchAccounts(usersReducer))
   }
 
   //name, role, company, phone number, email
@@ -296,6 +305,7 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
         handleClickContinue={() => {
           setModalShow(false)
           onDelete()
+          handleDelete()
         }}
         handleClickCancel={() => {
           setModalShow(false)
@@ -321,7 +331,10 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
           Pagination: CustomPagination
         }}
         className={'account-datagrid'}
-        onSelectionModelChange={rows => setSelectedRows(rows)}
+        onSelectionModelChange={rows => {
+          setSelectedRows(rows)
+          setIdMultiple(rows)
+        }}
       />
     </>
   )

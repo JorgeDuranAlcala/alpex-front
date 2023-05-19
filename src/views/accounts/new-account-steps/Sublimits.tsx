@@ -1,4 +1,7 @@
+import { useGetAccountById } from '@/hooks/accounts/forms'
+import { useAddSublimits } from '@/hooks/accounts/sublimit'
 import GenericCard from '@/layouts/components/SublimitsCards/GenericCard'
+import { useAppSelector } from '@/store'
 import CheckIcon from '@mui/icons-material/Check'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import SaveIcon from '@mui/icons-material/Save'
@@ -14,7 +17,7 @@ import {
   TextField,
   Typography
 } from '@mui/material'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import UserThemeOptions from 'src/layouts/UserThemeOptions'
 import SublimitCard, { RenderFormGeneric } from 'src/layouts/components/CardSublimit'
 import {
@@ -23,6 +26,7 @@ import {
   InputsContainerSublimits,
   NextContainer
 } from 'src/styles/Forms/Sublimits'
+import * as yup from 'yup'
 
 const ITEM_HEIGHT = 60
 const ITEM_PADDING_TOP = 8
@@ -48,28 +52,210 @@ const coverage = [
   { id: 9, label: 'Business Interruption Machinery Breakdown' }
 ]
 
+yup.setLocale({
+  mixed: {
+    required: 'This field is required',
+    notType: 'This field must be a number'
+  },
+  number: {
+    min: 'This field must be greater than ${min}',
+    max: 'This field must be less than ${max}'
+  }
+})
+
+/*  yes?: boolean
+  luc?: boolean
+  sublimit: number
+  percentage: number
+  price: number
+  min: number
+  days: number
+  priceInterruption: number
+  coinsurance: number
+  index?: number
+  typeDeductible?: string
+  typeBi?: string
+  type
+  */
+
+const schema = yup.object().shape({
+  sublimit: yup
+    .number()
+    .transform((_, val) => (val === Number(val) ? val : null))
+    .test('Validate sublimit', 'Sublimit cannot be greater than limit', value => {
+      const val = value || 0
+      const limit = 10000 || 0
+
+      return +val <= +limit
+    })
+    .required()
+    .min(0),
+  yes: yup.boolean().notRequired(),
+  luc: yup.boolean().notRequired(),
+  typeDeductibleRadio: yup.string().notRequired(),
+  percentage: yup
+    .number()
+    .transform((_, val) => (val === Number(val) ? val : null))
+    .test('Validate percentage', 'Percentage cannot be greater than 100', value => {
+      const val = value || 0
+
+      return +val <= 100
+    })
+    .nullable()
+    .when('typeDeductibleRadio', {
+      is: (typeDeductibleRadio: string) => {
+        return typeDeductibleRadio === 'percentage'
+      },
+      then: yup.number().required('Field is required').min(1)
+    }),
+  price: yup
+    .number()
+    .transform((_, val) => (val === Number(val) ? val : null))
+    .nullable()
+    .when('typeDeductibleRadio', {
+      is: (typeDeductibleRadio: string) => {
+        return typeDeductibleRadio === 'price'
+      }, //just an e.g. you can return a function
+      then: yup.number().required('Field is required').min(1)
+    }),
+  min: yup
+    .number()
+    .transform((_, val) => (val === Number(val) ? val : null))
+    .nullable()
+    .when('typeDeductibleRadio', {
+      is: (typeDeductibleRadio: string) => {
+        return typeDeductibleRadio === 'percentage'
+      },
+      then: yup.number().required('Field is required').min(1)
+    }),
+  typeDeductible: yup.string().when('typeDeductibleRadio', {
+    is: (typeDeductibleRadio: string) => {
+      return typeDeductibleRadio === 'percentage'
+    },
+    then: yup.string().required('Field is required')
+  }),
+  typeBi: yup.string().notRequired(),
+  days: yup
+    .number()
+    .transform((_, val) => (val === Number(val) ? val : null))
+    .nullable()
+    .test('Validate days', 'Days cannot be greater than 999', value => {
+      const val = value || 0
+
+      return +val <= 999
+    })
+    .when('typeBi', {
+      is: (typeBi: string) => {
+        return typeBi === 'BIDays'
+      },
+      then: yup.number().required('Field is required').min(1)
+    }),
+  priceInterruption: yup
+    .number()
+    .transform((_, val) => (val === Number(val) ? val : null))
+    .nullable()
+    .when('typeBi', {
+      is: (typeBi: string) => {
+        return typeBi === 'BIPrice'
+      },
+      then: yup.number().required('Field is required').min(1)
+    }),
+  coinsurance: yup
+    .number()
+    .transform((_, val) => (val === Number(val) ? val : null))
+    .test('Validate coinsurance', 'Coinsurance cannot be greater than 100', value => {
+      const val = value || 0
+
+      return +val <= 100
+    })
+    .required()
+    .min(1)
+})
+
+const initialValues = {
+  sublimit: 0,
+  percentage: 0,
+  price: 0,
+  min: 0,
+  days: 0,
+  priceInterruption: 0,
+  coinsurance: 0,
+  yes: false,
+  luc: false,
+  typeDeductible: '',
+  typeBi: '',
+  at100: false,
+  typeDeductibleRadio: 'default'
+}
 const Sublimits = () => {
   const forms = GenericCard
-  console.log(forms)
   const [checked, setChecked] = useState<number[]>([])
+  const [allFormData, setAllFormData] = useState<any[]>([])
+  const [formErrors, setFormErrors] = useState<any[]>([])
   const [coverageSelect, setCoverageSelect] = useState<any>('')
   const [availableOptions, setAvailableOptions] = useState<any[]>(coverage)
   const [filteredOptions, setFilteredOptions] = useState<any[]>([])
-  console.log('Selected', availableOptions)
-  console.log('Pusheados', filteredOptions)
+  const [formInformationData, setFormInformationData] = useState<any>({})
+  const accountData = useAppSelector(state => state.accounts)
+  const { account } = useGetAccountById(formInformationData?.id)
+  const { saveSublimits } = useAddSublimits()
+
+  useEffect(() => {
+    if (accountData.formsData.form1?.id) setFormInformationData(accountData.formsData.form1)
+  }, [accountData])
+
   const [formsCheck] = useState<RenderFormGeneric[]>([])
-  console.log('arrayForms--->', formsCheck)
+
+  const handleOnChangeForm = (value: any, index: number) => {
+    const data = allFormData
+    data[index] = value
+    data[index].index = index
+    validate(data[index], index)
+    setAllFormData(data)
+  }
+  const validate = (form: any, index: number) => {
+    const dataError = { ...initialValues }
+    Object.keys(dataError).forEach(function (key) {
+      // @ts-ignore
+      dataError[key] = null
+    })
+    const data = formErrors
+    data[index] = dataError
+
+    schema
+      .validate({ ...form, account }, { abortEarly: false })
+      .then(function () {
+        console.log('ok')
+        const removeItem = data.filter((errors, i) => i !== index)
+        setFormErrors(removeItem)
+      })
+      .catch(function (err) {
+        for (const error of err?.inner) {
+          console.log(error)
+          data[index][error.path] = error.message
+          console.log(data)
+        }
+
+        setFormErrors(data)
+
+        //setEnableNextStep(false)
+      })
+  }
   const handleToggle = (value: number, label: string) => () => {
-    console.log(label)
     const currentIndex = checked.indexOf(value)
     const newChecked = [...checked]
 
     if (currentIndex === -1) {
       newChecked.push(value)
+      allFormData.push({ ...initialValues })
+      formErrors.push({ ...initialValues })
       formsCheck.push({
         type: value,
         components: forms,
-        title: label
+        title: label,
+        handleOnChangeForm: handleOnChangeForm,
+        formInformation: account,
+        formErrors: formErrors
       })
     } else {
       newChecked.splice(currentIndex, 1)
@@ -80,7 +266,6 @@ const Sublimits = () => {
 
   const handleChangeSelect = (event: SelectChangeEvent<string[]>) => {
     const selectedValue = event.target.value
-    console.log(selectedValue)
     setCoverageSelect(selectedValue)
     setAvailableOptions(availableOptions.filter(option => option.label !== selectedValue))
     const filter = availableOptions.filter(option => option.label === selectedValue)
@@ -89,8 +274,27 @@ const Sublimits = () => {
     } else return
   }
 
-  const addOption = (name: string) => {
+  const handleSubmit = () => {
+    const dataToSubmit = allFormData.map(item => {
+      return {
+        sublimit: item.sublimit,
+        at100: true,
+        yes: true,
+        luc: true,
+        typeDeductible: 'none',
+        typeBi: 'days',
+        coinsurance: item.coinsurance,
+        idAccount: formInformationData.id
+      }
+    })
+    saveSublimits(dataToSubmit)
+  }
+
+  const addOption = (name: string, index: number) => {
+    formsCheck.splice(index, 1)
+    allFormData.splice(index, 1)
     const add = filteredOptions.filter(obj => obj.label === name)
+
     if (!availableOptions.some(item => item.label === add[0].label)) {
       setAvailableOptions(availableOptions.concat(add))
     } else {
@@ -111,7 +315,10 @@ const Sublimits = () => {
           <InputsContainerSublimits>
             <TextField
               sx={{ width: '48.5%' }}
-              value={'Limit'}
+              value={account?.informations[0].limit || 'Limit'}
+              disabled
+              name='Limit'
+              label='Limit'
               InputProps={{
                 disabled: true
               }}
@@ -187,12 +394,13 @@ const Sublimits = () => {
                       state={item.state}
                       setState={item.setState}
                       title={item.title}
-                      deleteForm={() => addOption(item.title ?? '')}
+                      deleteForm={() => addOption(item.title ?? '', index)}
+                      handleOnChangeForm={item.handleOnChangeForm}
+                      index={index}
+                      formInformation={item.formInformation}
+                      formErrors={formErrors}
                     />
                   }
-                  state={item.state}
-                  setState={item.setState}
-                  type={item.type}
                 />
               </Grid>
             ))}
@@ -204,6 +412,7 @@ const Sublimits = () => {
           variant='contained'
           color='success'
           sx={{ mr: 2, fontFamily: inter, fontSize: size, letterSpacing: '0.4px' }}
+          onClick={handleSubmit}
         >
           <SaveIcon /> &nbsp; Save changes
         </Button>

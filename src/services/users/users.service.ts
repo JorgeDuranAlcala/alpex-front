@@ -9,6 +9,7 @@ class UsersServices {
     try {
       const url = urlQ ? urlQ : queryBuilder(usersData.filters, USERS_ROUTES.GET)
       const { data } = await AppAlpexApiGateWay.get(`${url}&take=${usersData.info.take}&page=${usersData.info.page}`)
+      console.log({ data })
 
       return data
     } catch (error) {
@@ -56,7 +57,7 @@ class UsersServices {
 
   async deleteUsers(user: Partial<UsersDeleteDto>): Promise<UsersGetDto[]> {
     try {
-      const { data } = await AppAlpexApiGateWay.post<Promise<UsersGetDto[]>>(`${USERS_ROUTES.DELETE}`, {
+      const { data } = await AppAlpexApiGateWay.post<Promise<UsersGetDto[]>>(USERS_ROUTES.DELETE, {
         ...user,
         headers: {
           'x-api-key': 'ZlExQKG0xPB673L3B6hClORm6oPaKcer'
