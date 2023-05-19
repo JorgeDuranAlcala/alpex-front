@@ -978,7 +978,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
 
   const { account, setAccountId } = useGetAccountById()
 
-  console.log(account)
+
   useEffect(() => {
     accountData.formsData.form1.id && setAccountId(accountData.formsData.form1.id)
   }, [accountData.formsData.form1.id, setAccountId])

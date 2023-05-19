@@ -139,7 +139,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
             <Grid container spacing={{ xs: 2, sm: 5, md: 5 }} rowSpacing={4} columns={12}>
               <Grid item xs={12} sm={6} md={4}>
                 <DatePicker
-                  selected={account && account?.informations[0].effectiveDate}
+                  selected={account ? new Date(account?.informations[0].effetiveDate) : null}
                   shouldCloseOnSelect
                   id='reception-date'
                   showTimeSelect
@@ -155,7 +155,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
                 <TextField
                   fullWidth
                   label='Dynamic net premium'
-                  value={account && account.securityTotal.receivesNetPremium}
+                  value={account ? account.securityTotal.receivedNetPremium : null}
                   InputProps={{
                     disabled: true
                   }}
