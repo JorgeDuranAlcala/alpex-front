@@ -251,6 +251,14 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
   }
 
   useEffect(() => {
+    setIdBroker(Number(basicInfo.broker))
+  }, [basicInfo.broker, brokers])
+
+  useEffect(() => {
+    setIdCedant(Number(basicInfo.cedant))
+  }, [basicInfo.cedant, cedant])
+
+  useEffect(() => {
     let riskActivity = {
       riskActivity: '',
       riskClass: 0

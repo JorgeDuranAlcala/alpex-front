@@ -9,7 +9,7 @@ import CloseIcon from '@mui/icons-material/Close'
 import { Box, Button, Modal, Typography } from '@mui/material'
 import IconButton from '@mui/material/IconButton'
 import { DataGrid, GRID_CHECKBOX_SELECTION_COL_DEF, GridColumns, GridRowId } from '@mui/x-data-grid'
-import { ButtonClose, HeaderTitleModal } from 'src/styles/Dashboard/ModalReinsurers/modalReinsurers'
+import { ButtonClose, HeaderTitleModal } from 'src/styles/modal/modal.styled'
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
