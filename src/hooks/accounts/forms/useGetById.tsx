@@ -13,7 +13,7 @@ export const useGetAccountById = () => {
           setAccount(accounts)
         })
         .catch((error: Error) => {
-          throw error
+          console.log(error)
         })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
