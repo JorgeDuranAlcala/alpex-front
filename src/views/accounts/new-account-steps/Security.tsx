@@ -966,9 +966,9 @@ const Security = ({ onStepChange }: SecurityProps) => {
     grossPremium: 0
   })
   const [badgeData, setBadgeData] = useState<IAlert>({
-    message: '1111111111',
+    message: '',
     theme: 'success',
-    open: true,
+    open: false,
     status: 'error'
   })
 
@@ -1104,7 +1104,38 @@ const Security = ({ onStepChange }: SecurityProps) => {
 
     const saveAll = await saveSecurities(forms)
 
-    console.log(saveTotal, saveAll)
+    if (saveAll === 'error' || saveTotal === 'error') {
+      setBadgeData({
+        message: 'Error saving data',
+        theme: 'error',
+        open: true,
+        status: 'error',
+        icon: <Icon style={{ color: '#FF4D49' }} icon='icon-park-outline:error' />
+      })
+      setTimeout(() => {
+        setBadgeData({
+          message: 'Saved successfully',
+          theme: 'success',
+          open: false,
+          status: 'error'
+        })
+      }, 5000)
+    } else {
+      setBadgeData({
+        message: 'The information has been saved',
+        theme: 'success',
+        open: true,
+        status: 'error'
+      })
+      setTimeout(() => {
+        setBadgeData({
+          message: 'Saved successfully',
+          theme: 'success',
+          open: false,
+          status: 'error'
+        })
+      }, 5000)
+    }
   }
 
   const handleSuccess = () => {

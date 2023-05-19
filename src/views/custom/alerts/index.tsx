@@ -6,7 +6,7 @@ export interface IAlert {
   icon?: JSX.Element | undefined
   backgroundColor?: string
   fontColor?: string
-  theme?: 'success' | 'secondary'
+  theme?: 'success' | 'secondary' | 'error'
   open?: boolean
 }
 
@@ -16,26 +16,31 @@ const customTheme = {
     color: '#828597'
   },
   success: {
-    backgroundColor: '#00B74A',
-    color: '#fff'
+    backgroundColor: '#72E12840',
+    color: '#72E128'
+  },
+  error: {
+    backgroundColor: '#FF4D4940',
+    color: '#FF4D49'
   }
 }
 
 const CustomAlert = (props: IAlert) => {
   return (
     <>
-      {props.open && (
-        <Alert
-          sx={{
-            backgroundColor: props.theme ? customTheme[props.theme] || '' : props.backgroundColor,
-            color: props.fontColor,
-            fontWeight: 500
-          }}
-          icon={props.icon || ''}
-        >
-          {props.message}
-        </Alert>
-      )}
+      <Alert
+        sx={{
+          backgroundColor: props.theme ? customTheme[props.theme] || '' : props.backgroundColor,
+          color: props.fontColor,
+          fontWeight: 500,
+          margin: '0.5rem',
+          marginTop: '-2rem',
+          visibility: props.open ? 'visible' : 'hidden'
+        }}
+        icon={props.icon || ''}
+      >
+        {props.message}
+      </Alert>
     </>
   )
 }
