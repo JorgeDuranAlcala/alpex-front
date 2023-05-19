@@ -320,22 +320,27 @@
   padding: 10px 0px 0px;
 }
 
+.add-new .edit-btn,
 .add-new .edit-broker-btn {
   margin-left: 15px;
 }
 
+.add-new .delete-btn.MuiButton-root,
 .add-new .delete-broker-btn.MuiButton-root {
   color: rgba(130, 133, 151, 1);
 }
 
 @media (max-width: 800px) {
 
-  .add-new .ccreate-broker-btn.MuiButton-root,
+  .add-new .edit-btn.MuiButton-root,
+  .add-new .delete-btn.MuiButton-root,
+  .add-new .create-broker-btn.MuiButton-root,
   .add-new .edit-broker-btn.MuiButton-root,
   .add-new .delete-broker-btn.MuiButton-root {
     width: 100%;
   }
 
+  .add-new .edit-btn,
   .add-new .edit-broker-btn {
     margin-left: 0;
     margin-top: 10px;
@@ -472,5 +477,75 @@
 
 }
 
+.inner-container-long .header-icon{
+  width: 5%;
+}
+
+.header-icon .icon{
+  width: 20px;
+  height: 20px;
+}
+
+.header-block .content{
+  display: block;
+  width: 80%;
+}
+
+.inner-container-long .content{
+  width: 90%;
+}
+.content .title{
+  color: rgba(77, 80, 98, 0.87);
+  font-size: 16px;
+}
+
+.content .description{
+  color: rgba(77, 80, 98, 0.68);
+  font-size: 14px;
+}
+  .add-btn{
+  width: 10%;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  justify-content: flex-end;
+ }
+
+ .inner-container-long .add-btn{
+  width: 5%;
+}
+ .block-list{
+  padding: 10px 10px;
+ }
 
 
+ .block-list .list-item{
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+ }
+
+ .list-item .item-name{
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+ }
+
+ .item-menu{
+  width: 30px;
+  height: 30px;
+  display: flex;
+  position: relative;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  border-radius: 50%;
+ }
+
+ .item-menu:hover{
+  background-color: rgba(76, 78, 100, 0.04);
+ }
+.inner-container-long .actions-menu,
+.inner-container .actions-menu{
+  top: 0px;
+}

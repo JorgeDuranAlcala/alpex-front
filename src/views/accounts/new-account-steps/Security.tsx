@@ -22,6 +22,7 @@ import { useGetAllReinsuranceCompanies } from '@/hooks/catalogs/reinsuranceCompa
 import { useGetAllRetroCedants } from '@/hooks/catalogs/retroCedant'
 import { SecurityDto } from '@/services/accounts/dtos/security.dto'
 import { updateFormsData } from '@/store/apps/accounts'
+import CustomAlert, { IAlert } from '@/views/custom/alerts'
 import { NumericFormat, NumericFormatProps } from 'react-number-format'
 import Icon from 'src/@core/components/icon'
 import { useAppDispatch, useAppSelector } from 'src/store'
@@ -453,6 +454,7 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
       case 'SharePercent':
         data[index]['NetInsurancePremium'] = NetInsurancePremium
         data[index]['PremiumPerShare'] = validateNumber(((+sharePercent * +totalNetPremium) / 100).toString())
+
         break
 
       case 'PremiumPerShare':
@@ -528,7 +530,9 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
   }, [formData[index].NetPremium])
 
   useEffect(() => {
-    setValues('PremiumPerShare')
+    setTimeout(() => {
+      setValues('PremiumPerShare')
+    }, 100)
     //eslint-disable-next-line
   }, [formData[index].PremiumPerShare])
 
@@ -594,10 +598,14 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
       setValues('NetPremium')
       setValues('PremiumPerShare')
     }
+    setFormData(data)
+    setValues('NetPremium')
+    setValues('SharePercent')
 
     if (company?.isGross) {
       handleIsGross()
     } else handleIsNet()
+
     //eslint-disable-next-line
   }, [formData[index].ReinsuranceCompany])
 
@@ -957,6 +965,12 @@ const Security = ({ onStepChange }: SecurityProps) => {
     netPremium: 0,
     grossPremium: 0
   })
+  const [badgeData, setBadgeData] = useState<IAlert>({
+    message: '',
+    theme: 'success',
+    open: false,
+    status: 'error'
+  })
 
   const dispatch = useAppDispatch()
   const accountData = useAppSelector(state => state.accounts)
@@ -1090,7 +1104,38 @@ const Security = ({ onStepChange }: SecurityProps) => {
 
     const saveAll = await saveSecurities(forms)
 
-    console.log(saveTotal, saveAll)
+    if (saveAll === 'error' || saveTotal === 'error') {
+      setBadgeData({
+        message: 'Error saving data',
+        theme: 'error',
+        open: true,
+        status: 'error',
+        icon: <Icon style={{ color: '#FF4D49' }} icon='icon-park-outline:error' />
+      })
+      setTimeout(() => {
+        setBadgeData({
+          message: 'Saved successfully',
+          theme: 'success',
+          open: false,
+          status: 'error'
+        })
+      }, 5000)
+    } else {
+      setBadgeData({
+        message: 'The information has been saved',
+        theme: 'success',
+        open: true,
+        status: 'error'
+      })
+      setTimeout(() => {
+        setBadgeData({
+          message: 'Saved successfully',
+          theme: 'success',
+          open: false,
+          status: 'error'
+        })
+      }, 5000)
+    }
   }
 
   const handleSuccess = () => {
@@ -1124,6 +1169,9 @@ const Security = ({ onStepChange }: SecurityProps) => {
     <>
       <div className='information' style={{ fontFamily: inter }}>
         <div className='title'>Security</div>
+        <div style={{ width: 'fit-content', float: 'right' }}>
+          <CustomAlert {...badgeData} />
+        </div>
         <form noValidate autoComplete='on' onSubmit={handleSubmit}>
           <div className='section'>
             {formData.map((_, index) => (
