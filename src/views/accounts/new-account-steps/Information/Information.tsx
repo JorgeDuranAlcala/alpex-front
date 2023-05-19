@@ -207,7 +207,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
       idTypeOfLimit: Number(placementStructure.typeOfLimit),
       step: 1
     })
-    if (res === 'error') {
+    if (typeof res === 'string' && res === 'error') {
       setBadgeData({
         message: 'Error saving data',
         theme: 'error',
