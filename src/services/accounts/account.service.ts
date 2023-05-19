@@ -1,9 +1,9 @@
 import { AppAlpexApiGateWay } from '../app.alpex.api-getway'
 
 //Routes
+import { ACCOUNT_ROUTES } from '@/configs/api'
+import { queryBuilder } from '@/services/helper/queryBuilder'
 import { IAccountsState } from '@/types/apps/accountsTypes'
-import { ACCOUNT_ROUTES } from '../../configs/api'
-import { queryBuilder } from '../helper/queryBuilder'
 
 /**
  *  service responsible of the  account methods
@@ -14,9 +14,13 @@ class AccountServices {
    * @param id
    * @returns
    */
-  async getAccountById(id: number) {
+  async getAccountById(id: number, jwtToken: string) {
     try {
-      const { data } = await AppAlpexApiGateWay.get(`${ACCOUNT_ROUTES.GET_BY_ID}/${id}`)
+      const { data } = await AppAlpexApiGateWay.get(`${ACCOUNT_ROUTES.GET_BY_ID}/${id}`, {
+        headers: {
+          Authorization: `Bearer ${jwtToken}`
+        }
+      })
 
       return data
     } catch (error) {
