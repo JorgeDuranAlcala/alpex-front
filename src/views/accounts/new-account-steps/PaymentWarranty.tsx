@@ -155,7 +155,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
                 <TextField
                   fullWidth
                   label='Dynamic net premium'
-                  value={account & account.securityTotal.receivesNetPremium}
+                  value={account && account.securityTotal.receivesNetPremium}
                   InputProps={{
                     disabled: true
                   }}
