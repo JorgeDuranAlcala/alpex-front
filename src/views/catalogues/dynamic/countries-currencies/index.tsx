@@ -3,6 +3,10 @@ import { useEffect, useState } from 'react'
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
 
+//customed imports
+// import AddEditModal from '@/views/components/modals/add-edit-modal'
+// import DeleteModal from '@/views/components/modals/delete-modal'
+
 export interface ICountries {
   id: number
   name: string
@@ -25,8 +29,22 @@ const CountriesCurrencies = () => {
   const [, setCurrentCurrency] = useState<ICurrencies | null>(null)
   const [, setCurrencyToDelete] = useState<number | undefined>(0)
 
-  const getCountries = () => {
-    //Call to edit broker service
+  //Handle Modals
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [openAddCurrency, setOpenAddCurrency] = useState(false)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [openEditCurrency, setOpenEditCurrency] = useState(false)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [openDeleteCurrency, setOpenDeleteCurrency] = useState(false)
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [openAddCountry, setOpenAddCountry] = useState(false)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [openEditCountry, setOpenEditCountry] = useState(false)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [openDeleteCountry, setOpenDeleteCountry] = useState(false)
+
+  const getCountries = () => { //Call to edit broker service
     const data: ICountries[] = [
       { id: 1, name: 'México' },
       { id: 2, name: 'United States' },
@@ -51,47 +69,70 @@ const CountriesCurrencies = () => {
 
   const handleEditCountry = (country: ICountries) => {
     setCurrentCountry(country)
-    setSelectedCountry(null)
-
-    // setOpenEdit(true)
+    setSelectedCountry(null);
+    setOpenEditCountry(true)
   }
 
   const handleDeleteCountry = (id: number | undefined) => {
-    setCountryToDelete(id)
-    setSelectedCountry(null)
-
-    // setOpenDelete(true);
+    setCountryToDelete(id);
+    setSelectedCountry(null);
+    setOpenDeleteCountry(true);
   }
 
   const handleEditCurrency = (newCurrency: ICurrencies) => {
     setCurrentCurrency(newCurrency)
-    setSelectedCurrency(null)
-
-    // setOpenEdit(true)
+    setSelectedCurrency(null);
+    setOpenEditCurrency(true)
   }
 
   const handleDeleteCurrency = (id: number | undefined) => {
-    setCurrencyToDelete(id)
-    setSelectedCurrency(null)
-
-    // setOpenDelete(true);
+    setCurrencyToDelete(id);
+    setSelectedCurrency(null);
+    setOpenDeleteCurrency(true);
   }
 
   // const editCountry = () => {
 
-  //   console.log(currentCountry)
-  // }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const addCountry = (value: string) => {
+    const newCountry = { id: countries.length, name: value }
+    setCountries(prevCountries => [...prevCountries, newCountry]);
+    setOpenAddCountry(false)
+  };
 
-  // const deleteCountry = () => {
-  //   console.log(countryToDelete)
-  // }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const editCountry = (value: string) => {
 
-  // const editCurrency = () => {
+    setOpenEditCountry(false)
+  };
 
-  //   console.log(currentCurrency)
-  // }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const deleteCountry = () => {
 
-  // const deleteCurrency = () => {
+    setOpenDeleteCountry(false)
+  };
+
+
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const addCurrency = (value: string) => {
+
+    const newCurrency = { id: currencies.length, currency: value }
+    setCurrencies(prevCurrencies => [...prevCurrencies, newCurrency]);
+    setOpenAddCurrency(false)
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const editCurrency = (value: string) => {
+
+    setOpenEditCurrency(false)
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const deleteCurrency = () => {
+
+    setOpenDeleteCurrency(false)
+  }
 
   //   console.log(currencyToDelete)
   // }
@@ -121,7 +162,12 @@ const CountriesCurrencies = () => {
               <div className='description'>You can add a country by clicking the plus button.</div>
             </div>
             <div className='add-btn'>
-              <Icon icon='mdi:plus-circle' />
+              <Icon
+                icon='mdi:plus-circle'
+                onClick={() => {
+                  setOpenAddCountry(true)
+                }}
+              />
             </div>
           </div>
           <div className='block-list'>
@@ -172,7 +218,12 @@ const CountriesCurrencies = () => {
               <div className='description'>You can add a currency by clicking the plus button.</div>
             </div>
             <div className='add-btn'>
-              <Icon icon='mdi:plus-circle' />
+              <Icon
+                icon='mdi:plus-circle'
+                onClick={() => {
+                  setOpenAddCurrency(true)
+                }}
+              />
             </div>
           </div>
           <div className='block-list'>
