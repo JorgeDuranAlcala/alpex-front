@@ -23,7 +23,7 @@ export const useAddInformation = () => {
     } catch (error) {
       console.log('[addInformation] Error', error)
 
-      return 'error'
+      throw new Error('error')
     }
   }
 
