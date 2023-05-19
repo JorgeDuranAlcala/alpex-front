@@ -26,7 +26,7 @@ type FormData = {
 
 const schema = yup.object().shape({
   password: yup.string().min(5).required(),
-  confirmPassword: yup.string().min(5).required()
+  passwordConfirm: yup.string().min(5).required()
 })
 const Background = () => {
   const defaultOptions = {
@@ -61,8 +61,8 @@ const ForgotPasswordPage = () => {
     resolver: yupResolver(schema)
   })
 
-  const { updatePass } = useUpdatePassword()
-  console.log(updatePass)
+  const { setToken, setUpdatePassword } = useUpdatePassword()
+
   const onSubmit: SubmitHandler<FormData> = data => {
     console.log(data?.password)
     console.log(data?.passwordConfirm)
@@ -72,7 +72,9 @@ const ForgotPasswordPage = () => {
         type: 'manual',
         message: 'Password does not match'
       })
-    updatePass({ password: data?.password, passwordConfirm: data?.passwordConfirm }, router.query.token)
+
+    setUpdatePassword({ password: data?.password, passwordConfirm: data?.passwordConfirm })
+    setToken(router.query.token)
   }
   const [showPassword, setShowPassword] = useState<boolean>(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false)
