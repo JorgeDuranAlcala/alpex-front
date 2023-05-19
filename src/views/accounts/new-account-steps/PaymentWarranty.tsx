@@ -128,7 +128,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
   }, [count])
   useEffect(() => {
     idAccount && setAccountId(idAccount)
-  }, [idAccount])
+  }, [idAccount, setAccountId])
 
   return (
     <>
