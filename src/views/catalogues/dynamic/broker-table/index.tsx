@@ -8,7 +8,7 @@ import { useRouter } from 'next/router'
 import CloseIcon from '@mui/icons-material/Close'
 import { Box, Button, Modal, Typography } from '@mui/material'
 import IconButton from '@mui/material/IconButton'
-import { DataGrid, GridColumns, GRID_CHECKBOX_SELECTION_COL_DEF } from '@mui/x-data-grid'
+import { DataGrid, GRID_CHECKBOX_SELECTION_COL_DEF, GridColumns } from '@mui/x-data-grid'
 import { ButtonClose, HeaderTitleModal } from 'src/styles/Dashboard/ModalReinsurers/modalReinsurers'
 
 // ** Icon Imports
@@ -186,7 +186,7 @@ const Table = () => {
     setOpenDelete(false)
   }
 
-  /* 
+  /*
   useEffect(() => {
     setBrokerList(getBrokerList)
     //eslint-disable-next-line
@@ -199,6 +199,7 @@ const Table = () => {
           onDeleteRows={() => {
             setOpenDeleteRows(true)
           }}
+          deleteBtn={selectedRows.length > 0 ? true : false}
           onSearch={searchBrokers}
           textBtn='ADD NEW BROKER'
           onClickBtn={() => router.push('/catalogues/dynamic/add-broker')}
