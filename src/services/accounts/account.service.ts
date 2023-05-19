@@ -46,6 +46,56 @@ class AccountServices {
       throw new Error(message)
     }
   }
+
+  /**
+   * deactivate accounts by id
+   * @returns
+   */
+  async deleteAccounts(accountsIds: number[], jwtToken: string) {
+    try {
+      const { data } = await AppAlpexApiGateWay.post(
+        ACCOUNT_ROUTES.DELETE,
+        {
+          accountsIds
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${jwtToken}`
+          }
+        }
+      )
+
+      return data
+    } catch (error) {
+      const message = String(error)
+      throw new Error(message)
+    }
+  }
+
+  /**
+   * duplicate accounts
+   * @returns
+   */
+  async duplicateAccounts(accountsIds: number[], jwtToken: string) {
+    try {
+      const { data } = await AppAlpexApiGateWay.post(
+        ACCOUNT_ROUTES.DUPLICATE,
+        {
+          accountsIds
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${jwtToken}`
+          }
+        }
+      )
+
+      return data
+    } catch (error) {
+      const message = String(error)
+      throw new Error(message)
+    }
+  }
 }
 
 export default new AccountServices()

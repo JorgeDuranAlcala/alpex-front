@@ -15,7 +15,9 @@ export enum AUTH_ROUTES {
 // ==== ACCOUNT
 export enum ACCOUNT_ROUTES {
   GET_BY_ID = 'account',
-  GET_ALL = 'account/all'
+  GET_ALL = 'account/all',
+  DELETE = 'account/delete',
+  DUPLICATE = 'account/duplicate'
 }
 
 export enum ACCOUNT_INFORMATION_ROUTES {
