@@ -1,6 +1,8 @@
 // ** React Imports
 import loginAnimation from '@/pages/reset-password/animations/login-animation.json'
 import { useRouter } from 'next/router'
+
+// import queryString from 'query-string'
 import { ReactNode, useState } from 'react'
 import Lottie from 'react-lottie'
 
@@ -8,6 +10,7 @@ import Lottie from 'react-lottie'
 
 // ** Layout Import
 
+// import { useUpdatePassword } from '@/hooks/recoverPassword/updatePassword'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { Icon } from '@iconify/react'
 import { Button, FormControl, IconButton, InputAdornment, InputLabel, OutlinedInput, Typography } from '@mui/material'
@@ -56,7 +59,17 @@ const ForgotPasswordPage = () => {
     mode: 'onBlur',
     resolver: yupResolver(schema)
   })
+
+  // const url = window.location.search
+  // const parsedUrl = queryString.parse(url)
+  // const token = parsedUrl.token
+  // const token =
+  //   'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiMWU3ZDkyMS1hOThjLTQ2MGEtOWEzNy0wYzc3NjExYjU1NjIiLCJzdWIiOiJhZG1pbi1ycmhoIiwiZXhwIjoxNjc4ODkzMjE4LCJpYXQiOjE2Nzg4OTE0MTh9.RkXlULEIDSjhW4qHFblZtjgI7L5elAsnXoL0H0AzSy_ZZOM-DAlxpMW6UQvWU8Asvoosq0CY8cH5PESkv-bbvOECrN8mtEhatZ7Lcq4DdSH-TI8dAvDZasW3yC8KApvcps5iM1T15wyk1UwTpjrDyjaxNCL0Hff53EZVHxXuxh1K2P3BLWnEKCwZshSRSCPsO_1VtGJVdAHi9R0HyaFVjTa-yBqoayF1hh592HZKuL6nu0vb_x2nkS9jsHkgr7Y7RUrViC6KV_4jJ_pL6cuhDDIqhLWMUFBxK66EQ9XsRzKp0bQiN8sqjAW2z7LIlZCIH0mOL4kuyi7pQjAGqcsP6g'
+  // console.log('Token--->', token)
+  // const { updatePass } = useUpdatePassword()
+
   const onSubmit: SubmitHandler<FormData> = data => {
+    console.log(data.password)
     if (data.password !== data.confirmPassword)
       setError('confirmPassword', {
         type: 'manual',
@@ -116,7 +129,7 @@ const ForgotPasswordPage = () => {
               )}
             </FormControl>
             <FormControl fullWidth sx={{ mt: 8 }}>
-              <InputLabel htmlFor='auth-login-v2-password' error={Boolean(errors.password)}>
+              <InputLabel htmlFor='auth-login-v2-confirmPassword' error={Boolean(errors.password)}>
                 Confirm password
               </InputLabel>
               <Controller
@@ -129,7 +142,7 @@ const ForgotPasswordPage = () => {
                     onBlur={onBlur}
                     label='Confirm password'
                     onChange={onChange}
-                    id='auth-login-v2-password'
+                    id='auth-login-v2-confirmPassword'
                     error={Boolean(errors.confirmPassword)}
                     type={showConfirmPassword ? 'text' : 'password'}
                     endAdornment={

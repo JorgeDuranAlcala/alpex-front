@@ -349,6 +349,12 @@ const column: GridColumns<IContact> = [
     setOpenDelete(false)
   }
 
+  const deleteRows = () => {  //must be replaced with the respective broker service
+    // const newContactList = // Service return new list
+    // setContactList(newBinderList)
+    // setOpenDelete(false)
+  }
+
   useEffect(() => {
     if (
       newContactData.name !== undefined &&
@@ -504,6 +510,8 @@ const column: GridColumns<IContact> = [
         <div className='table-header'>
           <TableHeader
             onSearch={searchContacts}
+            onDeleteRows={deleteRows}
+            deleteBtn={selectedRows.length > 0 ? true : false}
             textBtn="ADD NEW CONTACT"
             onClickBtn={() => { setOpenNewContact(true) }}
           />

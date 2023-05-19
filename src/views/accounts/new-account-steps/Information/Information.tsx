@@ -2,7 +2,11 @@ import React, { useEffect, useState } from 'react'
 import UserThemeOptions from 'src/layouts/UserThemeOptions'
 
 // Hooks
-import { useAddInformation } from 'src/hooks/accounts/information'
+import {
+  useAddInformation,
+  useFindInformationByIdAccount,
+  useUpdateInformationByIdAccount
+} from 'src/hooks/accounts/information'
 
 // // ** MUI Imports
 import CloseIcon from '@mui/icons-material/Close'
@@ -14,25 +18,26 @@ import PlacementStructure from './PlacementStructure'
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
-import { useAppDispatch } from 'src/store'
+import { useAppDispatch, useAppSelector } from 'src/store'
 import { updateFormsData } from 'src/store/apps/accounts'
 
 type InformationProps = {
   onStepChange?: (step: number) => void
+  onIsNewAccountChange: (status: boolean) => void
 }
 
 export interface BasicInfoInterface {
   insured: string
-  country: string
-  broker: string
-  brokerContact: string
-  cedant: string
-  cedantContact: string
-  lineOfBusiness: string
-  underwriter: string
-  leadUnderwriter: string
-  technicalAssistant: string
-  industryCode: string
+  country: number | string
+  broker: number | string
+  brokerContact: number | null | string
+  cedant: number | string
+  cedantContact: number | null | string
+  lineOfBusiness: number | string
+  underwriter: number | string
+  leadUnderwriter: number | string
+  technicalAssistant: number | string
+  industryCode: number | string
   riskActivity: string
   riskClass: number
   receptionDate: Date | null
@@ -40,22 +45,44 @@ export interface BasicInfoInterface {
   expirationDate: Date | null
 }
 
+export interface PlacementStructure {
+  currency: string
+  total: number
+  sir: number
+  reinsuranceBrokerageP: number
+  taxesP: number
+  frontingFeeP: number
+  netPremium: number
+  exchangeRate: number
+  limit: number
+  grossPremium: number
+  reinsuranceBrokerage: number
+  taxes: number
+  frontingFee: number
+  attachmentPoint: number
+  typeOfLimit: string | number
+}
+
 interface UserFile {
   file: File | null
 }
 
-const Information: React.FC<InformationProps> = ({ onStepChange }) => {
+const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountChange }) => {
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
   const inter = userThemeConfig.typography?.fontFamilyInter
   const [makeValidations, setMakeValidations] = useState(false)
   const [disableSaveBtn, setDisableSaveBtn] = useState(false)
-  const [disableNextBtn, setDisableNextBtn] = useState(true)
+  const [, setDisableNextBtn] = useState(true)
   const [basicIncfoValidated, setBasicIncfoValidated] = useState(false)
   const [placementStructureValidated, setPlacementStructureValidated] = useState(false)
   const [open, setOpen] = useState<boolean>(false)
   const [nextClicked, setNextClicked] = useState<boolean>(false)
+  const [userId, setUserId] = useState<number | null>(null)
 
+  const idAccount = useAppSelector(state => state.accounts?.formsData?.form1?.id)
+  const { getInformaByIdAccount } = useFindInformationByIdAccount()
   const { addInformation } = useAddInformation()
+  const { updateInformationByIdAccount } = useUpdateInformationByIdAccount()
 
   const dispatch = useAppDispatch()
 
@@ -77,7 +104,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange }) => {
     effectiveDate: null,
     expirationDate: null
   })
-  const [placementStructure, setPlacementStructure] = useState({
+  const [placementStructure, setPlacementStructure] = useState<PlacementStructure>({
     currency: '',
     total: 0.0,
     sir: 0.0,
@@ -100,9 +127,46 @@ const Information: React.FC<InformationProps> = ({ onStepChange }) => {
     }
   ])
 
-  const saveInformation = async () => {
-    //ALLOW NULLS
+  const updateInformation = async () => {
+    if (userId) {
+      const res = await updateInformationByIdAccount(userId, {
+        insured: basicInfo.insured,
+        idCountry: Number(basicInfo.country),
+        idBroker: Number(basicInfo.broker),
+        idBrokerContact: Number(basicInfo.brokerContact),
+        idCedant: Number(basicInfo.cedant),
+        idCedantContact: Number(basicInfo.cedantContact),
+        idLineOfBussines: Number(basicInfo.lineOfBusiness),
+        idRiskActivity: Number(basicInfo.industryCode),
+        effetiveDate: basicInfo.effectiveDate,
+        expirationDate: basicInfo.expirationDate,
+        receptionDate: basicInfo.receptionDate,
+        idLeadUnderwriter: Number(basicInfo.leadUnderwriter),
+        idTechnicalAssistant: Number(basicInfo.technicalAssistant),
+        idUnderwriter: Number(basicInfo.underwriter),
+        riskClass: basicInfo.riskClass,
+        currency: placementStructure.currency,
+        exchangeRate: placementStructure.exchangeRate,
+        attachmentPoint: placementStructure.attachmentPoint,
+        frontingFee: placementStructure.frontingFee,
+        frontingFeeTotal: placementStructure.frontingFeeP,
+        grossPremium: placementStructure.grossPremium,
+        limit: placementStructure.limit,
+        netPremiun: placementStructure.netPremium,
+        reinsuranceBrokerage: placementStructure.reinsuranceBrokerage,
+        reinsuranceBrokerageTotal: placementStructure.reinsuranceBrokerageP,
+        sir: placementStructure.sir,
+        taxes: placementStructure.taxes,
+        taxesTotal: placementStructure.taxesP,
+        totalValues: placementStructure.total,
+        idTypeOfLimit: Number(placementStructure.typeOfLimit)
+      })
 
+      return res
+    }
+  }
+
+  const saveInformation = async () => {
     const res = await addInformation({
       insured: basicInfo.insured,
       idCountry: Number(basicInfo.country),
@@ -140,21 +204,74 @@ const Information: React.FC<InformationProps> = ({ onStepChange }) => {
     return res
   }
 
+  const setDataInformation = async () => {
+    if (idAccount) {
+      const information = await getInformaByIdAccount(idAccount)
+      setBasicInfo({
+        insured: information.insured || '',
+        country: information.idCountry || '',
+        broker: information.idBroker || '',
+        brokerContact: information.idBrokerContact || '',
+        cedant: information?.idCedant || '',
+        cedantContact: information.idCedantContact || '',
+        lineOfBusiness: information.idLineOfBussines || '',
+        underwriter: information.idUnderwriter || '',
+        leadUnderwriter: information.idLeadUnderwriter || '',
+        technicalAssistant: information.idTechnicalAssistant || '',
+        industryCode: information.idRiskActivity || '',
+        riskActivity: '',
+        riskClass: 0,
+        receptionDate: information.receptionDate ? new Date(information.receptionDate) : null,
+        effectiveDate: information.effetiveDate ? new Date(information.effetiveDate) : null,
+        expirationDate: information.expirationDate ? new Date(information.expirationDate) : null
+      })
+
+      setPlacementStructure({
+        currency: information.currency || '',
+        total: Number(information.totalValues) || 0.0,
+        sir: Number(information.sir) || 0.0,
+        reinsuranceBrokerageP: Number(information.reinsuranceBrokerageTotal) || 0.0,
+        taxesP: Number(information.taxesTotal) || 0.0,
+        frontingFeeP: Number(information.frontingFeeTotal) || 0.0,
+        netPremium: Number(information.netPremiun) || 0.0,
+        exchangeRate: Number(information.exchangeRate) || 0.0,
+        limit: Number(information.limit) || 0.0,
+        grossPremium: Number(information.grossPremium) || 0.0,
+        reinsuranceBrokerage: Number(information.reinsuranceBrokerage) || 0.0,
+        taxes: Number(information.taxes) || 0.0,
+        frontingFee: Number(information.frontingFee) || 0.0,
+        attachmentPoint: Number(information.attachmentPoint) || 0.0,
+        typeOfLimit: information.idTypeOfLimit || ''
+      })
+    }
+  }
+
+  const handleSaveInformation = async () => {
+    if (userId) {
+      await updateInformation()
+      dispatch(updateFormsData({ form1: { basicInfo, placementStructure, userFile, id: userId } }))
+      onIsNewAccountChange(false)
+    } else {
+      const res = await saveInformation()
+      setUserId(res.account.id)
+      dispatch(updateFormsData({ form1: { basicInfo, placementStructure, userFile, id: res.account.id } }))
+      onIsNewAccountChange(false)
+    }
+  }
+
   const handleSubmit = async () => {
     setDisableNextBtn(false)
-    const res = await saveInformation()
-    if (res) {
-      dispatch(updateFormsData({ form1: { basicInfo, placementStructure, userFile, id: res.account.id } }))
-    }
+    await handleSaveInformation()
   }
 
   const handleCloseModal = () => {
     setOpen(false)
   }
 
-  const onNextStep = () => {
+  const onNextStep = async () => {
     setDisableNextBtn(false)
     if (onStepChange) {
+      await handleSaveInformation()
       onStepChange(2)
     }
   }
@@ -173,6 +290,11 @@ const Information: React.FC<InformationProps> = ({ onStepChange }) => {
   const setValidPlacementStructure = (valid: boolean) => {
     setPlacementStructureValidated(valid)
   }
+
+  useEffect(() => {
+    setDataInformation()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   useEffect(() => {
     const isBasicInfoValid = Object.values(basicInfo).some(value => value !== '' && value !== null)
@@ -229,7 +351,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange }) => {
               </div>
               SAVE CHANGES
             </Button>
-            <Button className='btn-next' onClick={handleNext} disabled={disableNextBtn}>
+            <Button className='btn-next' onClick={handleNext}>
               Next Step
               <div className='btn-icon'>
                 <Icon icon='material-symbols:arrow-right-alt' />

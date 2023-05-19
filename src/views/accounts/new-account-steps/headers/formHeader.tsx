@@ -116,7 +116,17 @@ const ModalUploadImage = () => {
 const FormHeader = () => {
   const [status, setStatus] = useState({})
 
-  const accountsReducer = useAppSelector(state => state.accounts)
+  const account = useAppSelector(state => state.accounts?.formsData?.form1)
+
+  const formatDate = (date: Date): string => {
+    const options: Intl.DateTimeFormatOptions = {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric'
+    }
+
+    return new Intl.DateTimeFormat('ban', options).format(date)
+  }
 
   return (
     <div className='form-header-grid'>
@@ -126,8 +136,8 @@ const FormHeader = () => {
             <div className='form-header-section'>
               <ModalUploadImage />
               <div className='double-gap'>
-                <span className='form-header-title2'>Insured name</span>
-                <span className='block blue-subtitle'>#001</span>
+                <span className='form-header-title2'>{account.basicInfo.insured}</span>
+                <span className='block blue-subtitle'>#{account.id}</span>
               </div>
             </div>
             <div className='form-header-section'>
@@ -139,13 +149,12 @@ const FormHeader = () => {
             <div className='form-header-section'>
               <span className='form-header-title'>Net premium:</span>
               <span className='form-header-subtitle'>
-                ${accountsReducer.formsData.form1?.placementStructure?.netPremium}{' '}
-                {accountsReducer.formsData.form1?.placementStructure?.currency}
+                ${account.placementStructure?.netPremium} {account.placementStructure?.currency}
               </span>
             </div>
             <div className='form-header-section'>
               <span className='form-header-title'>Registration date:</span>
-              <span className='form-header-subtitle'>22 Oct 2022 </span>
+              <span className='form-header-subtitle'>{formatDate(account.basicInfo.effectiveDate)}</span>
             </div>
           </div>
         </div>

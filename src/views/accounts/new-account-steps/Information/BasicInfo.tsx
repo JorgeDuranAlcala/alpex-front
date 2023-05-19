@@ -3,48 +3,31 @@ import React, { ForwardedRef, ReactNode, forwardRef, useEffect, useState } from 
 
 // ** MUI Imports
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
-import CloseIcon from '@mui/icons-material/Close'
 import {
-  Box,
-  Button,
   FormControl,
   FormHelperText,
   InputAdornment,
   InputLabel,
   MenuItem,
-  Modal,
   SxProps,
   TextField,
-  Theme,
-  Typography
+  Theme
 } from '@mui/material'
 import Select, { SelectChangeEvent } from '@mui/material/Select' //SelectChangeEvent
-import { ButtonClose, HeaderTitleModal } from 'src/styles/modal/modal.styled'
+
+//Components
+import { ModalContact } from 'src/views/accounts/new-account-steps/Information/ModalContact'
 
 //hooks para base info y  modal contac
-import { useGetAll as useCountyGetAll } from 'src/hooks/catalogs/country'
+import { useGetAllCountries as useCountyGetAll } from 'src/hooks/catalogs/country'
 
 // ** Third Party Imports
 import DatePicker from 'react-datepicker'
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 
-// ** Icon Imports
-import Icon from 'src/@core/components/icon'
-
 interface PickerProps {
   label?: string
   sx?: SxProps<Theme>
-}
-
-interface ContactData {
-  name: string
-  email: string
-  phone: string
-  country: string
-}
-
-interface IModal {
-  id: string
 }
 
 interface BasicInfoErrors {
@@ -67,18 +50,18 @@ interface BasicInfoErrors {
 type BasicInfoProps = {
   basicInfo: {
     insured: string
-    country: string
-    broker: string
-    brokerContact: string
-    cedant: string
-    cedantContact: string
-    lineOfBusiness: string
-    underwriter: string
-    leadUnderwriter: string
-    industryCode: string
+    country: number | string
+    broker: number | string
+    brokerContact: number | null | string
+    cedant: number | string
+    cedantContact: number | null | string
+    lineOfBusiness: number | string
+    underwriter: number | string
+    leadUnderwriter: number | string
+    industryCode: number | string
     riskActivity: string
     riskClass: number
-    technicalAssistant: string
+    technicalAssistant: number | string
     receptionDate: Date | null
     effectiveDate: Date | null
     expirationDate: Date | null
@@ -86,18 +69,18 @@ type BasicInfoProps = {
   setBasicInfo: React.Dispatch<
     React.SetStateAction<{
       insured: string
-      country: string
-      broker: string
-      brokerContact: string
-      cedant: string
-      cedantContact: string
-      lineOfBusiness: string
-      underwriter: string
-      leadUnderwriter: string
-      industryCode: string
+      country: number | string
+      broker: number | string
+      brokerContact: number | null | string
+      cedant: number | string
+      cedantContact: number | null | string
+      lineOfBusiness: number | string
+      underwriter: number | string
+      leadUnderwriter: number | string
+      industryCode: number | string
       riskActivity: string
       riskClass: number
-      technicalAssistant: string
+      technicalAssistant: number | string
       receptionDate: Date | null
       effectiveDate: Date | null
       expirationDate: Date | null
@@ -106,20 +89,6 @@ type BasicInfoProps = {
   makeValidations: boolean
   resetMakeValidations: () => void
   isValidForm?: (valid: boolean) => void
-}
-
-const initialContactData: ContactData = {
-  name: '',
-  email: '',
-  phone: '',
-  country: ''
-}
-
-const expresions = {
-  name: /^[a-zA-ZÀ-ÿ\s]{1,40}$/, // Letras y espacios, pueden llevar acentos.
-  email:
-    /^(?:[^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*|"[^\n"]+")@(?:[^<>()[\].,;:\s@"]+\.)+[^<>()[\]\.,;:\s@"]{2,63}$/i,
-  phone: /^\d{10}$/ // 7 a 10 numeros.
 }
 
 /* eslint-disable */
@@ -141,180 +110,6 @@ const CustomInput = forwardRef(({ ...props }: PickerProps, ref: ForwardedRef<HTM
   )
 })
 
-const ModalContact = ({ id }: IModal) => {
-  const [contactData, setContactData] = useState<ContactData>(initialContactData)
-  const [open, setOpen] = useState<boolean>(false)
-  const [btnDisable, setBtnDisable] = useState(true)
-  const [startValidations, setStartValidations] = useState(false)
-  const [error, setError] = useState(true)
-  const [nameError, setNameError] = useState(false)
-  const [emailError, setEmailError] = useState(false)
-  const [phoneError, setPhoneError] = useState(false)
-  const [countryError, setCountryError] = useState(false)
-  const [emptyForm, setEmptyForm] = useState(true)
-
-  useEffect(() => {
-    if (
-      contactData.name !== undefined &&
-      contactData.name !== '' &&
-      contactData.email !== undefined &&
-      contactData.email !== '' &&
-      contactData.phone !== undefined &&
-      contactData.phone !== '' &&
-      contactData.country !== undefined &&
-      contactData.country !== ''
-    ) {
-      setEmptyForm(false)
-    } else {
-      setEmptyForm(true)
-      setError(true)
-    }
-
-    if (startValidations) {
-      if (expresions.name.test(contactData.name)) {
-        setNameError(false)
-      } else {
-        setNameError(true)
-        setError(true)
-      }
-
-      if (expresions.email.test(contactData.email)) {
-        setEmailError(false)
-      } else {
-        setEmailError(true)
-        setError(true)
-      }
-
-      if (expresions.phone.test(contactData.phone)) {
-        setPhoneError(false)
-      } else {
-        setPhoneError(true)
-        setError(true)
-      }
-
-      if (contactData.country !== undefined && contactData.country !== '') {
-        setCountryError(false)
-      } else {
-        setCountryError(true)
-        setError(true)
-      }
-
-      if (!nameError && !emailError && !phoneError && !countryError && !emptyForm) {
-        setError(false)
-      } else {
-        setError(true)
-      }
-    }
-    if (error) setBtnDisable(true)
-    else if (!error) setBtnDisable(false)
-  }, [
-    contactData.name,
-    contactData.email,
-    contactData.phone,
-    contactData.country,
-    error,
-    nameError,
-    emailError,
-    phoneError,
-    countryError,
-    emptyForm
-  ])
-
-  const handleChange = (field: keyof ContactData, value: ContactData[keyof ContactData]) => {
-    setStartValidations(true)
-    setContactData({ ...contactData, [field]: value })
-  }
-
-  const handleCreateContact = () => {
-    console.log('createContact')
-  }
-  return (
-    <>
-      <Button className='create-contact-btn' onClick={() => setOpen(true)}>
-        <div className='btn-icon'>
-          <Icon icon='mdi:plus-circle-outline' />
-        </div>
-        CREATE NEW CONTACT
-      </Button>
-      <Modal className='create-contact-modal' open={open} onClose={() => setOpen(false)}>
-        <Box className='modal-wrapper'>
-          <HeaderTitleModal>
-            <Typography variant='h6'>Create new contact</Typography>
-            <ButtonClose onClick={() => setOpen(false)}>
-              <CloseIcon />
-            </ButtonClose>
-          </HeaderTitleModal>
-          <div className='contact-form'>
-            <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
-              <TextField
-                autoFocus
-                label='Contact Name'
-                value={contactData.name}
-                onChange={e => handleChange('name', e.target.value)}
-              />
-
-              {nameError && <FormHelperText sx={{ color: 'error.main' }}>Invalid name</FormHelperText>}
-            </FormControl>
-            <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
-              <TextField
-                autoFocus
-                label='Contact email'
-                value={contactData.email}
-                onChange={e => handleChange('email', e.target.value)}
-              />
-
-              {emailError && <FormHelperText sx={{ color: 'error.main' }}>Invalid field</FormHelperText>}
-            </FormControl>
-            <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
-              <TextField
-                autoFocus
-                label='Contact Phone'
-                value={contactData.phone}
-                onChange={e => handleChange('phone', e.target.value)}
-              />
-
-              {phoneError && <FormHelperText sx={{ color: 'error.main' }}>Invalid field</FormHelperText>}
-            </FormControl>
-            <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
-              <InputLabel>Select country</InputLabel>
-
-              <Select
-                label='Select country'
-                value={contactData.country}
-                onChange={e => handleChange('country', e.target.value)}
-                labelId='invoice-country'
-              >
-                <MenuItem value='USA'>USA</MenuItem>
-                <MenuItem value='UK'>UK</MenuItem>
-                <MenuItem value='Russia'>Russia</MenuItem>
-                <MenuItem value='Australia'>Australia</MenuItem>
-                <MenuItem value='Canada'>Canada</MenuItem>
-              </Select>
-
-              {countryError && (
-                <FormHelperText sx={{ color: 'error.main' }} id='invoice-country-error'>
-                  Select a country
-                </FormHelperText>
-              )}
-            </FormControl>
-          </div>
-          <Button
-            className='create-contact-modal'
-            disabled={btnDisable}
-            variant='contained'
-            onClick={handleCreateContact}
-          >
-            CREATE
-          </Button>
-          <Button className='create-contact-modal' onClick={() => setOpen(false)}>
-            CANCEL
-          </Button>
-        </Box>
-      </Modal>
-    </>
-  )
-}
-
 import { ROLES } from '@/configs/api'
 import { useGetAll as useBrokerGetAll } from 'src/hooks/catalogs/broker'
 import { useGetAllByIdBroker } from 'src/hooks/catalogs/broker-contact/'
@@ -335,8 +130,8 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
   const { countries } = useCountyGetAll()
   const { brokers } = useBrokerGetAll()
   const { cedant } = useCedantGetAll()
-  const { brokerContacts, setIdBroker } = useGetAllByIdBroker()
-  const { contacts: cedantContacts, setIdCedant } = useGetAllByCedant()
+  const { brokerContacts, setIdBroker, findByIdBroker } = useGetAllByIdBroker()
+  const { contacts: cedantContacts, setIdCedant, findByIdCedant } = useGetAllByCedant()
   const { riskActivities } = useGetAllRiskActivities()
   const { lineOfBussines } = useGetAllLineOfBussines()
   const { users: underwriters } = useGetByIdRole(ROLES.UNDERWRITER)
@@ -361,12 +156,20 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
     riskClassError: false
   })
 
+  const updateBrokerContact = async (id: number) => {
+    await findByIdBroker(id)
+  }
+
+  const updateCedantContact = async (id: number) => {
+    await findByIdCedant(id)
+  }
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     setBasicInfo({ ...basicInfo, [name]: value })
   }
 
-  const handleSelectChange = (event: SelectChangeEvent<string>, child: ReactNode) => {
+  const handleSelectChange = (event: SelectChangeEvent<string>, child?: ReactNode) => {
     const target = event.target
     const name = target.name
     const value = target.value
@@ -417,7 +220,6 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
   }
 
   const validations = () => {
-    console.log('entro a la validación')
     const newErrors: BasicInfoErrors = {
       insuredError: basicInfo.insured === '',
       countryError: basicInfo.country === '',
@@ -438,8 +240,6 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
     setErrors(newErrors)
 
     if (Object.values(newErrors).every(error => !error)) {
-      // enviar formulario si no hay errores
-      console.log('Formulario enviado')
       if (isValidForm) {
         isValidForm(true)
       }
@@ -449,6 +249,34 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
   const getErrorMessage = (name: keyof BasicInfoErrors) => {
     return errors[name] ? 'This field is required' : ''
   }
+
+  useEffect(() => {
+    setIdBroker(Number(basicInfo.broker))
+  }, [basicInfo.broker, brokers])
+
+  useEffect(() => {
+    setIdCedant(Number(basicInfo.cedant))
+  }, [basicInfo.cedant, cedant])
+
+  useEffect(() => {
+    let riskActivity = {
+      riskActivity: '',
+      riskClass: 0
+    }
+
+    const industryCode = riskActivities.find(r => r.id === Number(basicInfo.industryCode))
+
+    if (industryCode) {
+      riskActivity.riskActivity = industryCode.riskActivity
+      riskActivity.riskClass = industryCode.class
+    }
+
+    setBasicInfo(state => ({
+      ...state,
+      riskActivity: riskActivity.riskActivity,
+      riskClass: riskActivity.riskClass
+    }))
+  }, [basicInfo.industryCode, riskActivities])
 
   useEffect(() => {
     if (makeValidations) {
@@ -468,6 +296,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               autoFocus
               name='insured'
               label='insured'
+              defaultValue=''
               value={basicInfo.insured}
               onChange={handleInputChange}
               error={!!errors.insuredError}
@@ -481,7 +310,8 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
             <Select
               name='country'
               label='Country'
-              value={basicInfo.country}
+              defaultValue={''}
+              value={String(basicInfo.country)}
               onChange={handleSelectChange}
               labelId='invoice-country'
             >
@@ -511,7 +341,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
             <Select
               name='broker'
               label='Select Broker'
-              value={basicInfo.broker}
+              value={String(basicInfo.broker)}
               onChange={handleSelectChange}
               labelId='broker'
             >
@@ -536,7 +366,8 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
             <Select
               name='brokerContact'
               label='Select Broker Contact'
-              value={basicInfo.brokerContact}
+              value={String(basicInfo.brokerContact)}
+              defaultValue=''
               onChange={handleSelectChange}
               labelId='broker-contact'
             >
@@ -550,7 +381,12 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
                 })}
             </Select>
           </FormControl>
-          <ModalContact id='modal-broker' />
+          <ModalContact
+            service={'broker'}
+            id={Number(basicInfo.broker)}
+            updateContacts={updateBrokerContact}
+            setIdCreated={setBasicInfo}
+          />
         </div>
         <div className='form-col'>
           <div className='title'>Cedant</div>
@@ -560,7 +396,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
             <Select
               name='cedant'
               label='Select Cedant'
-              value={basicInfo.cedant}
+              value={String(basicInfo.cedant)}
               onChange={handleSelectChange}
               labelId='cedant'
             >
@@ -586,8 +422,9 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
             <Select
               name='cedantContact'
               label='Select Cedant Contact'
-              value={basicInfo.cedantContact}
+              value={`${basicInfo.cedantContact == 0 ? '' : basicInfo.cedantContact}`}
               onChange={handleSelectChange}
+              defaultValue=''
               labelId='cedant-contact'
             >
               {cedantContacts.length > 0 &&
@@ -600,7 +437,12 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
                 })}
             </Select>
           </FormControl>
-          <ModalContact id='modal-broker' />
+          <ModalContact
+            service={'cedant'}
+            id={Number(basicInfo.cedant)}
+            updateContacts={updateCedantContact}
+            setIdCreated={setBasicInfo}
+          />
         </div>
         <div className='form-col'>
           <div className='title'>Business</div>
@@ -610,7 +452,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
             <Select
               name='lineOfBusiness'
               label='Line of Business'
-              value={basicInfo.lineOfBusiness}
+              value={String(basicInfo.lineOfBusiness)}
               onChange={handleSelectChange}
               labelId='business'
             >
@@ -634,7 +476,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
             <Select
               name='industryCode'
               label='Industry Code'
-              value={basicInfo.industryCode}
+              value={String(basicInfo.industryCode)}
               onChange={handleSelectChange}
               labelId='industryCode'
             >
@@ -776,7 +618,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
             <Select
               name='underwriter'
               label='Underwriter'
-              value={basicInfo.underwriter}
+              value={String(basicInfo.underwriter)}
               onChange={handleSelectChange}
               labelId='underwriter'
             >
@@ -801,7 +643,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
             <Select
               name='leadUnderwriter'
               label='Lead Underwriter'
-              value={basicInfo.leadUnderwriter}
+              value={String(basicInfo.leadUnderwriter)}
               onChange={handleSelectChange}
               labelId='lead-underwriter'
             >
@@ -827,7 +669,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
             <Select
               name='technicalAssistant'
               label='Technical assistant'
-              value={basicInfo.technicalAssistant}
+              value={String(basicInfo.technicalAssistant)}
               onChange={handleSelectChange}
               labelId='assistant'
             >

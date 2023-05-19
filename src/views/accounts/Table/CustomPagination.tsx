@@ -1,32 +1,36 @@
 // ** MUI Imports
+import { useAppDispatch, useAppSelector } from '@/store'
 import Pagination from '@mui/material/Pagination'
 import Typography from '@mui/material/Typography'
-import {
-    gridPageCountSelector,
-    gridPageSelector,
-    gridPageSizeSelector,
-    gridRowCountSelector, useGridApiContext,
-    useGridSelector
-} from '@mui/x-data-grid'
+import { fetchAccounts } from 'src/store/apps/accounts'
 
 const CustomPagination = () => {
-    const apiRef = useGridApiContext()
-    const page = useGridSelector(apiRef, gridPageSelector)
-    const pageCount = useGridSelector(apiRef, gridPageCountSelector)
-    const pageSize = useGridSelector(apiRef, gridPageSizeSelector)
-    const rowCount = useGridSelector(apiRef, gridRowCountSelector)
-  
-    return (
-      <>
-        <Pagination
-          color={"standard"}
-          count={pageCount}
-          page={page+1}
-          onChange={(event, value) => apiRef.current.setPage(value - 1)}
-        />
-        <Typography sx={{marginRight:'1rem'}}>{(((page+1)*pageSize)-pageSize)+1}-{((page+1)*pageSize)} of {rowCount}</Typography>
-      </>
-    );
+  const accountsReducer = useAppSelector(state => state.accounts)
+  const dispatch = useAppDispatch()
+
+  const handleDispatch = (e: any, value: number) => {
+    accountsReducer
+    dispatch(fetchAccounts({ ...accountsReducer, info: { ...accountsReducer.info, page: value } }))
+  }
+
+  const page = accountsReducer.info.page
+  const pageCount = accountsReducer.info.pages
+  const pageSize = accountsReducer.info.take
+  const rowCount = accountsReducer.info.count
+
+  return (
+    <>
+      <Pagination
+        color={'standard'}
+        count={pageCount}
+        page={page + 1}
+        onChange={(event, value) => handleDispatch(event, value)}
+      />
+      <Typography sx={{ marginRight: '1rem' }}>
+        {page * pageSize - pageSize + 1}-{page * pageSize} of {rowCount}
+      </Typography>
+    </>
+  )
 }
 
 export default CustomPagination
