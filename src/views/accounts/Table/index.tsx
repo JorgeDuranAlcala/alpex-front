@@ -21,6 +21,7 @@ import TableHeader from './TableHeader'
 import ModalAction from './modal'
 
 // ** Custom utilities
+import useAccountTable from '@/hooks/accounts/Table/useAccountTable'
 import { formatStatus } from '@/utils/formatStatus'
 import { Link } from '@mui/material'
 import { useAppDispatch, useAppSelector } from 'src/store'
@@ -68,6 +69,7 @@ const Table = ({ status }: IAccountTable) => {
 
   // ** Custom Hooks
   //const { accounts, getAccounts } = useAccountTable()
+  const { duplicateAccounts } = useAccountTable()
 
   // ** Hooks
 
@@ -307,7 +309,9 @@ const Table = ({ status }: IAccountTable) => {
       }, 3000)
     }, 1000)
   }
-  const onDuplicated = (id: number) => {
+  const onDuplicated = async (id: number) => {
+    await duplicateAccounts([id])
+
     setBadgeData({
       message: `#${id.toLocaleString('en-US', {
         minimumIntegerDigits: 4,
