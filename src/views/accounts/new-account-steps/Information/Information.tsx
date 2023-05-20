@@ -291,6 +291,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
 
   const handleSaveInformation = async () => {
     if (idAccount) {
+      setUserId(idAccount)
       await updateInformation()
       dispatch(updateFormsData({ form1: { basicInfo, placementStructure, userFile, id: idAccount } }))
       onIsNewAccountChange(false)
@@ -314,14 +315,12 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   }
 
   //Evento para controlar el botón de save
-  const handleSave = async () => {
-    setMakeValidations(true)
-    setNextClicked(true)
-
-    if (nextClicked && basicIncfoValidated) {
-      await handleSaveInformation()
+  const handleSave = () => {
+    if (nextClicked) {
+      if (basicIncfoValidated) {
+        handleSaveInformation()
+      }
     }
-    handleCloseModal()
   }
 
   const handleCloseModal = () => {
@@ -387,7 +386,15 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
             <FileSubmit userFile={userFile} setUserFile={setUserFile} />
           </div>
           <div className='section action-buttons'>
-            <Button className='btn-save' onClick={handleSave} variant='contained'>
+            <Button
+              className='btn-save'
+              onClick={handleSave}
+              onMouseEnter={() => {
+                setNextClicked(true)
+                setMakeValidations(true)
+              }}
+              variant='contained'
+            >
               <div className='btn-icon'>
                 <Icon icon='mdi:content-save' />
               </div>
