@@ -59,7 +59,7 @@ const NewAccount = () => {
   }
 
   useEffect(() => {
-    const idAccount = router.query.idAccount
+    const idAccount = router.query.id
     if (idAccount) {
       setIsNewAccount(false)
     }
