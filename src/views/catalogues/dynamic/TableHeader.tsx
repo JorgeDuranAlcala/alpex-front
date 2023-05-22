@@ -1,44 +1,39 @@
 // ** React Imports
-import { useEffect, useState } from 'react';
+import { useState } from 'react'
 
 // ** MUI Imports
-import { Box, Button } from '@mui/material';
+import { Box, Button } from '@mui/material'
 
 // ** Icon Imports
-import Icon from 'src/@core/components/icon';
+import Icon from 'src/@core/components/icon'
 
 // ** Styled Components imports
-import { useAppDispatch } from '@/store';
-import { deleteBrokersFilter, handleBrokersFilter } from '@/store/apps/catalogs/brokers';
-import fonts from 'src/views/accounts/font';
+import fonts from 'src/views/accounts/font'
 
 interface ITableHeader {
   onDeleteRows?: () => void
-  deleteBtn?: boolean;
+  deleteBtn?: boolean
   onSearch: (value: string) => void
   onClickBtn: () => void
   textBtn: string
+  addBtnDisable?: boolean
 }
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const TableHeader: React.FC<ITableHeader> = ({ onDeleteRows, deleteBtn = false, onSearch, onClickBtn, textBtn }) => {
+const TableHeader: React.FC<ITableHeader> = ({
+  onDeleteRows,
+  deleteBtn = false,
+  onSearch,
+  onClickBtn,
+  textBtn,
+  addBtnDisable = false
+}) => {
   // ** State
-  // const [search, setSearch] = useState('')
-  const [searchValue, setSearchValue] = useState('')
+  const [search, setSearch] = useState('')
 
-  const dispatch = useAppDispatch()
-
-  /* const usersReducer = useAppSelector(state => state.brokers) */
-
-  /* const searchInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const searchInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(event.target.value)
     onSearch(event.target.value)
   }
- */
-  useEffect(() => {
-    if (searchValue === '') dispatch(deleteBrokersFilter('name'))
-    else dispatch(handleBrokersFilter({ type: 'name', value: searchValue, text: searchValue }))
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchValue])
 
   return (
     <Box
@@ -57,28 +52,33 @@ const TableHeader: React.FC<ITableHeader> = ({ onDeleteRows, deleteBtn = false, 
           <input
             className='input-search'
             placeholder='Search'
-            value={searchValue}
+            value={search}
             style={{ fontFamily: fonts.inter }}
-            onChange={e => setSearchValue(e.target.value)}
+            onChange={searchInputChange}
           />
         </div>
       </Box>
-      {deleteBtn ? <Box className='header-item '>
-        <Button
-          className='delete-button'
-          onClick={onDeleteRows}
-          variant='outlined'
-        >
-          <div className='btn-icon'>
-            <Icon icon='mdi:delete-outline' />
-          </div>
-          DELETE
-        </Button>
-
-      </Box> : ''}
+      {deleteBtn ? (
+        <Box className='header-item '>
+          <Button className='delete-button' onClick={onDeleteRows} variant='outlined'>
+            <div className='btn-icon'>
+              <Icon icon='mdi:delete-outline' />
+            </div>
+            DELETE
+          </Button>
+        </Box>
+      ) : (
+        ''
+      )}
 
       <Box className='header-item ' sx={{ marginLeft: 'auto' }}>
-        <Button className='action-button' sx={{ mb: 2 }} variant='contained' onClick={onClickBtn}>
+        <Button
+          className='action-button'
+          sx={{ mb: 2 }}
+          variant='contained'
+          onClick={onClickBtn}
+          disabled={addBtnDisable}
+        >
           {textBtn} &nbsp; <Icon icon='mdi:plus' />
         </Button>
       </Box>

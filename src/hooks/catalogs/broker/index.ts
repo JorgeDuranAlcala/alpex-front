@@ -1,4 +1,5 @@
 export * from './useAdd'
+export * from './useDelete'
 export * from './useFindById'
 export * from './useGetAll'
 export * from './useUpdateById'
