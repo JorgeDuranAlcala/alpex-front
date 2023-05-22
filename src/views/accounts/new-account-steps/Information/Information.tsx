@@ -291,9 +291,24 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
         attachmentPoint: Number(information.attachmentPoint) || 0.0,
         typeOfLimit: information.idTypeOfLimit || ''
       })
-      dispatch(updateFormsData({ form1: { basicInfo, placementStructure, userFile, id: idAccount } }))
-      onIsNewAccountChange(false)
+
+      dispatch(
+        updateFormsData({
+          form1: {
+            basicInfo: {
+              insured: information.insured || '',
+              effectiveDate: information.effetiveDate ? new Date(information.effetiveDate) : null
+            },
+            placementStructure: {
+              netPremium: Number(information.netPremiun) || 0.0
+            },
+            userFile,
+            id: idAccount
+          }
+        })
+      )
     }
+    onIsNewAccountChange(false)
   }
 
   const handleSaveInformation = async () => {
@@ -364,6 +379,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
     if (idAccount) {
       setDataInformation()
     }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [idAccount])
 
@@ -384,7 +400,8 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
     return () => {
       router.events.off('routeChangeStart', handleRouteChange)
     }
-  }, [dispatch, lastForm1Information, onIsNewAccountChange, router.events])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch, onIsNewAccountChange, router.events])
 
   return (
     <>
