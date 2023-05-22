@@ -17,7 +17,6 @@ import TextField from '@mui/material/TextField'
 import { useGetAccountById } from '@/hooks/accounts/forms'
 import { useAddSecurities } from '@/hooks/accounts/security'
 import { useAddSecurityTotal } from '@/hooks/accounts/securityTotal'
-import { useGetAllByCedant } from '@/hooks/catalogs/cedant-contact'
 import { useGetAllReinsuranceCompanies } from '@/hooks/catalogs/reinsuranceCompany'
 import { useGetAllRetroCedants } from '@/hooks/catalogs/retroCedant'
 import { SecurityDto } from '@/services/accounts/dtos/security.dto'
@@ -28,6 +27,10 @@ import Icon from 'src/@core/components/icon'
 import { useAppDispatch, useAppSelector } from 'src/store'
 import { ButtonClose, HeaderTitleModal } from 'src/styles/Dashboard/ModalReinsurers/modalReinsurers'
 import SwitchAlpex from 'src/views/custom/switchs'
+
+//Hooks
+import { useGetAllCountries } from 'src/hooks/catalogs/country'
+import { useGetAllByIdRetroCedant } from 'src/hooks/catalogs/retroCedantContact'
 
 interface FormInfo extends BrokerFormInfo {
   [key: string]: string | boolean | undefined
@@ -333,8 +336,9 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
   })
 
   const { retroCedants } = useGetAllRetroCedants()
+  const { retroCedantContacts, setIdRetroCedant } = useGetAllByIdRetroCedant()
   const { reinsuranceCompany } = useGetAllReinsuranceCompanies()
-  const { setIdCedant, contacts } = useGetAllByCedant()
+  const { countries } = useGetAllCountries()
 
   useEffect(() => {
     const companies = reinsuranceCompany?.map(company => {
@@ -512,6 +516,9 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
 
       case 'RetroCedant':
         data[index]['RetroCedantContact'] = ''
+        data[index]['ContactCountry'] = ''
+        data[index]['ContactEmail'] = ''
+        data[index]['ContactPhone'] = ''
         break
 
       case 'FrontingFee':
@@ -559,9 +566,30 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
 
   useEffect(() => {
     setValues('RetroCedant')
-    setIdCedant(+formData[index].RetroCedant)
+    setIdRetroCedant(Number(formData[index].RetroCedant))
+    formData[index].RetroCedantContact = ''
+    formData[index].ContactEmail = ''
+    formData[index].ContactPhone = ''
+    formData[index].ContactCountry = ''
     //eslint-disable-next-line
   }, [formData[index].RetroCedant])
+
+  useEffect(() => {
+    const id = Number(formData[index].RetroCedantContact)
+    const retroCedant = retroCedantContacts.find(contact => (contact.id = id))
+    if (retroCedant) {
+      formData[index].RetroCedantContact = String(retroCedant.id)
+      formData[index].ContactEmail = retroCedant.email
+      formData[index].ContactPhone = retroCedant.phone
+      formData[index].ContactCountry = String(retroCedant.idCCountry)
+    } else {
+      formData[index].RetroCedantContact = ''
+      formData[index].ContactEmail = ''
+      formData[index].ContactPhone = ''
+      formData[index].ContactCountry = ''
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formData[index].RetroCedantContact])
 
   useEffect(() => {
     setValues('FrontingFee')
@@ -849,7 +877,6 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
 
             <FormHelperText sx={{ color: 'error.main' }}>{formErrors[index]?.NetInsurancePremium}</FormHelperText>
           </FormControl>
-
           {frontingFeeEnabled && (formData[index]?.SharePercent !== '' || formData[index]?.PremiumPerShare !== '') && (
             <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
               <InputLabel>Select Retro cedant</InputLabel>
@@ -871,7 +898,6 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
               <FormHelperText sx={{ color: 'error.main' }}>{formErrors[index]?.RetroCedant}</FormHelperText>
             </FormControl>
           )}
-
           {frontingFeeEnabled && (formData[index]?.SharePercent !== '' || formData[index]?.PremiumPerShare !== '') && (
             <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
               <InputLabel>Select Retro Cedant contact</InputLabel>
@@ -882,7 +908,7 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
                 labelId='broker'
                 disabled={formData[index].RetroCedant === ''}
               >
-                {contacts?.map(contact => (
+                {retroCedantContacts?.map(contact => (
                   <MenuItem key={contact.name} value={contact.id}>
                     {contact.name}
                   </MenuItem>
@@ -896,53 +922,38 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
               </FormHelperText>
             </FormControl>
           )}
-          {formData[index]?.RetroCedantContact !== '' && frontingFeeEnabled && (
+          {formData[index].RetroCedantContact !== '' && frontingFeeEnabled && (
             <>
               <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
                 <TextField
                   autoFocus
+                  disabled
                   fullWidth
                   label='Contact email'
                   size='small'
                   value={formData[index].ContactEmail}
-                  InputProps={{
-                    inputComponent: NumericFormatCustom as any
-                  }}
-                  onChange={e => handleFormChange('ContactEmail', e.target.value)}
                 />
-
-                <FormHelperText sx={{ color: 'error.main' }}>{formErrors[index]?.ContactEmail}</FormHelperText>
               </FormControl>
 
               <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
                 <TextField
                   autoFocus
                   fullWidth
+                  disabled
                   size='small'
                   label='Contact phone'
                   value={formData[index].ContactPhone}
-                  InputProps={{
-                    inputComponent: NumericFormatCustom as any
-                  }}
-                  onChange={e => handleFormChange('ContactPhone', e.target.value)}
                 />
-
-                <FormHelperText sx={{ color: 'error.main' }}>{formErrors[index]?.ContactPhone}</FormHelperText>
               </FormControl>
               <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
-                <TextField
-                  autoFocus
-                  fullWidth
-                  size='small'
-                  label='Contact country'
-                  value={formData[index].ContactCountry}
-                  InputProps={{
-                    inputComponent: NumericFormatCustom as any
-                  }}
-                  onChange={e => handleFormChange('ContactCountry', e.target.value)}
-                />
-
-                <FormHelperText sx={{ color: 'error.main' }}>{formErrors[index]?.ContactCountry}</FormHelperText>
+                <InputLabel>Contact country'</InputLabel>
+                <Select label='Contact country' value={formData[index].ContactCountry} labelId='broker' disabled>
+                  {countries?.map(country => (
+                    <MenuItem key={country.name} value={country.id}>
+                      {country.name}
+                    </MenuItem>
+                  ))}
+                </Select>
               </FormControl>
             </>
           )}
