@@ -2,7 +2,7 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
 import SaveIcon from '@mui/icons-material/Save'
 import { Button, FormHelperText, Grid, InputAdornment, SxProps, TextField, Theme, Typography } from '@mui/material'
-import { ChangeEvent, FocusEvent, ForwardedRef, forwardRef, useEffect, useState } from 'react'
+import { FocusEvent, ForwardedRef, forwardRef, useEffect, useState } from 'react'
 import DatePicker from 'react-datepicker'
 
 // import Icon from 'src/@core/components/icon'
@@ -92,9 +92,8 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
   const idAccount = accountData.formsData.form1.id
   const { account, setAccountId } = useGetAccountById()
 
-  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value
-    if (value) setCount(value)
+  const handleNumericInputChange = (value: any) => {
+    if (value) setCount(String(value))
   }
 
   const handleBlur = (event: FocusEvent<HTMLInputElement>) => {
@@ -215,7 +214,9 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
                     return (floatValue! >= 0 && floatValue! <= upLimit) || floatValue === undefined
                   }}
                   value={count}
-                  onChange={handleChange}
+                  onValueChange={value => {
+                    handleNumericInputChange(value?.value)
+                  }}
                   onBlur={handleBlur}
                 />
                 {error.errorFieldRequired && (
