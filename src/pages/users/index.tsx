@@ -44,7 +44,7 @@ const Users = () => {
       active: true,
       component: (
         <>
-          <AddUser selectUser={false} />
+          <AddUser selectUser={false} title={'Add User'} subTitle={'add user'} />
         </>
       )
     },
@@ -54,7 +54,7 @@ const Users = () => {
       isDeleteable: true,
       component: (
         <>
-          <AddUser selectUser={true} />
+          <AddUser selectUser={true} title={'User Details'} subTitle={'edit user'} />
         </>
       )
     }

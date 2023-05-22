@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import UserThemeOptions from 'src/layouts/UserThemeOptions'
 
 // Hooks
+import { useRouter } from 'next/router'
 import {
   useAddInformation,
   useFindInformationByIdAccount,
@@ -23,7 +24,7 @@ import { useAppDispatch, useAppSelector } from 'src/store'
 import { updateFormsData } from 'src/store/apps/accounts'
 
 type InformationProps = {
-  onStepChange?: (step: number) => void
+  onStepChange: (step: number) => void
   onIsNewAccountChange: (status: boolean) => void
 }
 
@@ -61,7 +62,7 @@ export interface PlacementStructure {
   taxes: number
   frontingFee: number
   attachmentPoint: number
-  typeOfLimit: string | number
+  typeOfLimit: string | number | null
 }
 
 interface UserFile {
@@ -72,13 +73,14 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
   const inter = userThemeConfig.typography?.fontFamilyInter
   const [makeValidations, setMakeValidations] = useState(false)
-  const [disableSaveBtn, setDisableSaveBtn] = useState(false)
-  const [, setDisableNextBtn] = useState(true)
+  const [makeValidationsPlacement, setMakeValidationsPlacement] = useState(false)
+
+  //Validaciones
   const [basicIncfoValidated, setBasicIncfoValidated] = useState(false)
   const [placementStructureValidated, setPlacementStructureValidated] = useState(false)
+
   const [open, setOpen] = useState<boolean>(false)
   const [nextClicked, setNextClicked] = useState<boolean>(false)
-  const [userId, setUserId] = useState<number | null>(null)
   const [badgeData, setBadgeData] = useState<IAlert>({
     message: '',
     theme: 'success',
@@ -86,12 +88,16 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
     status: 'error'
   })
 
+  //store
   const idAccount = useAppSelector(state => state.accounts?.formsData?.form1?.id)
+  const lastForm1Information = useAppSelector(state => state.accounts?.formsData?.form1)
+
   const { getInformaByIdAccount } = useFindInformationByIdAccount()
   const { addInformation } = useAddInformation()
   const { updateInformationByIdAccount } = useUpdateInformationByIdAccount()
 
   const dispatch = useAppDispatch()
+  const router = useRouter()
 
   const [basicInfo, setBasicInfo] = useState<BasicInfoInterface>({
     insured: '',
@@ -135,8 +141,8 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   ])
 
   const updateInformation = async () => {
-    if (userId) {
-      const res = await updateInformationByIdAccount(userId, {
+    if (idAccount) {
+      const res = await updateInformationByIdAccount(idAccount, {
         insured: basicInfo.insured,
         idCountry: Number(basicInfo.country),
         idBroker: Number(basicInfo.broker),
@@ -246,7 +252,10 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   const setDataInformation = async () => {
     if (idAccount) {
       const information = await getInformaByIdAccount(idAccount)
-      setBasicInfo({
+
+      if (!information) return
+
+      const obBasicInfo = {
         insured: information.insured || '',
         country: information.idCountry || '',
         broker: information.idBroker || '',
@@ -263,9 +272,9 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
         receptionDate: information.receptionDate ? new Date(information.receptionDate) : null,
         effectiveDate: information.effetiveDate ? new Date(information.effetiveDate) : null,
         expirationDate: information.expirationDate ? new Date(information.expirationDate) : null
-      })
+      }
 
-      setPlacementStructure({
+      const obPlacementStructure = {
         currency: information.currency || '',
         total: Number(information.totalValues) || 0.0,
         sir: Number(information.sir) || 0.0,
@@ -281,48 +290,70 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
         frontingFee: Number(information.frontingFee) || 0.0,
         attachmentPoint: Number(information.attachmentPoint) || 0.0,
         typeOfLimit: information.idTypeOfLimit || ''
-      })
+      }
+
+      setBasicInfo(obBasicInfo)
+      setPlacementStructure(obPlacementStructure)
+      dispatch(
+        updateFormsData({
+          form1: { basicInfo: obBasicInfo, placementStructure: obPlacementStructure, userFile, id: idAccount }
+        })
+      )
+      onIsNewAccountChange(false)
     }
   }
 
   const handleSaveInformation = async () => {
-    if (userId) {
+    if (idAccount) {
       await updateInformation()
-      dispatch(updateFormsData({ form1: { basicInfo, placementStructure, userFile, id: userId } }))
-      onIsNewAccountChange(false)
+      dispatch(updateFormsData({ form1: { basicInfo, placementStructure, userFile, id: idAccount } }))
     } else {
       const res = await saveInformation()
-      setUserId(res.account.id)
+      localStorage.setItem('idAccount', String(res.account.id))
       dispatch(updateFormsData({ form1: { basicInfo, placementStructure, userFile, id: res.account.id } }))
       onIsNewAccountChange(false)
     }
   }
 
-  const handleSubmit = async () => {
-    setDisableNextBtn(false)
-    await handleSaveInformation()
+  //Evento que controla el evento de continuar
+  const handleNextStep = async () => {
+    if (nextClicked) {
+      if (basicIncfoValidated && placementStructureValidated) {
+        await handleSaveInformation()
+        onStepChange(2)
+      }
+    }
+    handleCloseModal()
+  }
+
+  //Evento para controlar el botÃ³n de save
+  const handleSave = () => {
+    if (nextClicked) {
+      if (basicIncfoValidated) {
+        handleSaveInformation()
+      }
+    }
   }
 
   const handleCloseModal = () => {
     setOpen(false)
   }
 
-  const onNextStep = async () => {
-    setDisableNextBtn(false)
-    if (onStepChange) {
-      await handleSaveInformation()
-      onStepChange(2)
-    }
-  }
-  const handleNext = async () => {
-    await setMakeValidations(true)
+  const handleNext = () => {
     setNextClicked(true)
-    handleNextStep()
+    setOpen(true)
+    setMakeValidations(true)
+    setMakeValidationsPlacement(true)
   }
 
   const resetMakeValidations = () => {
     setMakeValidations(false)
   }
+
+  const resetMakeValidationsPlacements = () => {
+    setMakeValidationsPlacement(false)
+  }
+
   const setValidBasicInfo = (valid: boolean) => {
     setBasicIncfoValidated(valid)
   }
@@ -331,29 +362,36 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   }
 
   useEffect(() => {
-    setDataInformation()
+    const idAccountCache = Number(localStorage.getItem('idAccount'))
+    dispatch(updateFormsData({ form1: { ...lastForm1Information, id: idAccountCache } }))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
-    const isBasicInfoValid = Object.values(basicInfo).some(value => value !== '' && value !== null)
-    setDisableSaveBtn(!isBasicInfoValid)
-  }, [basicInfo])
+    if (idAccount) {
+      setDataInformation()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [idAccount])
 
   useEffect(() => {
-    const isplacementStructureValid = Object.values(placementStructure).some(
-      value => value !== '' && value !== null && value !== 0
-    )
-    setDisableSaveBtn(!isplacementStructureValid)
-  }, [placementStructure])
+    const handleExit = () => {
+      localStorage.removeItem('idAccount')
+      dispatch(updateFormsData({ form1: { ...lastForm1Information, id: null } }))
+    }
 
-  const handleNextStep = () => {
-    if (nextClicked) {
-      if (basicIncfoValidated && placementStructureValidated) {
-        setOpen(true)
+    const handleRouteChange = (url: string) => {
+      if (url !== '/accounts/new-account') {
+        handleExit()
       }
     }
-  }
+
+    router.events.on('routeChangeStart', handleRouteChange)
+
+    return () => {
+      router.events.off('routeChangeStart', handleRouteChange)
+    }
+  }, [dispatch, lastForm1Information, onIsNewAccountChange, router.events])
 
   return (
     <>
@@ -361,7 +399,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
         <div style={{ width: 'fit-content', float: 'right' }}>
           <CustomAlert {...badgeData} />
         </div>
-        <form noValidate autoComplete='on' onSubmit={handleSubmit}>
+        <form noValidate autoComplete='on' onSubmit={handleNextStep}>
           <div className='section'>
             <BasicInfo
               basicInfo={basicInfo}
@@ -376,8 +414,8 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
             <PlacementStructure
               placementStructure={placementStructure}
               setPlacementStructure={setPlacementStructure}
-              makeValidations={makeValidations}
-              resetMakeValidations={resetMakeValidations}
+              makeValidations={makeValidationsPlacement}
+              resetMakeValidations={resetMakeValidationsPlacements}
               isValidForm={setValidPlacementStructure}
             />
           </div>
@@ -387,7 +425,15 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
             <FileSubmit userFile={userFile} setUserFile={setUserFile} />
           </div>
           <div className='section action-buttons'>
-            <Button className='btn-save' onClick={handleSubmit} disabled={disableSaveBtn} variant='contained'>
+            <Button
+              className='btn-save'
+              onClick={handleSave}
+              onMouseEnter={() => {
+                setNextClicked(true)
+                setMakeValidations(true)
+              }}
+              variant='contained'
+            >
               <div className='btn-icon'>
                 <Icon icon='mdi:content-save' />
               </div>
@@ -429,7 +475,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
                   You are about to advance to the next form. Make sure that all the fields have been completed with the
                   correct information.
                 </div>
-                <Button className='continue-modal-btn' variant='contained' onClick={onNextStep}>
+                <Button className='continue-modal-btn' variant='contained' onClick={handleNextStep}>
                   CONTINUE
                 </Button>
                 <Button

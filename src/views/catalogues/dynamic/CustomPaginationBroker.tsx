@@ -4,7 +4,7 @@ import { fetchBrokers } from '@/store/apps/catalogs/brokers'
 import Pagination from '@mui/material/Pagination'
 import Typography from '@mui/material/Typography'
 
-const CustomPagination = () => {
+const CustomPaginationBroker = () => {
   const userReducer = useAppSelector(state => state.brokers)
   const dispatch = useAppDispatch()
 
@@ -32,4 +32,4 @@ const CustomPagination = () => {
   )
 }
 
-export default CustomPagination
+export default CustomPaginationBroker

@@ -7,6 +7,9 @@ import DatePicker from 'react-datepicker'
 
 // import Icon from 'src/@core/components/icon'
 
+import CloseIcon from '@mui/icons-material/Close'
+import { Box, Modal } from '@mui/material'
+
 import UserThemeOptions from 'src/layouts/UserThemeOptions'
 import CardInstallment from 'src/layouts/components/CardInstallment'
 import {
@@ -19,9 +22,12 @@ import {
 //hooks
 import { useAddInstallments } from 'src/hooks/accounts/installments'
 import { useAppSelector } from 'src/store'
+import * as yup from 'yup'
 
 //dtos
 import { useGetAccountById } from '@/hooks/accounts/forms'
+import { ButtonClose, HeaderTitleModal } from '@/styles/modal/modal.styled'
+import { NumericFormat } from 'react-number-format'
 import { InstallmentDto } from 'src/services/accounts/dtos/installments.dto'
 
 interface InstallmentErrors {
@@ -38,6 +44,13 @@ interface PickerProps {
 type InformationProps = {
   onStepChange?: (step: number) => void
 }
+
+const schema = yup.object().shape({
+  paymentPercentage: yup.number().required(),
+  balanceDue: yup.number().required(),
+  premiumPaymentWarranty: yup.number().required(),
+  settlementDueDate: yup.date().required()
+})
 
 const CustomInput = forwardRef(({ ...props }: PickerProps, ref: ForwardedRef<HTMLElement>) => {
   return (
@@ -66,7 +79,8 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
   const [installmentsList, setInstallmentList] = useState<InstallmentDto[]>([])
 
   const [count, setCount] = useState<string>('0')
-  const [, setBtnNext] = useState<boolean>(false)
+  const [btnNext, setBtnNext] = useState<boolean>(false)
+  const [open, setOpen] = useState<boolean>(false)
   const [error, setError] = useState<InstallmentErrors>({
     errorFieldRequired: false,
     erorrRangeInstallments: false,
@@ -99,6 +113,26 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
   const handleItemChange = (index: number, item: InstallmentDto) => {
     setInstallmentList([...installmentsList.slice(0, index), item, ...installmentsList.slice(index + 1)])
   }
+
+  useEffect(() => {
+    //yup validate each form of installmentlist
+    for (let i = 0; i < +count; i++) {
+      const item = installmentsList[i]
+      schema
+        .validate(item)
+        .then(() => {
+          const sum = installmentsList.reduce((acc, item) => acc + item.paymentPercentage, 0)
+          if (sum === 100) {
+            setBtnNext(true)
+          } else {
+            setBtnNext(false)
+          }
+        })
+        .catch(err => {
+          console.log(err)
+        })
+    }
+  }, [installmentsList, count])
 
   const saveInstallments = (installments: Omit<InstallmentDto[], 'id'>) => {
     addInstallments(installments)
@@ -139,12 +173,12 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
             <Grid container spacing={{ xs: 2, sm: 5, md: 5 }} rowSpacing={4} columns={12}>
               <Grid item xs={12} sm={6} md={4}>
                 <DatePicker
-                  selected={account ? new Date(account?.informations[0].effetiveDate) : null}
+                  selected={account ? new Date(account?.informations[0].effetiveDate + 'T00:00:00') : null}
                   shouldCloseOnSelect
                   id='reception-date'
                   showTimeSelect
                   timeIntervals={15}
-                  customInput={<CustomInput label='Reception date' sx={{ mb: 2, mt: 2, width: '100%' }} />}
+                  customInput={<CustomInput label='Reception date' sx={{ mb: 2, mt: 0, width: '100%' }} />}
                   disabled={true}
                   onChange={() => {
                     return
@@ -155,17 +189,29 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
                 <TextField
                   fullWidth
                   label='Dynamic net premium'
-                  value={account ? account.securityTotal.receivedNetPremium : null}
+                  value={account ? account.securityTotal.receivedNetPremium : ' '}
                   InputProps={{
                     disabled: true
                   }}
                 />
               </Grid>
               <Grid item xs={12} sm={6} md={4}>
-                <TextField
-                  error={error.erorrRangeInstallments || error.errorFieldRequired || error.errorOnlyNumbers}
-                  fullWidth
+                <NumericFormat
+                  name='Installments'
+                  allowLeadingZeros
+                  thousandSeparator=','
+                  customInput={TextField}
+                  id='Installments'
                   label='Installments'
+                  multiline
+                  decimalScale={0}
+                  variant='outlined'
+                  isAllowed={values => {
+                    const { floatValue } = values
+                    const upLimit = 12
+
+                    return (floatValue! >= 0 && floatValue! <= upLimit) || floatValue === undefined
+                  }}
                   value={count}
                   onChange={handleChange}
                   onBlur={handleBlur}
@@ -197,9 +243,10 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
               onChangeList={handleItemChange}
               globalInfo={{
                 receivedNetPremium: account ? account.securityTotal.receivedNetPremium : '',
-                inceptionDate: account ? new Date(account.informations[0].effetiveDate) : null,
+                inceptionDate: account ? new Date(account.informations[0].effetiveDate + 'T00:00:00') : null,
                 idAccount: account ? idAccount : ''
               }}
+              count={+count}
               key={index}
             />
           ))}
@@ -221,11 +268,62 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
             fontSize: userThemeConfig.typography?.size.px15,
             color: texButtonColor
           }}
-          onClick={() => nestStep()}
+          onClick={() => setOpen(true)}
         >
-          Nex step &nbsp;
+          Next step &nbsp;
           <ArrowForwardIcon />
         </Button>
+
+        <Modal
+          className='next-step-modal'
+          open={open}
+          onClose={() => {
+            setOpen(false)
+          }}
+        >
+          <Box
+            sx={{
+              position: 'absolute',
+              bgcolor: 'white',
+              top: '50%',
+              left: '50%',
+              boxShadow: 24,
+              pl: 5,
+              pr: 5,
+              transform: 'translate(-50%, -50%)',
+              borderRadius: '10px',
+              padding: '15px'
+            }}
+          >
+            <HeaderTitleModal>
+              <div className='next-modal-title'>Ready to continue?</div>
+              <ButtonClose
+                onClick={() => {
+                  setOpen(false)
+                }}
+              >
+                <CloseIcon />
+              </ButtonClose>
+            </HeaderTitleModal>
+            <div className='next-modal-text'>
+              You are about to advance to the next form. Make sure that all the fields have been completed with the
+              correct information.
+            </div>
+            <Button
+              className='continue-modal-btn'
+              variant='contained'
+              disabled={!btnNext}
+              onClick={() => {
+                nestStep()
+              }}
+            >
+              CONTINUE
+            </Button>
+            <Button className='create-contact-modal' onClick={() => setOpen(false)}>
+              Keep editing information
+            </Button>
+          </Box>
+        </Modal>
       </NextContainer>
     </>
   )
