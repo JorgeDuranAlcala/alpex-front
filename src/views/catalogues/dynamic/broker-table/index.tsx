@@ -8,7 +8,7 @@ import { useRouter } from 'next/router'
 import CloseIcon from '@mui/icons-material/Close'
 import { Box, Button, Modal, Typography } from '@mui/material'
 import IconButton from '@mui/material/IconButton'
-import { DataGrid, GRID_CHECKBOX_SELECTION_COL_DEF, GridColumns } from '@mui/x-data-grid'
+import { DataGrid, GridColumns, GRID_CHECKBOX_SELECTION_COL_DEF } from '@mui/x-data-grid'
 import { ButtonClose, HeaderTitleModal } from 'src/styles/Dashboard/ModalReinsurers/modalReinsurers'
 
 // ** Icon Imports
@@ -25,8 +25,13 @@ import colors from 'src/views/accounts/colors'
 import fonts from 'src/views/accounts/font'
 
 import { useDeleteBroker } from '@/hooks/catalogs/broker/useDelete'
-import { fetchBrokers } from 'src/store/apps/catalogs/brokers'
-import CustomPagination from '../CustomPaginationImp'
+import {
+  deleteBrokersFilter,
+  fetchBrokers,
+  handleBrokersFilter,
+  handleSelectBroker
+} from 'src/store/apps/catalogs/brokers'
+import CustomPaginationBroker from '../CustomPaginationBroker'
 
 export interface IBroker {
   id: number
@@ -122,7 +127,13 @@ const Table = () => {
 
       renderCell: ({ row }) => (
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
-          <IconButton size='small' sx={{ mr: 1 }}>
+          <IconButton
+            size='small'
+            sx={{ mr: 1 }}
+            onClick={() => {
+              handleSelectBrokerEdit(row.id)
+            }}
+          >
             <Icon icon='ic:baseline-login' />
           </IconButton>
           <IconButton
@@ -156,9 +167,14 @@ const Table = () => {
     return data
   } */
 
+  const handleSelectBrokerEdit = (id: number | null) => {
+    dispatch(handleSelectBroker(id))
+    router.push({ pathname: '/catalogues/dynamic/add-broker', query: { id } })
+  }
+
   const searchBrokers = (value: string) => {
-    //must be replaced with the respective broker service
-    console.log('Call search service', value)
+    if (value === '') dispatch(deleteBrokersFilter('name'))
+    else dispatch(handleBrokersFilter({ type: 'name', value: value, text: value }))
   }
 
   const deleteRows = async () => {
@@ -214,7 +230,7 @@ const Table = () => {
             pagination
             pageSize={10}
             components={{
-              Pagination: CustomPagination
+              Pagination: CustomPaginationBroker
             }}
             className={'catalogue-datagrid'}
             onSelectionModelChange={rows => setSelectedRows(rows)}
@@ -231,7 +247,7 @@ const Table = () => {
       >
         <Box className='modal-wrapper'>
           <HeaderTitleModal>
-            <Typography variant='h6'>Are you sure you want to delete this account?</Typography>
+            <Typography variant='h6'>Are you sure you want to delete this broker?</Typography>
             <ButtonClose
               onClick={() => {
                 setOpenDelete(false)

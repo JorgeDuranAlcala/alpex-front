@@ -55,7 +55,6 @@ class BrokeService {
       const { data } = await AppAlpexApiGateWay.get(
         `${url}&take=${brokersData.info.take}&page=${brokersData.info.page}`
       )
-      console.log({ data })
 
       return data
     } catch (error) {

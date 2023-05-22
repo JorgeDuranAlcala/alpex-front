@@ -70,7 +70,9 @@ export enum BROKER_CONTACT_ROUTERS {
   GET_BY_ID = 'catalogs/broker-contact',
   ADD = 'catalogs/broker-contact/add',
   UPDATE = 'catalogs/broker-contact',
-  GET_BY_ID_BROKER = 'catalogs/broker-contact/broker'
+  GET_BY_ID_BROKER = 'catalogs/broker-contact/broker',
+  GET = 'catalogs/broker-contact/pagination/broker',
+  DELETE = 'catalogs/broker-contact/delete'
 }
 
 export enum CEDANT_CONTACT_ROUTERS {
