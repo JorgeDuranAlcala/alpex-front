@@ -94,7 +94,7 @@ const Table = ({ status }: IAccountTable) => {
 
   useEffect(() => {
     dispatch(resetAccountFilter())
-    if (status === undefined) dispatch(deleteAccountFilter('Status'))
+    if (status === undefined) dispatch(deleteAccountFilter('status'))
     else {
       const index: string = Object.keys(EStatus)[Object.values(EStatus).indexOf(status as any)]
       dispatch(
