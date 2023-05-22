@@ -16,8 +16,9 @@ import { useDeleteUser } from '@/hooks/catalogs/users/deleteUser'
 // ** Custom Components Imports
 
 // ** Custom Components Imports
+import Icon from 'src/@core/components/icon'
 
-import { Icon } from '@iconify/react'
+// import { Icon } from '@iconify/react'
 import ColumnHeader from './ColumnHeader'
 import CustomPagination from './CustomPagination'
 import TableHeader from './TableHeader'
@@ -112,7 +113,7 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const open = Boolean(anchorEl)
 
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget)
   }
   const handleClose = () => {
@@ -254,7 +255,19 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
           >
             <Icon icon='mdi:dots-vertical' />
           </IconButton>
-          <Menu anchorEl={anchorEl} open={open} onClose={handleClose} PaperProps={{ style: { minWidth: '8rem' } }}>
+          <Menu
+            anchorEl={anchorEl}
+            open={open}
+            onClose={handleClose}
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'right'
+            }}
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'right'
+            }}
+          >
             <MenuItem
               onClick={() => {
                 setSelectUser(selectedUser!.id)
@@ -268,6 +281,7 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
             <MenuItem
               onClick={() => {
                 setModalShow(true)
+                handleClose()
               }}
               sx={{ minWidth: '172px', display: 'flex', justifyContent: 'space-between' }}
             >
