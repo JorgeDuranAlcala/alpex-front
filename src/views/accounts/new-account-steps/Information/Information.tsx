@@ -255,7 +255,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
 
       if (!information) return
 
-      setBasicInfo({
+      const obBasicInfo = {
         insured: information.insured || '',
         country: information.idCountry || '',
         broker: information.idBroker || '',
@@ -272,9 +272,9 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
         receptionDate: information.receptionDate ? new Date(information.receptionDate) : null,
         effectiveDate: information.effetiveDate ? new Date(information.effetiveDate) : null,
         expirationDate: information.expirationDate ? new Date(information.expirationDate) : null
-      })
+      }
 
-      setPlacementStructure({
+      const obPlacementStructure = {
         currency: information.currency || '',
         total: Number(information.totalValues) || 0.0,
         sir: Number(information.sir) || 0.0,
@@ -290,23 +290,16 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
         frontingFee: Number(information.frontingFee) || 0.0,
         attachmentPoint: Number(information.attachmentPoint) || 0.0,
         typeOfLimit: information.idTypeOfLimit || ''
-      })
+      }
 
+      setBasicInfo(obBasicInfo)
+      setPlacementStructure(obPlacementStructure)
       dispatch(
         updateFormsData({
-          form1: {
-            basicInfo: {
-              insured: information.insured || '',
-              effectiveDate: information.effetiveDate ? new Date(information.effetiveDate) : null
-            },
-            placementStructure: {
-              netPremium: Number(information.netPremiun) || 0.0
-            },
-            userFile,
-            id: idAccount
-          }
+          form1: { basicInfo: obBasicInfo, placementStructure: obPlacementStructure, userFile, id: idAccount }
         })
       )
+      onIsNewAccountChange(false)
     }
     onIsNewAccountChange(false)
   }
@@ -334,7 +327,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
     handleCloseModal()
   }
 
-  //Evento para controlar el botón de save
+  //Evento para controlar el botÃ³n de save
   const handleSave = () => {
     if (nextClicked) {
       if (basicIncfoValidated) {

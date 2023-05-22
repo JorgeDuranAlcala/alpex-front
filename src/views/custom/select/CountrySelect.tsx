@@ -40,7 +40,7 @@ export default function CountrySelect({ setSelectedCountry, size = 'small', othe
         sx={{ width: 200 }}
         style={{ ...otherProps }}
         size={size}
-        renderInput={params => <TextField {...params} />}
+        renderInput={params => <TextField {...params} label='Select Country Code' />}
       />
     </div>
   )
