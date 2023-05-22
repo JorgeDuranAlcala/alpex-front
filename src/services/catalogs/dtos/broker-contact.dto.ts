@@ -6,3 +6,7 @@ export interface BrokerContactDto {
   idCBroker: number
   idCCountry: number
 }
+
+export interface BrokerContactsDeleteDto {
+  idDeleteList: number[]
+}

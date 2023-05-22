@@ -19,7 +19,12 @@ import { useAppDispatch, useAppSelector } from '@/store'
 import { fetchBrokers } from '@/store/apps/catalogs/brokers'
 import { useAddBroker } from 'src/hooks/catalogs/broker/useAdd'
 
-const AddBroker = () => {
+interface IAddBroker {
+  idBroker: number
+  setIdBroker: (id: number) => void
+}
+
+const AddBroker = ({ idBroker, setIdBroker }: IAddBroker) => {
   const [newBroker, setNewBroker] = useState<IBroker>({ id: 0, name: '' })
   const [isBrokerSaved, setIsBrokerSaved] = useState(false)
   const [disableAddBroker, setDisableAddBroker] = useState(true)
@@ -69,6 +74,7 @@ const AddBroker = () => {
       setNewBroker({ id: result.id, name: result.name })
       triggerAlert('success')
       dispatch(fetchBrokers(brokerReducer))
+      setIdBroker(result.id)
       setIsBrokerSaved(true)
     }
   }
@@ -93,6 +99,14 @@ const AddBroker = () => {
     }
     setOpenDelete(false)
   }
+
+  useEffect(() => {
+    if (brokerReducer.current !== undefined && brokerReducer.current !== null && idBroker !== 0) {
+      setNewBroker({ ...brokerReducer.current })
+      setIsBrokerSaved(true)
+    }
+    //eslint-disable-next-line
+  }, [brokerReducer.current, idBroker])
 
   useEffect(() => {
     if (newBroker.name !== '') {
