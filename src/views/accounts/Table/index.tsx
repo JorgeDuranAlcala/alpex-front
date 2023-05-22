@@ -28,7 +28,13 @@ import useAccountTable from '@/hooks/accounts/Table/useAccountTable'
 import { formatStatus } from '@/utils/formatStatus'
 import { Link } from '@mui/material'
 import { useAppDispatch, useAppSelector } from 'src/store'
-import { deleteAccountFilter, fetchAccounts, handleAccountFilter, resetAccountFilter } from 'src/store/apps/accounts'
+import {
+  deleteAccountFilter,
+  fetchAccounts,
+  handleAccountFilter,
+  resetAccountFilter,
+  updateFormsData
+} from 'src/store/apps/accounts'
 import colors from 'src/views/accounts/colors'
 import fonts from 'src/views/accounts/font'
 import { IAlert } from 'src/views/custom/alerts'
@@ -72,7 +78,7 @@ const Table = ({ status }: IAccountTable) => {
 
   // ** Custom Hooks
   //const { accounts, getAccounts } = useAccountTable()
-  const { duplicateAccounts, getAccounts } = useAccountTable()
+  const { duplicateAccounts } = useAccountTable()
 
   // ** Hooks
   const router = useRouter()
@@ -88,7 +94,7 @@ const Table = ({ status }: IAccountTable) => {
 
   useEffect(() => {
     dispatch(resetAccountFilter())
-    if (status === undefined) dispatch(deleteAccountFilter('Status'))
+    if (status === undefined) dispatch(deleteAccountFilter('status'))
     else {
       const index: string = Object.keys(EStatus)[Object.values(EStatus).indexOf(status as any)]
       dispatch(
@@ -342,33 +348,18 @@ const Table = ({ status }: IAccountTable) => {
   }
 
   const onEdit = async (id: number) => {
-    const res = await getAccounts({
-      formsData: null,
-      accounts: [],
-      loading: false,
-      filters: [
-        {
-          type: 'idAccount',
-          value: String(id)
+    dispatch(
+      updateFormsData({
+        form1: {
+          basicInfo: {},
+          placementStructure: {},
+          userFile: {},
+          id
         }
-      ],
-      info: {
-        count: 0,
-        next: '',
-        page: 1,
-        pages: 12,
-        prev: '',
-        take: 1
-      },
-      temporalFilters: [],
-      current: null
-    })
-
-    const foundAccount = res.results[0]
-
-    console.log(foundAccount)
-
-    router.push(`/accounts/new-account/?&idAccount=${id}`)
+      })
+    )
+    localStorage.setItem('idAccount', String(id))
+    router.push(`/accounts/new-account/?&id=${id}`)
   }
 
   return (

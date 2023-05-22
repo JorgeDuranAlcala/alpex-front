@@ -154,7 +154,7 @@ const FormHeader = () => {
             </div>
             <div className='form-header-section'>
               <span className='form-header-title'>Registration date:</span>
-              <span className='form-header-subtitle'>{formatDate(account?.basicInfo.effectiveDate)}</span>
+              <span className='form-header-subtitle'>{formatDate(account?.basicInfo?.effectiveDate)}</span>
             </div>
           </div>
         </div>
