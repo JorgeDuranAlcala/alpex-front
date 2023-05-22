@@ -250,7 +250,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   const setDataInformation = async () => {
     if (idAccount) {
       const information = await getInformaByIdAccount(idAccount)
-      setBasicInfo({
+      const obBasicInfo = {
         insured: information.insured || '',
         country: information.idCountry || '',
         broker: information.idBroker || '',
@@ -267,9 +267,9 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
         receptionDate: information.receptionDate ? new Date(information.receptionDate) : null,
         effectiveDate: information.effetiveDate ? new Date(information.effetiveDate) : null,
         expirationDate: information.expirationDate ? new Date(information.expirationDate) : null
-      })
+      }
 
-      setPlacementStructure({
+      const obPlacementStructure = {
         currency: information.currency || '',
         total: Number(information.totalValues) || 0.0,
         sir: Number(information.sir) || 0.0,
@@ -285,7 +285,15 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
         frontingFee: Number(information.frontingFee) || 0.0,
         attachmentPoint: Number(information.attachmentPoint) || 0.0,
         typeOfLimit: information.idTypeOfLimit || ''
-      })
+      }
+
+      setBasicInfo(obBasicInfo)
+      setPlacementStructure(obPlacementStructure)
+      dispatch(
+        updateFormsData({
+          form1: { basicInfo: obBasicInfo, placementStructure: obPlacementStructure, userFile, id: idAccount }
+        })
+      )
     }
   }
 
