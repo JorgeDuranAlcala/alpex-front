@@ -530,9 +530,7 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
   }, [formData[index].NetPremium])
 
   useEffect(() => {
-    setTimeout(() => {
-      setValues('PremiumPerShare')
-    }, 100)
+    setValues('PremiumPerShare')
     //eslint-disable-next-line
   }, [formData[index].PremiumPerShare])
 
