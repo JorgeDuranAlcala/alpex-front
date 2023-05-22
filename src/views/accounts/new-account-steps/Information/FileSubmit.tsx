@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useRef, useState } from 'react'
+import React, { Fragment, useRef, useState } from 'react'
 
 // // ** MUI Imports
 
@@ -27,9 +27,6 @@ const FileSubmit: React.FC<UserFileProps> = ({ setUserFile }) => {
 
     setFilevalues([...file, ...e.target.files])
     setUserFile({ file: [...file, ...e.target.files] })
-
-    // Guardar archivos en el almacenamiento local
-    localStorage.setItem('uploadedFiles', JSON.stringify([...e.target.files]))
   }
 
   const onButtonClick = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -42,17 +39,7 @@ const FileSubmit: React.FC<UserFileProps> = ({ setUserFile }) => {
   const handleRemoveFile = (e: any, index: number) => {
     e.preventDefault + file.splice(index, 1)
     setFile([...file])
-    localStorage.setItem('uploadedFiles', JSON.stringify(file))
   }
-
-  useEffect(() => {
-    const storedFiles = localStorage.getItem('uploadedFiles')
-
-    if (storedFiles) {
-      const parsedFiles = JSON.parse(storedFiles)
-      setFile(parsedFiles)
-    }
-  }, [])
 
   return (
     <Fragment>
