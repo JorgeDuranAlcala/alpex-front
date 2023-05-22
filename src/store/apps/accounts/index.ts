@@ -28,8 +28,6 @@ export const fetchAccounts = createAsyncThunk(
     const formatedFilters = []
     const rawFilters = state.filters
 
-    console.log('stateFilter', state.filters)
-
     if (rawFilters && rawFilters.length > 0) {
       for (const rawFilter of rawFilters) {
         if (rawFilter.type === 'status') {

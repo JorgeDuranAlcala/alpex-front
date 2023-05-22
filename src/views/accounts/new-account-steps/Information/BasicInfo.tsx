@@ -281,9 +281,8 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
   useEffect(() => {
     if (makeValidations) {
       validations()
-      resetMakeValidations()
     }
-  }, [makeValidations])
+  }, [makeValidations, basicInfo])
 
   return (
     <>

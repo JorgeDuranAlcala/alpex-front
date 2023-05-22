@@ -400,6 +400,9 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
   const resetValues = () => {
     const data = [...formData]
 
+    data[index]['SharePercent'] = '' + 0
+    data[index]['PremiumPerShare'] = '' + 0
+
     data[index]['DynamicComissionPercent'] = '' + 0
     data[index]['DynamicComission'] = '' + 0
 
@@ -408,6 +411,8 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
 
     data[index]['TaxesPercent'] = '' + 0
     data[index]['Taxes'] = '' + 0
+
+    data[index]['NetInsurancePremium'] = '' + 0
   }
 
   const setValues = (field: keyof FormInfo) => {
@@ -423,31 +428,34 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
     const TaxesPercent = data[index]['TaxesPercent']
     const FrontingFee = data[index]['FrontingFee']
     const FrontingFeePercent = data[index]['FrontingFeePercent']
-
     let NetInsurancePremium = ''
-    if (isGross) {
-      NetInsurancePremium = validateNumber(
-        (+premiumPerShare - +dynamicComission - +Taxes - +BrokerAge - +FrontingFee).toString(),
-        true
-      )
-    } else {
-      NetInsurancePremium = validateNumber((+premiumPerShare - +dynamicComission - +FrontingFee).toString(), true)
-    }
-    const dataError = [...formErrors]
 
-    if (+NetInsurancePremium < 0) dataError[index]['NetInsurancePremium'] = 'ERROR: The number must be greater than 0!'
-    else dataError[index]['NetInsurancePremium'] = ''
-    setFormErrors(dataError)
-    setFormErrors(formErrors)
-    if (+totalNetPremium === 0) {
-      data[index]['NetPremium'] = formInformation.netPremium.toString()
+    const calculateNetInsurancePremium = () => {
+      if (isGross) {
+        NetInsurancePremium = validateNumber(
+          (+premiumPerShare - +dynamicComission - +Taxes - +BrokerAge - +FrontingFee).toString(),
+          true
+        )
+      } else {
+        NetInsurancePremium = validateNumber((+premiumPerShare - +dynamicComission - +FrontingFee).toString(), true)
+      }
+      const dataError = [...formErrors]
+
+      if (+NetInsurancePremium < 0)
+        dataError[index]['NetInsurancePremium'] = 'ERROR: The number must be greater than 0!'
+      else dataError[index]['NetInsurancePremium'] = ''
+      setFormErrors(dataError)
+      setFormErrors(formErrors)
+      if (+totalNetPremium === 0) {
+        data[index]['NetPremium'] = formInformation.netPremium.toString()
+      }
     }
+
+    calculateNetInsurancePremium()
 
     switch (field) {
       case 'NetPremium':
         data[index]['PremiumPerShare'] = validateNumber(((+sharePercent * +totalNetPremium) / 100).toString())
-
-        // console.log(data[index]['PremiumPerShare'])
 
         break
 
@@ -517,8 +525,8 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
     if (!frontingFeeEnabled) {
       data[index]['FrontingFeePercent'] = '0'
       data[index]['FrontingFee'] = '0'
-      console.log(data[index]['PremiumPerShare'])
     }
+
     setFormData(data)
   }
 
@@ -584,6 +592,7 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
     const data = [...formData]
 
     if (company) {
+      setIsGross(true)
       resetValues()
       setIsGross(company.isGross)
       company.isGross
@@ -591,12 +600,10 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
         : (data[index]['NetPremium'] = formInformation.netPremium.toString())
 
       setValues('NetPremium')
-      setValues('PremiumPerShare')
     } else {
       setIsGross(false)
       data[index]['NetPremium'] = formInformation.netPremium.toString()
       setValues('NetPremium')
-      setValues('PremiumPerShare')
     }
     setFormData(data)
     setValues('NetPremium')
@@ -958,7 +965,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
     DistribuitedNetPremium: '',
     Diference: ''
   })
-  const [enableNextStep, setEnableNextStep] = useState<boolean>(false)
+
   const [open, setOpen] = useState<boolean>(false)
   const [formInformation, setFormInformation] = useState<FormInformation>({
     frontingFee: 0,
@@ -976,8 +983,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
   const accountData = useAppSelector(state => state.accounts)
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
 
-  const { account, setAccountId } = useGetAccountById()
-
+  const { setAccountId } = useGetAccountById()
 
   useEffect(() => {
     accountData.formsData.form1.id && setAccountId(accountData.formsData.form1.id)
@@ -995,7 +1001,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
   }
 
   const onNextStep = () => {
-    onStepChange!(3)
+    validate(true)
   }
 
   const handleNext = () => {
@@ -1006,7 +1012,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
     validate()
   }
 
-  const validate = async () => {
+  const validate = async (isNextStep?: boolean) => {
     formData.forEach((form, index) => {
       const data = [...formErrors]
       data[index] = { ...SecurityForm }
@@ -1015,39 +1021,28 @@ const Security = ({ onStepChange }: SecurityProps) => {
         schema
           .validate(form, { abortEarly: false })
           .then(function () {
-            console.log('dsadsa2')
-
             handleSuccess()
+
+            if (isNextStep) onStepChange!(3)
           })
           .catch(function (err) {
-            console.log('dsadsa4')
-
-            console.log(err)
-
             err?.inner?.forEach((e: any) => {
               data[index][e.path] = e.message
               setFormErrors(data)
             })
-            setEnableNextStep(false)
           })
       } else {
         schemaNetPremium
           .validate(form, { abortEarly: false })
           .then(function () {
-            console.log('dsadsa2')
-
             handleSuccess()
+            if (isNextStep) onStepChange!(3)
           })
           .catch(function (err) {
-            console.log('dsadsa4')
-
-            console.log(err)
-
             err?.inner?.forEach((e: any) => {
               data[index][e.path] = e.message
               setFormErrors(data)
             })
-            setEnableNextStep(false)
           })
       }
     })
@@ -1058,8 +1053,6 @@ const Security = ({ onStepChange }: SecurityProps) => {
     let sumSharePercent = 0
     let sumGrossShare = 0
     formData.forEach(form => {
-      console.log(form)
-
       DistribuitedNetPremium +=
         +form.BrokerAge + +form.Taxes + +form.DynamicComission + +form.FrontingFee + +form.NetInsurancePremium
       if (!form.IsGross) sumSharePercent += +form.SharePercent
@@ -1140,11 +1133,8 @@ const Security = ({ onStepChange }: SecurityProps) => {
   }
 
   const handleSuccess = () => {
-    console.log('dsadsa')
-
     saveInformation()
     dispatch(updateFormsData({ form2: allFormData }))
-    setEnableNextStep(true)
   }
 
   useEffect(() => {
@@ -1230,13 +1220,13 @@ const Security = ({ onStepChange }: SecurityProps) => {
             </Button>
           </div>
           <div className='section action-buttons' style={{ float: 'right', marginRight: 'auto', marginBottom: '20px' }}>
-            <Button className='btn-save' onClick={validate} variant='contained'>
+            <Button className='btn-save' onClick={() => validate()} variant='contained'>
               <div className='btn-icon'>
                 <Icon icon='mdi:content-save' />
               </div>
               SAVE CHANGES
             </Button>
-            <Button className='btn-next' disabled={!enableNextStep} onClick={handleNext}>
+            <Button className='btn-next' onClick={handleNext}>
               Next Step
               <div className='btn-icon'>
                 <Icon icon='material-symbols:arrow-right-alt' />
