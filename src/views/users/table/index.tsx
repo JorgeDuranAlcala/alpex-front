@@ -23,7 +23,7 @@ import CustomPagination from './CustomPagination'
 import TableHeader from './TableHeader'
 
 // ** Custom utilities
-import { Button, Link, ListItemText, Menu, MenuItem } from '@mui/material'
+import { IconButton, Link, Menu, MenuItem } from '@mui/material'
 import { useAppDispatch, useAppSelector } from 'src/store'
 import { fetchAccounts } from 'src/store/apps/users'
 import colors from 'src/views/accounts/colors'
@@ -221,7 +221,14 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
       headerClassName: 'account-column-header',
       renderHeader: ({ colDef }) => <ColumnHeader colDef={colDef} showIcon={false} action={handleClickColumnHeader} />,
       renderCell: ({ row }) => (
-        <Typography sx={{ color: colors.text.secondary, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
+        <Typography
+          sx={{
+            color: colors.text.secondary,
+            fontSize: fonts.size.px14,
+            fontFamily: fonts.inter,
+            textTransform: 'lowercase'
+          }}
+        >
           {row.email}
         </Typography>
       )
@@ -237,48 +244,81 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
       cellClassName: 'account-column-cell-pl-0',
       renderHeader: ({ colDef }) => <ColumnHeader colDef={colDef} showIcon={false} />,
       renderCell: ({ row }) => (
-        <Box sx={{ display: 'flex', alignItems: 'start' }}>
-          <Button
-            id='basic-button'
-            aria-controls={open ? 'basic-menu' : undefined}
-            aria-haspopup='true'
-            aria-expanded={open ? 'true' : undefined}
+        <>
+          <IconButton
+            size='small'
             onClick={e => {
               setSelectedUser(row)
               handleClick(e)
             }}
-            startIcon={<Icon icon='mdi:dots-vertical' fontSize={15} />}
-          />
-          <Menu
-            id='basic-menu'
-            anchorEl={anchorEl}
-            open={open}
-            onClose={handleClose}
-            MenuListProps={{
-              'aria-labelledby': 'basic-button'
-            }}
           >
+            <Icon icon='mdi:dots-vertical' />
+          </IconButton>
+          <Menu anchorEl={anchorEl} open={open} onClose={handleClose} PaperProps={{ style: { minWidth: '8rem' } }}>
             <MenuItem
               onClick={() => {
                 setSelectUser(selectedUser!.id)
+                handleClose()
               }}
-              sx={{ minWidth: '172px' }}
+              sx={{ minWidth: '172px', display: 'flex', justifyContent: 'space-between' }}
             >
-              <ListItemText>Edit</ListItemText>
+              Edit
               <Icon icon='mdi:pencil' fontSize={24} />
             </MenuItem>
             <MenuItem
               onClick={() => {
                 setModalShow(true)
               }}
-              sx={{ minWidth: '172px' }}
+              sx={{ minWidth: '172px', display: 'flex', justifyContent: 'space-between' }}
             >
-              <ListItemText>Delete</ListItemText>
+              Delete
               <Icon icon='ic:baseline-delete-outline' fontSize={24} />
             </MenuItem>
           </Menu>
-        </Box>
+        </>
       )
+
+      // <Box sx={{ display: 'flex', alignItems: 'start' }}>
+      //   <Button
+      //     id='basic-button'
+      //     aria-controls={open ? 'basic-menu' : undefined}
+      //     aria-haspopup='true'
+      //     aria-expanded={open ? 'true' : undefined}
+      //     onClick={e => {
+      //       setSelectedUser(row)
+      //       handleClick(e)
+      //     }}
+      //     startIcon={<Icon icon='mdi:dots-vertical' fontSize={15} />}
+      //   />
+      //   <Menu
+      //     id='basic-menu'
+      //     anchorEl={anchorEl}
+      //     open={open}
+      //     onClose={handleClose}
+      //     MenuListProps={{
+      //       'aria-labelledby': 'basic-button'
+      //     }}
+      //   >
+      //     <MenuItem
+      //       onClick={() => {
+      //         setSelectUser(selectedUser!.id)
+      //       }}
+      //       sx={{ minWidth: '172px' }}
+      //     >
+      //       <ListItemText>Edit</ListItemText>
+      //       <Icon icon='mdi:pencil' fontSize={24} />
+      //     </MenuItem>
+      //     <MenuItem
+      //       onClick={() => {
+      //         setModalShow(true)
+      //       }}
+      //       sx={{ minWidth: '172px' }}
+      //     >
+      //       <ListItemText>Delete</ListItemText>
+      //       <Icon icon='ic:baseline-delete-outline' fontSize={24} />
+      //     </MenuItem>
+      //   </Menu>
+      // </Box>
     }
   ]
   const onDelete = () => {
