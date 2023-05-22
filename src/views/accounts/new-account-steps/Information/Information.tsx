@@ -301,6 +301,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
       )
       onIsNewAccountChange(false)
     }
+    onIsNewAccountChange(false)
   }
 
   const handleSaveInformation = async () => {
@@ -371,6 +372,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
     if (idAccount) {
       setDataInformation()
     }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [idAccount])
 
@@ -391,7 +393,8 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
     return () => {
       router.events.off('routeChangeStart', handleRouteChange)
     }
-  }, [dispatch, lastForm1Information, onIsNewAccountChange, router.events])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch, onIsNewAccountChange, router.events])
 
   return (
     <>
