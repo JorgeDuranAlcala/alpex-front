@@ -236,9 +236,9 @@ const AddUser = ({ selectUser }: IAddUser) => {
                             error={Boolean(errors.name)}
                             sx={{
                               '& .MuiOutlinedInput-root.Mui-focused  .MuiOutlinedInput-notchedOutline': {
-                                borderColor: '#0D567B'
+                                borderColor: '#2535A8'
                               },
-                              '& .MuiInputLabel-root.Mui-focused': { color: '#0D567B' }
+                              '& .MuiInputLabel-root.Mui-focused': { color: '#2535A8' }
                             }}
                           />
                         )}
@@ -261,9 +261,9 @@ const AddUser = ({ selectUser }: IAddUser) => {
                             error={Boolean(errors.surname)}
                             sx={{
                               '& .MuiOutlinedInput-root.Mui-focused  .MuiOutlinedInput-notchedOutline': {
-                                borderColor: '#0D567B'
+                                borderColor: '#2535A8'
                               },
-                              '& .MuiInputLabel-root.Mui-focused': { color: '#0D567B' }
+                              '& .MuiInputLabel-root.Mui-focused': { color: '#2535A8' }
                             }}
                           />
                         )}
@@ -288,9 +288,9 @@ const AddUser = ({ selectUser }: IAddUser) => {
                             error={Boolean(errors.email)}
                             sx={{
                               '& .MuiOutlinedInput-root.Mui-focused  .MuiOutlinedInput-notchedOutline': {
-                                borderColor: '#0D567B'
+                                borderColor: '#2535A8'
                               },
-                              '& .MuiInputLabel-root.Mui-focused': { color: '#0D567B' }
+                              '& .MuiInputLabel-root.Mui-focused': { color: '#2535A8' }
                             }}
                           />
                         )}
@@ -337,9 +337,9 @@ const AddUser = ({ selectUser }: IAddUser) => {
                             disabled={selectedCountry?.phone === undefined || selectedCountry?.phone === null}
                             sx={{
                               '& .MuiOutlinedInput-root.Mui-focused  .MuiOutlinedInput-notchedOutline': {
-                                borderColor: '#0D567B'
+                                borderColor: '#2535A8'
                               },
-                              '& .MuiInputLabel-root.Mui-focused': { color: '#0D567B' }
+                              '& .MuiInputLabel-root.Mui-focused': { color: '#2535A8' }
                             }}
                           />
                         )}
@@ -378,6 +378,7 @@ const AddUser = ({ selectUser }: IAddUser) => {
                           <>
                             <InputLabel>Company</InputLabel>
                             <Select
+                              error={Boolean(errors.company)}
                               label='Company'
                               value={value}
                               onBlur={onBlur}
@@ -418,6 +419,7 @@ const AddUser = ({ selectUser }: IAddUser) => {
                           <>
                             <InputLabel>Role</InputLabel>
                             <Select
+                              error={Boolean(errors.role)}
                               label='Select a role'
                               value={value}
                               onBlur={onBlur}

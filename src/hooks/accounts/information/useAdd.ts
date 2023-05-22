@@ -16,12 +16,15 @@ export const useAddInformation = () => {
       const informationTem = { ...data }
       informationTem.idCedantContact = informationTem.idCedantContact === 0 ? null : informationTem.idCedantContact
       informationTem.idBrokerContact = informationTem.idBrokerContact === 0 ? null : informationTem.idBrokerContact
+      informationTem.idTypeOfLimit = informationTem.idTypeOfLimit === 0 ? null : informationTem.idTypeOfLimit
 
       const information = await informationService.addInformation(informationTem, jwtToken)
 
       return information
     } catch (error) {
-      throw error
+      console.log('[addInformation] Error', error)
+
+      throw new Error('error')
     }
   }
 

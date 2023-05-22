@@ -1,5 +1,6 @@
 import { RECOVER_PASSWORD_ROUTES } from '@/configs/api'
 import { AppAlpexApiGateWay } from '../app.alpex.api-getway'
+import { AppAlpexApiGateWayNoToken } from '../app.alpex.api-getway-no-jwt'
 import { PasswordPutDto, RecoveryPassPostDto } from './dtos/RecoveryPassDto'
 
 class RecoveryPasswordServices {
@@ -20,11 +21,11 @@ class RecoveryPasswordServices {
 
   async updatePassword(
     passwords: Partial<PasswordPutDto>,
-    token: string | (string | null)[] | null
+    token: string | string[] | undefined
   ): Promise<PasswordPutDto> {
     try {
-      const { data } = await AppAlpexApiGateWay.put<Promise<PasswordPutDto>>(
-        `${RECOVER_PASSWORD_ROUTES.UPDATE}`,
+      const { data } = await AppAlpexApiGateWayNoToken.put<Promise<PasswordPutDto>>(
+        RECOVER_PASSWORD_ROUTES.UPDATE,
         {
           ...passwords
         },

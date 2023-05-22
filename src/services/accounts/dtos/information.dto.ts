@@ -27,7 +27,7 @@ export interface InformationDto {
   idCedant: number
   idCedantContact: number | null
   idLineOfBussines: number
-  idTypeOfLimit: number
+  idTypeOfLimit: number | null
   idRiskActivity: number
   idLeadUnderwriter: number
   idUnderwriter: number
