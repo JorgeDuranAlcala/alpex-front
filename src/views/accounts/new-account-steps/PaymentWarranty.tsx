@@ -116,7 +116,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
 
   useEffect(() => {
     //yup validate each form of installmentlist
-    for (let i = 0; i < count; i++) {
+    for (let i = 0; i < +count; i++) {
       const item = installmentsList[i]
       schema
         .validate(item)
