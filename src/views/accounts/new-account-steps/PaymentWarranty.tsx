@@ -93,7 +93,8 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
   const { account, setAccountId } = useGetAccountById()
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setCount(event.target.value)
+    const value = event.target.value
+    if (value) setCount(value)
   }
 
   const handleBlur = (event: FocusEvent<HTMLInputElement>) => {
@@ -202,6 +203,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
                   thousandSeparator=','
                   customInput={TextField}
                   id='Installments'
+                  defaultValue={1}
                   label='Installments'
                   multiline
                   decimalScale={0}
@@ -229,7 +231,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
         </TitleContainer>
 
         <Grid container spacing={2}>
-          {Array.from({ length: Number(count) }, (_, index) => (
+          {Array.from({ length: Number(count) || 0 }, (_, index) => (
             <CardInstallment
               index={index}
               installment={
