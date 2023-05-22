@@ -358,7 +358,7 @@ const Table = ({ status }: IAccountTable) => {
         }
       })
     )
-
+    localStorage.setItem('idAccount', String(id))
     router.push(`/accounts/new-account/?&id=${id}`)
   }
 
