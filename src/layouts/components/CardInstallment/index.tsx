@@ -92,6 +92,11 @@ const CardInstallment = ({ index, installment, onChangeList, globalInfo, count }
         formDataTemp.paymentPercentage = 100
         formDataTemp.balanceDue = receivedNetPremium
         setFormData({ ...formDataTemp })
+      } else {
+        const formDataTemp = { ...formData }
+        formDataTemp.paymentPercentage = Number(undefined)
+        formDataTemp.balanceDue = receivedNetPremium
+        setFormData({ ...formDataTemp })
       }
     } catch {}
     // eslint-disable-next-line react-hooks/exhaustive-deps

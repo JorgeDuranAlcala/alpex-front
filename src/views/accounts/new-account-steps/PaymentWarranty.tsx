@@ -97,7 +97,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
   const [instIds, setInstIds] = useState<number[]>([])
 
   const handleNumericInputChange = (value: any) => {
-    if (value) setCount(String(value))
+    setCount(String(value))
   }
 
   const handleBlur = (event: FocusEvent<HTMLInputElement>) => {
@@ -261,7 +261,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
                   }}
                   value={count}
                   onValueChange={value => {
-                    handleNumericInputChange(value?.value)
+                    handleNumericInputChange(value.value)
                   }}
                   onBlur={handleBlur}
                 />
