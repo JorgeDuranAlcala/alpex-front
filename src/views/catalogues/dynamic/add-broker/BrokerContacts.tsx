@@ -25,6 +25,7 @@ import { useDeleteBrokerContact } from '@/hooks/catalogs/broker-contact/useDelet
 import { useGetAllCountries } from 'src/hooks/catalogs/country'
 
 // ** Custom utilities
+import { useUpdateById } from '@/hooks/catalogs/broker-contact/useUpdateById'
 import { useAppDispatch, useAppSelector } from '@/store'
 import {
   deleteBrokerContactsFilter,
@@ -39,14 +40,14 @@ export interface IContact {
   name: string
   phone: string
   email: string
-  idCCountry: number
+  idCCountry: ICountry
   idCBroker: number
 }
 
 export interface ICountry {
   id: number
-  name: string
-  currency: string
+  name?: string
+  currency?: string
 }
 
 const initialNewContact: IContact = {
@@ -54,7 +55,7 @@ const initialNewContact: IContact = {
   name: '',
   email: '',
   phone: '',
-  idCCountry: 0,
+  idCCountry: { id: 0 },
   idCBroker: 0
 }
 
@@ -120,6 +121,7 @@ const BrokerContacts = ({ idBroker }: IBrokerContacts) => {
   const { deleteBrokerContact } = useDeleteBrokerContact()
   const { saveBrokerContact } = useAddBrokerContact()
   const { countries } = useGetAllCountries()
+  const { update } = useUpdateById()
 
   useEffect(() => {
     setIdCBroker(idBroker)
@@ -144,12 +146,12 @@ const BrokerContacts = ({ idBroker }: IBrokerContacts) => {
     //eslint-disable-next-line
   }, [brokerContactReducer.filters])
 
-  const triggerAlert = (type: string) => {
+  const triggerAlert = (type: string, text?: string) => {
     setAlertType(type)
 
     switch (type) {
       case 'success':
-        setAlertText('NEW CONTACT ADDED')
+        setAlertText(text || 'NEW CONTACT ADDED')
         setAlertIcon('mdi:check-circle-outline')
         break
       case 'error':
@@ -273,7 +275,7 @@ const BrokerContacts = ({ idBroker }: IBrokerContacts) => {
       ),
       renderCell: ({ row }) => (
         <Typography sx={{ color: colors.text.secondary, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
-          {row.idCCountry}
+          {row.idCCountry.name}
         </Typography>
       )
     },
@@ -360,10 +362,11 @@ const BrokerContacts = ({ idBroker }: IBrokerContacts) => {
   }
 
   const handleCreateContact = async () => {
-    const result = await saveBrokerContact({ ...contactData, idCBroker })
+    const result = await saveBrokerContact({ ...contactData, idCBroker, idCCountry: contactData.idCCountry.id })
     if (result) {
       //setNewBroker({ id: result.id, name: result.name })
       triggerAlert('success')
+      setContactData(initialNewContact)
       dispatch(fetchBrokerContacts(brokerContactReducer))
 
       //setIsBrokerSaved(true)
@@ -372,16 +375,26 @@ const BrokerContacts = ({ idBroker }: IBrokerContacts) => {
     triggerAlert('success')
   }
 
-  const editContact = () => {
-    //must be replaced with the respective reinsurers service
-    console.log('call method to edit contact', currentContact)
+  const editContact = async () => {
+    const result = await update(currentContact.id, {
+      ...currentContact,
+      idCBroker,
+      idCCountry: currentContact.idCCountry.id
+    })
+    if (result) {
+      triggerAlert('success', 'CHANGES SAVED')
+      dispatch(fetchBrokerContacts(brokerContactReducer))
+    }
     setOpenEdit(false)
   }
 
-  const deleteContact = () => {
-    //must be replaced with the respective reinsurers service
-    const newContactList = contactList.filter(contact => contact.id !== contactToDelete)
-    setContactList(newContactList)
+  const deleteContact = async () => {
+    const result = await deleteBrokerContact({ idDeleteList: [contactToDelete] })
+    if (result) {
+      //it needs an alert o message
+      console.log('success')
+      dispatch(fetchBrokerContacts(brokerContactReducer))
+    }
     setOpenDelete(false)
   }
 
@@ -407,7 +420,7 @@ const BrokerContacts = ({ idBroker }: IBrokerContacts) => {
       contactData.phone !== undefined &&
       contactData.phone !== '' &&
       contactData.idCCountry !== undefined &&
-      contactData.idCCountry !== 0
+      contactData.idCCountry.id !== 0
     ) {
       setEmptyForm(false)
     } else {
@@ -437,7 +450,7 @@ const BrokerContacts = ({ idBroker }: IBrokerContacts) => {
         setError(true)
       }
 
-      if (contactData.idCCountry !== undefined && contactData.idCCountry !== 0) {
+      if (contactData.idCCountry !== undefined && contactData.idCCountry.id !== 0) {
         setCountryError(false)
       } else {
         setCountryError(true)
@@ -475,7 +488,7 @@ const BrokerContacts = ({ idBroker }: IBrokerContacts) => {
       currentContact.phone !== undefined &&
       currentContact.phone !== '' &&
       currentContact.idCCountry !== undefined &&
-      currentContact.idCCountry !== 0
+      currentContact.idCCountry.id !== 0
     ) {
       setEmptyEditForm(false)
     } else {
@@ -505,7 +518,7 @@ const BrokerContacts = ({ idBroker }: IBrokerContacts) => {
         setEditError(true)
       }
 
-      if (currentContact.idCCountry !== undefined && currentContact.idCCountry !== 0) {
+      if (currentContact.idCCountry !== undefined && currentContact.idCCountry.id !== 0) {
         setEditCountryError(false)
       } else {
         setEditCountryError(true)
@@ -547,6 +560,7 @@ const BrokerContacts = ({ idBroker }: IBrokerContacts) => {
   }
 
   const handleEditContact = (row: IContact) => {
+    console.log(row)
     setCurrentContact(row)
     setSelectedRow(null)
     setOpenEdit(true)
@@ -646,8 +660,8 @@ const BrokerContacts = ({ idBroker }: IBrokerContacts) => {
 
               <Select
                 label='Select country'
-                value={contactData.idCCountry}
-                onChange={e => handleChangeModal('idCCountry', e.target.value)}
+                value={contactData.idCCountry.id}
+                onChange={e => handleChangeModal('idCCountry', { id: parseInt(e.target.value.toString()) })}
                 labelId='invoice-country'
               >
                 {countries.map(country => {
@@ -791,15 +805,17 @@ const BrokerContacts = ({ idBroker }: IBrokerContacts) => {
 
               <Select
                 label='Select country'
-                value={currentContact.idCCountry}
-                onChange={e => handleEditModal('idCCountry', e.target.value)}
+                value={currentContact.idCCountry.id}
+                onChange={e => handleEditModal('idCCountry', { id: parseInt(e.target.value.toString()) })}
                 labelId='invoice-country'
               >
-                <MenuItem value='USA'>USA</MenuItem>
-                <MenuItem value='UK'>UK</MenuItem>
-                <MenuItem value='Russia'>Russia</MenuItem>
-                <MenuItem value='Australia'>Australia</MenuItem>
-                <MenuItem value='Canada'>Canada</MenuItem>
+                {countries.map(country => {
+                  return (
+                    <MenuItem key={country.id} value={country.id}>
+                      {country.name}
+                    </MenuItem>
+                  )
+                })}
               </Select>
 
               {editCountryError && (
@@ -810,9 +826,9 @@ const BrokerContacts = ({ idBroker }: IBrokerContacts) => {
             </FormControl>
           </div>
           <Button className='create-contact-modal' disabled={btnEditDisable} variant='contained' onClick={editContact}>
-            EDIT
+            SAVE CHANGES
           </Button>
-          <Button className='create-contact-modal' onClick={() => setOpenNewContact(false)}>
+          <Button className='create-contact-modal' onClick={() => setOpenEdit(false)}>
             CANCEL
           </Button>
         </Box>
