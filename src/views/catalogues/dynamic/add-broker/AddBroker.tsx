@@ -208,7 +208,7 @@ const AddBroker = ({ idBroker, setIdBroker }: IAddBroker) => {
             )
           ) : (
             <div className='action-buttons'>
-              <Button className='create-contact-btn' onClick={addBroker} disabled={disableAddBroker}>
+              <Button className='add-btn' onClick={addBroker} disabled={disableAddBroker}>
                 <div className='btn-icon'>
                   <Icon icon='mdi:check' />
                 </div>
