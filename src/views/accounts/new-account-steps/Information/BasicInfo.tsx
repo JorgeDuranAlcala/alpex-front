@@ -294,7 +294,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
             <TextField
               autoFocus
               name='insured'
-              label='insured'
+              label='Insured'
               defaultValue=''
               value={basicInfo.insured}
               onChange={handleInputChange}
