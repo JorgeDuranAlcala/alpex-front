@@ -25,7 +25,7 @@ import colors from 'src/views/accounts/colors'
 import fonts from 'src/views/accounts/font'
 
 export interface ICedant {
-  id: string
+  id: number
   name: string
 }
 
@@ -122,8 +122,9 @@ const RetroCedantsTable = () => {
     const data: ICedant[] = []
 
     for (let index = 1; index <= 100; index++) {
-      const id = index.toString()
-      const name = `Retro Cedant ${index}`
+      const id = index
+      const name = `Retro
+      Cedant ${index}`
 
       data.push({
         id,
@@ -149,7 +150,7 @@ const RetroCedantsTable = () => {
   }
 
   const deleteSingleCedant = () => {  //must be replaced with the respective broker service
-    const newBrokerList = retroCedantList.filter(retrocedant => retrocedant.id !== retroCedantToDelete.toString())
+    const newBrokerList = retroCedantList.filter(retrocedant => retrocedant.id !== retroCedantToDelete)
     setRetroCedantList(newBrokerList)
     setOpenDelete(false)
   }
@@ -168,7 +169,7 @@ const RetroCedantsTable = () => {
             deleteBtn={selectedRows.length > 0 ? true : false}
             onSearch={searchRetroCedant}
             textBtn="ADD NEW CEDANT"
-            onClickBtn={() => router.push('/catalogues/dynamic/add-cedant')} />
+            onClickBtn={() => router.push('/catalogues/dynamic/add-retrocedants')} />
       <div className='cedant-list'>
 
           <DataGrid
