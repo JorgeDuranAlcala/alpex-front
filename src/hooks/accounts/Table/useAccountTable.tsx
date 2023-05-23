@@ -12,10 +12,18 @@ import AccountsTableContext from 'src/context/accounts/Table/reducer'
 import accountsService from 'src/services/accounts/account.service'
 
 // ** Custom utilities
+import { useLocalStorage } from '@/hooks/useLocalStorage'
+import { useAppDispatch, useAppSelector } from '@/store'
 import { IAccountsState } from '@/types/apps/accountsTypes'
+import { fetchAccounts } from 'src/store/apps/accounts'
 import { EStatus } from 'src/views/accounts/Table/Status'
 
 const useAccountTable = () => {
+  // **Reducers
+  const dispatchRedux = useAppDispatch()
+  const accountsReducer = useAppSelector(state => state.accounts)
+
+  const [jwtToken] = useLocalStorage('accessToken', false)
   const { state, dispatch } = useContext(AccountsTableContext)
   const { accounts } = state
 
@@ -31,14 +39,21 @@ const useAccountTable = () => {
 
   const deleteAccounts = async (selectedRows: GridRowId[]) => {
     try {
-      //const response = await accountsService.getAccounts()
-      const newAccounts = accounts.filter(account => {
-        return !selectedRows.find(id => id === account.id)
-      })
-      dispatch({
-        type: EAccountsTableActionTypes.SET_ACCOUNTS,
-        payload: newAccounts
-      })
+      const response = await accountsService.deleteAccounts(selectedRows as number[], jwtToken)
+      dispatchRedux(fetchAccounts(accountsReducer))
+
+      return response
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  const duplicateAccounts = async (selectedRows: GridRowId[]) => {
+    try {
+      const response = await accountsService.duplicateAccounts(selectedRows as number[], jwtToken)
+      dispatchRedux(fetchAccounts(accountsReducer))
+
+      return response
     } catch (error) {
       console.error(error)
     }
@@ -70,6 +85,7 @@ const useAccountTable = () => {
     accounts,
     getAccounts,
     deleteAccounts,
+    duplicateAccounts,
     changeStatusAccounts
   }
 }

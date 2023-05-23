@@ -1,8 +1,11 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 // ** MUI Imports
 import Card from '@mui/material/Card'
 import Grid from '@mui/material/Grid'
+
+// ** Next Import
+import { useRouter } from 'next/router'
 
 // ** Custom Components Imports
 import Information from 'src/views/accounts/new-account-steps/Information/Information'
@@ -23,6 +26,9 @@ import FormHeader from 'src/views/accounts/new-account-steps/headers/formHeader'
 // import InvoiceAdd from 'src/pages/apps/invoice/add'
 
 const NewAccount = () => {
+  // ** Hooks
+  const router = useRouter()
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [disableComments, setDisableComments] = useState(false)
   const [isNewAccount, setIsNewAccount] = useState<boolean>(true)
@@ -52,22 +58,22 @@ const NewAccount = () => {
     }
   }
 
+  useEffect(() => {
+    const idAccount = router.query.id
+    if (idAccount) {
+      setIsNewAccount(false)
+    }
+  }, [router])
+
   return (
     <Grid className='new-account' item xs={12}>
       {/* "ActionsHeader" component receives the initial status of the
       account and in order to use it as a "side header" (forms 2 to 4),
       it is necessary to send the boolean variable "sideHeader = true". */}
-      {activeStep == 1 && isNewAccount ? (
-        <ActionsHeader accountStatus='PENDING' sideHeader={false} />
-      ) : (
-        <>
-          <FormHeader />
-        </>
-      )}
+      {activeStep == 1 && isNewAccount ? <ActionsHeader accountStatus='PENDING' sideHeader={false} /> : <FormHeader />}
 
       <Card>
         <NewAccountStepper changeStep={activeStep} onStepChange={handleStepChange} />
-        {}
         <StepForm step={activeStep} />
         {/* <TabAccount /> */}
 

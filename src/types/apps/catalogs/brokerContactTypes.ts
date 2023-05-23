@@ -1,16 +1,3 @@
-export interface BrokerContactDto {
-  id: number
-  name: string
-  email: string
-  phone: string
-  idCBroker: number
-  idCCountry: number
-}
-
-export interface BrokerContactsDeleteDto {
-  idDeleteList: number[]
-}
-
 interface ICountry {
   id: number
   name: string
@@ -51,7 +38,10 @@ export type IBrokerContactFilters = {
 
 export interface IBrokerContactsState {
   idCBroker: number
+  current: IBrokerContact | null
   brokerContacts: IBrokerContact[]
+  loading: boolean
   filters: IBrokerContactFilters[]
   info: IBrokerContactsInfo
+  temporalFilters: IBrokerContact[]
 }

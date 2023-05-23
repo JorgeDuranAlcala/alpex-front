@@ -10,6 +10,7 @@ export const useUpdateInformationByIdAccount = () => {
       const informationTem = { ...update }
       informationTem.idCedantContact = informationTem.idCedantContact === 0 ? null : informationTem.idCedantContact
       informationTem.idBrokerContact = informationTem.idBrokerContact === 0 ? null : informationTem.idBrokerContact
+      informationTem.idTypeOfLimit = informationTem.idTypeOfLimit === 0 ? null : informationTem.idTypeOfLimit
 
       const information = await InformationService.updatedInformaById(idAccount, informationTem)
 

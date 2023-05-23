@@ -17,16 +17,20 @@ import TextField from '@mui/material/TextField'
 import { useGetAccountById } from '@/hooks/accounts/forms'
 import { useAddSecurities } from '@/hooks/accounts/security'
 import { useAddSecurityTotal } from '@/hooks/accounts/securityTotal'
-import { useGetAllByCedant } from '@/hooks/catalogs/cedant-contact'
 import { useGetAllReinsuranceCompanies } from '@/hooks/catalogs/reinsuranceCompany'
 import { useGetAllRetroCedants } from '@/hooks/catalogs/retroCedant'
 import { SecurityDto } from '@/services/accounts/dtos/security.dto'
 import { updateFormsData } from '@/store/apps/accounts'
+import CustomAlert, { IAlert } from '@/views/custom/alerts'
 import { NumericFormat, NumericFormatProps } from 'react-number-format'
 import Icon from 'src/@core/components/icon'
 import { useAppDispatch, useAppSelector } from 'src/store'
 import { ButtonClose, HeaderTitleModal } from 'src/styles/Dashboard/ModalReinsurers/modalReinsurers'
 import SwitchAlpex from 'src/views/custom/switchs'
+
+//Hooks
+import { useGetAllCountries } from 'src/hooks/catalogs/country'
+import { useGetAllByIdRetroCedant } from 'src/hooks/catalogs/retroCedantContact'
 
 interface FormInfo extends BrokerFormInfo {
   [key: string]: string | boolean | undefined
@@ -332,8 +336,9 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
   })
 
   const { retroCedants } = useGetAllRetroCedants()
+  const { retroCedantContacts, setIdRetroCedant } = useGetAllByIdRetroCedant()
   const { reinsuranceCompany } = useGetAllReinsuranceCompanies()
-  const { setIdCedant, contacts } = useGetAllByCedant()
+  const { countries } = useGetAllCountries()
 
   useEffect(() => {
     const companies = reinsuranceCompany?.map(company => {
@@ -399,6 +404,9 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
   const resetValues = () => {
     const data = [...formData]
 
+    data[index]['SharePercent'] = '' + 0
+    data[index]['PremiumPerShare'] = '' + 0
+
     data[index]['DynamicComissionPercent'] = '' + 0
     data[index]['DynamicComission'] = '' + 0
 
@@ -407,6 +415,8 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
 
     data[index]['TaxesPercent'] = '' + 0
     data[index]['Taxes'] = '' + 0
+
+    data[index]['NetInsurancePremium'] = '' + 0
   }
 
   const setValues = (field: keyof FormInfo) => {
@@ -422,37 +432,41 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
     const TaxesPercent = data[index]['TaxesPercent']
     const FrontingFee = data[index]['FrontingFee']
     const FrontingFeePercent = data[index]['FrontingFeePercent']
-
     let NetInsurancePremium = ''
-    if (isGross) {
-      NetInsurancePremium = validateNumber(
-        (+premiumPerShare - +dynamicComission - +Taxes - +BrokerAge - +FrontingFee).toString(),
-        true
-      )
-    } else {
-      NetInsurancePremium = validateNumber((+premiumPerShare - +dynamicComission - +FrontingFee).toString(), true)
-    }
-    const dataError = [...formErrors]
 
-    if (+NetInsurancePremium < 0) dataError[index]['NetInsurancePremium'] = 'ERROR: The number must be greater than 0!'
-    else dataError[index]['NetInsurancePremium'] = ''
-    setFormErrors(dataError)
-    setFormErrors(formErrors)
-    if (+totalNetPremium === 0) {
-      data[index]['NetPremium'] = formInformation.netPremium.toString()
+    const calculateNetInsurancePremium = () => {
+      if (isGross) {
+        NetInsurancePremium = validateNumber(
+          (+premiumPerShare - +dynamicComission - +Taxes - +BrokerAge - +FrontingFee).toString(),
+          true
+        )
+      } else {
+        NetInsurancePremium = validateNumber((+premiumPerShare - +dynamicComission - +FrontingFee).toString(), true)
+      }
+      const dataError = [...formErrors]
+
+      if (+NetInsurancePremium < 0)
+        dataError[index]['NetInsurancePremium'] = 'ERROR: The number must be greater than 0!'
+      else dataError[index]['NetInsurancePremium'] = ''
+      setFormErrors(dataError)
+      setFormErrors(formErrors)
+      if (+totalNetPremium === 0) {
+        data[index]['NetPremium'] = formInformation.netPremium.toString()
+      }
     }
+
+    calculateNetInsurancePremium()
 
     switch (field) {
       case 'NetPremium':
         data[index]['PremiumPerShare'] = validateNumber(((+sharePercent * +totalNetPremium) / 100).toString())
-
-        // console.log(data[index]['PremiumPerShare'])
 
         break
 
       case 'SharePercent':
         data[index]['NetInsurancePremium'] = NetInsurancePremium
         data[index]['PremiumPerShare'] = validateNumber(((+sharePercent * +totalNetPremium) / 100).toString())
+
         break
 
       case 'PremiumPerShare':
@@ -502,6 +516,9 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
 
       case 'RetroCedant':
         data[index]['RetroCedantContact'] = ''
+        data[index]['ContactCountry'] = ''
+        data[index]['ContactEmail'] = ''
+        data[index]['ContactPhone'] = ''
         break
 
       case 'FrontingFee':
@@ -515,8 +532,8 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
     if (!frontingFeeEnabled) {
       data[index]['FrontingFeePercent'] = '0'
       data[index]['FrontingFee'] = '0'
-      console.log(data[index]['PremiumPerShare'])
     }
+
     setFormData(data)
   }
 
@@ -549,9 +566,30 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
 
   useEffect(() => {
     setValues('RetroCedant')
-    setIdCedant(+formData[index].RetroCedant)
+    setIdRetroCedant(Number(formData[index].RetroCedant))
+    formData[index].RetroCedantContact = ''
+    formData[index].ContactEmail = ''
+    formData[index].ContactPhone = ''
+    formData[index].ContactCountry = ''
     //eslint-disable-next-line
   }, [formData[index].RetroCedant])
+
+  useEffect(() => {
+    const id = Number(formData[index].RetroCedantContact)
+    const retroCedant = retroCedantContacts.find(contact => (contact.id = id))
+    if (retroCedant) {
+      formData[index].RetroCedantContact = String(retroCedant.id)
+      formData[index].ContactEmail = retroCedant.email
+      formData[index].ContactPhone = retroCedant.phone
+      formData[index].ContactCountry = String(retroCedant.idCCountry)
+    } else {
+      formData[index].RetroCedantContact = ''
+      formData[index].ContactEmail = ''
+      formData[index].ContactPhone = ''
+      formData[index].ContactCountry = ''
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formData[index].RetroCedantContact])
 
   useEffect(() => {
     setValues('FrontingFee')
@@ -580,6 +618,7 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
     const data = [...formData]
 
     if (company) {
+      setIsGross(true)
       resetValues()
       setIsGross(company.isGross)
       company.isGross
@@ -587,17 +626,19 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
         : (data[index]['NetPremium'] = formInformation.netPremium.toString())
 
       setValues('NetPremium')
-      setValues('PremiumPerShare')
     } else {
       setIsGross(false)
       data[index]['NetPremium'] = formInformation.netPremium.toString()
       setValues('NetPremium')
-      setValues('PremiumPerShare')
     }
+    setFormData(data)
+    setValues('NetPremium')
+    setValues('SharePercent')
 
     if (company?.isGross) {
       handleIsGross()
     } else handleIsNet()
+
     //eslint-disable-next-line
   }, [formData[index].ReinsuranceCompany])
 
@@ -836,7 +877,6 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
 
             <FormHelperText sx={{ color: 'error.main' }}>{formErrors[index]?.NetInsurancePremium}</FormHelperText>
           </FormControl>
-
           {frontingFeeEnabled && (formData[index]?.SharePercent !== '' || formData[index]?.PremiumPerShare !== '') && (
             <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
               <InputLabel>Select Retro cedant</InputLabel>
@@ -858,7 +898,6 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
               <FormHelperText sx={{ color: 'error.main' }}>{formErrors[index]?.RetroCedant}</FormHelperText>
             </FormControl>
           )}
-
           {frontingFeeEnabled && (formData[index]?.SharePercent !== '' || formData[index]?.PremiumPerShare !== '') && (
             <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
               <InputLabel>Select Retro Cedant contact</InputLabel>
@@ -869,7 +908,7 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
                 labelId='broker'
                 disabled={formData[index].RetroCedant === ''}
               >
-                {contacts?.map(contact => (
+                {retroCedantContacts?.map(contact => (
                   <MenuItem key={contact.name} value={contact.id}>
                     {contact.name}
                   </MenuItem>
@@ -883,53 +922,38 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
               </FormHelperText>
             </FormControl>
           )}
-          {formData[index]?.RetroCedantContact !== '' && frontingFeeEnabled && (
+          {formData[index].RetroCedantContact !== '' && frontingFeeEnabled && (
             <>
               <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
                 <TextField
                   autoFocus
+                  disabled
                   fullWidth
                   label='Contact email'
                   size='small'
                   value={formData[index].ContactEmail}
-                  InputProps={{
-                    inputComponent: NumericFormatCustom as any
-                  }}
-                  onChange={e => handleFormChange('ContactEmail', e.target.value)}
                 />
-
-                <FormHelperText sx={{ color: 'error.main' }}>{formErrors[index]?.ContactEmail}</FormHelperText>
               </FormControl>
 
               <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
                 <TextField
                   autoFocus
                   fullWidth
+                  disabled
                   size='small'
                   label='Contact phone'
                   value={formData[index].ContactPhone}
-                  InputProps={{
-                    inputComponent: NumericFormatCustom as any
-                  }}
-                  onChange={e => handleFormChange('ContactPhone', e.target.value)}
                 />
-
-                <FormHelperText sx={{ color: 'error.main' }}>{formErrors[index]?.ContactPhone}</FormHelperText>
               </FormControl>
               <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
-                <TextField
-                  autoFocus
-                  fullWidth
-                  size='small'
-                  label='Contact country'
-                  value={formData[index].ContactCountry}
-                  InputProps={{
-                    inputComponent: NumericFormatCustom as any
-                  }}
-                  onChange={e => handleFormChange('ContactCountry', e.target.value)}
-                />
-
-                <FormHelperText sx={{ color: 'error.main' }}>{formErrors[index]?.ContactCountry}</FormHelperText>
+                <InputLabel>Contact country'</InputLabel>
+                <Select label='Contact country' value={formData[index].ContactCountry} labelId='broker' disabled>
+                  {countries?.map(country => (
+                    <MenuItem key={country.name} value={country.id}>
+                      {country.name}
+                    </MenuItem>
+                  ))}
+                </Select>
               </FormControl>
             </>
           )}
@@ -950,21 +974,26 @@ const Security = ({ onStepChange }: SecurityProps) => {
     DistribuitedNetPremium: '',
     Diference: ''
   })
-  const [enableNextStep, setEnableNextStep] = useState<boolean>(false)
+
   const [open, setOpen] = useState<boolean>(false)
   const [formInformation, setFormInformation] = useState<FormInformation>({
     frontingFee: 0,
     netPremium: 0,
     grossPremium: 0
   })
+  const [badgeData, setBadgeData] = useState<IAlert>({
+    message: '',
+    theme: 'success',
+    open: false,
+    status: 'error'
+  })
 
   const dispatch = useAppDispatch()
   const accountData = useAppSelector(state => state.accounts)
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
 
-  const { account, setAccountId } = useGetAccountById()
+  const { setAccountId } = useGetAccountById()
 
-  console.log(account)
   useEffect(() => {
     accountData.formsData.form1.id && setAccountId(accountData.formsData.form1.id)
   }, [accountData.formsData.form1.id, setAccountId])
@@ -981,7 +1010,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
   }
 
   const onNextStep = () => {
-    onStepChange!(3)
+    validate(true)
   }
 
   const handleNext = () => {
@@ -992,7 +1021,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
     validate()
   }
 
-  const validate = async () => {
+  const validate = async (isNextStep?: boolean) => {
     formData.forEach((form, index) => {
       const data = [...formErrors]
       data[index] = { ...SecurityForm }
@@ -1001,39 +1030,28 @@ const Security = ({ onStepChange }: SecurityProps) => {
         schema
           .validate(form, { abortEarly: false })
           .then(function () {
-            console.log('dsadsa2')
-
             handleSuccess()
+
+            if (isNextStep) onStepChange!(3)
           })
           .catch(function (err) {
-            console.log('dsadsa4')
-
-            console.log(err)
-
             err?.inner?.forEach((e: any) => {
               data[index][e.path] = e.message
               setFormErrors(data)
             })
-            setEnableNextStep(false)
           })
       } else {
         schemaNetPremium
           .validate(form, { abortEarly: false })
           .then(function () {
-            console.log('dsadsa2')
-
             handleSuccess()
+            if (isNextStep) onStepChange!(3)
           })
           .catch(function (err) {
-            console.log('dsadsa4')
-
-            console.log(err)
-
             err?.inner?.forEach((e: any) => {
               data[index][e.path] = e.message
               setFormErrors(data)
             })
-            setEnableNextStep(false)
           })
       }
     })
@@ -1044,8 +1062,6 @@ const Security = ({ onStepChange }: SecurityProps) => {
     let sumSharePercent = 0
     let sumGrossShare = 0
     formData.forEach(form => {
-      console.log(form)
-
       DistribuitedNetPremium +=
         +form.BrokerAge + +form.Taxes + +form.DynamicComission + +form.FrontingFee + +form.NetInsurancePremium
       if (!form.IsGross) sumSharePercent += +form.SharePercent
@@ -1091,15 +1107,43 @@ const Security = ({ onStepChange }: SecurityProps) => {
 
     const saveAll = await saveSecurities(forms)
 
-    console.log(saveTotal, saveAll)
+    if (saveAll === 'error' || saveTotal === 'error') {
+      setBadgeData({
+        message: 'Error saving data',
+        theme: 'error',
+        open: true,
+        status: 'error',
+        icon: <Icon style={{ color: '#FF4D49' }} icon='icon-park-outline:error' />
+      })
+      setTimeout(() => {
+        setBadgeData({
+          message: 'Saved successfully',
+          theme: 'success',
+          open: false,
+          status: 'error'
+        })
+      }, 5000)
+    } else {
+      setBadgeData({
+        message: 'The information has been saved',
+        theme: 'success',
+        open: true,
+        status: 'error'
+      })
+      setTimeout(() => {
+        setBadgeData({
+          message: 'Saved successfully',
+          theme: 'success',
+          open: false,
+          status: 'error'
+        })
+      }, 5000)
+    }
   }
 
   const handleSuccess = () => {
-    console.log('dsadsa')
-
     saveInformation()
     dispatch(updateFormsData({ form2: allFormData }))
-    setEnableNextStep(true)
   }
 
   useEffect(() => {
@@ -1125,6 +1169,9 @@ const Security = ({ onStepChange }: SecurityProps) => {
     <>
       <div className='information' style={{ fontFamily: inter }}>
         <div className='title'>Security</div>
+        <div style={{ width: 'fit-content', float: 'right' }}>
+          <CustomAlert {...badgeData} />
+        </div>
         <form noValidate autoComplete='on' onSubmit={handleSubmit}>
           <div className='section'>
             {formData.map((_, index) => (
@@ -1182,13 +1229,13 @@ const Security = ({ onStepChange }: SecurityProps) => {
             </Button>
           </div>
           <div className='section action-buttons' style={{ float: 'right', marginRight: 'auto', marginBottom: '20px' }}>
-            <Button className='btn-save' onClick={validate} variant='contained'>
+            <Button className='btn-save' onClick={() => validate()} variant='contained'>
               <div className='btn-icon'>
                 <Icon icon='mdi:content-save' />
               </div>
               SAVE CHANGES
             </Button>
-            <Button className='btn-next' disabled={!enableNextStep} onClick={handleNext}>
+            <Button className='btn-next' onClick={handleNext}>
               Next Step
               <div className='btn-icon'>
                 <Icon icon='material-symbols:arrow-right-alt' />

@@ -15,7 +15,9 @@ export enum AUTH_ROUTES {
 // ==== ACCOUNT
 export enum ACCOUNT_ROUTES {
   GET_BY_ID = 'account',
-  GET_ALL = 'account/all'
+  GET_ALL = 'account/all',
+  DELETE = 'account/delete',
+  DUPLICATE = 'account/duplicate'
 }
 
 export enum ACCOUNT_INFORMATION_ROUTES {
@@ -68,7 +70,9 @@ export enum BROKER_CONTACT_ROUTERS {
   GET_BY_ID = 'catalogs/broker-contact',
   ADD = 'catalogs/broker-contact/add',
   UPDATE = 'catalogs/broker-contact',
-  GET_BY_ID_BROKER = 'catalogs/broker-contact/broker'
+  GET_BY_ID_BROKER = 'catalogs/broker-contact/broker',
+  GET = 'catalogs/broker-contact/pagination/broker',
+  DELETE = 'catalogs/broker-contact/delete'
 }
 
 export enum CEDANT_CONTACT_ROUTERS {
@@ -134,6 +138,14 @@ export enum RETRO_CEDANT_ROUTES {
   GET_BY_ID = 'catalogs/retroCedant',
   ADD = 'catalogs/retroCedant/add',
   UPDATE = 'catalogs/retroCedant'
+}
+
+export enum RETRO_CEDANT_CONTACT_ROUTES {
+  GET_ALL = 'catalogs/retroCedantContact/all',
+  GET_BY_ID = 'catalogs/retroCedantContact',
+  ADD = 'catalogs/retroCedantContact/add',
+  GET_BY_ID_RETROCEDANT = 'catalogs/retroCedantContact/retroCedant',
+  UPDATE = 'catalogs/retroCedantContact'
 }
 
 export enum INSTALLMENT_ROUTERS {

@@ -19,21 +19,13 @@ import {
   Select,
   TextField
 } from '@mui/material'
-import { useEffect, useState } from 'react'
+import { FocusEvent, FocusEventHandler, useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useAppDispatch, useAppSelector } from 'src/store'
 
 import { UserSection } from 'src/styles/Forms/usersSection'
 import CountrySelect, { ICountry } from 'src/views/custom/select/CountrySelect'
 import { StyledDescription, StyledSubtitle, StyledTitle } from 'src/views/custom/typography'
-
-const schema = yup.object().shape({
-  email: yup.string().email().required(),
-  name: yup.string().required(),
-  surname: yup.string().required(),
-  phone: yup.string().required(),
-  company: yup.string().required()
-})
 
 interface FormInfo {
   name: string
@@ -65,13 +57,43 @@ const initialForm: UsersPutDto = {
   areaCode: ''
 }
 
+interface IAddUser {
+  selectUser: boolean
+  title: string
+  subTitle: string
+}
+interface errorsEmail {
+  fieldRequired: boolean | undefined
+  validateEmail: boolean | undefined
+}
+const showErrors = (field: string, valueLen: number, min: number) => {
+  if (valueLen === 0) {
+    return `This field is required.`
+  } else if (valueLen > 0 && valueLen < min) {
+    return `${field} must be at least ${min} characters`
+  } else {
+    return ''
+  }
+}
+
+const schema = yup.object().shape({
+  phone: yup.string().required(),
+  company: yup.string().required(),
+  email: yup.string().email().required(),
+  name: yup
+    .string()
+    .min(3, obj => showErrors('First Name', obj.value.length, obj.min))
+    .required(),
+  surname: yup
+    .string()
+    .min(3, obj => showErrors('Last Name', obj.value.length, obj.min))
+    .required()
+})
+
 // const ADMIN_COMPANIES = ['dynamic', 'claims']
 const ADMIN_COMPANIES = ['3', '4']
 
-interface IAddUser {
-  selectUser: boolean
-}
-const AddUser = ({ selectUser }: IAddUser) => {
+const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
   const {
     control,
     handleSubmit,
@@ -84,8 +106,16 @@ const AddUser = ({ selectUser }: IAddUser) => {
     resolver: yupResolver(schema)
   })
 
+  const ErrorsEmailText = {
+    fieldRequired: 'This field is required.',
+    validEmail: 'Enter a valid email, example: name@gmail.com'
+  }
+
   const useWatchCompany = watch('company')
   const useWatchRole = watch('role')
+
+  // const useWatchEmail = watch('email')
+
   const usersReducer = useAppSelector(state => state.users)
   const dispatch = useAppDispatch()
   const [formData, setFormData] = useState<FormInfo>(UserForm)
@@ -93,10 +123,19 @@ const AddUser = ({ selectUser }: IAddUser) => {
   const [dualRoleDisabled, setDualRoleDisabled] = useState<boolean>(false)
   const [roleDisabled, setRoleDisabled] = useState<boolean>(false)
   const [editable, setEditable] = useState<boolean>(false)
-
   const [idCompany, setIdCompany] = useState<string>('')
   const [idRole, setIdRole] = useState<string>('')
   const [informativeIdRole, setInformativeIdRole] = useState<string>('')
+
+  // const [email, setEmail] = useState<string>('')
+  const [errorsTextEmail, setErrorsTextEmail] = useState<any>({
+    fieldRequired: '',
+    validEmail: ''
+  })
+  const [errorEmail, setErrorEmail] = useState<errorsEmail>({
+    fieldRequired: false,
+    validateEmail: false
+  })
 
   const { setUserPost } = useAddUser()
   const { setUserPut } = useEditUser()
@@ -169,6 +208,35 @@ const AddUser = ({ selectUser }: IAddUser) => {
     setFormData({ ...formData, [field]: value })
   }
 
+  // const handleChangeEmail = (event: ChangeEvent<HTMLInputElement>) => {
+  //   setEmail(event.target.value)
+  // }
+  console.log('ErrorMailBefore--->', errorEmail)
+
+  const handleBlur: FocusEventHandler<HTMLInputElement> = (event: FocusEvent<HTMLInputElement>) => {
+    const input = event.target.value
+    const regexEmail = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]{2,3}$/
+    console.log(input)
+
+    if (!input) {
+      setErrorEmail({
+        ...errorEmail,
+        fieldRequired: true,
+        validateEmail: false
+      })
+      setErrorsTextEmail({ ...errorsTextEmail, fieldRequired: ErrorsEmailText.fieldRequired })
+    } else if (!regexEmail.test(input)) {
+      setErrorEmail({ ...errorEmail, validateEmail: true, fieldRequired: false })
+      setErrorsTextEmail({ ...errorsTextEmail, validEmail: ErrorsEmailText.validEmail })
+      console.log('email no valido')
+    } else {
+      setErrorEmail({
+        ...errorEmail,
+        fieldRequired: false,
+        validateEmail: false
+      })
+    }
+  }
   useEffect(() => {
     if (usersReducer.current !== undefined && usersReducer.current !== null && selectUser) {
       reset({ ...usersReducer.current })
@@ -199,6 +267,28 @@ const AddUser = ({ selectUser }: IAddUser) => {
   }, [useWatchRole])
 
   // useEffect(() => {
+  // const regexEmail2 = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]{2,3}$/.test(useWatchEmail)
+
+  //   const regexEmail = new RegExp('[a-z0-9]+@[a-z]+.[a-z]{2,3}').test(email)
+  //   console.log('RegexEmail-->', regexEmail)
+  //   console.log('errorEmail-->', errorEmail)
+  //   if (regexEmail) {
+  //     setErrorEmail({
+  //       ...errorEmail,
+  //       fieldRequired: false,
+  //       validateEmail: false
+  //     })
+  //   } else {
+  //     setErrorsTextEmail({ ...errorsTextEmail, fieldRequired: ErrorsEmailText.fieldRequired })
+  //     setErrorEmail({
+  //       ...errorEmail,
+  //       fieldRequired: false,
+  //       validateEmail: true
+  //     })
+  //   }
+  // }, [email])
+
+  // useEffect(() => {
   //   dispatch(fetchAccounts(usersReducer))
   //   //eslint-disable-next-line
   // }, [usersReducer.filters])
@@ -207,11 +297,11 @@ const AddUser = ({ selectUser }: IAddUser) => {
     <>
       <div>
         <UserSection>
-          <StyledTitle>User Details</StyledTitle>
+          <StyledTitle>{title}</StyledTitle>
         </UserSection>
         <UserSection>
           <StyledDescription maxWidth={'734px'}>
-            Fill out the information below to add a user. The user will have access to this platform and depending on
+            Fill out the information below to {subTitle}. The user will have access to this platform and depending on
             their role, they can see certain data.
           </StyledDescription>
         </UserSection>
@@ -219,7 +309,7 @@ const AddUser = ({ selectUser }: IAddUser) => {
           <form autoComplete='off' onSubmit={handleSubmit(onSubmit)}>
             <UserSection otherProps={{ marginTop: '40px' }}>
               <StyledSubtitle>Basic info</StyledSubtitle>
-              <Grid container spacing={2}>
+              <Grid container spacing={5}>
                 <Grid container item xs={12} md={6} spacing={2}>
                   <Grid item xs={12}>
                     <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
@@ -236,14 +326,16 @@ const AddUser = ({ selectUser }: IAddUser) => {
                             error={Boolean(errors.name)}
                             sx={{
                               '& .MuiOutlinedInput-root.Mui-focused  .MuiOutlinedInput-notchedOutline': {
-                                borderColor: '#0D567B'
+                                borderColor: '#2535A8'
                               },
-                              '& .MuiInputLabel-root.Mui-focused': { color: '#0D567B' }
+                              '& .MuiInputLabel-root.Mui-focused': { color: '#2535A8' }
                             }}
                           />
                         )}
                       />
-                      {errors.name && <FormHelperText sx={{ color: 'error.main' }}>Invalid first name</FormHelperText>}
+                      {errors.name && (
+                        <FormHelperText sx={{ color: 'error.main' }}>{errors.name.message}</FormHelperText>
+                      )}
                     </FormControl>
                   </Grid>
                   <Grid item xs={12}>
@@ -261,42 +353,68 @@ const AddUser = ({ selectUser }: IAddUser) => {
                             error={Boolean(errors.surname)}
                             sx={{
                               '& .MuiOutlinedInput-root.Mui-focused  .MuiOutlinedInput-notchedOutline': {
-                                borderColor: '#0D567B'
+                                borderColor: '#2535A8'
                               },
-                              '& .MuiInputLabel-root.Mui-focused': { color: '#0D567B' }
+                              '& .MuiInputLabel-root.Mui-focused': { color: '#2535A8' }
                             }}
                           />
                         )}
                       />
                       {errors.surname && (
-                        <FormHelperText sx={{ color: 'error.main' }}>Invalid last name</FormHelperText>
+                        <FormHelperText sx={{ color: 'error.main' }}>{errors.surname.message}</FormHelperText>
                       )}
                     </FormControl>
                   </Grid>
                   <Grid item xs={12}>
                     <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
+                      {/* <TextField
+                        error={errorEmail?.fieldRequired || errorEmail?.validateEmail}
+                        name='Email'
+                        label='Email'
+                        value={email}
+                        onChange={handleChangeEmail}
+                        onBlur={handleBlur}
+                        sx={{
+                          '& .MuiOutlinedInput-root.Mui-focused  .MuiOutlinedInput-notchedOutline': {
+                            borderColor: '#2535A8'
+                          },
+                          '& .MuiInputLabel-root.Mui-focused': { color: '#2535A8' }
+                        }}
+                      />
+                      {errorEmail.fieldRequired ? (
+                        <FormHelperText sx={{ color: 'error.main' }}>{errorsTextEmail.fieldRequired}</FormHelperText>
+                      ) : errorEmail.validateEmail ? (
+                        <FormHelperText sx={{ color: 'error.main' }}>{errorsTextEmail.validEmail}</FormHelperText>
+                      ) : (
+                        <FormHelperText>
+                          The user will receive an automated password to this email so they can login.
+                        </FormHelperText>
+                      )} */}
                       <Controller
                         name='email'
                         control={control}
-                        defaultValue={''}
-                        render={({ field: { value, onChange, onBlur } }) => (
+                        rules={{ required: true }}
+                        render={({ field: { value, onChange } }) => (
                           <TextField
                             label='Email'
+                            type='email'
                             value={value}
-                            onBlur={onBlur}
+                            onBlur={handleBlur}
                             onChange={onChange}
-                            error={Boolean(errors.email)}
+                            error={errorEmail?.fieldRequired || errorEmail?.validateEmail}
                             sx={{
                               '& .MuiOutlinedInput-root.Mui-focused  .MuiOutlinedInput-notchedOutline': {
-                                borderColor: '#0D567B'
+                                borderColor: '#2535A8'
                               },
-                              '& .MuiInputLabel-root.Mui-focused': { color: '#0D567B' }
+                              '& .MuiInputLabel-root.Mui-focused': { color: '#2535A8' }
                             }}
                           />
                         )}
                       />
-                      {errors.email ? (
-                        <FormHelperText sx={{ color: 'error.main' }}>Invalid email</FormHelperText>
+                      {errorEmail.fieldRequired ? (
+                        <FormHelperText sx={{ color: 'error.main' }}>{errorsTextEmail.fieldRequired}</FormHelperText>
+                      ) : errorEmail.validateEmail ? (
+                        <FormHelperText sx={{ color: 'error.main' }}>{errorsTextEmail.validEmail}</FormHelperText>
                       ) : (
                         <FormHelperText>
                           The user will receive an automated password to this email so they can login.
@@ -337,9 +455,9 @@ const AddUser = ({ selectUser }: IAddUser) => {
                             disabled={selectedCountry?.phone === undefined || selectedCountry?.phone === null}
                             sx={{
                               '& .MuiOutlinedInput-root.Mui-focused  .MuiOutlinedInput-notchedOutline': {
-                                borderColor: '#0D567B'
+                                borderColor: '#2535A8'
                               },
-                              '& .MuiInputLabel-root.Mui-focused': { color: '#0D567B' }
+                              '& .MuiInputLabel-root.Mui-focused': { color: '#2535A8' }
                             }}
                           />
                         )}
@@ -366,7 +484,7 @@ const AddUser = ({ selectUser }: IAddUser) => {
 
             <UserSection otherProps={{ marginTop: '40px' }}>
               <StyledSubtitle>Company info</StyledSubtitle>
-              <Grid container spacing={2}>
+              <Grid container spacing={5}>
                 <Grid container xs={12} md={6} item spacing={2}>
                   <Grid item xs={12}>
                     <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
@@ -378,6 +496,7 @@ const AddUser = ({ selectUser }: IAddUser) => {
                           <>
                             <InputLabel>Company</InputLabel>
                             <Select
+                              error={Boolean(errors.company)}
                               label='Company'
                               value={value}
                               onBlur={onBlur}
@@ -396,7 +515,9 @@ const AddUser = ({ selectUser }: IAddUser) => {
                           </>
                         )}
                       />
-                      {errors.company && <FormHelperText sx={{ color: 'error.main' }}>Invalid company</FormHelperText>}
+                      {errors.company && (
+                        <FormHelperText sx={{ color: 'error.main' }}>This action is required</FormHelperText>
+                      )}
                     </FormControl>
                   </Grid>
                 </Grid>
@@ -418,6 +539,7 @@ const AddUser = ({ selectUser }: IAddUser) => {
                           <>
                             <InputLabel>Role</InputLabel>
                             <Select
+                              error={Boolean(errors.role)}
                               label='Select a role'
                               value={value}
                               onBlur={onBlur}
@@ -436,7 +558,9 @@ const AddUser = ({ selectUser }: IAddUser) => {
                           </>
                         )}
                       />
-                      {errors.role && <FormHelperText sx={{ color: 'error.main' }}>Invalid role</FormHelperText>}
+                      {errors.role && (
+                        <FormHelperText sx={{ color: 'error.main' }}>This action is required</FormHelperText>
+                      )}
                     </FormControl>
                   </Grid>
                   <Grid item xs={12}>

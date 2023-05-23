@@ -2,7 +2,7 @@ import { FormControl, Grid, InputAdornment, SxProps, TextField, Theme, Typograph
 
 // import { useState } from 'react'
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
-import { ForwardedRef, forwardRef, useState } from 'react'
+import { ForwardedRef, forwardRef, useEffect, useState } from 'react'
 import ReactDatePicker from 'react-datepicker'
 import { NumericFormat } from 'react-number-format'
 import UserThemeOptions from 'src/layouts/UserThemeOptions'
@@ -21,11 +21,13 @@ interface ICardInstallment {
   installment: InstallmentDto
   onChangeList: (index: number, item: InstallmentDto) => void
   globalInfo: GlobalInfo
+  count?: number
 }
 
 interface PickerProps {
   label?: string
   sx?: SxProps<Theme>
+  count?: number
 }
 
 const CustomInput = forwardRef(({ ...props }: PickerProps, ref: ForwardedRef<HTMLElement>) => {
@@ -46,7 +48,7 @@ const CustomInput = forwardRef(({ ...props }: PickerProps, ref: ForwardedRef<HTM
   )
 })
 
-const CardInstallment = ({ index, installment, onChangeList, globalInfo }: ICardInstallment) => {
+const CardInstallment = ({ index, installment, onChangeList, globalInfo, count }: ICardInstallment) => {
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
   const textColor = userThemeConfig.palette?.text.subTitle
 
@@ -62,9 +64,7 @@ const CardInstallment = ({ index, installment, onChangeList, globalInfo }: ICard
 
   const { receivedNetPremium, inceptionDate } = globalInfo
 
-  const handleNumericInputChange = (value: any, e: any) => {
-    const { name } = e.event.target
-
+  const handleNumericInputChange = (value: any, name: any) => {
     const formDataTemp = { ...formData }
 
     if (name === 'premiumPaymentWarranty' && inceptionDate) {
@@ -85,6 +85,18 @@ const CardInstallment = ({ index, installment, onChangeList, globalInfo }: ICard
     })
   }
 
+  useEffect(() => {
+    try {
+      if (count === 1) {
+        const formDataTemp = { ...formData }
+        formDataTemp.paymentPercentage = 100
+        formDataTemp.balanceDue = receivedNetPremium
+        setFormData({ ...formDataTemp })
+      }
+    } catch {}
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [count])
+
   return (
     <>
       <Grid item xs={12} sm={6} md={4}>
@@ -101,7 +113,7 @@ const CardInstallment = ({ index, installment, onChangeList, globalInfo }: ICard
                 thousandSeparator=','
                 customInput={TextField}
                 id='filled-multiline-flexible'
-                label='PremiumPaymentWarranty'
+                label='Premium payment warranty'
                 multiline
                 min={1}
                 max={999}
@@ -109,7 +121,13 @@ const CardInstallment = ({ index, installment, onChangeList, globalInfo }: ICard
                 minLength={1}
                 decimalScale={0}
                 variant='outlined'
-                onValueChange={(value, e) => handleNumericInputChange(value.value, e)}
+                isAllowed={values => {
+                  const { floatValue } = values
+                  const upLimit = 999
+
+                  return (floatValue! >= 0 && floatValue! <= upLimit) || floatValue === undefined
+                }}
+                onValueChange={value => handleNumericInputChange(value.value, 'premiumPaymentWarranty')}
               />
             </FormControl>
             <FormControl fullWidth>
@@ -124,8 +142,14 @@ const CardInstallment = ({ index, installment, onChangeList, globalInfo }: ICard
                 prefix={'%'}
                 decimalScale={2}
                 variant='outlined'
+                isAllowed={values => {
+                  const { floatValue } = values
+                  const upLimit = 100
+
+                  return (floatValue! >= 0 && floatValue! <= upLimit) || floatValue === undefined
+                }}
                 value={formData.paymentPercentage}
-                onValueChange={(value, e) => handleNumericInputChange(value.floatValue, e)}
+                onValueChange={value => handleNumericInputChange(value.floatValue, 'paymentPercentage')}
               />
               {/* {error. && <FormHelperText sx={{ color: 'error.main' }}>Required Field</FormHelperText>} */}
             </FormControl>
