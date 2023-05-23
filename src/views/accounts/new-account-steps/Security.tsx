@@ -15,7 +15,7 @@ import TextField from '@mui/material/TextField'
 
 // ** Icon Imports
 import { useGetAccountById } from '@/hooks/accounts/forms'
-import { useAddSecurities } from '@/hooks/accounts/security'
+import { useAddSecurities, useUpdateSecurities } from '@/hooks/accounts/security'
 import { useAddSecurityTotal } from '@/hooks/accounts/securityTotal'
 import { useGetAllReinsuranceCompanies } from '@/hooks/catalogs/reinsuranceCompany'
 import { useGetAllRetroCedants } from '@/hooks/catalogs/retroCedant'
@@ -85,7 +85,8 @@ const SecurityForm: FormInfo = {
   BrokerAgePercent: '',
   TaxesPercent: '',
   HasFrontingFee: false,
-  IsGross: false
+  IsGross: false,
+  id: ''
 }
 
 interface FormSecurity extends PreviousFormInfo {
@@ -402,27 +403,22 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
   }
 
   const resetValues = () => {
-    const data = [...formData]
-
-    data[index]['SharePercent'] = '' + 0
-    data[index]['PremiumPerShare'] = '' + 0
-
-    data[index]['DynamicComissionPercent'] = '' + 0
-    data[index]['DynamicComission'] = '' + 0
-
-    data[index]['BrokerAge'] = '' + 0
-    data[index]['BrokerAgePercent'] = '' + 0
-
-    data[index]['TaxesPercent'] = '' + 0
-    data[index]['Taxes'] = '' + 0
-
-    data[index]['NetInsurancePremium'] = '' + 0
+    // const data = [...formData]
+    // data[index]['SharePercent'] = '' + 0
+    // data[index]['PremiumPerShare'] = '' + 0
+    // data[index]['DynamicComissionPercent'] = '' + 0
+    // data[index]['DynamicComission'] = '' + 0
+    // data[index]['BrokerAge'] = '' + 0
+    // data[index]['BrokerAgePercent'] = '' + 0
+    // data[index]['TaxesPercent'] = '' + 0
+    // data[index]['Taxes'] = '' + 0
+    // data[index]['NetInsurancePremium'] = '' + 0
   }
 
   const setValues = (field: keyof FormInfo) => {
     const data = formData.map(obj => ({ ...obj }))
     const totalNetPremium = data[index]['NetPremium']
-    const premiumPerShare = data[index]['PremiumPerShare']
+    let premiumPerShare = data[index]['PremiumPerShare']
     const dynamicComission = data[index]['DynamicComission']
     const sharePercent = data[index]['SharePercent']
     const dynamicComissionPercent = data[index]['DynamicComissionPercent']
@@ -460,12 +456,14 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
     switch (field) {
       case 'NetPremium':
         data[index]['PremiumPerShare'] = validateNumber(((+sharePercent * +totalNetPremium) / 100).toString())
-
+        premiumPerShare = data[index]['PremiumPerShare']
         break
 
       case 'SharePercent':
         data[index]['NetInsurancePremium'] = NetInsurancePremium
         data[index]['PremiumPerShare'] = validateNumber(((+sharePercent * +totalNetPremium) / 100).toString())
+        data[index]['PremiumPerShare'] = validateNumber(((+sharePercent * +totalNetPremium) / 100).toString())
+        premiumPerShare = data[index]['PremiumPerShare']
 
         break
 
@@ -545,11 +543,13 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
   }, [formData[index].NetPremium])
 
   useEffect(() => {
+    setValues('sharePercent')
     setValues('PremiumPerShare')
     //eslint-disable-next-line
   }, [formData[index].PremiumPerShare])
 
   useEffect(() => {
+    setValues('DynamicComissionPercent')
     setValues('DynamicComission')
     //eslint-disable-next-line
   }, [formData[index].DynamicComission])
@@ -563,6 +563,13 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
     setValues('BrokerAge')
     //eslint-disable-next-line
   }, [formData[index].BrokerAge])
+
+  useEffect(() => {
+    setFrontingFeeEnabled(formData[index].HasFrontingFee)
+    setIsGross(formData[index].IsGross)
+    setValues('SharePercent')
+    //eslint-disable-next-line
+  }, [])
 
   useEffect(() => {
     setValues('RetroCedant')
@@ -964,9 +971,10 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
 }
 
 const Security = ({ onStepChange }: SecurityProps) => {
-  const [formData, setFormData] = useState<FormInfo[]>([{ ...SecurityForm }])
+  const [formData, setFormData] = useState<FormInfo[]>([])
   const [formErrors, setFormErrors] = useState<FormInfo[]>([{ ...SecurityForm }])
   const { saveSecurityTotal } = useAddSecurityTotal()
+  const { updateSecurities } = useUpdateSecurities()
   const { saveSecurities } = useAddSecurities()
   const [allFormData, setAllFormData] = useState<FormSecurity>({
     FormData: formData,
@@ -992,7 +1000,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
   const accountData = useAppSelector(state => state.accounts)
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
 
-  const { setAccountId } = useGetAccountById()
+  const { account, setAccountId } = useGetAccountById()
 
   useEffect(() => {
     accountData.formsData.form1.id && setAccountId(accountData.formsData.form1.id)
@@ -1031,7 +1039,6 @@ const Security = ({ onStepChange }: SecurityProps) => {
           .validate(form, { abortEarly: false })
           .then(function () {
             handleSuccess()
-
             if (isNextStep) onStepChange!(3)
           })
           .catch(function (err) {
@@ -1076,28 +1083,157 @@ const Security = ({ onStepChange }: SecurityProps) => {
     })
   }
 
-  const saveInformation = async () => {
-    const forms: Partial<SecurityDto>[] = formData.map(form => {
-      return {
-        netPremiumat100: +form.NetPremium || 0,
-        share: +form.SharePercent || 0,
-        frontingFeeActive: form.HasFrontingFee || false,
-        dynamicCommission: +form.DynamicComission || 0,
-        frontingFee: +form.FrontingFee || 0,
-        netReinsurancepremium: +form.NetInsurancePremium || 0,
-        taxes: +form.Taxes || 0,
-        reinsuranceBrokerage: +form.BrokerAge || 0,
-        active: true,
-        idCReinsuranceCompany: null,
-        idCRetroCedant: null,
-        idCRetroCedantContact: null,
-        idEndorsement: null,
-        idAccount: +accountData.formsData.form1.id,
-        receivedNetPremium: +allFormData.RecievedNetPremium,
-        distributedNetPremium: +allFormData.DistribuitedNetPremium,
-        difference: +allFormData.Diference
+  const getSecurities = () => {
+    const idAccountCache = Number(localStorage.getItem('idAccount'))
+    setAccountId(idAccountCache)
+    if (!account?.securities) return
+
+    const securitiesErrorsTemp: FormInfo[] = []
+    account.securities.forEach(() => securitiesErrorsTemp.push({ ...SecurityForm }))
+    const securitiesTem = account.securities.map<Partial<FormInfo>>(security => ({
+      id: String(security.id),
+      BrokerAgePercent: String(security.reinsuranceBrokerage),
+      TaxesPercent: String(security.taxes),
+      IsGross: security.isGross || false,
+      NetPremium: String(security.netPremiumat100),
+      FrontingFeePercent: String(security.frontingFee),
+      DynamicComissionPercent: String(security.dynamicCommission),
+      SharePercent: String(security.share),
+      NetInsurancePremium: String(security.netReinsurancepremium),
+      ReinsuranceCompany:
+        typeof security.idCReinsuranceCompany !== 'number'
+          ? String(security.idCReinsuranceCompany.id)
+          : String(security.idCReinsuranceCompany),
+      RetroCedantContact: security.idCRetroCedant ? String(security.idCRetroCedant) : '',
+      HasFrontingFee: security.frontingFeeActive || false,
+      BrokerAge: '',
+      ContactCountry: '',
+      ContactEmail: '',
+      ContactPhone: '',
+      DynamicComission: '',
+      FrontingFee: '',
+      PremiumPerShare: '741545',
+      RetroCedant: '',
+      Taxes: ''
+    }))
+
+    setFormData([...securitiesTem] as FormInfo[])
+    setFormErrors([...securitiesErrorsTemp])
+  }
+
+  // const saveInformation = async () => {
+  //   const forms: Partial<SecurityDto>[] = formData.map(form => {
+  //     return {
+  //       netPremiumat100: +form.NetPremium || 0,
+  //       share: +form.SharePercent || 0,
+  //       frontingFeeActive: form.HasFrontingFee || false,
+  //       dynamicCommission: +form.DynamicComission || 0,
+  //       frontingFee: +form.FrontingFee || 0,
+  //       netReinsurancepremium: +form.NetInsurancePremium || 0,
+  //       taxes: +form.Taxes || 0,
+  //       reinsuranceBrokerage: +form.BrokerAge || 0,
+  //       active: true,
+  //       idCReinsuranceCompany: Number(form.ReinsuranceCompany),
+  //       idCRetroCedant: Number(form.RetroCedant) || null,
+  //       idCRetroCedantContact: Number(form.RetroCedantContact) || null,
+  //       idEndorsement: null,
+  //       idAccount: +accountData.formsData.form1.id,
+  //       receivedNetPremium: +allFormData.RecievedNetPremium,
+  //       distributedNetPremium: +allFormData.DistribuitedNetPremium,
+  //       difference: +allFormData.Diference
+  //     }
+  //   })
+  //   const saveTotal = await saveSecurityTotal({
+  //     receivedNetPremium: +allFormData.RecievedNetPremium,
+  //     distributedNetPremium: +allFormData.DistribuitedNetPremium,
+  //     difference: +allFormData.Diference,
+  //     idAccount: +accountData.formsData.form1.id
+  //   })
+
+  //   const saveAll = await saveSecurities(forms)
+
+  //   if (saveAll === 'error' || saveTotal === 'error') {
+  //     setBadgeData({
+  //       message: 'Error saving data',
+  //       theme: 'error',
+  //       open: true,
+  //       status: 'error',
+  //       icon: <Icon style={{ color: '#FF4D49' }} icon='icon-park-outline:error' />
+  //     })
+  //     setTimeout(() => {
+  //       setBadgeData({
+  //         message: 'Saved successfully',
+  //         theme: 'success',
+  //         open: false,
+  //         status: 'error'
+  //       })
+  //     }, 5000)
+  //   } else {
+  //     setBadgeData({
+  //       message: 'The information has been saved',
+  //       theme: 'success',
+  //       open: true,
+  //       status: 'error'
+  //     })
+  //     setTimeout(() => {
+  //       setBadgeData({
+  //         message: 'Saved successfully',
+  //         theme: 'success',
+  //         open: false,
+  //         status: 'error'
+  //       })
+  //     }, 5000)
+  //   }
+  // }
+
+  const SaveData = async () => {
+    const update: Partial<SecurityDto>[] = []
+    const save: Partial<SecurityDto>[] = []
+    formData.forEach(form => {
+      if (form.id) {
+        update.push({
+          id: +form!.id,
+          netPremiumat100: +form.NetPremium || 0,
+          share: +form.SharePercent || 0,
+          frontingFeeActive: form.HasFrontingFee || false,
+          dynamicCommission: +form.DynamicComissionPercent || 0,
+          frontingFee: +form.FrontingFeePercent || 0,
+          netReinsurancepremium: +form.NetInsurancePremium || 0,
+          taxes: +form.TaxesPercent || 0,
+          reinsuranceBrokerage: +form.BrokerAgePercent || 0,
+          active: true,
+          idCReinsuranceCompany: Number(form.ReinsuranceCompany),
+          idCRetroCedant: Number(form.RetroCedant) || null,
+          idCRetroCedantContact: Number(form.RetroCedantContact) || null,
+          idEndorsement: null,
+          idAccount: +accountData.formsData.form1.id,
+          receivedNetPremium: +allFormData.RecievedNetPremium,
+          distributedNetPremium: +allFormData.DistribuitedNetPremium,
+          difference: +allFormData.Diference
+        })
+      } else {
+        save.push({
+          netPremiumat100: +form.NetPremium || 0,
+          share: +form.SharePercent || 0,
+          frontingFeeActive: form.HasFrontingFee || false,
+          dynamicCommission: +form.DynamicComissionPercent || 0,
+          frontingFee: +form.FrontingFeePercent || 0,
+          netReinsurancepremium: +form.NetInsurancePremium || 0,
+          taxes: +form.Taxes || 0,
+          reinsuranceBrokerage: +form.BrokerAgePercent || 0,
+          active: true,
+          idCReinsuranceCompany: Number(form.ReinsuranceCompany),
+          idCRetroCedant: Number(form.RetroCedant) || null,
+          idCRetroCedantContact: Number(form.RetroCedantContact) || null,
+          idEndorsement: null,
+          idAccount: +accountData.formsData.form1.id,
+          receivedNetPremium: +allFormData.RecievedNetPremium,
+          distributedNetPremium: +allFormData.DistribuitedNetPremium,
+          difference: +allFormData.Diference
+        })
       }
     })
+
     const saveTotal = await saveSecurityTotal({
       receivedNetPremium: +allFormData.RecievedNetPremium,
       distributedNetPremium: +allFormData.DistribuitedNetPremium,
@@ -1105,7 +1241,9 @@ const Security = ({ onStepChange }: SecurityProps) => {
       idAccount: +accountData.formsData.form1.id
     })
 
-    const saveAll = await saveSecurities(forms)
+    await updateSecurities(update)
+    const saveAll = await saveSecurities(save)
+    getSecurities()
 
     if (saveAll === 'error' || saveTotal === 'error') {
       setBadgeData({
@@ -1142,7 +1280,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
   }
 
   const handleSuccess = () => {
-    saveInformation()
+    SaveData()
     dispatch(updateFormsData({ form2: allFormData }))
   }
 
@@ -1164,6 +1302,10 @@ const Security = ({ onStepChange }: SecurityProps) => {
     })
     //eslint-disable-next-line
   }, [allFormData.DistribuitedNetPremium, allFormData.RecievedNetPremium])
+
+  useEffect(() => {
+    getSecurities()
+  }, [account])
 
   return (
     <>
