@@ -8,7 +8,7 @@ interface UserSectionProps {
 }
 
 export const UserSection = styled('div')<UserSectionProps>(({ maxWidth, margin, otherProps }) => ({
-  marginTop: '20px',
+  marginTop: '-20px',
   margin: margin ? margin : '',
   maxWidth: maxWidth ? maxWidth : '100%',
   ...otherProps
