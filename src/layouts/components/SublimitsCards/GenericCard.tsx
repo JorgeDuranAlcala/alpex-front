@@ -72,7 +72,7 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
 }: RenderFormGeneric) => {
   const [dataForm, setDataForm] = useState<FormGenericCard>(initialData)
   const [selectedValueRadio, setSelectedValueRadio] = useState<string>('')
-  const [errorForm, setErrorForm] = useState({})
+  const [, setErrorForm] = useState({})
   const [errors] = useState<FormErrors>({
     minError: false,
     coinsuranceError: false,
