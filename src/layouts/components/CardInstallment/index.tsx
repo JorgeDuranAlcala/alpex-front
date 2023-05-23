@@ -64,9 +64,7 @@ const CardInstallment = ({ index, installment, onChangeList, globalInfo, count }
 
   const { receivedNetPremium, inceptionDate } = globalInfo
 
-  const handleNumericInputChange = (value: any, e: any) => {
-    const { name } = e.event.target
-
+  const handleNumericInputChange = (value: any, name: any) => {
     const formDataTemp = { ...formData }
 
     if (name === 'premiumPaymentWarranty' && inceptionDate) {
@@ -129,7 +127,7 @@ const CardInstallment = ({ index, installment, onChangeList, globalInfo, count }
 
                   return (floatValue! >= 0 && floatValue! <= upLimit) || floatValue === undefined
                 }}
-                onValueChange={(value, e) => handleNumericInputChange(value.value, e)}
+                onValueChange={value => handleNumericInputChange(value.value, 'premiumPaymentWarranty')}
               />
             </FormControl>
             <FormControl fullWidth>
@@ -151,7 +149,7 @@ const CardInstallment = ({ index, installment, onChangeList, globalInfo, count }
                   return (floatValue! >= 0 && floatValue! <= upLimit) || floatValue === undefined
                 }}
                 value={formData.paymentPercentage}
-                onValueChange={(value, e) => handleNumericInputChange(value.floatValue, e)}
+                onValueChange={value => handleNumericInputChange(value.floatValue, 'paymentPercentage')}
               />
               {/* {error. && <FormHelperText sx={{ color: 'error.main' }}>Required Field</FormHelperText>} */}
             </FormControl>

@@ -44,7 +44,7 @@ class BrokerContactService {
   async updateById(id: number, update: Partial<BrokerContactDto>) {
     try {
       const { data } = await AppAlpexApiGateWay.put<Promise<BrokerContactDto>>(
-        `${BROKER_CONTACT_ROUTERS.UPDATE}${id}`,
+        `${BROKER_CONTACT_ROUTERS.UPDATE}/${id}`,
         {
           ...update
         }
