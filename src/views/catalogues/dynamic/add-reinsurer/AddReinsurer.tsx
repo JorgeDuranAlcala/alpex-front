@@ -149,7 +149,7 @@ const AddReinsurer = () => {
               </Button></div> :
             <div className='action-buttons'>
               <Button
-                className='create-contact-btn'
+                className='add-btn'
                 onClick={addReinsurer}
                 disabled={disableAddReinsurer}
               >

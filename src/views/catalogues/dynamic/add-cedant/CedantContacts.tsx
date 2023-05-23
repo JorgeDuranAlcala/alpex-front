@@ -46,20 +46,19 @@ const expresions = {
   phone: /^\d{10}$/ // 7 a 10 numeros.
 }
 
-const ReinsurerContacts = () => {
-  // Const declatation :
+const CedantContacts = () => {
+  // ** State
 
   // Handle Data
   const [contactList, setContactList] = useState<IContact[]>([])
-  const [newContactData, setNewContactData] = useState<IContact>(initialNewContact) //saves the new contact data
+  const [contactData, setContactData] = useState<IContact>(initialNewContact)
   const [currentContact, setCurrentContact] = useState<IContact>(initialNewContact); //saves the row data to be edited
-  const [selectedRow, setSelectedRow] = useState<IContact | null>(null); // saves the row wehen user click on actions button
   const [contactToDelete, setContactToDelete] = useState(0) //Saves id of contact to be deleted.
+  const [selectedRow, setSelectedRow] = useState<IContact | null>(null); // saves the row wehen user click on actions button
 
   // Handle view
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [selectedRows, setSelectedRows] = useState<GridRowId[]>([])
   const [btnDisable, setBtnDisable] = useState(true)
+  const [selectedRows, setSelectedRows] = useState<GridRowId[]>([])
   const [btnEditDisable, setBtnEditDisable] = useState(true)
 
   // Handle new contact validations
@@ -71,7 +70,7 @@ const ReinsurerContacts = () => {
   const [countryError, setCountryError] = useState(false)
   const [emptyForm, setEmptyForm] = useState(true)
 
-  // Handle edit contact validations
+  //handle edit contact validations
   const [startEditValidations, setStartEditValidations] = useState(false)
   const [editError, setEditError] = useState(true)
   const [editNameError, setEditNameError] = useState(false)
@@ -80,180 +79,17 @@ const ReinsurerContacts = () => {
   const [editCountryError, setEditCountryError] = useState(false)
   const [emptyEditForm, setEmptyEditForm] = useState(true)
 
-  // Handle modals
-  const [openNewContact, setOpenNewContact] = useState(false)
-  const [openEdit, setOpenEdit] = useState(false)
-  const [openDelete, setOpenDelete] = useState(false)
-  const [openDeleteRows, setOpenDeleteRows] = useState(false)
-
   // Handle Alerts
   const [showAlert, setShowAlert] = useState(true);
   const [alertType, setAlertType] = useState('');
   const [alertText, setAlertText] = useState('');
   const [alertIcon, setAlertIcon] = useState('');
 
-const column: GridColumns<IContact> = [
-    {
-      ...GRID_CHECKBOX_SELECTION_COL_DEF,
-      headerClassName: 'account-column-header-checkbox'
-    },
-    {
-      flex: 0.1,
-      field: 'contact-name ',
-      headerName: 'CONTACT NAME',
-      minWidth: 300,
-      maxWidth: 300,
-      type: 'string',
-      align: 'left',
-      sortable: false,
-      headerClassName: 'reinsurer-contacts-header',
-      renderHeader: () =>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative' }}>
-          <Typography
-            component={'span'}
-            sx={{ color: colors.text.primary, fontWeight: 500, fontSize: fonts.size.px12, fontFamily: fonts.inter }}
-          >
-            CONTACT NAME
-          </Typography>
-
-        </Box>,
-      renderCell: ({ row }) => (
-        <Typography sx={{ fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
-          {row.name}
-        </Typography>
-      )
-    },
-    {
-      flex: 0.1,
-      field: "phone-number",
-      headerName: 'PHONE NUMBER',
-      minWidth: 150,
-      maxWidth: 150,
-      type: 'string',
-      align: 'left',
-      disableColumnMenu: true,
-      sortable: false,
-      headerClassName: 'reinsurer-contacts-header',
-      renderHeader: () => (
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative' }}>
-          <Typography
-            component={'span'}
-            sx={{ color: colors.text.primary, fontWeight: 500, fontSize: fonts.size.px12, fontFamily: fonts.inter }}
-          >
-            PHONE NUMBER
-          </Typography>
-
-        </Box>),
-      renderCell: ({ row }) => (
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          {row.phone}
-        </Box>
-      )
-    },
-    {
-      flex: 0.1,
-      field: 'email',
-      headerName: 'EMAIL',
-      minWidth: 100,
-      type: 'string',
-      align: 'left',
-      disableColumnMenu: true,
-      sortable: false,
-      headerClassName: 'reinsurer-contacts-header',
-      renderHeader: () =>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative' }}>
-          <Typography
-            component={'span'}
-            sx={{ color: colors.text.primary, fontWeight: 500, fontSize: fonts.size.px12, fontFamily: fonts.inter }}
-          >
-            EMAIL
-          </Typography>
-
-        </Box>,
-      renderCell: ({ row }) => (
-        <Typography
-          sx={{ color: colors.text.primary, fontWeight: 500, fontSize: fonts.size.px14, fontFamily: fonts.inter }}
-        >
-          {row.email}
-        </Typography>
-      )
-    },
-    {
-      flex: 0.1,
-      field: 'country',
-      headerName: 'COUNTRY',
-      minWidth: 100,
-      type: 'string',
-      align: 'left',
-      disableColumnMenu: true,
-      sortable: false,
-      headerClassName: 'reinsurer-contacts-header',
-      renderHeader: () => <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative' }}>
-        <Typography
-          component={'span'}
-          sx={{ color: colors.text.primary, fontWeight: 500, fontSize: fonts.size.px12, fontFamily: fonts.inter }}
-        >
-          COUNTRY
-        </Typography>
-
-      </Box>,
-      renderCell: ({ row }) => (
-        <Typography sx={{ color: colors.text.secondary, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
-          {row.country}
-        </Typography>
-      )
-    },
-    {
-      flex: 0.1,
-      field: 'actions',
-      headerName: 'ACTIONS',
-      minWidth: 50,
-      maxWidth: 70,
-      type: 'string',
-      align: 'left',
-      disableColumnMenu: true,
-      sortable: false,
-      headerClassName: 'reinsurer-contacts-header',
-      renderHeader: () => <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative' }}>
-
-      </Box>,
-      renderCell: ({row}) =>{
-        const showActions = row === selectedRow;
-
-        return (
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', }}>
-          <div className='actions-wrapper'>
-             <IconButton
-            onClick={() => {
-              if (showActions) {
-                setSelectedRow(null);
-              } else {
-                setSelectedRow(row);
-              }
-            }
-            }
-            size='small'
-            sx={{ mr: 1 }}
-          >
-            <Icon icon='mdi:dots-vertical' />
-          </IconButton>
-          {showActions &&
-          <div className='actions-menu'>
-
-            <div className='menu-option' onClick={() => handleEditContact(row)}>
-              Edit
-            </div>
-            <div className='menu-option' onClick={() => handleDeleteContact(row.id)}>
-              Delete
-            </div>
-          </div> }
-          </div>
-
-        </Box>
-      )}
-    },
-
-  ]
+  // Handle modals
+  const [openNewContact, setOpenNewContact] = useState(false)
+  const [openEdit, setOpenEdit] = useState(false)
+  const [openDelete, setOpenDelete] = useState(false)
+  const [openDeleteRows, setOpenDeleteRows] = useState(false)
 
   const triggerAlert = (type: string) => {
     setAlertType(type)
@@ -284,9 +120,193 @@ const column: GridColumns<IContact> = [
 
   };
 
+  const column: GridColumns<IContact> = [
+    {
+      ...GRID_CHECKBOX_SELECTION_COL_DEF,
+      headerClassName: 'account-column-header-checkbox'
+    },
+    {
+      flex: 0.1,
+      field: 'contact-name ',
+      headerName: 'CONTACT NAME',
+      minWidth: 300,
+      maxWidth: 300,
+      type: 'string',
+      align: 'left',
+      sortable: false,
+      headerClassName: ' cedant-contacts-header',
+      renderHeader: () =>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative' }}>
+          <Typography
+            component={'span'}
+            sx={{ color: colors.text.primary, fontWeight: 500, fontSize: fonts.size.px12, fontFamily: fonts.inter }}
+          >
+            CONTACT NAME
+          </Typography>
+
+        </Box>,
+      renderCell: ({ row }) => (
+        <Typography sx={{ fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
+          {row.name}
+        </Typography>
+      )
+    },
+    {
+      flex: 0.1,
+      field: "phone-number",
+      headerName: 'PHONE NUMBER',
+      minWidth: 150,
+      maxWidth: 150,
+      type: 'string',
+      align: 'left',
+      disableColumnMenu: true,
+      sortable: false,
+      headerClassName: 'cedant-contacts-header',
+      renderHeader: () => (
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative' }}>
+          <Typography
+            component={'span'}
+            sx={{ color: colors.text.primary, fontWeight: 500, fontSize: fonts.size.px12, fontFamily: fonts.inter }}
+          >
+            PHONE NUMBER
+          </Typography>
+
+        </Box>),
+      renderCell: ({ row }) => (
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          {row.phone}
+        </Box>
+      )
+    },
+    {
+      flex: 0.1,
+      field: 'email',
+      headerName: 'EMAIL',
+      minWidth: 100,
+      type: 'string',
+      align: 'left',
+      disableColumnMenu: true,
+      sortable: false,
+      headerClassName: 'cedant-contacts-header',
+      renderHeader: () =>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative' }}>
+          <Typography
+            component={'span'}
+            sx={{ color: colors.text.primary, fontWeight: 500, fontSize: fonts.size.px12, fontFamily: fonts.inter }}
+          >
+            EMAIL
+          </Typography>
+
+        </Box>,
+      renderCell: ({ row }) => (
+        <Typography
+          sx={{ color: colors.text.primary, fontWeight: 500, fontSize: fonts.size.px14, fontFamily: fonts.inter }}
+        >
+          {row.email}
+        </Typography>
+      )
+    },
+    {
+      flex: 0.1,
+      field: 'country',
+      headerName: 'COUNTRY',
+      minWidth: 100,
+      type: 'string',
+      align: 'left',
+      disableColumnMenu: true,
+      sortable: false,
+      headerClassName: 'cedant-contacts-header',
+      renderHeader: () => <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative' }}>
+        <Typography
+          component={'span'}
+          sx={{ color: colors.text.primary, fontWeight: 500, fontSize: fonts.size.px12, fontFamily: fonts.inter }}
+        >
+          COUNTRY
+        </Typography>
+
+      </Box>,
+      renderCell: ({ row }) => (
+        <Typography sx={{ color: colors.text.secondary, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
+          {row.country}
+        </Typography>
+      )
+    },
+    {
+      flex: 0.1,
+      field: 'actions',
+      headerName: 'ACTIONS',
+      minWidth: 50,
+      maxWidth: 70,
+      type: 'string',
+      align: 'left',
+      disableColumnMenu: true,
+      sortable: false,
+      headerClassName: 'reinsurer-contacts-header',
+      renderHeader: () => <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative' }}>
+
+      </Box>,
+      renderCell: ({ row }) => {
+        const showActions = row === selectedRow;
+
+        return (
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', }}>
+            <div className='actions-wrapper'>
+              <IconButton
+                onClick={() => {
+                  if (showActions) {
+                    setSelectedRow(null);
+                  } else {
+                    setSelectedRow(row);
+                  }
+                }
+                }
+                size='small'
+                sx={{ mr: 1 }}
+              >
+                <Icon icon='mdi:dots-vertical' />
+              </IconButton>
+              {showActions &&
+                <div className='actions-menu'>
+
+                  <div className='menu-option' onClick={() => handleEditContact(row)}>
+                    Edit
+                  </div>
+                  <div className='menu-option' onClick={() => handleDeleteContact(row.id)}>
+                    Delete
+                  </div>
+                </div>}
+            </div>
+
+          </Box>
+        )
+      }
+    },
+
+
+  ]
+
+  const getContactList = () => { //must be replaced with the respective cedant service
+    const data: IContact[] = []
+
+    for (let index = 1; index <= 100; index++) {
+      const id = index
+      const name = `Contact ${index}`
+
+      data.push({
+        id,
+        name,
+        phone: '2221334455',
+        email: 'user@mail.com',
+        country: 'México'
+      })
+    }
+
+    return data
+  }
+
   const handleChangeModal = (field: keyof IContact, value: IContact[keyof IContact]) => {
     setStartValidations(true)
-    setNewContactData({ ...newContactData, [field]: value })
+    setContactData({ ...contactData, [field]: value })
   }
 
   const handleEditModal = (field: keyof IContact, value: IContact[keyof IContact]) => {
@@ -306,31 +326,11 @@ const column: GridColumns<IContact> = [
     setOpenEdit(true)
   }
 
-  const getContactList = () => { //must be replaced with the respective reinsurers service
-    const data: IContact[] = []
-
-    for (let index = 1; index <= 100; index++) {
-      const id = index
-      const name = `Contact ${index}`
-
-      data.push({
-        id,
-        name,
-        phone: '2221334455',
-        email: 'user@mail.com',
-        country: 'México'
-      })
-    }
-
-    return data
-  }
-
-  const searchContacts = (value: string) => { //must be replaced with the respective reinsurers service
+  const searchContacts = (value: string) => { //must be replaced with the respective cedant service
     console.log("Call search service", value)
   }
-
-  const createContact = () => {//must be replaced with the respective reinsurers service
-    console.log('Cal create contact service', newContactData)
+  const handleCreateContact = () => {
+    console.log('Cal create contact service', contactData)
     setOpenNewContact(false)
 
     triggerAlert("success")
@@ -350,22 +350,23 @@ const column: GridColumns<IContact> = [
     setOpenDelete(false)
   }
 
-  const deleteRows = () => {  //must be replaced with the respective broker service
+  const deleteRows = () => {  //must be replaced with the respective cedant service
     // const newContactList = // Service return new list
     // setContactList(newBinderList)
     setOpenDeleteRows(false)
   }
 
+
   useEffect(() => {
     if (
-      newContactData.name !== undefined &&
-      newContactData.name !== '' &&
-      newContactData.email !== undefined &&
-      newContactData.email !== '' &&
-      newContactData.phone !== undefined &&
-      newContactData.phone !== '' &&
-      newContactData.country !== undefined &&
-      newContactData.country !== ''
+      contactData.name !== undefined &&
+      contactData.name !== '' &&
+      contactData.email !== undefined &&
+      contactData.email !== '' &&
+      contactData.phone !== undefined &&
+      contactData.phone !== '' &&
+      contactData.country !== undefined &&
+      contactData.country !== ''
     ) {
       setEmptyForm(false)
     } else {
@@ -374,28 +375,28 @@ const column: GridColumns<IContact> = [
     }
 
     if (startValidations) {
-      if (expresions.name.test(newContactData.name)) {
+      if (expresions.name.test(contactData.name)) {
         setNameError(false)
       } else {
         setNameError(true)
         setError(true)
       }
 
-      if (expresions.email.test(newContactData.email)) {
+      if (expresions.email.test(contactData.email)) {
         setEmailError(false)
       } else {
         setEmailError(true)
         setError(true)
       }
 
-      if (expresions.phone.test(newContactData.phone)) {
+      if (expresions.phone.test(contactData.phone)) {
         setPhoneError(false)
       } else {
         setPhoneError(true)
         setError(true)
       }
 
-      if (newContactData.country !== undefined && newContactData.country !== '') {
+      if (contactData.country !== undefined && contactData.country !== '') {
         setCountryError(false)
       } else {
         setCountryError(true)
@@ -412,10 +413,10 @@ const column: GridColumns<IContact> = [
     else if (!error) setBtnDisable(false)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    newContactData.name,
-    newContactData.email,
-    newContactData.phone,
-    newContactData.country,
+    contactData.name,
+    contactData.email,
+    contactData.phone,
+    contactData.country,
     error,
     nameError,
     emailError,
@@ -505,7 +506,7 @@ const column: GridColumns<IContact> = [
         <div className='title'>Contacts</div>
         <div className='description'>
           Here you will find the contacts linked
-          to this specific Broker, you can add one
+          to this specific Cedant, you can add one
           or more contacts.
         </div>
         <div className='table-header'>
@@ -559,7 +560,7 @@ const column: GridColumns<IContact> = [
               <TextField
                 autoFocus
                 label='Contact Name'
-                value={newContactData.name}
+                value={contactData.name}
                 onChange={e => handleChangeModal('name', e.target.value)}
               />
 
@@ -569,7 +570,7 @@ const column: GridColumns<IContact> = [
               <TextField
                 autoFocus
                 label='Contact email'
-                value={newContactData.email}
+                value={contactData.email}
                 onChange={e => handleChangeModal('email', e.target.value)}
               />
 
@@ -579,7 +580,7 @@ const column: GridColumns<IContact> = [
               <TextField
                 autoFocus
                 label='Contact Phone'
-                value={newContactData.phone}
+                value={contactData.phone}
                 onChange={e => handleChangeModal('phone', e.target.value)}
               />
 
@@ -590,7 +591,7 @@ const column: GridColumns<IContact> = [
 
               <Select
                 label='Select country'
-                value={newContactData.country}
+                value={contactData.country}
                 onChange={e => handleChangeModal('country', e.target.value)}
                 labelId='invoice-country'
               >
@@ -612,7 +613,7 @@ const column: GridColumns<IContact> = [
             className='create-contact-modal'
             disabled={btnDisable}
             variant='contained'
-            onClick={createContact}
+            onClick={handleCreateContact}
           >
             CREATE
           </Button>
@@ -655,7 +656,6 @@ const column: GridColumns<IContact> = [
           </Button>
         </Box>
       </Modal>
-
       <Modal
         className='delete-modal'
         open={openDelete}
@@ -688,7 +688,6 @@ const column: GridColumns<IContact> = [
           </Button>
         </Box>
       </Modal>
-
       <Modal className='create-contact-modal' open={openEdit} onClose={() => setOpenEdit(false)}>
         <Box className='modal-wrapper'>
           <HeaderTitleModal>
@@ -768,4 +767,4 @@ const column: GridColumns<IContact> = [
   )
 }
 
-export default ReinsurerContacts
+export default CedantContacts
