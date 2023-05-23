@@ -82,9 +82,9 @@ const schema = yup.object().shape({
   sublimit: yup
     .number()
     .transform((_, val) => (val === Number(val) ? val : null))
-    .test('Validate sublimit', 'Sublimit cannot be greater than limit', value => {
+    .test('Validate sublimit', 'Sublimit cannot be greater than limit', (value, context) => {
       const val = value || 0
-      const limit = 10000 || 0
+      const limit = context.parent.account?.informations[0]?.limit || 0
 
       return +val <= +limit
     })
@@ -187,6 +187,22 @@ const initialValues = {
   at100: false,
   typeDeductibleRadio: 'default'
 }
+
+const initialErrorValues = {
+  sublimit: '',
+  percentage: '',
+  price: '',
+  min: '',
+  days: '',
+  priceInterruption: '',
+  coinsurance: '',
+  yes: '',
+  luc: '',
+  typeDeductible: '',
+  typeBi: '',
+  at100: '',
+  typeDeductibleRadio: ''
+}
 const Sublimits = () => {
   const forms = GenericCard
   const [checked, setChecked] = useState<number[]>([])
@@ -217,26 +233,24 @@ const Sublimits = () => {
     setAllFormData(data)
   }
   const validate = (form: any, index: number) => {
-    const dataError = { ...initialValues }
+    const dataError = { ...initialErrorValues }
+
     Object.keys(dataError).forEach(function (key) {
       // @ts-ignore
       dataError[key] = null
     })
-    const data = formErrors
-    data[index] = dataError
+    const data = { ...formErrors }
+    data[index] = { ...dataError }
 
     schema
       .validate({ ...form, account }, { abortEarly: false })
       .then(function () {
-        console.log('ok')
-        const removeItem = data.filter((errors, i) => i !== index)
-        setFormErrors(removeItem)
+        data[index] = { ...initialErrorValues }
+        setFormErrors(data)
       })
       .catch(function (err) {
         for (const error of err?.inner) {
-          console.log(error)
           data[index][error.path] = error.message
-          console.log(data)
         }
 
         setFormErrors(data)
@@ -251,7 +265,7 @@ const Sublimits = () => {
     if (currentIndex === -1) {
       newChecked.push(value)
       allFormData.push({ ...initialValues })
-      formErrors.push({ ...initialValues })
+      formErrors.push({ ...initialErrorValues })
       formsCheck.push({
         type: value,
         components: forms,
