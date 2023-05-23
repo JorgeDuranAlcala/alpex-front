@@ -1,10 +1,19 @@
+interface ICountry {
+  id: number
+  name: string
+  currency: string
+  createdAt: string
+  updatedAt: string
+  active: boolean
+}
+
 interface IBrokerContact {
   id: number
   name: string
   email: string
   phone: string
   idCBroker: number
-  idCCountry: number
+  idCCountry: ICountry
   createdAt: string
   updatedAt: string
   active: boolean
