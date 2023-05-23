@@ -22,13 +22,11 @@ interface PlacementStructureErrors {
   totalError: boolean
   reinsuranceBrokeragePError: boolean
   taxesPError: boolean
-  frontingFeePError: boolean
   exchangeRateError: boolean
   limitError: boolean
   grossPremiumError: boolean
   reinsuranceBrokerageError: boolean
   taxesError: boolean
-  frontingFeeError: boolean
   typeOfLimitError: boolean
 }
 
@@ -96,13 +94,11 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
     totalError: false,
     reinsuranceBrokeragePError: false,
     taxesPError: false,
-    frontingFeePError: false,
     exchangeRateError: false,
     limitError: false,
     grossPremiumError: false,
     reinsuranceBrokerageError: false,
     taxesError: false,
-    frontingFeeError: false,
     typeOfLimitError: false
   })
   const calculate = async (type = 'any') => {
@@ -148,12 +144,18 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
         break
       }
       case 'grossPremium': {
-        const resultBrokerage = (reinsuranceBrokeragec * 100) / grossPremiumc
-        const resultTaxes = (taxesPc * 100) / grossPremiumc
-        const resultFronting = (frontingFeec * 100) / grossPremiumc
-        setReinsuranceBrokerageP(isFinite(resultBrokerage) ? resultBrokerage : 0)
-        setTaxesP(isFinite(resultTaxes) ? resultTaxes : 0)
-        setFrontingFeeP(isFinite(resultFronting) ? resultFronting : 0)
+        console.log({ taxesPc, frontingFeePc })
+
+        const resultBrokerage = grossPremiumc * (reinsuranceBrokeragePc / 100)
+        const resultTaxes = grossPremiumc * (taxesPc / 100)
+        const resultFronting = grossPremiumc * (frontingFeePc / 100)
+
+        setReinsuranceBrokerageP(reinsuranceBrokeragePc)
+        setTaxes(taxesP)
+        setFrontingFee(frontingFeePc)
+        setReinsuranceBrokerage(isFinite(resultBrokerage) ? resultBrokerage : 0)
+        setTaxes(isFinite(resultTaxes) ? resultTaxes : 0)
+        setFrontingFee(isFinite(resultFronting) ? resultFronting : 0)
         break
       }
       default:
@@ -213,13 +215,11 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
       totalError: placementStructure.total === 0,
       reinsuranceBrokeragePError: placementStructure.reinsuranceBrokerageP === 0,
       taxesPError: placementStructure.taxesP === 0,
-      frontingFeePError: placementStructure.frontingFeeP === 0,
       exchangeRateError: placementStructure.exchangeRate === 0,
       limitError: placementStructure.limit === 0,
       grossPremiumError: placementStructure.grossPremium === 0,
       reinsuranceBrokerageError: placementStructure.reinsuranceBrokerage === 0,
       taxesError: placementStructure.taxes === undefined,
-      frontingFeeError: placementStructure.frontingFee === undefined,
       typeOfLimitError: placementStructure.typeOfLimit === ''
     }
     setErrors(newErrors)
@@ -406,8 +406,6 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
                 setFrontingFeeP(value.floatValue)
                 handleNumericInputChange(value.floatValue, 'frontingFeeP')
               }}
-              error={errors.frontingFeePError}
-              helperText={getErrorMessage('frontingFeePError')}
             />
           </FormControl>
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
@@ -418,6 +416,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               thousandSeparator=','
               customInput={TextField}
               disabled
+              prefix='$'
               id='net-premium'
               label='Net premium'
               multiline
@@ -443,6 +442,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               label='Exchange rate'
               multiline
               variant='outlined'
+              prefix='$'
               decimalScale={2}
               error={errors.exchangeRateError}
               helperText={getErrorMessage('exchangeRateError')}
@@ -460,6 +460,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               label='Limit'
               multiline
               variant='outlined'
+              prefix='$'
               decimalScale={2}
               onValueChange={value => {
                 handleNumericInputChange(value.floatValue, 'limit')
@@ -472,6 +473,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <NumericFormat
               name='grossPremium'
+              prefix='$'
               value={grossPremium}
               allowLeadingZeros
               thousandSeparator=','
@@ -497,6 +499,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               name='reinsuranceBrokerage'
               value={reinsuranceBrokerage}
               allowLeadingZeros
+              prefix='$'
               thousandSeparator=','
               customInput={TextField}
               id='reinsurance-brokerage'
@@ -531,6 +534,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               id='taxes'
               label='Taxes'
               multiline
+              prefix='$'
               variant='outlined'
               decimalScale={2}
               onBlur={() => calculate('taxes')}
@@ -557,6 +561,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               customInput={TextField}
               id='fornting-fee'
               label='Fronting fee'
+              prefix='$'
               multiline
               variant='outlined'
               decimalScale={2}
@@ -571,8 +576,6 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
                 setFrontingFee(value.floatValue)
                 handleNumericInputChange(value.floatValue, 'frontingFee')
               }}
-              error={errors.frontingFeeError}
-              helperText={getErrorMessage('frontingFeeError')}
             />
           </FormControl>
         </div>
@@ -581,6 +584,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
             <NumericFormat
               name='attachmentPoint'
               value={placementStructure.attachmentPoint}
+              prefix='$'
               allowLeadingZeros
               thousandSeparator=','
               customInput={TextField}

@@ -72,7 +72,7 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
 }: RenderFormGeneric) => {
   const [dataForm, setDataForm] = useState<FormGenericCard>(initialData)
   const [selectedValueRadio, setSelectedValueRadio] = useState<string>('')
-  const [errorForm, setErrorForm] = useState({})
+  const [, setErrorForm] = useState({})
   const [errors] = useState<FormErrors>({
     minError: false,
     coinsuranceError: false,
@@ -140,7 +140,6 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dataForm])
   useEffect(() => {
-    console.log({ errorForm })
     setErrorForm(formErrors[index] || {})
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formErrors])
@@ -182,6 +181,12 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
               multiline
               prefix={'$'}
               decimalScale={2}
+              isAllowed={values => {
+                const { floatValue } = values
+                const upLimit = +formInformation?.informations[0].limit
+
+                return (floatValue! >= 0 && floatValue! <= upLimit) || floatValue === undefined
+              }}
               variant='outlined'
               disabled={checked}
               onValueChange={value => {
@@ -340,6 +345,12 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
                   customInput={Input}
                   prefix={'$'}
                   decimalScale={2}
+                  isAllowed={values => {
+                    const { floatValue } = values
+                    const upLimit = 100
+
+                    return (floatValue! >= 0 && floatValue! <= upLimit) || floatValue === undefined
+                  }}
                   sx={{
                     width: '100%',
                     height: '100%',

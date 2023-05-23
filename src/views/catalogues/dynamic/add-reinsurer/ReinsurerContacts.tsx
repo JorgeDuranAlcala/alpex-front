@@ -84,6 +84,7 @@ const ReinsurerContacts = () => {
   const [openNewContact, setOpenNewContact] = useState(false)
   const [openEdit, setOpenEdit] = useState(false)
   const [openDelete, setOpenDelete] = useState(false)
+  const [openDeleteRows, setOpenDeleteRows] = useState(false)
 
   // Handle Alerts
   const [showAlert, setShowAlert] = useState(true);
@@ -352,7 +353,7 @@ const column: GridColumns<IContact> = [
   const deleteRows = () => {  //must be replaced with the respective broker service
     // const newContactList = // Service return new list
     // setContactList(newBinderList)
-    // setOpenDelete(false)
+    setOpenDeleteRows(false)
   }
 
   useEffect(() => {
@@ -510,7 +511,9 @@ const column: GridColumns<IContact> = [
         <div className='table-header'>
           <TableHeader
             onSearch={searchContacts}
-            onDeleteRows={deleteRows}
+            onDeleteRows={() => {
+              setOpenDeleteRows(true)
+            }}
             deleteBtn={selectedRows.length > 0 ? true : false}
             textBtn="ADD NEW CONTACT"
             onClickBtn={() => { setOpenNewContact(true) }}
@@ -620,6 +623,41 @@ const column: GridColumns<IContact> = [
       </Modal>
       <Modal
         className='delete-modal'
+        open={openDeleteRows}
+        onClose={() => {
+          setOpenDeleteRows(false)
+        }}
+      >
+        <Box className='modal-wrapper'>
+          <HeaderTitleModal>
+            <Typography variant='h6' sx={{ maxWidth: '450px' }}>
+              Are you sure you want to delete the selected contacts?
+            </Typography>
+            <ButtonClose
+              onClick={() => {
+                setOpenDeleteRows(false)
+              }}
+            >
+              <CloseIcon />
+            </ButtonClose>
+          </HeaderTitleModal>
+          <div className='delete-modal-text'>This action can’t be undone.</div>
+          <Button className='header-modal-btn' variant='contained' onClick={deleteRows}>
+            DELETE
+          </Button>
+          <Button
+            className='close-modal header-modal-btn'
+            onClick={() => {
+              setOpenDeleteRows(false)
+            }}
+          >
+            CANCEL
+          </Button>
+        </Box>
+      </Modal>
+
+      <Modal
+        className='delete-modal'
         open={openDelete}
         onClose={() => {
           setOpenDelete(false)
@@ -650,6 +688,7 @@ const column: GridColumns<IContact> = [
           </Button>
         </Box>
       </Modal>
+
       <Modal className='create-contact-modal' open={openEdit} onClose={() => setOpenEdit(false)}>
         <Box className='modal-wrapper'>
           <HeaderTitleModal>
@@ -720,7 +759,7 @@ const column: GridColumns<IContact> = [
           >
             EDIT
           </Button>
-          <Button className='create-contact-modal' onClick={() => setOpenNewContact(false)}>
+          <Button className='create-contact-modal' onClick={() => setOpenEdit(false)}>
             CANCEL
           </Button>
         </Box>

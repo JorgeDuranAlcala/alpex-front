@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import UserThemeOptions from 'src/layouts/UserThemeOptions'
 
 // Hooks
+import { useRouter } from 'next/router'
 import {
   useAddInformation,
   useFindInformationByIdAccount,
@@ -80,7 +81,6 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
 
   const [open, setOpen] = useState<boolean>(false)
   const [nextClicked, setNextClicked] = useState<boolean>(false)
-  const [userId, setUserId] = useState<number | null>(null)
   const [badgeData, setBadgeData] = useState<IAlert>({
     message: '',
     theme: 'success',
@@ -90,12 +90,14 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
 
   //store
   const idAccount = useAppSelector(state => state.accounts?.formsData?.form1?.id)
+  const lastForm1Information = useAppSelector(state => state.accounts?.formsData?.form1)
 
   const { getInformaByIdAccount } = useFindInformationByIdAccount()
   const { addInformation } = useAddInformation()
   const { updateInformationByIdAccount } = useUpdateInformationByIdAccount()
 
   const dispatch = useAppDispatch()
+  const router = useRouter()
 
   const [basicInfo, setBasicInfo] = useState<BasicInfoInterface>({
     insured: '',
@@ -139,8 +141,8 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   ])
 
   const updateInformation = async () => {
-    if (userId) {
-      const res = await updateInformationByIdAccount(userId, {
+    if (idAccount) {
+      const res = await updateInformationByIdAccount(idAccount, {
         insured: basicInfo.insured,
         idCountry: Number(basicInfo.country),
         idBroker: Number(basicInfo.broker),
@@ -250,7 +252,10 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   const setDataInformation = async () => {
     if (idAccount) {
       const information = await getInformaByIdAccount(idAccount)
-      setBasicInfo({
+
+      if (!information) return
+
+      const obBasicInfo = {
         insured: information.insured || '',
         country: information.idCountry || '',
         broker: information.idBroker || '',
@@ -267,9 +272,9 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
         receptionDate: information.receptionDate ? new Date(information.receptionDate) : null,
         effectiveDate: information.effetiveDate ? new Date(information.effetiveDate) : null,
         expirationDate: information.expirationDate ? new Date(information.expirationDate) : null
-      })
+      }
 
-      setPlacementStructure({
+      const obPlacementStructure = {
         currency: information.currency || '',
         total: Number(information.totalValues) || 0.0,
         sir: Number(information.sir) || 0.0,
@@ -285,19 +290,27 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
         frontingFee: Number(information.frontingFee) || 0.0,
         attachmentPoint: Number(information.attachmentPoint) || 0.0,
         typeOfLimit: information.idTypeOfLimit || ''
-      })
+      }
+
+      setBasicInfo(obBasicInfo)
+      setPlacementStructure(obPlacementStructure)
+      dispatch(
+        updateFormsData({
+          form1: { basicInfo: obBasicInfo, placementStructure: obPlacementStructure, userFile, id: idAccount }
+        })
+      )
+      onIsNewAccountChange(false)
     }
+    onIsNewAccountChange(false)
   }
 
   const handleSaveInformation = async () => {
     if (idAccount) {
-      setUserId(idAccount)
       await updateInformation()
       dispatch(updateFormsData({ form1: { basicInfo, placementStructure, userFile, id: idAccount } }))
-      onIsNewAccountChange(false)
     } else {
       const res = await saveInformation()
-      setUserId(res.account.id)
+      localStorage.setItem('idAccount', String(res.account.id))
       dispatch(updateFormsData({ form1: { basicInfo, placementStructure, userFile, id: res.account.id } }))
       onIsNewAccountChange(false)
     }
@@ -314,7 +327,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
     handleCloseModal()
   }
 
-  //Evento para controlar el botón de save
+  //Evento para controlar el botÃ³n de save
   const handleSave = () => {
     if (nextClicked) {
       if (basicIncfoValidated) {
@@ -350,9 +363,38 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   }
 
   useEffect(() => {
-    setDataInformation()
+    const idAccountCache = Number(localStorage.getItem('idAccount'))
+    dispatch(updateFormsData({ form1: { ...lastForm1Information, id: idAccountCache } }))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  useEffect(() => {
+    if (idAccount) {
+      setDataInformation()
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [idAccount])
+
+  useEffect(() => {
+    const handleExit = () => {
+      localStorage.removeItem('idAccount')
+      dispatch(updateFormsData({ form1: { ...lastForm1Information, id: null } }))
+    }
+
+    const handleRouteChange = (url: string) => {
+      if (url !== '/accounts/new-account') {
+        handleExit()
+      }
+    }
+
+    router.events.on('routeChangeStart', handleRouteChange)
+
+    return () => {
+      router.events.off('routeChangeStart', handleRouteChange)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch, onIsNewAccountChange, router.events])
 
   return (
     <>
