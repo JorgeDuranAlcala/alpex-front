@@ -17,6 +17,14 @@ export const useGetAccountById = () => {
   const [account, setAccount] = useState<Response>()
   const [accountId, setAccountId] = useState<number | null>(null)
   const [jwtToken] = useLocalStorage('accessToken', false)
+
+  const getAccountById = async (idAccount: number): Promise<Response> => {
+    const token = localStorage.getItem('accessToken')
+    const account = await AccountServices.getAccountById(idAccount, jwtToken ?? token)
+
+    return account
+  }
+
   useEffect(() => {
     if (accountId) {
       AccountServices.getAccountById(accountId, jwtToken)
@@ -32,6 +40,7 @@ export const useGetAccountById = () => {
 
   return {
     account,
-    setAccountId
+    setAccountId,
+    getAccountById
   }
 }

@@ -1,4 +1,6 @@
 import { ReinsuranceCompanyDto } from '@/services/catalogs/dtos/ReinsuranceCompanyDto'
+import { RetroCedantDto } from '@/services/catalogs/dtos/RetroCedantDto'
+import { RetroCedantContactDto } from '@/services/catalogs/dtos/retroCedantContact.dto'
 
 export interface SecurityDto {
   id: number | null
@@ -15,8 +17,8 @@ export interface SecurityDto {
   difference: number | null
   active: boolean | null
   idCReinsuranceCompany: ReinsuranceCompanyDto | number
-  idCRetroCedant: number | null
-  idCRetroCedantContact: number | null
+  idCRetroCedant: number | RetroCedantDto | null
+  idCRetroCedantContact: number | RetroCedantContactDto | null
   idEndorsement: number | null
   idAccount: number | null
   isGross: boolean
