@@ -345,12 +345,6 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
                   customInput={Input}
                   prefix={'$'}
                   decimalScale={2}
-                  isAllowed={values => {
-                    const { floatValue } = values
-                    const upLimit = 100
-
-                    return (floatValue! >= 0 && floatValue! <= upLimit) || floatValue === undefined
-                  }}
                   sx={{
                     width: '100%',
                     height: '100%',
