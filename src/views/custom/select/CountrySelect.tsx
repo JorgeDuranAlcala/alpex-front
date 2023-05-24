@@ -7,6 +7,7 @@ interface CountrySelect {
   setSelectedCountry: React.Dispatch<React.SetStateAction<any>>
   otherProps?: React.CSSProperties
   size?: 'small' | 'medium'
+  whatsApp?: boolean
 }
 
 export interface ICountry {
@@ -14,7 +15,7 @@ export interface ICountry {
   code: string
   phone: string
 }
-export default function CountrySelect({ setSelectedCountry, size = 'small', otherProps }: CountrySelect) {
+export default function CountrySelect({ setSelectedCountry, size = 'small', otherProps, whatsApp }: CountrySelect) {
   const [value, setValue] = useState<string | null>(null)
   const [inputValue, setInputValue] = useState<string | undefined>('')
   const options = [...countries.map(country => country.label)]
@@ -40,7 +41,7 @@ export default function CountrySelect({ setSelectedCountry, size = 'small', othe
         sx={{ width: 200 }}
         style={{ ...otherProps }}
         size={size}
-        renderInput={params => <TextField {...params} label='Select Country Code' />}
+        renderInput={params => <TextField {...params} label={whatsApp ? 'Country' : 'Select Country Code'} />}
       />
     </div>
   )

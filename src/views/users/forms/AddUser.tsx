@@ -297,7 +297,7 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
 
   return (
     <>
-      <div style={{ padding: '8px' }}>
+      <div style={{ padding: '20px 20px 80px' }}>
         <UserSection>
           <StyledTitle sx={{ pb: 2 }}>{title}</StyledTitle>
         </UserSection>

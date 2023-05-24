@@ -19,7 +19,7 @@ export default function TabPanel(props: TabPanelProps) {
       aria-labelledby={`simple-tab-${index}`}
       {...other}
     >
-      <Box sx={{ p: 3 }}>
+      <Box sx={{ p: 0 }}>
         <Typography>{children}</Typography>
       </Box>
     </div>
