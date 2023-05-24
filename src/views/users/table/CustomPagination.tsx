@@ -12,21 +12,21 @@ const CustomPagination = () => {
     dispatch(fetchAccounts({ ...userReducer, info: { ...userReducer.info, page: value } }))
   }
 
-  const page = userReducer.info.page
-  const pageCount = userReducer.info.pages
-  const pageSize = userReducer.info.take
-  const rowCount = userReducer.info.count
+  const page = parseInt(userReducer.info.page.toString())
+  const pageCount = parseInt(userReducer.info.pages.toString())
+  const pageSize = parseInt(userReducer.info.take.toString())
+  const rowCount = parseInt(userReducer.info.count.toString())
 
   return (
     <>
       <Pagination
         color={'standard'}
         count={pageCount}
-        page={page + 1}
+        page={page}
         onChange={(event, value) => handleDispatch(event, value)}
       />
       <Typography sx={{ marginRight: '1rem' }}>
-        {page * pageSize - pageSize + 1}-{page * pageSize} of {rowCount}
+        {1 + pageSize * (page - 1)}-{page * pageSize > rowCount ? rowCount : page * pageSize} of {rowCount}
       </Typography>
     </>
   )

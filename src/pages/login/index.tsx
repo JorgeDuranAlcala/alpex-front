@@ -71,7 +71,7 @@ const Background = () => {
 const LoginPage = () => {
   const [rememberMe, setRememberMe] = useState<boolean>(true)
   const [showPassword, setShowPassword] = useState<boolean>(false)
-  const [authError, setAuthError]=useState<boolean>(false)
+  const [authError, setAuthError] = useState<boolean>(false)
 
   // ** Hooks
   const auth = useAuth()
@@ -118,6 +118,12 @@ const LoginPage = () => {
                     onBlur={onBlur}
                     onChange={onChange}
                     error={Boolean(errors.email)}
+                    sx={{
+                      '& .MuiOutlinedInput-root.Mui-focused  .MuiOutlinedInput-notchedOutline': {
+                        borderColor: '#2535A8'
+                      },
+                      '& .MuiInputLabel-root.Mui-focused': { color: '#2535A8' }
+                    }}
                   />
                 )}
               />
@@ -126,7 +132,6 @@ const LoginPage = () => {
                   Enter a valid email, example: name@email.com
                 </FormHelperText>
               )}
-
             </FormControl>
             <FormControl fullWidth>
               <InputLabel htmlFor='auth-login-v2-password' error={Boolean(errors.password)}>
@@ -155,22 +160,35 @@ const LoginPage = () => {
                         </IconButton>
                       </InputAdornment>
                     }
+                    sx={{
+                      '& .MuiOutlinedInput-root.Mui-focused  .MuiOutlinedInput-notchedOutline': {
+                        borderColor: '#2535A8'
+                      },
+                      '& .MuiInputLabel-root.Mui-focused': { color: '#2535A8' }
+                    }}
                   />
                 )}
               />
 
-              {authError && (
-                <FormHelperText sx={{ color: 'error.main' }}>
-                  Incorrect email or password.
-                </FormHelperText>
-              )}
+              {authError && <FormHelperText sx={{ color: 'error.main' }}>Incorrect email or password.</FormHelperText>}
             </FormControl>
           </form>
         </div>
         <div className='remember-me'>
           <FormControlLabel
             label='Remember Me'
-            control={<Checkbox checked={rememberMe} onChange={e => setRememberMe(e.target.checked)} />}
+            control={
+              <Checkbox
+                checked={rememberMe}
+                onChange={e => setRememberMe(e.target.checked)}
+                sx={{
+                  color: '#2535A8',
+                  '&.Mui-checked': {
+                    color: '#2535A8'
+                  }
+                }}
+              />
+            }
           />
         </div>
         <div className='form-row login-btn'>
@@ -181,6 +199,7 @@ const LoginPage = () => {
             variant='contained'
             onClick={handleSubmit(onSubmit)}
             sx={{ mb: 7 }}
+            style={{ backgroundColor: '#2535A8' }}
           >
             Login
           </Button>
