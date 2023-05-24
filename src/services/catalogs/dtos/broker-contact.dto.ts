@@ -20,7 +20,7 @@ interface ICountry {
   active: boolean
 }
 
-interface IBrokerContact {
+export interface IBrokerContact {
   id: number
   name: string
   email: string
@@ -32,7 +32,7 @@ interface IBrokerContact {
   active: boolean
 }
 
-interface IBrokerContactsInfo {
+export interface IBrokerContactsInfo {
   count: number
   page: number
   take: number
@@ -49,9 +49,8 @@ export type IBrokerContactFilters = {
   unDeleteable?: boolean
 }
 
-export interface IBrokerContactsState {
+export interface IBrokerContactsPagination {
   idCBroker: number
-  brokerContacts: IBrokerContact[]
   filters: IBrokerContactFilters[]
   info: IBrokerContactsInfo
 }

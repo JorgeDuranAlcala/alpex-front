@@ -64,10 +64,15 @@ class AccountServices {
    * @param information
    * @returns
    */
+
+  parsedDate = (date: Date) => new Date(date.toString().replace(/GMT.*$/, 'GMT+0000')).toISOString()
   async updatedInformaById(idAccount: number, information: Partial<InformationDto>) {
     try {
       const { data } = await AppAlpexApiGateWay.put(`${ACCOUNT_INFORMATION_ROUTES.UPDATE}/${idAccount}`, {
-        ...information
+        ...information,
+        receptionDate: this.parsedDate(information.receptionDate || new Date()),
+        effetiveDate: this.parsedDate(information.effetiveDate || new Date()),
+        expirationDate: this.parsedDate(information.expirationDate || new Date())
       })
 
       return data

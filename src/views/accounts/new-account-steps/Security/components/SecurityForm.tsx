@@ -123,10 +123,11 @@ interface CustomProps {
   onChange: (event: { target: { name: string; value: string } }) => void
   name: string
   prefix: string
+  suffix: string
 }
 
 const NumericFormatCustom = forwardRef<NumericFormatProps, CustomProps>(function NumericFormatCustom(props, ref) {
-  const { onChange, prefix, ...other } = props
+  const { onChange, prefix, suffix, ...other } = props
 
   return (
     <NumericFormat
@@ -142,7 +143,8 @@ const NumericFormatCustom = forwardRef<NumericFormatProps, CustomProps>(function
       }}
       thousandSeparator
       valueIsNumericString
-      prefix={prefix ? prefix : '$'}
+      prefix={prefix ? prefix : suffix ? '' : '$'}
+      suffix={suffix ? suffix : ''}
     />
   )
 })
@@ -532,7 +534,7 @@ export const FormSection = ({
                 inputComponent: NumericFormatCustom as any
               }}
               inputProps={{
-                prefix: '%'
+                suffix: '%'
               }}
             />
 
@@ -548,7 +550,7 @@ export const FormSection = ({
                   inputComponent: NumericFormatCustom as any
                 }}
                 inputProps={{
-                  prefix: '%'
+                  suffix: '%'
                 }}
                 onChange={e => calculates('BrokerAgePercent', e.target.value)}
               />
@@ -566,7 +568,7 @@ export const FormSection = ({
                 inputComponent: NumericFormatCustom as any
               }}
               inputProps={{
-                prefix: '%'
+                suffix: '%'
               }}
               onChange={e => calculates('DynamicComissionPercent', e.target.value)}
             />
@@ -582,7 +584,7 @@ export const FormSection = ({
                   inputComponent: NumericFormatCustom as any
                 }}
                 inputProps={{
-                  prefix: '%'
+                  suffix: '%'
                 }}
                 value={localSecurity.TaxesPercent}
                 onChange={e => calculates('TaxesPercent', e.target.value)}
@@ -602,7 +604,7 @@ export const FormSection = ({
                   inputComponent: NumericFormatCustom as any
                 }}
                 inputProps={{
-                  prefix: '%'
+                  suffix: '%'
                 }}
                 onChange={e => calculates('FrontingFeePercent', e.target.value)}
               />
