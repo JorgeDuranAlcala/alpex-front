@@ -181,7 +181,7 @@ const CardInstallment = ({ index, installment, onChangeList, globalInfo, count }
                 id='reception-date'
                 showTimeSelect
                 timeIntervals={15}
-                customInput={<CustomInput label='Reception date' sx={{ mb: 2, mt: 2, width: '100%' }} />}
+                customInput={<CustomInput label='Settlement due date' sx={{ mb: 2, mt: 2, width: '100%' }} />}
                 disabled={true}
                 onChange={() => {
                   return
