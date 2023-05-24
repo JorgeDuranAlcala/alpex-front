@@ -199,7 +199,9 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
         areaCode: selectedCountry?.phone || ''
       }
       setUserPost(dataToSend)
-      dispatch(fetchAccounts(usersReducer))
+      setTimeout(() => {
+        dispatch(fetchAccounts(usersReducer))
+      }, 100)
       reset({ ...initialForm })
     }
   }
@@ -295,15 +297,22 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
 
   return (
     <>
-      <div>
+      <div style={{ padding: '20px 20px 80px' }}>
         <UserSection>
-          <StyledTitle>{title}</StyledTitle>
+          <StyledTitle sx={{ pb: 2 }}>{title}</StyledTitle>
         </UserSection>
         <UserSection>
-          <StyledDescription maxWidth={'734px'}>
-            Fill out the information below to {subTitle}. The user will have access to this platform and depending on
-            their role, they can see certain data.
-          </StyledDescription>
+          {selectUser ? (
+            <StyledDescription maxWidth={'734px'} sx={{ marginTop: '12px' }}>
+              This user can currently acces to the platform and access certain data. You can edit their information
+              below by clicking the buton "Edit".
+            </StyledDescription>
+          ) : (
+            <StyledDescription maxWidth={'734px'} sx={{ marginTop: '12px' }}>
+              Fill out the information below to {subTitle}. The user will have access to this platform and depending on
+              their role, they can see certain data.
+            </StyledDescription>
+          )}
         </UserSection>
         <div className='form-wrapper'>
           <form autoComplete='off' onSubmit={handleSubmit(onSubmit)}>
@@ -435,7 +444,7 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
                     </FormControl>
                   </Grid>
                   <Grid item xs={12}>
-                    <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
+                    <FormControl fullWidth sx={{ mb: 2, mt: errors.phone ? 4 : 0 }}>
                       <Controller
                         name='phone'
                         defaultValue={''}

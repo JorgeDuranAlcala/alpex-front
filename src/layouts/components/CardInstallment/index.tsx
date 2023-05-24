@@ -92,6 +92,11 @@ const CardInstallment = ({ index, installment, onChangeList, globalInfo, count }
         formDataTemp.paymentPercentage = 100
         formDataTemp.balanceDue = receivedNetPremium
         setFormData({ ...formDataTemp })
+      } else {
+        const formDataTemp = { ...formData }
+        formDataTemp.paymentPercentage = Number(undefined)
+        formDataTemp.balanceDue = receivedNetPremium
+        setFormData({ ...formDataTemp })
       }
     } catch {}
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -176,7 +181,7 @@ const CardInstallment = ({ index, installment, onChangeList, globalInfo, count }
                 id='reception-date'
                 showTimeSelect
                 timeIntervals={15}
-                customInput={<CustomInput label='Reception date' sx={{ mb: 2, mt: 2, width: '100%' }} />}
+                customInput={<CustomInput label='Settlement due date' sx={{ mb: 2, mt: 2, width: '100%' }} />}
                 disabled={true}
                 onChange={() => {
                   return

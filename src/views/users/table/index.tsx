@@ -139,8 +139,7 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
       flex: 0.1,
       field: EFieldColumn.NAME,
       headerName: 'NAME',
-      minWidth: 150,
-      maxWidth: 400,
+      minWidth: 270,
       type: 'string',
       align: 'left',
       disableColumnMenu: true,
@@ -149,7 +148,13 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
       renderHeader: ({ colDef }) => <ColumnHeader colDef={colDef} showIcon={false} action={handleClickColumnHeader} />,
       renderCell: ({ row }) => (
         <Typography
-          sx={{ color: colors.primary.main, fontSize: fonts.size.px14, fontFamily: fonts.inter, overflow: 'elipsis' }}
+          sx={{
+            color: colors.primary.main,
+            fontSize: fonts.size.px14,
+            fontFamily: fonts.inter,
+            overflow: 'elipsis',
+            marginLeft: '-3%'
+          }}
         >
           {`${row.name} ${row.surname}`}
         </Typography>
@@ -159,8 +164,7 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
       flex: 0.1,
       field: EFieldColumn.ROLE,
       headerName: 'ROLE',
-      minWidth: 150,
-      maxWidth: 150,
+      minWidth: 130,
       type: 'string',
       align: 'left',
       cellClassName: 'account-column-cell-pl-0',
@@ -176,7 +180,7 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
       flex: 0.1,
       field: EFieldColumn.COMPANY,
       headerName: 'COMPANY',
-      minWidth: 185,
+      minWidth: 150,
       type: 'string',
       align: 'left',
       disableColumnMenu: true,
@@ -184,20 +188,27 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
       headerClassName: 'account-column-header',
       renderHeader: ({ colDef }) => <ColumnHeader colDef={colDef} action={handleClickColumnHeader} />,
       renderCell: ({ row }) => (
-        <Typography
-          sx={{ color: colors.text.primary, fontWeight: 500, fontSize: fonts.size.px14, fontFamily: fonts.inter }}
-        >
-          <Link sx={{ color: colors.text.primary }} href='#'>
-            <StyledChip color='primary' sx={{}} label={row.idCompany.alias || 'W/ company'} />
-          </Link>
-        </Typography>
+        <Box sx={{ marginLeft: '-6%' }}>
+          <Typography
+            sx={{
+              color: colors.text.primary,
+              fontWeight: 500,
+              fontSize: fonts.size.px14,
+              fontFamily: fonts.inter
+            }}
+          >
+            <Link sx={{ color: colors.text.primary }} href='#'>
+              <StyledChip color='primary' sx={{}} label={row.idCompany.alias || 'W/ company'} />
+            </Link>
+          </Typography>
+        </Box>
       )
     },
     {
       flex: 0.1,
       field: EFieldColumn.PHONE_NUMBER,
       headerName: 'PHONE NUMBER',
-      minWidth: 170,
+      minWidth: 135,
       type: 'string',
       align: 'left',
       disableColumnMenu: true,
@@ -214,7 +225,7 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
       flex: 0.1,
       field: EFieldColumn.EMAIL,
       headerName: 'EMAIL',
-      minWidth: 165,
+      minWidth: 250,
       type: 'string',
       align: 'left',
       disableColumnMenu: true,
@@ -239,7 +250,6 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
       field: '',
       headerName: '',
       minWidth: 10,
-      maxWidth: 60,
       sortable: false,
       disableColumnMenu: true,
       cellClassName: 'account-column-cell-pl-0',

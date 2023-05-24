@@ -16,7 +16,7 @@ import { ButtonClose, HeaderTitleModal } from 'src/styles/modal/modal.styled'
 import Icon from 'src/@core/components/icon'
 
 // ** Custom Components Imports
-import CustomPaginationBrokerContact from '../CustomPaginationBrokerContact'
+import CustomPaginationBrokerContact from '../CustomPaginationImpl'
 import TableHeader from '../TableHeader'
 
 //Hooks
@@ -25,13 +25,8 @@ import { useDeleteBrokerContact } from '@/hooks/catalogs/broker-contact/useDelet
 import { useGetAllCountries } from 'src/hooks/catalogs/country'
 
 // ** Custom utilities
+import useGetAllByIdBrokerAndPagination from '@/hooks/catalogs/broker-contact/useGetAllByIdBrokerAndPagination'
 import { useUpdateById } from '@/hooks/catalogs/broker-contact/useUpdateById'
-import { useAppDispatch, useAppSelector } from '@/store'
-import {
-  deleteBrokerContactsFilter,
-  fetchBrokerContacts,
-  handleBrokerContactsFilter
-} from '@/store/apps/catalogs/brokerContacts'
 import colors from 'src/views/accounts/colors'
 import fonts from 'src/views/accounts/font'
 
@@ -94,7 +89,8 @@ const BrokerContacts = ({ idBroker }: IBrokerContacts) => {
   const [btnEditDisable, setBtnEditDisable] = useState(true)
 
   const [contactList, setContactList] = useState<IContact[]>([])
-  const [loading, setLoading] = useState<any>([])
+
+  //const [loading, setLoading] = useState<any>([])
   const [openNewContact, setOpenNewContact] = useState(false)
   const [contactData, setContactData] = useState<IContact>(initialNewContact)
   const [startValidations, setStartValidations] = useState(false)
@@ -113,15 +109,18 @@ const BrokerContacts = ({ idBroker }: IBrokerContacts) => {
 
   const [idCBroker, setIdCBroker] = useState(0)
 
-  // **Reducers
-  const dispatch = useAppDispatch()
-  const brokerContactReducer = useAppSelector(state => state.brokerContacts)
-
   //hooks
   const { deleteBrokerContact } = useDeleteBrokerContact()
   const { saveBrokerContact } = useAddBrokerContact()
   const { countries } = useGetAllCountries()
   const { update } = useUpdateById()
+  const {
+    brokerContactsPagination,
+    brokerContacts,
+    setBrokerContactsPagination,
+    getBrokerContactsByIdBroker,
+    brokerContactInfoPage
+  } = useGetAllByIdBrokerAndPagination()
 
   useEffect(() => {
     setIdCBroker(idBroker)
@@ -129,22 +128,13 @@ const BrokerContacts = ({ idBroker }: IBrokerContacts) => {
   }, [idBroker])
 
   useEffect(() => {
-    //setContactList(getContactList)
-    dispatch(fetchBrokerContacts({ ...brokerContactReducer, idCBroker }))
+    setBrokerContactsPagination({ ...brokerContactsPagination, idCBroker })
     //eslint-disable-next-line
   }, [idCBroker])
 
   useEffect(() => {
-    setContactList(brokerContactReducer.brokerContacts || [])
-    console.log(loading)
-    setLoading(brokerContactReducer.loading)
-    //eslint-disable-next-line
-  }, [brokerContactReducer.brokerContacts])
-
-  useEffect(() => {
-    dispatch(fetchBrokerContacts({ ...brokerContactReducer, idCBroker }))
-    //eslint-disable-next-line
-  }, [brokerContactReducer.filters])
+    setContactList(brokerContacts || [])
+  }, [brokerContacts])
 
   const triggerAlert = (type: string, text?: string) => {
     setAlertType(type)
@@ -331,45 +321,26 @@ const BrokerContacts = ({ idBroker }: IBrokerContacts) => {
     }
   ]
 
-  /*  const getContactList = () => {
-    //must be replaced with the respective broker service
-    const data: IContact[] = []
-
-    for (let index = 1; index <= 100; index++) {
-      const id = index
-      const name = `Contact ${index}`
-
-      data.push({
-        id,
-        name,
-        phone: '2221334455',
-        email: 'user@mail.com',
-        country: 'México'
-      })
-    }
-
-    return data
-  } */
-
   const handleChangeModal = (field: keyof IContact, value: IContact[keyof IContact]) => {
     setStartValidations(true)
     setContactData({ ...contactData, [field]: value })
   }
 
   const searchContacts = (value: string) => {
-    if (value === '') dispatch(deleteBrokerContactsFilter('name'))
-    else dispatch(handleBrokerContactsFilter({ type: 'name', value: value, text: value }))
+    if (value === '') setBrokerContactsPagination({ ...brokerContactsPagination, filters: [] })
+    else
+      setBrokerContactsPagination({
+        ...brokerContactsPagination,
+        filters: [{ type: 'name', value: value, text: value }]
+      })
   }
 
   const handleCreateContact = async () => {
     const result = await saveBrokerContact({ ...contactData, idCBroker, idCCountry: contactData.idCCountry.id })
     if (result) {
-      //setNewBroker({ id: result.id, name: result.name })
       triggerAlert('success')
       setContactData(initialNewContact)
-      dispatch(fetchBrokerContacts(brokerContactReducer))
-
-      //setIsBrokerSaved(true)
+      getBrokerContactsByIdBroker(brokerContactsPagination)
     }
     setOpenNewContact(false)
     triggerAlert('success')
@@ -383,7 +354,7 @@ const BrokerContacts = ({ idBroker }: IBrokerContacts) => {
     })
     if (result) {
       triggerAlert('success', 'CHANGES SAVED')
-      dispatch(fetchBrokerContacts(brokerContactReducer))
+      getBrokerContactsByIdBroker(brokerContactsPagination)
     }
     setOpenEdit(false)
   }
@@ -393,20 +364,17 @@ const BrokerContacts = ({ idBroker }: IBrokerContacts) => {
     if (result) {
       //it needs an alert o message
       console.log('success')
-      dispatch(fetchBrokerContacts(brokerContactReducer))
+      getBrokerContactsByIdBroker(brokerContactsPagination)
     }
     setOpenDelete(false)
   }
 
   const deleteRows = async () => {
-    //must be replaced with the respective broker service
-    // const newContactList = // Service return new list
-    // setContactList(newBinderList)
     const result = await deleteBrokerContact({ idDeleteList: selectedRows })
     if (result) {
       //it needs an alert o message
       console.log('success')
-      dispatch(fetchBrokerContacts(brokerContactReducer))
+      getBrokerContactsByIdBroker(brokerContactsPagination)
     }
     setOpenDeleteRows(false)
   }
@@ -566,6 +534,13 @@ const BrokerContacts = ({ idBroker }: IBrokerContacts) => {
     setOpenEdit(true)
   }
 
+  const handleDispatch = (e: any, value: number) => {
+    setBrokerContactsPagination({
+      ...brokerContactsPagination,
+      info: { ...brokerContactsPagination.info, page: value }
+    })
+  }
+
   return (
     <>
       <div className='contacts-wrapper'>
@@ -609,7 +584,7 @@ const BrokerContacts = ({ idBroker }: IBrokerContacts) => {
               Pagination: CustomPaginationBrokerContact
             }}
             componentsProps={{
-              pagination: { catalog: 'brokerContacts' }
+              pagination: { handleDispatch, infoPage: { ...brokerContactInfoPage } }
             }}
             className={'catalogue-datagrid'}
             onSelectionModelChange={rows => setSelectedRows(rows)}

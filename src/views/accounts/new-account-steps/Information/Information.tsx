@@ -141,6 +141,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   ])
 
   const updateInformation = async () => {
+    console.log(basicInfo)
     if (idAccount) {
       const res = await updateInformationByIdAccount(idAccount, {
         insured: basicInfo.insured,

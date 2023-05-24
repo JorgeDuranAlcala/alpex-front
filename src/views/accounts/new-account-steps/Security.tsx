@@ -299,10 +299,11 @@ interface CustomProps {
   onChange: (event: { target: { name: string; value: string } }) => void
   name: string
   prefix: string
+  suffix: string
 }
 
 const NumericFormatCustom = forwardRef<NumericFormatProps, CustomProps>(function NumericFormatCustom(props, ref) {
-  const { onChange, prefix, ...other } = props
+  const { onChange, prefix, suffix, ...other } = props
 
   return (
     <NumericFormat
@@ -318,7 +319,8 @@ const NumericFormatCustom = forwardRef<NumericFormatProps, CustomProps>(function
       }}
       thousandSeparator
       valueIsNumericString
-      prefix={prefix ? prefix : '$'}
+      prefix={prefix ? prefix : suffix ? '' : '$'}
+      suffix={suffix ? suffix : ''}
     />
   )
 })
@@ -684,7 +686,7 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
                 inputComponent: NumericFormatCustom as any
               }}
               inputProps={{
-                prefix: '%'
+                suffix: '%'
               }}
               onKeyUp={() => setValues('SharePercent')}
             />
@@ -701,7 +703,7 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
                   inputComponent: NumericFormatCustom as any
                 }}
                 inputProps={{
-                  prefix: '%'
+                  suffix: '%'
                 }}
                 onChange={e => handleFormChange('BrokerAgePercent', e.target.value)}
                 onKeyUp={() => setValues('BrokerAgePercent')}
@@ -720,7 +722,7 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
                 inputComponent: NumericFormatCustom as any
               }}
               inputProps={{
-                prefix: '%'
+                suffix: '%'
               }}
               onChange={e => handleFormChange('DynamicComissionPercent', e.target.value)}
               onKeyUp={() => setValues('DynamicComissionPercent')}
@@ -737,7 +739,7 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
                   inputComponent: NumericFormatCustom as any
                 }}
                 inputProps={{
-                  prefix: '%'
+                  suffix: '%'
                 }}
                 value={formData[index].TaxesPercent}
                 onChange={e => handleFormChange('TaxesPercent', e.target.value)}
@@ -758,7 +760,7 @@ const FormSection = ({ index, formData, setFormData, formErrors, setFormErrors }
                   inputComponent: NumericFormatCustom as any
                 }}
                 inputProps={{
-                  prefix: '%'
+                  suffix: '%'
                 }}
                 onChange={e => handleFormChange('FrontingFeePercent', e.target.value)}
                 onKeyUp={() => setValues('FrontingFeePercent')}
