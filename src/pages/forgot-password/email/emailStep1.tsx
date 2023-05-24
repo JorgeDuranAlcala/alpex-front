@@ -64,9 +64,9 @@ const EmailStep1 = ({ handleVariant }: EmailStep1) => {
                   error={Boolean(errors.email)}
                   sx={{
                     '& .MuiOutlinedInput-root.Mui-focused  .MuiOutlinedInput-notchedOutline': {
-                      borderColor: '#0D567B'
+                      borderColor: '#2535A8'
                     },
-                    '& .MuiInputLabel-root.Mui-focused': { color: '#0D567B' }
+                    '& .MuiInputLabel-root.Mui-focused': { color: '#2535A8' }
                   }}
                 />
               )}
@@ -74,7 +74,7 @@ const EmailStep1 = ({ handleVariant }: EmailStep1) => {
             {errors.email && <FormHelperText sx={{ color: 'error.main' }}>Invalid email</FormHelperText>}
           </FormControl>
 
-          <Button type='submit' variant='contained' color='primary' size='large'>
+          <Button type='submit' variant='contained' color='primary' size='large' style={{ backgroundColor: '#2535A8' }}>
             CONTINUE
           </Button>
         </form>
