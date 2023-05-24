@@ -76,7 +76,7 @@ const Users = () => {
           tabsInfo={tabsInfo}
         />
 
-        <Card sx={{ minHeight: '100%', padding: '16px' }}>
+        <Card sx={{ minHeight: '100%' }}>
           <TabMenu value={value} tabsInfo={tabsInfo} />
         </Card>
       </Grid>

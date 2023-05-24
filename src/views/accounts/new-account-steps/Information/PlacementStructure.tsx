@@ -442,7 +442,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               label='Exchange rate'
               multiline
               variant='outlined'
-              prefix='$'
+              prefix=''
               decimalScale={2}
               error={errors.exchangeRateError}
               helperText={getErrorMessage('exchangeRateError')}
