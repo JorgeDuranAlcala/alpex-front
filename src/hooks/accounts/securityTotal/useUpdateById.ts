@@ -5,14 +5,11 @@ import SecurityTotalService from 'src/services/accounts/securityTotal.service'
 export const useUpdateSecurityTotalById = () => {
   const [securityTotal, setSecurityTotal] = useState<SecurityTotalDto>()
 
-  const updateSecurityTotal = (id: number, securityTotal: Partial<SecurityTotalDto>) => {
-    SecurityTotalService.updateById(id, securityTotal)
-      .then(securityTotal => {
-        setSecurityTotal(securityTotal)
-      })
-      .catch(error => {
-        throw error
-      })
+  const updateSecurityTotal = async (id: number, securityTotal: Partial<SecurityTotalDto>) => {
+    const response = await SecurityTotalService.updateById(id, securityTotal)
+    setSecurityTotal(response)
+
+    return response
   }
 
   return {
