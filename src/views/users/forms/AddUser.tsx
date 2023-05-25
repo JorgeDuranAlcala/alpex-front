@@ -114,8 +114,6 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
   const useWatchCompany = watch('company')
   const useWatchRole = watch('role')
 
-  // const useWatchEmail = watch('email')
-
   const usersReducer = useAppSelector(state => state.users)
   const dispatch = useAppDispatch()
   const [formData, setFormData] = useState<FormInfo>(UserForm)
@@ -213,7 +211,6 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
   // const handleChangeEmail = (event: ChangeEvent<HTMLInputElement>) => {
   //   setEmail(event.target.value)
   // }
-  console.log('ErrorMailBefore--->', errorEmail)
 
   const handleBlur: FocusEventHandler<HTMLInputElement> = (event: FocusEvent<HTMLInputElement>) => {
     const input = event.target.value
@@ -267,28 +264,6 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
     }
     //eslint-disable-next-line
   }, [useWatchRole])
-
-  // useEffect(() => {
-  // const regexEmail2 = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]{2,3}$/.test(useWatchEmail)
-
-  //   const regexEmail = new RegExp('[a-z0-9]+@[a-z]+.[a-z]{2,3}').test(email)
-  //   console.log('RegexEmail-->', regexEmail)
-  //   console.log('errorEmail-->', errorEmail)
-  //   if (regexEmail) {
-  //     setErrorEmail({
-  //       ...errorEmail,
-  //       fieldRequired: false,
-  //       validateEmail: false
-  //     })
-  //   } else {
-  //     setErrorsTextEmail({ ...errorsTextEmail, fieldRequired: ErrorsEmailText.fieldRequired })
-  //     setErrorEmail({
-  //       ...errorEmail,
-  //       fieldRequired: false,
-  //       validateEmail: true
-  //     })
-  //   }
-  // }, [email])
 
   // useEffect(() => {
   //   dispatch(fetchAccounts(usersReducer))
@@ -403,12 +378,12 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
                         name='email'
                         control={control}
                         rules={{ required: true }}
-                        render={({ field: { value, onChange } }) => (
+                        render={({ field: { value, onChange, onBlur } }) => (
                           <TextField
                             label='Email'
                             type='email'
                             value={value}
-                            onBlur={handleBlur}
+                            onBlur={handleBlur || onBlur}
                             onChange={onChange}
                             error={errorEmail?.fieldRequired || errorEmail?.validateEmail}
                             sx={{
@@ -471,7 +446,11 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
                           />
                         )}
                       />
-                      {errors.phone && <FormHelperText sx={{ color: 'error.main' }}>Invalid phone</FormHelperText>}
+                      {errors.phone && (
+                        <FormHelperText sx={{ color: 'error.main' }}>
+                          Select a country for the country code.
+                        </FormHelperText>
+                      )}
                     </FormControl>
                   </Grid>
                   <Grid item xs={12}>
