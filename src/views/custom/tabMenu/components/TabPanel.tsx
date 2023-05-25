@@ -11,10 +11,11 @@ export default function TabPanel(props: TabPanelProps) {
   const { children, value, index, ...other } = props
 
   return (
-    <div
+    <>
+    { (value === index) &&
+      <div
       role='tabpanel'
       hidden={value !== index}
-      style={{ visibility: value === index ? 'visible' : 'hidden' }}
       id={`simple-tabpanel-${index}`}
       aria-labelledby={`simple-tab-${index}`}
       {...other}
@@ -23,5 +24,8 @@ export default function TabPanel(props: TabPanelProps) {
         <Typography>{children}</Typography>
       </Box>
     </div>
+  }
+    </>
+
   )
 }
