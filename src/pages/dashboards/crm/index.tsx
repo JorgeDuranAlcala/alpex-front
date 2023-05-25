@@ -43,7 +43,7 @@ const CrmDashboard = () => {
           Welcome to your dashboard!
         </Typography>
       </ContainerHeader>
-      <Grid container spacing={{ xs: 2, sm: 2, md: 4 }} sx={{ mb: 4, height: 'auto' }}>
+      <Grid container spacing={{ xs: 2, sm: 2, md: 4 }} sx={{ mb: 4, height: 'auto', border: 1 }}>
         <Grid item xs={12} md={6} sm={6}>
           <BrokersBalanceStatus />
         </Grid>

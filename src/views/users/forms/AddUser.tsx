@@ -170,7 +170,9 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
         areaCode: selectedCountry?.phone || ''
       }
       setUserPut(dataToSend)
-      dispatch(fetchAccounts(usersReducer))
+      setTimeout(() => {
+        dispatch(fetchAccounts(usersReducer))
+      }, 100)
     } else {
       const dataToSend: UsersPostDto = {
         name: data.name || '',
