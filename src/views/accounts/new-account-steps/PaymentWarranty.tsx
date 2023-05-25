@@ -291,7 +291,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
               }
               onChangeList={handleItemChange}
               globalInfo={{
-                receivedNetPremium: account ? account?.securityTotal?.receivedNetPremium : '',
+                receivedNetPremium: account ? account?.securityTotal?.receivedNetPremium : 0,
                 inceptionDate: account ? new Date(account?.informations[0]?.effetiveDate + 'T00:00:00') : null,
                 idAccount: account ? idAccount : ''
               }}
