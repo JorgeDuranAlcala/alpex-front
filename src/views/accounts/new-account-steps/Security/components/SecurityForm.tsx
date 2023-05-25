@@ -483,13 +483,13 @@ export const FormSection = ({
     setFrontingFeeEnabled(localSecurity.HasFrontingFee)
     calculates('NetPremium', security.NetPremium)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    console.log({ localSecurity, security })
   }, [])
 
   useEffect(() => {
     onChangeItemList(index, {
       ...localSecurity
     })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [localSecurity])
 
   useEffect(() => {
@@ -497,6 +497,7 @@ export const FormSection = ({
       ...security
     })
     calculates('NetPremium', security.NetPremium)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [security.id])
 
   return (
