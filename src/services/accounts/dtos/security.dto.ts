@@ -1,3 +1,7 @@
+import { ReinsuranceCompanyDto } from '@/services/catalogs/dtos/ReinsuranceCompanyDto'
+import { RetroCedantDto } from '@/services/catalogs/dtos/RetroCedantDto'
+import { RetroCedantContactDto } from '@/services/catalogs/dtos/retroCedantContact.dto'
+
 export interface SecurityDto {
   id: number | null
   netPremiumat100: number | null
@@ -12,9 +16,10 @@ export interface SecurityDto {
   distributedNetPremium: number | null
   difference: number | null
   active: boolean | null
-  idCReinsuranceCompany: number | null
-  idCRetroCedant: number | null
-  idCRetroCedantContact: number | null
+  idCReinsuranceCompany: ReinsuranceCompanyDto | number
+  idCRetroCedant: number | RetroCedantDto | null
+  idCRetroCedantContact: number | RetroCedantContactDto | null
   idEndorsement: number | null
   idAccount: number | null
+  isGross: boolean
 }

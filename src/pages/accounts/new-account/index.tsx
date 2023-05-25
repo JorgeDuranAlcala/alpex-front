@@ -11,7 +11,7 @@ import { useRouter } from 'next/router'
 import Information from 'src/views/accounts/new-account-steps/Information/Information'
 
 import PaymentWarranty from 'src/views/accounts/new-account-steps/PaymentWarranty'
-import Security from 'src/views/accounts/new-account-steps/Security'
+import Security from 'src/views/accounts/new-account-steps/Security/SecurityView'
 import ActionsHeader from 'src/views/accounts/new-account-steps/headers/ActionsHeader'
 import CommentSection from 'src/views/components/new-accounts/CommentSection'
 import NewAccountStepper from 'src/views/components/new-accounts/NewAccountStepper'
