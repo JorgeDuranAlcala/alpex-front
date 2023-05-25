@@ -7,8 +7,8 @@ import Grid from '@mui/material/Grid'
 // import { AccountsTableContextProvider } from 'src/context/accounts/Table/reducer'
 
 // ** Custom Components Imports
+import CedantData from '@/views/catalogues/dynamic/add-cedant/CedantData'
 import CedantContacts from 'src/views/catalogues/dynamic/add-cedant/CedantContacts'
-import CedantData from 'src/views/catalogues/dynamic/add-cedant/CedantData'
 
 const AddCedantView = () => {
 
