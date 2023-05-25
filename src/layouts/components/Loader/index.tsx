@@ -16,7 +16,7 @@ const Loader = () => {
   }
 
   return (
-    <div>
+    <div style={{ width: '59.31px', height: '66.52px' }}>
       <Lottie options={defaultOptions} />
     </div>
   )

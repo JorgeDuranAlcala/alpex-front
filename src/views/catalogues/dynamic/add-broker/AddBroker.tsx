@@ -27,7 +27,9 @@ interface IAddBroker {
 const AddBroker = ({ idBroker, setIdBroker }: IAddBroker) => {
   const [newBroker, setNewBroker] = useState<IBroker>({ id: 0, name: '' })
   const [isBrokerSaved, setIsBrokerSaved] = useState(false)
+  const [isEditing, setIsEditing] = useState(false)
   const [disableAddBroker, setDisableAddBroker] = useState(true)
+  const [nameDisabled, setNameDisabled] = useState(false)
   const [openDelete, setOpenDelete] = useState(false)
   const [showAlert, setShowAlert] = useState(true)
   const [alertType, setAlertType] = useState('')
@@ -41,12 +43,12 @@ const AddBroker = ({ idBroker, setIdBroker }: IAddBroker) => {
   const dispatch = useAppDispatch()
   const brokerReducer = useAppSelector(state => state.brokers)
 
-  const triggerAlert = (type: string) => {
+  const triggerAlert = (type: string, text?: string) => {
     setAlertType(type)
 
     switch (type) {
       case 'success':
-        setAlertText('NEW BROKER ADDED')
+        setAlertText(text || 'NEW BROKER ADDED')
         setAlertIcon('mdi:check-circle-outline')
         break
       case 'error':
@@ -75,8 +77,14 @@ const AddBroker = ({ idBroker, setIdBroker }: IAddBroker) => {
       triggerAlert('success')
       dispatch(fetchBrokers(brokerReducer))
       setIdBroker(result.id)
+      setNameDisabled(true)
       setIsBrokerSaved(true)
     }
+  }
+
+  const activeEditBroker = () => {
+    setNameDisabled(false)
+    setIsEditing(true)
   }
 
   const editBroker = async () => {
@@ -85,7 +93,9 @@ const AddBroker = ({ idBroker, setIdBroker }: IAddBroker) => {
       setNewBroker({ id: result.id, name: result.name })
       dispatch(fetchBrokers(brokerReducer))
       setIsBrokerSaved(true)
-      triggerAlert('success')
+      setNameDisabled(true)
+      setIsEditing(false)
+      triggerAlert('success', 'CHANGES SAVED')
     } else {
       triggerAlert('error')
     }
@@ -104,7 +114,10 @@ const AddBroker = ({ idBroker, setIdBroker }: IAddBroker) => {
     if (brokerReducer.current !== undefined && brokerReducer.current !== null && idBroker !== 0) {
       setNewBroker({ ...brokerReducer.current })
       setIsBrokerSaved(true)
+      setNameDisabled(true)
+      setIsEditing(false)
     }
+
     //eslint-disable-next-line
   }, [brokerReducer.current, idBroker])
 
@@ -148,31 +161,54 @@ const AddBroker = ({ idBroker, setIdBroker }: IAddBroker) => {
               label='Broker Name'
               value={newBroker.name}
               onChange={e => setNewBroker({ ...newBroker, ['name']: e.target.value })}
+              disabled={nameDisabled}
             />
           </FormControl>
           {isBrokerSaved ? (
-            <div className='action-buttons'>
-              <Button
-                className='delete-broker-btn'
-                onClick={() => {
-                  setOpenDelete(true)
-                }}
-              >
-                <div className='btn-icon'>
-                  <Icon icon='mdi:delete-outline' />
-                </div>
-                DELETE
-              </Button>
-              <Button className='edit-broker-btn' variant='outlined' onClick={editBroker}>
-                <div className='btn-icon'>
-                  <Icon icon='mdi:pencil' />
-                </div>
-                EDIT
-              </Button>
-            </div>
+            isEditing ? (
+              <div className='action-buttons'>
+                <Button
+                  className='delete-broker-btn'
+                  onClick={() => {
+                    setOpenDelete(true)
+                  }}
+                >
+                  <div className='btn-icon'>
+                    <Icon icon='mdi:delete-outline' />
+                  </div>
+                  DELETE
+                </Button>
+                <Button className='edit-broker-btn' variant='outlined' onClick={editBroker} disabled={disableAddBroker}>
+                  <div className='btn-icon'>
+                    <Icon icon='mdi:content-save' />
+                  </div>
+                  SAVE
+                </Button>{' '}
+              </div>
+            ) : (
+              <div className='action-buttons'>
+                <Button
+                  className='delete-broker-btn'
+                  onClick={() => {
+                    setOpenDelete(true)
+                  }}
+                >
+                  <div className='btn-icon'>
+                    <Icon icon='mdi:delete-outline' />
+                  </div>
+                  DELETE
+                </Button>
+                <Button className='edit-broker-btn' variant='outlined' onClick={activeEditBroker}>
+                  <div className='btn-icon'>
+                    <Icon icon='mdi:pencil' />
+                  </div>
+                  EDIT
+                </Button>
+              </div>
+            )
           ) : (
             <div className='action-buttons'>
-              <Button className='create-contact-btn' onClick={addBroker} disabled={disableAddBroker}>
+              <Button className='add-btn' onClick={addBroker} disabled={disableAddBroker}>
                 <div className='btn-icon'>
                   <Icon icon='mdi:check' />
                 </div>

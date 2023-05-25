@@ -37,7 +37,7 @@ const Footer = ({ isLogin }: Ifooter) => {
       {isLogin ? (
         <Typography
           sx={{ mr: 2, fontFamily: inter }}
-        >{`© ${new Date().getFullYear()} Una plataforma de Dynamic `}</Typography>
+        >{`A Dynamic Reinsurance platform, © ${new Date().getFullYear()}`}</Typography>
       ) : (
         <Typography sx={{ mr: 2, fontFamily: inter }}>
           {`© ${new Date().getFullYear()}, Made with `}

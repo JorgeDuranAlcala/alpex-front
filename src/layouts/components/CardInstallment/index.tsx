@@ -64,9 +64,7 @@ const CardInstallment = ({ index, installment, onChangeList, globalInfo, count }
 
   const { receivedNetPremium, inceptionDate } = globalInfo
 
-  const handleNumericInputChange = (value: any, e: any) => {
-    const { name } = e.event.target
-
+  const handleNumericInputChange = (value: any, name: any) => {
     const formDataTemp = { ...formData }
 
     if (name === 'premiumPaymentWarranty' && inceptionDate) {
@@ -92,6 +90,11 @@ const CardInstallment = ({ index, installment, onChangeList, globalInfo, count }
       if (count === 1) {
         const formDataTemp = { ...formData }
         formDataTemp.paymentPercentage = 100
+        formDataTemp.balanceDue = receivedNetPremium
+        setFormData({ ...formDataTemp })
+      } else {
+        const formDataTemp = { ...formData }
+        formDataTemp.paymentPercentage = Number(undefined)
         formDataTemp.balanceDue = receivedNetPremium
         setFormData({ ...formDataTemp })
       }
@@ -129,7 +132,7 @@ const CardInstallment = ({ index, installment, onChangeList, globalInfo, count }
 
                   return (floatValue! >= 0 && floatValue! <= upLimit) || floatValue === undefined
                 }}
-                onValueChange={(value, e) => handleNumericInputChange(value.value, e)}
+                onValueChange={value => handleNumericInputChange(value.value, 'premiumPaymentWarranty')}
               />
             </FormControl>
             <FormControl fullWidth>
@@ -151,7 +154,7 @@ const CardInstallment = ({ index, installment, onChangeList, globalInfo, count }
                   return (floatValue! >= 0 && floatValue! <= upLimit) || floatValue === undefined
                 }}
                 value={formData.paymentPercentage}
-                onValueChange={(value, e) => handleNumericInputChange(value.floatValue, e)}
+                onValueChange={value => handleNumericInputChange(value.floatValue, 'paymentPercentage')}
               />
               {/* {error. && <FormHelperText sx={{ color: 'error.main' }}>Required Field</FormHelperText>} */}
             </FormControl>
@@ -178,7 +181,7 @@ const CardInstallment = ({ index, installment, onChangeList, globalInfo, count }
                 id='reception-date'
                 showTimeSelect
                 timeIntervals={15}
-                customInput={<CustomInput label='Reception date' sx={{ mb: 2, mt: 2, width: '100%' }} />}
+                customInput={<CustomInput label='Settlement due date' sx={{ mb: 2, mt: 2, width: '100%' }} />}
                 disabled={true}
                 onChange={() => {
                   return

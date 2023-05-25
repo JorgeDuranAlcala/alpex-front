@@ -2,7 +2,7 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
 import SaveIcon from '@mui/icons-material/Save'
 import { Button, FormHelperText, Grid, InputAdornment, SxProps, TextField, Theme, Typography } from '@mui/material'
-import { ChangeEvent, FocusEvent, ForwardedRef, forwardRef, useEffect, useState } from 'react'
+import { FocusEvent, ForwardedRef, forwardRef, useEffect, useState } from 'react'
 import DatePicker from 'react-datepicker'
 
 // import Icon from 'src/@core/components/icon'
@@ -20,7 +20,7 @@ import {
 } from 'src/styles/Forms/PaymentWarranty/paymentWarranty'
 
 //hooks
-import { useAddInstallments } from 'src/hooks/accounts/installments'
+import { useAddInstallments, useUpdateInstallments } from 'src/hooks/accounts/installments'
 import { useAppSelector } from 'src/store'
 import * as yup from 'yup'
 
@@ -88,12 +88,16 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
   })
 
   const { addInstallments } = useAddInstallments()
+  const { updateInstallments } = useUpdateInstallments()
   const accountData = useAppSelector(state => state.accounts)
   const idAccount = accountData.formsData.form1.id
   const { account, setAccountId } = useGetAccountById()
 
-  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setCount(event.target.value)
+  // State to save installments Ids to upload
+  const [instIds, setInstIds] = useState<number[]>([])
+
+  const handleNumericInputChange = (value: any) => {
+    setCount(String(value))
   }
 
   const handleBlur = (event: FocusEvent<HTMLInputElement>) => {
@@ -134,11 +138,52 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
     }
   }, [installmentsList, count])
 
-  const saveInstallments = (installments: Omit<InstallmentDto[], 'id'>) => {
-    addInstallments(installments)
+  const saveInstallments = async (installments: InstallmentDto[]) => {
+    const installmentsToUpdate: InstallmentDto[] = []
+    const newIds: number[] = instIds
+
+    if (newIds.length > 0) {
+      if (newIds.length >= installments.length) {
+        // Update all
+        for (const [idx, installment] of installments.entries()) {
+          installment.id = newIds[idx]
+          installmentsToUpdate.push(installment)
+        }
+        await updateInstallments(installmentsToUpdate)
+      } else {
+        // Update some and create some
+        const installmentsToCreate: InstallmentDto[] = []
+        for (const [idx, installment] of installments.entries()) {
+          if (newIds[idx]) {
+            installment.id = newIds[idx]
+            installmentsToUpdate.push(installment)
+          } else {
+            installmentsToCreate.push(installment)
+          }
+        }
+        await updateInstallments(installmentsToUpdate)
+
+        const resCreate = await addInstallments(installmentsToCreate)
+        if (resCreate && resCreate.length > 0) {
+          for (const createdInstallment of resCreate) {
+            newIds.push(createdInstallment.id)
+          }
+        }
+        setInstIds(newIds)
+      }
+    } else {
+      // Create all
+      const resCreate = await addInstallments(installments)
+      if (resCreate && resCreate.length > 0) {
+        for (const createdInstallment of resCreate) {
+          newIds.push(createdInstallment.id)
+        }
+      }
+      setInstIds(newIds)
+    }
   }
 
-  const nestStep = () => {
+  const nextStep = () => {
     if (onStepChange) {
       saveInstallments(installmentsList)
       onStepChange(4)
@@ -160,6 +205,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
     }
     //eslint-disable-next-line react-hooks/exhaustive-deps
   }, [count])
+
   useEffect(() => {
     idAccount && setAccountId(idAccount)
   }, [idAccount, setAccountId])
@@ -173,7 +219,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
             <Grid container spacing={{ xs: 2, sm: 5, md: 5 }} rowSpacing={4} columns={12}>
               <Grid item xs={12} sm={6} md={4}>
                 <DatePicker
-                  selected={account ? new Date(account?.informations[0].effetiveDate + 'T00:00:00') : null}
+                  selected={account ? new Date(account?.informations[0]?.effetiveDate + 'T00:00:00') : null}
                   shouldCloseOnSelect
                   id='reception-date'
                   showTimeSelect
@@ -189,7 +235,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
                 <TextField
                   fullWidth
                   label='Dynamic net premium'
-                  value={account ? account.securityTotal.receivedNetPremium : ' '}
+                  value={account ? account?.securityTotal?.receivedNetPremium : ' '}
                   InputProps={{
                     disabled: true
                   }}
@@ -202,6 +248,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
                   thousandSeparator=','
                   customInput={TextField}
                   id='Installments'
+                  defaultValue={1}
                   label='Installments'
                   multiline
                   decimalScale={0}
@@ -213,7 +260,9 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
                     return (floatValue! >= 0 && floatValue! <= upLimit) || floatValue === undefined
                   }}
                   value={count}
-                  onChange={handleChange}
+                  onValueChange={value => {
+                    handleNumericInputChange(value.value)
+                  }}
                   onBlur={handleBlur}
                 />
                 {error.errorFieldRequired && (
@@ -229,7 +278,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
         </TitleContainer>
 
         <Grid container spacing={2}>
-          {Array.from({ length: Number(count) }, (_, index) => (
+          {Array.from({ length: Number(count) || 0 }, (_, index) => (
             <CardInstallment
               index={index}
               installment={
@@ -242,8 +291,8 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
               }
               onChangeList={handleItemChange}
               globalInfo={{
-                receivedNetPremium: account ? account.securityTotal.receivedNetPremium : '',
-                inceptionDate: account ? new Date(account.informations[0].effetiveDate + 'T00:00:00') : null,
+                receivedNetPremium: account ? account?.securityTotal?.receivedNetPremium : '',
+                inceptionDate: account ? new Date(account?.informations[0]?.effetiveDate + 'T00:00:00') : null,
                 idAccount: account ? idAccount : ''
               }}
               count={+count}
@@ -314,7 +363,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
               variant='contained'
               disabled={!btnNext}
               onClick={() => {
-                nestStep()
+                nextStep()
               }}
             >
               CONTINUE

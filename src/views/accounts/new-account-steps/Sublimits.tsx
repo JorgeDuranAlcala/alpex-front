@@ -1,7 +1,8 @@
 import { useGetAccountById } from '@/hooks/accounts/forms'
-import { useAddSublimits } from '@/hooks/accounts/sublimit'
+import { useAddSublimits, useUpdateSublimits } from '@/hooks/accounts/sublimit'
 import GenericCard from '@/layouts/components/SublimitsCards/GenericCard'
 import { useAppSelector } from '@/store'
+import CustomAlert, { IAlert } from '@/views/custom/alerts'
 import CheckIcon from '@mui/icons-material/Check'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import SaveIcon from '@mui/icons-material/Save'
@@ -82,9 +83,9 @@ const schema = yup.object().shape({
   sublimit: yup
     .number()
     .transform((_, val) => (val === Number(val) ? val : null))
-    .test('Validate sublimit', 'Sublimit cannot be greater than limit', value => {
+    .test('Validate sublimit', 'Sublimit cannot be greater than limit', (value, context) => {
       const val = value || 0
-      const limit = 10000 || 0
+      const limit = context.parent.account?.informations[0]?.limit || 0
 
       return +val <= +limit
     })
@@ -187,6 +188,22 @@ const initialValues = {
   at100: false,
   typeDeductibleRadio: 'default'
 }
+
+const initialErrorValues = {
+  sublimit: '',
+  percentage: '',
+  price: '',
+  min: '',
+  days: '',
+  priceInterruption: '',
+  coinsurance: '',
+  yes: '',
+  luc: '',
+  typeDeductible: '',
+  typeBi: '',
+  at100: '',
+  typeDeductibleRadio: ''
+}
 const Sublimits = () => {
   const forms = GenericCard
   const [checked, setChecked] = useState<number[]>([])
@@ -199,7 +216,14 @@ const Sublimits = () => {
   const accountData = useAppSelector(state => state.accounts)
   const { account, setAccountId } = useGetAccountById()
   const { saveSublimits } = useAddSublimits()
-
+  const { updateSublimits } = useUpdateSublimits()
+  const [sublimtsData, setSublimitsData] = useState<any>()
+  const [badgeData, setBadgeData] = useState<IAlert>({
+    message: '',
+    theme: 'success',
+    open: false,
+    status: 'error'
+  })
   useEffect(() => {
     if (accountData.formsData.form1?.id) {
       setAccountId(accountData.formsData.form1.id)
@@ -217,26 +241,24 @@ const Sublimits = () => {
     setAllFormData(data)
   }
   const validate = (form: any, index: number) => {
-    const dataError = { ...initialValues }
+    const dataError = { ...initialErrorValues }
+
     Object.keys(dataError).forEach(function (key) {
       // @ts-ignore
       dataError[key] = null
     })
-    const data = formErrors
-    data[index] = dataError
+    const data = [...formErrors]
+    data[index] = { ...dataError }
 
     schema
       .validate({ ...form, account }, { abortEarly: false })
       .then(function () {
-        console.log('ok')
-        const removeItem = data.filter((errors, i) => i !== index)
-        setFormErrors(removeItem)
+        data[index] = { ...initialErrorValues }
+        setFormErrors(data)
       })
       .catch(function (err) {
         for (const error of err?.inner) {
-          console.log(error)
           data[index][error.path] = error.message
-          console.log(data)
         }
 
         setFormErrors(data)
@@ -251,7 +273,9 @@ const Sublimits = () => {
     if (currentIndex === -1) {
       newChecked.push(value)
       allFormData.push({ ...initialValues })
-      formErrors.push({ ...initialValues })
+
+      console.log(formErrors)
+      formErrors.push({ ...initialErrorValues })
       formsCheck.push({
         type: value,
         components: forms,
@@ -277,20 +301,66 @@ const Sublimits = () => {
     } else return
   }
 
-  const handleSubmit = () => {
-    const dataToSubmit = allFormData.map(item => {
-      return {
-        sublimit: item.sublimit,
-        at100: true,
-        yes: true,
-        luc: true,
-        typeDeductible: 'none',
-        typeBi: 'days',
-        coinsurance: item.coinsurance,
-        idAccount: formInformationData.id
-      }
-    })
-    saveSublimits(dataToSubmit)
+  const handleSubmit = async () => {
+    if (sublimtsData) {
+      const dataToSubmit = allFormData.map(item => {
+        return {
+          id: sublimtsData[0].id,
+          sublimit: item.sublimit,
+          at100: true,
+          yes: true,
+          luc: true,
+          typeDeductible: 'none',
+          typeBi: 'days',
+          coinsurance: item.coinsurance,
+          idAccount: formInformationData.id
+        }
+      })
+      await updateSublimits(dataToSubmit)
+      setBadgeData({
+        message: 'The information has been updated',
+        theme: 'success',
+        open: true,
+        status: 'error'
+      })
+      setTimeout(() => {
+        setBadgeData({
+          message: 'updated successfully',
+          theme: 'success',
+          open: false,
+          status: 'error'
+        })
+      }, 5000)
+    } else {
+      const dataToSubmit = allFormData.map(item => {
+        return {
+          sublimit: item.sublimit,
+          at100: true,
+          yes: true,
+          luc: true,
+          typeDeductible: 'none',
+          typeBi: 'days',
+          coinsurance: item.coinsurance,
+          idAccount: formInformationData.id
+        }
+      })
+      const result = await saveSublimits(dataToSubmit)
+      setBadgeData({
+        message: 'The information has been saved',
+        theme: 'success',
+        open: true,
+        status: 'error'
+      })
+      setTimeout(() => {
+        setBadgeData({
+          message: 'saved successfully',
+          theme: 'success',
+          open: false,
+          status: 'error'
+        })
+      }, 5000)
+      setSublimitsData(result)
+    }
   }
 
   const addOption = (name: string, index: number) => {
@@ -315,6 +385,10 @@ const Sublimits = () => {
       <GeneralContainerSublimits>
         <ContainerTitleSublimits>
           <Typography variant='h5'>Sublimits</Typography>
+          <div style={{ width: 'fit-content', float: 'right', alignSelf: 'end' }}>
+            <CustomAlert {...badgeData} />
+          </div>
+
           <InputsContainerSublimits>
             <TextField
               sx={{ width: '48.5%' }}

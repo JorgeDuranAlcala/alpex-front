@@ -1,7 +1,10 @@
-import { IBrokerContactsState } from '@/types/apps/catalogs/brokerContactTypes'
 import { BROKER_CONTACT_ROUTERS } from 'src/configs/api'
 import { AppAlpexApiGateWay } from 'src/services/app.alpex.api-getway'
-import { BrokerContactDto, BrokerContactsDeleteDto } from 'src/services/catalogs/dtos/broker-contact.dto'
+import {
+  BrokerContactDto,
+  BrokerContactsDeleteDto,
+  IBrokerContactsPagination
+} from 'src/services/catalogs/dtos/broker-contact.dto'
 import { queryBuilder } from '../helper/queryBuilder'
 
 class BrokerContactService {
@@ -44,7 +47,7 @@ class BrokerContactService {
   async updateById(id: number, update: Partial<BrokerContactDto>) {
     try {
       const { data } = await AppAlpexApiGateWay.put<Promise<BrokerContactDto>>(
-        `${BROKER_CONTACT_ROUTERS.UPDATE}${id}`,
+        `${BROKER_CONTACT_ROUTERS.UPDATE}/${id}`,
         {
           ...update
         }
@@ -69,7 +72,7 @@ class BrokerContactService {
     }
   }
 
-  async getBrokerContactsByIdBroker(idCBroker: number, brokerContactsData: IBrokerContactsState, urlQ?: string) {
+  async getBrokerContactsByIdBroker(idCBroker: number, brokerContactsData: IBrokerContactsPagination, urlQ?: string) {
     try {
       const url = urlQ ? urlQ : queryBuilder(brokerContactsData.filters, `${BROKER_CONTACT_ROUTERS.GET}/${idCBroker}`)
       const { data } = await AppAlpexApiGateWay.get(
