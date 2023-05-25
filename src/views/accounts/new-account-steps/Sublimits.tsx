@@ -1,4 +1,5 @@
 import { useGetAccountById } from '@/hooks/accounts/forms'
+import { useUpdateAccountsStatus } from '@/hooks/accounts/status'
 import { useAddSublimits, useUpdateSublimits } from '@/hooks/accounts/sublimit'
 import GenericCard from '@/layouts/components/SublimitsCards/GenericCard'
 import { useAppSelector } from '@/store'
@@ -226,6 +227,11 @@ const Sublimits = () => {
     open: false,
     status: 'error'
   })
+  const [disableBoundBtn, setDisableBoundBtn] = useState<boolean>(true)
+
+  // ** Custom hooks
+  const { updateAccountsStatus } = useUpdateAccountsStatus()
+
   useEffect(() => {
     if (accountData.formsData.form1?.id) {
       setAccountId(accountData.formsData.form1.id)
@@ -363,6 +369,32 @@ const Sublimits = () => {
       }, 5000)
       setSublimitsData(result)
     }
+    setDisableBoundBtn(false)
+  }
+
+  const handleUpdateStatus = async () => {
+    await updateAccountsStatus({
+      updateStatus: [
+        {
+          idAccount: formInformationData.id,
+          status: 5
+        }
+      ]
+    })
+    setBadgeData({
+      message: 'Account has been updated',
+      theme: 'success',
+      open: true,
+      status: 'error'
+    })
+    setTimeout(() => {
+      setBadgeData({
+        message: 'updated successfully',
+        theme: 'success',
+        open: false,
+        status: 'error'
+      })
+    }, 5000)
   }
 
   const addOption = (name: string, index: number) => {
@@ -506,7 +538,8 @@ const Sublimits = () => {
             fontSize: userThemeConfig.typography?.size.px15,
             color: texButtonColor
           }}
-          disabled
+          disabled={disableBoundBtn}
+          onClick={handleUpdateStatus}
         >
           <CheckIcon /> &nbsp; Add bound
         </Button>
