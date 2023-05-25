@@ -5,4 +5,7 @@ export interface RetroCedantContactDto {
   phone: string
   idCRetroCedant: number
   idCCountry: number
+  __idCCountry__?: {
+    id: number
+  }
 }
