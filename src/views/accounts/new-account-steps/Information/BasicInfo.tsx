@@ -127,6 +127,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
   isValidForm
 }) => {
   //cargamos la información de los catálogos de base de datos
+  console.log(basicInfo)
   const { countries } = useCountyGetAll()
   const { brokers } = useBrokerGetAll()
   const { cedant } = useCedantGetAll()

@@ -16,6 +16,7 @@ import { EStatus, EStatusString } from './Status'
 import ModalAction from './modal'
 
 // ** Custom Hooks imports
+import { formatStatusToNumber } from '@/utils/formatStatus'
 import Chip from 'src/@core/components/mui/chip'
 import useAccountTable from 'src/hooks/accounts/Table/useAccountTable'
 import { useAppDispatch, useAppSelector } from 'src/store'
@@ -84,9 +85,22 @@ const TableHeader: React.FC<ITableHeader> = ({ selectedRows, badgeData }) => {
   }
 
   // ** Handlers for Change Status
-  const handleChangeStatusAction = () => {
+  const handleChangeStatusAction = async () => {
     if (changeStatusTo) {
-      changeStatusAccounts(selectedRows, changeStatusTo)
+      const changeStatusArray = [{}]
+
+      if (selectedRows.length > 0) {
+        for (const [idx, row] of selectedRows.entries()) {
+          changeStatusArray[idx] = {
+            idAccount: row,
+            status: formatStatusToNumber(changeStatusTo)
+          }
+        }
+
+        await changeStatusAccounts({
+          updateStatus: changeStatusArray
+        })
+      }
     }
   }
 

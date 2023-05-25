@@ -19,12 +19,12 @@ import { useAppDispatch, useAppSelector } from '@/store'
 import { fetchBrokers } from '@/store/apps/catalogs/brokers'
 import { useAddBroker } from 'src/hooks/catalogs/broker/useAdd'
 
-interface IAddBroker {
+interface IBrokerData {
   idBroker: number
   setIdBroker: (id: number) => void
 }
 
-const AddBroker = ({ idBroker, setIdBroker }: IAddBroker) => {
+const BrokerData = ({ idBroker, setIdBroker }: IBrokerData) => {
   const [newBroker, setNewBroker] = useState<IBroker>({ id: 0, name: '' })
   const [isBrokerSaved, setIsBrokerSaved] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
@@ -256,4 +256,4 @@ const AddBroker = ({ idBroker, setIdBroker }: IAddBroker) => {
   )
 }
 
-export default AddBroker
+export default BrokerData
