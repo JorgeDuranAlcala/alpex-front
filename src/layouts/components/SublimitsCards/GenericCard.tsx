@@ -57,7 +57,7 @@ const initialData: FormGenericCard = {
   yes: false,
   luc: false,
   typeDeductible: '',
-  typeBi: '',
+  typeBi: 'BIDays',
   at100: false,
   typeDeductibleRadio: ''
 }
@@ -272,7 +272,7 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
                   value={dataForm.percentage}
                   thousandSeparator=','
                   customInput={Input}
-                  prefix={'%'}
+                  suffix={'%'}
                   decimalScale={2}
                   sx={{
                     width: '100%',

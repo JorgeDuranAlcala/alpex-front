@@ -19,6 +19,7 @@ import {
   Typography
 } from '@mui/material'
 import { useEffect, useState } from 'react'
+import { NumericFormat } from 'react-number-format'
 import UserThemeOptions from 'src/layouts/UserThemeOptions'
 import SublimitCard, { RenderFormGeneric } from 'src/layouts/components/CardSublimit'
 import {
@@ -165,12 +166,13 @@ const schema = yup.object().shape({
     .number()
     .transform((_, val) => (val === Number(val) ? val : null))
     .test('Validate coinsurance', 'Coinsurance cannot be greater than 100', value => {
+      if (value === 0) {
+        return true
+      }
       const val = value || 0
 
       return +val <= 100
     })
-    .required()
-    .min(1)
 })
 
 const initialValues = {
@@ -390,15 +392,19 @@ const Sublimits = () => {
           </div>
 
           <InputsContainerSublimits>
-            <TextField
-              sx={{ width: '48.5%' }}
+            <NumericFormat
               value={account?.informations[0].limit || 'Limit'}
+              prefix='$'
+              allowLeadingZeros
+              thousandSeparator=','
+              customInput={TextField}
               disabled
               name='Limit'
               label='Limit'
-              InputProps={{
-                disabled: true
-              }}
+              multiline
+              variant='outlined'
+              decimalScale={2}
+              sx={{ width: '48.5%' }}
             />
             <FormControl fullWidth>
               <Select
