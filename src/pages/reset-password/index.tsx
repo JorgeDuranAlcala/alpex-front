@@ -1,5 +1,5 @@
 // ** React Imports
-import loginAnimation from '@/pages/reset-password/animations/login-animation.json'
+import loginAnimation from '@/pages/reset-password/animations/resetPassword-animation.json'
 import { useRouter } from 'next/router'
 
 // import queryString from 'query-string'
@@ -100,6 +100,7 @@ const ForgotPasswordPage = () => {
                 rules={{ required: true }}
                 render={({ field: { value, onChange, onBlur } }) => (
                   <OutlinedInput
+                    style={{ border: '#2535A8' }}
                     value={value}
                     onBlur={onBlur}
                     label='New password'
@@ -165,17 +166,24 @@ const ForgotPasswordPage = () => {
               )}
             </FormControl>
             <div className='buttons'>
-              <Button type='submit' variant='contained' color='primary' size='large'>
+              <Button
+                type='submit'
+                variant='contained'
+                color='primary'
+                size='large'
+                style={{ backgroundColor: '#2535A8' }}
+              >
                 CONTINUE
               </Button>
               <Button
                 onClick={() => router.push('/login')}
                 variant='text'
-                color='primary'
                 size='large'
-                startIcon={<Icon icon='mdi:arrow-left-thin' fontSize={20} />}
+                startIcon={<Icon icon='mdi:arrow-left-thin' fontSize={20} color='#2535A8' />}
               >
-                BACK TO LOGIN
+                <Typography fontWeight={500} fontSize={'15px'} letterSpacing={'0.46px'} color={'#2535A8'}>
+                  Back to login
+                </Typography>
               </Button>
             </div>
           </form>
