@@ -5,6 +5,7 @@ import Card from '@mui/material/Card'
 import Grid from '@mui/material/Grid'
 
 // ** Next Import
+import { useAppDispatch } from '@/store'
 import { useRouter } from 'next/router'
 
 // ** Custom Components Imports
@@ -18,6 +19,7 @@ import NewAccountStepper from 'src/views/components/new-accounts/NewAccountStepp
 
 // import TabAccount from 'src/views/pages/account-settings/TabAccount'
 
+import { updateFormsData } from '@/store/apps/accounts'
 import Sublimits from 'src/views/accounts/new-account-steps/Sublimits'
 import FormHeader from 'src/views/accounts/new-account-steps/headers/formHeader'
 
@@ -28,6 +30,7 @@ import FormHeader from 'src/views/accounts/new-account-steps/headers/formHeader'
 const NewAccount = () => {
   // ** Hooks
   const router = useRouter()
+  const dispatch = useAppDispatch()
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [disableComments, setDisableComments] = useState(false)
@@ -64,6 +67,27 @@ const NewAccount = () => {
       setIsNewAccount(false)
     }
   }, [router])
+
+  useEffect(() => {
+    const handleExit = () => {
+      localStorage.removeItem('idAccount')
+      dispatch(updateFormsData({ form1: { id: null } }))
+    }
+
+    const handleRouteChange = (url: string) => {
+      if (url !== '/accounts/new-account') {
+        console.log('change')
+        handleExit()
+      }
+    }
+
+    router.events.on('routeChangeStart', handleRouteChange)
+
+    return () => {
+      router.events.off('routeChangeStart', handleRouteChange)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch, router.events])
 
   return (
     <Grid className='new-account' item xs={12}>

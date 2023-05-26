@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import UserThemeOptions from 'src/layouts/UserThemeOptions'
 
 // Hooks
-import { useRouter } from 'next/router'
 import {
   useAddInformation,
   useFindInformationByIdAccount,
@@ -97,7 +96,6 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   const { updateInformationByIdAccount } = useUpdateInformationByIdAccount()
 
   const dispatch = useAppDispatch()
-  const router = useRouter()
 
   const [basicInfo, setBasicInfo] = useState<BasicInfoInterface>({
     insured: '',
@@ -376,26 +374,6 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [idAccount])
-
-  useEffect(() => {
-    const handleExit = () => {
-      localStorage.removeItem('idAccount')
-      dispatch(updateFormsData({ form1: { ...lastForm1Information, id: null } }))
-    }
-
-    const handleRouteChange = (url: string) => {
-      if (url !== '/accounts/new-account') {
-        handleExit()
-      }
-    }
-
-    router.events.on('routeChangeStart', handleRouteChange)
-
-    return () => {
-      router.events.off('routeChangeStart', handleRouteChange)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, onIsNewAccountChange, router.events])
 
   return (
     <>
