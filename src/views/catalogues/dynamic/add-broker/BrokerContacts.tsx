@@ -16,7 +16,6 @@ import { ButtonClose, HeaderTitleModal } from 'src/styles/modal/modal.styled'
 import Icon from 'src/@core/components/icon'
 
 // ** Custom Components Imports
-import CustomPaginationBrokerContact from '../CustomPaginationImpl'
 import TableHeader from '../TableHeader'
 
 //Hooks
@@ -29,6 +28,7 @@ import useGetAllByIdBrokerAndPagination from '@/hooks/catalogs/broker-contact/us
 import { useUpdateById } from '@/hooks/catalogs/broker-contact/useUpdateById'
 import colors from 'src/views/accounts/colors'
 import fonts from 'src/views/accounts/font'
+import CustomPagination from '../CustomPaginationImpl'
 
 export interface IContact {
   id: number
@@ -107,8 +107,6 @@ const BrokerContacts = ({ idBroker }: IBrokerContacts) => {
   const [alertIcon, setAlertIcon] = useState('')
   const [openDeleteRows, setOpenDeleteRows] = useState(false)
 
-  const [idCBroker, setIdCBroker] = useState(0)
-
   //hooks
   const { deleteBrokerContact } = useDeleteBrokerContact()
   const { saveBrokerContact } = useAddBrokerContact()
@@ -123,14 +121,9 @@ const BrokerContacts = ({ idBroker }: IBrokerContacts) => {
   } = useGetAllByIdBrokerAndPagination()
 
   useEffect(() => {
-    setIdCBroker(idBroker)
+    setBrokerContactsPagination({ ...brokerContactsPagination, idCBroker: idBroker })
     //eslint-disable-next-line
   }, [idBroker])
-
-  useEffect(() => {
-    setBrokerContactsPagination({ ...brokerContactsPagination, idCBroker })
-    //eslint-disable-next-line
-  }, [idCBroker])
 
   useEffect(() => {
     setContactList(brokerContacts || [])
@@ -336,7 +329,11 @@ const BrokerContacts = ({ idBroker }: IBrokerContacts) => {
   }
 
   const handleCreateContact = async () => {
-    const result = await saveBrokerContact({ ...contactData, idCBroker, idCCountry: contactData.idCCountry.id })
+    const result = await saveBrokerContact({
+      ...contactData,
+      idCBroker: idBroker,
+      idCCountry: contactData.idCCountry.id
+    })
     if (result) {
       triggerAlert('success')
       setContactData(initialNewContact)
@@ -349,7 +346,7 @@ const BrokerContacts = ({ idBroker }: IBrokerContacts) => {
   const editContact = async () => {
     const result = await update(currentContact.id, {
       ...currentContact,
-      idCBroker,
+      idCBroker: idBroker,
       idCCountry: currentContact.idCCountry.id
     })
     if (result) {
@@ -559,7 +556,7 @@ const BrokerContacts = ({ idBroker }: IBrokerContacts) => {
             onClickBtn={() => {
               setOpenNewContact(true)
             }}
-            addBtnDisable={idCBroker === 0}
+            addBtnDisable={idBroker === 0}
           />
           {showAlert && (
             <div className={`${alertType} contacts-alert`}>
@@ -581,7 +578,7 @@ const BrokerContacts = ({ idBroker }: IBrokerContacts) => {
             pagination
             pageSize={10}
             components={{
-              Pagination: CustomPaginationBrokerContact
+              Pagination: CustomPagination
             }}
             componentsProps={{
               pagination: { handleDispatch, infoPage: { ...brokerContactInfoPage } }
