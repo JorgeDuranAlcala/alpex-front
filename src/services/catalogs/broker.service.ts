@@ -1,7 +1,7 @@
 import { IBrokersState } from '@/types/apps/catalogs/brokerTypes'
 import { BROKER_ROUTES } from 'src/configs/api'
 import { AppAlpexApiGateWay } from 'src/services/app.alpex.api-getway'
-import { BrokerDto, BrokersDeleteDto } from 'src/services/catalogs/dtos/broker.dto'
+import { BrokerDto, BrokersDeleteDto, BrokersPaginationDto } from 'src/services/catalogs/dtos/broker.dto'
 import { queryBuilder } from '../helper/queryBuilder'
 
 class BrokeService {
@@ -55,6 +55,18 @@ class BrokeService {
       const { data } = await AppAlpexApiGateWay.get(
         `${url}&take=${brokersData.info.take}&page=${brokersData.info.page}`
       )
+
+      return data
+    } catch (error) {
+      const errMessage = String(error)
+      throw new Error(errMessage)
+    }
+  }
+
+  async getBrokersPagination(brokerData: BrokersPaginationDto, urlQ?: string) {
+    try {
+      const url = urlQ ? urlQ : queryBuilder(brokerData.filters, `${BROKER_ROUTES.GET}`)
+      const { data } = await AppAlpexApiGateWay.get(`${url}&take=${brokerData.info.take}&page=${brokerData.info.page}`)
 
       return data
     } catch (error) {
