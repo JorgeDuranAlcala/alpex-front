@@ -674,8 +674,8 @@ export const FormSection = ({
         </div>
 
         <div className='form-col'>
-          <FormControl fullWidth variant='outlined' sx={{ mb: 2, mt: 2 }}>
-            <InputLabel htmlFor='outlined-Name' shrink={true} variant='outlined'>
+          <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
+            <InputLabel htmlFor='outlined-Name' shrink={true}>
               Reinsurance companies
             </InputLabel>
             <Select
@@ -683,7 +683,7 @@ export const FormSection = ({
               value={localSecurity.ReinsuranceCompany}
               onChange={e => calculates('ReinsuranceCompany', e.target.value)}
               labelId='ReinsuranceCompany'
-              variant='outlined'
+              label='Reinsurance companies'
             >
               {avaliableReinsurers.map(reinsurer => (
                 <MenuItem key={reinsurer.id} value={reinsurer.id}>
