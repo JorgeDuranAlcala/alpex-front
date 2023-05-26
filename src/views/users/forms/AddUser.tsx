@@ -113,6 +113,7 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
 
   const useWatchCompany = watch('company')
   const useWatchRole = watch('role')
+  const useWatchEmail = watch('email')
 
   const usersReducer = useAppSelector(state => state.users)
   const dispatch = useAppDispatch()
@@ -208,6 +209,16 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
 
   const handleFormChange = (field: keyof FormInfo, value: FormInfo[keyof FormInfo]) => {
     setFormData({ ...formData, [field]: value })
+  }
+  const handleInpuEmail = () => {
+    if (useWatchEmail === undefined || useWatchEmail === '') {
+      setErrorEmail({
+        ...errorEmail,
+        fieldRequired: true,
+        validateEmail: false
+      })
+      setErrorsTextEmail({ ...errorsTextEmail, fieldRequired: ErrorsEmailText.fieldRequired })
+    }
   }
 
   // const handleChangeEmail = (event: ChangeEvent<HTMLInputElement>) => {
@@ -601,6 +612,7 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
                 color='primary'
                 size='large'
                 sx={{ float: 'right' }}
+                onClick={handleInpuEmail}
               >
                 ADD USER
               </Button>
