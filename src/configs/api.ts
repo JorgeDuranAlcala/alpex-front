@@ -17,7 +17,8 @@ export enum ACCOUNT_ROUTES {
   GET_BY_ID = 'account',
   GET_ALL = 'account/all',
   DELETE = 'account/delete',
-  DUPLICATE = 'account/duplicate'
+  DUPLICATE = 'account/duplicate',
+  UPDATE_STATUS = 'account/update-status'
 }
 
 export enum ACCOUNT_INFORMATION_ROUTES {

@@ -1,4 +1,5 @@
 import { useGetAccountById } from '@/hooks/accounts/forms'
+import { useUpdateAccountsStatus } from '@/hooks/accounts/status'
 import { useAddSublimits, useUpdateSublimits } from '@/hooks/accounts/sublimit'
 import GenericCard from '@/layouts/components/SublimitsCards/GenericCard'
 import { useAppSelector } from '@/store'
@@ -19,6 +20,7 @@ import {
   Typography
 } from '@mui/material'
 import { useEffect, useState } from 'react'
+import { NumericFormat } from 'react-number-format'
 import UserThemeOptions from 'src/layouts/UserThemeOptions'
 import SublimitCard, { RenderFormGeneric } from 'src/layouts/components/CardSublimit'
 import {
@@ -165,12 +167,13 @@ const schema = yup.object().shape({
     .number()
     .transform((_, val) => (val === Number(val) ? val : null))
     .test('Validate coinsurance', 'Coinsurance cannot be greater than 100', value => {
+      if (value === 0) {
+        return true
+      }
       const val = value || 0
 
       return +val <= 100
     })
-    .required()
-    .min(1)
 })
 
 const initialValues = {
@@ -224,6 +227,11 @@ const Sublimits = () => {
     open: false,
     status: 'error'
   })
+  const [disableBoundBtn, setDisableBoundBtn] = useState<boolean>(true)
+
+  // ** Custom hooks
+  const { updateAccountsStatus } = useUpdateAccountsStatus()
+
   useEffect(() => {
     if (accountData.formsData.form1?.id) {
       setAccountId(accountData.formsData.form1.id)
@@ -361,6 +369,32 @@ const Sublimits = () => {
       }, 5000)
       setSublimitsData(result)
     }
+    setDisableBoundBtn(false)
+  }
+
+  const handleUpdateStatus = async () => {
+    await updateAccountsStatus({
+      updateStatus: [
+        {
+          idAccount: formInformationData.id,
+          status: 5
+        }
+      ]
+    })
+    setBadgeData({
+      message: 'Account has been updated',
+      theme: 'success',
+      open: true,
+      status: 'error'
+    })
+    setTimeout(() => {
+      setBadgeData({
+        message: 'updated successfully',
+        theme: 'success',
+        open: false,
+        status: 'error'
+      })
+    }, 5000)
   }
 
   const addOption = (name: string, index: number) => {
@@ -390,15 +424,19 @@ const Sublimits = () => {
           </div>
 
           <InputsContainerSublimits>
-            <TextField
-              sx={{ width: '48.5%' }}
+            <NumericFormat
               value={account?.informations[0].limit || 'Limit'}
+              prefix='$'
+              allowLeadingZeros
+              thousandSeparator=','
+              customInput={TextField}
               disabled
               name='Limit'
               label='Limit'
-              InputProps={{
-                disabled: true
-              }}
+              multiline
+              variant='outlined'
+              decimalScale={2}
+              sx={{ width: '48.5%' }}
             />
             <FormControl fullWidth>
               <Select
@@ -500,7 +538,8 @@ const Sublimits = () => {
             fontSize: userThemeConfig.typography?.size.px15,
             color: texButtonColor
           }}
-          disabled
+          disabled={disableBoundBtn}
+          onClick={handleUpdateStatus}
         >
           <CheckIcon /> &nbsp; Add bound
         </Button>

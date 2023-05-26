@@ -5,7 +5,6 @@ import { useContext } from 'react'
 import { GridRowId } from '@mui/x-data-grid'
 
 // ** Context
-import EAccountsTableActionTypes from 'src/context/accounts/Table/actionTypes'
 import AccountsTableContext from 'src/context/accounts/Table/reducer'
 
 // ** Services
@@ -13,10 +12,10 @@ import accountsService from 'src/services/accounts/account.service'
 
 // ** Custom utilities
 import { useLocalStorage } from '@/hooks/useLocalStorage'
+import { UpdateStatusArrayDto } from '@/services/accounts/dtos/account.dto'
 import { useAppDispatch, useAppSelector } from '@/store'
 import { IAccountsState } from '@/types/apps/accountsTypes'
 import { fetchAccounts } from 'src/store/apps/accounts'
-import { EStatus } from 'src/views/accounts/Table/Status'
 
 const useAccountTable = () => {
   // **Reducers
@@ -24,7 +23,7 @@ const useAccountTable = () => {
   const accountsReducer = useAppSelector(state => state.accounts)
 
   const [jwtToken] = useLocalStorage('accessToken', false)
-  const { state, dispatch } = useContext(AccountsTableContext)
+  const { state } = useContext(AccountsTableContext)
   const { accounts } = state
 
   const getAccounts = async (usersData: IAccountsState, urlQ?: string) => {
@@ -59,23 +58,12 @@ const useAccountTable = () => {
     }
   }
 
-  const changeStatusAccounts = async (selectedRows: GridRowId[], status: EStatus) => {
+  const changeStatusAccounts = async (updateStatus: UpdateStatusArrayDto) => {
     try {
-      //const response = await accountsService.getAccounts()
-      const newAccounts = accounts.map(account => {
-        if (selectedRows.find(id => id === account.id)) {
-          return {
-            ...account,
-            status: status
-          }
-        }
+      const response = await accountsService.updateAccountsStatus(updateStatus, jwtToken)
+      dispatchRedux(fetchAccounts(accountsReducer))
 
-        return account
-      })
-      dispatch({
-        type: EAccountsTableActionTypes.SET_ACCOUNTS,
-        payload: newAccounts
-      })
+      return response
     } catch (error) {
       console.error(error)
     }

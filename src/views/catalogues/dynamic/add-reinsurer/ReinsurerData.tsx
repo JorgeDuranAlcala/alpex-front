@@ -22,7 +22,7 @@ import Icon from 'src/@core/components/icon'
 import { ButtonClose, HeaderTitleModal } from 'src/styles/modal/modal.styled'
 import { IReinsurer } from '../reinsurers-table'
 
-const AddReinsurer = () => {
+const ReinsurerData = () => {
   const [newReinsurer, setNewReinsurer] = useState<IReinsurer>({ id: "0", name: '' })
   const [isReinsurerSaved, setIsReinsurerSaved] = useState(false)
   const [disableAddReinsurer, setDisableAddReinsurer] = useState(true)
@@ -205,4 +205,4 @@ const AddReinsurer = () => {
   )
 }
 
-export default AddReinsurer
+export default ReinsurerData

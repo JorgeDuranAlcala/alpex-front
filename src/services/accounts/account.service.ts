@@ -4,6 +4,7 @@ import { AppAlpexApiGateWay } from '../app.alpex.api-getway'
 import { ACCOUNT_ROUTES } from '@/configs/api'
 import { queryBuilder } from '@/services/helper/queryBuilder'
 import { IAccountsState } from '@/types/apps/accountsTypes'
+import { UpdateStatusArrayDto } from './dtos/account.dto'
 
 /**
  *  service responsible of the  account methods
@@ -89,6 +90,25 @@ class AccountServices {
           }
         }
       )
+
+      return data
+    } catch (error) {
+      const message = String(error)
+      throw new Error(message)
+    }
+  }
+
+  /**
+   * update accounts status, need an array
+   * @returns
+   */
+  async updateAccountsStatus(updateStatus: UpdateStatusArrayDto, jwtToken: string) {
+    try {
+      const { data } = await AppAlpexApiGateWay.post(ACCOUNT_ROUTES.UPDATE_STATUS, updateStatus, {
+        headers: {
+          Authorization: `Bearer ${jwtToken}`
+        }
+      })
 
       return data
     } catch (error) {

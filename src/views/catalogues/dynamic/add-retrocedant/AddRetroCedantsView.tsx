@@ -7,23 +7,23 @@ import Grid from '@mui/material/Grid'
 // import { AccountsTableContextProvider } from 'src/context/accounts/Table/reducer'
 
 // ** Custom Components Imports
-import CedantContacts from 'src/views/catalogues/dynamic/add-cedant/CedantContacts'
-import CedantData from 'src/views/catalogues/dynamic/add-cedant/CedantData'
+import RetroCedantData from '@/views/catalogues/dynamic/add-retrocedant/RetroCedantData'
+import RetroCedantContacts from 'src/views/catalogues/dynamic/add-retrocedant/RetroCedantContacts'
 
-const AddCedantView = () => {
+const AddRetroCedantView = () => {
 
   return (
 
     <Grid item xs={12}>
       <Card sx={{marginBottom: '15px'}}>
-        <CedantData />
+        <RetroCedantData />
       </Card>
       <Card>
-       <CedantContacts />
+       <RetroCedantContacts />
       </Card>
     </Grid>
 
   )
 }
 
-export default AddCedantView
+export default AddRetroCedantView
