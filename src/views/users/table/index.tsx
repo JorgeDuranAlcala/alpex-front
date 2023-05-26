@@ -320,6 +320,7 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
       }
     }
   ]
+
   const onDelete = () => {
     setBadgeData({
       message: `${selectedUser?.name} ${selectedUser?.surname} WAS DELETED SUCCESSFULLY`,
@@ -359,6 +360,7 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
         setModalShow={setModalShow}
       />
       <DataGrid
+        loading={loading}
         sx={{ textTransform: 'capitalize' }}
         autoHeight
         checkboxSelection

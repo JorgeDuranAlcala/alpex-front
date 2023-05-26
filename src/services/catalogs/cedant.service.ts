@@ -1,6 +1,7 @@
 import { CEDANT_ROUTERS } from 'src/configs/api'
 import { AppAlpexApiGateWay } from 'src/services/app.alpex.api-getway'
-import { CedantDto } from 'src/services/catalogs/dtos/cedant.dto'
+import { CedantDto, CedantsDeleteDto, CedantsPaginationDto } from 'src/services/catalogs/dtos/cedant.dto'
+import { queryBuilder } from '../helper/queryBuilder'
 
 class CedantService {
   async getAll(): Promise<CedantDto[]> {
@@ -44,6 +45,30 @@ class CedantService {
       return data
     } catch (error) {
       throw error
+    }
+  }
+
+  async deleteCedants(cedantsDelete: Partial<CedantsDeleteDto>) {
+    try {
+      const { data } = await AppAlpexApiGateWay.post(CEDANT_ROUTERS.DELETE, {
+        ...cedantsDelete
+      })
+
+      return data
+    } catch (error) {
+      throw error
+    }
+  }
+
+  async getCedantsPagination(cedantData: CedantsPaginationDto, urlQ?: string) {
+    try {
+      const url = urlQ ? urlQ : queryBuilder(cedantData.filters, `${CEDANT_ROUTERS.GET}`)
+      const { data } = await AppAlpexApiGateWay.get(`${url}&take=${cedantData.info.take}&page=${cedantData.info.page}`)
+
+      return data
+    } catch (error) {
+      const errMessage = String(error)
+      throw new Error(errMessage)
     }
   }
 }

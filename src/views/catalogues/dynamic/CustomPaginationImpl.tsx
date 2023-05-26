@@ -16,7 +16,7 @@ interface ICustomPagination {
   infoPage: IInfoPage
 }
 
-const CustomPaginationBrokerContact = ({ handleDispatch, infoPage }: ICustomPagination) => {
+const CustomPagination = ({ handleDispatch, infoPage }: ICustomPagination) => {
   const page = parseInt(infoPage.page.toString())
   const pageCount = parseInt(infoPage.pages.toString())
   const pageSize = parseInt(infoPage.take.toString())
@@ -38,4 +38,4 @@ const CustomPaginationBrokerContact = ({ handleDispatch, infoPage }: ICustomPagi
   )
 }
 
-export default CustomPaginationBrokerContact
+export default CustomPagination
