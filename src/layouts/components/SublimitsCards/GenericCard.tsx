@@ -462,7 +462,7 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
             allowLeadingZeros
             thousandSeparator=','
             customInput={TextField}
-            prefix={'%'}
+            suffix={'%'}
             decimalScale={2}
             sx={{
               width: '100%',
