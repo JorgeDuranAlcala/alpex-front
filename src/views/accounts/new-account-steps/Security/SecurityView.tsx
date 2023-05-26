@@ -73,9 +73,9 @@ const SecurityForm: FormInfo = {
   NetInsurancePremium: '',
   RetroCedant: '',
   RetroCedantContact: '',
-  ContactEmail: 'mail@example.com',
-  ContactPhone: '55618475268',
-  ContactCountry: 'Mexico',
+  ContactEmail: '',
+  ContactPhone: '',
+  ContactCountry: '',
   BrokerAge: '',
   Taxes: '',
   BrokerAgePercent: '',
@@ -90,7 +90,7 @@ interface FormSecurity extends PreviousFormInfo {
 }
 
 type SecurityProps = {
-  onStepChange?: (step: number) => void
+  onStepChange: (step: number) => void
 }
 yup.setLocale({
   mixed: {
@@ -163,7 +163,7 @@ const schemaNetPremium = yup.object().shape(
       .test('Is positive?', 'ERROR: The number must be greater than 0!', value => {
         const valueVal = value || 0
 
-        return +valueVal > 0
+        return +valueVal >= 0
       })
   },
   [['IsGross', 'frontingFeeEnabled']]
@@ -229,7 +229,7 @@ const schema = yup.object().shape(
       .test('Is positive?', 'ERROR: The number must be greater than 0!', value => {
         const valueVal = value || 0
 
-        return +valueVal > 0
+        return +valueVal >= 0
       }),
     RetroCedant: yup.string().when('HasFrontingFee', {
       is: true,
@@ -287,6 +287,7 @@ interface FormInformation {
 
 const Security = ({ onStepChange }: SecurityProps) => {
   const [securitiesList, setSecuritiesList] = useState<FormInfo[]>([])
+
   const [formErrors, setFormErrors] = useState<FormInfo[]>([{ ...SecurityForm }])
   const { saveSecurityTotal } = useAddSecurityTotal()
   const { updateSecurities } = useUpdateSecurities()
@@ -300,7 +301,8 @@ const Security = ({ onStepChange }: SecurityProps) => {
   const { updateSecurityTotal } = useUpdateSecurityTotalById()
 
   const handleItemChange = (index: number, item: FormInfo) => {
-    setSecuritiesList([...securitiesList.slice(0, index), item, ...securitiesList.slice(index + 1)])
+    const tempSecurities = [...securitiesList.slice(0, index), item, ...securitiesList.slice(index + 1)]
+    setSecuritiesList(tempSecurities)
   }
 
   const [allFormData, setAllFormData] = useState<FormSecurity>({
@@ -334,6 +336,16 @@ const Security = ({ onStepChange }: SecurityProps) => {
     setFormErrors([...formErrors, { ...SecurityForm }])
   }
 
+  const DeleteNewForm = (index: number) => {
+    const updatedSecurities = [...securitiesList]
+    const updatedValidations = [...formErrors]
+    updatedSecurities.splice(index, 1)
+    updatedValidations.splice(index, 1)
+
+    setSecuritiesList(updatedSecurities)
+    setFormErrors(updatedValidations)
+  }
+
   const handleCloseModal = () => {
     setOpen(false)
   }
@@ -341,6 +353,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
   const onNextStep = () => {
     validate()
     SetIsNextStep(true)
+    handleCloseModal()
   }
 
   const handleNext = () => {
@@ -351,18 +364,6 @@ const Security = ({ onStepChange }: SecurityProps) => {
     validate()
     SetIsNextStep(isNextStep)
   }
-
-  useEffect(() => {
-    console.log(canMakeRequest)
-
-    if (canMakeRequest) {
-      handleSuccess()
-    }
-
-    if (isNextStep && onStepChange) onStepChange(3)
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [canMakeRequest, isNextStep])
 
   const validate = async () => {
     securitiesList.forEach((form, index) => {
@@ -399,42 +400,39 @@ const Security = ({ onStepChange }: SecurityProps) => {
     })
   }
 
-  const calculateDistribuitedNetPremium = () => {
+  const calculateDistribuitedNetPremium = (item: FormInfo, index: number) => {
+    const tempSecurities = [...securitiesList.slice(0, index), item, ...securitiesList.slice(index + 1)]
+
     let DistribuitedNetPremium = 0
     let sumSharePercent = 0
     let sumGrossShare = 0
-    for (const form of securitiesList) {
+
+    tempSecurities.forEach(form => {
       DistribuitedNetPremium +=
         +form.BrokerAge + +form.Taxes + +form.DynamicComission + +form.FrontingFee + +form.NetInsurancePremium
       if (!form.IsGross) sumSharePercent += +form.SharePercent
       else sumGrossShare += +form.PremiumPerShare
-    }
+    })
+
     const recievedNetPremium = (sumSharePercent * +formInformation.netPremium) / 100 + sumGrossShare
 
-    setAllFormData({
-      ...allFormData,
+    setAllFormData(state => ({
+      ...state,
+      Diference: (DistribuitedNetPremium - recievedNetPremium).toString(),
       DistribuitedNetPremium: DistribuitedNetPremium.toString(),
       RecievedNetPremium: recievedNetPremium.toString()
-    })
-  }
-
-  const getSecurityTotal = async () => {
-    const idAccountCache = Number(localStorage.getItem('idAccount'))
-    const accountInfo = await getAccountById(idAccountCache)
-    if (!accountInfo.securityTotal) return
-    setAllFormData({
-      ...allFormData,
-      DistribuitedNetPremium: accountInfo.securityTotal.distributedNetPremium.toString(),
-      RecievedNetPremium: accountInfo.securityTotal.receivedNetPremium.toString(),
-      Diference: accountInfo.securityTotal.difference.toString(),
-      id: accountInfo.securityTotal.id
-    })
+    }))
   }
 
   const getSecurities = async () => {
     const idAccountCache = Number(localStorage.getItem('idAccount'))
     const accountInfo = await getAccountById(idAccountCache)
-    if (!accountInfo?.securities) return
+    if (accountInfo?.securities.length <= 0 && !accountInfo.securityTotal) {
+      setSecuritiesList([{ ...SecurityForm, NetPremium: '' + accountInfo.informations[0].netPremiun }])
+      setFormErrors([{ ...SecurityForm }])
+
+      return
+    }
 
     const securitiesTem: Partial<FormInfo>[] = []
     const securitiesErrorsTemp: FormInfo[] = []
@@ -475,9 +473,17 @@ const Security = ({ onStepChange }: SecurityProps) => {
         Taxes: '0'
       })
     }
+
     accountInfo.securities.forEach(() => securitiesErrorsTemp.push({ ...SecurityForm }))
     setSecuritiesList([...securitiesTem] as FormInfo[])
     setFormErrors([...securitiesErrorsTemp])
+    setAllFormData({
+      ...allFormData,
+      DistribuitedNetPremium: accountInfo.securityTotal.distributedNetPremium.toString(),
+      RecievedNetPremium: accountInfo.securityTotal.receivedNetPremium.toString(),
+      Diference: accountInfo.securityTotal.difference.toString(),
+      id: accountInfo.securityTotal.id
+    })
   }
 
   const SaveData = async () => {
@@ -501,9 +507,9 @@ const Security = ({ onStepChange }: SecurityProps) => {
           idCRetroCedantContact: Number(form.RetroCedantContact) || null,
           idEndorsement: null,
           idAccount: +accountData.formsData.form1.id,
-          receivedNetPremium: +allFormData.RecievedNetPremium,
-          distributedNetPremium: +allFormData.DistribuitedNetPremium,
-          difference: +allFormData.Diference
+          receivedNetPremium: 0,
+          distributedNetPremium: 0,
+          difference: 0
         })
       } else {
         save.push({
@@ -513,7 +519,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
           dynamicCommission: +form.DynamicComissionPercent || 0,
           frontingFee: +form.FrontingFeePercent || 0,
           netReinsurancepremium: +form.NetInsurancePremium || 0,
-          taxes: +form.Taxes || 0,
+          taxes: +form.TaxesPercent || 0,
           reinsuranceBrokerage: +form.BrokerAgePercent || 0,
           active: true,
           idCReinsuranceCompany: Number(form.ReinsuranceCompany),
@@ -521,9 +527,9 @@ const Security = ({ onStepChange }: SecurityProps) => {
           idCRetroCedantContact: Number(form.RetroCedantContact) || null,
           idEndorsement: null,
           idAccount: +accountData.formsData.form1.id,
-          receivedNetPremium: +allFormData.RecievedNetPremium,
-          distributedNetPremium: +allFormData.DistribuitedNetPremium,
-          difference: +allFormData.Diference
+          receivedNetPremium: 0,
+          distributedNetPremium: 0,
+          difference: 0
         })
       }
     })
@@ -537,13 +543,11 @@ const Security = ({ onStepChange }: SecurityProps) => {
         idAccount: +accountData.formsData.form1.id
       })) as string
     } else {
-      updateSecurityTotal(allFormData.id, {
+      await updateSecurityTotal(allFormData.id, {
         receivedNetPremium: +allFormData.RecievedNetPremium,
         distributedNetPremium: +allFormData.DistribuitedNetPremium,
         difference: +allFormData.Diference,
         idAccount: +accountData.formsData.form1.id
-      }).finally(() => {
-        getSecurityTotal()
       })
     }
 
@@ -552,8 +556,10 @@ const Security = ({ onStepChange }: SecurityProps) => {
     saveSecurities(save)
       .then(res => (saveAll = '' + res))
       .finally(() => {
-        getSecurities()
         setCanMakeRequest(false)
+
+        setSecuritiesList([])
+        getSecurities()
       })
 
     if (saveAll === 'error' || saveTotal === 'error') {
@@ -602,11 +608,6 @@ const Security = ({ onStepChange }: SecurityProps) => {
   }, [accountData.formsData.form1])
 
   useEffect(() => {
-    calculateDistribuitedNetPremium()
-    //eslint-disable-next-line
-  }, [securitiesList])
-
-  useEffect(() => {
     setAllFormData({
       ...allFormData,
       Diference: (+allFormData.RecievedNetPremium - +allFormData.DistribuitedNetPremium).toString()
@@ -616,9 +617,21 @@ const Security = ({ onStepChange }: SecurityProps) => {
 
   useEffect(() => {
     getSecurities()
-    getSecurityTotal()
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [account])
+
+  useEffect(() => {
+    if (canMakeRequest) {
+      handleSuccess()
+    }
+
+    console.log({ isNextStep, canMakeRequest })
+
+    if (isNextStep && canMakeRequest) onStepChange(3)
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [canMakeRequest, isNextStep])
 
   return (
     <>
@@ -640,6 +653,8 @@ const Security = ({ onStepChange }: SecurityProps) => {
                   formErrors={formErrors}
                   setFormErrors={setFormErrors}
                   securities={securitiesList}
+                  onDeleteItemList={DeleteNewForm}
+                  onMakeTotals={calculateDistribuitedNetPremium}
                 />
               </>
             ))}
