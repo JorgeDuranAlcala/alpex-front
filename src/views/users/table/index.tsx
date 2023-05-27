@@ -111,9 +111,11 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
   }, [usersReducer.filters])
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
+
   const open = Boolean(anchorEl)
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    console.log(event.currentTarget)
     setAnchorEl(event.currentTarget)
   }
   const handleClose = () => {
@@ -126,7 +128,50 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
     } else {
       deleteUser({ idUsersList: [selectedUser!.id] })
     }
-    dispatch(fetchAccounts(usersReducer))
+    setTimeout(() => {
+      dispatch(fetchAccounts(usersReducer))
+    }, 50)
+  }
+
+  const ModalActions = () => {
+    return (
+      <>
+        <Menu
+          anchorEl={anchorEl}
+          open={open}
+          onClose={handleClose}
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'right'
+          }}
+          transformOrigin={{
+            vertical: 'top',
+            horizontal: 'right'
+          }}
+        >
+          <MenuItem
+            onClick={() => {
+              setSelectUser(selectedUser!.id)
+              handleClose()
+            }}
+            sx={{ minWidth: '172px', display: 'flex', justifyContent: 'space-between' }}
+          >
+            Edit
+            <Icon icon='mdi:pencil' fontSize={24} />
+          </MenuItem>
+          <MenuItem
+            onClick={() => {
+              setModalShow(true)
+              handleClose()
+            }}
+            sx={{ minWidth: '172px', display: 'flex', justifyContent: 'space-between' }}
+          >
+            Delete
+            <Icon icon='ic:baseline-delete-outline' fontSize={24} />
+          </MenuItem>
+        </Menu>
+      </>
+    )
   }
 
   //name, role, company, phone number, email
@@ -238,7 +283,8 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
             color: colors.text.secondary,
             fontSize: fonts.size.px14,
             fontFamily: fonts.inter,
-            textTransform: 'lowercase'
+            textTransform: 'lowercase',
+            marginLeft: '-5%'
           }}
         >
           {row.email}
@@ -250,101 +296,31 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
       field: '',
       headerName: '',
       minWidth: 10,
+      maxWidth: 50,
       sortable: false,
       disableColumnMenu: true,
       cellClassName: 'account-column-cell-pl-0',
       renderHeader: ({ colDef }) => <ColumnHeader colDef={colDef} showIcon={false} />,
-      renderCell: ({ row }) => (
-        <>
-          <IconButton
-            size='small'
-            onClick={e => {
-              setSelectedUser(row)
-              handleClick(e)
-            }}
-          >
-            <Icon icon='mdi:dots-vertical' />
-          </IconButton>
-          <Menu
-            anchorEl={anchorEl}
-            open={open}
-            onClose={handleClose}
-            anchorOrigin={{
-              vertical: 'bottom',
-              horizontal: 'right'
-            }}
-            transformOrigin={{
-              vertical: 'top',
-              horizontal: 'right'
-            }}
-          >
-            <MenuItem
-              onClick={() => {
-                setSelectUser(selectedUser!.id)
-                handleClose()
-              }}
-              sx={{ minWidth: '172px', display: 'flex', justifyContent: 'space-between' }}
-            >
-              Edit
-              <Icon icon='mdi:pencil' fontSize={24} />
-            </MenuItem>
-            <MenuItem
-              onClick={() => {
-                setModalShow(true)
-                handleClose()
-              }}
-              sx={{ minWidth: '172px', display: 'flex', justifyContent: 'space-between' }}
-            >
-              Delete
-              <Icon icon='ic:baseline-delete-outline' fontSize={24} />
-            </MenuItem>
-          </Menu>
-        </>
-      )
+      renderCell: ({ row }) => {
+        console.log({ row })
 
-      // <Box sx={{ display: 'flex', alignItems: 'start' }}>
-      //   <Button
-      //     id='basic-button'
-      //     aria-controls={open ? 'basic-menu' : undefined}
-      //     aria-haspopup='true'
-      //     aria-expanded={open ? 'true' : undefined}
-      //     onClick={e => {
-      //       setSelectedUser(row)
-      //       handleClick(e)
-      //     }}
-      //     startIcon={<Icon icon='mdi:dots-vertical' fontSize={15} />}
-      //   />
-      //   <Menu
-      //     id='basic-menu'
-      //     anchorEl={anchorEl}
-      //     open={open}
-      //     onClose={handleClose}
-      //     MenuListProps={{
-      //       'aria-labelledby': 'basic-button'
-      //     }}
-      //   >
-      //     <MenuItem
-      //       onClick={() => {
-      //         setSelectUser(selectedUser!.id)
-      //       }}
-      //       sx={{ minWidth: '172px' }}
-      //     >
-      //       <ListItemText>Edit</ListItemText>
-      //       <Icon icon='mdi:pencil' fontSize={24} />
-      //     </MenuItem>
-      //     <MenuItem
-      //       onClick={() => {
-      //         setModalShow(true)
-      //       }}
-      //       sx={{ minWidth: '172px' }}
-      //     >
-      //       <ListItemText>Delete</ListItemText>
-      //       <Icon icon='ic:baseline-delete-outline' fontSize={24} />
-      //     </MenuItem>
-      //   </Menu>
-      // </Box>
+        return (
+          <>
+            <IconButton
+              size='small'
+              onClick={e => {
+                setSelectedUser(row)
+                handleClick(e)
+              }}
+            >
+              <Icon icon='mdi:dots-vertical' />
+            </IconButton>
+          </>
+        )
+      }
     }
   ]
+
   const onDelete = () => {
     setBadgeData({
       message: `${selectedUser?.name} ${selectedUser?.surname} WAS DELETED SUCCESSFULLY`,
@@ -362,6 +338,7 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
 
   return (
     <>
+      <ModalActions />
       <ModalAction
         headingText={`Are you sure you want to delete ${selectedUser?.name} ${selectedUser?.surname}`}
         text='This user will no longer have access to the platform.'
@@ -383,6 +360,7 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
         setModalShow={setModalShow}
       />
       <DataGrid
+        loading={loading}
         sx={{ textTransform: 'capitalize' }}
         autoHeight
         checkboxSelection

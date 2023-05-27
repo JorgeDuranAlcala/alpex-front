@@ -268,9 +268,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
                 {error.errorFieldRequired && (
                   <FormHelperText sx={{ color: 'error.main' }}>This field is required</FormHelperText>
                 )}
-                {error.erorrRangeInstallments && (
-                  <FormHelperText sx={{ color: 'error.main' }}>Can not enter 0</FormHelperText>
-                )}
+                {error.erorrRangeInstallments && <FormHelperText sx={{ color: 'error.main' }}></FormHelperText>}
                 {error.errorOnlyNumbers && <FormHelperText sx={{ color: 'error.main' }}>Only numbers</FormHelperText>}
               </Grid>
             </Grid>
@@ -291,7 +289,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
               }
               onChangeList={handleItemChange}
               globalInfo={{
-                receivedNetPremium: account ? account?.securityTotal?.receivedNetPremium : '',
+                receivedNetPremium: account ? account?.securityTotal?.receivedNetPremium : 0,
                 inceptionDate: account ? new Date(account?.informations[0]?.effetiveDate + 'T00:00:00') : null,
                 idAccount: account ? idAccount : ''
               }}

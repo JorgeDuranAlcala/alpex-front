@@ -7,8 +7,8 @@ import Grid from '@mui/material/Grid'
 // import { AccountsTableContextProvider } from 'src/context/accounts/Table/reducer'
 
 // ** Custom Components Imports
-import AddCedant from 'src/views/catalogues/dynamic/add-cedant/AddCedant'
 import CedantContacts from 'src/views/catalogues/dynamic/add-cedant/CedantContacts'
+import CedantData from 'src/views/catalogues/dynamic/add-cedant/CedantData'
 
 const AddCedantView = () => {
 
@@ -16,7 +16,7 @@ const AddCedantView = () => {
 
     <Grid item xs={12}>
       <Card sx={{marginBottom: '15px'}}>
-        <AddCedant />
+        <CedantData />
       </Card>
       <Card>
        <CedantContacts />

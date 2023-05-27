@@ -17,7 +17,8 @@ export enum ACCOUNT_ROUTES {
   GET_BY_ID = 'account',
   GET_ALL = 'account/all',
   DELETE = 'account/delete',
-  DUPLICATE = 'account/duplicate'
+  DUPLICATE = 'account/duplicate',
+  UPDATE_STATUS = 'account/update-status'
 }
 
 export enum ACCOUNT_INFORMATION_ROUTES {
@@ -62,7 +63,9 @@ export enum CEDANT_ROUTERS {
   GET_ALL = 'catalogs/cedant/all',
   GET_BY_ID = 'catalogs/cedant',
   ADD = 'catalogs/cedant/add',
-  UPDATE = 'catalogs/cedant'
+  UPDATE = 'catalogs/cedant',
+  GET = 'catalogs/cedant',
+  DELETE = 'catalogs/cedant/delete'
 }
 
 export enum BROKER_CONTACT_ROUTERS {
@@ -80,7 +83,9 @@ export enum CEDANT_CONTACT_ROUTERS {
   GET_BY_ID = 'catalogs/cedant-contact',
   ADD = 'catalogs/cedant-contact/add',
   UPDATE = 'catalogs/cedant-contact',
-  GET_BY_ID_CEDANT = 'catalogs/cedant-contact/cedant'
+  GET_BY_ID_CEDANT = 'catalogs/cedant-contact/cedant',
+  GET = 'catalogs/cedant-contact/pagination/cedant',
+  DELETE = 'catalogs/cedant-contact/delete'
 }
 
 export enum COUNTRY_ROUTERS {
@@ -122,7 +127,19 @@ export enum REINSURANCE_COMPANY_ROUTES {
   GET_ALL = 'catalogs/reinsuranceCompany/all',
   GET_BY_ID = 'catalogs/reinsuranceCompany',
   ADD = 'catalogs/reinsuranceCompany/add',
-  UPDATE = 'catalogs/reinsuranceCompany'
+  UPDATE = 'catalogs/reinsuranceCompany',
+  GET = 'catalogs/reinsuranceCompany',
+  DELETE = 'catalogs/reinsuranceCompany/delete'
+}
+
+export enum REINSURANCE_COMPANY_CONTACT_ROUTES {
+  GET_ALL = 'catalogs/reinsuranceCompanyContact/all',
+  GET_BY_ID = 'catalogs/reinsuranceCompanyContact',
+  ADD = 'catalogs/reinsuranceCompanyContact/add',
+  UPDATE = 'catalogs/reinsuranceCompanyContact',
+  GET_BY_ID_REINSURANCE_COMPANY = 'catalogs/reinsuranceCompanyContact/reinsuranceCompany',
+  GET = 'catalogs/reinsuranceCompanyContact/pagination/reinsuranceCompany',
+  DELETE = 'catalogs/reinsuranceCompanyContact/delete'
 }
 
 export enum COMPANY_ROUTES {
@@ -137,7 +154,9 @@ export enum RETRO_CEDANT_ROUTES {
   GET_ALL = 'catalogs/retroCedant/all',
   GET_BY_ID = 'catalogs/retroCedant',
   ADD = 'catalogs/retroCedant/add',
-  UPDATE = 'catalogs/retroCedant'
+  UPDATE = 'catalogs/retroCedant',
+  GET = 'catalogs/retroCedant',
+  DELETE = 'catalogs/retroCedant/delete'
 }
 
 export enum RETRO_CEDANT_CONTACT_ROUTES {
@@ -145,7 +164,9 @@ export enum RETRO_CEDANT_CONTACT_ROUTES {
   GET_BY_ID = 'catalogs/retroCedantContact',
   ADD = 'catalogs/retroCedantContact/add',
   GET_BY_ID_RETROCEDANT = 'catalogs/retroCedantContact/retroCedant',
-  UPDATE = 'catalogs/retroCedantContact'
+  UPDATE = 'catalogs/retroCedantContact',
+  GET = 'catalogs/retroCedantContact/pagination/retroCedant',
+  DELETE = 'catalogs/retroCedantContact/delete'
 }
 
 export enum INSTALLMENT_ROUTERS {

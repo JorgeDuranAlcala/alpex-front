@@ -25,3 +25,29 @@ export const formatStatus = (rawStatus: string) => {
     return rawStatus
   }
 }
+
+export const formatStatusToNumber = (rawStatus: string) => {
+  if (rawStatus) {
+    switch (rawStatus) {
+      case EStatus.PENDING:
+        return 1
+
+      case EStatus.NOT_MATERIALIZED:
+        return 3
+
+      case EStatus.NOT_TAKEN_UP:
+        return 2
+
+      case EStatus.DECLINED:
+        return 4
+
+      case EStatus.BOUND:
+        return 5
+
+      default:
+        return 0
+    }
+  } else {
+    return 0
+  }
+}

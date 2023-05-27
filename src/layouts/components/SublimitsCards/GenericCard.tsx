@@ -57,7 +57,7 @@ const initialData: FormGenericCard = {
   yes: false,
   luc: false,
   typeDeductible: '',
-  typeBi: '',
+  typeBi: 'BIDays',
   at100: false,
   typeDeductibleRadio: ''
 }
@@ -79,6 +79,7 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
     daysError: false,
     priceInterruptionError: false
   })
+  const [numericError, setNumericError] = useState<string>('')
   const [checked, setChecked] = useState(false)
 
   const handleNumericInputChange = (value: any, e: any) => {
@@ -184,8 +185,14 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
               isAllowed={values => {
                 const { floatValue } = values
                 const upLimit = +formInformation?.informations[0].limit
+                if ((floatValue! >= 0 && floatValue! <= upLimit) || floatValue === undefined) {
+                  setNumericError('')
 
-                return (floatValue! >= 0 && floatValue! <= upLimit) || floatValue === undefined
+                  return true
+                }
+                setNumericError(`Sublimit cannot be greater than limit`)
+
+                return false
               }}
               variant='outlined'
               disabled={checked}
@@ -193,7 +200,7 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
                 handleNumericInputChange(value.floatValue, { name: 'sublimit' })
               }}
             />
-            <FormHelperText sx={{ color: 'error.main' }}>{formErrors[index]?.sublimit}</FormHelperText>
+            <FormHelperText sx={{ color: 'error.main' }}>{numericError}</FormHelperText>
           </FormControl>
           <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', paddingRight: '8px', width: '88px' }}>
             <Checkbox
@@ -272,7 +279,7 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
                   value={dataForm.percentage}
                   thousandSeparator=','
                   customInput={Input}
-                  prefix={'%'}
+                  suffix={'%'}
                   decimalScale={2}
                   sx={{
                     width: '100%',
@@ -455,7 +462,7 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
             allowLeadingZeros
             thousandSeparator=','
             customInput={TextField}
-            prefix={'%'}
+            suffix={'%'}
             decimalScale={2}
             sx={{
               width: '100%',
