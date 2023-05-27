@@ -21,7 +21,7 @@ export type IAccounts = {
       idLineOfBussines: {
         lineOfBussines: string
       }
-      effetiveDate: string
+      effectiveDate: string
       expirationDate: string
     }
   ]
