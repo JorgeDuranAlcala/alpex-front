@@ -25,6 +25,7 @@ import ModalAction from './modal'
 
 // ** Custom utilities
 import useAccountTable from '@/hooks/accounts/Table/useAccountTable'
+import { timestampToOnlyDate } from '@/utils/formatDates'
 import { formatStatus } from '@/utils/formatStatus'
 import { Link } from '@mui/material'
 import { useAppDispatch, useAppSelector } from 'src/store'
@@ -118,12 +119,12 @@ const Table = ({ status }: IAccountTable) => {
     if (rawRows && rawRows.length > 0) {
       for (const rawRow of rawRows) {
         formatedRows.push({
-          id: rawRow.id,
-          status: formatStatus(rawRow.idAccountStatus.status),
+          id: rawRow?.id,
+          status: formatStatus(rawRow?.idAccountStatus?.status),
           insured: rawRow?.informations[0]?.insured,
           lob: rawRow?.informations[0]?.idLineOfBussines?.lineOfBussines,
-          effectiveDate: rawRow?.informations[0]?.effetiveDate,
-          expirationDate: rawRow?.informations[0]?.expirationDate
+          effectiveDate: timestampToOnlyDate(rawRow?.informations[0]?.effectiveDate),
+          expirationDate: timestampToOnlyDate(rawRow?.informations[0]?.expirationDate)
         })
       }
     }

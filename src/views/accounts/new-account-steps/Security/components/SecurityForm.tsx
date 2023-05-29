@@ -9,6 +9,12 @@ import MenuItem from '@mui/material/MenuItem'
 import Select from '@mui/material/Select'
 import TextField from '@mui/material/TextField'
 
+//Styles
+
+//Icons
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
+import Icon from '@mui/material/Icon'
+
 // ** Icon Imports
 import { useGetAllReinsuranceCompanies } from '@/hooks/catalogs/reinsuranceCompany'
 import { useGetAllRetroCedants } from '@/hooks/catalogs/retroCedant'
@@ -112,6 +118,8 @@ interface FormSectionProps {
   formErrors: FormInfo[]
   setFormErrors: (data: FormInfo[]) => void
   securities: FormInfo[]
+  onDeleteItemList: (index: number) => void
+  onMakeTotals: (item: FormInfo, index: number) => void
 }
 
 interface FormInformation {
@@ -124,6 +132,16 @@ interface CustomProps {
   name: string
   prefix: string
   suffix: string
+}
+
+interface IPropsCalculeProperty {
+  sharePercent: string
+  totalNetPremium: string
+  TaxesPercent: string
+  BrokerAgePercent: string
+  FrontingFeePercent: string
+  dynamicComissionPercent: string
+  isGross: boolean
 }
 
 const NumericFormatCustom = forwardRef<NumericFormatProps, CustomProps>(function NumericFormatCustom(props, ref) {
@@ -155,7 +173,9 @@ export const FormSection = ({
   onChangeItemList,
   formErrors,
   setFormErrors,
-  securities
+  securities,
+  onDeleteItemList,
+  onMakeTotals
 }: FormSectionProps) => {
   const [localSecurity, setLocalSecurity] = useState<FormInfo>(security)
   const switchAlpex = useRef(null)
@@ -175,11 +195,7 @@ export const FormSection = ({
   const { reinsuranceCompany } = useGetAllReinsuranceCompanies()
   const { countries } = useGetAllCountries()
   const accountData = useAppSelector(state => state.accounts)
-
-  const handleSwitch = () => {
-    setFrontingFeeEnabled(state => !state)
-    handleUpdateInput('HasFrontingFee', !frontingFeeEnabled)
-  }
+  const errors = [...formErrors]
 
   const calculateAvaliableReinsurers = () => {
     const data = [...companiesSelect]
@@ -214,19 +230,17 @@ export const FormSection = ({
     return result.toString()
   }
 
-  const handleUpdateInput = (name: TypeFormInfo, value: any) => {
-    setLocalSecurity({
-      ...localSecurity,
-      [name]: value
-    })
-
-    onChangeItemList(index, { ...localSecurity, [name]: value })
-    const errors = [...formErrors]
-    errors[index][name.toString()] = ''
-    setFormErrors(errors)
+  const handleSwitch = () => {
+    calculates('HasFrontingFee', !frontingFeeEnabled)
+    setFrontingFeeEnabled(state => !state)
+    localSecurity.RetroCedantContact = ''
+    localSecurity.ContactEmail = ''
+    localSecurity.ContactPhone = ''
+    localSecurity.ContactCountry = ''
+    localSecurity.RetroCedant = ''
   }
 
-  const calculates = (calcule: TypeFormInfo, value?: any) => {
+  const calculates = (calcule: TypeFormInfo, value?: any, Gross?: boolean) => {
     const tempSecurity = {
       ...localSecurity,
       [calcule]: value
@@ -244,6 +258,28 @@ export const FormSection = ({
     const FrontingFee = tempSecurity.FrontingFee
     const FrontingFeePercent = tempSecurity.FrontingFeePercent
     let NetInsurancePremium = ''
+
+    const calculateValues = ({
+      BrokerAgePercent,
+      FrontingFeePercent,
+      TaxesPercent,
+      dynamicComissionPercent,
+      sharePercent,
+      isGross,
+      totalNetPremium
+    }: IPropsCalculeProperty) => {
+      const result = validateNumber(((+sharePercent * +totalNetPremium) / 100).toString())
+      const resultTaxes = isGross ? validateNumber(((+TaxesPercent * +result) / 100).toString()) : ''
+      const resultBroger = isGross ? validateNumber(((+BrokerAgePercent * +result) / 100).toString()) : ''
+      const resultFrontingFee = validateNumber(((+FrontingFeePercent * +result) / 100).toString())
+      const resultDynamicComission = validateNumber(((+dynamicComissionPercent * +result) / 100).toString())
+
+      tempSecurity.PremiumPerShare = result
+      tempSecurity.Taxes = resultTaxes
+      tempSecurity.BrokerAge = resultBroger
+      tempSecurity.FrontingFee = resultFrontingFee
+      tempSecurity.DynamicComission = resultDynamicComission
+    }
 
     const calculateNetInsurancePremium = () => {
       if (isGross) {
@@ -276,32 +312,28 @@ export const FormSection = ({
 
     switch (calcule) {
       case 'NetPremium': {
-        //TODO:refactor this
-        const result = validateNumber(((+sharePercent * +totalNetPremium) / 100).toString())
-        const resultTaxes = isGross ? validateNumber(((+TaxesPercent * +result) / 100).toString()) : ''
-        const resultBroger = isGross ? validateNumber(((+BrokerAgePercent * +result) / 100).toString()) : ''
-        const resultFrontingFee = validateNumber(((+FrontingFeePercent * +result) / 100).toString())
-        const resultDynamicComission = validateNumber(((+dynamicComissionPercent * +result) / 100).toString())
-
-        tempSecurity.PremiumPerShare = result
-        tempSecurity.Taxes = resultTaxes
-        tempSecurity.BrokerAge = resultBroger
-        tempSecurity.FrontingFee = resultFrontingFee
-        tempSecurity.DynamicComission = resultDynamicComission
-        tempSecurity.PremiumPerShare = result
+        calculateValues({
+          sharePercent,
+          BrokerAgePercent,
+          dynamicComissionPercent,
+          FrontingFeePercent,
+          isGross,
+          TaxesPercent,
+          totalNetPremium
+        })
         break
       }
       case 'SharePercent': {
         const result = validateNumber(((+sharePercent * +totalNetPremium) / 100).toString())
-        const resultTaxes = isGross ? validateNumber(((+TaxesPercent * +result) / 100).toString()) : ''
-        const resultBroger = isGross ? validateNumber(((+BrokerAgePercent * +result) / 100).toString()) : ''
-        const resultFrontingFee = validateNumber(((+FrontingFeePercent * +result) / 100).toString())
-        const resultDynamicComission = validateNumber(((+dynamicComissionPercent * +result) / 100).toString())
-
-        tempSecurity.Taxes = resultTaxes
-        tempSecurity.BrokerAge = resultBroger
-        tempSecurity.FrontingFee = resultFrontingFee
-        tempSecurity.DynamicComission = resultDynamicComission
+        calculateValues({
+          sharePercent,
+          BrokerAgePercent,
+          dynamicComissionPercent,
+          FrontingFeePercent,
+          isGross,
+          TaxesPercent,
+          totalNetPremium
+        })
         tempSecurity.PremiumPerShare = result
         break
       }
@@ -324,49 +356,56 @@ export const FormSection = ({
       case 'DynamicComission': {
         const result = validateNumber(((+dynamicComission / +premiumPerShare) * 100).toString())
         tempSecurity.DynamicComissionPercent = result
+        errors[index]['DynamicComissionPercent'] = ''
         break
       }
 
       case 'DynamicComissionPercent': {
         const result = validateNumber(((+dynamicComissionPercent * +premiumPerShare) / 100).toString())
         tempSecurity.DynamicComission = result
+        errors[index]['DynamicComission'] = ''
         break
       }
 
       case 'Taxes': {
         const result = validateNumber(((+Taxes / +premiumPerShare) * 100).toString())
         tempSecurity.TaxesPercent = result
+        errors[index]['TaxesPercent'] = ''
         break
       }
 
       case 'TaxesPercent': {
         const result = validateNumber(((+TaxesPercent * +premiumPerShare) / 100).toString())
         tempSecurity.Taxes = result
+        errors[index]['Taxes'] = ''
         break
       }
 
       case 'BrokerAge': {
         const result = validateNumber(((+BrokerAge / +premiumPerShare) * 100).toString())
         tempSecurity.BrokerAgePercent = result
+        errors[index]['BrokerAgePercent'] = ''
         break
       }
 
       case 'BrokerAgePercent': {
         const result = validateNumber(((+BrokerAgePercent * +premiumPerShare) / 100).toString())
         tempSecurity.BrokerAge = result
+        errors[index]['BrokerAge'] = ''
         break
       }
 
       case 'FrontingFee': {
         const result = validateNumber(((+FrontingFee / +premiumPerShare) * 100).toString())
         tempSecurity.FrontingFeePercent = result
+        errors[index]['FrontingFeePercent'] = ''
         break
       }
 
       case 'FrontingFeePercent': {
         const result = validateNumber(((+FrontingFeePercent * +premiumPerShare) / 100).toString())
-
         tempSecurity.FrontingFee = result
+        errors[index]['FrontingFee'] = ''
         break
       }
       case 'ReinsuranceCompany': {
@@ -390,35 +429,41 @@ export const FormSection = ({
       tempSecurity.FrontingFee = '0'
     }
 
-    calculateNetInsurancePremium()
+    if (Gross !== undefined) {
+      tempSecurity.IsGross = Gross
+    }
 
-    onChangeItemList(index, { ...tempSecurity })
-    setLocalSecurity({ ...tempSecurity })
-    const errors = [...formErrors]
+    calculateNetInsurancePremium()
     errors[index][calcule.toString()] = ''
     setFormErrors(errors)
+
+    onMakeTotals({ ...localSecurity }, index)
+    onChangeItemList(index, { ...tempSecurity })
+    setLocalSecurity({ ...tempSecurity })
   }
 
   useEffect(() => {
     const company = companiesSelect.find(company => company.id === +localSecurity.ReinsuranceCompany)
 
     if (company) {
-      setIsGross(true)
       setIsGross(company.isGross)
       const newNetPremium = company.isGross
         ? formInformation.grossPremium.toString()
         : formInformation.netPremium.toString()
-      calculates('NetPremium', newNetPremium)
+
+      localSecurity.NetPremium = newNetPremium
+      localSecurity.IsGross = company.isGross
     } else {
       setIsGross(false)
       const newNetPremium = formInformation.netPremium.toString()
-      calculates('NetPremium', newNetPremium)
+      localSecurity.NetPremium = newNetPremium
     }
 
     if (company?.isGross) {
       handleIsGross()
     } else handleIsNet()
 
+    calculates('NetPremium', localSecurity.NetPremium)
     //eslint-disable-next-line
   }, [localSecurity.ReinsuranceCompany])
 
@@ -458,7 +503,6 @@ export const FormSection = ({
 
   useEffect(() => {
     const id = Number(localSecurity.RetroCedantContact)
-    console.log(localSecurity.RetroCedantContact)
 
     const retroCedant = retroCedantContacts.find(contact => (contact.id = id))
     if (retroCedant) {
@@ -476,38 +520,52 @@ export const FormSection = ({
   }, [localSecurity.RetroCedantContact])
 
   useEffect(() => {
-    const securityTem = { ...security }
-    setLocalSecurity(securityTem)
-
     setIsGross(localSecurity.IsGross)
     setFrontingFeeEnabled(localSecurity.HasFrontingFee)
-    calculates('NetPremium', security.NetPremium)
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
-    onChangeItemList(index, {
-      ...localSecurity
-    })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [localSecurity])
-
-  useEffect(() => {
-    setLocalSecurity({
-      ...security
-    })
-    calculates('NetPremium', security.NetPremium)
+    localSecurity.id = security.id
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [security.id])
 
+  useEffect(() => {
+    if (frontingFeeEnabled === false) {
+      calculates('FrontingFee', 0)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [frontingFeeEnabled])
+
   return (
     <>
-      {(formInformation.frontingFee <= 0 || isGross) && (
+      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+        {formInformation?.frontingFee <= 0 || isGross ? (
+          <>
+            <div>
+              <span className='switch-text'>Fronting fee </span>
+              <SwitchAlpex innerRef={switchAlpex} checked={frontingFeeEnabled} onClick={handleSwitch} />
+            </div>
+          </>
+        ) : (
+          <div></div>
+        )}
         <>
-          <span className='switch-text'>Fronting fee </span>
-          <SwitchAlpex innerRef={switchAlpex} checked={frontingFeeEnabled} onClick={handleSwitch} />
+          {!localSecurity.id && (
+            <Icon
+              component={DeleteOutlineIcon}
+              amplitude={10}
+              style={{
+                fontSize: '34px',
+                cursor: 'pointer',
+                zIndex: '1000'
+              }}
+              onClick={() => onDeleteItemList(index)}
+            />
+          )}
         </>
-      )}
+      </div>
       <div className='form-wrapper space-top'>
         <div className='form-col'>
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
@@ -518,7 +576,7 @@ export const FormSection = ({
               InputProps={{
                 inputComponent: NumericFormatCustom as any
               }}
-              defaultValue={formInformation.netPremium.toString()}
+              defaultValue={formInformation?.netPremium.toString()}
               onChange={e => calculates('NetPremium', e.target.value)}
             />
             <FormHelperText sx={{ color: 'error.main' }}>{formErrors[index]?.NetPremium}</FormHelperText>
@@ -617,12 +675,15 @@ export const FormSection = ({
 
         <div className='form-col'>
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
-            <InputLabel>Reinsurance companies</InputLabel>
-
+            <InputLabel htmlFor='outlined-Name' shrink={true}>
+              Reinsurance companies
+            </InputLabel>
             <Select
+              id='outlined-Name'
               value={localSecurity.ReinsuranceCompany}
               onChange={e => calculates('ReinsuranceCompany', e.target.value)}
-              labelId='broker'
+              labelId='ReinsuranceCompany'
+              label='Reinsurance companies'
             >
               {avaliableReinsurers.map(reinsurer => (
                 <MenuItem key={reinsurer.id} value={reinsurer.id}>
@@ -731,7 +792,7 @@ export const FormSection = ({
                 label='Select Retro cedant'
                 value={localSecurity.RetroCedant}
                 onChange={e => {
-                  handleUpdateInput('RetroCedant', e.target.value)
+                  calculates('RetroCedant', e.target.value)
                 }}
                 labelId='Retrocedant'
               >
@@ -750,7 +811,7 @@ export const FormSection = ({
               <Select
                 label='Select Retro Cedant contact '
                 value={localSecurity.RetroCedantContact}
-                onChange={e => handleUpdateInput('RetroCedantContact', e.target.value)}
+                onChange={e => calculates('RetroCedantContact', e.target.value)}
                 labelId='RetroCedantcontact'
                 disabled={localSecurity.RetroCedant === ''}
               >

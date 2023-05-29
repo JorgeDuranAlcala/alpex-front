@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import UserThemeOptions from 'src/layouts/UserThemeOptions'
 
 // Hooks
-import { useRouter } from 'next/router'
 import {
   useAddInformation,
   useFindInformationByIdAccount,
@@ -97,7 +96,6 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   const { updateInformationByIdAccount } = useUpdateInformationByIdAccount()
 
   const dispatch = useAppDispatch()
-  const router = useRouter()
 
   const [basicInfo, setBasicInfo] = useState<BasicInfoInterface>({
     insured: '',
@@ -152,7 +150,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
         idCedantContact: Number(basicInfo.cedantContact),
         idLineOfBussines: Number(basicInfo.lineOfBusiness),
         idRiskActivity: Number(basicInfo.industryCode),
-        effetiveDate: basicInfo.effectiveDate,
+        effectiveDate: basicInfo.effectiveDate,
         expirationDate: basicInfo.expirationDate,
         receptionDate: basicInfo.receptionDate,
         idLeadUnderwriter: Number(basicInfo.leadUnderwriter),
@@ -166,7 +164,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
         frontingFeeTotal: placementStructure.frontingFeeP,
         grossPremium: placementStructure.grossPremium,
         limit: placementStructure.limit,
-        netPremiun: placementStructure.netPremium,
+        netPremium: placementStructure.netPremium,
         reinsuranceBrokerage: placementStructure.reinsuranceBrokerage,
         reinsuranceBrokerageTotal: placementStructure.reinsuranceBrokerageP,
         sir: placementStructure.sir,
@@ -190,7 +188,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
       idCedantContact: Number(basicInfo.cedantContact),
       idLineOfBussines: Number(basicInfo.lineOfBusiness),
       idRiskActivity: Number(basicInfo.industryCode),
-      effetiveDate: basicInfo.effectiveDate,
+      effectiveDate: basicInfo.effectiveDate,
       expirationDate: basicInfo.expirationDate,
       receptionDate: basicInfo.receptionDate,
       idLeadUnderwriter: Number(basicInfo.leadUnderwriter),
@@ -204,7 +202,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
       frontingFeeTotal: placementStructure.frontingFeeP,
       grossPremium: placementStructure.grossPremium,
       limit: placementStructure.limit,
-      netPremiun: placementStructure.netPremium,
+      netPremium: placementStructure.netPremium,
       reinsuranceBrokerage: placementStructure.reinsuranceBrokerage,
       reinsuranceBrokerageTotal: placementStructure.reinsuranceBrokerageP,
       sir: placementStructure.sir,
@@ -271,7 +269,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
         riskActivity: '',
         riskClass: 0,
         receptionDate: information.receptionDate ? new Date(information.receptionDate) : null,
-        effectiveDate: information.effetiveDate ? new Date(information.effetiveDate) : null,
+        effectiveDate: information.effectiveDate ? new Date(information.effectiveDate) : null,
         expirationDate: information.expirationDate ? new Date(information.expirationDate) : null
       }
 
@@ -282,7 +280,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
         reinsuranceBrokerageP: Number(information.reinsuranceBrokerageTotal) || 0.0,
         taxesP: Number(information.taxesTotal) || 0.0,
         frontingFeeP: Number(information.frontingFeeTotal) || 0.0,
-        netPremium: Number(information.netPremiun) || 0.0,
+        netPremium: Number(information.netPremium) || 0.0,
         exchangeRate: Number(information.exchangeRate) || 0.0,
         limit: Number(information.limit) || 0.0,
         grossPremium: Number(information.grossPremium) || 0.0,
@@ -376,26 +374,6 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [idAccount])
-
-  useEffect(() => {
-    const handleExit = () => {
-      localStorage.removeItem('idAccount')
-      dispatch(updateFormsData({ form1: { ...lastForm1Information, id: null } }))
-    }
-
-    const handleRouteChange = (url: string) => {
-      if (url !== '/accounts/new-account') {
-        handleExit()
-      }
-    }
-
-    router.events.on('routeChangeStart', handleRouteChange)
-
-    return () => {
-      router.events.off('routeChangeStart', handleRouteChange)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, onIsNewAccountChange, router.events])
 
   return (
     <>

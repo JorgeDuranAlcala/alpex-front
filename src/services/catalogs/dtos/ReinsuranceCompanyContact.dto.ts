@@ -1,13 +1,13 @@
-export interface CedantContactDto {
+export interface ReinsuranceCompanyContactDto {
   id: number
   name: string
   email: string
   phone: string
-  idCCedant: number
+  idCReinsuranceCompany: number
   idCCountry: number
 }
 
-export interface CedantContactsDeleteDto {
+export interface ReinsuranceCompanyContactsDeleteDto {
   idDeleteList: number[]
 }
 
@@ -20,19 +20,19 @@ interface CountryDto {
   active: boolean
 }
 
-export interface CedantContactTableDto {
+export interface ReinsuranceCompanyContactTableDto {
   id: number
   name: string
   email: string
   phone: string
-  idCCedant: number
+  idCReinsuranceCompany: number
   idCCountry: CountryDto
   createdAt: string
   updatedAt: string
   active: boolean
 }
 
-export interface CedantContactsInfoDto {
+export interface ReinsuranceCompanyContactsInfoDto {
   count: number
   page: number
   take: number
@@ -41,7 +41,7 @@ export interface CedantContactsInfoDto {
   prev: string
 }
 
-export type CedantContactFiltersDto = {
+export type ReinsuranceCompanyContactFiltersDto = {
   type: string
   value: string
   subtype?: string
@@ -49,8 +49,8 @@ export type CedantContactFiltersDto = {
   unDeleteable?: boolean
 }
 
-export interface CedantContactsPaginationDto {
-  idCCedant: number
-  filters: CedantContactFiltersDto[]
-  info: CedantContactsInfoDto
+export interface ReinsuranceCompanyContactsPaginationDto {
+  idCReinsuranceCompany: number
+  filters: ReinsuranceCompanyContactFiltersDto[]
+  info: ReinsuranceCompanyContactsInfoDto
 }
