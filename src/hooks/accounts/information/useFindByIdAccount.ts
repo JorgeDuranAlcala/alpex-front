@@ -9,6 +9,17 @@ export const useFindInformationByIdAccount = () => {
   const getInformaByIdAccount = async (idAccount: number): Promise<InformationDto> => {
     try {
       const information = (await InformationService.getInformaById(idAccount)) as InformationDto
+
+      if (information.effectiveDate && information.expirationDate && information.receptionDate) {
+        const effectiveDate = new Date(information.effectiveDate).toLocaleString('en-US', { timeZone: 'UTC' })
+        const expirationDate = new Date(information.expirationDate).toLocaleString('en-US', { timeZone: 'UTC' })
+        const receptionDate = new Date(information.receptionDate).toLocaleString('en-US', { timeZone: 'UTC' })
+
+        information.effectiveDate = new Date(effectiveDate)
+        information.expirationDate = new Date(expirationDate)
+        information.receptionDate = new Date(receptionDate)
+      }
+
       setInformation({
         ...information
       })

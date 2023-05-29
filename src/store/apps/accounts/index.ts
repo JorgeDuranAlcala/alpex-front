@@ -1,4 +1,5 @@
 // ** Redux Imports
+import { setDateFilterQuery } from '@/utils/formatDates'
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 
 // ** Axios Imports
@@ -32,16 +33,17 @@ export const fetchAccounts = createAsyncThunk(
       for (const rawFilter of rawFilters) {
         if (rawFilter.type === 'status') {
           formatedFilters.push({
-            type: rawFilter.type,
-            value: String(rawFilter.text),
-            text: rawFilter.text
+            ...rawFilter,
+            value: String(rawFilter.text)
           })
         } else {
-          formatedFilters.push({
-            type: rawFilter.type,
-            value: rawFilter.value,
-            text: rawFilter.text
-          })
+          if (rawFilter.type === 'effectiveDate') {
+            setDateFilterQuery(rawFilter, formatedFilters, 'effectiveDate')
+          } else if (rawFilter.type === 'expirationDate') {
+            setDateFilterQuery(rawFilter, formatedFilters, 'expirationDate')
+          } else {
+            formatedFilters.push(rawFilter)
+          }
         }
       }
     }
@@ -61,7 +63,7 @@ export const appAccountsSlice = createSlice({
       else {
         state.filters = state.filters.map(item => {
           if (item.type === payload.type) {
-            return { ...item, value: payload.value, text: payload.text }
+            return { ...item, value: payload.value, text: payload.text, subtype: payload.subtype }
           }
 
           return item
