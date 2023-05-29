@@ -113,18 +113,19 @@ const FilterMenuExpirationDate = () => {
   }, [subtype])
 
   const handleClick = () => {
+    let newDateValue = ''
+
+    if (subtype === 'fulldate') {
+      newDateValue = dateTransformNumber(expirationDate)
+    } else if (subtype === 'month') {
+      newDateValue = dateTransformNumber(month)
+    } else {
+      newDateValue = dateTransformNumber(year)
+    }
+
     dispatch(
       handleAccountFilter({
         type: 'expirationDate',
-        value: `${dateTransformNumber(expirationDate)}`,
-
-        // value: `${
-        //   subtype === 'fulldate'
-        //     ? dateTransform(expirationDate)
-        //     : subtype === 'month'
-        //     ? dateTransform(month)
-        //     : dateTransform(year)
-        // }`,
         text: `Expiration: ${
           subtype === 'fulldate'
             ? dateTransform(expirationDate)
@@ -132,6 +133,7 @@ const FilterMenuExpirationDate = () => {
             ? dateTransform(month)
             : dateTransform(year)
         }`,
+        value: newDateValue,
         subtype
       })
     )
