@@ -71,7 +71,7 @@ class AccountServices {
       const { data } = await AppAlpexApiGateWay.put(`${ACCOUNT_INFORMATION_ROUTES.UPDATE}/${idAccount}`, {
         ...information,
         receptionDate: this.parsedDate(information.receptionDate || new Date()),
-        effetiveDate: this.parsedDate(information.effetiveDate || new Date()),
+        effectiveDate: this.parsedDate(information.effectiveDate || new Date()),
         expirationDate: this.parsedDate(information.expirationDate || new Date())
       })
 

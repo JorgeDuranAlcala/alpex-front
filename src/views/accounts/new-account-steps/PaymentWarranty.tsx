@@ -219,7 +219,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
             <Grid container spacing={{ xs: 2, sm: 5, md: 5 }} rowSpacing={4} columns={12}>
               <Grid item xs={12} sm={6} md={4}>
                 <DatePicker
-                  selected={account ? new Date(account?.informations[0]?.effetiveDate + 'T00:00:00') : null}
+                  selected={account ? new Date(account?.informations[0]?.effectiveDate + 'T00:00:00') : null}
                   shouldCloseOnSelect
                   id='reception-date'
                   showTimeSelect
@@ -290,7 +290,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
               onChangeList={handleItemChange}
               globalInfo={{
                 receivedNetPremium: account ? account?.securityTotal?.receivedNetPremium : 0,
-                inceptionDate: account ? new Date(account?.informations[0]?.effetiveDate + 'T00:00:00') : null,
+                inceptionDate: account ? new Date(account?.informations[0]?.effectiveDate + 'T00:00:00') : null,
                 idAccount: account ? idAccount : ''
               }}
               count={+count}

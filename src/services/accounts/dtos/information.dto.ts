@@ -1,7 +1,7 @@
 export interface InformationDto {
   id: number
   insured: string
-  effetiveDate: Date | null
+  effectiveDate: Date | null
   expirationDate: Date | null
   receptionDate: Date | null
   limit: number
@@ -18,7 +18,7 @@ export interface InformationDto {
   step?: number
   currency: string
   exchangeRate: number
-  netPremiun: number
+  netPremium: number
   grossPremium: number
   idAccount: number
   idCountry: number
