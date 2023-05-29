@@ -442,11 +442,11 @@ const Security = ({ onStepChange }: SecurityProps) => {
         BrokerAgePercent: String(security.reinsuranceBrokerage),
         TaxesPercent: String(security.taxes),
         IsGross: security.isGross || false,
-        NetPremium: String(security.netPremiumat100),
+        NetPremium: String(security.netPremiumAt100),
         FrontingFeePercent: String(security.frontingFee),
         DynamicComissionPercent: String(security.dynamicCommission),
         SharePercent: String(security.share),
-        NetInsurancePremium: String(security.netReinsurancepremium),
+        NetInsurancePremium: String(security.netReinsurancePremium),
         ReinsuranceCompany:
           typeof security.idCReinsuranceCompany !== 'number' && security.idCReinsuranceCompany
             ? String(security.idCReinsuranceCompany.id)
@@ -493,12 +493,12 @@ const Security = ({ onStepChange }: SecurityProps) => {
       if (form.id) {
         update.push({
           id: +form!.id,
-          netPremiumat100: +form.NetPremium || 0,
+          netPremiumAt100: +form.NetPremium || 0,
           share: +form.SharePercent || 0,
           frontingFeeActive: form.HasFrontingFee || false,
           dynamicCommission: +form.DynamicComissionPercent || 0,
           frontingFee: +form.FrontingFeePercent || 0,
-          netReinsurancepremium: +form.NetInsurancePremium || 0,
+          netReinsurancePremium: +form.NetInsurancePremium || 0,
           taxes: +form.TaxesPercent || 0,
           reinsuranceBrokerage: +form.BrokerAgePercent || 0,
           active: true,
@@ -513,12 +513,12 @@ const Security = ({ onStepChange }: SecurityProps) => {
         })
       } else {
         save.push({
-          netPremiumat100: +form.NetPremium || 0,
+          netPremiumAt100: +form.NetPremium || 0,
           share: +form.SharePercent || 0,
           frontingFeeActive: form.HasFrontingFee || false,
           dynamicCommission: +form.DynamicComissionPercent || 0,
           frontingFee: +form.FrontingFeePercent || 0,
-          netReinsurancepremium: +form.NetInsurancePremium || 0,
+          netReinsurancePremium: +form.NetInsurancePremium || 0,
           taxes: +form.TaxesPercent || 0,
           reinsuranceBrokerage: +form.BrokerAgePercent || 0,
           active: true,
