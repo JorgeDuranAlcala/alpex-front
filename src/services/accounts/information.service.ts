@@ -85,7 +85,7 @@ class AccountServices {
 
 export default new AccountServices()
 
-const possibleStatuses = ['Pending', 'Declined', 'Not Materialized', 'Not Taken Up', 'Bound']
+const possibleStatuses = ['pending', 'declined', 'bound', 'notMaterialized', 'notTakenUp']
 
 const getRandomStatus = () => {
   const randomIndex = Math.floor(Math.random() * possibleStatuses.length)
