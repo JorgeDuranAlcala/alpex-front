@@ -607,13 +607,19 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               onChange={handleSelectChange}
               labelId='type-of-limit'
             >
-              {typesOfLimits?.map(limit => {
-                return (
-                  <MenuItem key={limit.id} value={limit.id}>
-                    {limit.name}
-                  </MenuItem>
-                )
-              })}
+              {typesOfLimits && typesOfLimits.length > 0 ? (
+                typesOfLimits?.map(limit => {
+                  return (
+                    <MenuItem key={limit.id} value={limit.id}>
+                      {limit.name}
+                    </MenuItem>
+                  )
+                })
+              ) : (
+                <MenuItem key={null} value={''}>
+                  No options available
+                </MenuItem>
+              )}
             </Select>
             {errors.typeOfLimitError && (
               <FormHelperText sx={{ color: 'error.main' }} id='invoice-country-error'>

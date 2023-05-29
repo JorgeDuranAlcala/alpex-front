@@ -127,7 +127,6 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
   isValidForm
 }) => {
   //cargamos la información de los catálogos de base de datos
-  console.log(basicInfo)
   const { countries } = useCountyGetAll()
   const { brokers } = useBrokerGetAll()
   const { cedant } = useCedantGetAll()
@@ -315,14 +314,19 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               onChange={handleSelectChange}
               labelId='invoice-country'
             >
-              {countries.length > 0 &&
+              {countries.length > 0 ? (
                 countries.map(country => {
                   return (
                     <MenuItem key={country.id} value={country.id}>
                       {country.name}
                     </MenuItem>
                   )
-                })}
+                })
+              ) : (
+                <MenuItem key={null} value={''}>
+                  No options available
+                </MenuItem>
+              )}
             </Select>
 
             {errors.countryError && (
@@ -345,14 +349,19 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               onChange={handleSelectChange}
               labelId='broker'
             >
-              {brokers.length > 0 &&
+              {brokers.length > 0 ? (
                 brokers.map(broker => {
                   return (
                     <MenuItem key={broker.id} value={broker.id}>
                       {broker.name}
                     </MenuItem>
                   )
-                })}
+                })
+              ) : (
+                <MenuItem key={null} value={''}>
+                  No options available
+                </MenuItem>
+              )}
             </Select>
             {errors.brokerError && (
               <FormHelperText sx={{ color: 'error.main' }} id='broker-error'>
@@ -371,14 +380,19 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               onChange={handleSelectChange}
               labelId='broker-contact'
             >
-              {brokerContacts.length > 0 &&
+              {brokerContacts.length > 0 ? (
                 brokerContacts.map(contact => {
                   return (
                     <MenuItem key={contact.id} value={contact.id}>
                       {contact.name}
                     </MenuItem>
                   )
-                })}
+                })
+              ) : (
+                <MenuItem key={null} value={''}>
+                  No options available
+                </MenuItem>
+              )}
             </Select>
           </FormControl>
           <ModalContact
@@ -400,14 +414,19 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               onChange={handleSelectChange}
               labelId='cedant'
             >
-              {cedant.length > 0 &&
+              {cedant.length > 0 ? (
                 cedant.map(cedant => {
                   return (
                     <MenuItem key={cedant.id} value={cedant.id}>
                       {cedant.name}
                     </MenuItem>
                   )
-                })}
+                })
+              ) : (
+                <MenuItem key={null} value={''}>
+                  No options available
+                </MenuItem>
+              )}
             </Select>
 
             {errors.cedantError && (
@@ -427,14 +446,19 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               defaultValue=''
               labelId='cedant-contact'
             >
-              {cedantContacts.length > 0 &&
+              {cedantContacts.length > 0 ? (
                 cedantContacts.map(contact => {
                   return (
                     <MenuItem key={contact.id} value={contact.id}>
                       {contact.name}
                     </MenuItem>
                   )
-                })}
+                })
+              ) : (
+                <MenuItem key={null} value={''}>
+                  No options available
+                </MenuItem>
+              )}
             </Select>
           </FormControl>
           <ModalContact
@@ -456,14 +480,19 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               onChange={handleSelectChange}
               labelId='business'
             >
-              {lineOfBussines.length > 0 &&
+              {lineOfBussines.length > 0 ? (
                 lineOfBussines.map(lineOfBussine => {
                   return (
                     <MenuItem key={lineOfBussine.id} value={lineOfBussine.id}>
                       {lineOfBussine.lineOfBussines}
                     </MenuItem>
                   )
-                })}
+                })
+              ) : (
+                <MenuItem key={null} value={''}>
+                  No options available
+                </MenuItem>
+              )}
             </Select>
             {errors.lineOfBusinessError && (
               <FormHelperText sx={{ color: 'error.main' }} id='industryCode-error'>
@@ -480,14 +509,19 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               onChange={handleSelectChange}
               labelId='industryCode'
             >
-              {riskActivities.length > 0 &&
+              {riskActivities.length > 0 ? (
                 riskActivities.map(riskActivities => {
                   return (
                     <MenuItem key={riskActivities.id} value={riskActivities.id}>
                       {riskActivities.industryCode} / {riskActivities.riskActivity}
                     </MenuItem>
                   )
-                })}
+                })
+              ) : (
+                <MenuItem key={null} value={''}>
+                  No options available
+                </MenuItem>
+              )}
             </Select>
             {errors.industryCodeError && (
               <FormHelperText sx={{ color: 'error.main' }} id='business-error'>
@@ -537,7 +571,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               showDisabledMonthNavigation
               timeFormat='HH:mm'
               timeIntervals={15}
-              dateFormat='MM/dd/yyyy h:mm aa'
+              dateFormat='dd/MM/yyyy h:mm aa'
             />
             {errors.receptionDateError && (
               <FormHelperText
@@ -565,7 +599,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               showDisabledMonthNavigation
               timeFormat='HH:mm'
               timeIntervals={15}
-              dateFormat='MM/dd/yyyy h:mm aa'
+              dateFormat='dd/MM/yyyy h:mm aa'
             />
             {errors.effectiveDateError && (
               <FormHelperText
@@ -593,7 +627,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               showDisabledMonthNavigation
               timeFormat='HH:mm'
               timeIntervals={15}
-              dateFormat='MM/dd/yyyy h:mm aa'
+              dateFormat='dd/MM/yyyy h:mm aa'
             />
             {errors.expirationDateError && (
               <FormHelperText
@@ -622,14 +656,19 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               onChange={handleSelectChange}
               labelId='underwriter'
             >
-              {underwriters.length > 0 &&
+              {underwriters.length > 0 ? (
                 underwriters.map(underwriter => {
                   return (
                     <MenuItem key={underwriter.id} value={underwriter.id}>
                       {underwriter.name}
                     </MenuItem>
                   )
-                })}
+                })
+              ) : (
+                <MenuItem key={null} value={''}>
+                  No options available
+                </MenuItem>
+              )}
             </Select>
             {errors.underwriterError && (
               <FormHelperText sx={{ color: 'error.main' }} id='expirationDate-error'>
@@ -647,14 +686,19 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               onChange={handleSelectChange}
               labelId='lead-underwriter'
             >
-              {leadUnderwriters.length > 0 &&
+              {leadUnderwriters.length > 0 ? (
                 leadUnderwriters.map(leadUnderwriter => {
                   return (
                     <MenuItem key={leadUnderwriter.id} value={leadUnderwriter.id}>
                       {leadUnderwriter.name}
                     </MenuItem>
                   )
-                })}
+                })
+              ) : (
+                <MenuItem key={null} value={''}>
+                  No options available
+                </MenuItem>
+              )}
             </Select>
             {errors.leadUnderwriterError && (
               <FormHelperText sx={{ color: 'error.main' }} id='expirationDate-error'>
@@ -673,14 +717,19 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               onChange={handleSelectChange}
               labelId='assistant'
             >
-              {technicalAssistants.length > 0 &&
+              {technicalAssistants.length > 0 ? (
                 technicalAssistants.map(technicalAssistant => {
                   return (
                     <MenuItem key={technicalAssistant.id} value={technicalAssistant.id}>
                       {technicalAssistant.name}
                     </MenuItem>
                   )
-                })}
+                })
+              ) : (
+                <MenuItem key={null} value={''}>
+                  No options available
+                </MenuItem>
+              )}
             </Select>
             {errors.technicalAssistantError && (
               <FormHelperText sx={{ color: 'error.main' }} id='expirationDate-error'>

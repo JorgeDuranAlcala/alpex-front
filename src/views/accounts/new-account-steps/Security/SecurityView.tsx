@@ -428,7 +428,6 @@ const Security = ({ onStepChange }: SecurityProps) => {
     const idAccountCache = Number(localStorage.getItem('idAccount'))
     const accountInfo = await getAccountById(idAccountCache)
     if (accountInfo?.securities.length <= 0 && !accountInfo.securityTotal) {
-      debugger
       setSecuritiesList([{ ...SecurityForm, NetPremium: '' + accountInfo.informations[0].netPremium }])
       setFormErrors([{ ...SecurityForm }])
 
