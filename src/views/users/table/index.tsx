@@ -243,7 +243,7 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
             }}
           >
             <Link sx={{ color: colors.text.primary }} href='#'>
-              <StyledChip color='primary' sx={{}} label={row.idCompany.alias || 'W/ company'} />
+              <StyledChip color='primary' sx={{}} label={row.idCompany?.alias || 'W/ company'} />
             </Link>
           </Typography>
         </Box>
