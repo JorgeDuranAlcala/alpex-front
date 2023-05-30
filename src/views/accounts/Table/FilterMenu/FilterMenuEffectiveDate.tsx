@@ -113,6 +113,16 @@ const FilterMenuEffectiveDate = () => {
   }, [subtype])
 
   const handleClick = () => {
+    let newDateValue = ''
+
+    if (subtype === 'fulldate') {
+      newDateValue = dateTransformNumber(effectiveDate)
+    } else if (subtype === 'month') {
+      newDateValue = dateTransformNumber(month)
+    } else {
+      newDateValue = dateTransformNumber(year)
+    }
+
     dispatch(
       handleAccountFilter({
         type: 'effectiveDate',
@@ -123,15 +133,7 @@ const FilterMenuEffectiveDate = () => {
             ? dateTransform(month)
             : dateTransform(year)
         }`,
-        value: `${dateTransformNumber(effectiveDate)}`,
-
-        // value: `${
-        //   subtype === 'fulldate'
-        //     ? dateTransform(effectiveDate)
-        //     : subtype === 'month'
-        //     ? dateTransform(month)
-        //     : dateTransform(year)
-        // }`,
+        value: newDateValue,
         subtype
       })
     )
