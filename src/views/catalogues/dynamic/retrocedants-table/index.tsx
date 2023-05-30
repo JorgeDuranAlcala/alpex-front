@@ -8,16 +8,18 @@ import { useRouter } from 'next/router'
 import CloseIcon from '@mui/icons-material/Close'
 import { Box, Button, Modal, Typography } from '@mui/material'
 import IconButton from '@mui/material/IconButton'
-import { DataGrid, GRID_CHECKBOX_SELECTION_COL_DEF, GridColumns, GridRowId } from '@mui/x-data-grid'
+import { DataGrid, GridColumns, GRID_CHECKBOX_SELECTION_COL_DEF } from '@mui/x-data-grid'
 import { ButtonClose, HeaderTitleModal } from 'src/styles/modal/modal.styled'
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
 
 // ** Custom Hooks imports
+import { useDeleteRetroCedant } from '@/hooks/catalogs/retroCedant/useDelete'
+import useGetAllPagination from '@/hooks/catalogs/retroCedant/useGetAllPagination'
 
 // ** Custom Components Imports
-import CustomPagination from '../CustomPagination'
+import CustomPagination from '../CustomPaginationImpl'
 import TableHeader from '../TableHeader'
 
 // ** Custom utilities
@@ -29,10 +31,9 @@ export interface ICedant {
   name: string
 }
 
-
 const RetroCedantsTable = () => {
   // ** State
-  const [selectedRows, setSelectedRows] = useState<GridRowId[]>([])
+  const [selectedRows, setSelectedRows] = useState<any[]>([])
   const [retroCedantList, setRetroCedantList] = useState<ICedant[]>([])
 
   const [openDelete, setOpenDelete] = useState(false)
@@ -41,12 +42,15 @@ const RetroCedantsTable = () => {
 
   const router = useRouter()
 
-  // const [badgeData] = useState<IAlert>({
-  //   message: '',
-  //   status: undefined,
-  //   icon: undefined
-  // })
-
+  //hooks
+  const {
+    retroCedantPagination,
+    setRetroCedantPagination,
+    retroCedants,
+    getRetroCedantsPagination,
+    retroCedantInfoPage
+  } = useGetAllPagination()
+  const { deleteRetroCedant } = useDeleteRetroCedant()
 
   const column: GridColumns<ICedant> = [
     {
@@ -63,7 +67,7 @@ const RetroCedantsTable = () => {
       disableColumnMenu: true,
       sortable: false,
       headerClassName: 'catalogue-column-header',
-      renderHeader: ({ }) => (
+      renderHeader: ({}) => (
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative' }}>
           <Typography
             component={'span'}
@@ -71,8 +75,8 @@ const RetroCedantsTable = () => {
           >
             RETRO CEDANT NAME
           </Typography>
-
-        </Box>),
+        </Box>
+      ),
       renderCell: ({ row }) => (
         <Typography sx={{ color: colors.text.secondary, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
           {row.name}
@@ -88,7 +92,7 @@ const RetroCedantsTable = () => {
       align: 'right',
       disableColumnMenu: true,
       cellClassName: 'catalogue-column-cell-pl-0',
-      renderHeader: ({ }) => (
+      renderHeader: ({}) => (
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative' }}>
           <Typography
             component={'span'}
@@ -96,11 +100,11 @@ const RetroCedantsTable = () => {
           >
             ACTIONS
           </Typography>
-
-        </Box>),
+        </Box>
+      ),
 
       renderCell: ({ row }) => (
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
           <IconButton size='small' sx={{ mr: 1 }}>
             <Icon icon='ic:baseline-login' />
           </IconButton>
@@ -118,30 +122,41 @@ const RetroCedantsTable = () => {
     }
   ]
 
-  const getRetroCedantList = () => { //must be replaced with the respective broker service
-    const data: ICedant[] = []
+  useEffect(() => {
+    setRetroCedantPagination({ ...retroCedantPagination })
+    //eslint-disable-next-line
+  }, [])
 
-    for (let index = 1; index <= 100; index++) {
-      const id = index
-      const name = `Retro
-      Cedant ${index}`
+  useEffect(() => {
+    setRetroCedantList(retroCedants || [])
+  }, [retroCedants])
 
-      data.push({
-        id,
-        name
+  const searchRetroCedant = (value: string) => {
+    //must be replaced with the respective broker service
+    if (value === '') {
+      setRetroCedantPagination({
+        ...retroCedantPagination,
+        filters: [],
+        info: { ...retroCedantPagination.info, page: 1 }
+      })
+    } else {
+      setRetroCedantPagination({
+        ...retroCedantPagination,
+        filters: [{ type: 'name', value: value, text: value }],
+        info: { ...retroCedantPagination.info, page: 1 }
       })
     }
-
-    return data
   }
 
-  const searchRetroCedant = (value: string) => { //must be replaced with the respective broker service
-    console.log("Call search service", value)
-  }
-
-  const deleteRows = () => { //must be replaced with the respective broker service
-    console.log('Call to delete rows service', selectedRows)
-    setOpenDelete(false)
+  const deleteRows = async () => {
+    //must be replaced with the respective broker service
+    const result = await deleteRetroCedant({ idDeleteList: selectedRows })
+    if (result) {
+      //it needs an alert o message
+      console.log('success')
+      getRetroCedantsPagination({ ...retroCedantPagination })
+    }
+    setOpenDeleteRows(false)
   }
 
   const openDeleteModal = (id: number) => {
@@ -149,29 +164,36 @@ const RetroCedantsTable = () => {
     setOpenDelete(true)
   }
 
-  const deleteSingleCedant = () => {  //must be replaced with the respective broker service
-    const newBrokerList = retroCedantList.filter(retrocedant => retrocedant.id !== retroCedantToDelete)
-    setRetroCedantList(newBrokerList)
+  const deleteSingleCedant = async () => {
+    const result = await deleteRetroCedant({ idDeleteList: [retroCedantToDelete] })
+    if (result) {
+      //it needs an alert o message
+      console.log('success')
+      getRetroCedantsPagination({ ...retroCedantPagination })
+    }
     setOpenDelete(false)
   }
 
-  useEffect(() => {
-    setRetroCedantList(getRetroCedantList)
-    //eslint-disable-next-line
-  }, [])
-
+  const handleDispatch = (e: any, value: number) => {
+    setRetroCedantPagination({
+      ...retroCedantPagination,
+      info: { ...retroCedantPagination.info, page: value }
+    })
+  }
 
   return (
     <>
       <div className='outter-wrapper'>
-      <TableHeader
-            onDeleteRows={() => { setOpenDeleteRows(true) }}
-            deleteBtn={selectedRows.length > 0 ? true : false}
-            onSearch={searchRetroCedant}
-            textBtn="ADD NEW CEDANT"
-            onClickBtn={() => router.push('/catalogues/dynamic/add-retrocedants')} />
-      <div className='cedant-list'>
-
+        <TableHeader
+          onDeleteRows={() => {
+            setOpenDeleteRows(true)
+          }}
+          deleteBtn={selectedRows.length > 0 ? true : false}
+          onSearch={searchRetroCedant}
+          textBtn='ADD NEW CEDANT'
+          onClickBtn={() => router.push('/catalogues/dynamic/add-retrocedants')}
+        />
+        <div className='cedant-list'>
           <DataGrid
             autoHeight
             checkboxSelection
@@ -183,11 +205,13 @@ const RetroCedantsTable = () => {
             components={{
               Pagination: CustomPagination
             }}
+            componentsProps={{
+              pagination: { handleDispatch, infoPage: { ...retroCedantInfoPage } }
+            }}
             className={'catalogue-datagrid'}
             onSelectionModelChange={rows => setSelectedRows(rows)}
           />
         </div>
-
       </div>
 
       <Modal
@@ -232,7 +256,9 @@ const RetroCedantsTable = () => {
       >
         <Box className='modal-wrapper'>
           <HeaderTitleModal>
-            <Typography variant='h6' sx={{ maxWidth: "450px" }}>Are you sure you want to delete the selected retro cedants?</Typography>
+            <Typography variant='h6' sx={{ maxWidth: '450px' }}>
+              Are you sure you want to delete the selected retro cedants?
+            </Typography>
             <ButtonClose
               onClick={() => {
                 setOpenDeleteRows(false)
@@ -255,7 +281,6 @@ const RetroCedantsTable = () => {
           </Button>
         </Box>
       </Modal>
-
     </>
   )
 }

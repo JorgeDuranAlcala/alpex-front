@@ -9,6 +9,7 @@ import { Box, Button, FormControl, Modal, TextField, Typography } from '@mui/mat
 import Icon from 'src/@core/components/icon'
 
 // ** Custom Imports
+import { useAddCedant } from '@/hooks/catalogs/cedant'
 import { ButtonClose, HeaderTitleModal } from 'src/styles/modal/modal.styled'
 import { ICedant } from '../cedants-table'
 
@@ -28,6 +29,17 @@ const AddCedant = () => {
   const [alertType, setAlertType] = useState('')
   const [alertText, setAlertText] = useState('')
   const [alertIcon, setAlertIcon] = useState('')
+  const [nameDisabled, setNameDisabled] = useState(false)
+
+  //temp
+  const [idCedant, setIdCedant] = useState(0)
+  console.log(idCedant)
+
+  //hooks
+  const { saveCedant } = useAddCedant()
+
+  //const { deleteCedant: deleteCedants } = useDeleteCedant()
+  //const { update } = useUpdateById()
 
   // const { saveCedant } = useAddCedant()
   // const { deleteCedant: deleteCedants } = useDeleteCedant()
@@ -66,35 +78,37 @@ const AddCedant = () => {
   const addCedant = async () => {
     // const result = await saveCedant({ name: newCedant.name })
     // if (result) {
-      // setNewCedant({ id: result.id, name: result.name })
+    // setNewCedant({ id: result.id, name: result.name })
+    console.log('addCedant')
+    const result = await saveCedant({ name: newCedant.name })
+    if (result) {
+      setNewCedant({ id: result.id, name: result.name })
       triggerAlert('success')
-
-      // dispatch(fetchCedants(cedantReducer))
+      setIdCedant(result.id)
+      setNameDisabled(true)
       setIsCedantSaved(true)
-
-    // }
+    }
   }
 
   const editCedant = async () => {
     // const result = await update(newCedant.id, newCedant)
     // if (result) {
-      // setNewCedant({ id: result.id, name: result.name })
-      // dispatch(fetchCedants(cedantReducer))
+    // setNewCedant({ id: result.id, name: result.name })
+    // dispatch(fetchCedants(cedantReducer))
 
-      setIsCedantSaved(true)
-      triggerAlert('success')
+    setIsCedantSaved(true)
+    triggerAlert('success')
 
     // } else {
-      // triggerAlert('error')
-    }
-
+    // triggerAlert('error')
+  }
 
   const deleteCedant = async () => {
     // const result = await deleteCedants({ idDeleteList: [newCedant.id] })
     // if (result) {
-      triggerAlert('success')
+    triggerAlert('success')
 
-      // dispatch(fetchCedants(cedantReducer))
+    // dispatch(fetchCedants(cedantReducer))
     // }
     setOpenDelete(false)
   }
@@ -139,6 +153,7 @@ const AddCedant = () => {
               label='Cedant Name'
               value={newCedant.name}
               onChange={e => setNewCedant({ ...newCedant, ['name']: e.target.value })}
+              disabled={nameDisabled}
             />
           </FormControl>
           {isCedantSaved ? (
