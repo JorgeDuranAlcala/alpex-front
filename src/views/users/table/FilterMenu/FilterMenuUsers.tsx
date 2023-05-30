@@ -1,4 +1,5 @@
 // ** MUI Imports
+import { useGetAllRoles } from '@/hooks/catalogs/roles/getAllRoles'
 import Box from '@mui/material/Box'
 import ListItemText from '@mui/material/ListItemText'
 import MenuItem from '@mui/material/MenuItem'
@@ -12,35 +13,15 @@ import { handleUsersFilter } from 'src/store/apps/users'
 import colors from 'src/views/accounts/colors'
 import fonts from 'src/views/accounts/font'
 
-interface IOption {
-  label: string
-  value: number
+interface IOptionRol {
+  id: number
+  role: string
+  level: string
+  description: string
 }
 
-const roles = [
-  {
-    label: 'Admin',
-    value: 5
-  },
-  {
-    label: 'Lead underwriter',
-    value: 1
-  },
-  {
-    label: 'Client',
-    value: 6
-  },
-  {
-    label: 'Technical assistant',
-    value: 2
-  },
-  {
-    label: 'Underwriter',
-    value: 3
-  }
-]
 interface IFilterMenuUsersOptionProps {
-  rol: IOption
+  rol: IOptionRol
 }
 
 const FilterMenuUsersOption: React.FC<IFilterMenuUsersOptionProps> = ({ rol }) => {
@@ -49,8 +30,8 @@ const FilterMenuUsersOption: React.FC<IFilterMenuUsersOptionProps> = ({ rol }) =
     dispatch(
       handleUsersFilter({
         type: 'idRole',
-        value: rol.value,
-        text: rol.label
+        value: rol.id,
+        text: rol.role
       })
     )
   }
@@ -67,7 +48,7 @@ const FilterMenuUsersOption: React.FC<IFilterMenuUsersOptionProps> = ({ rol }) =
               textTransform: 'capitalize'
             }}
           >
-            {rol.label}
+            {rol.role}
           </Typography>
         </ListItemText>
       </MenuItem>
@@ -76,6 +57,8 @@ const FilterMenuUsersOption: React.FC<IFilterMenuUsersOptionProps> = ({ rol }) =
 }
 
 const FilterMenuUsers = ({}) => {
+  const { roles } = useGetAllRoles()
+
   return (
     <>
       <Box component={'li'} sx={{ padding: '10px 10px', display: 'block', width: '100%', borderRadius: '0' }}>
@@ -85,8 +68,8 @@ const FilterMenuUsers = ({}) => {
           </Typography>
         </Box>
       </Box>
-      {roles.map(rol => (
-        <FilterMenuUsersOption key={rol.label} rol={rol} />
+      {roles?.map(rol => (
+        <FilterMenuUsersOption key={rol.id} rol={rol} />
       ))}
     </>
   )

@@ -12,20 +12,19 @@ export default function TabPanel(props: TabPanelProps) {
 
   return (
     <>
-    { (value === index) &&
-      <div
-      role='tabpanel'
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      <Box sx={{ p: 0 }}>
-        <Typography>{children}</Typography>
-      </Box>
-    </div>
-  }
+      {value === index && (
+        <div
+          role='tabpanel'
+          hidden={value !== index}
+          id={`simple-tabpanel-${index}`}
+          aria-labelledby={`simple-tab-${index}`}
+          {...other}
+        >
+          <Box sx={{ p: 0 }}>
+            <Typography>{children}</Typography>
+          </Box>
+        </div>
+      )}
     </>
-
   )
 }

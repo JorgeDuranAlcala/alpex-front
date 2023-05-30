@@ -91,7 +91,7 @@ const schema = yup.object().shape({
 })
 
 // const ADMIN_COMPANIES = ['dynamic', 'claims']
-const ADMIN_COMPANIES = ['3', '4']
+const ADMIN_COMPANIES = ['1', '2']
 
 const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
   const {
@@ -140,8 +140,10 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
   const { setUserPut } = useEditUser()
 
   const { company } = useGetAllCompanies()
+  console.log({ company })
 
   const { roles } = useGetAllRoles()
+  console.log({ roles })
 
   const onSubmit = (data: any) => {
     if (selectUser) {
