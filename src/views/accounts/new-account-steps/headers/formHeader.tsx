@@ -130,7 +130,7 @@ const FormHeader = () => {
 
   return (
     <div className='form-header-grid'>
-      <Card>
+      <Card className='info-header'>
         <div className='form-header-data'>
           <div className='form-header'>
             <div className='form-header-section'>
@@ -164,6 +164,9 @@ const FormHeader = () => {
       </Card>
       <div className={'actions-header'}>
         <ActionsHeader accountStatus='PENDING' sideHeader={true} />
+      </div>
+      <div className={'actions-header-mobile'}>
+        <ActionsHeader accountStatus='PENDING' sideHeader={false}  />
       </div>
     </div>
   )
