@@ -795,7 +795,7 @@
   }
 }
 
-@media (max-width: 500px){
+@media (max-width: 450px){
   .react-datepicker-popper {
     max-width: 85vw !important  ;
   }
@@ -808,4 +808,8 @@
     width: 95% !important;
     margin: 0 auto 10px !important;
   }
+
+  .react-datepicker__month-container {
+    margin: auto !important;
+}
 }
