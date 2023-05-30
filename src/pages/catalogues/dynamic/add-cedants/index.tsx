@@ -1,7 +1,7 @@
-// ** MUI Imports
-import AddCedantView from '@/views/catalogues/dynamic/add-cedant/AddCedantsView'
-
 // ** Context
+
+// ** Custom Components Imports
+import AddCedantView from 'src/views/catalogues/dynamic/add-cedant/AddCedantsView'
 
 const AddCedant = () => {
   return (

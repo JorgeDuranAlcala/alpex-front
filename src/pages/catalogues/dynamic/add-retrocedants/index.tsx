@@ -7,7 +7,7 @@ import Grid from '@mui/material/Grid'
 // import { AccountsTableContextProvider } from 'src/context/accounts/Table/reducer'
 
 // ** Custom Components Imports
-import AddRetroCedant from 'src/views/catalogues/dynamic/add-retrocedant/AddRetroCedant'
+import RetroCedantData from 'src/views/catalogues/dynamic/add-retrocedant/RetroCedantData'
 import RetroCedantContacts from 'src/views/catalogues/dynamic/add-retrocedant/RetroCedantContacts'
 
 const AddRetroCedantView = () => {
@@ -16,7 +16,7 @@ const AddRetroCedantView = () => {
 
     <Grid item xs={12}>
       <Card sx={{marginBottom: '15px'}}>
-        <AddRetroCedant />
+        <RetroCedantData />
       </Card>
       <Card>
        <RetroCedantContacts />

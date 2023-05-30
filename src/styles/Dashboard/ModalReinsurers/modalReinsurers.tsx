@@ -4,14 +4,14 @@ const HeaderTitleModal = styled('div')({
   display: 'flex',
   flexDirection: 'row',
   alignItems: 'center',
-  paddingTop: '20px',
+  paddingTop: '0px',
   paddingRight: '0px',
   gap: '10px',
   width: '100%',
-  height: '56px',
   justifyContent: 'space-between',
   marginBottom: '26px'
 })
+
 
 const Container = styled('div')({
   display: 'flex',
