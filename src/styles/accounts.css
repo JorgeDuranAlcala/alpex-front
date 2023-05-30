@@ -52,7 +52,7 @@
 /* - New accoun styles ----------------------------------------------------------------------------------------------  */
 
 .new-account .MuiCard-root {
-  margin: 20px 0;
+  margin: 0px 0 20px;
 }
 
 /*---- Header----*/
@@ -61,7 +61,7 @@
   width: fit-content;
   height: 100%;
   margin: 0px;
-
+  overflow: inherit;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -154,6 +154,7 @@
   padding: 15px 0;
   border-radius: 15px;
   box-shadow: 0px 4px 6px 1px rgba(0, 0, 0, 0.2);
+  z-index: 10;
 }
 
 .print-options .title {
@@ -587,10 +588,12 @@
 
 .actions-header {
   width: 100%;
-  padding: 20px 0;
+  padding: 0;
   height: 100%;
 }
-
+.actions-header-mobile{
+  display: none;
+}
 .form-header-section:first-child {
   grid-column: span 2;
   display: grid;
@@ -710,8 +713,8 @@
   grid-row-gap: 0px;
   align-items: center;
   min-height: 80px;
-  padding-top: 80px;
   padding-bottom: 0px;
+  margin-bottom: 20px;
 }
 
 .form-header-grid:first-child {
@@ -729,6 +732,8 @@
   align-self: stretch;
   flex-grow: 0;
 }
+
+
 .react-datepicker > .react-datepicker__navigation.react-datepicker__navigation--next--with-time {
   right: 127px;
   display: none;
@@ -771,4 +776,36 @@
 .react-datepicker .react-datepicker__header__dropdown .react-datepicker__year-read-view--down-arrow {
   top: 20px;
   border-color: rgba(76, 78, 100, 0.38);
+}
+
+
+@media (max-width: 1320px) {
+  .info-header {
+    display: none;
+  }
+  .actions-header{
+    display: none;
+  }
+
+  .actions-header-mobile{
+    display: block;
+  }
+  .form-header-grid {
+    grid-template-columns: unset;
+  }
+}
+
+@media (max-width: 500px){
+  .react-datepicker-popper {
+    max-width: 85vw !important  ;
+  }
+
+  .react-datepicker{
+    display: flex !important;
+    flex-wrap: wrap !important;
+  }
+  .react-datepicker:not(.react-datepicker--time-only) .react-datepicker__time-container {
+    width: 95% !important;
+    margin: 0 auto 10px !important;
+  }
 }
