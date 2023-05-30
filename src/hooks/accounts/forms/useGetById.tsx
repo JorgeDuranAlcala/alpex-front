@@ -11,6 +11,7 @@ interface Response {
   informations: InformationDto[]
   securities: SecurityDto[]
   securityTotal: SecurityTotalDto
+  installments: any
 }
 
 export const useGetAccountById = () => {

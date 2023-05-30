@@ -100,6 +100,19 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
     setCount(String(value))
   }
 
+  useEffect(() => {
+    if (account) {
+      setCount(String(account.installments.length))
+
+      //change settlementDueDate
+      setTimeout(() => {
+        account.installments.forEach((item: any) => {
+          item.settlementDueDate = new Date(item.settlementDueDate + 'T00:00:00.678Z')
+        })
+        setInstallmentList([...account.installments])
+      }, 50)
+    }
+  }, [account])
   const handleBlur = (event: FocusEvent<HTMLInputElement>) => {
     if (event.target.value === '') {
       setError({
@@ -203,6 +216,22 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
       })
       setBtnNext(true)
     }
+
+    //Change the paymentPercentage of each installment when the count changes to be equal to 100/count
+    const paymentPercentage = 100 / +count
+    const defaultObject = {
+      balanceDue: 0,
+      paymentPercentage: paymentPercentage,
+      premiumPaymentWarranty: 0,
+      settlementDueDate: account ? new Date(account?.informations[0]?.effectiveDate || '') : new Date(),
+      idAccount: account ? idAccount : '',
+      id: 0
+    }
+    for (let i = 0; i < +count; i++) {
+      installmentsList[i] = { ...defaultObject }
+    }
+    setInstallmentList(installmentsList)
+
     //eslint-disable-next-line react-hooks/exhaustive-deps
   }, [count])
 
@@ -219,7 +248,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
             <Grid container spacing={{ xs: 2, sm: 5, md: 5 }} rowSpacing={4} columns={12}>
               <Grid item xs={12} sm={6} md={4}>
                 <DatePicker
-                  selected={account ? new Date(account?.informations[0]?.effectiveDate + 'T00:00:00') : null}
+                  selected={account ? new Date(account?.informations[0]?.effectiveDate + '') : null}
                   shouldCloseOnSelect
                   id='reception-date'
                   showTimeSelect
@@ -287,10 +316,11 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
                   settlementDueDate: undefined
                 }
               }
+              daysFirst={installmentsList[0]?.premiumPaymentWarranty || 0}
               onChangeList={handleItemChange}
               globalInfo={{
                 receivedNetPremium: account ? account?.securityTotal?.receivedNetPremium : 0,
-                inceptionDate: account ? new Date(account?.informations[0]?.effectiveDate + 'T00:00:00') : null,
+                inceptionDate: account ? new Date(account?.informations[0]?.effectiveDate || '') : null,
                 idAccount: account ? idAccount : ''
               }}
               count={+count}
