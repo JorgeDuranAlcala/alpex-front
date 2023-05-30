@@ -1,6 +1,6 @@
 import { useGetAccountById } from '@/hooks/accounts/forms'
 import { useUpdateAccountsStatus } from '@/hooks/accounts/status'
-import { useAddSublimits, useUpdateSublimits } from '@/hooks/accounts/sublimit'
+import { useAddSublimits, useFindSublimitsByAccountId, useUpdateSublimits } from '@/hooks/accounts/sublimit'
 import GenericCard from '@/layouts/components/SublimitsCards/GenericCard'
 import { useAppSelector } from '@/store'
 import CustomAlert, { IAlert } from '@/views/custom/alerts'
@@ -231,6 +231,7 @@ const Sublimits = () => {
 
   // ** Custom hooks
   const { updateAccountsStatus } = useUpdateAccountsStatus()
+  const { sublimits } = useFindSublimitsByAccountId(accountData.formsData.form1?.id || null)
 
   useEffect(() => {
     if (accountData.formsData.form1?.id) {
@@ -238,6 +239,10 @@ const Sublimits = () => {
       setFormInformationData(accountData.formsData.form1)
     }
   }, [accountData, setAccountId])
+
+  useEffect(() => {
+    console.log(sublimits)
+  }, [sublimits])
 
   const [formsCheck] = useState<RenderFormGeneric[]>([])
 
