@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react'
 import CloseIcon from '@mui/icons-material/Close'
 import { Box, Button, FormControl, IconButton, InputLabel, MenuItem, Modal, TextField, Typography } from '@mui/material'
 import Select from '@mui/material/Select'
-import { DataGrid, GRID_CHECKBOX_SELECTION_COL_DEF, GridColumns, GridRowId } from '@mui/x-data-grid'
+import { DataGrid, GridColumns, GRID_CHECKBOX_SELECTION_COL_DEF } from '@mui/x-data-grid'
 
 import FormHelperText from '@mui/material/FormHelperText'
 
@@ -16,10 +16,15 @@ import { ButtonClose, HeaderTitleModal } from 'src/styles/modal/modal.styled'
 import Icon from 'src/@core/components/icon'
 
 // ** Custom Components Imports
-import CustomPagination from '../CustomPagination'
+import CustomPagination from '../CustomPaginationImpl'
 import TableHeader from '../TableHeader'
 
 // ** Custom utilities
+import { useAddCedantContact } from '@/hooks/catalogs/cedant-contact'
+import { useDeleteCedantContact } from '@/hooks/catalogs/cedant-contact/useDelete'
+import useGetAllByIdCedantAndPagination from '@/hooks/catalogs/cedant-contact/useGetAllByIdCedantAndPagination'
+import { useUpdateById } from '@/hooks/catalogs/cedant-contact/useUpdateById'
+import { useGetAllCountries } from '@/hooks/catalogs/country'
 import colors from 'src/views/accounts/colors'
 import fonts from 'src/views/accounts/font'
 
@@ -28,7 +33,14 @@ export interface IContact {
   name: string
   phone: string
   email: string
-  country: string
+  idCCountry: ICountry
+  idCCedant: number
+}
+
+export interface ICountry {
+  id: number
+  name?: string
+  currency?: string
 }
 
 const initialNewContact: IContact = {
@@ -36,7 +48,8 @@ const initialNewContact: IContact = {
   name: '',
   email: '',
   phone: '',
-  country: ''
+  idCCountry: { id: 0 },
+  idCCedant: 0
 }
 
 const expresions = {
@@ -46,19 +59,23 @@ const expresions = {
   phone: /^\d{10}$/ // 7 a 10 numeros.
 }
 
-const CedantContacts = () => {
-  // ** State
+interface ICedantContacts {
+  idCedant: number
+}
+
+const CedantContacts = ({ idCedant }: ICedantContacts) => {
+  console.log(idCedant)
 
   // Handle Data
   const [contactList, setContactList] = useState<IContact[]>([])
   const [contactData, setContactData] = useState<IContact>(initialNewContact)
-  const [currentContact, setCurrentContact] = useState<IContact>(initialNewContact); //saves the row data to be edited
+  const [currentContact, setCurrentContact] = useState<IContact>(initialNewContact) //saves the row data to be edited
   const [contactToDelete, setContactToDelete] = useState(0) //Saves id of contact to be deleted.
-  const [selectedRow, setSelectedRow] = useState<IContact | null>(null); // saves the row wehen user click on actions button
+  const [selectedRow, setSelectedRow] = useState<IContact | null>(null) // saves the row wehen user click on actions button
 
   // Handle view
   const [btnDisable, setBtnDisable] = useState(true)
-  const [selectedRows, setSelectedRows] = useState<GridRowId[]>([])
+  const [selectedRows, setSelectedRows] = useState<any>([])
   const [btnEditDisable, setBtnEditDisable] = useState(true)
 
   // Handle new contact validations
@@ -80,10 +97,10 @@ const CedantContacts = () => {
   const [emptyEditForm, setEmptyEditForm] = useState(true)
 
   // Handle Alerts
-  const [showAlert, setShowAlert] = useState(true);
-  const [alertType, setAlertType] = useState('');
-  const [alertText, setAlertText] = useState('');
-  const [alertIcon, setAlertIcon] = useState('');
+  const [showAlert, setShowAlert] = useState(true)
+  const [alertType, setAlertType] = useState('')
+  const [alertText, setAlertText] = useState('')
+  const [alertIcon, setAlertIcon] = useState('')
 
   // Handle modals
   const [openNewContact, setOpenNewContact] = useState(false)
@@ -91,34 +108,54 @@ const CedantContacts = () => {
   const [openDelete, setOpenDelete] = useState(false)
   const [openDeleteRows, setOpenDeleteRows] = useState(false)
 
-  const triggerAlert = (type: string) => {
+  //hooks
+  const { deleteCedantContact } = useDeleteCedantContact()
+  const { saveCedantContact } = useAddCedantContact()
+  const { countries } = useGetAllCountries()
+  const { update } = useUpdateById()
+  const {
+    cedantContactsPagination,
+    cedantContacts,
+    setCedantContactsPagination,
+    getCedantContactsByIdCedant,
+    cedantContactInfoPage
+  } = useGetAllByIdCedantAndPagination()
+
+  useEffect(() => {
+    setCedantContactsPagination({ ...cedantContactsPagination, idCCedant: idCedant })
+    //eslint-disable-next-line
+  }, [idCedant])
+
+  useEffect(() => {
+    setContactList(cedantContacts || [])
+  }, [cedantContacts])
+
+  const triggerAlert = (type: string, text?: string) => {
     setAlertType(type)
 
     switch (type) {
       case 'success':
-        setAlertText('NEW CONTACT ADDED')
+        setAlertText(text || 'NEW CONTACT ADDED')
         setAlertIcon('mdi:check-circle-outline')
-        break;
+        break
       case 'error':
         setAlertText('UNKNOWN ERROR, TRY AGAIN')
         setAlertIcon('mdi:alert-circle-outline')
-        break;
+        break
       case 'warn':
         setAlertText('NO INTERNET CONNECTION')
         setAlertIcon('mdi:alert-outline')
-        break;
+        break
       default:
         break
     }
 
-    setShowAlert(true);
+    setShowAlert(true)
 
     setTimeout(() => {
-      setShowAlert(false);
-    }, 5000);
-
-
-  };
+      setShowAlert(false)
+    }, 5000)
+  }
 
   const column: GridColumns<IContact> = [
     {
@@ -135,7 +172,7 @@ const CedantContacts = () => {
       align: 'left',
       sortable: false,
       headerClassName: ' cedant-contacts-header',
-      renderHeader: () =>
+      renderHeader: () => (
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative' }}>
           <Typography
             component={'span'}
@@ -143,17 +180,15 @@ const CedantContacts = () => {
           >
             CONTACT NAME
           </Typography>
-
-        </Box>,
+        </Box>
+      ),
       renderCell: ({ row }) => (
-        <Typography sx={{ fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
-          {row.name}
-        </Typography>
+        <Typography sx={{ fontSize: fonts.size.px14, fontFamily: fonts.inter }}>{row.name}</Typography>
       )
     },
     {
       flex: 0.1,
-      field: "phone-number",
+      field: 'phone-number',
       headerName: 'PHONE NUMBER',
       minWidth: 150,
       maxWidth: 150,
@@ -170,13 +205,9 @@ const CedantContacts = () => {
           >
             PHONE NUMBER
           </Typography>
-
-        </Box>),
-      renderCell: ({ row }) => (
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          {row.phone}
         </Box>
-      )
+      ),
+      renderCell: ({ row }) => <Box sx={{ display: 'flex', alignItems: 'center' }}>{row.phone}</Box>
     },
     {
       flex: 0.1,
@@ -188,7 +219,7 @@ const CedantContacts = () => {
       disableColumnMenu: true,
       sortable: false,
       headerClassName: 'cedant-contacts-header',
-      renderHeader: () =>
+      renderHeader: () => (
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative' }}>
           <Typography
             component={'span'}
@@ -196,8 +227,8 @@ const CedantContacts = () => {
           >
             EMAIL
           </Typography>
-
-        </Box>,
+        </Box>
+      ),
       renderCell: ({ row }) => (
         <Typography
           sx={{ color: colors.text.primary, fontWeight: 500, fontSize: fonts.size.px14, fontFamily: fonts.inter }}
@@ -216,18 +247,19 @@ const CedantContacts = () => {
       disableColumnMenu: true,
       sortable: false,
       headerClassName: 'cedant-contacts-header',
-      renderHeader: () => <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative' }}>
-        <Typography
-          component={'span'}
-          sx={{ color: colors.text.primary, fontWeight: 500, fontSize: fonts.size.px12, fontFamily: fonts.inter }}
-        >
-          COUNTRY
-        </Typography>
-
-      </Box>,
+      renderHeader: () => (
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative' }}>
+          <Typography
+            component={'span'}
+            sx={{ color: colors.text.primary, fontWeight: 500, fontSize: fonts.size.px12, fontFamily: fonts.inter }}
+          >
+            COUNTRY
+          </Typography>
+        </Box>
+      ),
       renderCell: ({ row }) => (
         <Typography sx={{ color: colors.text.secondary, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
-          {row.country}
+          {row.idCCountry.name}
         </Typography>
       )
     },
@@ -242,67 +274,46 @@ const CedantContacts = () => {
       disableColumnMenu: true,
       sortable: false,
       headerClassName: 'reinsurer-contacts-header',
-      renderHeader: () => <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative' }}>
-
-      </Box>,
+      renderHeader: () => (
+        <Box
+          sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative' }}
+        ></Box>
+      ),
       renderCell: ({ row }) => {
-        const showActions = row === selectedRow;
+        const showActions = row === selectedRow
 
         return (
-          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
             <div className='actions-wrapper'>
               <IconButton
                 onClick={() => {
                   if (showActions) {
-                    setSelectedRow(null);
+                    setSelectedRow(null)
                   } else {
-                    setSelectedRow(row);
+                    setSelectedRow(row)
                   }
-                }
-                }
+                }}
                 size='small'
                 sx={{ mr: 1 }}
               >
                 <Icon icon='mdi:dots-vertical' />
               </IconButton>
-              {showActions &&
+              {showActions && (
                 <div className='actions-menu'>
-
                   <div className='menu-option' onClick={() => handleEditContact(row)}>
                     Edit
                   </div>
                   <div className='menu-option' onClick={() => handleDeleteContact(row.id)}>
                     Delete
                   </div>
-                </div>}
+                </div>
+              )}
             </div>
-
           </Box>
         )
       }
-    },
-
-
-  ]
-
-  const getContactList = () => { //must be replaced with the respective cedant service
-    const data: IContact[] = []
-
-    for (let index = 1; index <= 100; index++) {
-      const id = index
-      const name = `Contact ${index}`
-
-      data.push({
-        id,
-        name,
-        phone: '2221334455',
-        email: 'user@mail.com',
-        country: 'México'
-      })
     }
-
-    return data
-  }
+  ]
 
   const handleChangeModal = (field: keyof IContact, value: IContact[keyof IContact]) => {
     setStartValidations(true)
@@ -315,47 +326,73 @@ const CedantContacts = () => {
   }
 
   const handleDeleteContact = (id: number) => {
-    setContactToDelete(id);
-    setSelectedRow(null);
-    setOpenDelete(true);
+    setContactToDelete(id)
+    setSelectedRow(null)
+    setOpenDelete(true)
   }
 
   const handleEditContact = (row: IContact) => {
     setCurrentContact(row)
-    setSelectedRow(null);
+    setSelectedRow(null)
     setOpenEdit(true)
   }
 
-  const searchContacts = (value: string) => { //must be replaced with the respective cedant service
-    console.log("Call search service", value)
+  const searchContacts = (value: string) => {
+    if (value === '') setCedantContactsPagination({ ...cedantContactsPagination, filters: [] })
+    else
+      setCedantContactsPagination({
+        ...cedantContactsPagination,
+        filters: [{ type: 'name', value: value, text: value }]
+      })
   }
-  const handleCreateContact = () => {
-    console.log('Cal create contact service', contactData)
+
+  const handleCreateContact = async () => {
+    const result = await saveCedantContact({
+      ...contactData,
+      idCCedant: idCedant,
+      idCCountry: contactData.idCCountry.id
+    })
+    if (result) {
+      triggerAlert('success')
+      setContactData(initialNewContact)
+      getCedantContactsByIdCedant(cedantContactsPagination)
+    }
     setOpenNewContact(false)
-
-    triggerAlert("success")
-
-    // triggerAlert("error")
-    // triggerAlert("warn")
+    triggerAlert('success')
   }
 
-  const editContact = () => { //must be replaced with the respective reinsurers service
-    console.log("call method to edit contact", currentContact)
+  const editContact = async () => {
+    const result = await update(currentContact.id, {
+      ...currentContact,
+      idCCedant: idCedant,
+      idCCountry: currentContact.idCCountry.id
+    })
+    if (result) {
+      triggerAlert('success', 'CHANGES SAVED')
+      getCedantContactsByIdCedant(cedantContactsPagination)
+    }
     setOpenEdit(false)
   }
 
-  const deleteContact = () => {  //must be replaced with the respective reinsurers service
-    const newContactList = contactList.filter(contact => contact.id !== contactToDelete)
-    setContactList(newContactList)
+  const deleteContact = async () => {
+    const result = await deleteCedantContact({ idDeleteList: [contactToDelete] })
+    if (result) {
+      //it needs an alert o message
+      console.log('success')
+      getCedantContactsByIdCedant(cedantContactsPagination)
+    }
     setOpenDelete(false)
   }
 
-  const deleteRows = () => {  //must be replaced with the respective cedant service
-    // const newContactList = // Service return new list
-    // setContactList(newBinderList)
+  const deleteRows = async () => {
+    const result = await deleteCedantContact({ idDeleteList: selectedRows })
+    if (result) {
+      //it needs an alert o message
+      console.log('success')
+      getCedantContactsByIdCedant(cedantContactsPagination)
+    }
     setOpenDeleteRows(false)
   }
-
 
   useEffect(() => {
     if (
@@ -365,8 +402,8 @@ const CedantContacts = () => {
       contactData.email !== '' &&
       contactData.phone !== undefined &&
       contactData.phone !== '' &&
-      contactData.country !== undefined &&
-      contactData.country !== ''
+      contactData.idCCountry !== undefined &&
+      contactData.idCCountry.id !== 0
     ) {
       setEmptyForm(false)
     } else {
@@ -396,7 +433,7 @@ const CedantContacts = () => {
         setError(true)
       }
 
-      if (contactData.country !== undefined && contactData.country !== '') {
+      if (contactData.idCCountry !== undefined && contactData.idCCountry.id !== 0) {
         setCountryError(false)
       } else {
         setCountryError(true)
@@ -416,7 +453,7 @@ const CedantContacts = () => {
     contactData.name,
     contactData.email,
     contactData.phone,
-    contactData.country,
+    contactData.idCCountry,
     error,
     nameError,
     emailError,
@@ -433,8 +470,8 @@ const CedantContacts = () => {
       currentContact.email !== '' &&
       currentContact.phone !== undefined &&
       currentContact.phone !== '' &&
-      currentContact.country !== undefined &&
-      currentContact.country !== ''
+      currentContact.idCCountry !== undefined &&
+      currentContact.idCCountry.id !== 0
     ) {
       setEmptyEditForm(false)
     } else {
@@ -464,7 +501,7 @@ const CedantContacts = () => {
         setEditError(true)
       }
 
-      if (currentContact.country !== undefined && currentContact.country !== '') {
+      if (currentContact.idCCountry !== undefined && currentContact.idCCountry.id !== 0) {
         setEditCountryError(false)
       } else {
         setEditCountryError(true)
@@ -480,12 +517,12 @@ const CedantContacts = () => {
     if (editError) setBtnEditDisable(true)
     else if (!editError) setBtnEditDisable(false)
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     currentContact.name,
     currentContact.email,
     currentContact.phone,
-    currentContact.country,
+    currentContact.idCCountry,
     editError,
     editNameError,
     editEmailError,
@@ -494,20 +531,19 @@ const CedantContacts = () => {
     emptyEditForm
   ])
 
-  useEffect(() => {
-    setContactList(getContactList)
-    //eslint-disable-next-line
-  }, [])
-
+  const handleDispatch = (e: any, value: number) => {
+    setCedantContactsPagination({
+      ...cedantContactsPagination,
+      info: { ...cedantContactsPagination.info, page: value }
+    })
+  }
 
   return (
     <>
       <div className='contacts-wrapper'>
         <div className='title'>Contacts</div>
         <div className='description'>
-          Here you will find the contacts linked
-          to this specific Cedant, you can add one
-          or more contacts.
+          Here you will find the contacts linked to this specific Cedant, you can add one or more contacts.
         </div>
         <div className='table-header'>
           <TableHeader
@@ -516,20 +552,23 @@ const CedantContacts = () => {
               setOpenDeleteRows(true)
             }}
             deleteBtn={selectedRows.length > 0 ? true : false}
-            textBtn="ADD NEW CONTACT"
-            onClickBtn={() => { setOpenNewContact(true) }}
+            textBtn='ADD NEW CONTACT'
+            onClickBtn={() => {
+              setOpenNewContact(true)
+            }}
+            addBtnDisable={idCedant === 0}
           />
-          {showAlert &&
+          {showAlert && (
             <div className={`${alertType} contacts-alert`}>
               <div className='btn-icon'>
                 <Icon icon={alertIcon} />
               </div>
               {alertText}
-            </div>}
+            </div>
+          )}
         </div>
 
         <div className='contact-list'>
-
           <DataGrid
             autoHeight
             checkboxSelection
@@ -541,11 +580,13 @@ const CedantContacts = () => {
             components={{
               Pagination: CustomPagination
             }}
+            componentsProps={{
+              pagination: { handleDispatch, infoPage: { ...cedantContactInfoPage } }
+            }}
             className={'catalogue-datagrid'}
             onSelectionModelChange={rows => setSelectedRows(rows)}
           />
         </div>
-
       </div>
       <Modal className='create-contact-modal' open={openNewContact} onClose={() => setOpenNewContact(false)}>
         <Box className='modal-wrapper'>
@@ -591,15 +632,17 @@ const CedantContacts = () => {
 
               <Select
                 label='Select country'
-                value={contactData.country}
-                onChange={e => handleChangeModal('country', e.target.value)}
+                value={contactData.idCCountry.id}
+                onChange={e => handleChangeModal('idCCountry', { id: parseInt(e.target.value.toString()) })}
                 labelId='invoice-country'
               >
-                <MenuItem value='USA'>USA</MenuItem>
-                <MenuItem value='UK'>UK</MenuItem>
-                <MenuItem value='Russia'>Russia</MenuItem>
-                <MenuItem value='Australia'>Australia</MenuItem>
-                <MenuItem value='Canada'>Canada</MenuItem>
+                {countries.map(country => {
+                  return (
+                    <MenuItem key={country.id} value={country.id}>
+                      {country.name}
+                    </MenuItem>
+                  )
+                })}
               </Select>
 
               {countryError && (
@@ -665,7 +708,9 @@ const CedantContacts = () => {
       >
         <Box className='modal-wrapper'>
           <HeaderTitleModal>
-            <Typography variant='h6' sx={{ maxWidth: "450px" }}>Are you sure you want to delete this Contact?</Typography>
+            <Typography variant='h6' sx={{ maxWidth: '450px' }}>
+              Are you sure you want to delete this Contact?
+            </Typography>
             <ButtonClose
               onClick={() => {
                 setOpenDelete(false)
@@ -732,15 +777,17 @@ const CedantContacts = () => {
 
               <Select
                 label='Select country'
-                value={currentContact.country}
-                onChange={e => handleEditModal('country', e.target.value)}
+                value={currentContact.idCCountry.id}
+                onChange={e => handleEditModal('idCCountry', { id: parseInt(e.target.value.toString()) })}
                 labelId='invoice-country'
               >
-                <MenuItem value='USA'>USA</MenuItem>
-                <MenuItem value='UK'>UK</MenuItem>
-                <MenuItem value='Russia'>Russia</MenuItem>
-                <MenuItem value='Australia'>Australia</MenuItem>
-                <MenuItem value='Canada'>Canada</MenuItem>
+                {countries.map(country => {
+                  return (
+                    <MenuItem key={country.id} value={country.id}>
+                      {country.name}
+                    </MenuItem>
+                  )
+                })}
               </Select>
 
               {editCountryError && (
@@ -750,12 +797,7 @@ const CedantContacts = () => {
               )}
             </FormControl>
           </div>
-          <Button
-            className='create-contact-modal'
-            disabled={btnEditDisable}
-            variant='contained'
-            onClick={editContact}
-          >
+          <Button className='create-contact-modal' disabled={btnEditDisable} variant='contained' onClick={editContact}>
             EDIT
           </Button>
           <Button className='create-contact-modal' onClick={() => setOpenEdit(false)}>

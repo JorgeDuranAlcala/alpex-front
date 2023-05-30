@@ -1,29 +1,14 @@
-
 // ** MUI Imports
-import Card from '@mui/material/Card'
-import Grid from '@mui/material/Grid'
+import AddCedantView from '@/views/catalogues/dynamic/add-cedant/AddCedantsView'
 
 // ** Context
-// import { AccountsTableContextProvider } from 'src/context/accounts/Table/reducer'
 
-// ** Custom Components Imports
-import CedantContacts from 'src/views/catalogues/dynamic/add-cedant/CedantContacts'
-import CedantData from 'src/views/catalogues/dynamic/add-cedant/CedantData'
-
-const AddCedantView = () => {
-
+const AddCedant = () => {
   return (
-
-    <Grid item xs={12}>
-      <Card sx={{marginBottom: '15px'}}>
-        <CedantData />
-      </Card>
-      <Card>
-       <CedantContacts />
-      </Card>
-    </Grid>
-
+    <>
+      <AddCedantView />
+    </>
   )
 }
 
-export default AddCedantView
+export default AddCedant

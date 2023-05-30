@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
 import CedantContactService from 'src/services/catalogs/cedant-contact.service'
 import {
-  CedantContactDto,
   CedantContactsInfoDto,
-  CedantContactsPaginationDto
+  CedantContactsPaginationDto,
+  CedantContactTableDto
 } from 'src/services/catalogs/dtos/cedant-contact.dto'
 
 const initialState: CedantContactsPaginationDto = {
@@ -30,7 +30,7 @@ const initialStateInfo: CedantContactsInfoDto = {
 
 const useGetAllByIdCedantAndPagination = () => {
   const [cedantContactsPagination, setCedantContactsPagination] = useState<CedantContactsPaginationDto>(initialState)
-  const [cedantContacts, setCedantContacts] = useState<CedantContactDto[]>([])
+  const [cedantContacts, setCedantContacts] = useState<CedantContactTableDto[]>([])
   const [cedantContactInfoPage, setCedantContactInfoPage] = useState<CedantContactsInfoDto>(initialStateInfo)
 
   const getCedantContactsByIdCedant = async (cedantContactsPagination: CedantContactsPaginationDto) => {
