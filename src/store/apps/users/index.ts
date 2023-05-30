@@ -28,7 +28,7 @@ export const fetchAccounts = createAsyncThunk('appUsersState/fetchUsers', async 
 })
 
 export const fetchAccountsTemporal = createAsyncThunk('appUsersState/fetchUsersTemporal', async () => {
-  const data = await UsersServices.getUsers({ ...initialState, info: { ...initialState.info, take: 49 } })
+  const data = await UsersServices.getUsers({ ...initialState, info: { ...initialState.info } })
 
   return data
 })
