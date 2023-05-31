@@ -1,7 +1,7 @@
 export interface CedantDto {
   id: number
   name: string
-  alias: string
+  alias?: string
   idCountry?: number
 }
 

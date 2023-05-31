@@ -105,7 +105,13 @@ const CedantsTable = () => {
 
       renderCell: ({ row }) => (
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
-          <IconButton size='small' sx={{ mr: 1 }}>
+          <IconButton
+            size='small'
+            sx={{ mr: 1 }}
+            onClick={() => {
+              handleSelectCedantEdit(row.id)
+            }}
+          >
             <Icon icon='ic:baseline-login' />
           </IconButton>
           <IconButton
@@ -131,8 +137,11 @@ const CedantsTable = () => {
     setCedantList(cedants || [])
   }, [cedants])
 
+  const handleSelectCedantEdit = (id: number | null) => {
+    router.push({ pathname: '/catalogues/dynamic/add-cedants', query: { id } })
+  }
+
   const searchCedant = (value: string) => {
-    console.log('Call search service', value)
     if (value === '') {
       setCedantPagination({ ...cedantPagination, filters: [], info: { ...cedantPagination.info, page: 1 } })
     } else {

@@ -106,7 +106,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
 
       //change settlementDueDate
       setTimeout(() => {
-        account.installments.forEach(item => {
+        account.installments.forEach((item: any) => {
           item.settlementDueDate = new Date(item.settlementDueDate + 'T00:00:00.678Z')
         })
         setInstallmentList([...account.installments])
@@ -320,7 +320,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
               onChangeList={handleItemChange}
               globalInfo={{
                 receivedNetPremium: account ? account?.securityTotal?.receivedNetPremium : 0,
-                inceptionDate: account ? new Date(account?.informations[0]?.effectiveDate) : null,
+                inceptionDate: account ? new Date(account?.informations[0]?.effectiveDate || '') : null,
                 idAccount: account ? idAccount : ''
               }}
               count={+count}
