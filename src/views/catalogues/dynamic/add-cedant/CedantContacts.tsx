@@ -339,11 +339,12 @@ const CedantContacts = ({ idCedant }: ICedantContacts) => {
 
   const searchContacts = (value: string) => {
     if (value === '') setCedantContactsPagination({ ...cedantContactsPagination, filters: [] })
-    else
+    else {
       setCedantContactsPagination({
         ...cedantContactsPagination,
         filters: [{ type: 'name', value: value, text: value }]
       })
+    }
   }
 
   const handleCreateContact = async () => {

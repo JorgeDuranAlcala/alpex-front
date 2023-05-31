@@ -37,9 +37,6 @@ const CedantData = ({ idCedant, setIdCedant }: ICedantData) => {
   const [nameDisabled, setNameDisabled] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
 
-  //temp
-  console.log(idCedant)
-
   //hooks
   const { saveCedant } = useAddCedant()
   const { update } = useUpdateById()

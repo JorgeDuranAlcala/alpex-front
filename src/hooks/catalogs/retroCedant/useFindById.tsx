@@ -2,8 +2,9 @@ import { useEffect, useState } from 'react'
 import { RetroCedantDto } from 'src/services/catalogs/dtos/RetroCedantDto'
 import RetroCedantService from 'src/services/catalogs/retroCedant.service'
 
-export const useGetRetroCedantById = (id: number) => {
+export const useGetRetroCedantById = () => {
   const [retroCedant, setRetroCedant] = useState<RetroCedantDto>()
+  const [id, setId] = useState(0)
 
   useEffect(() => {
     RetroCedantService.findById(id)
@@ -15,5 +16,5 @@ export const useGetRetroCedantById = (id: number) => {
       })
   }, [id])
 
-  return { retroCedant }
+  return { retroCedant, setId }
 }
