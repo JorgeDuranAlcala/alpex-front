@@ -302,8 +302,6 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
       cellClassName: 'account-column-cell-pl-0',
       renderHeader: ({ colDef }) => <ColumnHeader colDef={colDef} showIcon={false} />,
       renderCell: ({ row }) => {
-        console.log({ row })
-
         return (
           <>
             <IconButton
