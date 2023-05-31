@@ -9,6 +9,8 @@ import { Box, Button, FormControl, Modal, TextField, Typography } from '@mui/mat
 import Icon from 'src/@core/components/icon'
 
 // ** Custom Imports
+import { useAddRetroCedant, useGetRetroCedantById, useUpdateRetroCedant } from '@/hooks/catalogs/retroCedant'
+import { useDeleteRetroCedant } from '@/hooks/catalogs/retroCedant/useDelete'
 import { ButtonClose, HeaderTitleModal } from 'src/styles/modal/modal.styled'
 import { ICedant } from '../retrocedants-table'
 
@@ -19,7 +21,12 @@ import { ICedant } from '../retrocedants-table'
 // import { fetchCedants } from '@/store/apps/catalogs/retroCedants'
 // import { useAddCedant } from 'src/hooks/catalogs/retroCedant/useAdd'
 
-const RetroCedantData = () => {
+interface IRetroCedantData {
+  idRetroCedant: number
+  setIdRetroCedant: (id: number) => void
+}
+
+const RetroCedantData = ({ idRetroCedant, setIdRetroCedant }: IRetroCedantData) => {
   const [newRetroCedant, setNewRetroCedant] = useState<ICedant>({ id: 0, name: '' })
   const [isRetroCedantSaved, setIsRetroCedantSaved] = useState(false)
   const [disableAddRetroCedant, setDisableAddRetroCedant] = useState(true)
@@ -29,19 +36,34 @@ const RetroCedantData = () => {
   const [alertText, setAlertText] = useState('')
   const [alertIcon, setAlertIcon] = useState('')
 
-  // const { saveRetroCedant } = useAddRetroCedant()
-  // const { deleteRetroCedant: deleteRetroCedants } = useDeleteRetroCedant()
-  // const { update } = useUpdateById()
+  //new
+  const [nameDisabled, setNameDisabled] = useState(false)
+  const [isEditing, setIsEditing] = useState(false)
 
-  // const dispatch = useAppDispatch()
-  // const retroCedantReducer = useAppSelector(state => state.retroCedants)
+  //hooks
+  const { saveRetroCedant } = useAddRetroCedant()
+  const { updateRetroCedant: update } = useUpdateRetroCedant()
+  const { deleteRetroCedant: deleteRetroCedants } = useDeleteRetroCedant()
+  const { setId, retroCedant } = useGetRetroCedantById()
 
-  const triggerAlert = (type: string) => {
+  useEffect(() => {
+    if (idRetroCedant !== 0) {
+      setId(idRetroCedant)
+      setNewRetroCedant({ id: idRetroCedant, name: retroCedant?.name || '' })
+      setIsRetroCedantSaved(true)
+      setNameDisabled(true)
+      setIsEditing(false)
+    }
+
+    //eslint-disable-next-line
+  }, [idRetroCedant, retroCedant])
+
+  const triggerAlert = (type: string, text?: string) => {
     setAlertType(type)
 
     switch (type) {
       case 'success':
-        setAlertText('NEW CEDANT ADDED')
+        setAlertText(text || 'NEW CEDANT ADDED')
         setAlertIcon('mdi:check-circle-outline')
         break
       case 'error':
@@ -64,38 +86,44 @@ const RetroCedantData = () => {
   }
 
   const addRetroCedant = async () => {
-    // const result = await saveRetroCedant({ name: newRetroCedant.name })
-    // if (result) {
-      // setNewRetroCedant({ id: result.id, name: result.name })
+    const result = await saveRetroCedant({ name: newRetroCedant.name })
+    if (result) {
+      setNewRetroCedant({ id: result.id, name: result.name })
       triggerAlert('success')
-
-      // dispatch(fetchRetroCedants(retroCedantReducer))
+      setIdRetroCedant(result.id)
+      setNameDisabled(true)
       setIsRetroCedantSaved(true)
+    } else {
+      triggerAlert('error')
+    }
+  }
 
-    // }
+  const activeEditRetroCedant = () => {
+    setNameDisabled(false)
+    setIsEditing(true)
   }
 
   const editRetroCedant = async () => {
-    // const result = await update(newRetroCedant.id, newRetroCedant)
-    // if (result) {
-      // setNewRetroCedant({ id: result.id, name: result.name })
-      // dispatch(fetchRetroCedants(retroCedantReducer))
-
+    const result = await update(newRetroCedant.id, newRetroCedant)
+    if (result) {
+      setNewRetroCedant({ id: result.id, name: result.name })
       setIsRetroCedantSaved(true)
-      triggerAlert('success')
-
-    // } else {
-      // triggerAlert('error')
+      setNameDisabled(true)
+      setIsEditing(false)
+      triggerAlert('success', 'CHANGES SAVED')
+    } else {
+      triggerAlert('error')
     }
-
+  }
 
   const deleteRetroCedant = async () => {
-    // const result = await deleteRetroCedants({ idDeleteList: [newRetroCedant.id] })
-    // if (result) {
-      triggerAlert('success')
-
-      // dispatch(fetchRetroCedants(retroCedantReducer))
-    // }
+    const result = await deleteRetroCedants({ idDeleteList: [newRetroCedant.id] })
+    if (result) {
+      triggerAlert('success', 'CEDANT DELETED')
+      setIdRetroCedant(0)
+    } else {
+      triggerAlert('error')
+    }
     setOpenDelete(false)
   }
 
@@ -139,28 +167,57 @@ const RetroCedantData = () => {
               label='Retro Cedant Name'
               value={newRetroCedant.name}
               onChange={e => setNewRetroCedant({ ...newRetroCedant, ['name']: e.target.value })}
+              disabled={nameDisabled}
             />
           </FormControl>
+
           {isRetroCedantSaved ? (
-            <div className='action-buttons'>
-              <Button
-                className='delete-btn'
-                onClick={() => {
-                  setOpenDelete(true)
-                }}
-              >
-                <div className='btn-icon'>
-                  <Icon icon='mdi:delete-outline' />
-                </div>
-                DELETE
-              </Button>
-              <Button className='edit-btn' variant='outlined' onClick={editRetroCedant}>
-                <div className='btn-icon'>
-                  <Icon icon='mdi:pencil' />
-                </div>
-                EDIT
-              </Button>
-            </div>
+            isEditing ? (
+              <div className='action-buttons'>
+                <Button
+                  className='delete-broker-btn'
+                  onClick={() => {
+                    setOpenDelete(true)
+                  }}
+                >
+                  <div className='btn-icon'>
+                    <Icon icon='mdi:delete-outline' />
+                  </div>
+                  DELETE
+                </Button>
+                <Button
+                  className='edit-broker-btn'
+                  variant='outlined'
+                  onClick={editRetroCedant}
+                  disabled={disableAddRetroCedant}
+                >
+                  <div className='btn-icon'>
+                    <Icon icon='mdi:content-save' />
+                  </div>
+                  SAVE
+                </Button>{' '}
+              </div>
+            ) : (
+              <div className='action-buttons'>
+                <Button
+                  className='delete-broker-btn'
+                  onClick={() => {
+                    setOpenDelete(true)
+                  }}
+                >
+                  <div className='btn-icon'>
+                    <Icon icon='mdi:delete-outline' />
+                  </div>
+                  DELETE
+                </Button>
+                <Button className='edit-broker-btn' variant='outlined' onClick={activeEditRetroCedant}>
+                  <div className='btn-icon'>
+                    <Icon icon='mdi:pencil' />
+                  </div>
+                  EDIT
+                </Button>
+              </div>
+            )
           ) : (
             <div className='action-buttons'>
               <Button className='add-btn' onClick={addRetroCedant} disabled={disableAddRetroCedant}>
