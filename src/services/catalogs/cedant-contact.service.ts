@@ -47,7 +47,7 @@ class CedantContactService {
   async updateById(id: number, update: Partial<CedantContactDto>) {
     try {
       const { data } = await AppAlpexApiGateWay.put<Promise<CedantContactDto>>(
-        `${CEDANT_CONTACT_ROUTERS.UPDATE}${id}`,
+        `${CEDANT_CONTACT_ROUTERS.UPDATE}/${id}`,
         {
           ...update
         }

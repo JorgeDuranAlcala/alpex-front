@@ -13,13 +13,17 @@ import { ButtonClose, HeaderTitleModal } from 'src/styles/modal/modal.styled'
 import { ICedant } from '../cedants-table'
 
 // Hooks
-// import { useUpdateById } from '@/hooks/catalogs/cedant'
-// import { useDeleteCedant } from '@/hooks/catalogs/cedant/useDelete'
-// import { useAppDispatch, useAppSelector } from '@/store'
-// import { fetchCedants } from '@/store/apps/catalogs/cedants'
-// import { useAddCedant } from 'src/hooks/catalogs/cedant/useAdd'
+import { useAddCedant } from '@/hooks/catalogs/cedant'
+import { useDeleteCedant } from '@/hooks/catalogs/cedant/useDelete'
+import { useFindByIdCedant } from '@/hooks/catalogs/cedant/useFindById'
+import { useUpdateById } from '@/hooks/catalogs/cedant/useUpdateById'
 
-const CedantData = () => {
+interface ICedantData {
+  idCedant: number
+  setIdCedant: (id: number) => void
+}
+
+const CedantData = ({ idCedant, setIdCedant }: ICedantData) => {
   const [newCedant, setNewCedant] = useState<ICedant>({ id: 0, name: '' })
   const [isCedantSaved, setIsCedantSaved] = useState(false)
   const [disableAddCedant, setDisableAddCedant] = useState(true)
@@ -29,19 +33,38 @@ const CedantData = () => {
   const [alertText, setAlertText] = useState('')
   const [alertIcon, setAlertIcon] = useState('')
 
-  // const { saveCedant } = useAddCedant()
-  // const { deleteCedant: deleteCedants } = useDeleteCedant()
-  // const { update } = useUpdateById()
+  //new
+  const [nameDisabled, setNameDisabled] = useState(false)
+  const [isEditing, setIsEditing] = useState(false)
 
-  // const dispatch = useAppDispatch()
-  // const cedantReducer = useAppSelector(state => state.cedants)
+  //temp
+  console.log(idCedant)
 
-  const triggerAlert = (type: string) => {
+  //hooks
+  const { saveCedant } = useAddCedant()
+  const { update } = useUpdateById()
+  const { deleteCedant: deleteCedants } = useDeleteCedant()
+  const { setId, cedant } = useFindByIdCedant()
+
+  useEffect(() => {
+    if (idCedant !== 0) {
+      setId(idCedant)
+      console.log('****cedant', cedant)
+      setNewCedant({ id: idCedant, name: cedant?.name || '' })
+      setIsCedantSaved(true)
+      setNameDisabled(true)
+      setIsEditing(false)
+    }
+
+    //eslint-disable-next-line
+  }, [idCedant, cedant])
+
+  const triggerAlert = (type: string, text?: string) => {
     setAlertType(type)
 
     switch (type) {
       case 'success':
-        setAlertText('NEW CEDANT ADDED')
+        setAlertText(text || 'NEW BROKER ADDED')
         setAlertIcon('mdi:check-circle-outline')
         break
       case 'error':
@@ -64,38 +87,45 @@ const CedantData = () => {
   }
 
   const addCedant = async () => {
-    // const result = await saveCedant({ name: newCedant.name })
-    // if (result) {
-      // setNewCedant({ id: result.id, name: result.name })
+    console.log('addCedant')
+    const result = await saveCedant({ name: newCedant.name })
+    if (result) {
+      setNewCedant({ id: result.id, name: result.name })
       triggerAlert('success')
-
-      // dispatch(fetchCedants(cedantReducer))
+      setIdCedant(result.id)
+      setNameDisabled(true)
       setIsCedantSaved(true)
+    } else {
+      triggerAlert('error')
+    }
+  }
 
-    // }
+  const activeEditCedant = () => {
+    setNameDisabled(false)
+    setIsEditing(true)
   }
 
   const editCedant = async () => {
-    // const result = await update(newCedant.id, newCedant)
-    // if (result) {
-      // setNewCedant({ id: result.id, name: result.name })
-      // dispatch(fetchCedants(cedantReducer))
-
+    const result = await update(newCedant.id, newCedant)
+    if (result) {
+      setNewCedant({ id: result.id, name: result.name })
       setIsCedantSaved(true)
-      triggerAlert('success')
-
-    // } else {
-      // triggerAlert('error')
+      setNameDisabled(true)
+      setIsEditing(false)
+      triggerAlert('success', 'CHANGES SAVED')
+    } else {
+      triggerAlert('error')
     }
-
+  }
 
   const deleteCedant = async () => {
-    // const result = await deleteCedants({ idDeleteList: [newCedant.id] })
-    // if (result) {
-      triggerAlert('success')
-
-      // dispatch(fetchCedants(cedantReducer))
-    // }
+    const result = await deleteCedants({ idDeleteList: [newCedant.id] })
+    if (result) {
+      triggerAlert('success', 'CEDANT DELETED')
+      setIdCedant(0)
+    } else {
+      triggerAlert('error')
+    }
     setOpenDelete(false)
   }
 
@@ -139,28 +169,52 @@ const CedantData = () => {
               label='Cedant Name'
               value={newCedant.name}
               onChange={e => setNewCedant({ ...newCedant, ['name']: e.target.value })}
+              disabled={nameDisabled}
             />
           </FormControl>
+
           {isCedantSaved ? (
-            <div className='action-buttons'>
-              <Button
-                className='delete-btn'
-                onClick={() => {
-                  setOpenDelete(true)
-                }}
-              >
-                <div className='btn-icon'>
-                  <Icon icon='mdi:delete-outline' />
-                </div>
-                DELETE
-              </Button>
-              <Button className='edit-btn' variant='outlined' onClick={editCedant}>
-                <div className='btn-icon'>
-                  <Icon icon='mdi:pencil' />
-                </div>
-                EDIT
-              </Button>
-            </div>
+            isEditing ? (
+              <div className='action-buttons'>
+                <Button
+                  className='delete-broker-btn'
+                  onClick={() => {
+                    setOpenDelete(true)
+                  }}
+                >
+                  <div className='btn-icon'>
+                    <Icon icon='mdi:delete-outline' />
+                  </div>
+                  DELETE
+                </Button>
+                <Button className='edit-broker-btn' variant='outlined' onClick={editCedant} disabled={disableAddCedant}>
+                  <div className='btn-icon'>
+                    <Icon icon='mdi:content-save' />
+                  </div>
+                  SAVE
+                </Button>{' '}
+              </div>
+            ) : (
+              <div className='action-buttons'>
+                <Button
+                  className='delete-broker-btn'
+                  onClick={() => {
+                    setOpenDelete(true)
+                  }}
+                >
+                  <div className='btn-icon'>
+                    <Icon icon='mdi:delete-outline' />
+                  </div>
+                  DELETE
+                </Button>
+                <Button className='edit-broker-btn' variant='outlined' onClick={activeEditCedant}>
+                  <div className='btn-icon'>
+                    <Icon icon='mdi:pencil' />
+                  </div>
+                  EDIT
+                </Button>
+              </div>
+            )
           ) : (
             <div className='action-buttons'>
               <Button className='add-btn' onClick={addCedant} disabled={disableAddCedant}>

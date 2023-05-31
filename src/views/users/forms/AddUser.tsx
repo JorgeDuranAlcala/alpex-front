@@ -27,6 +27,14 @@ import { UserSection } from 'src/styles/Forms/usersSection'
 import CountrySelect, { ICountry } from 'src/views/custom/select/CountrySelect'
 import { StyledDescription, StyledSubtitle, StyledTitle } from 'src/views/custom/typography'
 
+interface ReinsuranceCompanyDto {
+  id: number | string
+  name: string
+  special?: boolean
+  alias?: string
+  idSubscriptionType?: number
+}
+
 interface FormInfo {
   name: string
   surname: string
@@ -35,6 +43,7 @@ interface FormInfo {
   company: string
   role: string
   dualRole: string
+  areaCode?: string
 }
 
 const UserForm: FormInfo = {
@@ -122,9 +131,14 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
   const [dualRoleDisabled, setDualRoleDisabled] = useState<boolean>(false)
   const [roleDisabled, setRoleDisabled] = useState<boolean>(false)
   const [editable, setEditable] = useState<boolean>(false)
-  const [idCompany, setIdCompany] = useState<string>('')
+  const [idCompany, setIdCompany] = useState<any>('')
   const [idRole, setIdRole] = useState<string>('')
   const [informativeIdRole, setInformativeIdRole] = useState<string>('')
+  const [selectCompany, setSelectCompany] = useState<ReinsuranceCompanyDto | undefined | string>()
+
+  console.log(usersReducer)
+  console.log({ idCompany })
+  console.log({ selectCompany })
 
   // const [email, setEmail] = useState<string>('')
   const [errorsTextEmail, setErrorsTextEmail] = useState<any>({
@@ -280,6 +294,14 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
     //eslint-disable-next-line
   }, [useWatchRole])
 
+  useEffect(() => {
+    const reducersCompany = usersReducer?.current?.idCompany?.id
+    const companySelect = company?.find(c => c.id === reducersCompany)
+
+    setSelectCompany(companySelect)
+    setIdCompany(companySelect?.id.toString())
+  }, [company, usersReducer])
+
   // useEffect(() => {
   //   dispatch(fetchAccounts(usersReducer))
   //   //eslint-disable-next-line
@@ -425,11 +447,18 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
 
                 <Grid container item xs={12} md={6} spacing={2}>
                   <Grid item xs={12}>
-                    <FormControl fullWidth defaultValue={''} sx={{ mb: 2, mt: 2 }}>
-                      <CountrySelect
-                        size='medium'
-                        otherProps={{ width: '100%' }}
-                        setSelectedCountry={setSelectedCountry}
+                    <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
+                      <Controller
+                        name='areaCode'
+                        control={control}
+                        render={({ field: { value } }) => (
+                          <CountrySelect
+                            areaCode={value}
+                            size='medium'
+                            otherProps={{ width: '100%' }}
+                            setSelectedCountry={setSelectedCountry}
+                          />
+                        )}
                       />
                     </FormControl>
                   </Grid>
@@ -501,17 +530,18 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
                             <Select
                               error={Boolean(errors.company)}
                               label='Company'
-                              value={value}
+                              value={selectUser ? idCompany : value}
                               onBlur={onBlur}
                               onChange={e => {
                                 onChange(e.target.value)
                                 setIdCompany(e.target.value)
+                                setSelectCompany(e.target.value)
                               }}
                               labelId='broker'
                             >
                               {company?.map(company => (
                                 <MenuItem key={company.name} value={company.id.toString()}>
-                                  {company.alias}
+                                  {company.name}
                                 </MenuItem>
                               ))}
                             </Select>
