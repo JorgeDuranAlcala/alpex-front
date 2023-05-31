@@ -22,6 +22,7 @@ interface ICardInstallment {
   onChangeList: (index: number, item: InstallmentDto) => void
   globalInfo: GlobalInfo
   count?: number
+  daysFirst?: number
 }
 
 interface PickerProps {
@@ -48,7 +49,7 @@ const CustomInput = forwardRef(({ ...props }: PickerProps, ref: ForwardedRef<HTM
   )
 })
 
-const CardInstallment = ({ index, installment, onChangeList, globalInfo, count }: ICardInstallment) => {
+const CardInstallment = ({ index, installment, onChangeList, globalInfo, count, daysFirst }: ICardInstallment) => {
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
   const textColor = userThemeConfig.palette?.text.subTitle
 
@@ -63,6 +64,30 @@ const CardInstallment = ({ index, installment, onChangeList, globalInfo, count }
   })
 
   const { receivedNetPremium, inceptionDate } = globalInfo
+
+  useEffect(() => {
+    setTimeout(() => {
+      setFormData({
+        paymentPercentage: installment.paymentPercentage,
+        balanceDue: installment.balanceDue,
+        premiumPaymentWarranty: installment.premiumPaymentWarranty,
+        settlementDueDate: installment.settlementDueDate,
+        idAccount: globalInfo.idAccount,
+        id: installment.id
+      })
+    }, 10)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [installment])
+
+  useEffect(() => {
+    setTimeout(() => {
+      setFormData({
+        ...formData,
+        premiumPaymentWarranty: daysFirst ? daysFirst * (index + 1) : formData.premiumPaymentWarranty
+      })
+    }, 12)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [daysFirst])
 
   const handleNumericInputChange = (value: any, name: any) => {
     const formDataTemp = { ...formData }

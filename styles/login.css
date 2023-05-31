@@ -31,6 +31,7 @@
 
 .login-view .login-form {
   position: absolute;
+  min-width: 450px;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -89,6 +90,12 @@
   }
   .login-view .login-form {
     box-shadow: none;
+  }
+}
+
+@media (max-width: 450px){
+  .login-view .login-form {
+    min-width: 95vw;
   }
 }
 
