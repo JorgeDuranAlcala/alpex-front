@@ -7,7 +7,6 @@ export const useFindByIdCedant = () => {
   const [id, setId] = useState(0)
 
   useEffect(() => {
-    console.log('useEffect usefIndByIdCedant')
     CedantService.findById(id)
       .then(cedant => {
         setCedant(cedant)
