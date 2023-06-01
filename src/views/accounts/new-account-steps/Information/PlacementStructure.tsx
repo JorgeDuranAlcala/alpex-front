@@ -274,13 +274,15 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               onChange={handleCurrencyChange}
               labelId='currency'
             >
-              {currencies?.map(currency => {
-                return (
-                  <MenuItem key={currency.code} value={currency.code}>
-                    {currency.code}
-                  </MenuItem>
-                )
-              })}
+              {currencies
+                ?.filter((obj, index, self) => index === self.findIndex(o => o.code === obj.code))
+                .map(currency => {
+                  return (
+                    <MenuItem key={currency.code} value={currency.code}>
+                      {currency.code}
+                    </MenuItem>
+                  )
+                })}
             </Select>
             {errors.currencyError && (
               <FormHelperText sx={{ color: 'error.main' }} id='invoice-country-error'>
