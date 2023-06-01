@@ -481,10 +481,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
     }
 
     accountInfo.securities.forEach(() => securitiesErrorsTemp.push({ ...SecurityForm }))
-
-    {
-      !itemsChanged && setSecuritiesList([...securitiesTem] as FormInfo[])
-    }
+    setSecuritiesList([...securitiesTem] as FormInfo[])
     setFormErrors([...securitiesErrorsTemp])
     setAllFormData({
       ...allFormData,
@@ -567,7 +564,6 @@ const Security = ({ onStepChange }: SecurityProps) => {
       .finally(() => {
         setCanMakeRequest(false)
         setItemsChanged(false)
-        setSecuritiesList([])
         getSecurities()
       })
 
