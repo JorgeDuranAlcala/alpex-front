@@ -58,14 +58,14 @@ const expresions = {
 export const ModalContact = ({ id, service, updateContacts, setIdCreated }: Props) => {
   const [contactData, setContactData] = useState<ContactData>(initialContactData)
   const [open, setOpen] = useState<boolean>(false)
-  const [btnDisable, setBtnDisable] = useState(true)
+
   const [startValidations, setStartValidations] = useState(false)
   const [error, setError] = useState(true)
   const [nameError, setNameError] = useState(false)
   const [emailError, setEmailError] = useState(false)
   const [phoneError, setPhoneError] = useState(false)
   const [countryError, setCountryError] = useState(false)
-  const [emptyForm, setEmptyForm] = useState(true)
+  const [, setEmptyForm] = useState(true)
 
   const { countries } = useGetAllCountries()
   const { saveBrokerContact } = useAddBrokerContact()
@@ -82,39 +82,50 @@ export const ModalContact = ({ id, service, updateContacts, setIdCreated }: Prop
     setCountryError(false)
     setEmptyForm(false)
     setStartValidations(false)
-    setBtnDisable(true)
   }
 
   const saveContact = async () => {
     switch (service) {
       case 'broker':
-        const contactBroker = await saveBrokerContact({
+        saveBrokerContact({
           email: contactData.email,
           name: contactData.name,
           phone: contactData.phone,
           idCCountry: Number(contactData.country),
           idCBroker: id
         })
+          .then(contactBroker => {
+            setIdCreated(state => ({
+              ...state,
+              brokerContact: contactBroker.id
+            }))
+            setStartValidations(false)
+          })
+          .catch(err => {
+            console.log('ERROR-SERVICE [saveBrokerContact]', err)
+          })
 
-        setIdCreated(state => ({
-          ...state,
-          brokerContact: contactBroker.id
-        }))
         break
 
       case 'cedant':
-        const contactCedant = await saveCedantContact({
+        saveCedantContact({
           email: contactData.email,
           name: contactData.name,
           phone: contactData.phone,
           idCCountry: Number(contactData.country),
           idCCedant: id
         })
+          .then(contactCedant => {
+            setIdCreated(state => ({
+              ...state,
+              cedantContact: contactCedant.id
+            }))
+            setStartValidations(false)
+          })
+          .catch(err => {
+            console.log('ERROR-SERVICE [saveCedantContact]', err)
+          })
 
-        setIdCreated(state => ({
-          ...state,
-          cedantContact: contactCedant.id
-        }))
         break
     }
 
@@ -122,78 +133,50 @@ export const ModalContact = ({ id, service, updateContacts, setIdCreated }: Prop
     closeModal()
   }
 
-  useEffect(() => {
-    if (
-      contactData.name !== undefined &&
-      contactData.name !== '' &&
-      contactData.email !== undefined &&
-      contactData.email !== '' &&
-      contactData.phone !== undefined &&
-      contactData.phone !== '' &&
-      contactData.country !== undefined &&
-      contactData.country !== ''
-    ) {
-      setEmptyForm(false)
-    } else {
-      setEmptyForm(true)
-      setError(true)
-    }
+  const validateForm = () => {
+    const nameErrorTemp = !expresions.name.test(contactData.name)
+    const emailErrorTemp = !expresions.email.test(contactData.email)
+    const phoneErrorTemp = !expresions.phone.test(contactData.phone)
+    const countryErrorTemp = contactData.country === undefined || contactData.country === ''
 
-    if (startValidations) {
-      if (expresions.name.test(contactData.name)) {
-        setNameError(false)
-      } else {
-        setNameError(true)
-        setError(true)
-      }
-
-      if (expresions.email.test(contactData.email)) {
-        setEmailError(false)
-      } else {
-        setEmailError(true)
-        setError(true)
-      }
-
-      if (expresions.phone.test(contactData.phone)) {
-        setPhoneError(false)
-      } else {
-        setPhoneError(true)
-        setError(true)
-      }
-
-      if (contactData.country !== undefined && contactData.country !== '') {
-        setCountryError(false)
-      } else {
-        setCountryError(true)
-        setError(true)
-      }
-
-      if (!nameError && !emailError && !phoneError && !countryError && !emptyForm) {
-        setError(false)
-      } else {
-        setError(true)
-      }
-    }
-    if (error) setBtnDisable(true)
-    else if (!error) setBtnDisable(false)
-  }, [
-    contactData.name,
-    contactData.email,
-    contactData.phone,
-    contactData.country,
-    error,
-    nameError,
-    emailError,
-    phoneError,
-    countryError,
-    emptyForm,
-    startValidations
-  ])
-
-  const handleChange = (field: keyof ContactData, value: ContactData[keyof ContactData]) => {
-    setStartValidations(true)
-    setContactData({ ...contactData, [field]: value })
+    const errorTemp = nameErrorTemp || emailErrorTemp || phoneErrorTemp || countryErrorTemp
+    setNameError(nameErrorTemp)
+    setEmailError(emailErrorTemp)
+    setPhoneError(phoneErrorTemp)
+    setCountryError(countryErrorTemp)
+    setError(errorTemp)
+    setEmptyForm(errorTemp)
   }
+  const handleChange = (field: keyof ContactData, value: ContactData[keyof ContactData]) => {
+    setContactData({ ...contactData, [field]: value })
+    switch (field) {
+      case 'name':
+        setNameError(false)
+        break
+      case 'email':
+        setEmailError(false)
+        break
+      case 'phone':
+        setPhoneError(false)
+        break
+      case 'country':
+        setCountryError(false)
+        break
+
+      default:
+        break
+    }
+    setStartValidations(false)
+  }
+
+  useEffect(() => {
+    !error && saveContact()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [error])
+  useEffect(() => {
+    startValidations && validateForm()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [startValidations])
 
   return (
     <>
@@ -236,7 +219,7 @@ export const ModalContact = ({ id, service, updateContacts, setIdCreated }: Prop
                 onChange={e => handleChange('email', e.target.value)}
               />
 
-              {emailError && <FormHelperText sx={{ color: 'error.main' }}>Invalid field</FormHelperText>}
+              {emailError && <FormHelperText sx={{ color: 'error.main' }}>This field is required</FormHelperText>}
             </FormControl>
             <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
               <TextField
@@ -246,7 +229,7 @@ export const ModalContact = ({ id, service, updateContacts, setIdCreated }: Prop
                 onChange={e => handleChange('phone', e.target.value)}
               />
 
-              {phoneError && <FormHelperText sx={{ color: 'error.main' }}>Invalid field</FormHelperText>}
+              {phoneError && <FormHelperText sx={{ color: 'error.main' }}>This field is required</FormHelperText>}
             </FormControl>
             <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
               <InputLabel>Select country</InputLabel>
@@ -273,7 +256,13 @@ export const ModalContact = ({ id, service, updateContacts, setIdCreated }: Prop
               )}
             </FormControl>
           </div>
-          <Button className='create-contact-modal' disabled={btnDisable} variant='contained' onClick={saveContact}>
+          <Button
+            className='create-contact-modal'
+            variant='contained'
+            onClick={() => {
+              setStartValidations(true)
+            }}
+          >
             CREATE
           </Button>
           <Button className='create-contact-modal' onClick={closeModal}>

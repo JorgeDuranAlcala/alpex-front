@@ -4,6 +4,7 @@ export interface InformationDto {
   effectiveDate: Date | null
   expirationDate: Date | null
   receptionDate: Date | null
+  createdAt?: Date | null
   limit: number
   attachmentPoint: number
   reinsuranceBrokerage: number

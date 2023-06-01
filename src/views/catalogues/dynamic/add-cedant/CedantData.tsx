@@ -46,13 +46,11 @@ const CedantData = ({ idCedant, setIdCedant }: ICedantData) => {
   useEffect(() => {
     if (idCedant !== 0) {
       setId(idCedant)
-      console.log('****cedant', cedant)
       setNewCedant({ id: idCedant, name: cedant?.name || '' })
       setIsCedantSaved(true)
       setNameDisabled(true)
       setIsEditing(false)
     }
-
     //eslint-disable-next-line
   }, [idCedant, cedant])
 
@@ -84,7 +82,6 @@ const CedantData = ({ idCedant, setIdCedant }: ICedantData) => {
   }
 
   const addCedant = async () => {
-    console.log('addCedant')
     const result = await saveCedant({ name: newCedant.name })
     if (result) {
       setNewCedant({ id: result.id, name: result.name })

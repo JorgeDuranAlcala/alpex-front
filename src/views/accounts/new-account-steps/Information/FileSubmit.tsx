@@ -53,17 +53,18 @@ const FileSubmit: React.FC<UserFileProps> = ({ setUserFile }) => {
           onChange={onFileChange}
           multiple
         />
+
+        {file.length > 0 &&
+          file.map((fileElement, index) => (
+            <div key={index} className='file-details'>
+              <Icon icon='mdi:file-document-outline' />
+              <Typography className='file-name'>{fileElement?.name}</Typography>
+              <IconButton onClick={e => handleRemoveFile(e, index)}>
+                <Icon icon='mdi:close' fontSize={20} />
+              </IconButton>
+            </div>
+          ))}
         <label id='label-file-upload' htmlFor='input-file-upload'>
-          {file.length > 0 &&
-            file.map((fileElement, index) => (
-              <div key={index} className='file-details'>
-                <Icon icon='mdi:file-document-outline' />
-                <Typography className='file-name'>{fileElement?.name}</Typography>
-                <IconButton onClick={e => handleRemoveFile(e, index)}>
-                  <Icon icon='mdi:close' fontSize={20} />
-                </IconButton>
-              </div>
-            ))}
           <Button className='upload-button' onClick={e => onButtonClick(e)} variant='outlined'>
             <div className='btn-icon'>
               <Icon icon='mdi:upload' />
