@@ -120,7 +120,16 @@ const FormHeader = () => {
   const account = useAppSelector(state => state.accounts?.formsData?.form1)
 
   const { setIdAccount, information } = useFindInformationByIdAccount()
-  console.log({ account })
+  const formaterAmount = (amount: number) => {
+    if (amount) {
+      return amount.toLocaleString('en-US', {
+        style: 'decimal',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+        useGrouping: true
+      })
+    }
+  }
   const formatDate = (date: Date | null | undefined): string => {
     if (date) {
       const options: Intl.DateTimeFormatOptions = {
@@ -158,7 +167,8 @@ const FormHeader = () => {
             <div className='form-header-section'>
               <span className='form-header-title'>Net premium:</span>
               <span className='form-header-subtitle'>
-                ${account?.placementStructure?.netPremium} {account?.placementStructure?.currency}
+                ${account && formaterAmount(account?.placementStructure?.netPremium)}{' '}
+                {account?.placementStructure?.currency}
               </span>
             </div>
             <div className='form-header-section'>
