@@ -298,7 +298,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
   const { account, setAccountId, getAccountById } = useGetAccountById()
   const { updateSecurityTotal } = useUpdateSecurityTotalById()
-  const [itemsChanged, setItemsChanged] = useState(false)
+  const [, setItemsChanged] = useState(false)
 
   const handleItemChange = (index: number, item: FormInfo) => {
     console.log('handle Item change ')
