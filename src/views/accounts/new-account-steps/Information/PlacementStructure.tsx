@@ -340,7 +340,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               id='reinsurance-brokerage'
               label='Reinsurance brokerage %'
               multiline
-              prefix={'%'}
+              suffix={'%'}
               decimalScale={2}
               variant='outlined'
               isAllowed={values => {
@@ -367,7 +367,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               id='taxes-p'
               label='Taxes %'
               multiline
-              prefix={'%'}
+              suffix={'%'}
               decimalScale={2}
               variant='outlined'
               onBlur={() => calculate('taxesP')}
@@ -395,7 +395,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               id='fronting-fee-p'
               label='Fronting fee %'
               multiline
-              prefix={'%'}
+              suffix={'%'}
               maxRows={4}
               decimalScale={2}
               variant='outlined'
