@@ -65,7 +65,7 @@ export const ModalContact = ({ id, service, updateContacts, setIdCreated }: Prop
   const [emailError, setEmailError] = useState(false)
   const [phoneError, setPhoneError] = useState(false)
   const [countryError, setCountryError] = useState(false)
-  const [emptyForm, setEmptyForm] = useState(true)
+  const [, setEmptyForm] = useState(true)
 
   const { countries } = useGetAllCountries()
   const { saveBrokerContact } = useAddBrokerContact()
@@ -171,9 +171,11 @@ export const ModalContact = ({ id, service, updateContacts, setIdCreated }: Prop
 
   useEffect(() => {
     !error && saveContact()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [error])
   useEffect(() => {
     startValidations && validateForm()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [startValidations])
 
   return (
