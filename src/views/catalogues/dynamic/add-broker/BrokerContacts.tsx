@@ -320,12 +320,19 @@ const BrokerContacts = ({ idBroker }: IBrokerContacts) => {
   }
 
   const searchContacts = (value: string) => {
-    if (value === '') setBrokerContactsPagination({ ...brokerContactsPagination, filters: [] })
-    else
+    if (value === '') {
       setBrokerContactsPagination({
         ...brokerContactsPagination,
-        filters: [{ type: 'name', value: value, text: value }]
+        filters: [],
+        info: { ...brokerContactsPagination.info, page: 1 }
       })
+    } else {
+      setBrokerContactsPagination({
+        ...brokerContactsPagination,
+        filters: [{ type: 'name', value: value, text: value }],
+        info: { ...brokerContactsPagination.info, page: 1 }
+      })
+    }
   }
 
   const handleCreateContact = async () => {

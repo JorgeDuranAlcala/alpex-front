@@ -17,21 +17,15 @@ import Icon from 'src/@core/components/icon'
 // ** Custom Hooks imports
 
 // ** Custom Components Imports
+import CustomPagination from '../CustomPaginationImpl'
 import TableHeader from '../TableHeader'
 
 // ** Custom utilities
-import { useAppDispatch, useAppSelector } from '@/store'
 import colors from 'src/views/accounts/colors'
 import fonts from 'src/views/accounts/font'
 
 import { useDeleteBroker } from '@/hooks/catalogs/broker/useDelete'
-import {
-  deleteBrokersFilter,
-  fetchBrokers,
-  handleBrokersFilter,
-  handleSelectBroker
-} from 'src/store/apps/catalogs/brokers'
-import CustomPaginationBroker from '../CustomPaginationBroker'
+import useGetAllPagination from '@/hooks/catalogs/broker/useGetAllPagination'
 
 export interface IBroker {
   id: number
@@ -42,7 +36,6 @@ const Table = () => {
   // ** State
   const [selectedRows, setSelectedRows] = useState<any>([])
   const [brokerList, setBrokerList] = useState<any>([])
-  const [loading, setLoading] = useState<any>([])
 
   const [openDelete, setOpenDelete] = useState(false)
   const [openDeleteRows, setOpenDeleteRows] = useState(false)
@@ -50,29 +43,18 @@ const Table = () => {
 
   const router = useRouter()
 
-  // **Reducers
-  const dispatch = useAppDispatch()
-  const brokerReducer = useAppSelector(state => state.brokers)
-
+  //hooks
+  const { brokerPagination, setBrokerPagination, brokers, getBrokersPagination, brokerInfoPage } = useGetAllPagination()
   const { deleteBroker: deleteBrokers } = useDeleteBroker()
 
   useEffect(() => {
-    setBrokerList(brokerReducer.brokers || [])
-    console.log(loading)
-    setLoading(brokerReducer.loading)
+    setBrokerPagination({ ...brokerPagination })
     //eslint-disable-next-line
-  }, [brokerReducer.brokers])
+  }, [])
 
   useEffect(() => {
-    dispatch(fetchBrokers(brokerReducer))
-    //eslint-disable-next-line
-  }, [brokerReducer.filters])
-
-  // const [badgeData] = useState<IAlert>({
-  //   message: '',
-  //   status: undefined,
-  //   icon: undefined
-  // })
+    setBrokerList(brokers || [])
+  }, [brokers])
 
   const column: GridColumns<IBroker> = [
     {
@@ -150,39 +132,31 @@ const Table = () => {
     }
   ]
 
-  /*  const getBrokerList = () => {
-    //must be replaced with the respective broker service
-    const data: IBroker[] = []
-
-    for (let index = 1; index <= 100; index++) {
-      const id = index.toString()
-      const name = `Broker ${index}`
-
-      data.push({
-        id,
-        name
-      })
-    }
-
-    return data
-  } */
-
   const handleSelectBrokerEdit = (id: number | null) => {
-    dispatch(handleSelectBroker(id))
     router.push({ pathname: '/catalogues/dynamic/add-broker', query: { id } })
   }
 
   const searchBrokers = (value: string) => {
-    if (value === '') dispatch(deleteBrokersFilter('name'))
-    else dispatch(handleBrokersFilter({ type: 'name', value: value, text: value }))
+    if (value === '') {
+      setBrokerPagination({
+        ...brokerPagination,
+        filters: [],
+        info: { ...brokerPagination.info, page: 1 }
+      })
+    } else {
+      setBrokerPagination({
+        ...brokerPagination,
+        filters: [{ type: 'name', value: value, text: value }],
+        info: { ...brokerPagination.info, page: 1 }
+      })
+    }
   }
 
   const deleteRows = async () => {
     const result = await deleteBrokers({ idDeleteList: selectedRows })
     if (result) {
-      //it needs an alert o message
       console.log('success')
-      dispatch(fetchBrokers(brokerReducer))
+      getBrokersPagination({ ...brokerPagination })
     }
     setOpenDeleteRows(false)
   }
@@ -197,16 +171,17 @@ const Table = () => {
     if (result) {
       //it needs an alert o message
       console.log('success')
-      dispatch(fetchBrokers(brokerReducer))
+      getBrokersPagination({ ...brokerPagination })
     }
     setOpenDelete(false)
   }
 
-  /*
-  useEffect(() => {
-    setBrokerList(getBrokerList)
-    //eslint-disable-next-line
-  }, []) */
+  const handleDispatch = (e: any, value: number) => {
+    setBrokerPagination({
+      ...brokerPagination,
+      info: { ...brokerPagination.info, page: value }
+    })
+  }
 
   return (
     <>
@@ -230,7 +205,10 @@ const Table = () => {
             pagination
             pageSize={10}
             components={{
-              Pagination: CustomPaginationBroker
+              Pagination: CustomPagination
+            }}
+            componentsProps={{
+              pagination: { handleDispatch, infoPage: { ...brokerInfoPage } }
             }}
             className={'catalogue-datagrid'}
             onSelectionModelChange={rows => setSelectedRows(rows)}

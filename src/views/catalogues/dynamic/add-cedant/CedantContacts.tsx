@@ -64,8 +64,6 @@ interface ICedantContacts {
 }
 
 const CedantContacts = ({ idCedant }: ICedantContacts) => {
-  console.log(idCedant)
-
   // Handle Data
   const [contactList, setContactList] = useState<IContact[]>([])
   const [contactData, setContactData] = useState<IContact>(initialNewContact)
@@ -338,11 +336,17 @@ const CedantContacts = ({ idCedant }: ICedantContacts) => {
   }
 
   const searchContacts = (value: string) => {
-    if (value === '') setCedantContactsPagination({ ...cedantContactsPagination, filters: [] })
-    else {
+    if (value === '') {
       setCedantContactsPagination({
         ...cedantContactsPagination,
-        filters: [{ type: 'name', value: value, text: value }]
+        filters: [],
+        info: { ...cedantContactsPagination.info, page: 1 }
+      })
+    } else {
+      setCedantContactsPagination({
+        ...cedantContactsPagination,
+        filters: [{ type: 'name', value: value, text: value }],
+        info: { ...cedantContactsPagination.info, page: 1 }
       })
     }
   }
