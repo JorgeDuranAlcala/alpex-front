@@ -256,6 +256,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
         exchangeRate: exchangeRate.conversionRate || 0
       })
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [exchangeRate])
 
   return (

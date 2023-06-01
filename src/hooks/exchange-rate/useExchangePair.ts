@@ -24,6 +24,7 @@ export const useExchangePair = () => {
   }
   useEffect(() => {
     if (pair.baseCurrency) getPair()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pair])
 
   return {
