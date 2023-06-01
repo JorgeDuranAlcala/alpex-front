@@ -60,30 +60,57 @@ const CardInstallment = ({ index, installment, onChangeList, globalInfo, count, 
     premiumPaymentWarranty: installment.premiumPaymentWarranty,
     settlementDueDate: installment.settlementDueDate,
     idAccount: globalInfo.idAccount,
-    id: 0
+    id: installment.id || 0
   })
 
   const { receivedNetPremium, inceptionDate } = globalInfo
 
   useEffect(() => {
     setTimeout(() => {
-      setFormData({
-        paymentPercentage: installment.paymentPercentage,
-        balanceDue: installment.balanceDue,
-        premiumPaymentWarranty: installment.premiumPaymentWarranty,
-        settlementDueDate: installment.settlementDueDate,
-        idAccount: globalInfo.idAccount,
-        id: installment.id
+      setFormData(state => {
+        const balanceDue = receivedNetPremium * (installment.paymentPercentage / 100)
+        const paymentWarranty =
+          installment.premiumPaymentWarranty !== 0 ? installment.premiumPaymentWarranty : index + 1
+
+        if (inceptionDate && paymentWarranty) {
+          const days = paymentWarranty * 24 * 60 * 60 * 1000
+          state.settlementDueDate = new Date(inceptionDate.getTime() + days)
+        } else {
+          state.settlementDueDate = installment.settlementDueDate
+        }
+
+        state.idAccount = globalInfo.idAccount
+        state.premiumPaymentWarranty = paymentWarranty
+        state.paymentPercentage = installment.paymentPercentage
+        state.id = installment.id
+        state.balanceDue = balanceDue
+
+        return state
       })
-    }, 10)
+    }, 25)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [installment])
+  }, [installment, index])
 
   useEffect(() => {
     setTimeout(() => {
-      setFormData({
-        ...formData,
-        premiumPaymentWarranty: daysFirst ? daysFirst * (index + 1) : formData.premiumPaymentWarranty
+      setFormData(state => {
+        const premiumPaymentWarranty = daysFirst ? daysFirst * (index + 1) : formData.premiumPaymentWarranty
+
+        if (inceptionDate && premiumPaymentWarranty) {
+          const days = premiumPaymentWarranty * 24 * 60 * 60 * 1000
+          const settlementDueDate = new Date(inceptionDate.getTime() + days)
+
+          return {
+            ...state,
+            premiumPaymentWarranty,
+            settlementDueDate: settlementDueDate
+          }
+        }
+
+        return {
+          ...state,
+          premiumPaymentWarranty
+        }
       })
     }, 12)
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -124,6 +151,7 @@ const CardInstallment = ({ index, installment, onChangeList, globalInfo, count, 
         setFormData({ ...formDataTemp })
       }
     } catch {}
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [count])
 
