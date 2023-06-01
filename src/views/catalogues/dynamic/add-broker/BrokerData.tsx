@@ -13,10 +13,8 @@ import { ButtonClose, HeaderTitleModal } from 'src/styles/modal/modal.styled'
 import { IBroker } from '../broker-table'
 
 // Hooks
-import { useUpdateById } from '@/hooks/catalogs/broker'
+import { useFindByIdBroker, useUpdateById } from '@/hooks/catalogs/broker'
 import { useDeleteBroker } from '@/hooks/catalogs/broker/useDelete'
-import { useAppDispatch, useAppSelector } from '@/store'
-import { fetchBrokers } from '@/store/apps/catalogs/brokers'
 import { useAddBroker } from 'src/hooks/catalogs/broker/useAdd'
 
 interface IBrokerData {
@@ -36,12 +34,22 @@ const BrokerData = ({ idBroker, setIdBroker }: IBrokerData) => {
   const [alertText, setAlertText] = useState('')
   const [alertIcon, setAlertIcon] = useState('')
 
+  //hooks
   const { saveBroker } = useAddBroker()
   const { deleteBroker: deleteBrokers } = useDeleteBroker()
   const { update } = useUpdateById()
+  const { setId, broker } = useFindByIdBroker()
 
-  const dispatch = useAppDispatch()
-  const brokerReducer = useAppSelector(state => state.brokers)
+  useEffect(() => {
+    if (idBroker !== 0) {
+      setId(idBroker)
+      setNewBroker({ id: idBroker, name: broker?.name || '' })
+      setIsBrokerSaved(true)
+      setNameDisabled(true)
+      setIsEditing(false)
+    }
+    //eslint-disable-next-line
+  }, [idBroker, broker])
 
   const triggerAlert = (type: string, text?: string) => {
     setAlertType(type)
@@ -75,10 +83,11 @@ const BrokerData = ({ idBroker, setIdBroker }: IBrokerData) => {
     if (result) {
       setNewBroker({ id: result.id, name: result.name })
       triggerAlert('success')
-      dispatch(fetchBrokers(brokerReducer))
       setIdBroker(result.id)
       setNameDisabled(true)
       setIsBrokerSaved(true)
+    } else {
+      triggerAlert('error')
     }
   }
 
@@ -91,7 +100,6 @@ const BrokerData = ({ idBroker, setIdBroker }: IBrokerData) => {
     const result = await update(newBroker.id, newBroker)
     if (result) {
       setNewBroker({ id: result.id, name: result.name })
-      dispatch(fetchBrokers(brokerReducer))
       setIsBrokerSaved(true)
       setNameDisabled(true)
       setIsEditing(false)
@@ -105,21 +113,12 @@ const BrokerData = ({ idBroker, setIdBroker }: IBrokerData) => {
     const result = await deleteBrokers({ idDeleteList: [newBroker.id] })
     if (result) {
       triggerAlert('success')
-      dispatch(fetchBrokers(brokerReducer))
+      setIdBroker(0)
+    } else {
+      triggerAlert('error')
     }
     setOpenDelete(false)
   }
-
-  useEffect(() => {
-    if (brokerReducer.current !== undefined && brokerReducer.current !== null && idBroker !== 0) {
-      setNewBroker({ ...brokerReducer.current })
-      setIsBrokerSaved(true)
-      setNameDisabled(true)
-      setIsEditing(false)
-    }
-
-    //eslint-disable-next-line
-  }, [brokerReducer.current, idBroker])
 
   useEffect(() => {
     if (newBroker.name !== '') {
