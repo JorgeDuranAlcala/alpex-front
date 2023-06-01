@@ -96,8 +96,37 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
   // State to save installments Ids to upload
   const [instIds, setInstIds] = useState<number[]>([])
 
-  const handleNumericInputChange = (value: any) => {
-    setCount(String(value))
+  const handleNumericInputChange = (count: any) => {
+    const installmentsTemp = []
+
+    if (parseInt(count) === 0 || parseInt(count) > 12) {
+      setError({
+        ...error,
+        erorrRangeInstallments: true
+      })
+    } else {
+      setError({
+        ...error,
+        erorrRangeInstallments: false
+      })
+      setBtnNext(true)
+    }
+
+    //Change the paymentPercentage of each installment when the count changes to be equal to 100/count
+    const paymentPercentage = 100 / +count
+    const defaultObject = {
+      balanceDue: 0,
+      paymentPercentage: paymentPercentage,
+      premiumPaymentWarranty: 0,
+      settlementDueDate: account ? new Date(account?.informations[0]?.effectiveDate || '') : new Date(),
+      idAccount: account ? idAccount : '',
+      id: 0
+    }
+    for (let i = 0; i < +count; i++) {
+      installmentsTemp[i] = { ...defaultObject }
+    }
+    setInstallmentList(installmentsTemp)
+    setCount(String(count))
   }
 
   useEffect(() => {
@@ -113,6 +142,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
       }, 50)
     }
   }, [account])
+
   const handleBlur = (event: FocusEvent<HTMLInputElement>) => {
     if (event.target.value === '') {
       setError({
@@ -133,6 +163,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
 
   useEffect(() => {
     //yup validate each form of installmentlist
+
     for (let i = 0; i < +count; i++) {
       const item = installmentsList[i]
       schema
@@ -203,37 +234,39 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
     }
   }
 
-  useEffect(() => {
-    if (parseInt(count) === 0 || parseInt(count) > 12) {
-      setError({
-        ...error,
-        erorrRangeInstallments: true
-      })
-    } else {
-      setError({
-        ...error,
-        erorrRangeInstallments: false
-      })
-      setBtnNext(true)
-    }
+  // useEffect(() => {
+  //   const installmentsTemp = []
 
-    //Change the paymentPercentage of each installment when the count changes to be equal to 100/count
-    const paymentPercentage = 100 / +count
-    const defaultObject = {
-      balanceDue: 0,
-      paymentPercentage: paymentPercentage,
-      premiumPaymentWarranty: 0,
-      settlementDueDate: account ? new Date(account?.informations[0]?.effectiveDate || '') : new Date(),
-      idAccount: account ? idAccount : '',
-      id: 0
-    }
-    for (let i = 0; i < +count; i++) {
-      installmentsList[i] = { ...defaultObject }
-    }
-    setInstallmentList(installmentsList)
+  //   if (parseInt(count) === 0 || parseInt(count) > 12) {
+  //     setError({
+  //       ...error,
+  //       erorrRangeInstallments: true
+  //     })
+  //   } else {
+  //     setError({
+  //       ...error,
+  //       erorrRangeInstallments: false
+  //     })
+  //     setBtnNext(true)
+  //   }
 
-    //eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [count])
+  //   //Change the paymentPercentage of each installment when the count changes to be equal to 100/count
+  //   const paymentPercentage = 100 / +count
+  //   const defaultObject = {
+  //     balanceDue: 0,
+  //     paymentPercentage: paymentPercentage,
+  //     premiumPaymentWarranty: 0,
+  //     settlementDueDate: account ? new Date(account?.informations[0]?.effectiveDate || '') : new Date(),
+  //     idAccount: account ? idAccount : '',
+  //     id: 0
+  //   }
+  //   for (let i = 0; i < +count; i++) {
+  //     installmentsTemp[i] = { ...defaultObject, }
+  //   }
+  //   setInstallmentList(installmentsTemp)
+
+  //   //eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [count])
 
   useEffect(() => {
     idAccount && setAccountId(idAccount)

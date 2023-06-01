@@ -305,12 +305,11 @@ const Security = ({ onStepChange }: SecurityProps) => {
 
   const handleItemChange = (index: number, item: FormInfo) => {
     setItemsChanged(true)
-    setSecuritiesList((prevSecuritiesList) => {
+    setSecuritiesList(prevSecuritiesList => {
       const tempSecurities = [...prevSecuritiesList.slice(0, index), item, ...prevSecuritiesList.slice(index + 1)]
 
-      return tempSecurities;
-    });
-
+      return tempSecurities
+    })
   }
 
   const [allFormData, setAllFormData] = useState<FormSecurity>({
@@ -336,8 +335,6 @@ const Security = ({ onStepChange }: SecurityProps) => {
   useEffect(() => {
     accountData.formsData.form1.id && setAccountId(accountData.formsData.form1.id)
   }, [accountData.formsData.form1.id, setAccountId])
-
-
 
   const inter = userThemeConfig.typography?.fontFamilyInter
 
