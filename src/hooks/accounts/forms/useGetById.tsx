@@ -2,6 +2,7 @@ import { useLocalStorage } from '@/hooks/useLocalStorage'
 import { useEffect, useState } from 'react'
 
 import { InformationDto } from '@/services/accounts/dtos/information.dto'
+import { InstallmentDto } from '@/services/accounts/dtos/installments.dto'
 import { SecurityDto } from '@/services/accounts/dtos/security.dto'
 import { SecurityTotalDto } from '@/services/accounts/dtos/securityTotal.dto'
 import AccountServices from 'src/services/accounts/account.service'
@@ -11,7 +12,7 @@ interface Response {
   informations: InformationDto[]
   securities: SecurityDto[]
   securityTotal: SecurityTotalDto
-  installments: any
+  installments: InstallmentDto[]
 }
 
 export const useGetAccountById = () => {

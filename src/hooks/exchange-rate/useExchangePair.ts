@@ -7,8 +7,8 @@ export const useExchangePair = () => {
   const [exchangeRate, setExchangeRate] = useState<ExchangeRateDto>({} as ExchangeRateDto)
 
   const [pair, setPair] = useState<Pair>({
-    baseCurrency: '',
-    targetCurrency: 'USD'
+    baseCurrency: 'USD',
+    targetCurrency: ''
   })
 
   const getPair = async () => {
@@ -23,7 +23,7 @@ export const useExchangePair = () => {
     }
   }
   useEffect(() => {
-    if (pair.baseCurrency) getPair()
+    if (pair.targetCurrency) getPair()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pair])
 

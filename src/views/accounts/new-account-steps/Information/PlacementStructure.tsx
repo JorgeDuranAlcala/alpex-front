@@ -183,7 +183,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
   const handleCurrencyChange = (e: SelectChangeEvent<string>) => {
     const target = e.target
     const value = target.value
-    setPair({ baseCurrency: value, targetCurrency: 'USD' })
+    setPair({ targetCurrency: value, baseCurrency: 'USD' })
   }
 
   const handleNumericInputChange = (value: any, name: string) => {
@@ -252,7 +252,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
     if (exchangeRate) {
       setPlacementStructure({
         ...placementStructure,
-        currency: pair.baseCurrency,
+        currency: pair.targetCurrency,
         exchangeRate: exchangeRate.conversionRate || 0
       })
     }
