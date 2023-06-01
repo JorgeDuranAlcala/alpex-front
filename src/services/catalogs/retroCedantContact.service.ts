@@ -52,7 +52,7 @@ class RetroCedantContactService {
   async updateById(id: number, update: Partial<RetroCedantContactDto>) {
     try {
       const { data } = await AppAlpexApiGateWay.put<Promise<RetroCedantContactDto>>(
-        `${RETRO_CEDANT_CONTACT_ROUTES.UPDATE}${id}`,
+        `${RETRO_CEDANT_CONTACT_ROUTES.UPDATE}/${id}`,
         {
           ...update
         }
@@ -92,6 +92,7 @@ class RetroCedantContactService {
 
       return data
     } catch (error) {
+      console.log(error)
       const errMessage = String(error)
       throw new Error(errMessage)
     }

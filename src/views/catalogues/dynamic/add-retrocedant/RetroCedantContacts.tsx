@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react'
 import CloseIcon from '@mui/icons-material/Close'
 import { Box, Button, FormControl, IconButton, InputLabel, MenuItem, Modal, TextField, Typography } from '@mui/material'
 import Select from '@mui/material/Select'
-import { DataGrid, GRID_CHECKBOX_SELECTION_COL_DEF, GridColumns, GridRowId } from '@mui/x-data-grid'
+import { DataGrid, GridColumns, GRID_CHECKBOX_SELECTION_COL_DEF } from '@mui/x-data-grid'
 
 import FormHelperText from '@mui/material/FormHelperText'
 
@@ -16,10 +16,15 @@ import { ButtonClose, HeaderTitleModal } from 'src/styles/modal/modal.styled'
 import Icon from 'src/@core/components/icon'
 
 // ** Custom Components Imports
-import CustomPagination from '../CustomPagination'
+import CustomPagination from '../CustomPaginationImpl'
 import TableHeader from '../TableHeader'
 
 // ** Custom utilities
+import { useGetAllCountries } from '@/hooks/catalogs/country'
+import { useAddRetroCedantContact } from '@/hooks/catalogs/retroCedantContact/useAdd'
+import { useDeleteRetroCedantContact } from '@/hooks/catalogs/retroCedantContact/useDelete'
+import useGetAllByIdRetroCedantAndPagination from '@/hooks/catalogs/retroCedantContact/useGetAllByIdBrokerAndPagination'
+import { useUpdateById } from '@/hooks/catalogs/retroCedantContact/useUpdateById'
 import colors from 'src/views/accounts/colors'
 import fonts from 'src/views/accounts/font'
 
@@ -28,7 +33,14 @@ export interface IContact {
   name: string
   phone: string
   email: string
-  country: string
+  idCCountry: ICountry
+  idCRetroCedant: number
+}
+
+export interface ICountry {
+  id: number
+  name?: string
+  currency?: string
 }
 
 const initialNewContact: IContact = {
@@ -36,7 +48,8 @@ const initialNewContact: IContact = {
   name: '',
   email: '',
   phone: '',
-  country: ''
+  idCCountry: { id: 0 },
+  idCRetroCedant: 0
 }
 
 const expresions = {
@@ -46,18 +59,22 @@ const expresions = {
   phone: /^\d{10}$/ // 7 a 10 numeros.
 }
 
-const BrokerContacts = () => {
+interface IRetroCedantContacts {
+  idRetroCedant: number
+}
+
+const RetroCedantContacts = ({ idRetroCedant }: IRetroCedantContacts) => {
   // ** State
   // Handle Data
   const [contactList, setContactList] = useState<IContact[]>([])
   const [contactData, setContactData] = useState<IContact>(initialNewContact)
-  const [currentContact, setCurrentContact] = useState<IContact>(initialNewContact); //saves the row data to be edited
-  const [selectedRow, setSelectedRow] = useState<IContact | null>(null); // saves the row wehen user click on actions button
+  const [currentContact, setCurrentContact] = useState<IContact>(initialNewContact) //saves the row data to be edited
+  const [selectedRow, setSelectedRow] = useState<IContact | null>(null) // saves the row wehen user click on actions button
   const [contactToDelete, setContactToDelete] = useState(0) //Saves id of contact to be deleted.
 
   // Handle view
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [selectedRows, setSelectedRows] = useState<GridRowId[]>([])
+  const [selectedRows, setSelectedRows] = useState<any[]>([])
   const [btnDisable, setBtnDisable] = useState(true)
   const [btnEditDisable, setBtnEditDisable] = useState(true)
 
@@ -69,7 +86,6 @@ const BrokerContacts = () => {
   const [phoneError, setPhoneError] = useState(false)
   const [countryError, setCountryError] = useState(false)
   const [emptyForm, setEmptyForm] = useState(true)
-
 
   // Handle edit contact validations
   const [startEditValidations, setStartEditValidations] = useState(false)
@@ -87,39 +103,59 @@ const BrokerContacts = () => {
   const [openDeleteRows, setOpenDeleteRows] = useState(false)
 
   // Handle Alerts
-  const [showAlert, setShowAlert] = useState(true);
-  const [alertType, setAlertType] = useState('');
-  const [alertText, setAlertText] = useState('');
-  const [alertIcon, setAlertIcon] = useState('');
+  const [showAlert, setShowAlert] = useState(true)
+  const [alertType, setAlertType] = useState('')
+  const [alertText, setAlertText] = useState('')
+  const [alertIcon, setAlertIcon] = useState('')
 
-  const triggerAlert = (type: string) => {
+  //hooks
+  const { deleteRetroCedantContact } = useDeleteRetroCedantContact()
+  const { saveRetroCedantContact } = useAddRetroCedantContact()
+  const { countries } = useGetAllCountries()
+  const { update } = useUpdateById()
+  const {
+    retroCedantContactsPagination,
+    retroCedantContacts,
+    setRetroCedantContactsPagination,
+    getRetroCedantContactsByIdRetroCedant,
+    retroCedantContactInfoPage
+  } = useGetAllByIdRetroCedantAndPagination()
+
+  useEffect(() => {
+    setRetroCedantContactsPagination({ ...retroCedantContactsPagination, idCRetroCedant: idRetroCedant })
+    //eslint-disable-next-line
+  }, [idRetroCedant])
+
+  useEffect(() => {
+    setContactList(retroCedantContacts || [])
+  }, [retroCedantContacts])
+
+  const triggerAlert = (type: string, text?: string) => {
     setAlertType(type)
 
     switch (type) {
       case 'success':
-        setAlertText('NEW CONTACT ADDED')
+        setAlertText(text || 'NEW CONTACT ADDED')
         setAlertIcon('mdi:check-circle-outline')
-        break;
+        break
       case 'error':
         setAlertText('UNKNOWN ERROR, TRY AGAIN')
         setAlertIcon('mdi:alert-circle-outline')
-        break;
+        break
       case 'warn':
         setAlertText('NO INTERNET CONNECTION')
         setAlertIcon('mdi:alert-outline')
-        break;
+        break
       default:
         break
     }
 
-    setShowAlert(true);
+    setShowAlert(true)
 
     setTimeout(() => {
-      setShowAlert(false);
-    }, 5000);
-
-
-  };
+      setShowAlert(false)
+    }, 5000)
+  }
 
   const column: GridColumns<IContact> = [
     {
@@ -136,7 +172,7 @@ const BrokerContacts = () => {
       align: 'left',
       sortable: false,
       headerClassName: ' broker-contacts-header',
-      renderHeader: () =>
+      renderHeader: () => (
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative' }}>
           <Typography
             component={'span'}
@@ -144,17 +180,15 @@ const BrokerContacts = () => {
           >
             CONTACT NAME
           </Typography>
-
-        </Box>,
+        </Box>
+      ),
       renderCell: ({ row }) => (
-        <Typography sx={{ fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
-          {row.name}
-        </Typography>
+        <Typography sx={{ fontSize: fonts.size.px14, fontFamily: fonts.inter }}>{row.name}</Typography>
       )
     },
     {
       flex: 0.1,
-      field: "phone-number",
+      field: 'phone-number',
       headerName: 'PHONE NUMBER',
       minWidth: 150,
       maxWidth: 150,
@@ -171,13 +205,9 @@ const BrokerContacts = () => {
           >
             PHONE NUMBER
           </Typography>
-
-        </Box>),
-      renderCell: ({ row }) => (
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          {row.phone}
         </Box>
-      )
+      ),
+      renderCell: ({ row }) => <Box sx={{ display: 'flex', alignItems: 'center' }}>{row.phone}</Box>
     },
     {
       flex: 0.1,
@@ -189,7 +219,7 @@ const BrokerContacts = () => {
       disableColumnMenu: true,
       sortable: false,
       headerClassName: 'broker-contacts-header',
-      renderHeader: () =>
+      renderHeader: () => (
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative' }}>
           <Typography
             component={'span'}
@@ -197,8 +227,8 @@ const BrokerContacts = () => {
           >
             EMAIL
           </Typography>
-
-        </Box>,
+        </Box>
+      ),
       renderCell: ({ row }) => (
         <Typography
           sx={{ color: colors.text.primary, fontWeight: 500, fontSize: fonts.size.px14, fontFamily: fonts.inter }}
@@ -217,18 +247,19 @@ const BrokerContacts = () => {
       disableColumnMenu: true,
       sortable: false,
       headerClassName: 'broker-contacts-header',
-      renderHeader: () => <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative' }}>
-        <Typography
-          component={'span'}
-          sx={{ color: colors.text.primary, fontWeight: 500, fontSize: fonts.size.px12, fontFamily: fonts.inter }}
-        >
-          COUNTRY
-        </Typography>
-
-      </Box>,
+      renderHeader: () => (
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative' }}>
+          <Typography
+            component={'span'}
+            sx={{ color: colors.text.primary, fontWeight: 500, fontSize: fonts.size.px12, fontFamily: fonts.inter }}
+          >
+            COUNTRY
+          </Typography>
+        </Box>
+      ),
       renderCell: ({ row }) => (
         <Typography sx={{ color: colors.text.secondary, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
-          {row.country}
+          {row.idCCountry.name}
         </Typography>
       )
     },
@@ -243,66 +274,46 @@ const BrokerContacts = () => {
       disableColumnMenu: true,
       sortable: false,
       headerClassName: 'reinsurer-contacts-header',
-      renderHeader: () => <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative' }}>
-
-      </Box>,
+      renderHeader: () => (
+        <Box
+          sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative' }}
+        ></Box>
+      ),
       renderCell: ({ row }) => {
-        const showActions = row === selectedRow;
+        const showActions = row === selectedRow
 
         return (
-          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
             <div className='actions-wrapper'>
               <IconButton
                 onClick={() => {
                   if (showActions) {
-                    setSelectedRow(null);
+                    setSelectedRow(null)
                   } else {
-                    setSelectedRow(row);
+                    setSelectedRow(row)
                   }
-                }
-                }
+                }}
                 size='small'
                 sx={{ mr: 1 }}
               >
                 <Icon icon='mdi:dots-vertical' />
               </IconButton>
-              {showActions &&
+              {showActions && (
                 <div className='actions-menu'>
-
                   <div className='menu-option' onClick={() => handleEditContact(row)}>
                     Edit
                   </div>
                   <div className='menu-option' onClick={() => handleDeleteContact(row.id)}>
                     Delete
                   </div>
-                </div>}
+                </div>
+              )}
             </div>
-
           </Box>
         )
       }
-    },
-
-  ]
-
-  const getContactList = () => { //must be replaced with the respective broker service
-    const data: IContact[] = []
-
-    for (let index = 1; index <= 100; index++) {
-      const id = index
-      const name = `Contact ${index}`
-
-      data.push({
-        id,
-        name,
-        phone: '2221334455',
-        email: 'user@mail.com',
-        country: 'México'
-      })
     }
-
-    return data
-  }
+  ]
 
   const handleChangeModal = (field: keyof IContact, value: IContact[keyof IContact]) => {
     setStartValidations(true)
@@ -315,47 +326,78 @@ const BrokerContacts = () => {
   }
 
   const handleDeleteContact = (id: number) => {
-    setContactToDelete(id);
-    setSelectedRow(null);
-    setOpenDelete(true);
+    setContactToDelete(id)
+    setSelectedRow(null)
+    setOpenDelete(true)
   }
 
   const handleEditContact = (row: IContact) => {
     setCurrentContact(row)
-    setSelectedRow(null);
+    setSelectedRow(null)
     setOpenEdit(true)
   }
 
-  const searchContacts = (value: string) => { //must be replaced with the respective broker service
-    console.log("Call search service", value)
+  const searchContacts = (value: string) => {
+    if (value === '') {
+      setRetroCedantContactsPagination({
+        ...retroCedantContactsPagination,
+        filters: [],
+        info: { ...retroCedantContactsPagination.info, page: 1 }
+      })
+    } else {
+      setRetroCedantContactsPagination({
+        ...retroCedantContactsPagination,
+        filters: [{ type: 'name', value: value, text: value }],
+        info: { ...retroCedantContactsPagination.info, page: 1 }
+      })
+    }
   }
-  const handleCreateContact = () => {
-    console.log('Cal create contact service', contactData)
+  const handleCreateContact = async () => {
+    const result = await saveRetroCedantContact({
+      ...contactData,
+      idCRetroCedant: idRetroCedant,
+      idCCountry: contactData.idCCountry.id
+    })
+    if (result) {
+      triggerAlert('success')
+      setContactData(initialNewContact)
+      getRetroCedantContactsByIdRetroCedant(retroCedantContactsPagination)
+    }
     setOpenNewContact(false)
-
-    triggerAlert("success")
-
-    // triggerAlert("error")
-    // triggerAlert("warn")
+    triggerAlert('success')
   }
 
-  const editContact = () => { //must be replaced with the respective reinsurers service
-    console.log("call method to edit contact", currentContact)
+  const editContact = async () => {
+    const result = await update(currentContact.id, {
+      ...currentContact,
+      idCRetroCedant: idRetroCedant,
+      idCCountry: currentContact.idCCountry.id
+    })
+    if (result) {
+      triggerAlert('success', 'CHANGES SAVED')
+      getRetroCedantContactsByIdRetroCedant(retroCedantContactsPagination)
+    }
     setOpenEdit(false)
   }
 
-  const deleteContact = () => {  //must be replaced with the respective reinsurers service
-    const newContactList = contactList.filter(contact => contact.id !== contactToDelete)
-    setContactList(newContactList)
+  const deleteContact = async () => {
+    const result = await deleteRetroCedantContact({ idDeleteList: [contactToDelete] })
+    if (result) {
+      //it needs an alert o message
+      getRetroCedantContactsByIdRetroCedant(retroCedantContactsPagination)
+    }
     setOpenDelete(false)
   }
 
-  const deleteRows = () => {  //must be replaced with the respective broker service
-    // const newContactList = // Service return new list
-    // setContactList(newBinderList)
+  const deleteRows = async () => {
+    const result = await deleteRetroCedantContact({ idDeleteList: selectedRows })
+    if (result) {
+      //it needs an alert o message
+      console.log('success')
+      getRetroCedantContactsByIdRetroCedant(retroCedantContactsPagination)
+    }
     setOpenDeleteRows(false)
   }
-
 
   useEffect(() => {
     if (
@@ -365,8 +407,8 @@ const BrokerContacts = () => {
       contactData.email !== '' &&
       contactData.phone !== undefined &&
       contactData.phone !== '' &&
-      contactData.country !== undefined &&
-      contactData.country !== ''
+      contactData.idCCountry !== undefined &&
+      contactData.idCCountry.id !== 0
     ) {
       setEmptyForm(false)
     } else {
@@ -396,7 +438,7 @@ const BrokerContacts = () => {
         setError(true)
       }
 
-      if (contactData.country !== undefined && contactData.country !== '') {
+      if (contactData.idCCountry !== undefined && contactData.idCCountry.id !== 0) {
         setCountryError(false)
       } else {
         setCountryError(true)
@@ -416,7 +458,7 @@ const BrokerContacts = () => {
     contactData.name,
     contactData.email,
     contactData.phone,
-    contactData.country,
+    contactData.idCCountry,
     error,
     nameError,
     emailError,
@@ -433,8 +475,8 @@ const BrokerContacts = () => {
       currentContact.email !== '' &&
       currentContact.phone !== undefined &&
       currentContact.phone !== '' &&
-      currentContact.country !== undefined &&
-      currentContact.country !== ''
+      currentContact.idCCountry !== undefined &&
+      currentContact.idCCountry.id !== 0
     ) {
       setEmptyEditForm(false)
     } else {
@@ -464,7 +506,7 @@ const BrokerContacts = () => {
         setEditError(true)
       }
 
-      if (currentContact.country !== undefined && currentContact.country !== '') {
+      if (currentContact.idCCountry !== undefined && currentContact.idCCountry.id !== 0) {
         setEditCountryError(false)
       } else {
         setEditCountryError(true)
@@ -485,7 +527,7 @@ const BrokerContacts = () => {
     currentContact.name,
     currentContact.email,
     currentContact.phone,
-    currentContact.country,
+    currentContact.idCCountry,
     editError,
     editNameError,
     editEmailError,
@@ -494,20 +536,19 @@ const BrokerContacts = () => {
     emptyEditForm
   ])
 
-  useEffect(() => {
-    setContactList(getContactList)
-    //eslint-disable-next-line
-  }, [])
-
+  const handleDispatch = (e: any, value: number) => {
+    setRetroCedantContactsPagination({
+      ...retroCedantContactsPagination,
+      info: { ...retroCedantContactsPagination.info, page: value }
+    })
+  }
 
   return (
     <>
       <div className='contacts-wrapper'>
         <div className='title'>Contacts</div>
         <div className='description'>
-          Here you will find the contacts linked
-          to this specific Broker, you can add one
-          or more contacts.
+          Here you will find the contacts linked to this specific Broker, you can add one or more contacts.
         </div>
         <div className='table-header'>
           <TableHeader
@@ -516,20 +557,23 @@ const BrokerContacts = () => {
               setOpenDeleteRows(true)
             }}
             deleteBtn={selectedRows.length > 0 ? true : false}
-            textBtn="ADD NEW CONTACT"
-            onClickBtn={() => { setOpenNewContact(true) }}
+            textBtn='ADD NEW CONTACT'
+            onClickBtn={() => {
+              setOpenNewContact(true)
+            }}
+            addBtnDisable={idRetroCedant === 0}
           />
-          {showAlert &&
+          {showAlert && (
             <div className={`${alertType} contacts-alert`}>
               <div className='btn-icon'>
                 <Icon icon={alertIcon} />
               </div>
               {alertText}
-            </div>}
+            </div>
+          )}
         </div>
 
         <div className='contact-list'>
-
           <DataGrid
             autoHeight
             checkboxSelection
@@ -541,11 +585,13 @@ const BrokerContacts = () => {
             components={{
               Pagination: CustomPagination
             }}
+            componentsProps={{
+              pagination: { handleDispatch, infoPage: { ...retroCedantContactInfoPage } }
+            }}
             className={'catalogue-datagrid'}
             onSelectionModelChange={rows => setSelectedRows(rows)}
           />
         </div>
-
       </div>
       <Modal className='create-contact-modal' open={openNewContact} onClose={() => setOpenNewContact(false)}>
         <Box className='modal-wrapper'>
@@ -591,15 +637,17 @@ const BrokerContacts = () => {
 
               <Select
                 label='Select country'
-                value={contactData.country}
-                onChange={e => handleChangeModal('country', e.target.value)}
+                value={contactData.idCCountry.id}
+                onChange={e => handleChangeModal('idCCountry', { id: parseInt(e.target.value.toString()) })}
                 labelId='invoice-country'
               >
-                <MenuItem value='USA'>USA</MenuItem>
-                <MenuItem value='UK'>UK</MenuItem>
-                <MenuItem value='Russia'>Russia</MenuItem>
-                <MenuItem value='Australia'>Australia</MenuItem>
-                <MenuItem value='Canada'>Canada</MenuItem>
+                {countries.map(country => {
+                  return (
+                    <MenuItem key={country.id} value={country.id}>
+                      {country.name}
+                    </MenuItem>
+                  )
+                })}
               </Select>
 
               {countryError && (
@@ -667,7 +715,9 @@ const BrokerContacts = () => {
       >
         <Box className='modal-wrapper'>
           <HeaderTitleModal>
-            <Typography variant='h6' sx={{ maxWidth: "450px" }}>Are you sure you want to delete this Contact?</Typography>
+            <Typography variant='h6' sx={{ maxWidth: '450px' }}>
+              Are you sure you want to delete this Contact?
+            </Typography>
             <ButtonClose
               onClick={() => {
                 setOpenDelete(false)
@@ -735,15 +785,17 @@ const BrokerContacts = () => {
 
               <Select
                 label='Select country'
-                value={currentContact.country}
-                onChange={e => handleEditModal('country', e.target.value)}
+                value={currentContact.idCCountry.id}
+                onChange={e => handleEditModal('idCCountry', { id: parseInt(e.target.value.toString()) })}
                 labelId='invoice-country'
               >
-                <MenuItem value='USA'>USA</MenuItem>
-                <MenuItem value='UK'>UK</MenuItem>
-                <MenuItem value='Russia'>Russia</MenuItem>
-                <MenuItem value='Australia'>Australia</MenuItem>
-                <MenuItem value='Canada'>Canada</MenuItem>
+                {countries.map(country => {
+                  return (
+                    <MenuItem key={country.id} value={country.id}>
+                      {country.name}
+                    </MenuItem>
+                  )
+                })}
               </Select>
 
               {editCountryError && (
@@ -753,12 +805,7 @@ const BrokerContacts = () => {
               )}
             </FormControl>
           </div>
-          <Button
-            className='create-contact-modal'
-            disabled={btnEditDisable}
-            variant='contained'
-            onClick={editContact}
-          >
+          <Button className='create-contact-modal' disabled={btnEditDisable} variant='contained' onClick={editContact}>
             EDIT
           </Button>
           <Button className='create-contact-modal' onClick={() => setOpenEdit(false)}>
@@ -770,4 +817,4 @@ const BrokerContacts = () => {
   )
 }
 
-export default BrokerContacts
+export default RetroCedantContacts
