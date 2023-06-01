@@ -193,3 +193,8 @@ export enum RECOVER_PASSWORD_ROUTES {
   NOTIFICATION = 'notification/recovery-password',
   UPDATE = 'user/update-password'
 }
+
+//EXCHANGE-RATE
+export enum EXCHANGE_RATE {
+  PAIR = 'exchange-rate/pair'
+}
