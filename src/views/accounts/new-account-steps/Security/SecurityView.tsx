@@ -287,7 +287,6 @@ interface FormInformation {
 
 const Security = ({ onStepChange }: SecurityProps) => {
   const [securitiesList, setSecuritiesList] = useState<FormInfo[]>([])
-
   const [formErrors, setFormErrors] = useState<FormInfo[]>([{ ...SecurityForm }])
   const { saveSecurityTotal } = useAddSecurityTotal()
   const { updateSecurities } = useUpdateSecurities()
@@ -299,10 +298,17 @@ const Security = ({ onStepChange }: SecurityProps) => {
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
   const { account, setAccountId, getAccountById } = useGetAccountById()
   const { updateSecurityTotal } = useUpdateSecurityTotalById()
+  const [, setItemsChanged] = useState(false)
 
   const handleItemChange = (index: number, item: FormInfo) => {
-    const tempSecurities = [...securitiesList.slice(0, index), item, ...securitiesList.slice(index + 1)]
-    setSecuritiesList(tempSecurities)
+    console.log('handle Item change ')
+    console.log(item)
+    setItemsChanged(true)
+    setSecuritiesList(prevSecuritiesList => {
+      const tempSecurities = [...prevSecuritiesList.slice(0, index), item, ...prevSecuritiesList.slice(index + 1)]
+
+      return tempSecurities
+    })
   }
 
   const [allFormData, setAllFormData] = useState<FormSecurity>({
@@ -557,8 +563,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
       .then(res => (saveAll = '' + res))
       .finally(() => {
         setCanMakeRequest(false)
-
-        setSecuritiesList([])
+        setItemsChanged(false)
         getSecurities()
       })
 
@@ -632,6 +637,12 @@ const Security = ({ onStepChange }: SecurityProps) => {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [canMakeRequest, isNextStep])
+
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  useEffect(() => {
+    console.log('useffect')
+    console.log(securitiesList)
+  }, [securitiesList])
 
   return (
     <>
