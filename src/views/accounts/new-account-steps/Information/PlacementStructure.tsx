@@ -15,6 +15,7 @@ import Select, { SelectChangeEvent } from '@mui/material/Select'
 import TextField from '@mui/material/TextField'
 
 // ** Third Party Imports
+import { useExchangePair } from '@/hooks/exchange-rate/useExchangePair'
 import { NumericFormat } from 'react-number-format'
 
 interface PlacementStructureErrors {
@@ -101,6 +102,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
     taxesError: false,
     typeOfLimitError: false
   })
+  const { setPair, exchangeRate, pair } = useExchangePair()
   const calculate = async (type = 'any') => {
     const grossPremiumc: number = grossPremium || 0
     const reinsuranceBrokeragePc: number = reinsuranceBrokerageP || 0
@@ -181,18 +183,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
   const handleCurrencyChange = (e: SelectChangeEvent<string>) => {
     const target = e.target
     const value = target.value
-
-    switch (value) {
-      case 'USD':
-        setPlacementStructure({ ...placementStructure, currency: value, exchangeRate: 1 })
-        break
-      case 'MXN':
-        setPlacementStructure({ ...placementStructure, currency: value, exchangeRate: 0.057 })
-        break
-      case 'EUR':
-        setPlacementStructure({ ...placementStructure, currency: value, exchangeRate: 1.09 })
-        break
-    }
+    setPair({ baseCurrency: value, targetCurrency: 'USD' })
   }
 
   const handleNumericInputChange = (value: any, name: string) => {
@@ -257,6 +248,16 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
     setNetPremium(placementStructure.netPremium)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [placementStructure.grossPremium])
+  useEffect(() => {
+    if (exchangeRate) {
+      setPlacementStructure({
+        ...placementStructure,
+        currency: pair.baseCurrency,
+        exchangeRate: exchangeRate.conversionRate || 0
+      })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [exchangeRate])
 
   return (
     <>
@@ -273,13 +274,15 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               onChange={handleCurrencyChange}
               labelId='currency'
             >
-              {currencies?.map(currency => {
-                return (
-                  <MenuItem key={currency.code} value={currency.code}>
-                    {currency.code}
-                  </MenuItem>
-                )
-              })}
+              {currencies
+                ?.filter((obj, index, self) => index === self.findIndex(o => o.code === obj.code))
+                .map(currency => {
+                  return (
+                    <MenuItem key={currency.code} value={currency.code}>
+                      {currency.code}
+                    </MenuItem>
+                  )
+                })}
             </Select>
             {errors.currencyError && (
               <FormHelperText sx={{ color: 'error.main' }} id='invoice-country-error'>
@@ -337,7 +340,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               id='reinsurance-brokerage'
               label='Reinsurance brokerage %'
               multiline
-              prefix={'%'}
+              suffix={'%'}
               decimalScale={2}
               variant='outlined'
               isAllowed={values => {
@@ -364,7 +367,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               id='taxes-p'
               label='Taxes %'
               multiline
-              prefix={'%'}
+              suffix={'%'}
               decimalScale={2}
               variant='outlined'
               onBlur={() => calculate('taxesP')}
@@ -392,7 +395,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               id='fronting-fee-p'
               label='Fronting fee %'
               multiline
-              prefix={'%'}
+              suffix={'%'}
               maxRows={4}
               decimalScale={2}
               variant='outlined'
