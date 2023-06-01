@@ -52,6 +52,10 @@ const RetroCedantsTable = () => {
   } = useGetAllPagination()
   const { deleteRetroCedant } = useDeleteRetroCedant()
 
+  const handleSelectCedantEdit = (id: number | null) => {
+    router.push({ pathname: '/catalogues/dynamic/add-retrocedants', query: { id } })
+  }
+
   const column: GridColumns<ICedant> = [
     {
       ...GRID_CHECKBOX_SELECTION_COL_DEF,
@@ -105,7 +109,13 @@ const RetroCedantsTable = () => {
 
       renderCell: ({ row }) => (
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
-          <IconButton size='small' sx={{ mr: 1 }}>
+          <IconButton
+            size='small'
+            sx={{ mr: 1 }}
+            onClick={() => {
+              handleSelectCedantEdit(row.id)
+            }}
+          >
             <Icon icon='ic:baseline-login' />
           </IconButton>
           <IconButton

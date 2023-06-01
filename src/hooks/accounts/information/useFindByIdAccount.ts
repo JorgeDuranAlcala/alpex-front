@@ -18,6 +18,8 @@ export const useFindInformationByIdAccount = () => {
         information.effectiveDate = new Date(effectiveDate)
         information.expirationDate = new Date(expirationDate)
         information.receptionDate = new Date(receptionDate)
+        if (information.createdAt)
+          information.createdAt = new Date(new Date(information.createdAt).toLocaleString('en-US', { timeZone: 'UTC' }))
       }
 
       setInformation({
@@ -32,7 +34,7 @@ export const useFindInformationByIdAccount = () => {
 
   useEffect(() => {
     if (idAccount) {
-      InformationService.getInformaById(idAccount)
+      getInformaByIdAccount(idAccount)
         .then(information => {
           setInformation(information)
         })

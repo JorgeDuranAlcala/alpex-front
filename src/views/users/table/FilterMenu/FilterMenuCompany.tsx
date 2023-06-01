@@ -4,9 +4,9 @@ import Box from '@mui/material/Box'
 import ListItemText from '@mui/material/ListItemText'
 import MenuItem from '@mui/material/MenuItem'
 import Typography from '@mui/material/Typography'
-import { useEffect } from 'react'
+
 import { useAppDispatch } from 'src/store'
-import { fetchAccountsTemporal, handleUsersFilter } from 'src/store/apps/users'
+import { handleUsersFilter } from 'src/store/apps/users'
 
 // ** Icon Imports
 
@@ -60,16 +60,17 @@ const FilterMenuUsersOption: React.FC<IFilterMenuUsersOptionProps> = ({ Company 
 
 const FilterMenuCompany = ({}) => {
   const { company } = useGetAllCompanies()
-  const dispatch = useAppDispatch()
+
+  // const dispatch = useAppDispatch()
 
   // const usersReducer = useAppSelector(state => state.users)
   // const [companies, setCompanies] = useState<IOption[]>([])
 
-  useEffect(() => {
-    dispatch(fetchAccountsTemporal())
-    //eslint-disable-next-line
-    //eslint-disable-next-line
-  }, [])
+  // useEffect(() => {
+  //   dispatch(fetchAccountsTemporal())
+  //   //eslint-disable-next-line
+  //   //eslint-disable-next-line
+  // }, [])
 
   // useEffect(() => {
   //   const data = usersReducer.temporalFilters
