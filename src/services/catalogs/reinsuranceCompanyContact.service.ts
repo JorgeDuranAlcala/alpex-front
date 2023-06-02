@@ -52,7 +52,7 @@ class ReinsuranceCompanyContactService {
   async updateById(id: number, update: Partial<ReinsuranceCompanyContactDto>) {
     try {
       const { data } = await AppAlpexApiGateWay.put<Promise<ReinsuranceCompanyContactDto>>(
-        `${REINSURANCE_COMPANY_CONTACT_ROUTES.UPDATE}${id}`,
+        `${REINSURANCE_COMPANY_CONTACT_ROUTES.UPDATE}/${id}`,
         {
           ...update
         }

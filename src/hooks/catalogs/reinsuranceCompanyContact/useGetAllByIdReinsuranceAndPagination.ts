@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import {
-  ReinsuranceCompanyContactDto,
+  ReinsuranceCompanyContactTableDto,
   ReinsuranceCompanyContactsInfoDto,
   ReinsuranceCompanyContactsPaginationDto
 } from 'src/services/catalogs/dtos/ReinsuranceCompanyContact.dto'
@@ -31,7 +31,7 @@ const initialStateInfo: ReinsuranceCompanyContactsInfoDto = {
 const useGetAllByIdReinsuranceCompanyAndPagination = () => {
   const [reinsuranceCompanyContactsPagination, setReinsuranceCompanyContactsPagination] =
     useState<ReinsuranceCompanyContactsPaginationDto>(initialState)
-  const [reinsuranceCompanyContacts, setReinsuranceCompanyContacts] = useState<ReinsuranceCompanyContactDto[]>([])
+  const [reinsuranceCompanyContacts, setReinsuranceCompanyContacts] = useState<ReinsuranceCompanyContactTableDto[]>([])
   const [reinsuranceCompanyContactInfoPage, setReinsuranceCompanyContactInfoPage] =
     useState<ReinsuranceCompanyContactsInfoDto>(initialStateInfo)
 

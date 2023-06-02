@@ -2,8 +2,9 @@ import { useEffect, useState } from 'react'
 import { ReinsuranceCompanyDto } from 'src/services/catalogs/dtos/ReinsuranceCompanyDto'
 import ReinsuranceCompanyService from 'src/services/catalogs/reinsuranceCompany.service'
 
-export const useGetReinsuranceCompanyById = (id: number) => {
+export const useGetReinsuranceCompanyById = () => {
   const [reinsuranceCompany, setReinsuranceCompany] = useState<ReinsuranceCompanyDto>()
+  const [id, setId] = useState(0)
 
   useEffect(() => {
     ReinsuranceCompanyService.findById(id)
@@ -15,5 +16,5 @@ export const useGetReinsuranceCompanyById = (id: number) => {
       })
   }, [id])
 
-  return { reinsuranceCompany }
+  return { reinsuranceCompany, setId }
 }

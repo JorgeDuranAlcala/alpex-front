@@ -2,7 +2,7 @@ import { FormControl, Grid, InputAdornment, SxProps, TextField, Theme, Typograph
 
 // import { useState } from 'react'
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
-import { ForwardedRef, forwardRef, useEffect, useState } from 'react'
+import { ForwardedRef, forwardRef } from 'react'
 import ReactDatePicker from 'react-datepicker'
 import { NumericFormat } from 'react-number-format'
 import UserThemeOptions from 'src/layouts/UserThemeOptions'
@@ -16,10 +16,11 @@ interface GlobalInfo {
   inceptionDate: Date | null
   idAccount: number
 }
+
 interface ICardInstallment {
   index: number
   installment: InstallmentDto
-  onChangeList: (index: number, item: InstallmentDto) => void
+  onChangeList: (index: number, { name, value }: { name: keyof InstallmentDto; value: any }) => void
   globalInfo: GlobalInfo
   count?: number
   daysFirst?: number
@@ -49,111 +50,13 @@ const CustomInput = forwardRef(({ ...props }: PickerProps, ref: ForwardedRef<HTM
   )
 })
 
-const CardInstallment = ({ index, installment, onChangeList, globalInfo, count, daysFirst }: ICardInstallment) => {
+const CardInstallment = ({ index, installment, onChangeList }: ICardInstallment) => {
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
   const textColor = userThemeConfig.palette?.text.subTitle
 
-  // const [error,setError]=useState<InstallmentsErrors>({percentagePaymentError:false})
-  const [formData, setFormData] = useState<InstallmentDto>({
-    paymentPercentage: installment.paymentPercentage,
-    balanceDue: installment.balanceDue,
-    premiumPaymentWarranty: installment.premiumPaymentWarranty,
-    settlementDueDate: installment.settlementDueDate,
-    idAccount: globalInfo.idAccount,
-    id: installment.id || 0
-  })
-
-  const { receivedNetPremium, inceptionDate } = globalInfo
-
-  useEffect(() => {
-    setTimeout(() => {
-      setFormData(state => {
-        const balanceDue = receivedNetPremium * (installment.paymentPercentage / 100)
-        const paymentWarranty =
-          installment.premiumPaymentWarranty !== 0 ? installment.premiumPaymentWarranty : index + 1
-
-        if (inceptionDate && paymentWarranty) {
-          const days = paymentWarranty * 24 * 60 * 60 * 1000
-          state.settlementDueDate = new Date(inceptionDate.getTime() + days)
-        } else {
-          state.settlementDueDate = installment.settlementDueDate
-        }
-
-        state.idAccount = globalInfo.idAccount
-        state.premiumPaymentWarranty = paymentWarranty
-        state.paymentPercentage = installment.paymentPercentage
-        state.id = installment.id
-        state.balanceDue = balanceDue
-
-        return state
-      })
-    }, 25)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [installment, index])
-
-  useEffect(() => {
-    setTimeout(() => {
-      setFormData(state => {
-        const premiumPaymentWarranty = daysFirst ? daysFirst * (index + 1) : formData.premiumPaymentWarranty
-
-        if (inceptionDate && premiumPaymentWarranty) {
-          const days = premiumPaymentWarranty * 24 * 60 * 60 * 1000
-          const settlementDueDate = new Date(inceptionDate.getTime() + days)
-
-          return {
-            ...state,
-            premiumPaymentWarranty,
-            settlementDueDate: settlementDueDate
-          }
-        }
-
-        return {
-          ...state,
-          premiumPaymentWarranty
-        }
-      })
-    }, 12)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [daysFirst])
-
-  const handleNumericInputChange = (value: any, name: any) => {
-    const formDataTemp = { ...formData }
-
-    if (name === 'premiumPaymentWarranty' && inceptionDate) {
-      formDataTemp.premiumPaymentWarranty = value
-      const days = formDataTemp.premiumPaymentWarranty * 24 * 60 * 60 * 1000
-      formDataTemp.settlementDueDate = new Date(inceptionDate.getTime() + days)
-    }
-
-    if (name === 'paymentPercentage' && receivedNetPremium) {
-      formDataTemp.paymentPercentage = value
-      formDataTemp.balanceDue = receivedNetPremium * (formDataTemp.paymentPercentage / 100)
-    }
-
-    setFormData({ ...formDataTemp, [name]: value })
-    onChangeList(index, {
-      ...formDataTemp,
-      [name]: value
-    })
+  const handleNumericInputChange = (value: any, name: keyof InstallmentDto) => {
+    onChangeList(index, { name, value })
   }
-
-  useEffect(() => {
-    try {
-      if (count === 1) {
-        const formDataTemp = { ...formData }
-        formDataTemp.paymentPercentage = 100
-        formDataTemp.balanceDue = receivedNetPremium
-        setFormData({ ...formDataTemp })
-      } else {
-        const formDataTemp = { ...formData }
-        formDataTemp.paymentPercentage = Number(undefined)
-        formDataTemp.balanceDue = receivedNetPremium
-        setFormData({ ...formDataTemp })
-      }
-    } catch {}
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [count])
 
   return (
     <>
@@ -166,7 +69,7 @@ const CardInstallment = ({ index, installment, onChangeList, globalInfo, count, 
             <FormControl fullWidth>
               <NumericFormat
                 name='premiumPaymentWarranty'
-                value={formData.premiumPaymentWarranty}
+                value={installment.premiumPaymentWarranty}
                 allowLeadingZeros
                 thousandSeparator=','
                 customInput={TextField}
@@ -206,7 +109,7 @@ const CardInstallment = ({ index, installment, onChangeList, globalInfo, count, 
 
                   return (floatValue! >= 0 && floatValue! <= upLimit) || floatValue === undefined
                 }}
-                value={formData.paymentPercentage}
+                value={installment.paymentPercentage}
                 onValueChange={value => handleNumericInputChange(value.floatValue, 'paymentPercentage')}
               />
               {/* {error. && <FormHelperText sx={{ color: 'error.main' }}>Required Field</FormHelperText>} */}
@@ -223,13 +126,13 @@ const CardInstallment = ({ index, installment, onChangeList, globalInfo, count, 
                 prefix={'$'}
                 decimalScale={2}
                 variant='outlined'
-                value={formData.balanceDue}
+                value={installment.balanceDue}
                 disabled={true}
               />
             </FormControl>
             <FormControl fullWidth>
               <ReactDatePicker
-                selected={formData.settlementDueDate}
+                selected={installment.settlementDueDate}
                 shouldCloseOnSelect
                 id='reception-date'
                 showTimeSelect
