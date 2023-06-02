@@ -1,4 +1,4 @@
-import React, { Fragment, useRef, useState } from 'react'
+import React, { Fragment, useEffect, useRef, useState } from 'react'
 
 // // ** MUI Imports
 
@@ -13,20 +13,15 @@ interface UserFileProps {
   setUserFile: React.Dispatch<React.SetStateAction<any>>
 }
 
-const FileSubmit: React.FC<UserFileProps> = ({ setUserFile }) => {
+const FileSubmit: React.FC<UserFileProps> = ({ setUserFile, userFile }) => {
   // ** State
   const inputRef = useRef<HTMLInputElement>(null)
   const [file, setFile] = useState<File[]>([])
-
-  const setFilevalues = (uploadFiles: File[]) => {
-    setFile(uploadFiles)
-  }
 
   const onFileChange = function (e: any) {
     e.preventDefault()
     const rawFiles = e.target.files
 
-    setFilevalues([...file, ...rawFiles])
     setUserFile([...file, ...rawFiles])
   }
 
@@ -39,9 +34,14 @@ const FileSubmit: React.FC<UserFileProps> = ({ setUserFile }) => {
 
   const handleRemoveFile = (e: any, index: number) => {
     e.preventDefault + file.splice(index, 1)
-    setFile([...file])
     setUserFile([...file])
   }
+
+  useEffect(() => {
+    if (userFile.length > 0) {
+      setFile([...userFile])
+    }
+  }, [userFile])
 
   return (
     <Fragment>
