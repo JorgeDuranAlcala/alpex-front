@@ -172,7 +172,8 @@ export enum RETRO_CEDANT_CONTACT_ROUTES {
 export enum INSTALLMENT_ROUTERS {
   GET_ALL = 'account/installment/',
   ADD = 'account/installment/add',
-  UPDATE = 'account/installment/update'
+  UPDATE = 'account/installment/update',
+  DELETE = 'account/installment/delete'
 }
 
 export enum ACCOUNT_STATUS_ROUTERS {

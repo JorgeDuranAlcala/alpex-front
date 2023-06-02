@@ -20,7 +20,7 @@ import {
 } from 'src/styles/Forms/PaymentWarranty/paymentWarranty'
 
 //hooks
-import { useAddInstallments, useUpdateInstallments } from 'src/hooks/accounts/installments'
+import { useAddInstallments, useDeleteInstallments } from 'src/hooks/accounts/installments'
 import { useAppSelector } from 'src/store'
 import * as yup from 'yup'
 
@@ -77,9 +77,11 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
   const size = userThemeConfig.typography?.size.px14
   const texButtonColor = userThemeConfig.palette?.buttonText.primary
   const [installmentsList, setInstallmentList] = useState<InstallmentDto[]>([])
+  const [initialInstallmentList, setInitialInstallmentList] = useState<InstallmentDto[]>([])
 
   const [count, setCount] = useState<string>('0')
   const [btnNext, setBtnNext] = useState<boolean>(false)
+  const [daysFirst, setDaysFirst] = useState<number>()
   const [open, setOpen] = useState<boolean>(false)
   const [error, setError] = useState<InstallmentErrors>({
     errorFieldRequired: false,
@@ -88,13 +90,10 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
   })
 
   const { addInstallments } = useAddInstallments()
-  const { updateInstallments } = useUpdateInstallments()
   const accountData = useAppSelector(state => state.accounts)
   const idAccount = accountData.formsData.form1.id
   const { account, setAccountId } = useGetAccountById()
-
-  // State to save installments Ids to upload
-  const [instIds, setInstIds] = useState<number[]>([])
+  const { deleteInstallments } = useDeleteInstallments()
 
   const handleNumericInputChange = (count: any) => {
     const installmentsTemp = []
@@ -123,7 +122,8 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
       id: 0
     }
     for (let i = 0; i < +count; i++) {
-      installmentsTemp[i] = { ...defaultObject }
+      const temp = { ...defaultObject, premiumPaymentWarranty: 30 * (i + 1) }
+      installmentsTemp[i] = makeCalculates({ ...temp })
     }
     setInstallmentList(installmentsTemp)
     setCount(String(count))
@@ -139,7 +139,8 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
           item.settlementDueDate = new Date(item.settlementDueDate + 'T00:00:00.678Z')
         })
         setInstallmentList([...account.installments])
-      }, 50)
+        setInitialInstallmentList([...account.installments])
+      }, 10)
     }
   }, [account])
 
@@ -157,8 +158,35 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
     }
   }
 
-  const handleItemChange = (index: number, item: InstallmentDto) => {
-    setInstallmentList([...installmentsList.slice(0, index), item, ...installmentsList.slice(index + 1)])
+  const makeCalculates = (installment: InstallmentDto) => {
+    const temp = { ...installment }
+    const inceptionDate = account ? new Date(account?.informations[0]?.effectiveDate || '') : null
+    const receivedNetPremium = account ? account?.securityTotal?.receivedNetPremium : 0
+
+    if (inceptionDate) {
+      const days = temp.premiumPaymentWarranty * 24 * 60 * 60 * 1000
+      temp.settlementDueDate = new Date(inceptionDate.getTime() + days)
+    }
+
+    if (receivedNetPremium) {
+      temp.balanceDue = receivedNetPremium * (temp.paymentPercentage / 100)
+    }
+
+    return temp
+  }
+
+  const handleItemChange = (index: number, { name, value }: { name: keyof InstallmentDto; value: any }) => {
+    const temp = { ...installmentsList[index], [name]: value }
+
+    const newInstalment = makeCalculates(temp)
+
+    setInstallmentList(state => {
+      const lastState = [...state]
+      lastState[index] = newInstalment
+      setDaysFirst(lastState[0]?.premiumPaymentWarranty)
+
+      return lastState
+    })
   }
 
   useEffect(() => {
@@ -183,48 +211,9 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
   }, [installmentsList, count])
 
   const saveInstallments = async (installments: InstallmentDto[]) => {
-    const installmentsToUpdate: InstallmentDto[] = []
-    const newIds: number[] = instIds
-
-    if (newIds.length > 0) {
-      if (newIds.length >= installments.length) {
-        // Update all
-        for (const [idx, installment] of installments.entries()) {
-          installment.id = newIds[idx]
-          installmentsToUpdate.push(installment)
-        }
-        await updateInstallments(installmentsToUpdate)
-      } else {
-        // Update some and create some
-        const installmentsToCreate: InstallmentDto[] = []
-        for (const [idx, installment] of installments.entries()) {
-          if (newIds[idx]) {
-            installment.id = newIds[idx]
-            installmentsToUpdate.push(installment)
-          } else {
-            installmentsToCreate.push(installment)
-          }
-        }
-        await updateInstallments(installmentsToUpdate)
-
-        const resCreate = await addInstallments(installmentsToCreate)
-        if (resCreate && resCreate.length > 0) {
-          for (const createdInstallment of resCreate) {
-            newIds.push(createdInstallment.id)
-          }
-        }
-        setInstIds(newIds)
-      }
-    } else {
-      // Create all
-      const resCreate = await addInstallments(installments)
-      if (resCreate && resCreate.length > 0) {
-        for (const createdInstallment of resCreate) {
-          newIds.push(createdInstallment.id)
-        }
-      }
-      setInstIds(newIds)
-    }
+    await deleteInstallments(initialInstallmentList)
+    const newInitialInstallments = await addInstallments(installments)
+    setInitialInstallmentList(newInitialInstallments)
   }
 
   const nextStep = () => {
@@ -234,39 +223,25 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
     }
   }
 
-  // useEffect(() => {
-  //   const installmentsTemp = []
+  useEffect(() => {
+    const tempInstallments: InstallmentDto[] = []
+    const base = daysFirst ? daysFirst : 0
 
-  //   if (parseInt(count) === 0 || parseInt(count) > 12) {
-  //     setError({
-  //       ...error,
-  //       erorrRangeInstallments: true
-  //     })
-  //   } else {
-  //     setError({
-  //       ...error,
-  //       erorrRangeInstallments: false
-  //     })
-  //     setBtnNext(true)
-  //   }
+    for (const [index, installment] of installmentsList.entries()) {
+      let temp = { ...installment }
+      const paymentWarrantyResult = base * (index + 1)
+      temp.premiumPaymentWarranty = paymentWarrantyResult
+      temp = makeCalculates(temp)
+      tempInstallments.push(temp)
+    }
 
-  //   //Change the paymentPercentage of each installment when the count changes to be equal to 100/count
-  //   const paymentPercentage = 100 / +count
-  //   const defaultObject = {
-  //     balanceDue: 0,
-  //     paymentPercentage: paymentPercentage,
-  //     premiumPaymentWarranty: 0,
-  //     settlementDueDate: account ? new Date(account?.informations[0]?.effectiveDate || '') : new Date(),
-  //     idAccount: account ? idAccount : '',
-  //     id: 0
-  //   }
-  //   for (let i = 0; i < +count; i++) {
-  //     installmentsTemp[i] = { ...defaultObject, }
-  //   }
-  //   setInstallmentList(installmentsTemp)
+    setInstallmentList(() => {
+      const temp = [...tempInstallments]
 
-  //   //eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [count])
+      return temp
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [daysFirst])
 
   useEffect(() => {
     idAccount && setAccountId(idAccount)
