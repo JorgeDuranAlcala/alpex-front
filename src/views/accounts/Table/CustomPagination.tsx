@@ -13,10 +13,10 @@ const CustomPagination = () => {
     dispatch(fetchAccounts({ ...accountsReducer, info: { ...accountsReducer.info, page: value } }))
   }
 
-  const page = accountsReducer.info.page
-  const pageCount = accountsReducer.info.pages
-  const pageSize = accountsReducer.info.take
-  const rowCount = accountsReducer.info.count
+  const page = parseInt(accountsReducer.info.page.toString())
+  const pageCount = parseInt(accountsReducer.info.pages.toString())
+  const pageSize = parseInt(accountsReducer.info.take.toString())
+  const rowCount = parseInt(accountsReducer.info.count.toString())
 
   return (
     <>

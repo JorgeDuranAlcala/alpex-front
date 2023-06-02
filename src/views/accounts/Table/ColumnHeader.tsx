@@ -32,7 +32,6 @@ const ColumnHeader: React.FC<IColunmHeader> = ({ colDef, action, showIcon = true
   const open = Boolean(anchorEl)
   const [widthMenu, setWidthMenu] = useState(0)
 
-  // ** Hooks
   const columnHeaderRef = useRef(null)
 
   const handleClose = () => {
@@ -72,7 +71,7 @@ const ColumnHeader: React.FC<IColunmHeader> = ({ colDef, action, showIcon = true
       </Typography>
       {showIcon && (
         <IconButton size='small' onClick={handleOnClick}>
-          <Icon icon='mdi:filter-variant' fontSize={20} />
+          <Icon icon='mdi:filter-variant' fontSize={20} color={!open ? 'grey' : anchorEl ? '#2535A8' : undefined} />
         </IconButton>
       )}
       <Menu

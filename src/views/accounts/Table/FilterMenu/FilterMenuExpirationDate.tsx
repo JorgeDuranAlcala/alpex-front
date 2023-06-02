@@ -145,6 +145,9 @@ const FilterMenuExpirationDate = () => {
         <DatePickerWrapper>
           <DatePicker
             selected={expirationDate}
+            showMonthDropdown
+            showYearDropdown
+            showDisabledMonthNavigation
             shouldCloseOnSelect
             id='effective-date'
             customInput={<CustomInputWithIcon label='Write a full date' />}
