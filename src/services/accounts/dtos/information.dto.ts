@@ -40,3 +40,23 @@ export interface InformationDto {
   idUnderwriter: number
   idTechnicalAssistant: number
 }
+
+export interface DoctoDto {
+  type: string
+  name: string
+  base64: string
+}
+
+export interface UploadDoctoDto {
+  idAccount: number
+  idCDocto: number
+  docto: DoctoDto
+  idDocto?: number
+  name?: string
+}
+
+export interface DeleteDoctoDto {
+  idAccount: number
+  idDocto: number
+  fileName: string
+}

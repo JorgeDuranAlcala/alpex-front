@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import UserThemeOptions from 'src/layouts/UserThemeOptions'
 
-// Hooks
+// ** Custom Hooks
 import {
   useAddInformation,
   useFindInformationByIdAccount,
@@ -21,6 +21,10 @@ import CustomAlert, { IAlert } from '@/views/custom/alerts'
 import Icon from 'src/@core/components/icon'
 import { useAppDispatch, useAppSelector } from 'src/store'
 import { updateFormsData } from 'src/store/apps/accounts'
+
+// ** Utils
+import { useUploadInformationDocument } from '@/hooks/accounts/information'
+import { formatInformationDoctos } from '@/utils/formatDoctos'
 
 type InformationProps = {
   onStepChange: (step: number) => void
@@ -98,9 +102,11 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   const idAccount = useAppSelector(state => state.accounts?.formsData?.form1?.id)
   const lastForm1Information = useAppSelector(state => state.accounts?.formsData?.form1)
 
+  // ** Custom Hooks
   const { getInformaByIdAccount } = useFindInformationByIdAccount()
   const { addInformation } = useAddInformation()
   const { updateInformationByIdAccount } = useUpdateInformationByIdAccount()
+  const { uploadInformationDocument } = useUploadInformationDocument()
 
   const dispatch = useAppDispatch()
 
@@ -145,11 +151,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
     attachmentPoint: 0.0,
     typeOfLimit: ''
   })
-  const [userFile, setUserFile] = useState<UserFile[]>([
-    {
-      file: null
-    }
-  ])
+  const [userFile, setUserFile] = useState<UserFile[]>([])
 
   const updateInformation = async () => {
     if (idAccount) {
@@ -333,14 +335,24 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
     onIsNewAccountChange(false)
   }
 
+  const uploadDoctos = async (idAccount: number) => {
+    const formatedDoctos = await formatInformationDoctos(userFile, idAccount, 1)
+    for (const docto of formatedDoctos) {
+      const res = await uploadInformationDocument(docto)
+      console.log(res)
+    }
+  }
+
   const handleSaveInformation = async () => {
     console.log("Step saved: 1")
     if (idAccount) {
       await updateInformation()
+      await uploadDoctos(idAccount)
       dispatch(updateFormsData({ form1: { basicInfo, placementStructure, userFile, id: idAccount } }))
     } else {
       const res = await saveInformation()
       localStorage.setItem('idAccount', String(res.account.id))
+      await uploadDoctos(res.account.id)
       dispatch(updateFormsData({ form1: { basicInfo, placementStructure, userFile, id: res.account.id } }))
       onIsNewAccountChange(false)
     }

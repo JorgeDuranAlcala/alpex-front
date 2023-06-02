@@ -73,8 +73,8 @@ const Status: React.FC<IStatusProps> = ({ status }) => {
           component='span'
           sx={{ overflow: 'hidden', display: 'flex', gap: 2, color: colors.primary.light, alignContent: 'center' }}
         >
-          <Icon icon='icon-park-outline:link-three' fontSize={20} />
-          <Typography sx={{ color: colors.primary.light, fontSize: fonts.size.px16, fontFamily: fonts.inter }}>
+          <Icon icon='icon-park-outline:link-three' fontSize={20} color='#2D2F39' />
+          <Typography sx={{ color: '#2D2F39', fontSize: fonts.size.px16, fontFamily: fonts.inter }}>
             {EStatusString.BOUND}
           </Typography>
         </Box>
@@ -99,8 +99,8 @@ const Status: React.FC<IStatusProps> = ({ status }) => {
           component='span'
           sx={{ overflow: 'hidden', display: 'flex', gap: 2, color: colors.secondary.dark, alignContent: 'center' }}
         >
-          <Icon icon='custom:not-taken-up' fontSize={20} />
-          <Typography sx={{ color: colors.secondary.dark, fontSize: fonts.size.px16, fontFamily: fonts.inter }}>
+          <Icon icon='custom:not-taken-up' fontSize={20} color={'#828597'} />
+          <Typography sx={{ color: ' #686B7E', fontSize: fonts.size.px16, fontFamily: fonts.inter }}>
             {EStatusString.NOT_TAKEN_UP}
           </Typography>
         </Box>

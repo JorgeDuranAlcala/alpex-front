@@ -24,9 +24,10 @@ const FileSubmit: React.FC<UserFileProps> = ({ setUserFile }) => {
 
   const onFileChange = function (e: any) {
     e.preventDefault()
+    const rawFiles = e.target.files
 
-    setFilevalues([...file, ...e.target.files])
-    setUserFile({ file: [...file, ...e.target.files] })
+    setFilevalues([...file, ...rawFiles])
+    setUserFile([...file, ...rawFiles])
   }
 
   const onButtonClick = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -39,6 +40,7 @@ const FileSubmit: React.FC<UserFileProps> = ({ setUserFile }) => {
   const handleRemoveFile = (e: any, index: number) => {
     e.preventDefault + file.splice(index, 1)
     setFile([...file])
+    setUserFile([...file])
   }
 
   return (
