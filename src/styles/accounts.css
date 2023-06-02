@@ -370,7 +370,7 @@
 }
 
 .show-on-mobile{
-  display: none;
+  display: none !important;
 }
 
 @media (max-width: 800px) {

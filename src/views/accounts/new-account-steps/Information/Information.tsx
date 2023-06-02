@@ -345,6 +345,8 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
 
   const handleSaveInformation = async () => {
     console.log("Step saved: 1")
+    console.log('basic info')
+    console.log(basicInfo)
     if (idAccount) {
       await updateInformation()
       await uploadDoctos(idAccount)
@@ -369,13 +371,22 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
     handleCloseModal()
   }
 
+  const verifyValidations = async ()=>{
+    if (placementStructureValidated && basicInfoValidated) {
+      setAllValidated(true)
+    } else {
+      setAllValidated(false)
+    }
+  }
+
   //Evento para controlar el botÃ³n de save
   const handleSave = () => {
-    if (nextClicked) {
+    // if (nextClicked) {
       if (basicInfoValidated) {
         handleSaveInformation()
       }
-    }
+
+    // }
   }
 
   const handleCloseModal = () => {
@@ -419,13 +430,13 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   }, [idAccount])
 
   useEffect(() => {
+    async function verify() {
+      await verifyValidations()
+    }
+    verify();
+
     if (nextClicked) {
       setOpen(true)
-    }
-    if (placementStructureValidated && basicInfoValidated) {
-      setAllValidated(true)
-    } else {
-      setAllValidated(false)
     }
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -470,7 +481,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
               className='btn-save'
               onClick={handleSave}
               onMouseEnter={() => {
-                setNextClicked(true)
+                // setNextClicked(true)
                 setMakeValidations(true)
               }}
               variant='contained'
