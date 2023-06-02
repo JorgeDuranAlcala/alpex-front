@@ -303,6 +303,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   }
 
   const handleSaveInformation = async () => {
+    console.log("Step saved: 1")
     if (idAccount) {
       await updateInformation()
       dispatch(updateFormsData({ form1: { basicInfo, placementStructure, userFile, id: idAccount } }))
