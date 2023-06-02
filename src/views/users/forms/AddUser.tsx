@@ -23,17 +23,12 @@ import { FocusEvent, FocusEventHandler, useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useAppDispatch, useAppSelector } from 'src/store'
 
+// import { ReinsuranceCompanyDto } from '@/services/catalogs/dtos/ReinsuranceCompanyDto'
+
+// import CompanySelect from '@/views/custom/select/CompanySelect'
 import { UserSection } from 'src/styles/Forms/usersSection'
 import CountrySelect, { ICountry } from 'src/views/custom/select/CountrySelect'
 import { StyledDescription, StyledSubtitle, StyledTitle } from 'src/views/custom/typography'
-
-interface ReinsuranceCompanyDto {
-  id: number | string
-  name: string
-  special?: boolean
-  alias?: string
-  idSubscriptionType?: number
-}
 
 interface FormInfo {
   name: string
@@ -89,6 +84,9 @@ const schema = yup.object().shape({
   phone: yup.string().required(),
   company: yup.string().required(),
   email: yup.string().email().required(),
+
+  // role: yup.string().required(),
+  // dualRole: yup.string().required(),
   name: yup
     .string()
     .min(3, obj => showErrors('First Name', obj.value.length, obj.min))
@@ -132,13 +130,26 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
   const [roleDisabled, setRoleDisabled] = useState<boolean>(false)
   const [editable, setEditable] = useState<boolean>(false)
   const [idCompany, setIdCompany] = useState<any>('')
-  const [idRole, setIdRole] = useState<string>('')
-  const [informativeIdRole, setInformativeIdRole] = useState<string>('')
-  const [selectCompany, setSelectCompany] = useState<ReinsuranceCompanyDto | undefined | string>()
+  const [idRole, setIdRole] = useState<any>('')
+  const [informativeIdRole, setInformativeIdRole] = useState<any>('')
+
+  // const [selectCompany, setSelectCompany] = useState<ReinsuranceCompanyDto | undefined | string>()
+  // const flagCompany = true
+
+  // const [selectRol, setSelectRol] = useState<RolesCreateUser | undefined | string>()
+  // const [selectDualRol, setSelectDualRol] = useState<RolesCreateUser | undefined | string>()
 
   console.log(usersReducer)
+
   console.log({ idCompany })
-  console.log({ selectCompany })
+
+  console.log({ idRole })
+  console.log({ informativeIdRole })
+  console.log({ useWatchCompany })
+
+  // console.log({ selectRol })
+  // console.log({ selectDualRol })
+  // console.log({ selectCompany })
 
   // const [email, setEmail] = useState<string>('')
   const [errorsTextEmail, setErrorsTextEmail] = useState<any>({
@@ -197,22 +208,23 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
         email: data.email || '',
         phone: data.phone || '',
         idCompany: parseInt(idCompany),
-        roles: parseInt(idRole)
-          ? [
-              {
-                id: parseInt(idRole)
-              }
-            ]
-          : parseInt(idRole) && parseInt(informativeIdRole)
-          ? [
-              {
-                id: parseInt(idRole)
-              },
-              {
-                id: parseInt(informativeIdRole)
-              }
-            ]
-          : [],
+        roles:
+          parseInt(idRole) && parseInt(informativeIdRole)
+            ? [
+                {
+                  id: parseInt(idRole)
+                },
+                {
+                  id: parseInt(informativeIdRole)
+                }
+              ]
+            : parseInt(idRole)
+            ? [
+                {
+                  id: parseInt(idRole)
+                }
+              ]
+            : [],
         areaCode: selectedCountry?.phone || ''
       }
       setUserPost(dataToSend)
@@ -273,34 +285,68 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
   }, [usersReducer.current])
 
   useEffect(() => {
-    if (ADMIN_COMPANIES.includes(useWatchCompany)) {
+    if (selectUser) {
       setRoleDisabled(false)
-      setValue('role', '', { shouldValidate: true })
-      setValue('dualRole', '', { shouldValidate: true })
     } else {
-      setRoleDisabled(true)
-      setDualRoleDisabled(true)
+      if (ADMIN_COMPANIES.includes(useWatchCompany)) {
+        setRoleDisabled(false)
+        setValue('role', '', { shouldValidate: true })
+        setValue('dualRole', '', { shouldValidate: true })
+      } else {
+        setRoleDisabled(true)
+        setDualRoleDisabled(true)
+      }
     }
     //eslint-disable-next-line
   }, [useWatchCompany])
 
   useEffect(() => {
-    if (useWatchRole === '5') {
-      setDualRoleDisabled(false)
-      setValue('dualRole', '', { shouldValidate: true })
+    if (selectUser) {
+      if (idRole === '5') {
+        setDualRoleDisabled(false)
+        setValue('dualRole', '', { shouldValidate: true })
+      } else {
+        setDualRoleDisabled(true)
+      }
     } else {
-      setDualRoleDisabled(true)
+      if (useWatchRole === '5') {
+        setDualRoleDisabled(false)
+        setValue('dualRole', '', { shouldValidate: true })
+      } else {
+        setDualRoleDisabled(true)
+      }
     }
     //eslint-disable-next-line
-  }, [useWatchRole])
+  }, [useWatchRole, selectUser, idRole])
 
   useEffect(() => {
     const reducersCompany = usersReducer?.current?.idCompany?.id
-    const companySelect = company?.find(c => c.id === reducersCompany)
 
-    setSelectCompany(companySelect)
+    const companySelect = company?.find(c => c.id === reducersCompany)
     setIdCompany(companySelect?.id.toString())
-  }, [company, usersReducer])
+  }, [company, usersReducer, setIdCompany, selectUser])
+
+  // useEffect(() => {
+  //   const nameCompany = usersReducer?.current?.idCompany?.name
+  //   const nameSelect = company?.find(c => c.name === nameCompany)
+  //   setSelectCompany(nameSelect?.name)
+  // }, [company, usersReducer, setIdCompany])
+
+  useEffect(() => {
+    const reducersRol = usersReducer?.current?.roles[0]?.id
+    const rolSelect = roles?.find(rol => rol.id === reducersRol)
+
+    // setSelectRol(rolSelect)
+    setIdRole(rolSelect?.id.toString())
+  }, [roles, usersReducer, setIdRole])
+
+  useEffect(() => {
+    const reducersDualRol = usersReducer?.current?.roles[1]?.id
+    const dualRolSelect = roles?.find(dualRol => dualRol.id === reducersDualRol)
+
+    // setSelectDualRol(dualRolSelect)
+    setInformativeIdRole(dualRolSelect?.id.toString())
+  }, [roles, usersReducer, setInformativeIdRole])
 
   // useEffect(() => {
   //   dispatch(fetchAccounts(usersReducer))
@@ -527,15 +573,15 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
                         render={({ field: { value, onChange, onBlur } }) => (
                           <>
                             <InputLabel>Company</InputLabel>
+
                             <Select
                               error={Boolean(errors.company)}
                               label='Company'
-                              value={selectUser ? idCompany : value}
+                              value={value}
                               onBlur={onBlur}
                               onChange={e => {
                                 onChange(e.target.value)
                                 setIdCompany(e.target.value)
-                                setSelectCompany(e.target.value)
                               }}
                               labelId='broker'
                             >
@@ -549,7 +595,7 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
                         )}
                       />
                       {errors.company && (
-                        <FormHelperText sx={{ color: 'error.main' }}>This action is required</FormHelperText>
+                        <FormHelperText sx={{ color: 'error.main' }}>This action is required.</FormHelperText>
                       )}
                     </FormControl>
                   </Grid>
@@ -574,7 +620,7 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
                             <Select
                               error={Boolean(errors.role)}
                               label='Select a role'
-                              value={value}
+                              value={selectUser ? idRole : value}
                               onBlur={onBlur}
                               onChange={e => {
                                 onChange(e.target.value)
@@ -592,12 +638,19 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
                         )}
                       />
                       {errors.role && (
-                        <FormHelperText sx={{ color: 'error.main' }}>This action is required</FormHelperText>
+                        <FormHelperText sx={{ color: 'error.main' }}>This action is required.</FormHelperText>
                       )}
                     </FormControl>
                   </Grid>
                   <Grid item xs={12}>
-                    <FormControl fullWidth sx={{ visibility: dualRoleDisabled ? 'hidden' : 'visible', mb: 2, mt: 2 }}>
+                    <FormControl
+                      fullWidth
+                      sx={{
+                        visibility: dualRoleDisabled ? 'hidden' : 'visible',
+                        mb: 2,
+                        mt: 2
+                      }}
+                    >
                       <Controller
                         defaultValue={''}
                         name='dualRole'
@@ -607,7 +660,8 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
                             <InputLabel>Role</InputLabel>
                             <Select
                               label='Select a role'
-                              value={value}
+                              value={selectUser ? informativeIdRole : value}
+                              error={Boolean(errors.dualRole)}
                               onBlur={onBlur}
                               onChange={e => {
                                 onChange(e.target.value)
@@ -629,7 +683,7 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
                         )}
                       />
                       {errors.dualRole && (
-                        <FormHelperText sx={{ color: 'error.main' }}>Select a valid dual role</FormHelperText>
+                        <FormHelperText sx={{ color: 'error.main' }}>This action is required.</FormHelperText>
                       )}
                     </FormControl>
                   </Grid>

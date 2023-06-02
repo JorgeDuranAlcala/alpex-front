@@ -241,6 +241,7 @@ export const FormSection = ({
   }
 
   const calculates = (calcule: TypeFormInfo, value?: any, Gross?: boolean) => {
+
     const tempSecurity = {
       ...localSecurity,
       [calcule]: value
@@ -270,13 +271,13 @@ export const FormSection = ({
     }: IPropsCalculeProperty) => {
       const result = validateNumber(((+sharePercent * +totalNetPremium) / 100).toString())
       const resultTaxes = isGross ? validateNumber(((+TaxesPercent * +result) / 100).toString()) : ''
-      const resultBroger = isGross ? validateNumber(((+BrokerAgePercent * +result) / 100).toString()) : ''
+      const resultBroker = isGross ? validateNumber(((+BrokerAgePercent * +result) / 100).toString()) : ''
       const resultFrontingFee = validateNumber(((+FrontingFeePercent * +result) / 100).toString())
       const resultDynamicComission = validateNumber(((+dynamicComissionPercent * +result) / 100).toString())
 
       tempSecurity.PremiumPerShare = result
       tempSecurity.Taxes = resultTaxes
-      tempSecurity.BrokerAge = resultBroger
+      tempSecurity.BrokerAge = resultBroker
       tempSecurity.FrontingFee = resultFrontingFee
       tempSecurity.DynamicComission = resultDynamicComission
     }
@@ -436,8 +437,6 @@ export const FormSection = ({
     calculateNetInsurancePremium()
     errors[index][calcule.toString()] = ''
     setFormErrors(errors)
-
-    onMakeTotals({ ...localSecurity }, index)
     onChangeItemList(index, { ...tempSecurity })
     setLocalSecurity({ ...tempSecurity })
   }
@@ -538,6 +537,13 @@ export const FormSection = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [frontingFeeEnabled])
 
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  useEffect(() => { // Cuando en los calculos se setea LocalSecurity se vuelven a realizar
+                    // los calculos de Recived net premium y Distributed net premium
+    onMakeTotals({ ...localSecurity }, index)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [localSecurity, setLocalSecurity])
+
   return (
     <>
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -557,7 +563,7 @@ export const FormSection = ({
               component={DeleteOutlineIcon}
               amplitude={10}
               style={{
-                fontSize: '34px',
+                fontSize: '2.125rem',
                 cursor: 'pointer',
                 zIndex: '1000'
               }}
@@ -826,23 +832,21 @@ export const FormSection = ({
           )}
           {localSecurity.RetroCedantContact !== '' && frontingFeeEnabled && (
             <>
-              <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
+              <FormControl fullWidth sx={{ marginBottom: "0.7rem", mt: 2 }}>
                 <TextField
                   autoFocus
                   disabled
                   fullWidth
                   label='Contact email'
-                  size='small'
                   value={localSecurity.ContactEmail}
                 />
               </FormControl>
 
-              <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
+              <FormControl fullWidth sx={{ marginBottom: "0.7rem"  , mt: 2 }}>
                 <TextField
                   autoFocus
                   fullWidth
                   disabled
-                  size='small'
                   label='Contact phone'
                   value={localSecurity.ContactPhone}
                 />
