@@ -25,8 +25,14 @@ export interface InformationDto {
   idCountry: number
   idBroker: number
   idBrokerContact: number | null
+  brokerContactEmail: string
+  brokerContactPhone: string
+  brokerContactCountry: string
   idCedant: number
   idCedantContact: number | null
+  cedantContactEmail: string
+  cedantContactPhone: string
+  cedantContactCountry: string
   idLineOfBussines: number
   idTypeOfLimit: number | null
   idRiskActivity: number
