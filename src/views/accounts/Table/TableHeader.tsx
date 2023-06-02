@@ -172,20 +172,22 @@ const TableHeader: React.FC<ITableHeader> = ({ selectedRows, badgeData }) => {
     >
       <Box>
         <Select
-          size='small'
           displayEmpty
           open={actionMenu}
           onOpen={handleActionMenuOpen}
           onClick={e => handleActionMenuOnclick(e)}
           onChange={handleSelectedAction}
           defaultValue=''
-          sx={{ mr: 4, mb: 2 }}
+          sx={{ mr: 4, mb: 2, width: '100%' }}
           disabled={selectedRows && selectedRows.length === 0}
-          renderValue={selected => (selected.length === 0 ? 'Actions' : selected)}
+          renderValue={selected => (selected.length === 0 ? 'Action' : selected)}
         >
-          <MenuItem value={''}>Actions</MenuItem>
-          <MenuItem value={EActions.DELETE_ALL}>{EActions.DELETE_ALL}</MenuItem>
-          <MenuItem id='statusChangeActionMenu' value={EActions.CHANGE_STATUS}>
+          <MenuItem
+            id='statusChangeActionMenu'
+            value={EActions.CHANGE_STATUS}
+            sx={{ minWidth: '172px', display: 'flex', gap: '5%' }}
+          >
+            <Icon icon='ic:outline-replay' fontSize={24} />
             {EActions.CHANGE_STATUS}
             <Menu open={openStatusChangeMenu} anchorEl={anchorEl}>
               <MenuItem onClick={() => HandleChangeStatus(EStatus.PENDING)}>{EStatusString.PENDING}</MenuItem>
@@ -196,6 +198,10 @@ const TableHeader: React.FC<ITableHeader> = ({ selectedRows, badgeData }) => {
               <MenuItem onClick={() => HandleChangeStatus(EStatus.DECLINED)}>{EStatusString.DECLINED}</MenuItem>
               <MenuItem onClick={() => HandleChangeStatus(EStatus.BOUND)}>{EStatusString.BOUND}</MenuItem>
             </Menu>
+          </MenuItem>
+          <MenuItem value={EActions.DELETE_ALL} sx={{ minWidth: '172px', display: 'flex', gap: '5%' }}>
+            <Icon icon='ic:outline-delete' fontSize={24} />
+            {EActions.DELETE_ALL}
           </MenuItem>
         </Select>
 

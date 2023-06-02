@@ -28,6 +28,7 @@ export default function CountrySelect({
   const options = [...countries.map(country => country.label)]
 
   console.log({ areaCode })
+  console.log({ value })
   useEffect(() => {
     setSelectedCountry(countries.find(country => country.label === value))
     // eslint-disable-next-line react-hooks/exhaustive-deps
