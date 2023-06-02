@@ -66,7 +66,7 @@ const Table = ({ status }: IAccountTable) => {
   // ** State
   const [selectedRows, setSelectedRows] = useState<GridRowId[]>([])
   const [accounts, setAccounts] = useState<any>([])
-  const [, setLoading] = useState<any>([])
+  const [loading, setLoading] = useState<any>([])
   const [badgeData, setBadgeData] = useState<IAlert>({
     message: '',
     status: undefined,
@@ -372,6 +372,7 @@ const Table = ({ status }: IAccountTable) => {
     <>
       <TableHeader selectedRows={selectedRows} badgeData={badgeData} />
       <DataGrid
+        loading={loading}
         autoHeight
         checkboxSelection
         disableSelectionOnClick
