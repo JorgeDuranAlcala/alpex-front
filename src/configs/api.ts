@@ -24,7 +24,10 @@ export enum ACCOUNT_ROUTES {
 export enum ACCOUNT_INFORMATION_ROUTES {
   ADD = 'account/information/add',
   GET = 'account/information',
-  UPDATE = 'account/information'
+  UPDATE = 'account/information',
+  UPLOAD_FILE = 'account/information/upload-file',
+  DELETE_FILE = 'account/information/delete-file',
+  GET_FILES = 'account/information/all-doctos'
 }
 
 export enum ACCOUNT_SECURITY_ROUTES {
@@ -172,7 +175,8 @@ export enum RETRO_CEDANT_CONTACT_ROUTES {
 export enum INSTALLMENT_ROUTERS {
   GET_ALL = 'account/installment/',
   ADD = 'account/installment/add',
-  UPDATE = 'account/installment/update'
+  UPDATE = 'account/installment/update',
+  DELETE = 'account/installment/delete'
 }
 
 export enum ACCOUNT_STATUS_ROUTERS {

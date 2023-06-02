@@ -8,16 +8,18 @@ import { useRouter } from 'next/router'
 import CloseIcon from '@mui/icons-material/Close'
 import { Box, Button, Modal, Typography } from '@mui/material'
 import IconButton from '@mui/material/IconButton'
-import { DataGrid, GRID_CHECKBOX_SELECTION_COL_DEF, GridColumns, GridRowId } from '@mui/x-data-grid'
+import { DataGrid, GRID_CHECKBOX_SELECTION_COL_DEF, GridColumns } from '@mui/x-data-grid'
 import { ButtonClose, HeaderTitleModal } from 'src/styles/modal/modal.styled'
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
 
 // ** Custom Hooks imports
+import { useDeleteReinsuranceCompany } from '@/hooks/catalogs/reinsuranceCompany/useDelete'
+import useGetAllPagination from '@/hooks/catalogs/reinsuranceCompany/useGetAllPagination'
 
 // ** Custom Components Imports
-import CustomPagination from '../CustomPagination'
+import CustomPagination from '../CustomPaginationImpl'
 import TableHeader from '../TableHeader'
 
 // ** Custom utilities
@@ -25,28 +27,39 @@ import colors from 'src/views/accounts/colors'
 import fonts from 'src/views/accounts/font'
 
 export interface IReinsurer {
-  id: string
+  id: number
   name: string
 }
 
-
 const ReinsurersTable = () => {
   // ** State
-  const [selectedRows, setSelectedRows] = useState<GridRowId[]>([])
-  const [reinsurerList, setReinsurerList] = useState<IReinsurer[]>([])
+  const [selectedRows, setSelectedRows] = useState<any[]>([])
+  const [reinsuranceCompanyList, setReinsuranceCompanyList] = useState<IReinsurer[]>([])
 
   const [openDelete, setOpenDelete] = useState(false)
   const [openDeleteRows, setOpenDeleteRows] = useState(false)
-  const [reinsurerToDelete, setReinsurerToDelete] = useState(0)
+  const [reinsuranceCompanyToDelete, setReinsuranceCompanyToDelete] = useState(0)
 
   const router = useRouter()
 
-  // const [badgeData] = useState<IAlert>({
-  //   message: '',
-  //   status: undefined,
-  //   icon: undefined
-  // })
+  //hooks
+  const {
+    reinsuranceCompanyPagination,
+    setReinsuranceCompanyPagination,
+    reinsuranceCompanys,
+    getReinsuranceCompanysPagination,
+    reinsuranceCompanyInfoPage
+  } = useGetAllPagination()
+  const { deleteReinsuranceCompany: deleteReinsuranceCompanys } = useDeleteReinsuranceCompany()
 
+  useEffect(() => {
+    setReinsuranceCompanyPagination({ ...reinsuranceCompanyPagination })
+    //eslint-disable-next-line
+  }, [])
+
+  useEffect(() => {
+    setReinsuranceCompanyList(reinsuranceCompanys || [])
+  }, [reinsuranceCompanys])
 
   const column: GridColumns<IReinsurer> = [
     {
@@ -63,7 +76,7 @@ const ReinsurersTable = () => {
       disableColumnMenu: true,
       sortable: false,
       headerClassName: 'catalogue-column-header',
-      renderHeader: ({ }) => (
+      renderHeader: ({}) => (
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative' }}>
           <Typography
             component={'span'}
@@ -71,8 +84,8 @@ const ReinsurersTable = () => {
           >
             REINSURER NAME
           </Typography>
-
-        </Box>),
+        </Box>
+      ),
       renderCell: ({ row }) => (
         <Typography sx={{ color: colors.text.secondary, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
           {row.name}
@@ -88,7 +101,7 @@ const ReinsurersTable = () => {
       align: 'right',
       disableColumnMenu: true,
       cellClassName: 'catalogue-column-cell-pl-0',
-      renderHeader: ({ }) => (
+      renderHeader: ({}) => (
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative' }}>
           <Typography
             component={'span'}
@@ -96,12 +109,18 @@ const ReinsurersTable = () => {
           >
             ACTIONS
           </Typography>
-
-        </Box>),
+        </Box>
+      ),
 
       renderCell: ({ row }) => (
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', }}>
-          <IconButton size='small' sx={{ mr: 1 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+          <IconButton
+            size='small'
+            sx={{ mr: 1 }}
+            onClick={() => {
+              handleSelectReinsuranceCompanyEdit(row.id)
+            }}
+          >
             <Icon icon='ic:baseline-login' />
           </IconButton>
           <IconButton
@@ -118,74 +137,87 @@ const ReinsurersTable = () => {
     }
   ]
 
-  const getBrokerList = () => { //must be replaced with the respective broker service
-    const data: IReinsurer[] = []
+  const handleSelectReinsuranceCompanyEdit = (id: number | null) => {
+    router.push({ pathname: '/catalogues/dynamic/add-reinsurer', query: { id } })
+  }
 
-    for (let index = 1; index <= 100; index++) {
-      const id = index.toString()
-      const name = `Reinsurer ${index}`
-
-      data.push({
-        id,
-        name
+  const searchReinsurer = (value: string) => {
+    if (value === '') {
+      setReinsuranceCompanyPagination({
+        ...reinsuranceCompanyPagination,
+        filters: [],
+        info: { ...reinsuranceCompanyPagination.info, page: 1 }
+      })
+    } else {
+      setReinsuranceCompanyPagination({
+        ...reinsuranceCompanyPagination,
+        filters: [{ type: 'name', value: value, text: value }],
+        info: { ...reinsuranceCompanyPagination.info, page: 1 }
       })
     }
-
-    return data
   }
 
-  const searchReinsurer = (value: string) => { //must be replaced with the respective broker service
-    console.log("Call search service", value)
-  }
-
-  const deleteRows = () => { //must be replaced with the respective broker service
-    console.log('Call to delete rows service', selectedRows)
-    setOpenDelete(false)
+  const deleteRows = async () => {
+    const result = await deleteReinsuranceCompanys({ idDeleteList: selectedRows })
+    if (result) {
+      console.log('success')
+      getReinsuranceCompanysPagination({ ...reinsuranceCompanyPagination })
+    }
+    setOpenDeleteRows(false)
   }
 
   const openDeleteModal = (id: number) => {
-    setReinsurerToDelete(id)
+    setReinsuranceCompanyToDelete(id)
     setOpenDelete(true)
   }
 
-  const deleteSingleBroker = () => {  //must be replaced with the respective broker service
-    const newBrokerList = reinsurerList.filter(reinsurer => reinsurer.id !== reinsurerToDelete.toString())
-    setReinsurerList(newBrokerList)
+  const deleteSingleReinsuranceCompany = async () => {
+    const result = await deleteReinsuranceCompanys({ idDeleteList: [reinsuranceCompanyToDelete] })
+    if (result) {
+      //it needs an alert o message
+      console.log('success')
+      getReinsuranceCompanysPagination({ ...reinsuranceCompanyPagination })
+    }
     setOpenDelete(false)
   }
 
-  useEffect(() => {
-    setReinsurerList(getBrokerList)
-    //eslint-disable-next-line
-  }, [])
-
+  const handleDispatch = (e: any, value: number) => {
+    setReinsuranceCompanyPagination({
+      ...reinsuranceCompanyPagination,
+      info: { ...reinsuranceCompanyPagination.info, page: value }
+    })
+  }
 
   return (
     <>
       <div className='outter-wrapper'>
-      <TableHeader
-            onDeleteRows={() => { setOpenDeleteRows(true) }}
-            onSearch={searchReinsurer}
-            textBtn="ADD NEW REINSURER"
-            onClickBtn={() => router.push('/catalogues/dynamic/add-reinsurer')} />
-      <div className='reinsurer-list'>
-
+        <TableHeader
+          onDeleteRows={() => {
+            setOpenDeleteRows(true)
+          }}
+          onSearch={searchReinsurer}
+          textBtn='ADD NEW REINSURER'
+          onClickBtn={() => router.push('/catalogues/dynamic/add-reinsurer')}
+        />
+        <div className='reinsurer-list'>
           <DataGrid
             autoHeight
             checkboxSelection
             disableSelectionOnClick
-            rows={reinsurerList}
+            rows={reinsuranceCompanyList}
             columns={column}
             pagination
             pageSize={10}
             components={{
               Pagination: CustomPagination
             }}
+            componentsProps={{
+              pagination: { handleDispatch, infoPage: { ...reinsuranceCompanyInfoPage } }
+            }}
             className={'catalogue-datagrid'}
             onSelectionModelChange={rows => setSelectedRows(rows)}
           />
         </div>
-
       </div>
 
       <Modal
@@ -207,7 +239,7 @@ const ReinsurersTable = () => {
             </ButtonClose>
           </HeaderTitleModal>
           <div className='delete-modal-text'>This action can’t be undone.</div>
-          <Button className='header-modal-btn' variant='contained' onClick={deleteSingleBroker}>
+          <Button className='header-modal-btn' variant='contained' onClick={deleteSingleReinsuranceCompany}>
             DELETE
           </Button>
           <Button
@@ -230,7 +262,9 @@ const ReinsurersTable = () => {
       >
         <Box className='modal-wrapper'>
           <HeaderTitleModal>
-            <Typography variant='h6' sx={{ maxWidth: "450px" }}>Are you sure you want to delete the selected Reinsurers?</Typography>
+            <Typography variant='h6' sx={{ maxWidth: '450px' }}>
+              Are you sure you want to delete the selected Reinsurers?
+            </Typography>
             <ButtonClose
               onClick={() => {
                 setOpenDeleteRows(false)
@@ -253,7 +287,6 @@ const ReinsurersTable = () => {
           </Button>
         </Box>
       </Modal>
-
     </>
   )
 }

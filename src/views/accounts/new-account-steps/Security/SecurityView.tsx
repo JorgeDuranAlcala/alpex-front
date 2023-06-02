@@ -373,7 +373,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
   }
 
   const validate = async () => {
-    // console.log(formErrors)
+
     securitiesList.forEach((form, index) => {
       const data = [...formErrors]
       data[index] = { ...SecurityForm }
@@ -415,7 +415,9 @@ const Security = ({ onStepChange }: SecurityProps) => {
             })
           })
       }
-      if(index == (securitiesList.length-1))
+      if(index == (securitiesList.length-1)) // Esta condición se agrego como prueba
+                                            // para determinar cuando habian sido validados
+                                            // todos los Reinsurers
       {
         // console.log("all validations are done")
         setValidationsDone(true)
@@ -431,21 +433,13 @@ const Security = ({ onStepChange }: SecurityProps) => {
     let sumGrossShare = 0
 
     tempSecurities.forEach(form => {
-
-      // console.log("form")
-      // console.log(form)
       DistribuitedNetPremium +=
         +form.BrokerAge + +form.Taxes + +form.DynamicComission + +form.FrontingFee + +form.NetInsurancePremium
 
-        // console.log("Distributed net")
-      // console.log(DistribuitedNetPremium)
       if (!form.IsGross) sumSharePercent += +form.SharePercent
       else sumGrossShare += +form.PremiumPerShare
 
     })
-
-    // console.log("Distributed net total")
-    // console.log(DistribuitedNetPremium)
 
     const recievedNetPremium = (sumSharePercent * +formInformation.netPremium) / 100 + sumGrossShare
 
@@ -509,9 +503,11 @@ const Security = ({ onStepChange }: SecurityProps) => {
     }
 
     accountInfo.securities.forEach(() => securitiesErrorsTemp.push({ ...SecurityForm }))
-    console.log("items changed")
-    console.log(itemsChanged)
-    {!itemsChanged || isSaving && setSecuritiesList([...securitiesTem] as FormInfo[])}
+
+    if(!itemsChanged || isSaving ){ // Si no hubo cambios en el formulario  Ó si se está
+                                    //guardando la data entonces reasigna securitiesList
+      setSecuritiesList([...securitiesTem] as FormInfo[])
+    }
     setFormErrors([...securitiesErrorsTemp])
     setAllFormData({
       ...allFormData,
@@ -633,14 +629,8 @@ const Security = ({ onStepChange }: SecurityProps) => {
   }
 
   const handleSuccess = () => {
-    console.log('Antes de guardar');
-
-    setTimeout(() => {
       SaveData()
       dispatch(updateFormsData({ form2: allFormData }))
-      console.log('despues de guardar');
-    }, 6000);
-
   }
 
   useEffect(() => {
