@@ -152,7 +152,12 @@ const Table = ({ status }: IAccountTable) => {
       renderHeader: ({ colDef }) => <ColumnHeader colDef={colDef} action={handleClickColumnHeader} />,
       renderCell: ({ row }) => (
         <Typography sx={{ color: colors.primary.main, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
-          <Link href='#'>{`#${row.id}`}</Link>
+          <Link
+            sx={{ cursor: 'pointer' }}
+            onClick={() => {
+              onEdit(+row.id)
+            }}
+          >{`#${row.id}`}</Link>
         </Typography>
       )
     },
