@@ -83,6 +83,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
   const [btnNext, setBtnNext] = useState<boolean>(false)
   const [daysFirst, setDaysFirst] = useState<number>()
   const [open, setOpen] = useState<boolean>(false)
+  const [isChange, setIsChange] = useState<boolean>(false)
   const [error, setError] = useState<InstallmentErrors>({
     errorFieldRequired: false,
     erorrRangeInstallments: false,
@@ -127,35 +128,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
     }
     setInstallmentList(installmentsTemp)
     setCount(String(count))
-  }
-
-  useEffect(() => {
-    if (account) {
-      setCount(String(account.installments.length))
-
-      //change settlementDueDate
-      setTimeout(() => {
-        account.installments.forEach((item: any) => {
-          item.settlementDueDate = new Date(item.settlementDueDate + 'T00:00:00.678Z')
-        })
-        setInstallmentList([...account.installments])
-        setInitialInstallmentList([...account.installments])
-      }, 10)
-    }
-  }, [account])
-
-  const handleBlur = (event: FocusEvent<HTMLInputElement>) => {
-    if (event.target.value === '') {
-      setError({
-        ...error,
-        errorFieldRequired: true
-      })
-    } else {
-      setError({
-        ...error,
-        errorFieldRequired: false
-      })
-    }
+    setIsChange(true)
   }
 
   const makeCalculates = (installment: InstallmentDto) => {
@@ -211,9 +184,12 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
   }, [installmentsList, count])
 
   const saveInstallments = async (installments: InstallmentDto[]) => {
-    await deleteInstallments(initialInstallmentList)
-    const newInitialInstallments = await addInstallments(installments)
-    setInitialInstallmentList(newInitialInstallments)
+    if (isChange) {
+      await deleteInstallments(initialInstallmentList)
+      const newInitialInstallments = await addInstallments(installments)
+      setInitialInstallmentList(newInitialInstallments)
+      setIsChange(false)
+    }
   }
 
   const nextStep = () => {
@@ -246,6 +222,35 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
   useEffect(() => {
     idAccount && setAccountId(idAccount)
   }, [idAccount, setAccountId])
+
+  useEffect(() => {
+    if (account) {
+      setCount(String(account.installments.length))
+
+      //change settlementDueDate
+      setTimeout(() => {
+        account.installments.forEach((item: any) => {
+          item.settlementDueDate = new Date(item.settlementDueDate + 'T00:00:00.678Z')
+        })
+        setInstallmentList([...account.installments])
+        setInitialInstallmentList([...account.installments])
+      }, 10)
+    }
+  }, [account])
+
+  const handleBlur = (event: FocusEvent<HTMLInputElement>) => {
+    if (event.target.value === '') {
+      setError({
+        ...error,
+        errorFieldRequired: true
+      })
+    } else {
+      setError({
+        ...error,
+        errorFieldRequired: false
+      })
+    }
+  }
 
   return (
     <>
