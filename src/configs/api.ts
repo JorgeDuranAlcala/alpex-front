@@ -24,7 +24,10 @@ export enum ACCOUNT_ROUTES {
 export enum ACCOUNT_INFORMATION_ROUTES {
   ADD = 'account/information/add',
   GET = 'account/information',
-  UPDATE = 'account/information'
+  UPDATE = 'account/information',
+  UPLOAD_FILE = 'account/information/upload-file',
+  DELETE_FILE = 'account/information/delete-file',
+  GET_FILES = 'account/information/all-doctos'
 }
 
 export enum ACCOUNT_SECURITY_ROUTES {
