@@ -5,7 +5,9 @@ import UserThemeOptions from 'src/layouts/UserThemeOptions'
 import {
   useAddInformation,
   useFindInformationByIdAccount,
-  useUpdateInformationByIdAccount
+  useGetInfoDoctosByIdAccount,
+  useUpdateInformationByIdAccount,
+  useUploadInformationDocument
 } from 'src/hooks/accounts/information'
 
 // // ** MUI Imports
@@ -23,8 +25,7 @@ import { useAppDispatch, useAppSelector } from 'src/store'
 import { updateFormsData } from 'src/store/apps/accounts'
 
 // ** Utils
-import { useUploadInformationDocument } from '@/hooks/accounts/information'
-import { formatInformationDoctos } from '@/utils/formatDoctos'
+import { formatInformationDoctos, getFileFromUrl } from '@/utils/formatDoctos'
 
 type InformationProps = {
   onStepChange: (step: number) => void
@@ -91,6 +92,10 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
     status: 'error'
   })
 
+  // Save id doctos by file name
+  const [doctoIdByName, setDoctoIdByName] = useState({})
+  const [userFile, setUserFile] = useState<UserFile[]>([])
+
   //store
   const idAccount = useAppSelector(state => state.accounts?.formsData?.form1?.id)
   const lastForm1Information = useAppSelector(state => state.accounts?.formsData?.form1)
@@ -100,6 +105,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   const { addInformation } = useAddInformation()
   const { updateInformationByIdAccount } = useUpdateInformationByIdAccount()
   const { uploadInformationDocument } = useUploadInformationDocument()
+  const { getInfoDoctosByIdAccount } = useGetInfoDoctosByIdAccount()
 
   const dispatch = useAppDispatch()
 
@@ -121,6 +127,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
     effectiveDate: null,
     expirationDate: null
   })
+
   const [placementStructure, setPlacementStructure] = useState<PlacementStructure>({
     currency: '',
     total: 0.0,
@@ -138,7 +145,6 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
     attachmentPoint: 0.0,
     typeOfLimit: ''
   })
-  const [userFile, setUserFile] = useState<UserFile[]>([])
 
   const updateInformation = async () => {
     if (idAccount) {
@@ -305,15 +311,25 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   }
 
   const uploadDoctos = async (idAccount: number) => {
-    const formatedDoctos = await formatInformationDoctos(userFile, idAccount, 1)
+    const formatedDoctos = await formatInformationDoctos(userFile, idAccount, 1, doctoIdByName)
+    const newDoctoIdByName: any = {}
+
     for (const docto of formatedDoctos) {
       const res = await uploadInformationDocument(docto)
       console.log(res)
+      if (res.createdDoctoDB) {
+        const createdDoctoData = res.createdDoctoDB
+        newDoctoIdByName[createdDoctoData.name] = createdDoctoData.id
+      }
     }
+
+    setDoctoIdByName({
+      ...doctoIdByName,
+      ...newDoctoIdByName
+    })
   }
 
   const handleSaveInformation = async () => {
-    console.log("Step saved: 1")
     if (idAccount) {
       await updateInformation()
       await uploadDoctos(idAccount)
@@ -376,6 +392,35 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   useEffect(() => {
     const idAccountCache = Number(localStorage.getItem('idAccount'))
     dispatch(updateFormsData({ form1: { ...lastForm1Information, id: idAccountCache } }))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  useEffect(() => {
+    const getFiles = async () => {
+      const idAccountCache = Number(localStorage.getItem('idAccount'))
+      if (idAccountCache) {
+        const res = await getInfoDoctosByIdAccount(idAccountCache)
+        const newDoctoIdByName: any = {}
+        const newUserFiles: UserFile[] = []
+
+        if (res.length > 0) {
+          for (const docto of res) {
+            newDoctoIdByName[docto.name] = docto.id
+            const newFile = await getFileFromUrl(docto.url, docto.name)
+            if (newFile) {
+              newUserFiles.push(newFile)
+            }
+          }
+          setUserFile(newUserFiles)
+
+          setDoctoIdByName({
+            ...doctoIdByName,
+            ...newDoctoIdByName
+          })
+        }
+      }
+    }
+    getFiles()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 

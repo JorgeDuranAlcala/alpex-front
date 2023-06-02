@@ -1,4 +1,6 @@
-const getBase64 = (file: any) => {
+import axios, { AxiosResponse } from 'axios'
+
+export const fileToBase64 = (file: any) => {
   const data = new Promise(resolve => {
     let baseURL: any = ''
     const reader = new FileReader()
@@ -12,13 +14,32 @@ const getBase64 = (file: any) => {
   return data
 }
 
-export const formatInformationDoctos = async (files: any, idAccount: number, idCDocto: number): Promise<any[]> => {
+export const getFileFromUrl = async (url: string, fileName: string): Promise<any> => {
+  try {
+    const response: AxiosResponse<ArrayBuffer> = await axios.get(url, {
+      responseType: 'arraybuffer'
+    })
+
+    const file = new File([response.data], fileName)
+
+    return file
+  } catch (error) {
+    throw new Error(`Error fetching file from URL: ${error}`)
+  }
+}
+
+export const formatInformationDoctos = async (
+  files: any,
+  idAccount: number,
+  idCDocto: number,
+  doctoIdByName: any
+): Promise<any[]> => {
   const formattedDoctos = []
 
   if (files?.length > 0) {
     for (const file of files) {
       if (file) {
-        const streamString = String(await getBase64(file))
+        const streamString = String(await fileToBase64(file))
         const partsStream = streamString.split(',')
         const blackListFileTypes = ['asp', 'javascript', 'html', 'python', 'shellscript', 'msdos', 'plain']
 
@@ -28,7 +49,7 @@ export const formatInformationDoctos = async (files: any, idAccount: number, idC
           formattedDoctos.push({
             idAccount,
             idCDocto,
-            idDocto: null,
+            idDocto: doctoIdByName[file?.name],
             name: file?.name,
             docto: {
               name: file?.name,
