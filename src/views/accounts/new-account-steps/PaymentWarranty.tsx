@@ -84,6 +84,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
   const [daysFirst, setDaysFirst] = useState<number>()
   const [open, setOpen] = useState<boolean>(false)
   const [isChange, setIsChange] = useState<boolean>(false)
+  const [disableSaveBtn, setDisableSaveBtn] = useState<boolean>(false)
   const [error, setError] = useState<InstallmentErrors>({
     errorFieldRequired: false,
     erorrRangeInstallments: false,
@@ -184,12 +185,14 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
   }, [installmentsList, count])
 
   const saveInstallments = async (installments: InstallmentDto[]) => {
+    setDisableSaveBtn(true)
     if (isChange) {
       await deleteInstallments(initialInstallmentList)
       const newInitialInstallments = await addInstallments(installments)
       setInitialInstallmentList(newInitialInstallments)
       setIsChange(false)
     }
+    setDisableSaveBtn(false)
   }
 
   const nextStep = () => {
@@ -347,7 +350,10 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
           variant='contained'
           color='success'
           sx={{ mr: 2, fontFamily: inter, fontSize: size, letterSpacing: '0.4px' }}
-          onClick={() => saveInstallments(installmentsList)}
+          disabled={disableSaveBtn}
+          onClick={() => {
+            saveInstallments(installmentsList)
+          }}
         >
           <SaveIcon /> &nbsp; Save changes
         </Button>
