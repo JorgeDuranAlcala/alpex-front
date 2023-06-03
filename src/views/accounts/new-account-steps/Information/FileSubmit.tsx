@@ -11,9 +11,10 @@ import Icon from 'src/@core/components/icon'
 interface UserFileProps {
   userFile: any
   setUserFile: React.Dispatch<React.SetStateAction<any>>
+  setUserFileToDelete: React.Dispatch<React.SetStateAction<any>>
 }
 
-const FileSubmit: React.FC<UserFileProps> = ({ setUserFile, userFile }) => {
+const FileSubmit: React.FC<UserFileProps> = ({ setUserFile, userFile, setUserFileToDelete }) => {
   // ** State
   const inputRef = useRef<HTMLInputElement>(null)
   const [file, setFile] = useState<File[]>([])
@@ -33,6 +34,7 @@ const FileSubmit: React.FC<UserFileProps> = ({ setUserFile, userFile }) => {
   }
 
   const handleRemoveFile = (e: any, index: number) => {
+    setUserFileToDelete && setUserFileToDelete(file.splice(index, 1)[0])
     e.preventDefault + file.splice(index, 1)
     setUserFile([...file])
   }

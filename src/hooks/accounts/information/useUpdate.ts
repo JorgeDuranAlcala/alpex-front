@@ -4,7 +4,7 @@ import InformationService from 'src/services/accounts/information.service'
 export const useUpdateInformationByIdAccount = () => {
   const updateInformationByIdAccount = async (
     idAccount: number,
-    update: Omit<InformationDto, 'id' | 'idAccount'>
+    update: Omit<Partial<InformationDto>, 'id' | 'idAccount'>
   ): Promise<InformationDto> => {
     try {
       const informationTem = { ...update }
