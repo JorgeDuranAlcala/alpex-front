@@ -37,8 +37,14 @@ export interface BasicInfoInterface {
   country: number | string
   broker: number | string
   brokerContact: number | null | string
+  brokerContactEmail: string
+  brokerContactPhone: string
+  brokerContactCountry: string
   cedant: number | string
   cedantContact: number | null | string
+  cedantContactEmail: string
+  cedantContactPhone: string
+  cedantContactCountry: string
   lineOfBusiness: number | string
   underwriter: number | string
   leadUnderwriter: number | string
@@ -80,8 +86,9 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   const [makeValidationsPlacement, setMakeValidationsPlacement] = useState(false)
 
   //Validaciones
-  const [basicIncfoValidated, setBasicIncfoValidated] = useState(false)
+  const [basicInfoValidated, setbasicInfoValidated] = useState(false)
   const [placementStructureValidated, setPlacementStructureValidated] = useState(false)
+  const [allValidated, setAllValidated] = useState(false)
 
   const [open, setOpen] = useState<boolean>(false)
   const [nextClicked, setNextClicked] = useState<boolean>(false)
@@ -114,8 +121,14 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
     country: '',
     broker: '',
     brokerContact: '',
+    brokerContactEmail: '',
+    brokerContactPhone: '',
+    brokerContactCountry: '',
     cedant: '',
     cedantContact: '',
+    cedantContactEmail: '',
+    cedantContactPhone: '',
+    cedantContactCountry: '',
     lineOfBusiness: '',
     underwriter: '',
     leadUnderwriter: '',
@@ -153,8 +166,14 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
         idCountry: Number(basicInfo.country),
         idBroker: Number(basicInfo.broker),
         idBrokerContact: Number(basicInfo.brokerContact),
+        brokerContactEmail: basicInfo.brokerContactEmail,
+        brokerContactPhone: basicInfo.brokerContactPhone,
+        brokerContactCountry: basicInfo.brokerContactCountry,
         idCedant: Number(basicInfo.cedant),
         idCedantContact: Number(basicInfo.cedantContact),
+        cedantContactEmail: basicInfo.cedantContactEmail,
+        cedantContactPhone: basicInfo.cedantContactPhone,
+        cedantContactCountry: basicInfo.cedantContactCountry,
         idLineOfBussines: Number(basicInfo.lineOfBusiness),
         idRiskActivity: Number(basicInfo.industryCode),
         effectiveDate: basicInfo.effectiveDate,
@@ -191,8 +210,14 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
       idCountry: Number(basicInfo.country),
       idBroker: Number(basicInfo.broker),
       idBrokerContact: Number(basicInfo.brokerContact),
+      brokerContactEmail: basicInfo.brokerContactEmail,
+      brokerContactPhone: basicInfo.brokerContactPhone,
+      brokerContactCountry: basicInfo.brokerContactCountry,
       idCedant: Number(basicInfo.cedant),
       idCedantContact: Number(basicInfo.cedantContact),
+      cedantContactEmail: basicInfo.cedantContactEmail,
+      cedantContactPhone: basicInfo.cedantContactPhone,
+      cedantContactCountry: basicInfo.cedantContactCountry,
       idLineOfBussines: Number(basicInfo.lineOfBusiness),
       idRiskActivity: Number(basicInfo.industryCode),
       effectiveDate: basicInfo.effectiveDate,
@@ -266,8 +291,14 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
         country: information.idCountry || '',
         broker: information.idBroker || '',
         brokerContact: information.idBrokerContact || '',
+        brokerContactEmail: information.brokerContactEmail || '',
+        brokerContactPhone: information.brokerContactPhone || '',
+        brokerContactCountry: information.brokerContactCountry || '',
         cedant: information?.idCedant || '',
         cedantContact: information.idCedantContact || '',
+        cedantContactEmail: information.cedantContactEmail || '',
+        cedantContactPhone: information.cedantContactPhone || '',
+        cedantContactCountry: information.cedantContactCountry || '',
         lineOfBusiness: information.idLineOfBussines || '',
         underwriter: information.idUnderwriter || '',
         leadUnderwriter: information.idLeadUnderwriter || '',
@@ -330,6 +361,9 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   }
 
   const handleSaveInformation = async () => {
+    console.log("Step saved: 1")
+    console.log('basic info')
+    console.log(basicInfo)
     if (idAccount) {
       await updateInformation()
       await uploadDoctos(idAccount)
@@ -346,7 +380,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   //Evento que controla el evento de continuar
   const handleNextStep = async () => {
     if (nextClicked) {
-      if (basicIncfoValidated && placementStructureValidated) {
+      if (basicInfoValidated && placementStructureValidated) {
         await handleSaveInformation()
         onStepChange(2)
       }
@@ -354,13 +388,22 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
     handleCloseModal()
   }
 
+  const verifyValidations = async ()=>{
+    if (placementStructureValidated && basicInfoValidated) {
+      setAllValidated(true)
+    } else {
+      setAllValidated(false)
+    }
+  }
+
   //Evento para controlar el botÃ³n de save
   const handleSave = () => {
-    if (nextClicked) {
-      if (basicIncfoValidated) {
+    // if (nextClicked) {
+      if (basicInfoValidated) {
         handleSaveInformation()
       }
-    }
+
+    // }
   }
 
   const handleCloseModal = () => {
@@ -383,7 +426,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   }
 
   const setValidBasicInfo = (valid: boolean) => {
-    setBasicIncfoValidated(valid)
+    setbasicInfoValidated(valid)
   }
   const setValidPlacementStructure = (valid: boolean) => {
     setPlacementStructureValidated(valid)
@@ -432,6 +475,22 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [idAccount])
 
+  useEffect(() => {
+    async function verify() {
+      await verifyValidations()
+    }
+    verify();
+
+    if (nextClicked) {
+      setOpen(true)
+    }
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [basicInfoValidated,
+     placementStructureValidated,
+      setbasicInfoValidated,
+       setPlacementStructureValidated])
+
   return (
     <>
       <div className='information' style={{ fontFamily: inter }}>
@@ -468,7 +527,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
               className='btn-save'
               onClick={handleSave}
               onMouseEnter={() => {
-                setNextClicked(true)
+                // setNextClicked(true)
                 setMakeValidations(true)
               }}
               variant='contained'
@@ -497,35 +556,64 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
                   pr: 5,
                   transform: 'translate(-50%, -50%)',
                   borderRadius: '10px',
-                  padding: '15px'
+                  padding: '20px'
                 }}
               >
-                <HeaderTitleModal>
-                  <div className='next-modal-title'>Ready to continue?</div>
-                  <ButtonClose
-                    onClick={() => {
-                      setOpen(false)
-                    }}
-                  >
-                    <CloseIcon />
-                  </ButtonClose>
-                </HeaderTitleModal>
-                <div className='next-modal-text'>
-                  You are about to advance to the next form. Make sure that all the fields have been completed with the
-                  correct information.
-                </div>
-                <Button className='continue-modal-btn' variant='contained' onClick={handleNextStep}>
-                  CONTINUE
-                </Button>
-                <Button
-                  className='create-contact-modal'
-                  onClick={() => {
-                    setOpen(false)
-                    setNextClicked(false)
-                  }}
-                >
-                  Keep editing information
-                </Button>
+                {allValidated ?
+                  <>
+                    <HeaderTitleModal>
+                      <div className='next-modal-title'>Ready to continue?</div>
+                      <ButtonClose
+                        onClick={() => {
+                          setOpen(false)
+                        }}
+                      >
+                        <CloseIcon />
+                      </ButtonClose>
+                    </HeaderTitleModal>
+                    <div className='next-modal-text'>
+                      You are about to advance to the next form. Make sure that all the fields have been completed with the
+                      correct information.
+                    </div>
+                    <Button className='continue-modal-btn' variant='contained' onClick={handleNextStep}>
+                      CONTINUE
+                    </Button>
+                    <Button
+                      className='create-contact-modal'
+                      onClick={() => {
+                        setOpen(false)
+                        setNextClicked(false)
+                      }}
+                    >
+                      Keep editing information
+                    </Button>
+                  </> :
+                  <>
+                    <HeaderTitleModal>
+                      <div className='next-modal-title'>Incomplete Information</div>
+                      <ButtonClose
+                        onClick={() => {
+                          setOpen(false)
+                        }}
+                      >
+                        <CloseIcon />
+                      </ButtonClose>
+                    </HeaderTitleModal>
+                    <div className='next-modal-text'>
+                      Please fill out all the required files to proceed to the next form.
+                    </div>
+                    <Button
+                      className='ok-modal-btn'
+                      variant='contained'
+                      onClick={() => {
+                        setOpen(false)
+                        setNextClicked(false)
+                      }}
+                    >
+                      OK
+                    </Button>
+                  </>}
+
               </Box>
             </Modal>
           </div>

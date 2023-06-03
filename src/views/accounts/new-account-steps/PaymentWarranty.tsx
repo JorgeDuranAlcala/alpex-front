@@ -161,6 +161,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
 
       return lastState
     })
+    setIsChange(true)
   }
 
   useEffect(() => {
@@ -195,30 +196,32 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
     setDisableSaveBtn(false)
   }
 
-  const nextStep = () => {
+  const nextStep = async () => {
     if (onStepChange) {
-      saveInstallments(installmentsList)
+      await saveInstallments(installmentsList)
       onStepChange(4)
     }
   }
 
   useEffect(() => {
     const tempInstallments: InstallmentDto[] = []
-    const base = daysFirst ? daysFirst : 0
+    const base = daysFirst ? daysFirst : 1
 
-    for (const [index, installment] of installmentsList.entries()) {
-      let temp = { ...installment }
-      const paymentWarrantyResult = base * (index + 1)
-      temp.premiumPaymentWarranty = paymentWarrantyResult
-      temp = makeCalculates(temp)
-      tempInstallments.push(temp)
+    if (daysFirst && daysFirst != 0) {
+      for (const [index, installment] of installmentsList.entries()) {
+        let temp = { ...installment }
+        const paymentWarrantyResult = base * (index + 1)
+        temp.premiumPaymentWarranty = paymentWarrantyResult
+        temp = makeCalculates(temp)
+        tempInstallments.push(temp)
+      }
+
+      setInstallmentList(() => {
+        const temp = [...tempInstallments]
+
+        return temp
+      })
     }
-
-    setInstallmentList(() => {
-      const temp = [...tempInstallments]
-
-      return temp
-    })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [daysFirst])
 
@@ -266,10 +269,10 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
                 <DatePicker
                   selected={account ? new Date(account?.informations[0]?.effectiveDate + '') : null}
                   shouldCloseOnSelect
-                  id='reception-date'
+                  id='Inception date'
                   showTimeSelect
                   timeIntervals={15}
-                  customInput={<CustomInput label='Reception date' sx={{ mb: 2, mt: 0, width: '100%' }} />}
+                  customInput={<CustomInput label='Inception date' sx={{ mb: 2, mt: 0, width: '100%' }} />}
                   disabled={true}
                   onChange={() => {
                     return
@@ -277,13 +280,19 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
                 />
               </Grid>
               <Grid item xs={12} sm={6} md={4}>
-                <TextField
+                <NumericFormat
                   fullWidth
+                  name='DynamicNetPremium'
+                  allowLeadingZeros
+                  thousandSeparator=','
+                  customInput={TextField}
+                  id='DynamicNetPremium'
+                  decimalScale={2}
                   label='Dynamic net premium'
+                  multiline
+                  variant='outlined'
                   value={account ? account?.securityTotal?.receivedNetPremium : ' '}
-                  InputProps={{
-                    disabled: true
-                  }}
+                  disabled={true}
                 />
               </Grid>
               <Grid item xs={12} sm={6} md={4}>

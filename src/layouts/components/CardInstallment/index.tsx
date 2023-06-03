@@ -76,6 +76,7 @@ const CardInstallment = ({ index, installment, onChangeList }: ICardInstallment)
                 id='filled-multiline-flexible'
                 label='Premium payment warranty'
                 multiline
+                defaultValue={0}
                 min={1}
                 max={999}
                 maxLength={4}
