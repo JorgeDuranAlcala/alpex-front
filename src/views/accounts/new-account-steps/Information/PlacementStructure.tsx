@@ -290,7 +290,24 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               </FormHelperText>
             )}
           </FormControl>
-
+          <FormControl fullWidth sx={{ mb: 2, mt: 2 }} className='show-on-mobile'>
+            <NumericFormat
+              name='exchangeRate'
+              value={placementStructure.exchangeRate}
+              allowLeadingZeros
+              thousandSeparator=','
+              customInput={TextField}
+              id='exchange-rate'
+              label='Exchange rate'
+              multiline
+              variant='outlined'
+              prefix=''
+              decimalScale={2}
+              error={errors.exchangeRateError}
+              helperText={getErrorMessage('exchangeRateError')}
+            />
+            {false && <FormHelperText sx={{ color: 'error.main' }}>Required Field</FormHelperText>}
+          </FormControl>
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <NumericFormat
               name='total'
@@ -434,7 +451,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
         </div>
 
         <div className='form-col'>
-          <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
+          <FormControl fullWidth sx={{ mb: 2, mt: 2 }} className='hide-on-mobile'>
             <NumericFormat
               name='exchangeRate'
               value={placementStructure.exchangeRate}

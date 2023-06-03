@@ -126,9 +126,16 @@ const BrokerContacts = ({ idBroker }: IBrokerContacts) => {
   }, [])
 
   useEffect(() => {
-    setBrokerContactsPagination({ ...brokerContactsPagination, idCBroker: idBroker })
+    /*  const result = setBrokerContactsPagination({ ...brokerContactsPagination, idCBroker: idBroker })
+    setContactList(result) */
+    getBrokerContacts()
     //eslint-disable-next-line
   }, [idBroker])
+
+  const getBrokerContacts = async () => {
+    const result = await getBrokerContactsByIdBroker({ ...brokerContactsPagination, idCBroker: idBroker })
+    setContactList(result)
+  }
 
   useEffect(() => {
     setContactList(brokerContacts || [])

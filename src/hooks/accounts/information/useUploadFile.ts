@@ -5,7 +5,7 @@ import informationService from 'src/services/accounts/information.service'
 export const useUploadInformationDocument = () => {
   const [jwtToken] = useLocalStorage('accessToken', false)
 
-  const uploadInformationDocument = async (uploadDocto: UploadDoctoDto): Promise<object> => {
+  const uploadInformationDocument = async (uploadDocto: UploadDoctoDto): Promise<any> => {
     try {
       const res = await informationService.uploadDocument(uploadDocto, jwtToken)
 
