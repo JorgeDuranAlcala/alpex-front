@@ -115,12 +115,12 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
 
     //Change the paymentPercentage of each installment when the count changes to be equal to 100/count
     const paymentPercentage = 100 / +count
-    const defaultObject = {
+    const defaultObject: InstallmentDto = {
       balanceDue: 0,
       paymentPercentage: paymentPercentage,
       premiumPaymentWarranty: 0,
       settlementDueDate: account ? new Date(account?.informations[0]?.effectiveDate || '') : new Date(),
-      idAccount: account ? idAccount : '',
+      idAccount: account ? idAccount : Number(localStorage.getItem('idAccount')),
       id: 0
     }
     for (let i = 0; i < +count; i++) {
@@ -164,43 +164,59 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
     setIsChange(true)
   }
 
-  useEffect(() => {
-    //yup validate each form of installmentlist
+  const handleBlur = (event: FocusEvent<HTMLInputElement>) => {
+    if (event.target.value === '') {
+      setError({
+        ...error,
+        errorFieldRequired: true
+      })
+    } else {
+      setError({
+        ...error,
+        errorFieldRequired: false
+      })
+    }
+  }
 
+  const validations = async () => {
     for (let i = 0; i < +count; i++) {
       const item = installmentsList[i]
-      schema
-        .validate(item)
-        .then(() => {
-          const sum = installmentsList.reduce((acc, item) => acc + item.paymentPercentage, 0)
-          if (sum === 100) {
-            setBtnNext(true)
-          } else {
-            setBtnNext(false)
-          }
-        })
-        .catch(err => {
-          console.log(err)
-        })
+      try {
+        await schema.isValid(item, { abortEarly: false })
+        const sum = installmentsList.reduce((acc, item) => acc + item.paymentPercentage, 0)
+        if (sum === 100) {
+          setBtnNext(true)
+        } else {
+          setBtnNext(false)
+        }
+      } catch (err) {
+        console.log(err)
+      }
     }
-  }, [installmentsList, count])
+  }
 
-  const saveInstallments = async (installments: InstallmentDto[]) => {
+  const saveInstallments = async () => {
     setDisableSaveBtn(true)
     if (isChange) {
       await deleteInstallments(initialInstallmentList)
-      const newInitialInstallments = await addInstallments(installments)
-      setInitialInstallmentList(newInitialInstallments)
+      const newInitialInstallments = await addInstallments(installmentsList)
       setIsChange(false)
+      setInitialInstallmentList(newInitialInstallments)
     }
     setDisableSaveBtn(false)
   }
 
-  const nextStep = async () => {
+  const nextStep = () => {
+    validations()
     if (onStepChange) {
-      await saveInstallments(installmentsList)
+      saveInstallments()
       onStepChange(4)
     }
+  }
+
+  const openModal = () => {
+    validations()
+    setOpen(true)
   }
 
   useEffect(() => {
@@ -208,6 +224,8 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
     const base = daysFirst ? daysFirst : 1
 
     if (daysFirst && daysFirst != 0) {
+      console.log(daysFirst)
+
       for (const [index, installment] of installmentsList.entries()) {
         let temp = { ...installment }
         const paymentWarrantyResult = base * (index + 1)
@@ -237,26 +255,14 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
       setTimeout(() => {
         account.installments.forEach((item: any) => {
           item.settlementDueDate = new Date(item.settlementDueDate + 'T00:00:00.678Z')
+          item.idAccount = account ? idAccount : Number(localStorage.getItem('idAccount'))
         })
         setInstallmentList([...account.installments])
         setInitialInstallmentList([...account.installments])
       }, 10)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [account])
-
-  const handleBlur = (event: FocusEvent<HTMLInputElement>) => {
-    if (event.target.value === '') {
-      setError({
-        ...error,
-        errorFieldRequired: true
-      })
-    } else {
-      setError({
-        ...error,
-        errorFieldRequired: false
-      })
-    }
-  }
 
   return (
     <>
@@ -360,9 +366,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
           color='success'
           sx={{ mr: 2, fontFamily: inter, fontSize: size, letterSpacing: '0.4px' }}
           disabled={disableSaveBtn}
-          onClick={() => {
-            saveInstallments(installmentsList)
-          }}
+          onClick={saveInstallments}
         >
           <SaveIcon /> &nbsp; Save changes
         </Button>
@@ -373,7 +377,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
             fontSize: userThemeConfig.typography?.size.px15,
             color: texButtonColor
           }}
-          onClick={() => setOpen(true)}
+          onClick={openModal}
         >
           Next step &nbsp;
           <ArrowForwardIcon />
