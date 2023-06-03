@@ -4,6 +4,7 @@ import UserThemeOptions from 'src/layouts/UserThemeOptions'
 // ** Custom Hooks
 import {
   useAddInformation,
+  useDeleteInformationDocument,
   useFindInformationByIdAccount,
   useGetInfoDoctosByIdAccount,
   useUpdateInformationByIdAccount,
@@ -75,10 +76,6 @@ export interface PlacementStructure {
   typeOfLimit: string | number | null
 }
 
-interface UserFile {
-  file: File | null
-}
-
 const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountChange }) => {
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
   const inter = userThemeConfig.typography?.fontFamilyInter
@@ -101,7 +98,8 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
 
   // Save id doctos by file name
   const [doctoIdByName, setDoctoIdByName] = useState({})
-  const [userFile, setUserFile] = useState<UserFile[]>([])
+  const [userFile, setUserFile] = useState<File[]>([])
+  const [userFileToDelete, setUserFileToDelete] = useState<File>()
 
   //store
   const idAccount = useAppSelector(state => state.accounts?.formsData?.form1?.id)
@@ -113,6 +111,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   const { updateInformationByIdAccount } = useUpdateInformationByIdAccount()
   const { uploadInformationDocument } = useUploadInformationDocument()
   const { getInfoDoctosByIdAccount } = useGetInfoDoctosByIdAccount()
+  const { deleteInformationDocument } = useDeleteInformationDocument()
 
   const dispatch = useAppDispatch()
 
@@ -166,14 +165,16 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
         idCountry: Number(basicInfo.country),
         idBroker: Number(basicInfo.broker),
         idBrokerContact: Number(basicInfo.brokerContact),
-        brokerContactEmail: basicInfo.brokerContactEmail,
-        brokerContactPhone: basicInfo.brokerContactPhone,
-        brokerContactCountry: basicInfo.brokerContactCountry,
+
+        // brokerContactEmail: basicInfo.brokerContactEmail,
+        // brokerContactPhone: basicInfo.brokerContactPhone,
+        // brokerContactCountry: basicInfo.brokerContactCountry,
         idCedant: Number(basicInfo.cedant),
         idCedantContact: Number(basicInfo.cedantContact),
-        cedantContactEmail: basicInfo.cedantContactEmail,
-        cedantContactPhone: basicInfo.cedantContactPhone,
-        cedantContactCountry: basicInfo.cedantContactCountry,
+
+        // cedantContactEmail: basicInfo.cedantContactEmail,
+        // cedantContactPhone: basicInfo.cedantContactPhone,
+        // cedantContactCountry: basicInfo.cedantContactCountry,
         idLineOfBussines: Number(basicInfo.lineOfBusiness),
         idRiskActivity: Number(basicInfo.industryCode),
         effectiveDate: basicInfo.effectiveDate,
@@ -361,7 +362,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   }
 
   const handleSaveInformation = async () => {
-    console.log("Step saved: 1")
+    console.log('Step saved: 1')
     console.log('basic info')
     console.log(basicInfo)
     if (idAccount) {
@@ -388,7 +389,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
     handleCloseModal()
   }
 
-  const verifyValidations = async ()=>{
+  const verifyValidations = async () => {
     if (placementStructureValidated && basicInfoValidated) {
       setAllValidated(true)
     } else {
@@ -399,9 +400,9 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   //Evento para controlar el botÃ³n de save
   const handleSave = () => {
     // if (nextClicked) {
-      if (basicInfoValidated) {
-        handleSaveInformation()
-      }
+    if (basicInfoValidated) {
+      handleSaveInformation()
+    }
 
     // }
   }
@@ -444,7 +445,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
       if (idAccountCache) {
         const res = await getInfoDoctosByIdAccount(idAccountCache)
         const newDoctoIdByName: any = {}
-        const newUserFiles: UserFile[] = []
+        const newUserFiles: File[] = []
 
         if (res.length > 0) {
           for (const docto of res) {
@@ -468,6 +469,25 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   }, [])
 
   useEffect(() => {
+    const deleteFile = async (userFileToDelete: File) => {
+      const fileName = String(userFileToDelete.name)
+      const bodyToDelete = {
+        idAccount: idAccount,
+        idDocto: doctoIdByName[fileName as keyof typeof doctoIdByName],
+        fileName: fileName
+      }
+
+      const res = await deleteInformationDocument(bodyToDelete)
+      console.log(res)
+    }
+
+    if (userFileToDelete && idAccount) {
+      deleteFile(userFileToDelete)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userFileToDelete])
+
+  useEffect(() => {
     if (idAccount) {
       setDataInformation()
     }
@@ -479,17 +499,14 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
     async function verify() {
       await verifyValidations()
     }
-    verify();
+    verify()
 
     if (nextClicked) {
       setOpen(true)
     }
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [basicInfoValidated,
-     placementStructureValidated,
-      setbasicInfoValidated,
-       setPlacementStructureValidated])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [basicInfoValidated, placementStructureValidated, setbasicInfoValidated, setPlacementStructureValidated])
 
   return (
     <>
@@ -520,7 +537,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
 
           <div className='section'>
             <div className='title'>File submit</div>
-            <FileSubmit userFile={userFile} setUserFile={setUserFile} />
+            <FileSubmit userFile={userFile} setUserFile={setUserFile} setUserFileToDelete={setUserFileToDelete} />
           </div>
           <div className='section action-buttons'>
             <Button
@@ -559,7 +576,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
                   padding: '20px'
                 }}
               >
-                {allValidated ?
+                {allValidated ? (
                   <>
                     <HeaderTitleModal>
                       <div className='next-modal-title'>Ready to continue?</div>
@@ -572,8 +589,8 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
                       </ButtonClose>
                     </HeaderTitleModal>
                     <div className='next-modal-text'>
-                      You are about to advance to the next form. Make sure that all the fields have been completed with the
-                      correct information.
+                      You are about to advance to the next form. Make sure that all the fields have been completed with
+                      the correct information.
                     </div>
                     <Button className='continue-modal-btn' variant='contained' onClick={handleNextStep}>
                       CONTINUE
@@ -587,7 +604,8 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
                     >
                       Keep editing information
                     </Button>
-                  </> :
+                  </>
+                ) : (
                   <>
                     <HeaderTitleModal>
                       <div className='next-modal-title'>Incomplete Information</div>
@@ -612,8 +630,8 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
                     >
                       OK
                     </Button>
-                  </>}
-
+                  </>
+                )}
               </Box>
             </Modal>
           </div>
