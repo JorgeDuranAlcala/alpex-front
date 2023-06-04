@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react'
 import CloseIcon from '@mui/icons-material/Close'
 import { Box, Button, FormControl, IconButton, InputLabel, MenuItem, Modal, TextField, Typography } from '@mui/material'
 import Select from '@mui/material/Select'
-import { DataGrid, GridColumns, GRID_CHECKBOX_SELECTION_COL_DEF } from '@mui/x-data-grid'
+import { DataGrid, GRID_CHECKBOX_SELECTION_COL_DEF, GridColumns } from '@mui/x-data-grid'
 
 import FormHelperText from '@mui/material/FormHelperText'
 
@@ -123,7 +123,19 @@ const BrokerContacts = ({ idBroker }: IBrokerContacts) => {
   useEffect(() => {
     setBrokerContactsPagination({ ...brokerContactsPagination, idCBroker: idBroker })
     //eslint-disable-next-line
+  }, [])
+
+  useEffect(() => {
+    /*  const result = setBrokerContactsPagination({ ...brokerContactsPagination, idCBroker: idBroker })
+    setContactList(result) */
+    getBrokerContacts()
+    //eslint-disable-next-line
   }, [idBroker])
+
+  const getBrokerContacts = async () => {
+    const result = await getBrokerContactsByIdBroker({ ...brokerContactsPagination, idCBroker: idBroker })
+    setContactList(result)
+  }
 
   useEffect(() => {
     setContactList(brokerContacts || [])
@@ -320,12 +332,19 @@ const BrokerContacts = ({ idBroker }: IBrokerContacts) => {
   }
 
   const searchContacts = (value: string) => {
-    if (value === '') setBrokerContactsPagination({ ...brokerContactsPagination, filters: [] })
-    else
+    if (value === '') {
       setBrokerContactsPagination({
         ...brokerContactsPagination,
-        filters: [{ type: 'name', value: value, text: value }]
+        filters: [],
+        info: { ...brokerContactsPagination.info, page: 1 }
       })
+    } else {
+      setBrokerContactsPagination({
+        ...brokerContactsPagination,
+        filters: [{ type: 'name', value: value, text: value }],
+        info: { ...brokerContactsPagination.info, page: 1 }
+      })
+    }
   }
 
   const handleCreateContact = async () => {

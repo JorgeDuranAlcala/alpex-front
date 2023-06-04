@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react'
 import CloseIcon from '@mui/icons-material/Close'
 import { Box, Button, FormControl, IconButton, InputLabel, MenuItem, Modal, TextField, Typography } from '@mui/material'
 import Select from '@mui/material/Select'
-import { DataGrid, GridColumns, GRID_CHECKBOX_SELECTION_COL_DEF } from '@mui/x-data-grid'
+import { DataGrid, GRID_CHECKBOX_SELECTION_COL_DEF, GridColumns } from '@mui/x-data-grid'
 
 import FormHelperText from '@mui/material/FormHelperText'
 
@@ -64,8 +64,6 @@ interface ICedantContacts {
 }
 
 const CedantContacts = ({ idCedant }: ICedantContacts) => {
-  console.log(idCedant)
-
   // Handle Data
   const [contactList, setContactList] = useState<IContact[]>([])
   const [contactData, setContactData] = useState<IContact>(initialNewContact)
@@ -120,6 +118,11 @@ const CedantContacts = ({ idCedant }: ICedantContacts) => {
     getCedantContactsByIdCedant,
     cedantContactInfoPage
   } = useGetAllByIdCedantAndPagination()
+
+  useEffect(() => {
+    setCedantContactsPagination({ ...cedantContactsPagination, idCCedant: idCedant })
+    //eslint-disable-next-line
+  }, [])
 
   useEffect(() => {
     setCedantContactsPagination({ ...cedantContactsPagination, idCCedant: idCedant })
@@ -338,12 +341,19 @@ const CedantContacts = ({ idCedant }: ICedantContacts) => {
   }
 
   const searchContacts = (value: string) => {
-    if (value === '') setCedantContactsPagination({ ...cedantContactsPagination, filters: [] })
-    else
+    if (value === '') {
       setCedantContactsPagination({
         ...cedantContactsPagination,
-        filters: [{ type: 'name', value: value, text: value }]
+        filters: [],
+        info: { ...cedantContactsPagination.info, page: 1 }
       })
+    } else {
+      setCedantContactsPagination({
+        ...cedantContactsPagination,
+        filters: [{ type: 'name', value: value, text: value }],
+        info: { ...cedantContactsPagination.info, page: 1 }
+      })
+    }
   }
 
   const handleCreateContact = async () => {

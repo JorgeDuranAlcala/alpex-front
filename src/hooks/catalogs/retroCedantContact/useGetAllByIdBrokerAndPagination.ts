@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 import {
-  RetroCedantContactDto,
   RetroCedantContactsInfoDto,
-  RetroCedantContactsPaginationDto
+  RetroCedantContactsPaginationDto,
+  RetroCedantContactTableDto
 } from 'src/services/catalogs/dtos/retroCedantContact.dto'
 import RetroCedantContactService from 'src/services/catalogs/retroCedantContact.service'
 
@@ -31,7 +31,7 @@ const initialStateInfo: RetroCedantContactsInfoDto = {
 const useGetAllByIdRetroCedantAndPagination = () => {
   const [retroCedantContactsPagination, setRetroCedantContactsPagination] =
     useState<RetroCedantContactsPaginationDto>(initialState)
-  const [retroCedantContacts, setRetroCedantContacts] = useState<RetroCedantContactDto[]>([])
+  const [retroCedantContacts, setRetroCedantContacts] = useState<RetroCedantContactTableDto[]>([])
   const [retroCedantContactInfoPage, setRetroCedantContactInfoPage] =
     useState<RetroCedantContactsInfoDto>(initialStateInfo)
 

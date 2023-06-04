@@ -1,5 +1,6 @@
+import { useFindInformationByIdAccount } from '@/hooks/accounts/information'
 import { Box, Button, Card, ListItemIcon, ListItemText, Menu, MenuItem, Modal, Typography } from '@mui/material'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Icon from 'src/@core/components/icon'
 import { useAppSelector } from 'src/store'
 import StatusSelect from 'src/views/custom/select/StatusSelect'
@@ -118,15 +119,32 @@ const FormHeader = () => {
 
   const account = useAppSelector(state => state.accounts?.formsData?.form1)
 
-  const formatDate = (date: Date): string => {
-    const options: Intl.DateTimeFormatOptions = {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric'
+  const { setIdAccount, information } = useFindInformationByIdAccount()
+  const formaterAmount = (amount: number) => {
+    if (amount) {
+      return amount.toLocaleString('en-US', {
+        style: 'decimal',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+        useGrouping: true
+      })
     }
-
-    return new Intl.DateTimeFormat('ban', options).format(date)
   }
+  const formatDate = (date: Date | null | undefined): string => {
+    if (date) {
+      const options: Intl.DateTimeFormatOptions = {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric'
+      }
+
+      return new Intl.DateTimeFormat('ban', options).format(date)
+    }
+    return ''
+  }
+  useEffect(() => {
+    account && setIdAccount(account.id)
+  }, [account])
 
   return (
     <div className='form-header-grid'>
@@ -149,12 +167,13 @@ const FormHeader = () => {
             <div className='form-header-section'>
               <span className='form-header-title'>Net premium:</span>
               <span className='form-header-subtitle'>
-                ${account?.placementStructure?.netPremium} {account?.placementStructure?.currency}
+                ${account && formaterAmount(account?.placementStructure?.netPremium)}{' '}
+                {account?.placementStructure?.currency}
               </span>
             </div>
             <div className='form-header-section'>
               <span className='form-header-title'>Registration date:</span>
-              <span className='form-header-subtitle'>{formatDate(account?.basicInfo?.effectiveDate)}</span>
+              <span className='form-header-subtitle'>{information && formatDate(information?.createdAt)}</span>
             </div>
           </div>
         </div>
@@ -166,7 +185,7 @@ const FormHeader = () => {
         <ActionsHeader accountStatus='PENDING' sideHeader={true} />
       </div>
       <div className={'actions-header-mobile'}>
-        <ActionsHeader accountStatus='PENDING' sideHeader={false}  />
+        <ActionsHeader accountStatus='PENDING' sideHeader={false} />
       </div>
     </div>
   )

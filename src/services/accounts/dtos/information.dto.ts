@@ -4,6 +4,7 @@ export interface InformationDto {
   effectiveDate: Date | null
   expirationDate: Date | null
   receptionDate: Date | null
+  createdAt?: Date | null
   limit: number
   attachmentPoint: number
   reinsuranceBrokerage: number
@@ -24,12 +25,38 @@ export interface InformationDto {
   idCountry: number
   idBroker: number
   idBrokerContact: number | null
+  brokerContactEmail: string
+  brokerContactPhone: string
+  brokerContactCountry: string
   idCedant: number
   idCedantContact: number | null
+  cedantContactEmail: string
+  cedantContactPhone: string
+  cedantContactCountry: string
   idLineOfBussines: number
   idTypeOfLimit: number | null
   idRiskActivity: number
   idLeadUnderwriter: number
   idUnderwriter: number
   idTechnicalAssistant: number
+}
+
+export interface DoctoDto {
+  type: string
+  name: string
+  base64: string
+}
+
+export interface UploadDoctoDto {
+  idAccount: number
+  idCDocto: number
+  docto: DoctoDto
+  idDocto?: number
+  name?: string
+}
+
+export interface DeleteDoctoDto {
+  idAccount: number
+  idDocto: number
+  fileName: string
 }

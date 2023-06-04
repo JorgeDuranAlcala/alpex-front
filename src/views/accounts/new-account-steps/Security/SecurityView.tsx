@@ -287,7 +287,6 @@ interface FormInformation {
 
 const Security = ({ onStepChange }: SecurityProps) => {
   const [securitiesList, setSecuritiesList] = useState<FormInfo[]>([])
-
   const [formErrors, setFormErrors] = useState<FormInfo[]>([{ ...SecurityForm }])
   const { saveSecurityTotal } = useAddSecurityTotal()
   const { updateSecurities } = useUpdateSecurities()
@@ -299,10 +298,18 @@ const Security = ({ onStepChange }: SecurityProps) => {
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
   const { account, setAccountId, getAccountById } = useGetAccountById()
   const { updateSecurityTotal } = useUpdateSecurityTotalById()
+  const [itemsChanged, setItemsChanged] = useState(false)
+
+  // const allValidated: boolean[] = []
+  const [validationsDone, setValidationsDone] = useState(false)
 
   const handleItemChange = (index: number, item: FormInfo) => {
-    const tempSecurities = [...securitiesList.slice(0, index), item, ...securitiesList.slice(index + 1)]
-    setSecuritiesList(tempSecurities)
+    setItemsChanged(true)
+    setSecuritiesList(prevSecuritiesList => {
+      const tempSecurities = [...prevSecuritiesList.slice(0, index), item, ...prevSecuritiesList.slice(index + 1)]
+
+      return tempSecurities
+    })
   }
 
   const [allFormData, setAllFormData] = useState<FormSecurity>({
@@ -366,6 +373,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
   }
 
   const validate = async () => {
+
     securitiesList.forEach((form, index) => {
       const data = [...formErrors]
       data[index] = { ...SecurityForm }
@@ -374,9 +382,13 @@ const Security = ({ onStepChange }: SecurityProps) => {
         schema
           .validate(form, { abortEarly: false })
           .then(function () {
+            // console.log("validado form: ")
+            // console.log(index)
             setCanMakeRequest(true)
           })
           .catch(function (err) {
+            // console.log("error form: ")
+            // console.log(index)
             err?.inner?.forEach((e: any) => {
               data[index][e.path] = e.message
               setFormErrors(data)
@@ -388,8 +400,14 @@ const Security = ({ onStepChange }: SecurityProps) => {
           .validate(form, { abortEarly: false })
           .then(function () {
             setCanMakeRequest(true)
+
+            // console.log("validado form: ")
+            // console.log(index)
           })
           .catch(function (err) {
+            // console.log("error form: ")
+            // console.log(index)
+
             err?.inner?.forEach((e: any) => {
               data[index][e.path] = e.message
               setFormErrors(data)
@@ -397,12 +415,19 @@ const Security = ({ onStepChange }: SecurityProps) => {
             })
           })
       }
+      if(index == (securitiesList.length-1)) // Esta condición se agrego como prueba
+                                            // para determinar cuando habian sido validados
+                                            // todos los Reinsurers
+      {
+        // console.log("all validations are done")
+        setValidationsDone(true)
+
+      }
     })
   }
 
   const calculateDistribuitedNetPremium = (item: FormInfo, index: number) => {
     const tempSecurities = [...securitiesList.slice(0, index), item, ...securitiesList.slice(index + 1)]
-
     let DistribuitedNetPremium = 0
     let sumSharePercent = 0
     let sumGrossShare = 0
@@ -410,8 +435,10 @@ const Security = ({ onStepChange }: SecurityProps) => {
     tempSecurities.forEach(form => {
       DistribuitedNetPremium +=
         +form.BrokerAge + +form.Taxes + +form.DynamicComission + +form.FrontingFee + +form.NetInsurancePremium
+
       if (!form.IsGross) sumSharePercent += +form.SharePercent
       else sumGrossShare += +form.PremiumPerShare
+
     })
 
     const recievedNetPremium = (sumSharePercent * +formInformation.netPremium) / 100 + sumGrossShare
@@ -421,10 +448,11 @@ const Security = ({ onStepChange }: SecurityProps) => {
       Diference: (DistribuitedNetPremium - recievedNetPremium).toString(),
       DistribuitedNetPremium: DistribuitedNetPremium.toString(),
       RecievedNetPremium: recievedNetPremium.toString()
+
     }))
   }
 
-  const getSecurities = async () => {
+  const getSecurities = async (isSaving=false) => {
     const idAccountCache = Number(localStorage.getItem('idAccount'))
     const accountInfo = await getAccountById(idAccountCache)
     if (accountInfo?.securities.length <= 0 && !accountInfo.securityTotal) {
@@ -475,7 +503,11 @@ const Security = ({ onStepChange }: SecurityProps) => {
     }
 
     accountInfo.securities.forEach(() => securitiesErrorsTemp.push({ ...SecurityForm }))
-    setSecuritiesList([...securitiesTem] as FormInfo[])
+
+    if(!itemsChanged || isSaving ){ // Si no hubo cambios en el formulario  Ó si se está
+                                    //guardando la data entonces reasigna securitiesList
+      setSecuritiesList([...securitiesTem] as FormInfo[])
+    }
     setFormErrors([...securitiesErrorsTemp])
     setAllFormData({
       ...allFormData,
@@ -557,9 +589,9 @@ const Security = ({ onStepChange }: SecurityProps) => {
       .then(res => (saveAll = '' + res))
       .finally(() => {
         setCanMakeRequest(false)
-
+        setItemsChanged(false)
         setSecuritiesList([])
-        getSecurities()
+        getSecurities(true)
       })
 
     if (saveAll === 'error' || saveTotal === 'error') {
@@ -597,8 +629,8 @@ const Security = ({ onStepChange }: SecurityProps) => {
   }
 
   const handleSuccess = () => {
-    SaveData()
-    dispatch(updateFormsData({ form2: allFormData }))
+      SaveData()
+      dispatch(updateFormsData({ form2: allFormData }))
   }
 
   useEffect(() => {
@@ -622,16 +654,29 @@ const Security = ({ onStepChange }: SecurityProps) => {
   }, [account])
 
   useEffect(() => {
-    if (canMakeRequest) {
+
+    if (validationsDone && canMakeRequest) {
       handleSuccess()
+
     }
 
     console.log({ isNextStep, canMakeRequest })
 
-    if (isNextStep && canMakeRequest) onStepChange(3)
+    if (isNextStep && canMakeRequest && validationsDone) onStepChange(3)
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [canMakeRequest, isNextStep])
+  }, [canMakeRequest, isNextStep, validationsDone])
+
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  useEffect(() => {
+    // console.log("useffect")
+    // console.log(securitiesList)
+  }, [securitiesList]);
+
+   // eslint-disable-next-line @typescript-eslint/no-empty-function
+   useEffect(() => {
+  }, [itemsChanged, setItemsChanged]);
+
 
   return (
     <>

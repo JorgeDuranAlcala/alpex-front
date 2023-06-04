@@ -66,7 +66,7 @@ const Table = ({ status }: IAccountTable) => {
   // ** State
   const [selectedRows, setSelectedRows] = useState<GridRowId[]>([])
   const [accounts, setAccounts] = useState<any>([])
-  const [, setLoading] = useState<any>([])
+  const [loading, setLoading] = useState<any>([])
   const [badgeData, setBadgeData] = useState<IAlert>({
     message: '',
     status: undefined,
@@ -152,7 +152,12 @@ const Table = ({ status }: IAccountTable) => {
       renderHeader: ({ colDef }) => <ColumnHeader colDef={colDef} action={handleClickColumnHeader} />,
       renderCell: ({ row }) => (
         <Typography sx={{ color: colors.primary.main, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
-          <Link href='#'>{`#${row.id}`}</Link>
+          <Link
+            sx={{ cursor: 'pointer' }}
+            onClick={() => {
+              onEdit(+row.id)
+            }}
+          >{`#${row.id}`}</Link>
         </Typography>
       )
     },
@@ -259,7 +264,7 @@ const Table = ({ status }: IAccountTable) => {
       cellClassName: 'account-column-cell-pl-0',
       renderHeader: ({ colDef }) => <ColumnHeader colDef={colDef} showIcon={false} />,
       renderCell: ({ row }) => (
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
           <IconButton
             onClick={() => {
               onEdit(+row.id)
@@ -367,6 +372,7 @@ const Table = ({ status }: IAccountTable) => {
     <>
       <TableHeader selectedRows={selectedRows} badgeData={badgeData} />
       <DataGrid
+        loading={loading}
         autoHeight
         checkboxSelection
         disableSelectionOnClick

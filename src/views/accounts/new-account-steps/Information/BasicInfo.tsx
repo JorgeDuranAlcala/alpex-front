@@ -53,8 +53,14 @@ type BasicInfoProps = {
     country: number | string
     broker: number | string
     brokerContact: number | null | string
+    brokerContactEmail: string
+    brokerContactPhone: string
+    brokerContactCountry: string
     cedant: number | string
     cedantContact: number | null | string
+    cedantContactEmail: string
+    cedantContactPhone: string
+    cedantContactCountry: string
     lineOfBusiness: number | string
     underwriter: number | string
     leadUnderwriter: number | string
@@ -72,8 +78,14 @@ type BasicInfoProps = {
       country: number | string
       broker: number | string
       brokerContact: number | null | string
+      brokerContactEmail: string
+      brokerContactPhone: string
+      brokerContactCountry: string
       cedant: number | string
       cedantContact: number | null | string
+      cedantContactEmail: string
+      cedantContactPhone: string
+      cedantContactCountry: string
       lineOfBusiness: number | string
       underwriter: number | string
       leadUnderwriter: number | string
@@ -376,6 +388,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               name='brokerContact'
               label='Select Broker Contact'
               value={String(basicInfo.brokerContact)}
+              disabled={basicInfo.broker !== '' ? false : true}
               defaultValue=''
               onChange={handleSelectChange}
               labelId='broker-contact'
@@ -395,6 +408,39 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               )}
             </Select>
           </FormControl>
+          {basicInfo.brokerContact !== '' && (
+            <>
+              <FormControl fullWidth sx={{ marginBottom: "0.7rem", mt: 2 }}>
+                <TextField
+                  autoFocus
+                  disabled
+                  fullWidth
+                  label='Contact email'
+                  value={basicInfo.brokerContactEmail}
+                />
+              </FormControl>
+
+              <FormControl fullWidth sx={{ marginBottom: "0.7rem"  , mt: 2 }}>
+                <TextField
+                  autoFocus
+                  fullWidth
+                  disabled
+                  label='Contact phone'
+                  value={basicInfo.brokerContactPhone}
+                />
+              </FormControl>
+              <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
+                <InputLabel>Contact country'</InputLabel>
+                <Select label='Contact country' value={basicInfo.brokerContactCountry} labelId='Contactcountry' disabled>
+                  {countries?.map(country => (
+                    <MenuItem key={country.name} value={country.id}>
+                      {country.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </>
+          )}
           <ModalContact
             service={'broker'}
             id={Number(basicInfo.broker)}
@@ -442,6 +488,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               name='cedantContact'
               label='Select Cedant Contact'
               value={`${basicInfo.cedantContact == 0 ? '' : basicInfo.cedantContact}`}
+              disabled={basicInfo.cedant !== '' ? false : true}
               onChange={handleSelectChange}
               defaultValue=''
               labelId='cedant-contact'
@@ -461,6 +508,39 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               )}
             </Select>
           </FormControl>
+          {basicInfo.cedantContact !== '' && (
+            <>
+              <FormControl fullWidth sx={{ marginBottom: "0.7rem", mt: 2 }}>
+                <TextField
+                  autoFocus
+                  disabled
+                  fullWidth
+                  label='Contact email'
+                  value={basicInfo.cedantContactEmail}
+                />
+              </FormControl>
+
+              <FormControl fullWidth sx={{ marginBottom: "0.7rem"  , mt: 2 }}>
+                <TextField
+                  autoFocus
+                  fullWidth
+                  disabled
+                  label='Contact phone'
+                  value={basicInfo.cedantContactPhone}
+                />
+              </FormControl>
+              <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
+                <InputLabel>Contact country'</InputLabel>
+                <Select label='Contact country' value={basicInfo.cedantContactCountry} labelId='Contactcountry' disabled>
+                  {countries?.map(country => (
+                    <MenuItem key={country.name} value={country.id}>
+                      {country.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </>
+          )}
           <ModalContact
             service={'cedant'}
             id={Number(basicInfo.cedant)}
