@@ -1,4 +1,4 @@
-import React, { Fragment, useRef, useState } from 'react'
+import React, { Fragment, useEffect, useRef, useState } from 'react'
 
 // // ** MUI Imports
 
@@ -11,22 +11,18 @@ import Icon from 'src/@core/components/icon'
 interface UserFileProps {
   userFile: any
   setUserFile: React.Dispatch<React.SetStateAction<any>>
+  setUserFileToDelete: React.Dispatch<React.SetStateAction<any>>
 }
 
-const FileSubmit: React.FC<UserFileProps> = ({ setUserFile }) => {
+const FileSubmit: React.FC<UserFileProps> = ({ setUserFile, userFile, setUserFileToDelete }) => {
   // ** State
   const inputRef = useRef<HTMLInputElement>(null)
   const [file, setFile] = useState<File[]>([])
-
-  const setFilevalues = (uploadFiles: File[]) => {
-    setFile(uploadFiles)
-  }
 
   const onFileChange = function (e: any) {
     e.preventDefault()
     const rawFiles = e.target.files
 
-    setFilevalues([...file, ...rawFiles])
     setUserFile([...file, ...rawFiles])
   }
 
@@ -38,10 +34,16 @@ const FileSubmit: React.FC<UserFileProps> = ({ setUserFile }) => {
   }
 
   const handleRemoveFile = (e: any, index: number) => {
+    setUserFileToDelete && setUserFileToDelete(file.splice(index, 1)[0])
     e.preventDefault + file.splice(index, 1)
-    setFile([...file])
     setUserFile([...file])
   }
+
+  useEffect(() => {
+    if (userFile.length > 0) {
+      setFile([...userFile])
+    }
+  }, [userFile])
 
   return (
     <Fragment>

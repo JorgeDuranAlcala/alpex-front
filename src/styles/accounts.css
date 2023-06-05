@@ -318,6 +318,11 @@
   margin: 10px 0 !important;
 }
 
+.ok-modal-btn{
+  display: flex !important;
+  margin-left: auto !important;
+}
+
 .btn-icon {
   margin-right: 8px;
   display: flex;
@@ -364,6 +369,10 @@
   color: red;
 }
 
+.show-on-mobile{
+  display: none !important;
+}
+
 @media (max-width: 800px) {
   .information .form-col {
     width: 45%;
@@ -381,6 +390,13 @@
 
   .information .MuiButton-root {
     width: 100%;
+  }
+
+  .hide-on-mobile{
+    display: none !important;
+  }
+  .show-on-mobile{
+    display: inline-flex;
   }
 }
 

@@ -75,7 +75,7 @@
 }
 
 
-.delete-button.MuiButton-root {
+.header-wrapper .delete-button.MuiButton-root {
   color: red;
   border: 1px solid rgb(255 0 0 / 50%);
 }

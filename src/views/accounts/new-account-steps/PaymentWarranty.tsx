@@ -115,12 +115,12 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
 
     //Change the paymentPercentage of each installment when the count changes to be equal to 100/count
     const paymentPercentage = 100 / +count
-    const defaultObject = {
+    const defaultObject: InstallmentDto = {
       balanceDue: 0,
       paymentPercentage: paymentPercentage,
       premiumPaymentWarranty: 0,
       settlementDueDate: account ? new Date(account?.informations[0]?.effectiveDate || '') : new Date(),
-      idAccount: account ? idAccount : '',
+      idAccount: account ? idAccount : Number(localStorage.getItem('idAccount')),
       id: 0
     }
     for (let i = 0; i < +count; i++) {
@@ -161,85 +161,8 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
 
       return lastState
     })
+    setIsChange(true)
   }
-
-  useEffect(() => {
-    //yup validate each form of installmentlist
-
-    for (let i = 0; i < +count; i++) {
-      const item = installmentsList[i]
-      schema
-        .validate(item)
-        .then(() => {
-          const sum = installmentsList.reduce((acc, item) => acc + item.paymentPercentage, 0)
-          if (sum === 100) {
-            setBtnNext(true)
-          } else {
-            setBtnNext(false)
-          }
-        })
-        .catch(err => {
-          console.log(err)
-        })
-    }
-  }, [installmentsList, count])
-
-  const saveInstallments = async (installments: InstallmentDto[]) => {
-    setDisableSaveBtn(true)
-    if (isChange) {
-      await deleteInstallments(initialInstallmentList)
-      const newInitialInstallments = await addInstallments(installments)
-      setInitialInstallmentList(newInitialInstallments)
-      setIsChange(false)
-    }
-    setDisableSaveBtn(false)
-  }
-
-  const nextStep = () => {
-    if (onStepChange) {
-      saveInstallments(installmentsList)
-      onStepChange(4)
-    }
-  }
-
-  useEffect(() => {
-    const tempInstallments: InstallmentDto[] = []
-    const base = daysFirst ? daysFirst : 0
-
-    for (const [index, installment] of installmentsList.entries()) {
-      let temp = { ...installment }
-      const paymentWarrantyResult = base * (index + 1)
-      temp.premiumPaymentWarranty = paymentWarrantyResult
-      temp = makeCalculates(temp)
-      tempInstallments.push(temp)
-    }
-
-    setInstallmentList(() => {
-      const temp = [...tempInstallments]
-
-      return temp
-    })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [daysFirst])
-
-  useEffect(() => {
-    idAccount && setAccountId(idAccount)
-  }, [idAccount, setAccountId])
-
-  useEffect(() => {
-    if (account) {
-      setCount(String(account.installments.length))
-
-      //change settlementDueDate
-      setTimeout(() => {
-        account.installments.forEach((item: any) => {
-          item.settlementDueDate = new Date(item.settlementDueDate + 'T00:00:00.678Z')
-        })
-        setInstallmentList([...account.installments])
-        setInitialInstallmentList([...account.installments])
-      }, 10)
-    }
-  }, [account])
 
   const handleBlur = (event: FocusEvent<HTMLInputElement>) => {
     if (event.target.value === '') {
@@ -255,6 +178,92 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
     }
   }
 
+  const validations = async () => {
+    for (let i = 0; i < +count; i++) {
+      const item = installmentsList[i]
+      try {
+        await schema.isValid(item, { abortEarly: false })
+        const sum = installmentsList.reduce((acc, item) => acc + item.paymentPercentage, 0)
+        if (sum === 100) {
+          setBtnNext(true)
+        } else {
+          setBtnNext(false)
+        }
+      } catch (err) {
+        console.log(err)
+      }
+    }
+  }
+
+  const saveInstallments = async () => {
+    setDisableSaveBtn(true)
+    if (isChange) {
+      await deleteInstallments(initialInstallmentList)
+      const newInitialInstallments = await addInstallments(installmentsList)
+      setIsChange(false)
+      setInitialInstallmentList(newInitialInstallments)
+    }
+    setDisableSaveBtn(false)
+  }
+
+  const nextStep = () => {
+    validations()
+    if (onStepChange) {
+      saveInstallments()
+      onStepChange(4)
+    }
+  }
+
+  const openModal = () => {
+    validations()
+    setOpen(true)
+  }
+
+  useEffect(() => {
+    const tempInstallments: InstallmentDto[] = []
+    const base = daysFirst ? daysFirst : 1
+
+    if (daysFirst && daysFirst != 0) {
+      console.log(daysFirst)
+
+      for (const [index, installment] of installmentsList.entries()) {
+        let temp = { ...installment }
+        const paymentWarrantyResult = base * (index + 1)
+        temp.premiumPaymentWarranty = paymentWarrantyResult
+        temp = makeCalculates(temp)
+        tempInstallments.push(temp)
+      }
+
+      setInstallmentList(() => {
+        const temp = [...tempInstallments]
+
+        return temp
+      })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [daysFirst])
+
+  useEffect(() => {
+    idAccount && setAccountId(idAccount)
+  }, [idAccount, setAccountId])
+
+  useEffect(() => {
+    if (account) {
+      setCount(String(account.installments.length))
+
+      //change settlementDueDate
+      setTimeout(() => {
+        account.installments.forEach((item: any) => {
+          item.settlementDueDate = new Date(item.settlementDueDate + 'T00:00:00.678Z')
+          item.idAccount = account ? idAccount : Number(localStorage.getItem('idAccount'))
+        })
+        setInstallmentList([...account.installments])
+        setInitialInstallmentList([...account.installments])
+      }, 10)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [account])
+
   return (
     <>
       <GeneralContainer>
@@ -266,10 +275,10 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
                 <DatePicker
                   selected={account ? new Date(account?.informations[0]?.effectiveDate + '') : null}
                   shouldCloseOnSelect
-                  id='reception-date'
+                  id='Inception date'
                   showTimeSelect
                   timeIntervals={15}
-                  customInput={<CustomInput label='Reception date' sx={{ mb: 2, mt: 0, width: '100%' }} />}
+                  customInput={<CustomInput label='Inception date' sx={{ mb: 2, mt: 0, width: '100%' }} />}
                   disabled={true}
                   onChange={() => {
                     return
@@ -277,13 +286,19 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
                 />
               </Grid>
               <Grid item xs={12} sm={6} md={4}>
-                <TextField
+                <NumericFormat
                   fullWidth
+                  name='DynamicNetPremium'
+                  allowLeadingZeros
+                  thousandSeparator=','
+                  customInput={TextField}
+                  id='DynamicNetPremium'
+                  decimalScale={2}
                   label='Dynamic net premium'
+                  multiline
+                  variant='outlined'
                   value={account ? account?.securityTotal?.receivedNetPremium : ' '}
-                  InputProps={{
-                    disabled: true
-                  }}
+                  disabled={true}
                 />
               </Grid>
               <Grid item xs={12} sm={6} md={4}>
@@ -351,9 +366,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
           color='success'
           sx={{ mr: 2, fontFamily: inter, fontSize: size, letterSpacing: '0.4px' }}
           disabled={disableSaveBtn}
-          onClick={() => {
-            saveInstallments(installmentsList)
-          }}
+          onClick={saveInstallments}
         >
           <SaveIcon /> &nbsp; Save changes
         </Button>
@@ -364,7 +377,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
             fontSize: userThemeConfig.typography?.size.px15,
             color: texButtonColor
           }}
-          onClick={() => setOpen(true)}
+          onClick={openModal}
         >
           Next step &nbsp;
           <ArrowForwardIcon />
