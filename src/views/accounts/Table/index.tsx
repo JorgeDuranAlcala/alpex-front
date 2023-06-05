@@ -149,7 +149,9 @@ const Table = ({ status }: IAccountTable) => {
       disableColumnMenu: true,
       sortable: false,
       headerClassName: 'account-column-header',
-      renderHeader: ({ colDef }) => <ColumnHeader colDef={colDef} action={handleClickColumnHeader} />,
+      renderHeader: ({ colDef }) => (
+        <ColumnHeader colDef={colDef} action={handleClickColumnHeader} type={'idAccount'} />
+      ),
       renderCell: ({ row }) => (
         <Typography sx={{ color: colors.primary.main, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
           <Link
@@ -174,7 +176,11 @@ const Table = ({ status }: IAccountTable) => {
       sortable: false,
       headerClassName: 'account-column-header',
       renderHeader: ({ colDef }) => (
-        <ColumnHeader colDef={colDef} action={status === undefined ? handleClickColumnHeader : undefined} />
+        <ColumnHeader
+          colDef={colDef}
+          action={status === undefined ? handleClickColumnHeader : undefined}
+          type={'status'}
+        />
       ),
       renderCell: ({ row }) => (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -192,7 +198,7 @@ const Table = ({ status }: IAccountTable) => {
       disableColumnMenu: true,
       sortable: false,
       headerClassName: 'account-column-header',
-      renderHeader: ({ colDef }) => <ColumnHeader colDef={colDef} action={handleClickColumnHeader} />,
+      renderHeader: ({ colDef }) => <ColumnHeader colDef={colDef} action={handleClickColumnHeader} type='insured' />,
       renderCell: ({ row }) => (
         <Typography
           sx={{ color: colors.text.primary, fontWeight: 500, fontSize: fonts.size.px14, fontFamily: fonts.inter }}
@@ -213,7 +219,9 @@ const Table = ({ status }: IAccountTable) => {
       disableColumnMenu: true,
       sortable: false,
       headerClassName: 'account-column-header',
-      renderHeader: ({ colDef }) => <ColumnHeader colDef={colDef} action={handleClickColumnHeader} />,
+      renderHeader: ({ colDef }) => (
+        <ColumnHeader colDef={colDef} action={handleClickColumnHeader} type='idLineOfBusiness' />
+      ),
       renderCell: ({ row }) => (
         <Typography sx={{ color: colors.text.secondary, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
           {row.lob}
@@ -230,7 +238,9 @@ const Table = ({ status }: IAccountTable) => {
       disableColumnMenu: true,
       sortable: false,
       headerClassName: 'account-column-header',
-      renderHeader: ({ colDef }) => <ColumnHeader colDef={colDef} action={handleClickColumnHeader} />,
+      renderHeader: ({ colDef }) => (
+        <ColumnHeader colDef={colDef} action={handleClickColumnHeader} type='effectiveDate' />
+      ),
       renderCell: ({ row }) => (
         <Typography sx={{ color: colors.text.secondary, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
           {row.effectiveDate}
@@ -247,7 +257,9 @@ const Table = ({ status }: IAccountTable) => {
       disableColumnMenu: true,
       sortable: false,
       headerClassName: 'account-column-header',
-      renderHeader: ({ colDef }) => <ColumnHeader colDef={colDef} action={handleClickColumnHeader} />,
+      renderHeader: ({ colDef }) => (
+        <ColumnHeader colDef={colDef} action={handleClickColumnHeader} type='expirationDate' />
+      ),
       renderCell: ({ row }) => (
         <Typography sx={{ color: colors.text.secondary, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
           {row.expirationDate}
