@@ -55,9 +55,7 @@ const TableHeader: React.FC<ITableHeader> = ({ selectedRows, badgeData }) => {
   const [showChangeStatusModal, setShowChangeStatusModal] = useState(false)
   const [textChangeStatusModal, setTextChangeStatusModal] = useState('')
   const [changeStatusTo, setChangeStatusTo] = useState<EStatus | null>(null)
-  const [isOpenSubMenu, setIsOpenSubMenu] = useState<boolean>(false)
-
-  console.log(accountsReducer.filters)
+  const [value, setValue] = useState<string>('')
 
   // ** Handlers for Action menu
   const handleActionMenuOpen = () => {
@@ -65,13 +63,12 @@ const TableHeader: React.FC<ITableHeader> = ({ selectedRows, badgeData }) => {
   }
   const handleActionMenuClose = () => {
     setActionMenu(false)
+    setValue('')
+  }
+  const handleClose = () => {
     setAnchorEl(null)
   }
 
-  const handleSubMenu = () => {
-    setIsOpenSubMenu(true)
-    console.log('CLickkkkkk')
-  }
   const handleActionMenuOnclick = (e: React.MouseEvent<HTMLDivElement>) => {
     const target = e.target as HTMLInputElement
     if (target.value === undefined) {
@@ -79,7 +76,9 @@ const TableHeader: React.FC<ITableHeader> = ({ selectedRows, badgeData }) => {
     }
   }
 
-  const handleSelectedAction = async (event: SelectChangeEvent<string>) => {
+  const handleSelectedAction = (event: SelectChangeEvent<string>) => {
+    const selectedOption = event.target.value
+    setValue(selectedOption)
     switch (event.target.value) {
       case EActions.DELETE_ALL:
         handleTextDeleteModal(selectedRows)
@@ -186,7 +185,7 @@ const TableHeader: React.FC<ITableHeader> = ({ selectedRows, badgeData }) => {
         container
         spacing={{ xs: 2, sm: 2, md: 2 }}
         sx={{
-          display: 'felx',
+          display: 'flex',
           alignItems: 'center',
           justifyContent: accountsReducer.filters.length === 0 ? 'space-between' : null
         }}
@@ -198,7 +197,7 @@ const TableHeader: React.FC<ITableHeader> = ({ selectedRows, badgeData }) => {
             onOpen={handleActionMenuOpen}
             onClick={e => handleActionMenuOnclick(e)}
             onChange={handleSelectedAction}
-            defaultValue=''
+            value={value}
             sx={{ mr: 4, mb: 2, width: '100%', height: '42px' }}
             disabled={selectedRows && selectedRows.length === 0}
             renderValue={selected => (selected.length === 0 ? 'Action' : selected)}
@@ -211,34 +210,33 @@ const TableHeader: React.FC<ITableHeader> = ({ selectedRows, badgeData }) => {
               id='statusChangeActionMenu'
               value={EActions.CHANGE_STATUS}
               sx={{ minWidth: '172px', display: 'flex', gap: '5%' }}
-              onClick={handleSubMenu}
             >
               <Icon icon='ic:outline-replay' fontSize={24} color={'rgba(87, 90, 111, 0.54)'} />
               {EActions.CHANGE_STATUS}
-              {isOpenSubMenu && (
-                <Menu
-                  open={openStatusChangeMenu}
-                  keepMounted
-                  anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'right'
-                  }}
-                  transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right'
-                  }}
-                >
-                  <MenuItem onClick={() => HandleChangeStatus(EStatus.PENDING)}>{EStatusString.PENDING}</MenuItem>
-                  <MenuItem onClick={() => HandleChangeStatus(EStatus.NOT_MATERIALIZED)}>
-                    {EStatusString.NOT_MATERIALIZED}
-                  </MenuItem>
-                  <MenuItem onClick={() => HandleChangeStatus(EStatus.NOT_TAKEN_UP)}>
-                    {EStatusString.NOT_TAKEN_UP}
-                  </MenuItem>
-                  <MenuItem onClick={() => HandleChangeStatus(EStatus.DECLINED)}>{EStatusString.DECLINED}</MenuItem>
-                  <MenuItem onClick={() => HandleChangeStatus(EStatus.BOUND)}>{EStatusString.BOUND}</MenuItem>
-                </Menu>
-              )}
+              <Menu
+                open={openStatusChangeMenu}
+                keepMounted
+                onClose={handleClose}
+                anchorEl={anchorEl}
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'right'
+                }}
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right'
+                }}
+              >
+                <MenuItem onClick={() => HandleChangeStatus(EStatus.PENDING)}>{EStatusString.PENDING}</MenuItem>
+                <MenuItem onClick={() => HandleChangeStatus(EStatus.NOT_MATERIALIZED)}>
+                  {EStatusString.NOT_MATERIALIZED}
+                </MenuItem>
+                <MenuItem onClick={() => HandleChangeStatus(EStatus.NOT_TAKEN_UP)}>
+                  {EStatusString.NOT_TAKEN_UP}
+                </MenuItem>
+                <MenuItem onClick={() => HandleChangeStatus(EStatus.DECLINED)}>{EStatusString.DECLINED}</MenuItem>
+                <MenuItem onClick={() => HandleChangeStatus(EStatus.BOUND)}>{EStatusString.BOUND}</MenuItem>
+              </Menu>
             </MenuItem>
             <MenuItem value={EActions.DELETE_ALL} sx={{ minWidth: '172px', display: 'flex', gap: '5%' }}>
               <Icon icon='ic:outline-delete' fontSize={30} color={'rgba(87, 90, 111, 0.54)'} />
@@ -270,7 +268,7 @@ const TableHeader: React.FC<ITableHeader> = ({ selectedRows, badgeData }) => {
           />
         </Grid>
         {accountsReducer.filters.length === 0 ? null : (
-          <Grid item xs={12} sm={6} md={7} sx={{ height: '42px' }}>
+          <Grid item xs={12} sm={6} md={7} sx={{ height: 'auto' }}>
             {accountsReducer.filters.map((filter, index) =>
               filter.unDeleteable ? (
                 <Chip
@@ -281,7 +279,8 @@ const TableHeader: React.FC<ITableHeader> = ({ selectedRows, badgeData }) => {
                     marginRight: '6px',
                     color: '#2535A8',
                     fontWeight: 500,
-                    fontFamily: 'Inter'
+                    fontFamily: 'Inter',
+                    mb: 2
                   }}
                 />
               ) : (
@@ -293,7 +292,8 @@ const TableHeader: React.FC<ITableHeader> = ({ selectedRows, badgeData }) => {
                     marginRight: '6px',
                     color: '#2535A8',
                     fontWeight: 500,
-                    fontFamily: 'Inter'
+                    fontFamily: 'Inter',
+                    mb: 2
                   }}
                   onDelete={() => {
                     handleDelete(filter)
