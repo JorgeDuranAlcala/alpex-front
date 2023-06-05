@@ -59,8 +59,10 @@ export const appAccountsSlice = createSlice({
   initialState,
   reducers: {
     handleAccountFilter: (state, { payload }) => {
-      if (!state.filters.find(item => item.type === payload.type)) state.filters.push({ ...payload })
-      else {
+      if (!state.filters.find(item => item.type === payload.type)) {
+        state.filters.push({ ...payload })
+        state.info.page = 1
+      } else {
         state.filters = state.filters.map(item => {
           if (item.type === payload.type) {
             return { ...item, value: payload.value, text: payload.text, subtype: payload.subtype }
