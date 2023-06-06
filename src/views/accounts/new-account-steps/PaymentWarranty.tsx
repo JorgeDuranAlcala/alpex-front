@@ -178,12 +178,19 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
     }
   }
 
+  const getTwoDecimals = (num: number) => {
+    const numbers = num.toFixed(2)
+
+    return parseFloat(numbers)
+  }
+
   const validations = async () => {
     for (let i = 0; i < +count; i++) {
       const item = installmentsList[i]
       try {
         await schema.isValid(item, { abortEarly: false })
-        const sum = installmentsList.reduce((acc, item) => acc + item.paymentPercentage, 0)
+        const sum = getTwoDecimals(installmentsList.reduce((acc, item) => acc + item.paymentPercentage, 0))
+
         if (sum === 100) {
           setBtnNext(true)
         } else {
