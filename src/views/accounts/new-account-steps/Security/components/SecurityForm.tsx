@@ -8,7 +8,16 @@ import { RetroCedantDto } from '@/services/catalogs/dtos/RetroCedantDto'
 import { RetroCedantContactDto } from '@/services/catalogs/dtos/retroCedantContact.dto'
 import { NumericFormatCustom } from '@/views/components/inputs/numeric-format/NumericFormatCustom'
 import SwitchAlpex from '@/views/custom/switchs'
-import { FormControl, FormHelperText, Grid, InputLabel, MenuItem, Select, TextField } from '@mui/material'
+import {
+  FormControl,
+  FormHelperText,
+  Grid,
+  InputLabel,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+  TextField
+} from '@mui/material'
 
 import { ChangeEvent, useContext, useEffect, useRef, useState } from 'react'
 import * as yup from 'yup'
@@ -34,12 +43,12 @@ const initialErrorValues: errorsSecurity = {
   idCReinsuranceCompany: ''
 }
 export const FormSection = ({ index, security }: FormSectionProps) => {
+  console.log({ security, index })
   const [isGross, setIsGross] = useState<boolean>(security?.isGross)
-  const [grossPremium, setGrossPremium] = useState<number>(0)
-  const [netPremium, setNetPremium] = useState<number>(0)
+
   const [errorsSecurity, setErrorsSecurity] = useState<errorsSecurity>(initialErrorValues)
-  const [frontingFeeEnabled, setFrontingFeeEnabled] = useState(true)
-  const { securities, setSecurities, information, setCompaniesSelect, companiesSelect, calculateSecurities } =
+  const [frontingFeeEnabled, setFrontingFeeEnabled] = useState(security.frontingFeeActive || false)
+  const { securities, setSecurities, allErrors, setAllErrors, information, companiesSelect, calculateSecurities } =
     useContext(SecurityContext)
   const [avaliableReinsurers, setAvaliableReinsurers] = useState<ReinsuranceCompanyDto[]>([])
   const switchAlpex = useRef(null)
@@ -114,11 +123,6 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
     frontingFeeAmount: yup
       .number()
       .transform((_, val) => (val === Number(val) ? val : null))
-      .test('', 'This field is required', value => {
-        const val = value || 0
-
-        return +val > 0
-      })
       .required('This field is required'),
     taxesAmount: yup
       .number()
@@ -133,7 +137,12 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
       .number()
       .transform((_, val) => (val === Number(val) ? val : null))
       .required('This field is required')
-      .max(100)
+      .max(100),
+    netReinsurancePremium: yup
+      .number()
+      .transform((_, val) => (val === Number(val) ? val : null))
+      .required('This field is required')
+      .min(1, 'The number must be greater than 0!')
   })
 
   const operationSecurity: CalculateSecurity = new CalculateSecurity().setInformation(information).setSecurity(security)
@@ -148,7 +157,7 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
     }
     setSecurities(tempSecurities)
   }
-  const handleChangeRetroCedant = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleChangeRetroCedant = (e: SelectChangeEvent<string>) => {
     const selectedRetroCendantId = e.target.value
     const retroCedant = retroCedants?.find(retroCedant => retroCedant.id === selectedRetroCendantId)
     const tempSecurities = [...securities]
@@ -162,7 +171,7 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
       setIdRetroCedant(retroCedant.id)
     }
   }
-  const handleChangeRetroCedantContact = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleChangeRetroCedantContact = (e: SelectChangeEvent<string>) => {
     const selectedRetroCendantContactId = e.target.value
     const retroCedantContact = retroCedantContacts?.find(
       retroCedantContact => retroCedantContact.id === selectedRetroCendantContactId
@@ -276,12 +285,29 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
     }
     calculateSecurities(tempSecurities)
   }
+  const handleChangeCompany = (e: SelectChangeEvent) => {
+    const avaliableCompanies = avaliableReinsurers
+      .filter(reinsure => !companiesSelect.includes(reinsure.id) || security?.idCReinsuranceCompany?.id === reinsure.id)
+      .find(reinsurer => reinsurer.id === Number(e.target.value))
+    if (avaliableCompanies) {
+      const tempSecurities = [...securities]
+      tempSecurities[index] = {
+        ...tempSecurities[index],
+        idCReinsuranceCompany: avaliableCompanies,
+        isGross: avaliableCompanies.special
+      }
+      calculateSecurities(tempSecurities)
+    }
+  }
   const validateForm = (security: SecurityDto) => {
     let data = { ...initialErrorValues }
 
     schema
       .validate(security, { abortEarly: false })
       .then(function () {
+        const errorsTemp = [...allErrors]
+        errorsTemp[index] = false
+        setAllErrors(errorsTemp)
         setErrorsSecurity(initialErrorValues)
       })
       .catch(function (err) {
@@ -293,22 +319,20 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
         }
 
         setErrorsSecurity(data)
+        const errorsTemp = [...allErrors]
+        errorsTemp[index] = true
+        setAllErrors(errorsTemp)
 
         //setEnableNextStep(false)
       })
   }
-  useEffect(() => {
-    if (information) {
-      setGrossPremium(information.grossPremium)
-      setNetPremium(information.netPremium)
-    }
-  }, [information])
+
   useEffect(() => {
     const companies = reinsuranceCompany?.map(company => {
       return {
         id: company.id,
         name: company.name,
-        isGross: company.special,
+        special: company.special,
         active: true
       }
     })
@@ -316,7 +340,9 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
   }, [reinsuranceCompany])
   useEffect(() => {
     validateForm(security)
+    setIsGross(security.isGross)
   }, [security])
+  console.log({ avaliableReinsurers, security })
 
   return (
     <div>
@@ -344,8 +370,8 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
               InputProps={{
                 inputComponent: NumericFormatCustom as any
               }}
-              value={isGross ? grossPremium : netPremium}
-              defaultValue={netPremium}
+              value={security.netPremiumAt100}
+              defaultValue={security.netPremiumAt100}
               onChange={handleChangeBaseAmount}
             />
             <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
@@ -450,12 +476,11 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
             <InputLabel id='ReinsuranceCompany'>Reinsurance companies</InputLabel>
             <Select
               id='outlined-Name'
-              value={security.idCReinsuranceCompany?.id || security.idCReinsuranceCompany}
-              onChange={e => console.log(e)}
+              value={String(security.idCReinsuranceCompany?.id)}
+              onChange={handleChangeCompany}
               labelId='ReinsuranceCompany'
               label='Reinsurance companies'
             >
-              <MenuItem value={''}>Select option</MenuItem>
               {avaliableReinsurers
                 .filter(
                   reinsure =>
@@ -570,13 +595,12 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
               {errorsSecurity.netReinsurancePremium}
             </FormHelperText>
           </FormControl>
-          {/* && (localSecurity.SharePercent !== '' || localSecurity.PremiumPerShare !== '') */}
-          {frontingFeeEnabled && (security.share || security.premiumPerShareAmount) && (
+          {frontingFeeEnabled && (security.share || security.premiumPerShareAmount) ? (
             <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
               <InputLabel>Select Retro cedant</InputLabel>
               <Select
                 label='Select Retro cedant'
-                value={security.idCRetroCedant?.id || ''}
+                value={String(security.idCRetroCedant?.id) || ''}
                 onChange={handleChangeRetroCedant}
                 labelId='Retrocedant'
               >
@@ -588,14 +612,15 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
               </Select>
               <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>Error</FormHelperText>
             </FormControl>
+          ) : (
+            <></>
           )}
-          {/* && (localSecurity.SharePercent !== '' || localSecurity.PremiumPerShare !== '') */}
-          {frontingFeeEnabled && (security.share || security.premiumPerShareAmount) && (
+          {frontingFeeEnabled && (security.share || security.premiumPerShareAmount) ? (
             <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
               <InputLabel>Select Retro Cedant contact</InputLabel>
               <Select
                 label='Select Retro Cedant contact '
-                value={security.idCRetroCedantContact?.id || ''}
+                value={String(security.idCRetroCedantContact?.id) || ''}
                 onChange={handleChangeRetroCedantContact}
                 labelId='RetroCedantcontact'
                 disabled={security.idCRetroCedant?.id === null}
@@ -608,8 +633,10 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
               </Select>
               <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>Error</FormHelperText>
             </FormControl>
+          ) : (
+            <></>
           )}
-          {/* localSecurity.RetroCedantContact !== '' && */}
+
           {frontingFeeEnabled && security.idCRetroCedantContact?.id && (
             <>
               <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
@@ -622,7 +649,6 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
                   value={security.idCRetroCedantContact?.email ?? ''}
                 />
               </FormControl>
-
               <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
                 <TextField
                   autoFocus

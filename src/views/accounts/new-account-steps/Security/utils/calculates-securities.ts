@@ -12,10 +12,15 @@ export class CalculateSecurity {
   }
   setSecurity(security: SecurityDto) {
     this.security = security
+
     if (this.security.netPremiumAt100) {
       this.security.netPremiumAt100 = this.security.netPremiumAt100
       this.baseAmount = this.security.netPremiumAt100
-    } else this.baseAmount = this.security.isGross ? this.information.grossPremium : this.information.netPremium
+    } else
+      this.baseAmount = this.security.isGross
+        ? parseFloat(String(this.information.grossPremium))
+        : parseFloat(String(this.information.netPremium))
+    this.security.netPremiumAt100 = this.baseAmount
 
     return this
   }
