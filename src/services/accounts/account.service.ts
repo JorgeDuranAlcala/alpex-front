@@ -15,13 +15,9 @@ class AccountServices {
    * @param id
    * @returns
    */
-  async getAccountById(id: number, jwtToken: string) {
+  async getAccountById(id: number) {
     try {
-      const { data } = await AppAlpexApiGateWay.get(`${ACCOUNT_ROUTES.GET_BY_ID}/${id}`, {
-        headers: {
-          Authorization: `Bearer ${jwtToken}`
-        }
-      })
+      const { data } = await AppAlpexApiGateWay.get(`${ACCOUNT_ROUTES.GET_BY_ID}/${id}`)
 
       return data
     } catch (error) {
@@ -52,19 +48,11 @@ class AccountServices {
    * deactivate accounts by id
    * @returns
    */
-  async deleteAccounts(accountsIds: number[], jwtToken: string) {
+  async deleteAccounts(accountsIds: number[]) {
     try {
-      const { data } = await AppAlpexApiGateWay.post(
-        ACCOUNT_ROUTES.DELETE,
-        {
-          accountsIds
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${jwtToken}`
-          }
-        }
-      )
+      const { data } = await AppAlpexApiGateWay.post(ACCOUNT_ROUTES.DELETE, {
+        accountsIds
+      })
 
       return data
     } catch (error) {
@@ -77,19 +65,11 @@ class AccountServices {
    * duplicate accounts
    * @returns
    */
-  async duplicateAccounts(accountsIds: number[], jwtToken: string) {
+  async duplicateAccounts(accountsIds: number[]) {
     try {
-      const { data } = await AppAlpexApiGateWay.post(
-        ACCOUNT_ROUTES.DUPLICATE,
-        {
-          accountsIds
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${jwtToken}`
-          }
-        }
-      )
+      const { data } = await AppAlpexApiGateWay.post(ACCOUNT_ROUTES.DUPLICATE, {
+        accountsIds
+      })
 
       return data
     } catch (error) {
@@ -102,13 +82,9 @@ class AccountServices {
    * update accounts status, need an array
    * @returns
    */
-  async updateAccountsStatus(updateStatus: UpdateStatusArrayDto, jwtToken: string) {
+  async updateAccountsStatus(updateStatus: UpdateStatusArrayDto) {
     try {
-      const { data } = await AppAlpexApiGateWay.post(ACCOUNT_ROUTES.UPDATE_STATUS, updateStatus, {
-        headers: {
-          Authorization: `Bearer ${jwtToken}`
-        }
-      })
+      const { data } = await AppAlpexApiGateWay.post(ACCOUNT_ROUTES.UPDATE_STATUS, updateStatus)
 
       return data
     } catch (error) {

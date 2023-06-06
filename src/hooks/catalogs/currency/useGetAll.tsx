@@ -5,15 +5,21 @@ import { CurrencyDto } from 'src/services/catalogs/dtos/CurrencyDto'
 export const useGetAllCurrencies = () => {
   const [currencies, setCurrencies] = useState<CurrencyDto[]>([])
 
+  const getAllCurrencies = async () => {
+    const data = await CurrencyService.getAll()
+    setCurrencies(data)
+  }
+
   useEffect(() => {
-    CurrencyService.getAll()
+    /*  CurrencyService.getAll()
       .then(currencies => {
         setCurrencies(currencies)
       })
       .catch(error => {
         throw new Error(error)
-      })
+      }) */
+    getAllCurrencies()
   }, [])
 
-  return { currencies }
+  return { currencies, getAllCurrencies }
 }
