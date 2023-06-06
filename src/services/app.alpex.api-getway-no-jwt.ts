@@ -7,5 +7,5 @@ export const AppAlpexApiGateWayNoToken = axios.create({
     'Content-Type': 'application/json',
     'x-api-key': process.env.NEXT_PUBLIC_ALPEX_API_TOKEN
   },
-  timeout: 10000
+  timeout: 25000
 })
