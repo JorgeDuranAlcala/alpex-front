@@ -66,7 +66,6 @@ interface IRetroCedantContacts {
 const RetroCedantContacts = ({ idRetroCedant }: IRetroCedantContacts) => {
   // ** State
   // Handle Data
-  const [contactList, setContactList] = useState<IContact[]>([])
   const [contactData, setContactData] = useState<IContact>(initialNewContact)
   const [currentContact, setCurrentContact] = useState<IContact>(initialNewContact) //saves the row data to be edited
   const [selectedRow, setSelectedRow] = useState<IContact | null>(null) // saves the row wehen user click on actions button
@@ -122,18 +121,10 @@ const RetroCedantContacts = ({ idRetroCedant }: IRetroCedantContacts) => {
   } = useGetAllByIdRetroCedantAndPagination()
 
   useEffect(() => {
-    setRetroCedantContactsPagination({ ...retroCedantContactsPagination, idCRetroCedant: idRetroCedant })
-    //eslint-disable-next-line
-  }, [])
-
-  useEffect(() => {
-    setRetroCedantContactsPagination({ ...retroCedantContactsPagination, idCRetroCedant: idRetroCedant })
+    idRetroCedant != 0 &&
+      setRetroCedantContactsPagination({ ...retroCedantContactsPagination, idCRetroCedant: idRetroCedant })
     //eslint-disable-next-line
   }, [idRetroCedant])
-
-  useEffect(() => {
-    setContactList(retroCedantContacts || [])
-  }, [retroCedantContacts])
 
   const triggerAlert = (type: string, text?: string) => {
     setAlertType(type)
@@ -583,7 +574,7 @@ const RetroCedantContacts = ({ idRetroCedant }: IRetroCedantContacts) => {
             autoHeight
             checkboxSelection
             disableSelectionOnClick
-            rows={contactList}
+            rows={retroCedantContacts}
             columns={column}
             pagination
             pageSize={10}
