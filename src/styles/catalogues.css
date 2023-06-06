@@ -74,7 +74,6 @@
   margin-right: 30px;
 }
 
-
 .header-wrapper .delete-button.MuiButton-root {
   color: red;
   border: 1px solid rgb(255 0 0 / 50%);
@@ -111,22 +110,21 @@
 }
 
 .success {
-  background-color: #EEFBE5;
-  color: #72E128;
+  background-color: #eefbe5;
+  color: #72e128;
 }
 
 .error {
   background-color: #ffebeb;
-  color: #FF4D49;
+  color: #ff4d49;
 }
 
 .warn {
   background-color: #fff7eb;
-  color: #FFB446;
+  color: #ffb446;
 }
 
 @media (max-width: 700px) {
-
   .header-wrapper {
     display: flex;
     flex-direction: column-reverse;
@@ -144,7 +142,6 @@
     width: 100%;
     margin-bottom: 15px;
   }
-
 
   .input-search {
     width: 100%;
@@ -178,8 +175,6 @@
   border: 2px solid transparent;
 }
 
-
-
 .tabs .tab-btn .tab-name {
   font-size: 14px;
   color: rgba(77, 80, 98, 0.68);
@@ -195,15 +190,14 @@
   font-weight: 500;
 }
 
-
 .tab-btn::before {
   bottom: 0;
   left: 0;
-  content: "";
+  content: '';
   position: absolute;
   width: 0px;
   height: 0px;
-  transition: .2s ease-in-out;
+  transition: 0.2s ease-in-out;
   border-bottom: 2px solid transparent;
 }
 
@@ -224,7 +218,6 @@
   background-color: rgba(37, 53, 168, 0.05);
 }
 
-
 .mobile-tabs {
   position: absolute;
   z-index: 1;
@@ -234,8 +227,6 @@
   border-radius: 15px;
   box-shadow: 0px 4px 6px 1px rgba(0, 0, 0, 0.2);
 }
-
-
 
 .mobile-tabs .tab-mobile {
   cursor: pointer;
@@ -268,7 +259,6 @@
   }
 }
 
-
 /*---- BROKER LIST & REINSURER LIST ----*/
 
 .outter-wrapper {
@@ -295,7 +285,7 @@
 
 .add-new .subtitle {
   font-size: 20px;
-  color: rgba(77, 80, 98, 0.87)
+  color: rgba(77, 80, 98, 0.87);
 }
 
 .add-new .description {
@@ -320,9 +310,6 @@
   padding: 10px 0px 0px;
 }
 
-
-
-
 .add-new .edit-btn,
 .add-new .edit-broker-btn {
   margin-left: 15px;
@@ -334,7 +321,6 @@
 }
 
 @media (max-width: 800px) {
-
   .add-new .edit-btn.MuiButton-root,
   .add-new .delete-btn.MuiButton-root,
   .add-new .create-broker-btn.MuiButton-root,
@@ -354,7 +340,6 @@
   }
   .add-new .action-buttons .add-btn {
     width: 100%;
-
   }
 }
 
@@ -384,7 +369,7 @@
 
 /* ------ CONTACT ACTIONS & BINDER ACTIONS ------ */
 
-.contact-list .MuiDataGrid-cell{
+.contact-list .MuiDataGrid-cell {
   overflow: inherit !important;
 }
 
@@ -392,8 +377,6 @@
   width: 100%;
   position: relative;
 }
-
-
 
 .actions-menu {
   position: absolute;
@@ -406,8 +389,6 @@
   box-shadow: 0px 4px 6px 1px rgba(0, 0, 0, 0.2);
 }
 
-
-
 .actions-menu .menu-option {
   cursor: pointer;
   padding: 15px 15px 5px;
@@ -418,10 +399,7 @@
   background-color: rgba(76, 78, 100, 0.04);
 }
 
-
 @media (max-width: 700px) {
-
-
   .actions-wrapper .actions-menu {
     display: flex;
     justify-content: center;
@@ -435,9 +413,7 @@
   min-width: 500px;
 }
 
-
 @media (max-width: 700px) {
-
   .reference-number .MuiOutlinedInput-root {
     min-width: unset;
   }
@@ -445,23 +421,23 @@
 
 /* ---- Countries & Currencies ----*/
 
-.country-currencies-wrapper{
+.country-currencies-wrapper {
   width: 100%;
   display: flex;
   padding: 25px 10px;
 }
 
-.inner-container{
+.inner-container {
   width: 50%;
   margin: 0 10px;
 }
 
-.inner-container-long{
+.inner-container-long {
   width: 100%;
   margin: 0 10px;
 }
 
-.header-block{
+.header-block {
   background-color: rgba(76, 78, 100, 0.04);
   display: flex;
   border-radius: 8px;
@@ -470,7 +446,7 @@
   align-items: center;
 }
 
-.header-block .header-icon{
+.header-block .header-icon {
   width: 10%;
   max-width: 40px;
   height: 40px;
@@ -481,64 +457,62 @@
   background-color: rgba(45, 103, 235, 0.05);
   margin: 0 auto 0 0;
   padding: 5px;
-
 }
 
-.inner-container-long .header-icon{
+.inner-container-long .header-icon {
   width: 5%;
 }
 
-.header-block .header-icon .icon{
+.header-block .header-icon .icon {
   width: 20px;
   height: 20px;
 }
 
-.header-block .content{
+.header-block .content {
   display: block;
   width: 80%;
 }
 
-.inner-container-long .content{
+.inner-container-long .content {
   width: 90%;
 }
-.content .title{
+.content .title {
   color: rgba(77, 80, 98, 0.87);
   font-size: 16px;
 }
 
-.content .description{
+.content .description {
   color: rgba(77, 80, 98, 0.68);
   font-size: 14px;
 }
-.header-block .add-btn{
+.header-block .add-btn {
   width: 10%;
   display: flex;
   align-items: center;
   cursor: pointer;
   justify-content: flex-end;
- }
+}
 
- .inner-container-long .add-btn{
+.inner-container-long .add-btn {
   width: 5%;
 }
- .block-list{
+.block-list {
   padding: 10px 10px;
- }
+}
 
-
- .block-list .list-item{
+.block-list .list-item {
   display: flex;
   justify-content: space-between;
   padding: 10px 0;
- }
+}
 
- .list-item .item-name{
+.list-item .item-name {
   display: flex;
   justify-content: flex-start;
   align-items: center;
- }
+}
 
- .item-menu{
+.item-menu {
   width: 30px;
   height: 30px;
   display: flex;
@@ -547,59 +521,57 @@
   align-items: center;
   cursor: pointer;
   border-radius: 50%;
- }
+}
 
- .item-menu:hover{
+.item-menu:hover {
   background-color: rgba(76, 78, 100, 0.04);
- }
+}
 .inner-container-long .actions-menu,
-.inner-container .actions-menu{
+.inner-container .actions-menu {
   top: 0px;
 }
 
 @media (max-width: 700px) {
-
-  .header-block .content{
+  .header-block .content {
     width: 70%;
   }
 
-  .header-block .add-btn{
+  .header-block .add-btn {
     width: 17%;
-   }
-
-   .header-block .header-icon{
-    width: 17%;
-
   }
 
-  .inner-container-long .header-icon{
+  .header-block .header-icon {
+    width: 17%;
+  }
+
+  .inner-container-long .header-icon {
     width: 15%;
   }
-  .inner-container-long .content{
+  .inner-container-long .content {
     width: 70% !important;
   }
-  .inner-container-long .add-btn{
+  .inner-container-long .add-btn {
     width: 15% !important;
   }
 }
 
 @media (max-width: 900px) {
-  .country-currencies-wrapper{
+  .country-currencies-wrapper {
     flex-wrap: wrap;
   }
-  .inner-container{
+  .inner-container {
     width: 100%;
   }
 }
 
 @media (max-width: 950px) {
-  .inner-container-long .add-btn{
+  .inner-container-long .add-btn {
     width: 10%;
   }
-  .inner-container-long .content{
+  .inner-container-long .content {
     width: 80%;
   }
-  .inner-container-long .add-btn{
+  .inner-container-long .add-btn {
     width: 10%;
   }
 }

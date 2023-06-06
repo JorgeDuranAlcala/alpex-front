@@ -64,8 +64,10 @@ interface ICedantContacts {
 }
 
 const CedantContacts = ({ idCedant }: ICedantContacts) => {
+  console.info('idCedant:', idCedant)
+
   // Handle Data
-  const [contactList, setContactList] = useState<IContact[]>([])
+  //const [contactList, setContactList] = useState<IContact[]>([])
   const [contactData, setContactData] = useState<IContact>(initialNewContact)
   const [currentContact, setCurrentContact] = useState<IContact>(initialNewContact) //saves the row data to be edited
   const [contactToDelete, setContactToDelete] = useState(0) //Saves id of contact to be deleted.
@@ -122,16 +124,7 @@ const CedantContacts = ({ idCedant }: ICedantContacts) => {
   useEffect(() => {
     setCedantContactsPagination({ ...cedantContactsPagination, idCCedant: idCedant })
     //eslint-disable-next-line
-  }, [])
-
-  useEffect(() => {
-    setCedantContactsPagination({ ...cedantContactsPagination, idCCedant: idCedant })
-    //eslint-disable-next-line
   }, [idCedant])
-
-  useEffect(() => {
-    setContactList(cedantContacts || [])
-  }, [cedantContacts])
 
   const triggerAlert = (type: string, text?: string) => {
     setAlertType(type)
@@ -583,7 +576,7 @@ const CedantContacts = ({ idCedant }: ICedantContacts) => {
             autoHeight
             checkboxSelection
             disableSelectionOnClick
-            rows={contactList}
+            rows={cedantContacts}
             columns={column}
             pagination
             pageSize={10}

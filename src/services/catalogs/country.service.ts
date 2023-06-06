@@ -46,6 +46,16 @@ class CountryService {
       throw error
     }
   }
+
+  async deleteById(id: number) {
+    try {
+      const { data } = await AppAlpexApiGateWay.delete<Promise<CountryDto>>(`${COUNTRY_ROUTERS.DELETE}/${id}`)
+
+      return data
+    } catch (error) {
+      throw error
+    }
+  }
 }
 
 export default new CountryService()

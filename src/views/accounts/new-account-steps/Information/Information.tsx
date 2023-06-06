@@ -478,14 +478,17 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   useEffect(() => {
     const deleteFile = async (userFileToDelete: File) => {
       const fileName = String(userFileToDelete.name)
-      const bodyToDelete = {
-        idAccount: idAccount,
-        idDocto: doctoIdByName[fileName as keyof typeof doctoIdByName],
-        fileName: fileName
-      }
+      const idDocto = doctoIdByName[fileName as keyof typeof doctoIdByName]
 
-      const res = await deleteInformationDocument(bodyToDelete)
-      console.log(res)
+      if (idDocto) {
+        const bodyToDelete = {
+          idAccount: idAccount,
+          idDocto,
+          fileName: fileName
+        }
+        await deleteInformationDocument(bodyToDelete)
+        delete doctoIdByName[fileName as keyof typeof doctoIdByName]
+      }
     }
 
     if (userFileToDelete && idAccount) {

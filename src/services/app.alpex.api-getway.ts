@@ -1,3 +1,4 @@
+import { AppInterceptors } from '@/services/interceptors'
 import axios from 'axios'
 
 let accessToken = ''
@@ -13,8 +14,12 @@ export const AppAlpexApiGateWay = axios.create({
     'x-api-key': process.env.NEXT_PUBLIC_ALPEX_API_TOKEN,
     Authorization: accessToken
   },
-  timeout: 10000
+  timeout: 25000
 
   // TODO revisar funcionamiento
   // withCredentials: true
 })
+
+AppAlpexApiGateWay.interceptors.request.use(AppInterceptors.req, AppInterceptors.reqErr)
+
+AppAlpexApiGateWay.interceptors.response.use(AppInterceptors.res, AppInterceptors.resErr)
