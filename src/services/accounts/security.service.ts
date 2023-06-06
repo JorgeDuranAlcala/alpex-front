@@ -1,20 +1,11 @@
 import { ACCOUNT_SECURITY_ROUTES } from 'src/configs/api'
 import { AppAlpexApiGateWay } from '../app.alpex.api-getway'
-import { AppAlpexApiGateWayNoToken } from '../app.alpex.api-getway-no-jwt'
 import { SecurityDto } from './dtos/security.dto'
 
 class SecurityService {
-  async addSecurity(securitiesIn: Partial<SecurityDto>[], jwtToken: string): Promise<SecurityDto[] | string> {
+  async addSecurity(securitiesIn: Partial<SecurityDto>[]): Promise<SecurityDto[] | string> {
     try {
-      const { data } = await AppAlpexApiGateWayNoToken.post<Promise<SecurityDto[]>>(
-        ACCOUNT_SECURITY_ROUTES.ADD,
-        securitiesIn,
-        {
-          headers: {
-            Authorization: `Bearer ${jwtToken}`
-          }
-        }
-      )
+      const { data } = await AppAlpexApiGateWay.post<Promise<SecurityDto[]>>(ACCOUNT_SECURITY_ROUTES.ADD, securitiesIn)
 
       return data
     } catch (error) {

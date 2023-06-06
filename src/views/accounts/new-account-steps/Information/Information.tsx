@@ -278,13 +278,10 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
       }, 5000)
     }
 
-
     return res
   }
 
   const setDataInformation = async () => {
-
-
     if (idAccount) {
       const information = await getInformaByIdAccount(idAccount)
 
@@ -351,8 +348,8 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
 
     for (const docto of formatedDoctos) {
       const res = await uploadInformationDocument(docto)
-      if (res.createdDoctoDB) {
-        const createdDoctoData = res.createdDoctoDB
+      const createdDoctoData = res?.createdDoctoDB
+      if (createdDoctoData) {
         newDoctoIdByName[createdDoctoData.name] = createdDoctoData.id
       }
     }
@@ -364,14 +361,12 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   }
 
   const handleSaveInformation = async () => {
-
     if (idAccount) {
       await updateInformation()
       await uploadDoctos(idAccount)
 
       dispatch(updateFormsData({ form1: { basicInfo, placementStructure, userFile, id: idAccount } }))
     } else {
-
       const res = await saveInformation()
       localStorage.setItem('idAccount', String(res.account.id))
       await uploadDoctos(res.account.id)

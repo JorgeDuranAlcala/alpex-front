@@ -51,7 +51,7 @@ const AuthProvider = ({ children }: Props) => {
       if (storedToken) {
         setLoading(true)
         authServices
-          .authMe(storedToken)
+          .authMe()
           .then(async response => {
             setLoading(false)
             const resUser = response.data.userData

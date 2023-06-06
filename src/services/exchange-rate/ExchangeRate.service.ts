@@ -17,16 +17,11 @@ export type Pair = {
   targetCurrency: string
 }
 class ExchangeRateService {
-  async getExchangeRatePair(pair: Pair, jwtToken: string): Promise<ExchangeRateDto> {
+  async getExchangeRatePair(pair: Pair): Promise<ExchangeRateDto> {
     const { baseCurrency, targetCurrency } = pair
     try {
       const { data } = await AppAlpexApiGateWay.get<ExchangeRateDto>(
-        `${EXCHANGE_RATE.PAIR}/${baseCurrency}/${targetCurrency}`,
-        {
-          headers: {
-            Authorization: `Bearer ${jwtToken}`
-          }
-        }
+        `${EXCHANGE_RATE.PAIR}/${baseCurrency}/${targetCurrency}`
       )
 
       return data

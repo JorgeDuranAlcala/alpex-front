@@ -1,20 +1,11 @@
 import { ACCOUNT_SUBLIMIT_ROUTES } from 'src/configs/api'
 import { AppAlpexApiGateWay } from '../app.alpex.api-getway'
-import { AppAlpexApiGateWayNoToken } from '../app.alpex.api-getway-no-jwt'
 import { SublimitDto } from './dtos/sublimit.dto'
 
 class SublimitService {
-  async addSublimits(sublimitsIn: Partial<SublimitDto>[], jwtToken: string): Promise<SublimitDto[]> {
+  async addSublimits(sublimitsIn: Partial<SublimitDto>[]): Promise<SublimitDto[]> {
     try {
-      const { data } = await AppAlpexApiGateWayNoToken.post<Promise<SublimitDto[]>>(
-        ACCOUNT_SUBLIMIT_ROUTES.ADD,
-        sublimitsIn,
-        {
-          headers: {
-            Authorization: `Bearer ${jwtToken}`
-          }
-        }
-      )
+      const { data } = await AppAlpexApiGateWay.post<Promise<SublimitDto[]>>(ACCOUNT_SUBLIMIT_ROUTES.ADD, sublimitsIn)
 
       return data
     } catch (error) {
