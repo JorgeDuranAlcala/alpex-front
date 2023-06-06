@@ -13,13 +13,13 @@ import RetroCedantContacts from 'src/views/catalogues/dynamic/add-retrocedant/Re
 
 const AddRetroCedantView = () => {
   const router = useRouter()
-  const { id = '0' } = router.query
 
   const [idRetroCedant, setIdRetroCedant] = useState(0)
 
   useEffect(() => {
-    setIdRetroCedant(parseInt(id.toString()))
-  }, [id])
+    router.query.id && setIdRetroCedant(parseInt(router.query.id.toString()))
+    //eslint-disable-next-line
+  }, [router.query])
 
   return (
     <Grid item xs={12}>

@@ -16,7 +16,7 @@ import {
 import Select, { SelectChangeEvent } from '@mui/material/Select'; //SelectChangeEvent
 
 //Components
-import { ModalContact } from 'src/views/accounts/new-account-steps/Information/ModalContact';
+import { ContactModal } from '@/views/accounts/new-account-steps/Information/ContactModal';
 
 //hooks para base info y  modal contac
 import { useGetAllCountries as useCountyGetAll } from 'src/hooks/catalogs/country';
@@ -441,7 +441,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               </FormControl>
             </>
           )}
-          <ModalContact
+          <ContactModal
             service={'broker'}
             id={Number(basicInfo.broker)}
             updateContacts={updateBrokerContact}
@@ -541,7 +541,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               </FormControl>
             </>
           )}
-          <ModalContact
+          <ContactModal
             service={'cedant'}
             id={Number(basicInfo.cedant)}
             updateContacts={updateCedantContact}

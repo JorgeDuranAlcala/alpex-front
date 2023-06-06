@@ -117,7 +117,8 @@ export enum CURRENCY_ROUTES {
   GET_ALL = 'catalogs/currency/all',
   GET_BY_ID = 'catalogs/currency',
   ADD = 'catalogs/currency/add',
-  UPDATE = 'catalogs/currency'
+  UPDATE = 'catalogs/currency',
+  DELETE = 'catalogs/currency'
 }
 
 export enum RISK_ACTIVITY_ROUTES {

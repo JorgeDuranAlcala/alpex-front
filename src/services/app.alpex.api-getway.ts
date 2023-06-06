@@ -1,3 +1,4 @@
+import { AppInterceptors } from '@/services/interceptors'
 import axios from 'axios'
 
 let accessToken = ''
@@ -18,3 +19,7 @@ export const AppAlpexApiGateWay = axios.create({
   // TODO revisar funcionamiento
   // withCredentials: true
 })
+
+AppAlpexApiGateWay.interceptors.request.use(AppInterceptors.req, AppInterceptors.reqErr)
+
+AppAlpexApiGateWay.interceptors.response.use(AppInterceptors.res, AppInterceptors.resErr)
