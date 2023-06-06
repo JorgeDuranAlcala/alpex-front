@@ -23,6 +23,7 @@ const FileSubmit: React.FC<UserFileProps> = ({ setUserFile, userFile, setUserFil
     e.preventDefault()
     const rawFiles = e.target.files
 
+    setFile([...file, ...rawFiles])
     setUserFile([...file, ...rawFiles])
   }
 
@@ -34,9 +35,11 @@ const FileSubmit: React.FC<UserFileProps> = ({ setUserFile, userFile, setUserFil
   }
 
   const handleRemoveFile = (e: any, index: number) => {
-    setUserFileToDelete && setUserFileToDelete(file.splice(index, 1)[0])
-    e.preventDefault + file.splice(index, 1)
+    e.preventDefault
+    const deletedFile = file.splice(index, 1)
+    setFile([...file])
     setUserFile([...file])
+    setUserFileToDelete && setUserFileToDelete(deletedFile[0])
   }
 
   useEffect(() => {

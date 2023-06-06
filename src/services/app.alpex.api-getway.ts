@@ -14,7 +14,7 @@ export const AppAlpexApiGateWay = axios.create({
     'x-api-key': process.env.NEXT_PUBLIC_ALPEX_API_TOKEN,
     Authorization: accessToken
   },
-  timeout: 10000
+  timeout: 25000
 
   // TODO revisar funcionamiento
   // withCredentials: true
