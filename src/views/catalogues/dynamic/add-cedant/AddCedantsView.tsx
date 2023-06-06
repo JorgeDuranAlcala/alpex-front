@@ -2,9 +2,6 @@
 import Card from '@mui/material/Card'
 import Grid from '@mui/material/Grid'
 
-// ** Context
-// import { AccountsTableContextProvider } from 'src/context/accounts/Table/reducer'
-
 // ** Custom Components Imports
 import CedantData from '@/views/catalogues/dynamic/add-cedant/CedantData'
 import { useRouter } from 'next/router'
@@ -13,13 +10,13 @@ import CedantContacts from 'src/views/catalogues/dynamic/add-cedant/CedantContac
 
 const AddCedantView = () => {
   const router = useRouter()
-  const { id = '0' } = router.query
 
   const [idCedant, setIdCedant] = useState(0)
 
   useEffect(() => {
-    setIdCedant(parseInt(id.toString()))
-  }, [id])
+    router.query.id && setIdCedant(parseInt(router.query.id.toString()))
+    //eslint-disable-next-line
+  }, [router.query])
 
   return (
     <Grid item xs={12}>
