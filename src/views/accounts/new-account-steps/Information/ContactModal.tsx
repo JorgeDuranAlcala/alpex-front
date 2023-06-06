@@ -55,7 +55,7 @@ const expresions = {
   phone: /^\d{10}$/ // 7 a 10 numeros.
 }
 
-export const ModalContact = ({ id, service, updateContacts, setIdCreated }: Props) => {
+export const ContactModal = ({ id, service, updateContacts, setIdCreated }: Props) => {
   const [contactData, setContactData] = useState<ContactData>(initialContactData)
   const [open, setOpen] = useState<boolean>(false)
 
@@ -133,20 +133,6 @@ export const ModalContact = ({ id, service, updateContacts, setIdCreated }: Prop
     closeModal()
   }
 
-  const validateForm = () => {
-    const nameErrorTemp = !expresions.name.test(contactData.name)
-    const emailErrorTemp = !expresions.email.test(contactData.email)
-    const phoneErrorTemp = !expresions.phone.test(contactData.phone)
-    const countryErrorTemp = contactData.country === undefined || contactData.country === ''
-
-    const errorTemp = nameErrorTemp || emailErrorTemp || phoneErrorTemp || countryErrorTemp
-    setNameError(nameErrorTemp)
-    setEmailError(emailErrorTemp)
-    setPhoneError(phoneErrorTemp)
-    setCountryError(countryErrorTemp)
-    setError(errorTemp)
-    setEmptyForm(errorTemp)
-  }
   const handleChange = (field: keyof ContactData, value: ContactData[keyof ContactData]) => {
     setContactData({ ...contactData, [field]: value })
     switch (field) {
@@ -169,14 +155,34 @@ export const ModalContact = ({ id, service, updateContacts, setIdCreated }: Prop
     setStartValidations(false)
   }
 
-  useEffect(() => {
-    !error && saveContact()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [error])
+  const validateForm = () => {
+
+    const nameErrorTemp = !expresions.name.test(contactData.name)
+    const phoneErrorTemp = !expresions.phone.test(contactData.phone)
+    const countryErrorTemp = contactData.country === undefined || contactData.country === ''
+    const emailErrorTemp = !expresions.email.test(contactData.email)
+
+    const errorTemp = nameErrorTemp || emailErrorTemp || phoneErrorTemp || countryErrorTemp
+
+    setError(errorTemp)
+    setEmptyForm(errorTemp)
+    setNameError(nameErrorTemp)
+    setEmailError(emailErrorTemp)
+    setPhoneError(phoneErrorTemp)
+    setCountryError(countryErrorTemp)
+
+  }
+
   useEffect(() => {
     startValidations && validateForm()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [startValidations])
+
+
+  useEffect(() => {
+    !error && saveContact()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [error])
 
   return (
     <>
@@ -219,7 +225,9 @@ export const ModalContact = ({ id, service, updateContacts, setIdCreated }: Prop
                 onChange={e => handleChange('email', e.target.value)}
               />
 
-              {emailError && <FormHelperText sx={{ color: 'error.main' }}>This field is required</FormHelperText>}
+              {emailError && <FormHelperText sx={{ color: 'error.main' }}>
+                {(contactData.email == "" || contactData.email == undefined) ? "This field is required" : "Enter a valid email, example name@email.com" }
+                </FormHelperText>}
             </FormControl>
             <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
               <TextField
@@ -229,7 +237,9 @@ export const ModalContact = ({ id, service, updateContacts, setIdCreated }: Prop
                 onChange={e => handleChange('phone', e.target.value)}
               />
 
-              {phoneError && <FormHelperText sx={{ color: 'error.main' }}>This field is required</FormHelperText>}
+              {phoneError && <FormHelperText sx={{ color: 'error.main' }}>
+              {(contactData.phone == "" || contactData.phone == undefined) ? "This field is required" : "Enter a valid phone" }
+               </FormHelperText>}
             </FormControl>
             <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
               <InputLabel>Select country</InputLabel>
