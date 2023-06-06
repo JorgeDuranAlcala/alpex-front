@@ -124,11 +124,6 @@ const CedantContacts = ({ idCedant }: ICedantContacts) => {
   useEffect(() => {
     setCedantContactsPagination({ ...cedantContactsPagination, idCCedant: idCedant })
     //eslint-disable-next-line
-  }, [])
-
-  useEffect(() => {
-    setCedantContactsPagination({ ...cedantContactsPagination, idCCedant: idCedant })
-    //eslint-disable-next-line
   }, [idCedant])
 
   const triggerAlert = (type: string, text?: string) => {
