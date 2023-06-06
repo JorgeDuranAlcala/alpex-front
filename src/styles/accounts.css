@@ -53,6 +53,8 @@
 
 .new-account .MuiCard-root {
   margin: 0px 0 20px;
+  overflow: inherit;
+
 }
 
 /*---- Header----*/
@@ -396,7 +398,7 @@
     display: none !important;
   }
   .show-on-mobile{
-    display: inline-flex;
+    display: inline-flex !important;
   }
 }
 

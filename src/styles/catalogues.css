@@ -80,11 +80,11 @@
   border: 1px solid rgb(255 0 0 / 50%);
 }
 
-.delete-button.MuiButton-root:hover {
+.header-wrapper .delete-button.MuiButton-root:hover {
   border: 1px solid rgb(255 0 0 / 50%);
 }
 
-.delete-button.MuiButton-root.MuiButton-outlinedPrimary:hover {
+.header-wrapper .delete-button.MuiButton-root.MuiButton-outlinedPrimary:hover {
   background-color: rgb(255 0 0 / 8%);
 }
 
@@ -139,7 +139,7 @@
     align-items: center;
   }
 
-  .delete-button.MuiButton-root,
+  .header-wrapper .delete-button.MuiButton-root,
   .header-item .action-button.MuiButton-root {
     width: 100%;
     margin-bottom: 15px;

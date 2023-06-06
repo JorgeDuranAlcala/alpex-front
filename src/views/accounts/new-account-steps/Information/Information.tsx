@@ -278,10 +278,13 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
       }, 5000)
     }
 
+
     return res
   }
 
   const setDataInformation = async () => {
+
+
     if (idAccount) {
       const information = await getInformaByIdAccount(idAccount)
 
@@ -348,7 +351,6 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
 
     for (const docto of formatedDoctos) {
       const res = await uploadInformationDocument(docto)
-      console.log(res)
       if (res.createdDoctoDB) {
         const createdDoctoData = res.createdDoctoDB
         newDoctoIdByName[createdDoctoData.name] = createdDoctoData.id
@@ -362,18 +364,19 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   }
 
   const handleSaveInformation = async () => {
-    console.log('Step saved: 1')
-    console.log('basic info')
-    console.log(basicInfo)
+
     if (idAccount) {
       await updateInformation()
       await uploadDoctos(idAccount)
+
       dispatch(updateFormsData({ form1: { basicInfo, placementStructure, userFile, id: idAccount } }))
     } else {
+
       const res = await saveInformation()
       localStorage.setItem('idAccount', String(res.account.id))
       await uploadDoctos(res.account.id)
       dispatch(updateFormsData({ form1: { basicInfo, placementStructure, userFile, id: res.account.id } }))
+
       onIsNewAccountChange(false)
     }
   }
@@ -438,6 +441,10 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
     dispatch(updateFormsData({ form1: { ...lastForm1Information, id: idAccountCache } }))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [basicInfo, setBasicInfo])
 
   useEffect(() => {
     const getFiles = async () => {
