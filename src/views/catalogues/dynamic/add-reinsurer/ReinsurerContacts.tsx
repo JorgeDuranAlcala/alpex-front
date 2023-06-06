@@ -67,7 +67,6 @@ const ReinsurerContacts = ({ idReinsuranceCompany }: IReinsuranceCompanyContacts
   // Const declatation :
 
   // Handle Data
-  const [contactList, setContactList] = useState<IContact[]>([])
   const [newContactData, setNewContactData] = useState<IContact>(initialNewContact) //saves the new contact data
   const [currentContact, setCurrentContact] = useState<IContact>(initialNewContact) //saves the row data to be edited
   const [selectedRow, setSelectedRow] = useState<IContact | null>(null) // saves the row wehen user click on actions button
@@ -123,24 +122,13 @@ const ReinsurerContacts = ({ idReinsuranceCompany }: IReinsuranceCompanyContacts
   } = useGetAllByIdReinsuranceCompanyAndPagination()
 
   useEffect(() => {
-    setReinsuranceCompanyContactsPagination({
-      ...reinsuranceCompanyContactsPagination,
-      idCReinsuranceCompany: idReinsuranceCompany
-    })
-    //eslint-disable-next-line
-  }, [])
-
-  useEffect(() => {
-    setReinsuranceCompanyContactsPagination({
-      ...reinsuranceCompanyContactsPagination,
-      idCReinsuranceCompany: idReinsuranceCompany
-    })
+    idReinsuranceCompany != 0 &&
+      setReinsuranceCompanyContactsPagination({
+        ...reinsuranceCompanyContactsPagination,
+        idCReinsuranceCompany: idReinsuranceCompany
+      })
     //eslint-disable-next-line
   }, [idReinsuranceCompany])
-
-  useEffect(() => {
-    setContactList(reinsuranceCompanyContacts || [])
-  }, [reinsuranceCompanyContacts])
 
   const triggerAlert = (type: string, text?: string) => {
     setAlertType(type)
@@ -592,7 +580,7 @@ const ReinsurerContacts = ({ idReinsuranceCompany }: IReinsuranceCompanyContacts
             autoHeight
             checkboxSelection
             disableSelectionOnClick
-            rows={contactList}
+            rows={reinsuranceCompanyContacts}
             columns={column}
             pagination
             pageSize={10}
