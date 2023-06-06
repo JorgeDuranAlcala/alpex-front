@@ -1,6 +1,5 @@
 import { AUTH_ROUTES } from 'src/configs/api'
 import { AppAlpexApiGateWay } from '../app.alpex.api-getway'
-import { AppAlpexApiGateWayNoToken } from '../app.alpex.api-getway-no-jwt'
 import { AuthDto } from './dtos/AuthDto'
 
 class AuthServices {
@@ -17,13 +16,9 @@ class AuthServices {
     }
   }
 
-  async authMe(token: string | null) {
+  async authMe() {
     try {
-      const resp = await AppAlpexApiGateWayNoToken.get(`${AUTH_ROUTES.AUTH_ME}`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      })
+      const resp = await AppAlpexApiGateWay.get(`${AUTH_ROUTES.AUTH_ME}`)
 
       return resp
     } catch (error) {

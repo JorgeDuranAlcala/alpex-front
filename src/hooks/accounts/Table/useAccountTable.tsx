@@ -11,7 +11,6 @@ import AccountsTableContext from 'src/context/accounts/Table/reducer'
 import accountsService from 'src/services/accounts/account.service'
 
 // ** Custom utilities
-import { useLocalStorage } from '@/hooks/useLocalStorage'
 import { UpdateStatusArrayDto } from '@/services/accounts/dtos/account.dto'
 import { useAppDispatch, useAppSelector } from '@/store'
 import { IAccountsState } from '@/types/apps/accountsTypes'
@@ -22,7 +21,6 @@ const useAccountTable = () => {
   const dispatchRedux = useAppDispatch()
   const accountsReducer = useAppSelector(state => state.accounts)
 
-  const [jwtToken] = useLocalStorage('accessToken', false)
   const { state } = useContext(AccountsTableContext)
   const { accounts } = state
 
@@ -38,7 +36,7 @@ const useAccountTable = () => {
 
   const deleteAccounts = async (selectedRows: GridRowId[]) => {
     try {
-      const response = await accountsService.deleteAccounts(selectedRows as number[], jwtToken)
+      const response = await accountsService.deleteAccounts(selectedRows as number[])
       dispatchRedux(fetchAccounts(accountsReducer))
 
       return response
@@ -49,7 +47,7 @@ const useAccountTable = () => {
 
   const duplicateAccounts = async (selectedRows: GridRowId[]) => {
     try {
-      const response = await accountsService.duplicateAccounts(selectedRows as number[], jwtToken)
+      const response = await accountsService.duplicateAccounts(selectedRows as number[])
       dispatchRedux(fetchAccounts(accountsReducer))
 
       return response
@@ -60,7 +58,7 @@ const useAccountTable = () => {
 
   const changeStatusAccounts = async (updateStatus: UpdateStatusArrayDto) => {
     try {
-      const response = await accountsService.updateAccountsStatus(updateStatus, jwtToken)
+      const response = await accountsService.updateAccountsStatus(updateStatus)
       dispatchRedux(fetchAccounts(accountsReducer))
 
       return response
