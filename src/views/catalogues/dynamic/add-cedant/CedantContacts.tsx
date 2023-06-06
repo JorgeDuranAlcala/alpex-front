@@ -64,6 +64,8 @@ interface ICedantContacts {
 }
 
 const CedantContacts = ({ idCedant }: ICedantContacts) => {
+  console.info('idCedant:', idCedant)
+
   // Handle Data
   //const [contactList, setContactList] = useState<IContact[]>([])
   const [contactData, setContactData] = useState<IContact>(initialNewContact)
