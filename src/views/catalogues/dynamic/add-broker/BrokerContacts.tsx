@@ -88,8 +88,6 @@ const BrokerContacts = ({ idBroker }: IBrokerContacts) => {
 
   const [btnEditDisable, setBtnEditDisable] = useState(true)
 
-  const [contactList, setContactList] = useState<IContact[]>([])
-
   //const [loading, setLoading] = useState<any>([])
   const [openNewContact, setOpenNewContact] = useState(false)
   const [contactData, setContactData] = useState<IContact>(initialNewContact)
@@ -121,25 +119,9 @@ const BrokerContacts = ({ idBroker }: IBrokerContacts) => {
   } = useGetAllByIdBrokerAndPagination()
 
   useEffect(() => {
-    setBrokerContactsPagination({ ...brokerContactsPagination, idCBroker: idBroker })
-    //eslint-disable-next-line
-  }, [])
-
-  useEffect(() => {
-    /*  const result = setBrokerContactsPagination({ ...brokerContactsPagination, idCBroker: idBroker })
-    setContactList(result) */
-    getBrokerContacts()
+    idBroker !== 0 && setBrokerContactsPagination({ ...brokerContactsPagination, idCBroker: idBroker })
     //eslint-disable-next-line
   }, [idBroker])
-
-  const getBrokerContacts = async () => {
-    const result = await getBrokerContactsByIdBroker({ ...brokerContactsPagination, idCBroker: idBroker })
-    setContactList(result)
-  }
-
-  useEffect(() => {
-    setContactList(brokerContacts || [])
-  }, [brokerContacts])
 
   const triggerAlert = (type: string, text?: string) => {
     setAlertType(type)
@@ -592,7 +574,7 @@ const BrokerContacts = ({ idBroker }: IBrokerContacts) => {
             autoHeight
             checkboxSelection
             disableSelectionOnClick
-            rows={contactList}
+            rows={brokerContacts}
             columns={column}
             pagination
             pageSize={10}

@@ -13,13 +13,11 @@ import BrokerData from 'src/views/catalogues/dynamic/add-broker/BrokerData'
 
 const AddBrokerView = () => {
   const router = useRouter()
-  const { id = '0' } = router.query
-
   const [idBroker, setIdBroker] = useState(0)
 
   useEffect(() => {
-    setIdBroker(parseInt(id.toString()))
-  }, [id])
+    router.query.id && setIdBroker(parseInt(router.query.id.toString()))
+  }, [router.query])
 
   return (
     <Grid item xs={12}>
