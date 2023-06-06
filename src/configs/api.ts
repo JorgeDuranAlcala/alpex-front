@@ -95,7 +95,8 @@ export enum COUNTRY_ROUTERS {
   GET_ALL = 'catalogs/country/all',
   GET_BY_ID = 'catalogs/country',
   ADD = 'catalogs/country/add',
-  UPDATE = `catalogs/country`
+  UPDATE = `catalogs/country`,
+  DELETE = 'catalogs/country'
 }
 
 export enum LINE_OF_BUSSINES_ROUTES {
