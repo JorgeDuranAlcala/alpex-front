@@ -1,5 +1,4 @@
 import { AppAlpexApiGateWay } from '../app.alpex.api-getway'
-import { AppAlpexApiGateWayNoToken } from '../app.alpex.api-getway-no-jwt'
 
 import { ACCOUNT_INFORMATION_ROUTES } from '../../configs/api'
 
@@ -21,19 +20,11 @@ class AccountServices {
    * @param information
    * @returns
    */
-  async addInformation(information: Partial<InformationDto>, jwtToken: string) {
+  async addInformation(information: Partial<InformationDto>) {
     try {
-      const { data } = await AppAlpexApiGateWayNoToken.post(
-        `${ACCOUNT_INFORMATION_ROUTES.ADD}`,
-        {
-          ...information
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${jwtToken}`
-          }
-        }
-      )
+      const { data } = await AppAlpexApiGateWay.post(`${ACCOUNT_INFORMATION_ROUTES.ADD}`, {
+        ...information
+      })
 
       return data
     } catch (error) {
@@ -86,16 +77,11 @@ class AccountServices {
   /**
    * upload a file associated to an account
    * @param uploadDocto: UploadDoctoDto
-   * @param jwtToken
    * @returns
    */
-  async uploadDocument(uploadDocto: UploadDoctoDto, jwtToken: string) {
+  async uploadDocument(uploadDocto: UploadDoctoDto) {
     try {
-      const { data } = await AppAlpexApiGateWayNoToken.post(`${ACCOUNT_INFORMATION_ROUTES.UPLOAD_FILE}`, uploadDocto, {
-        headers: {
-          Authorization: `Bearer ${jwtToken}`
-        }
-      })
+      const { data } = await AppAlpexApiGateWay.post(`${ACCOUNT_INFORMATION_ROUTES.UPLOAD_FILE}`, uploadDocto)
 
       return data
     } catch (error) {
@@ -107,16 +93,11 @@ class AccountServices {
   /**
    * delete a file associated to an account
    * @param deleteDocto: DeleteDoctoDto
-   * @param jwtToken
    * @returns
    */
-  async deleteDocument(deleteDocto: DeleteDoctoDto, jwtToken: string) {
+  async deleteDocument(deleteDocto: DeleteDoctoDto) {
     try {
-      const { data } = await AppAlpexApiGateWayNoToken.post(`${ACCOUNT_INFORMATION_ROUTES.DELETE_FILE}`, deleteDocto, {
-        headers: {
-          Authorization: `Bearer ${jwtToken}`
-        }
-      })
+      const { data } = await AppAlpexApiGateWay.post(`${ACCOUNT_INFORMATION_ROUTES.DELETE_FILE}`, deleteDocto)
 
       return data
     } catch (error) {

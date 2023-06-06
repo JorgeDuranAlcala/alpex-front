@@ -1,9 +1,7 @@
-import { useLocalStorage } from '@/hooks/useLocalStorage'
 import ExchangeRateService, { ExchangeRateDto, Pair } from '@/services/exchange-rate/ExchangeRate.service'
 import { useEffect, useState } from 'react'
 
 export const useExchangePair = () => {
-  const [jwtToken] = useLocalStorage('accessToken', false)
   const [exchangeRate, setExchangeRate] = useState<ExchangeRateDto>({} as ExchangeRateDto)
 
   const [pair, setPair] = useState<Pair>({
@@ -13,7 +11,7 @@ export const useExchangePair = () => {
 
   const getPair = async () => {
     try {
-      const information = await ExchangeRateService.getExchangeRatePair(pair, jwtToken)
+      const information = await ExchangeRateService.getExchangeRatePair(pair)
 
       setExchangeRate(information)
     } catch (error) {

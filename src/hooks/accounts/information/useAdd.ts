@@ -1,11 +1,8 @@
-import { useLocalStorage } from '@/hooks/useLocalStorage'
 import { AccountProps } from '@/services/accounts/dtos/account.dto'
 import { InformationDto } from 'src/services/accounts/dtos/information.dto'
 import informationService from 'src/services/accounts/information.service'
 
 export const useAddInformation = () => {
-  const [jwtToken] = useLocalStorage('accessToken', false)
-
   const addInformation = async (
     data: Omit<InformationDto, 'id' | 'idAccount'>
   ): Promise<{
@@ -18,7 +15,7 @@ export const useAddInformation = () => {
       informationTem.idBrokerContact = informationTem.idBrokerContact === 0 ? null : informationTem.idBrokerContact
       informationTem.idTypeOfLimit = informationTem.idTypeOfLimit === 0 ? null : informationTem.idTypeOfLimit
 
-      const information = await informationService.addInformation(informationTem, jwtToken)
+      const information = await informationService.addInformation(informationTem)
 
       return information
     } catch (error) {
