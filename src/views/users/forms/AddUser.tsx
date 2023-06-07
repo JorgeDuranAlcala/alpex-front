@@ -352,6 +352,7 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
         duplicateEmail: false
       })
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [error])
 
   useEffect(() => {
@@ -359,7 +360,7 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
       const reducersCompany = usersReducer?.current?.idCompany?.id
       const companySelect = company?.find(c => c.id === reducersCompany)
       setIdCompany(companySelect?.id.toString())
-    }
+    } // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [company, setIdCompany])
 
   // useEffect(() => {
@@ -373,12 +374,14 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
     const reducersRol = usersReducer?.current?.roles[0]?.id
     const rolSelect = roles?.find(rol => rol.id === reducersRol)
     setIdRole(rolSelect?.id.toString())
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [roles, setIdRole])
 
   useEffect(() => {
     const reducersDualRol = usersReducer?.current?.roles[1]?.id
     const dualRolSelect = roles?.find(dualRol => dualRol.id === reducersDualRol)
     setInformativeIdRole(dualRolSelect?.id.toString())
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [roles, setInformativeIdRole])
 
   // useEffect(() => {
