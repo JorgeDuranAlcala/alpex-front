@@ -4,7 +4,7 @@ import { ACCOUNT_INFORMATION_ROUTES } from '../../configs/api'
 
 //Dtos
 import { IAccount } from 'src/views/accounts/Table'
-import { InformationDto } from './dtos/information.dto'
+import { DeleteDoctoDto, InformationDto, UploadDoctoDto } from './dtos/information.dto'
 
 /**
  * clase encargada del apartado de information de un account
@@ -29,7 +29,7 @@ class AccountServices {
       return data
     } catch (error) {
       const message = String(error)
-      throw new Error(message)
+      console.log(message)
     }
   }
 
@@ -45,7 +45,7 @@ class AccountServices {
       return data
     } catch (error) {
       const message = String(error)
-      throw new Error(message)
+      console.log(message)
     }
   }
 
@@ -55,10 +55,15 @@ class AccountServices {
    * @param information
    * @returns
    */
-  async updatedInformaById(idAccount: number, information: InformationDto) {
+
+  parsedDate = (date: Date) => new Date(date.toString().replace(/GMT.*$/, 'GMT+0000')).toISOString()
+  async updatedInformaById(idAccount: number, information: Partial<InformationDto>) {
     try {
       const { data } = await AppAlpexApiGateWay.put(`${ACCOUNT_INFORMATION_ROUTES.UPDATE}/${idAccount}`, {
-        ...information
+        ...information,
+        receptionDate: this.parsedDate(information.receptionDate || new Date()),
+        effectiveDate: this.parsedDate(information.effectiveDate || new Date()),
+        expirationDate: this.parsedDate(information.expirationDate || new Date())
       })
 
       return data
@@ -67,10 +72,60 @@ class AccountServices {
       throw new Error(message)
     }
   }
+
+  // ** Doctos
+  /**
+   * upload a file associated to an account
+   * @param uploadDocto: UploadDoctoDto
+   * @returns
+   */
+  async uploadDocument(uploadDocto: UploadDoctoDto) {
+    try {
+      const { data } = await AppAlpexApiGateWay.post(`${ACCOUNT_INFORMATION_ROUTES.UPLOAD_FILE}`, uploadDocto)
+
+      return data
+    } catch (error) {
+      const message = String(error)
+      console.log(message)
+    }
+  }
+
+  /**
+   * delete a file associated to an account
+   * @param deleteDocto: DeleteDoctoDto
+   * @returns
+   */
+  async deleteDocument(deleteDocto: DeleteDoctoDto) {
+    try {
+      const { data } = await AppAlpexApiGateWay.post(`${ACCOUNT_INFORMATION_ROUTES.DELETE_FILE}`, deleteDocto)
+
+      return data
+    } catch (error) {
+      const message = String(error)
+      console.log(message)
+    }
+  }
+
+  /**
+   * brings all files associated to an idAccount
+   * @param idAccount
+   * @returns
+   */
+  async getDocumentsByIdAccount(idAccount: number) {
+    try {
+      const { data } = await AppAlpexApiGateWay.get(`${ACCOUNT_INFORMATION_ROUTES.GET_FILES}/${idAccount}`)
+
+      return data
+    } catch (error) {
+      const message = String(error)
+      console.log(message)
+    }
+  }
 }
 
 export default new AccountServices()
 
+// ** Utils
 const possibleStatuses = ['pending', 'declined', 'bound', 'notMaterialized', 'notTakenUp']
 
 const getRandomStatus = () => {

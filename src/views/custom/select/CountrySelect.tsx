@@ -7,6 +7,8 @@ interface CountrySelect {
   setSelectedCountry: React.Dispatch<React.SetStateAction<any>>
   otherProps?: React.CSSProperties
   size?: 'small' | 'medium'
+  whatsApp?: boolean
+  areaCode?: string
 }
 
 export interface ICountry {
@@ -14,15 +16,31 @@ export interface ICountry {
   code: string
   phone: string
 }
-export default function CountrySelect({ setSelectedCountry, size = 'small', otherProps }: CountrySelect) {
-  const [value, setValue] = useState<string | null>(null)
+export default function CountrySelect({
+  setSelectedCountry,
+  size = 'small',
+  otherProps,
+  whatsApp,
+  areaCode
+}: CountrySelect) {
+  const [value, setValue] = useState<string | null | undefined>(null)
   const [inputValue, setInputValue] = useState<string | undefined>('')
   const options = [...countries.map(country => country.label)]
 
+  console.log({ areaCode })
+  console.log({ value })
   useEffect(() => {
     setSelectedCountry(countries.find(country => country.label === value))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value])
+
+  useEffect(() => {
+    if (areaCode) {
+      const country = countries.find(country => country.phone === areaCode)
+      setSelectedCountry(country)
+      setValue(country?.label)
+    }
+  }, [areaCode, setSelectedCountry])
 
   return (
     <div>
@@ -40,7 +58,7 @@ export default function CountrySelect({ setSelectedCountry, size = 'small', othe
         sx={{ width: 200 }}
         style={{ ...otherProps }}
         size={size}
-        renderInput={params => <TextField {...params} />}
+        renderInput={params => <TextField {...params} label={whatsApp ? 'Country' : 'Select Country Code'} />}
       />
     </div>
   )

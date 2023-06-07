@@ -50,6 +50,16 @@ class CurrencyService {
       throw new Error(message)
     }
   }
+
+  async deleteById(id: number) {
+    try {
+      const { data } = await AppAlpexApiGateWay.delete<Promise<CurrencyDto>>(`${CURRENCY_ROUTES.DELETE}/${id}`)
+
+      return data
+    } catch (error) {
+      throw error
+    }
+  }
 }
 
 export default new CurrencyService()

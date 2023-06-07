@@ -1,29 +1,16 @@
-
 // ** MUI Imports
-import Card from '@mui/material/Card'
-import Grid from '@mui/material/Grid'
-
 // ** Context
 // import { AccountsTableContextProvider } from 'src/context/accounts/Table/reducer'
 
 // ** Custom Components Imports
-import AddBroker from 'src/views/catalogues/dynamic/add-broker/AddBroker'
-import BrokerContacts from 'src/views/catalogues/dynamic/add-broker/BrokerContacts'
+import AddBrokerView from 'src/views/catalogues/dynamic/add-broker/AddBrokerView'
 
-const AddBrokerView = () => {
-
+const AddBroker = () => {
   return (
-
-    <Grid item xs={12}>
-      <Card sx={{marginBottom: '15px'}}>
-        <AddBroker />
-      </Card>
-      <Card>
-       <BrokerContacts />
-      </Card>
-    </Grid>
-
+    <>
+      <AddBrokerView/>
+    </>
   )
 }
 
-export default AddBrokerView
+export default AddBroker

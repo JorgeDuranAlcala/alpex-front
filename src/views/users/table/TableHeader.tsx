@@ -28,7 +28,6 @@ const TableHeader: React.FC<ITableHeader> = ({ badgeData, handleView, selectedRo
   // ** Custom Hooks
 
   //const { deleteAccounts, changeStatusAccounts } = useAccountTable()
-
   const dispatch = useAppDispatch()
   const usersReducer = useAppSelector(state => state.users)
 
@@ -114,7 +113,13 @@ const TableHeader: React.FC<ITableHeader> = ({ badgeData, handleView, selectedRo
       </Box>
       <Box sx={{ marginLeft: 'auto' }}>
         {!badgeData.status ? (
-          <Button startIcon={<Icon icon='mdi:plus' />} sx={{ mb: 2 }} variant='contained' onClick={() => handleView(1)}>
+          <Button
+            startIcon={<Icon icon='mdi:plus' />}
+            sx={{ mb: 2 }}
+            variant='contained'
+            onClick={() => handleView(1)}
+            style={{ backgroundColor: ' #14249D' }}
+          >
             ADD USER &nbsp;
           </Button>
         ) : (

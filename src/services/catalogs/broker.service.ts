@@ -1,8 +1,10 @@
+import { IBrokersState } from '@/types/apps/catalogs/brokerTypes'
 import { BROKER_ROUTES } from 'src/configs/api'
 import { AppAlpexApiGateWay } from 'src/services/app.alpex.api-getway'
-import { BrokerDto } from 'src/services/catalogs/dtos/broker.dto'
+import { BrokerDto, BrokersDeleteDto, BrokersPaginationDto } from 'src/services/catalogs/dtos/broker.dto'
+import { queryBuilder } from '../helper/queryBuilder'
 
-class CedantService {
+class BrokeService {
   async getAll(): Promise<BrokerDto[]> {
     try {
       const { data } = await AppAlpexApiGateWay.get<Promise<BrokerDto[]>>(BROKER_ROUTES.GET_ALL)
@@ -46,6 +48,44 @@ class CedantService {
       throw error
     }
   }
+
+  async getBrokers(brokersData: IBrokersState, urlQ?: string) {
+    try {
+      const url = urlQ ? urlQ : queryBuilder(brokersData.filters, BROKER_ROUTES.GET)
+      const { data } = await AppAlpexApiGateWay.get(
+        `${url}&take=${brokersData.info.take}&page=${brokersData.info.page}`
+      )
+
+      return data
+    } catch (error) {
+      const errMessage = String(error)
+      throw new Error(errMessage)
+    }
+  }
+
+  async getBrokersPagination(brokerData: BrokersPaginationDto, urlQ?: string) {
+    try {
+      const url = urlQ ? urlQ : queryBuilder(brokerData.filters, `${BROKER_ROUTES.GET}`)
+      const { data } = await AppAlpexApiGateWay.get(`${url}&take=${brokerData.info.take}&page=${brokerData.info.page}`)
+
+      return data
+    } catch (error) {
+      const errMessage = String(error)
+      throw new Error(errMessage)
+    }
+  }
+
+  async deleteBrokers(brokersDelete: Partial<BrokersDeleteDto>) {
+    try {
+      const { data } = await AppAlpexApiGateWay.post(BROKER_ROUTES.DELETE, {
+        ...brokersDelete
+      })
+
+      return data
+    } catch (error) {
+      throw error
+    }
+  }
 }
 
-export default new CedantService()
+export default new BrokeService()

@@ -1,5 +1,6 @@
+import { useFindInformationByIdAccount } from '@/hooks/accounts/information'
 import { Box, Button, Card, ListItemIcon, ListItemText, Menu, MenuItem, Modal, Typography } from '@mui/material'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Icon from 'src/@core/components/icon'
 import { useAppSelector } from 'src/store'
 import StatusSelect from 'src/views/custom/select/StatusSelect'
@@ -116,18 +117,45 @@ const ModalUploadImage = () => {
 const FormHeader = () => {
   const [status, setStatus] = useState({})
 
-  const accountsReducer = useAppSelector(state => state.accounts)
+  const account = useAppSelector(state => state.accounts?.formsData?.form1)
+
+  const { setIdAccount, information } = useFindInformationByIdAccount()
+  const formaterAmount = (amount: number) => {
+    if (amount) {
+      return amount.toLocaleString('en-US', {
+        style: 'decimal',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+        useGrouping: true
+      })
+    }
+  }
+  const formatDate = (date: Date | null | undefined): string => {
+    if (date) {
+      const options: Intl.DateTimeFormatOptions = {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric'
+      }
+
+      return new Intl.DateTimeFormat('ban', options).format(date)
+    }
+    return ''
+  }
+  useEffect(() => {
+    account && setIdAccount(account.id)
+  }, [account])
 
   return (
     <div className='form-header-grid'>
-      <Card>
+      <Card className='info-header'>
         <div className='form-header-data'>
           <div className='form-header'>
             <div className='form-header-section'>
               <ModalUploadImage />
               <div className='double-gap'>
-                <span className='form-header-title2'>Insured name</span>
-                <span className='block blue-subtitle'>#001</span>
+                <span className='form-header-title2'>{account?.basicInfo?.insured}</span>
+                <span className='block blue-subtitle'>#{account?.id}</span>
               </div>
             </div>
             <div className='form-header-section'>
@@ -139,13 +167,13 @@ const FormHeader = () => {
             <div className='form-header-section'>
               <span className='form-header-title'>Net premium:</span>
               <span className='form-header-subtitle'>
-                ${accountsReducer.formsData.form1.placementStructure.netPremium}{' '}
-                {accountsReducer.formsData.form1.placementStructure.currency}
+                ${account && formaterAmount(account?.placementStructure?.netPremium)}{' '}
+                {account?.placementStructure?.currency}
               </span>
             </div>
             <div className='form-header-section'>
               <span className='form-header-title'>Registration date:</span>
-              <span className='form-header-subtitle'>22 Oct 2022 </span>
+              <span className='form-header-subtitle'>{information && formatDate(information?.createdAt)}</span>
             </div>
           </div>
         </div>
@@ -155,6 +183,9 @@ const FormHeader = () => {
       </Card>
       <div className={'actions-header'}>
         <ActionsHeader accountStatus='PENDING' sideHeader={true} />
+      </div>
+      <div className={'actions-header-mobile'}>
+        <ActionsHeader accountStatus='PENDING' sideHeader={false} />
       </div>
     </div>
   )

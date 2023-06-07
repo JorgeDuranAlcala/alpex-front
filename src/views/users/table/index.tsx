@@ -9,15 +9,22 @@ import { DataGrid, GRID_CHECKBOX_SELECTION_COL_DEF, GridColumns, GridRowId } fro
 // ** Icon Imports
 
 // ** Custom Hooks imports
+import { useDeleteUser } from '@/hooks/catalogs/users/deleteUser'
+
+// import { UsersDeleteDto } from '@/services/users/dtos/UsersDto'
 
 // ** Custom Components Imports
-import { Icon } from '@iconify/react'
+
+// ** Custom Components Imports
+import Icon from 'src/@core/components/icon'
+
+// import { Icon } from '@iconify/react'
 import ColumnHeader from './ColumnHeader'
 import CustomPagination from './CustomPagination'
 import TableHeader from './TableHeader'
 
 // ** Custom utilities
-import { Button, Link, ListItemText, Menu, MenuItem } from '@mui/material'
+import { IconButton, Link, Menu, MenuItem } from '@mui/material'
 import { useAppDispatch, useAppSelector } from 'src/store'
 import { fetchAccounts } from 'src/store/apps/users'
 import colors from 'src/views/accounts/colors'
@@ -64,8 +71,12 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
   const [selectedRows, setSelectedRows] = useState<GridRowId[]>([])
   const [accounts, setAccounts] = useState<any>([])
   const [loading, setLoading] = useState<any>([])
-  const [selectedUser, setSelectedUser] = useState<IUsersGrid | null>(null)
+  const [selectedUser, setSelectedUser] = useState<IUsersGrid | null>()
   const [modalShow, setModalShow] = useState<boolean>(false)
+  const [idMultiple, setIdMultiple] = useState<any>([])
+
+  // console.log({ selectedRows })
+  // console.log({ idMultiple })
 
   //WIP
   //eslint-disable-next-line
@@ -79,7 +90,12 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
   const dispatch = useAppDispatch()
   const usersReducer = useAppSelector(state => state.users)
 
+  // console.log('Redux_Store--->', usersReducer.users)
+
   // ** Hooks
+  const { deleteUser } = useDeleteUser()
+
+  // console.log(deleteUser)
 
   const handleClickColumnHeader = (field: string) => {
     alert(field)
@@ -87,7 +103,7 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
 
   useEffect(() => {
     setAccounts(usersReducer.users || [])
-    console.log(loading)
+    console.log('Loading--->', loading)
     setLoading(usersReducer.loading)
     //eslint-disable-next-line
   }, [usersReducer.users])
@@ -98,12 +114,64 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
   }, [usersReducer.filters])
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
+
   const open = Boolean(anchorEl)
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    console.log(event.currentTarget)
     setAnchorEl(event.currentTarget)
   }
   const handleClose = () => {
     setAnchorEl(null)
+  }
+
+  const handleDelete = () => {
+    deleteUser({ idUsersList: idMultiple })
+
+    setTimeout(() => {
+      dispatch(fetchAccounts(usersReducer))
+    }, 50)
+  }
+
+  const ModalActions = () => {
+    return (
+      <>
+        <Menu
+          anchorEl={anchorEl}
+          open={open}
+          onClose={handleClose}
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'right'
+          }}
+          transformOrigin={{
+            vertical: 'top',
+            horizontal: 'right'
+          }}
+        >
+          <MenuItem
+            onClick={() => {
+              setSelectUser(selectedUser!.id)
+              handleClose()
+            }}
+            sx={{ minWidth: '172px', display: 'flex', justifyContent: 'space-between' }}
+          >
+            Edit
+            <Icon icon='mdi:pencil' fontSize={24} />
+          </MenuItem>
+          <MenuItem
+            onClick={() => {
+              setModalShow(true)
+              handleClose()
+            }}
+            sx={{ minWidth: '172px', display: 'flex', justifyContent: 'space-between' }}
+          >
+            Delete
+            <Icon icon='ic:baseline-delete-outline' fontSize={24} />
+          </MenuItem>
+        </Menu>
+      </>
+    )
   }
 
   //name, role, company, phone number, email
@@ -116,8 +184,7 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
       flex: 0.1,
       field: EFieldColumn.NAME,
       headerName: 'NAME',
-      minWidth: 150,
-      maxWidth: 400,
+      minWidth: 270,
       type: 'string',
       align: 'left',
       disableColumnMenu: true,
@@ -126,7 +193,13 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
       renderHeader: ({ colDef }) => <ColumnHeader colDef={colDef} showIcon={false} action={handleClickColumnHeader} />,
       renderCell: ({ row }) => (
         <Typography
-          sx={{ color: colors.primary.main, fontSize: fonts.size.px14, fontFamily: fonts.inter, overflow: 'elipsis' }}
+          sx={{
+            color: colors.primary.main,
+            fontSize: fonts.size.px14,
+            fontFamily: fonts.inter,
+            overflow: 'elipsis',
+            marginLeft: '-3%'
+          }}
         >
           {`${row.name} ${row.surname}`}
         </Typography>
@@ -136,8 +209,7 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
       flex: 0.1,
       field: EFieldColumn.ROLE,
       headerName: 'ROLE',
-      minWidth: 150,
-      maxWidth: 150,
+      minWidth: 130,
       type: 'string',
       align: 'left',
       cellClassName: 'account-column-cell-pl-0',
@@ -153,7 +225,7 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
       flex: 0.1,
       field: EFieldColumn.COMPANY,
       headerName: 'COMPANY',
-      minWidth: 185,
+      minWidth: 150,
       type: 'string',
       align: 'left',
       disableColumnMenu: true,
@@ -161,20 +233,27 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
       headerClassName: 'account-column-header',
       renderHeader: ({ colDef }) => <ColumnHeader colDef={colDef} action={handleClickColumnHeader} />,
       renderCell: ({ row }) => (
-        <Typography
-          sx={{ color: colors.text.primary, fontWeight: 500, fontSize: fonts.size.px14, fontFamily: fonts.inter }}
-        >
-          <Link sx={{ color: colors.text.primary }} href='#'>
-            <StyledChip color='primary' sx={{}} label={row.idCompany.alias || 'W/ company'} />
-          </Link>
-        </Typography>
+        <Box sx={{ marginLeft: '-6%' }}>
+          <Typography
+            sx={{
+              color: colors.text.primary,
+              fontWeight: 500,
+              fontSize: fonts.size.px14,
+              fontFamily: fonts.inter
+            }}
+          >
+            <Link sx={{ color: colors.text.primary }} href='#'>
+              <StyledChip color='primary' sx={{}} label={row.idCompany?.alias || 'W/ company'} />
+            </Link>
+          </Typography>
+        </Box>
       )
     },
     {
       flex: 0.1,
       field: EFieldColumn.PHONE_NUMBER,
       headerName: 'PHONE NUMBER',
-      minWidth: 170,
+      minWidth: 135,
       type: 'string',
       align: 'left',
       disableColumnMenu: true,
@@ -191,7 +270,7 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
       flex: 0.1,
       field: EFieldColumn.EMAIL,
       headerName: 'EMAIL',
-      minWidth: 165,
+      minWidth: 250,
       type: 'string',
       align: 'left',
       disableColumnMenu: true,
@@ -199,7 +278,15 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
       headerClassName: 'account-column-header',
       renderHeader: ({ colDef }) => <ColumnHeader colDef={colDef} showIcon={false} action={handleClickColumnHeader} />,
       renderCell: ({ row }) => (
-        <Typography sx={{ color: colors.text.secondary, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
+        <Typography
+          sx={{
+            color: colors.text.secondary,
+            fontSize: fonts.size.px14,
+            fontFamily: fonts.inter,
+            textTransform: 'lowercase',
+            marginLeft: '-5%'
+          }}
+        >
           {row.email}
         </Typography>
       )
@@ -209,56 +296,29 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
       field: '',
       headerName: '',
       minWidth: 10,
-      maxWidth: 60,
+      maxWidth: 50,
       sortable: false,
       disableColumnMenu: true,
       cellClassName: 'account-column-cell-pl-0',
       renderHeader: ({ colDef }) => <ColumnHeader colDef={colDef} showIcon={false} />,
-      renderCell: ({ row }) => (
-        <Box sx={{ display: 'flex', alignItems: 'start' }}>
-          <Button
-            id='basic-button'
-            aria-controls={open ? 'basic-menu' : undefined}
-            aria-haspopup='true'
-            aria-expanded={open ? 'true' : undefined}
-            onClick={e => {
-              setSelectedUser(row)
-              handleClick(e)
-            }}
-            startIcon={<Icon icon='mdi:dots-vertical' fontSize={15} />}
-          />
-          <Menu
-            id='basic-menu'
-            anchorEl={anchorEl}
-            open={open}
-            onClose={handleClose}
-            MenuListProps={{
-              'aria-labelledby': 'basic-button'
-            }}
-          >
-            <MenuItem
-              onClick={() => {
-                setSelectUser(selectedUser!.id)
+      renderCell: ({ row }) => {
+        return (
+          <>
+            <IconButton
+              size='small'
+              onClick={e => {
+                setSelectedUser(row)
+                handleClick(e)
               }}
-              sx={{ minWidth: '172px' }}
             >
-              <ListItemText>Edit</ListItemText>
-              <Icon icon='mdi:pencil' fontSize={24} />
-            </MenuItem>
-            <MenuItem
-              onClick={() => {
-                setModalShow(true)
-              }}
-              sx={{ minWidth: '172px' }}
-            >
-              <ListItemText>Delete</ListItemText>
-              <Icon icon='ic:baseline-delete-outline' fontSize={24} />
-            </MenuItem>
-          </Menu>
-        </Box>
-      )
+              <Icon icon='mdi:dots-vertical' />
+            </IconButton>
+          </>
+        )
+      }
     }
   ]
+
   const onDelete = () => {
     setBadgeData({
       message: `${selectedUser?.name} ${selectedUser?.surname} WAS DELETED SUCCESSFULLY`,
@@ -276,6 +336,7 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
 
   return (
     <>
+      <ModalActions />
       <ModalAction
         headingText={`Are you sure you want to delete ${selectedUser?.name} ${selectedUser?.surname}`}
         text='This user will no longer have access to the platform.'
@@ -283,6 +344,7 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
         handleClickContinue={() => {
           setModalShow(false)
           onDelete()
+          handleDelete()
         }}
         handleClickCancel={() => {
           setModalShow(false)
@@ -296,6 +358,7 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
         setModalShow={setModalShow}
       />
       <DataGrid
+        loading={loading}
         sx={{ textTransform: 'capitalize' }}
         autoHeight
         checkboxSelection
@@ -308,7 +371,10 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
           Pagination: CustomPagination
         }}
         className={'account-datagrid'}
-        onSelectionModelChange={rows => setSelectedRows(rows)}
+        onSelectionModelChange={rows => {
+          setSelectedRows(rows)
+          setIdMultiple(rows)
+        }}
       />
     </>
   )

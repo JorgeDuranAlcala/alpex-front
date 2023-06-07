@@ -5,26 +5,30 @@ import { useContext } from 'react'
 import { GridRowId } from '@mui/x-data-grid'
 
 // ** Context
-import EAccountsTableActionTypes from 'src/context/accounts/Table/actionTypes'
 import AccountsTableContext from 'src/context/accounts/Table/reducer'
 
 // ** Services
-import accountsService from 'src/services/accounts/information.service'
+import accountsService from 'src/services/accounts/account.service'
 
 // ** Custom utilities
-import { EStatus } from 'src/views/accounts/Table/Status'
+import { UpdateStatusArrayDto } from '@/services/accounts/dtos/account.dto'
+import { useAppDispatch, useAppSelector } from '@/store'
+import { IAccountsState } from '@/types/apps/accountsTypes'
+import { fetchAccounts } from 'src/store/apps/accounts'
 
 const useAccountTable = () => {
-  const { state, dispatch } = useContext(AccountsTableContext)
+  // **Reducers
+  const dispatchRedux = useAppDispatch()
+  const accountsReducer = useAppSelector(state => state.accounts)
+
+  const { state } = useContext(AccountsTableContext)
   const { accounts } = state
 
-  const getAccounts = async () => {
+  const getAccounts = async (usersData: IAccountsState, urlQ?: string) => {
     try {
-      const response = await accountsService.getAccounts()
-      dispatch({
-        type: EAccountsTableActionTypes.SET_ACCOUNTS,
-        payload: response
-      })
+      const response = await accountsService.getAccounts(usersData, urlQ)
+
+      return response
     } catch (error) {
       console.error(error)
     }
@@ -32,36 +36,32 @@ const useAccountTable = () => {
 
   const deleteAccounts = async (selectedRows: GridRowId[]) => {
     try {
-      //const response = await accountsService.getAccounts()
-      const newAccounts = accounts.filter(account => {
-        return !selectedRows.find(id => id === account.id)
-      })
-      dispatch({
-        type: EAccountsTableActionTypes.SET_ACCOUNTS,
-        payload: newAccounts
-      })
+      const response = await accountsService.deleteAccounts(selectedRows as number[])
+      dispatchRedux(fetchAccounts(accountsReducer))
+
+      return response
     } catch (error) {
       console.error(error)
     }
   }
 
-  const changeStatusAccounts = async (selectedRows: GridRowId[], status: EStatus) => {
+  const duplicateAccounts = async (selectedRows: GridRowId[]) => {
     try {
-      //const response = await accountsService.getAccounts()
-      const newAccounts = accounts.map(account => {
-        if (selectedRows.find(id => id === account.id)) {
-          return {
-            ...account,
-            status: status
-          }
-        }
+      const response = await accountsService.duplicateAccounts(selectedRows as number[])
+      dispatchRedux(fetchAccounts(accountsReducer))
 
-        return account
-      })
-      dispatch({
-        type: EAccountsTableActionTypes.SET_ACCOUNTS,
-        payload: newAccounts
-      })
+      return response
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  const changeStatusAccounts = async (updateStatus: UpdateStatusArrayDto) => {
+    try {
+      const response = await accountsService.updateAccountsStatus(updateStatus)
+      dispatchRedux(fetchAccounts(accountsReducer))
+
+      return response
     } catch (error) {
       console.error(error)
     }
@@ -71,6 +71,7 @@ const useAccountTable = () => {
     accounts,
     getAccounts,
     deleteAccounts,
+    duplicateAccounts,
     changeStatusAccounts
   }
 }

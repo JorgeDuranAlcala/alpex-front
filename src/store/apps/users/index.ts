@@ -28,7 +28,7 @@ export const fetchAccounts = createAsyncThunk('appUsersState/fetchUsers', async 
 })
 
 export const fetchAccountsTemporal = createAsyncThunk('appUsersState/fetchUsersTemporal', async () => {
-  const data = await UsersServices.getUsers({ ...initialState, info: { ...initialState.info, take: 49 } })
+  const data = await UsersServices.getUsers({ ...initialState, info: { ...initialState.info } })
 
   return data
 })
@@ -38,8 +38,10 @@ export const appUsersSlice = createSlice({
   initialState,
   reducers: {
     handleUsersFilter: (state, { payload }) => {
-      if (!state.filters.find(item => item.type === payload.type)) state.filters.push({ ...payload })
-      else {
+      if (!state.filters.find(item => item.type === payload.type)) {
+        state.filters.push({ ...payload })
+        state.info.page = 1
+      } else {
         state.filters = state.filters.map(item => {
           if (item.type === payload.type) {
             return { ...item, value: payload.value, text: payload.text }

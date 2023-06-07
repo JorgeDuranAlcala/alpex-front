@@ -1,6 +1,11 @@
 import { REINSURANCE_COMPANY_ROUTES } from 'src/configs/api'
 import { AppAlpexApiGateWay } from '../app.alpex.api-getway'
-import { ReinsuranceCompanyDto } from './dtos/ReinsuranceCompanyDto'
+import { queryBuilder } from '../helper/queryBuilder'
+import {
+  ReinsuranceCompanyDto,
+  ReinsuranceCompanysDeleteDto,
+  ReinsuranceCompanysPaginationDto
+} from './dtos/ReinsuranceCompanyDto'
 
 class ReinsuranceCompanyService {
   async getAll(): Promise<ReinsuranceCompanyDto[]> {
@@ -55,6 +60,32 @@ class ReinsuranceCompanyService {
     } catch (error) {
       const message = String(error)
       throw new Error(message)
+    }
+  }
+
+  async deleteReinsuranceCompany(reinsuranceCompanyDelete: Partial<ReinsuranceCompanysDeleteDto>) {
+    try {
+      const { data } = await AppAlpexApiGateWay.post(REINSURANCE_COMPANY_ROUTES.DELETE, {
+        ...reinsuranceCompanyDelete
+      })
+
+      return data
+    } catch (error) {
+      throw error
+    }
+  }
+
+  async getReinsuranceCompanyPagination(reinsuranceCompanyData: ReinsuranceCompanysPaginationDto, urlQ?: string) {
+    try {
+      const url = urlQ ? urlQ : queryBuilder(reinsuranceCompanyData.filters, `${REINSURANCE_COMPANY_ROUTES.GET}`)
+      const { data } = await AppAlpexApiGateWay.get(
+        `${url}&take=${reinsuranceCompanyData.info.take}&page=${reinsuranceCompanyData.info.page}`
+      )
+
+      return data
+    } catch (error) {
+      const errMessage = String(error)
+      throw new Error(errMessage)
     }
   }
 }

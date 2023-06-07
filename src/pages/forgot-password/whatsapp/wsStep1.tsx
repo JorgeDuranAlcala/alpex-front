@@ -54,7 +54,7 @@ const WSStep1 = ({ handleVariant }: WSStep1) => {
   return (
     <div className='buttons2'>
       <form autoComplete='off' onSubmit={handleSubmit(onSubmit)}>
-        <CountrySelect setSelectedCountry={setSelectedCountry}></CountrySelect>
+        <CountrySelect setSelectedCountry={setSelectedCountry} whatsApp></CountrySelect>
         <FormControl fullWidth sx={{ mt: 4 }}>
           <Controller
             name='number'
@@ -74,9 +74,9 @@ const WSStep1 = ({ handleVariant }: WSStep1) => {
                 error={Boolean(errors.number)}
                 sx={{
                   '& .MuiOutlinedInput-root.Mui-focused  .MuiOutlinedInput-notchedOutline': {
-                    borderColor: '#0D567B'
+                    borderColor: '#2535A8'
                   },
-                  '& .MuiInputLabel-root.Mui-focused': { color: '#0D567B' }
+                  '& .MuiInputLabel-root.Mui-focused': { color: '#2535A8' }
                 }}
               />
             )}
@@ -84,7 +84,15 @@ const WSStep1 = ({ handleVariant }: WSStep1) => {
           {errors.number && <FormHelperText sx={{ color: 'error.main' }}>Invalid number</FormHelperText>}
         </FormControl>
 
-        <Button type='submit' variant='contained' color='primary' size='large' fullWidth sx={{ mt: 4 }}>
+        <Button
+          type='submit'
+          variant='contained'
+          color='primary'
+          size='large'
+          fullWidth
+          sx={{ mt: 4 }}
+          style={{ backgroundColor: '#2535A8' }}
+        >
           CONTINUE
         </Button>
       </form>

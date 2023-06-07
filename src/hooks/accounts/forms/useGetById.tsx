@@ -1,20 +1,45 @@
 import { useEffect, useState } from 'react'
+
+import { InformationDto } from '@/services/accounts/dtos/information.dto'
+import { InstallmentDto } from '@/services/accounts/dtos/installments.dto'
+import { SecurityDto } from '@/services/accounts/dtos/security.dto'
+import { SecurityTotalDto } from '@/services/accounts/dtos/securityTotal.dto'
 import AccountServices from 'src/services/accounts/account.service'
 
-export const useGetAccountById = (id: number) => {
-  const [account, setAccount] = useState<any>()
+interface Response {
+  id: number
+  informations: InformationDto[]
+  securities: SecurityDto[]
+  securityTotal: SecurityTotalDto
+  installments: InstallmentDto[]
+}
+
+export const useGetAccountById = () => {
+  const [account, setAccount] = useState<Response>()
+  const [accountId, setAccountId] = useState<number | null>(null)
+
+  const getAccountById = async (idAccount: number): Promise<Response> => {
+    const account = await AccountServices.getAccountById(idAccount)
+
+    return account
+  }
 
   useEffect(() => {
-    AccountServices.getAccountById(id)
-      .then(accounts => {
-        setAccount(accounts)
-      })
-      .catch((error: Error) => {
-        throw error
-      })
-  }, [id])
+    if (accountId) {
+      AccountServices.getAccountById(accountId)
+        .then(accounts => {
+          setAccount(accounts)
+        })
+        .catch((error: Error) => {
+          console.log(error)
+        })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [accountId])
 
   return {
-    account
+    account,
+    setAccountId,
+    getAccountById
   }
 }

@@ -8,7 +8,7 @@ import { useRouter } from 'next/router'
 import CloseIcon from '@mui/icons-material/Close'
 import { Box, Button, Modal, Typography } from '@mui/material'
 import IconButton from '@mui/material/IconButton'
-import { DataGrid, GRID_CHECKBOX_SELECTION_COL_DEF, GridColumns, GridRowId } from '@mui/x-data-grid'
+import { DataGrid, GridColumns, GRID_CHECKBOX_SELECTION_COL_DEF } from '@mui/x-data-grid'
 import { ButtonClose, HeaderTitleModal } from 'src/styles/Dashboard/ModalReinsurers/modalReinsurers'
 
 // ** Icon Imports
@@ -17,23 +17,25 @@ import Icon from 'src/@core/components/icon'
 // ** Custom Hooks imports
 
 // ** Custom Components Imports
-import CustomPagination from '../CustomPagination'
+import CustomPagination from '../CustomPaginationImpl'
 import TableHeader from '../TableHeader'
 
 // ** Custom utilities
 import colors from 'src/views/accounts/colors'
 import fonts from 'src/views/accounts/font'
 
+import { useDeleteBroker } from '@/hooks/catalogs/broker/useDelete'
+import useGetAllPagination from '@/hooks/catalogs/broker/useGetAllPagination'
+
 export interface IBroker {
-  id: string
+  id: number
   name: string
 }
 
-
 const Table = () => {
   // ** State
-  const [selectedRows, setSelectedRows] = useState<GridRowId[]>([])
-  const [brokerList, setBrokerList] = useState<IBroker[]>([])
+  const [selectedRows, setSelectedRows] = useState<any>([])
+  const [brokerList, setBrokerList] = useState<any>([])
 
   const [openDelete, setOpenDelete] = useState(false)
   const [openDeleteRows, setOpenDeleteRows] = useState(false)
@@ -41,12 +43,18 @@ const Table = () => {
 
   const router = useRouter()
 
-  // const [badgeData] = useState<IAlert>({
-  //   message: '',
-  //   status: undefined,
-  //   icon: undefined
-  // })
+  //hooks
+  const { brokerPagination, setBrokerPagination, brokers, getBrokersPagination, brokerInfoPage } = useGetAllPagination()
+  const { deleteBroker: deleteBrokers } = useDeleteBroker()
 
+  useEffect(() => {
+    setBrokerPagination({ ...brokerPagination })
+    //eslint-disable-next-line
+  }, [])
+
+  useEffect(() => {
+    setBrokerList(brokers || [])
+  }, [brokers])
 
   const column: GridColumns<IBroker> = [
     {
@@ -63,7 +71,7 @@ const Table = () => {
       disableColumnMenu: true,
       sortable: false,
       headerClassName: 'catalogue-column-header',
-      renderHeader: ({ }) => (
+      renderHeader: ({}) => (
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative' }}>
           <Typography
             component={'span'}
@@ -71,8 +79,8 @@ const Table = () => {
           >
             BROKER NAME
           </Typography>
-
-        </Box>),
+        </Box>
+      ),
       renderCell: ({ row }) => (
         <Typography sx={{ color: colors.text.secondary, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
           {row.name}
@@ -88,7 +96,7 @@ const Table = () => {
       align: 'right',
       disableColumnMenu: true,
       cellClassName: 'catalogue-column-cell-pl-0',
-      renderHeader: ({ }) => (
+      renderHeader: ({}) => (
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative' }}>
           <Typography
             component={'span'}
@@ -96,12 +104,18 @@ const Table = () => {
           >
             ACTIONS
           </Typography>
-
-        </Box>),
+        </Box>
+      ),
 
       renderCell: ({ row }) => (
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', }}>
-          <IconButton size='small' sx={{ mr: 1 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+          <IconButton
+            size='small'
+            sx={{ mr: 1 }}
+            onClick={() => {
+              handleSelectBrokerEdit(row.id)
+            }}
+          >
             <Icon icon='ic:baseline-login' />
           </IconButton>
           <IconButton
@@ -118,29 +132,33 @@ const Table = () => {
     }
   ]
 
-  const getBrokerList = () => { //must be replaced with the respective broker service
-    const data: IBroker[] = []
+  const handleSelectBrokerEdit = (id: number | null) => {
+    router.push({ pathname: '/catalogues/dynamic/add-broker', query: { id } })
+  }
 
-    for (let index = 1; index <= 100; index++) {
-      const id = index.toString()
-      const name = `Broker ${index}`
-
-      data.push({
-        id,
-        name
+  const searchBrokers = (value: string) => {
+    if (value === '') {
+      setBrokerPagination({
+        ...brokerPagination,
+        filters: [],
+        info: { ...brokerPagination.info, page: 1 }
+      })
+    } else {
+      setBrokerPagination({
+        ...brokerPagination,
+        filters: [{ type: 'name', value: value, text: value }],
+        info: { ...brokerPagination.info, page: 1 }
       })
     }
-
-    return data
   }
 
-  const searchBrokers = (value: string) => { //must be replaced with the respective broker service
-    console.log("Call search service", value)
-  }
-
-  const deleteRows = () => { //must be replaced with the respective broker service
-    console.log('Call to delete rows service', selectedRows)
-    setOpenDelete(false)
+  const deleteRows = async () => {
+    const result = await deleteBrokers({ idDeleteList: selectedRows })
+    if (result) {
+      console.log('success')
+      getBrokersPagination({ ...brokerPagination })
+    }
+    setOpenDeleteRows(false)
   }
 
   const openDeleteModal = (id: number) => {
@@ -148,28 +166,36 @@ const Table = () => {
     setOpenDelete(true)
   }
 
-  const deleteSingleBroker = () => {  //must be replaced with the respective broker service
-    const newBrokerList = brokerList.filter(broker => broker.id !== brokerToDelete.toString())
-    setBrokerList(newBrokerList)
+  const deleteSingleBroker = async () => {
+    const result = await deleteBrokers({ idDeleteList: [brokerToDelete] })
+    if (result) {
+      //it needs an alert o message
+      console.log('success')
+      getBrokersPagination({ ...brokerPagination })
+    }
     setOpenDelete(false)
   }
 
-  useEffect(() => {
-    setBrokerList(getBrokerList)
-    //eslint-disable-next-line
-  }, [])
-
+  const handleDispatch = (e: any, value: number) => {
+    setBrokerPagination({
+      ...brokerPagination,
+      info: { ...brokerPagination.info, page: value }
+    })
+  }
 
   return (
     <>
       <div className='outter-wrapper'>
-      <TableHeader
-            onDeleteRows={() => { setOpenDeleteRows(true) }}
-            onSearch={searchBrokers}
-            textBtn="ADD NEW BROKER"
-            onClickBtn={() => router.push('/catalogues/dynamic/add-broker')} />
+        <TableHeader
+          onDeleteRows={() => {
+            setOpenDeleteRows(true)
+          }}
+          deleteBtn={selectedRows.length > 0 ? true : false}
+          onSearch={searchBrokers}
+          textBtn='ADD NEW BROKER'
+          onClickBtn={() => router.push('/catalogues/dynamic/add-broker')}
+        />
         <div className='broker-list'>
-
           <DataGrid
             autoHeight
             checkboxSelection
@@ -181,11 +207,13 @@ const Table = () => {
             components={{
               Pagination: CustomPagination
             }}
+            componentsProps={{
+              pagination: { handleDispatch, infoPage: { ...brokerInfoPage } }
+            }}
             className={'catalogue-datagrid'}
             onSelectionModelChange={rows => setSelectedRows(rows)}
           />
         </div>
-
       </div>
 
       <Modal
@@ -197,7 +225,7 @@ const Table = () => {
       >
         <Box className='modal-wrapper'>
           <HeaderTitleModal>
-            <Typography variant='h6'>Are you sure you want to delete this account?</Typography>
+            <Typography variant='h6'>Are you sure you want to delete this broker?</Typography>
             <ButtonClose
               onClick={() => {
                 setOpenDelete(false)
@@ -230,7 +258,9 @@ const Table = () => {
       >
         <Box className='modal-wrapper'>
           <HeaderTitleModal>
-            <Typography variant='h6' sx={{ maxWidth: "450px" }}>Are you sure you want to delete the selected Brokers?</Typography>
+            <Typography variant='h6' sx={{ maxWidth: '450px' }}>
+              Are you sure you want to delete the selected Brokers?
+            </Typography>
             <ButtonClose
               onClick={() => {
                 setOpenDeleteRows(false)
@@ -253,7 +283,6 @@ const Table = () => {
           </Button>
         </Box>
       </Modal>
-
     </>
   )
 }

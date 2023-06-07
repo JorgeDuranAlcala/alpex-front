@@ -31,7 +31,7 @@ const Users = () => {
 
   const tabsInfoMock: ITabsInfo[] = [
     {
-      label: 'Accounts',
+      label: 'Users',
       active: true,
       component: (
         <>
@@ -40,21 +40,21 @@ const Users = () => {
       )
     },
     {
-      label: 'New accounts',
+      label: 'New user',
       active: true,
       component: (
         <>
-          <AddUser selectUser={false} />
+          <AddUser selectUser={false} title={'Add User'} subTitle={'add user'} />
         </>
       )
     },
     {
-      label: 'Edit accounts',
+      label: 'Edit User',
       active: true,
       isDeleteable: true,
       component: (
         <>
-          <AddUser selectUser={true} />
+          <AddUser selectUser={true} title={'User Details'} subTitle={'edit user'} />
         </>
       )
     }
@@ -76,7 +76,7 @@ const Users = () => {
           tabsInfo={tabsInfo}
         />
 
-        <Card sx={{ minHeight: '100%', padding: '16px' }}>
+        <Card sx={{ minHeight: '100%' }}>
           <TabMenu value={value} tabsInfo={tabsInfo} />
         </Card>
       </Grid>

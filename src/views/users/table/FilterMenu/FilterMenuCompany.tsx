@@ -1,11 +1,12 @@
 // ** MUI Imports
+import { useGetAllCompanies } from '@/hooks/catalogs/company/getAllCompanies'
 import Box from '@mui/material/Box'
 import ListItemText from '@mui/material/ListItemText'
 import MenuItem from '@mui/material/MenuItem'
 import Typography from '@mui/material/Typography'
-import { useEffect, useState } from 'react'
-import { useAppDispatch, useAppSelector } from 'src/store'
-import { fetchAccountsTemporal, handleUsersFilter } from 'src/store/apps/users'
+
+import { useAppDispatch } from 'src/store'
+import { handleUsersFilter } from 'src/store/apps/users'
 
 // ** Icon Imports
 
@@ -13,13 +14,16 @@ import { fetchAccountsTemporal, handleUsersFilter } from 'src/store/apps/users'
 import colors from 'src/views/accounts/colors'
 import fonts from 'src/views/accounts/font'
 
-interface IFilterMenuUsersOptionProps {
-  Company: IOption
+interface IOptionCompany {
+  id: number
+  name: string
+  special?: boolean
+  alias?: string
+  idSubscriptionType?: number
 }
 
-interface IOption {
-  label: string
-  value: number
+interface IFilterMenuUsersOptionProps {
+  Company: IOptionCompany
 }
 
 const FilterMenuUsersOption: React.FC<IFilterMenuUsersOptionProps> = ({ Company }) => {
@@ -28,8 +32,8 @@ const FilterMenuUsersOption: React.FC<IFilterMenuUsersOptionProps> = ({ Company 
     dispatch(
       handleUsersFilter({
         type: 'idCompany',
-        value: Company.value,
-        text: Company.label
+        value: Company.id,
+        text: Company.name
       })
     )
   }
@@ -46,7 +50,7 @@ const FilterMenuUsersOption: React.FC<IFilterMenuUsersOptionProps> = ({ Company 
               textTransform: 'capitalize'
             }}
           >
-            {Company.label}
+            {Company.name}
           </Typography>
         </ListItemText>
       </MenuItem>
@@ -55,44 +59,47 @@ const FilterMenuUsersOption: React.FC<IFilterMenuUsersOptionProps> = ({ Company 
 }
 
 const FilterMenuCompany = ({}) => {
-  const dispatch = useAppDispatch()
-  const usersReducer = useAppSelector(state => state.users)
-  const [companies, setCompanies] = useState<IOption[]>([])
+  const { company } = useGetAllCompanies()
 
-  useEffect(() => {
-    dispatch(fetchAccountsTemporal())
-    //eslint-disable-next-line
-    //eslint-disable-next-line
-  }, [])
+  // const dispatch = useAppDispatch()
 
-  useEffect(() => {
-    const data = usersReducer.temporalFilters
-    const unique = [
-      ...new Set(
-        data.map(item => {
-          return {
-            label: item.idCompany.alias,
-            value: item.idCompany.id
-          }
-        })
-      )
-    ]
-    console.log(unique, data)
-    setCompanies(unique)
-    //eslint-disable-next-line
-  }, [usersReducer])
+  // const usersReducer = useAppSelector(state => state.users)
+  // const [companies, setCompanies] = useState<IOption[]>([])
+
+  // useEffect(() => {
+  //   dispatch(fetchAccountsTemporal())
+  //   //eslint-disable-next-line
+  //   //eslint-disable-next-line
+  // }, [])
+
+  // useEffect(() => {
+  //   const data = usersReducer.temporalFilters
+  //   const unique = [
+  //     ...new Set(
+  //       data.map(item => {
+  //         return {
+  //           label: item.idCompany?.alias,
+  //           value: item.idCompany?.id
+  //         }
+  //       })
+  //     )
+  //   ]
+  //   console.log(unique, data)
+  //   setCompanies(unique)
+  //   //eslint-disable-next-line
+  // }, [usersReducer])
 
   return (
     <>
       <Box component={'li'} sx={{ padding: '10px 10px', display: 'block', width: '100%', borderRadius: '0' }}>
         <Box sx={{ display: 'flex' }}>
           <Typography sx={{ color: colors.text.secondary, fontSize: fonts.size.px12, fontFamily: fonts.inter }}>
-            User role
+            Company
           </Typography>
         </Box>
       </Box>
-      {companies.map(company => (
-        <FilterMenuUsersOption key={company.value} Company={company} />
+      {company?.map((company, index) => (
+        <FilterMenuUsersOption key={index} Company={company} />
       ))}
     </>
   )

@@ -1,6 +1,7 @@
 import { RETRO_CEDANT_ROUTES } from 'src/configs/api'
 import { AppAlpexApiGateWay } from '../app.alpex.api-getway'
-import { RetroCedantDto } from './dtos/RetroCedantDto'
+import { queryBuilder } from '../helper/queryBuilder'
+import { RetroCedantDto, RetroCedantsDeleteDto, RetroCedantsPaginationDto } from './dtos/RetroCedantDto'
 
 class RetroCedantService {
   async getAll(): Promise<RetroCedantDto[]> {
@@ -48,6 +49,32 @@ class RetroCedantService {
     } catch (error) {
       const message = String(error)
       throw new Error(message)
+    }
+  }
+
+  async deleteRetroCedants(retroCedantsDelete: Partial<RetroCedantsDeleteDto>) {
+    try {
+      const { data } = await AppAlpexApiGateWay.post(RETRO_CEDANT_ROUTES.DELETE, {
+        ...retroCedantsDelete
+      })
+
+      return data
+    } catch (error) {
+      throw error
+    }
+  }
+
+  async getRetroCedantsPagination(retroCedantData: RetroCedantsPaginationDto, urlQ?: string) {
+    try {
+      const url = urlQ ? urlQ : queryBuilder(retroCedantData.filters, `${RETRO_CEDANT_ROUTES.GET}`)
+      const { data } = await AppAlpexApiGateWay.get(
+        `${url}&take=${retroCedantData.info.take}&page=${retroCedantData.info.page}`
+      )
+
+      return data
+    } catch (error) {
+      const errMessage = String(error)
+      throw new Error(errMessage)
     }
   }
 }

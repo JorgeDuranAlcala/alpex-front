@@ -1,1 +1,6 @@
 export * from './useAdd'
+export * from './useDeleteFile'
+export * from './useFindByIdAccount'
+export * from './useGetFiles'
+export * from './useUpdate'
+export * from './useUploadFile'
