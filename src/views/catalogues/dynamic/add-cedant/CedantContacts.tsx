@@ -120,12 +120,7 @@ const CedantContacts = ({ idCedant }: ICedantContacts) => {
   } = useGetAllByIdCedantAndPagination()
 
   useEffect(() => {
-    setCedantContactsPagination({ ...cedantContactsPagination, idCCedant: idCedant })
-    //eslint-disable-next-line
-  }, [])
-
-  useEffect(() => {
-    setCedantContactsPagination({ ...cedantContactsPagination, idCCedant: idCedant })
+    idCedant != 0 && setCedantContactsPagination({ ...cedantContactsPagination, idCCedant: idCedant })
     //eslint-disable-next-line
   }, [idCedant])
 
