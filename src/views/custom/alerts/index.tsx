@@ -1,4 +1,5 @@
 import { Alert } from '@mui/material'
+import { useState } from 'react'
 
 export interface IAlert {
   status: 'success' | 'error' | 'secondary' | 'warning' | undefined
@@ -26,16 +27,19 @@ const customTheme = {
 }
 
 const CustomAlert = (props: IAlert) => {
+  const [open, setOpen] = useState(props.open || false)
+
   return (
     <>
       <Alert
+        onClose={() => setOpen(false)}
         sx={{
           backgroundColor: props.theme ? customTheme[props.theme] || '' : props.backgroundColor,
           color: props.fontColor,
           fontWeight: 500,
           margin: '0.5rem',
           marginTop: '-2rem',
-          visibility: props.open ? 'visible' : 'hidden'
+          visibility: open ? 'visible' : 'hidden'
         }}
         icon={props.icon || ''}
       >

@@ -1,4 +1,3 @@
-import { useLocalStorage } from '@/hooks/useLocalStorage'
 import { useEffect, useState } from 'react'
 
 import { InformationDto } from '@/services/accounts/dtos/information.dto'
@@ -18,18 +17,16 @@ interface Response {
 export const useGetAccountById = () => {
   const [account, setAccount] = useState<Response>()
   const [accountId, setAccountId] = useState<number | null>(null)
-  const [jwtToken] = useLocalStorage('accessToken', false)
 
   const getAccountById = async (idAccount: number): Promise<Response> => {
-    const token = localStorage.getItem('accessToken')
-    const account = await AccountServices.getAccountById(idAccount, jwtToken ?? token)
+    const account = await AccountServices.getAccountById(idAccount)
 
     return account
   }
 
   useEffect(() => {
     if (accountId) {
-      AccountServices.getAccountById(accountId, jwtToken)
+      AccountServices.getAccountById(accountId)
         .then(accounts => {
           setAccount(accounts)
         })

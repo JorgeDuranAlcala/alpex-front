@@ -110,7 +110,8 @@ export enum TYPE_OF_LIMIT_ROUTES {
   GET_ALL = 'catalogs/typeOfLimit/all',
   GET_BY_ID = 'catalogs/typeOfLimit',
   ADD = 'catalogs/typeOfLimit/add',
-  UPDATE = 'catalogs/typeOfLimit'
+  UPDATE = 'catalogs/typeOfLimit',
+  DELETE = 'catalogs/typeOfLimit'
 }
 
 export enum CURRENCY_ROUTES {

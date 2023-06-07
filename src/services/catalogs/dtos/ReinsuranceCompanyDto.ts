@@ -1,7 +1,7 @@
 export interface ReinsuranceCompanyDto {
   id: number
   name: string
-  special?: boolean
+  special: boolean
   alias?: string
   idSubscriptionType?: number
 }
