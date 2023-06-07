@@ -26,6 +26,7 @@ import { useAppDispatch, useAppSelector } from 'src/store'
 import { updateFormsData } from 'src/store/apps/accounts'
 
 // ** Utils
+import { formatUTC } from '@/utils/formatDates'
 import { formatInformationDoctos, getFileFromUrl } from '@/utils/formatDoctos'
 
 type InformationProps = {
@@ -81,6 +82,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   const inter = userThemeConfig.typography?.fontFamilyInter
   const [makeValidations, setMakeValidations] = useState(false)
   const [makeValidationsPlacement, setMakeValidationsPlacement] = useState(false)
+  const [changeTitle, setChangeTitle] = useState(false)
 
   //Validaciones
   const [basicInfoValidated, setbasicInfoValidated] = useState(false)
@@ -206,7 +208,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   }
 
   const saveInformation = async () => {
-    const res = await addInformation({
+    const dataToSave = {
       insured: basicInfo.insured,
       idCountry: Number(basicInfo.country),
       idBroker: Number(basicInfo.broker),
@@ -221,9 +223,9 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
       cedantContactCountry: basicInfo.cedantContactCountry,
       idLineOfBussines: Number(basicInfo.lineOfBusiness),
       idRiskActivity: Number(basicInfo.industryCode),
-      effectiveDate: basicInfo.effectiveDate,
-      expirationDate: basicInfo.expirationDate,
-      receptionDate: basicInfo.receptionDate,
+      receptionDate: formatUTC(basicInfo.receptionDate),
+      effectiveDate: formatUTC(basicInfo.effectiveDate),
+      expirationDate: formatUTC(basicInfo.expirationDate),
       idLeadUnderwriter: Number(basicInfo.leadUnderwriter),
       idTechnicalAssistant: Number(basicInfo.technicalAssistant),
       idUnderwriter: Number(basicInfo.underwriter),
@@ -244,7 +246,10 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
       totalValues: placementStructure.total,
       idTypeOfLimit: Number(placementStructure.typeOfLimit),
       step: 1
-    })
+    }
+
+    const res = await addInformation(dataToSave)
+
     if (typeof res === 'string' && res === 'error') {
       setBadgeData({
         message: 'Error saving data',
@@ -431,6 +436,12 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
     setPlacementStructureValidated(valid)
   }
 
+  const onSubmittedFiles = (change: boolean) => {
+    console.log("submited files")
+    console.log(change)
+    setChangeTitle(change)
+  }
+
   useEffect(() => {
     const idAccountCache = Number(localStorage.getItem('idAccount'))
     dispatch(updateFormsData({ form1: { ...lastForm1Information, id: idAccountCache } }))
@@ -541,8 +552,13 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
           </div>
 
           <div className='section'>
-            <div className='title'>File submit</div>
-            <FileSubmit userFile={userFile} setUserFile={setUserFile} setUserFileToDelete={setUserFileToDelete} />
+            <div className='title'>{changeTitle ? "Submited files" : "File submit"}</div>
+            <FileSubmit
+              userFile={userFile}
+              setUserFile={setUserFile}
+              setUserFileToDelete={setUserFileToDelete}
+              changeTitle={onSubmittedFiles}
+            />
           </div>
           <div className='section action-buttons'>
             <Button
