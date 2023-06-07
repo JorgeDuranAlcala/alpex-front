@@ -208,7 +208,7 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
   const handleChangeRetroCedantContact = (e: SelectChangeEvent<string>) => {
     const selectedRetroCendantContactId = e.target.value
     const retroCedantContact = retroCedantContacts?.find(
-      retroCedantContact => retroCedantContact.id === selectedRetroCendantContactId
+      retroCedantContact => retroCedantContact.id === Number(selectedRetroCendantContactId)
     )
     const tempSecurities = [...securities]
 
