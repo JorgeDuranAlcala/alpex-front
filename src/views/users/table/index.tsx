@@ -71,9 +71,12 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
   const [selectedRows, setSelectedRows] = useState<GridRowId[]>([])
   const [accounts, setAccounts] = useState<any>([])
   const [loading, setLoading] = useState<any>([])
-  const [selectedUser, setSelectedUser] = useState<IUsersGrid | null>(null)
+  const [selectedUser, setSelectedUser] = useState<IUsersGrid | null>()
   const [modalShow, setModalShow] = useState<boolean>(false)
   const [idMultiple, setIdMultiple] = useState<any>([])
+
+  // console.log({ selectedRows })
+  // console.log({ idMultiple })
 
   //WIP
   //eslint-disable-next-line
@@ -123,11 +126,8 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
   }
 
   const handleDelete = () => {
-    if (selectedRows.length > 1) {
-      deleteUser({ idUsersList: idMultiple })
-    } else {
-      deleteUser({ idUsersList: [selectedUser!.id] })
-    }
+    deleteUser({ idUsersList: idMultiple })
+
     setTimeout(() => {
       dispatch(fetchAccounts(usersReducer))
     }, 50)
