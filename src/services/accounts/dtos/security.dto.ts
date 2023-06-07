@@ -74,6 +74,7 @@ export type FormSecurity = {
   recievedNetPremium: number
   distribuitedNetPremium: number
   diference: number
+  id?: number
 }
 
 export type errorsSecurity = {
@@ -90,4 +91,18 @@ export type errorsSecurity = {
   taxesAmount: string
   netReinsurancePremium: string
   idCReinsuranceCompany: string
+  idCRetroCedant: string
+  idCRetroCedantContact: string
+}
+export type SecurityContextDto = {
+  securities: SecurityDto[]
+  allErrors: boolean[]
+  information: FormInformation
+  companiesSelect: number[]
+  setSecurities: React.Dispatch<React.SetStateAction<SecurityDto[]>>
+  setAllErrors: React.Dispatch<React.SetStateAction<boolean[]>>
+  calculateSecurities: (securities: SecurityDto[]) => void
+}
+export type SecurityProps = {
+  onStepChange: (step: number) => void
 }

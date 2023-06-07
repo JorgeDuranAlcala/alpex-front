@@ -40,13 +40,15 @@ const initialErrorValues: errorsSecurity = {
   taxes: '',
   taxesAmount: '',
   netReinsurancePremium: '',
-  idCReinsuranceCompany: ''
+  idCReinsuranceCompany: '',
+  idCRetroCedantContact: '',
+  idCRetroCedant: ''
 }
 export const FormSection = ({ index, security }: FormSectionProps) => {
-  console.log({ security, index })
   const [isGross, setIsGross] = useState<boolean>(security?.isGross)
 
   const [errorsSecurity, setErrorsSecurity] = useState<errorsSecurity>(initialErrorValues)
+
   const [frontingFeeEnabled, setFrontingFeeEnabled] = useState(security.frontingFeeActive || false)
   const { securities, setSecurities, allErrors, setAllErrors, information, companiesSelect, calculateSecurities } =
     useContext(SecurityContext)
@@ -56,6 +58,36 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
   const { retroCedants } = useGetAllRetroCedants()
   const { retroCedantContacts, setIdRetroCedant } = useGetAllByIdRetroCedant()
   const { countries } = useGetAllCountries()
+  const operationSecurity: CalculateSecurity = new CalculateSecurity().setInformation(information).setSecurity(security)
+  const schemaRetrocedant = yup.object().shape({
+    idCRetroCedant: yup
+      .object()
+      .shape({
+        id: yup.number().nullable().notRequired(),
+        name: yup.string().nullable().notRequired()
+      })
+      .test('', 'This field is required', value => {
+        if (frontingFeeEnabled && value && typeof value === 'object') {
+          return value.hasOwnProperty('id')
+        }
+
+        return true
+      }),
+
+    idCRetroCedantContact: yup
+      .object()
+      .shape({
+        id: yup.number().nullable().notRequired(),
+        name: yup.string().nullable().notRequired()
+      })
+      .test('', 'This field is required', value => {
+        if (frontingFeeEnabled && value && typeof value === 'object') {
+          return value.hasOwnProperty('id')
+        }
+
+        return true
+      })
+  })
   const schema = yup.object().shape({
     netPremiumAt100: yup
       .number()
@@ -89,22 +121,21 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
       .number()
       .transform((_, val) => (val === Number(val) ? val : null))
       .required('This field is required')
-
       .max(100),
     brokerAgeAmount: yup
       .number()
       .transform((_, val) => (val === Number(val) ? val : null))
       .test('', 'This field is required', value => {
         const val = value || 0
+        if (isGross) return +val > 0
 
-        return +val > 0
-      })
-      .required('This field is required'),
+        return true
+      }),
+
     dynamicCommission: yup
       .number()
       .transform((_, val) => (val === Number(val) ? val : null))
       .required('This field is required')
-
       .max(100),
     dynamicCommissionAmount: yup
       .number()
@@ -129,8 +160,9 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
       .transform((_, val) => (val === Number(val) ? val : null))
       .test('', 'This field is required', value => {
         const val = value || 0
+        if (isGross) return +val > 0
 
-        return +val > 0
+        return true
       })
       .required('This field is required'),
     taxes: yup
@@ -145,21 +177,22 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
       .min(1, 'The number must be greater than 0!')
   })
 
-  const operationSecurity: CalculateSecurity = new CalculateSecurity().setInformation(information).setSecurity(security)
   const handleSwitch = () => {
-    setFrontingFeeEnabled(state => !state)
-
     const tempSecurities = [...securities]
     tempSecurities[index] = {
       ...tempSecurities[index],
       idCRetroCedant: {} as RetroCedantDto,
-      idCRetroCedantContact: {} as RetroCedantContactDto
+      idCRetroCedantContact: {} as RetroCedantContactDto,
+      frontingFeeActive: !frontingFeeEnabled
     }
-    setSecurities(tempSecurities)
+    setFrontingFeeEnabled(state => !state)
+
+    validateForm(tempSecurities[index])
+    calculateSecurities(tempSecurities)
   }
   const handleChangeRetroCedant = (e: SelectChangeEvent<string>) => {
     const selectedRetroCendantId = e.target.value
-    const retroCedant = retroCedants?.find(retroCedant => retroCedant.id === selectedRetroCendantId)
+    const retroCedant = retroCedants?.find(retroCedant => retroCedant.id === Number(selectedRetroCendantId))
     const tempSecurities = [...securities]
     if (retroCedant) {
       tempSecurities[index] = {
@@ -169,6 +202,7 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
       }
       setSecurities(tempSecurities)
       setIdRetroCedant(retroCedant.id)
+      validateForm(tempSecurities[index])
     }
   }
   const handleChangeRetroCedantContact = (e: SelectChangeEvent<string>) => {
@@ -182,6 +216,7 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
       ...tempSecurities[index],
       idCRetroCedantContact: retroCedantContact ? retroCedantContact : ({} as RetroCedantContactDto)
     }
+    validateForm(tempSecurities[index])
     setSecurities(tempSecurities)
   }
   const handleChangeBaseAmount = (e: ChangeEvent<HTMLInputElement>) => {
@@ -294,19 +329,34 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
       tempSecurities[index] = {
         ...tempSecurities[index],
         idCReinsuranceCompany: avaliableCompanies,
-        isGross: avaliableCompanies.special
+        frontingFeeActive: avaliableCompanies.special,
+
+        isGross: avaliableCompanies.special,
+        netPremiumAt100: avaliableCompanies.special ? information.grossPremium : information.netPremium
       }
+
+      setFrontingFeeEnabled(() => false)
       calculateSecurities(tempSecurities)
     }
   }
-  const validateForm = (security: SecurityDto) => {
+  const validateForm = (securityParam: SecurityDto) => {
     let data = { ...initialErrorValues }
 
-    schema
-      .validate(security, { abortEarly: false })
+    const errorsTemp = [...allErrors]
+    errorsTemp[index] = false
+    let combinedSchema = yup.object().shape({
+      ...schema.fields
+    })
+
+    // Combinar los esquemas
+    if (frontingFeeEnabled)
+      combinedSchema = yup.object().shape({
+        ...schema.fields,
+        ...schemaRetrocedant.fields
+      })
+    combinedSchema
+      .validate(securityParam, { abortEarly: false })
       .then(function () {
-        const errorsTemp = [...allErrors]
-        errorsTemp[index] = false
         setAllErrors(errorsTemp)
         setErrorsSecurity(initialErrorValues)
       })
@@ -318,10 +368,10 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
           }
         }
 
-        setErrorsSecurity(data)
-        const errorsTemp = [...allErrors]
         errorsTemp[index] = true
         setAllErrors(errorsTemp)
+
+        setErrorsSecurity(data)
 
         //setEnableNextStep(false)
       })
@@ -339,10 +389,13 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
     setAvaliableReinsurers(companies || [])
   }, [reinsuranceCompany])
   useEffect(() => {
-    validateForm(security)
-    setIsGross(security.isGross)
+    if (security?.id) {
+      setIdRetroCedant(security.idCRetroCedant?.id)
+      setIsGross(security.isGross)
+      validateForm(security)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [security])
-  console.log({ avaliableReinsurers, security })
 
   return (
     <div>
@@ -588,7 +641,6 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
                 inputComponent: NumericFormatCustom as any
               }}
               disabled={true}
-              onChange={e => console.log(e)}
             />
 
             <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
@@ -610,7 +662,9 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
                   </MenuItem>
                 ))}
               </Select>
-              <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>Error</FormHelperText>
+              <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
+                {errorsSecurity.idCRetroCedant}
+              </FormHelperText>
             </FormControl>
           ) : (
             <></>
@@ -631,7 +685,9 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
                   </MenuItem>
                 ))}
               </Select>
-              <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>Error</FormHelperText>
+              <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
+                {errorsSecurity.idCRetroCedantContact}
+              </FormHelperText>
             </FormControl>
           ) : (
             <></>
@@ -663,7 +719,6 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
                 <InputLabel id='Contactcountry'>Contact country</InputLabel>
                 <Select
                   id='outlined-Name'
-                  onChange={e => console.log(e)}
                   label='Contact country'
                   value={security.idCRetroCedantContact?.idCCountry ?? ''}
                   labelId='Contactcountry'

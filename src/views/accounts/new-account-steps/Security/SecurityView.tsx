@@ -1,5 +1,13 @@
 import { useGetAccountById } from '@/hooks/accounts/forms'
-import { FormInformation, FormSecurity, SecurityDto } from '@/services/accounts/dtos/security.dto'
+import { useAddSecurities, useUpdateSecurities } from '@/hooks/accounts/security'
+import { useAddSecurityTotal, useUpdateSecurityTotalById } from '@/hooks/accounts/securityTotal'
+import {
+  FormInformation,
+  FormSecurity,
+  SecurityContextDto,
+  SecurityDto,
+  SecurityProps
+} from '@/services/accounts/dtos/security.dto'
 import { useAppSelector } from '@/store'
 import { Title } from '@/styled-components/accounts/Security.styled'
 import { ButtonClose, HeaderTitleModal } from '@/styles/modal/modal.styled'
@@ -22,19 +30,12 @@ import Icon from 'src/@core/components/icon'
 import UserThemeOptions from 'src/layouts/UserThemeOptions'
 import { CalculateSecurity } from './utils/calculates-securities'
 
-type SecurityContextDto = {
-  securities: SecurityDto[]
-  allErrors: boolean[]
-  information: FormInformation
-  companiesSelect: number[]
-  setSecurities: React.Dispatch<React.SetStateAction<SecurityDto[]>>
-  setAllErrors: React.Dispatch<React.SetStateAction<boolean[]>>
-  calculateSecurities: (securities: SecurityDto[]) => void
-}
 export const SecurityContext = createContext<SecurityContextDto>({} as SecurityContextDto)
-const Security = () => {
+
+const Security = ({ onStepChange }: SecurityProps) => {
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
   const [securities, setSecurities] = useState<SecurityDto[]>([])
+  const [isNextStep, setIsNextStep] = useState<boolean>(false)
   const [allFormData, setAllFormData] = useState<FormSecurity>({
     formData: [],
     recievedNetPremium: 0,
@@ -43,13 +44,18 @@ const Security = () => {
   })
   const [allErrors, setAllErrors] = useState<boolean[]>([])
 
+  const [open, setOpen] = useState<boolean>(false)
   const [information, setInformation] = useState<FormInformation>({
     frontingFee: 0,
     netPremium: 0,
     grossPremium: 0
   })
-  const [companiesSelect, setCompaniesSelect] = useState<number[]>([])
-  const { account, setAccountId, getAccountById } = useGetAccountById()
+  const [companiesSelect] = useState<number[]>([])
+  const { account, setAccountId } = useGetAccountById()
+  const { saveSecurityTotal } = useAddSecurityTotal()
+  const { updateSecurityTotal } = useUpdateSecurityTotalById()
+  const { updateSecurities } = useUpdateSecurities()
+  const { saveSecurities } = useAddSecurities()
   const accountData = useAppSelector(state => state.accounts)
   const inter = userThemeConfig.typography?.fontFamilyInter
   const [badgeData, setBadgeData] = useState<IAlert>({
@@ -63,7 +69,10 @@ const Security = () => {
     if (account && information) {
       const tempSecurities = []
       companiesSelect.splice(0, companiesSelect.length)
+      allErrors.splice(0, allErrors.length)
+
       for (const security of securities) {
+        allErrors.push(false)
         const operationSecurity: CalculateSecurity = new CalculateSecurity()
           .setInformation(information)
           .setSecurity(security)
@@ -88,12 +97,11 @@ const Security = () => {
           taxes: Number(security.taxes) || 0
         })
       }
-
       setAllFormData({
         formData: tempSecurities,
-        ...CalculateSecurity.getData(tempSecurities, information)
+        ...CalculateSecurity.getData(tempSecurities, information),
+        id: account.securityTotal.id
       })
-
       setSecurities(tempSecurities)
     }
   }
@@ -101,6 +109,128 @@ const Security = () => {
     const securityNew = {} as SecurityDto
     calculateSecurities([...securities, securityNew])
   }
+  const handleNextStep = () => {
+    setOpen(true)
+  }
+  const handleCloseModal = () => {
+    setOpen(false)
+  }
+  const onNextStep = () => {
+    setIsNextStep(true)
+    handleCloseModal()
+  }
+  const SaveData = async () => {
+    const isError = allErrors.find(error => error)
+
+    if (!isError) {
+      const update: Partial<SecurityDto>[] = []
+      const save: Partial<SecurityDto>[] = []
+      debugger
+      for (const security of securities) {
+        const mapper = {
+          netPremiumAt100: security.netPremiumAt100,
+          share: security.share,
+          frontingFeeActive: security.frontingFeeActive,
+          dynamicCommission: security.dynamicCommission,
+          frontingFee: security.frontingFee,
+          netReinsurancePremium: security.netReinsurancePremium,
+          taxes: security.taxes,
+          reinsuranceBrokerage: security.reinsuranceBrokerage,
+          active: true,
+          idCReinsuranceCompany: security.idCReinsuranceCompany,
+          idCRetroCedant: security.idCRetroCedant,
+          idCRetroCedantContact: security.idCRetroCedantContact,
+          idEndorsement: undefined,
+          idAccount: +accountData.formsData.form1.id,
+          receivedNetPremium: 0,
+          distributedNetPremium: 0,
+          difference: 0
+        }
+        if (security.id) {
+          update.push({
+            ...mapper,
+            id: security.id
+          })
+        } else {
+          save.push({ ...mapper })
+        }
+      }
+
+      if (!allFormData.id) {
+        saveSecurityTotal({
+          receivedNetPremium: +allFormData.recievedNetPremium,
+          distributedNetPremium: +allFormData.distribuitedNetPremium,
+          difference: +allFormData.diference,
+          idAccount: +accountData.formsData.form1.id
+        })
+          .then(response => {
+            console.log('saveSecurityTotal', { response })
+          })
+          .catch(e => {
+            console.log('saveSecurityTotal', e)
+          })
+      } else {
+        await updateSecurityTotal(allFormData?.id, {
+          receivedNetPremium: +allFormData.recievedNetPremium,
+          distributedNetPremium: +allFormData.distribuitedNetPremium,
+          difference: +allFormData.diference,
+          idAccount: +accountData.formsData.form1.id
+        })
+          .then(response => {
+            console.log('updateSecurityTotal', { response })
+          })
+          .catch(e => {
+            console.log('updateSecurityTotal', e)
+          })
+      }
+
+      if (update.length > 0)
+        updateSecurities(update)
+          .then(res => {
+            console.log('updateSecurities', { res })
+
+            setBadgeData({
+              message: 'Saved successfully',
+              theme: 'success',
+              open: true,
+              status: 'error'
+            })
+          })
+          .catch(e => {
+            console.log('ERROR updateSecurities', e)
+            setBadgeData({
+              message: 'Error saving data',
+              theme: 'error',
+              open: true,
+              status: 'error',
+              icon: <Icon style={{ color: '#FF4D49' }} icon='icon-park-outline:error' />
+            })
+          })
+      if (save.length > 0)
+        saveSecurities(save)
+          .then(res => {
+            console.log('saveSecurities', { res })
+
+            setBadgeData({
+              message: 'Saved successfully',
+              theme: 'success',
+              open: true,
+              status: 'error'
+            })
+          })
+          .catch(e => {
+            console.log('ERROR saveSecurities', e)
+            setBadgeData({
+              message: 'Error saving data',
+              theme: 'error',
+              open: true,
+              status: 'error',
+              icon: <Icon style={{ color: '#FF4D49' }} icon='icon-park-outline:error' />
+            })
+          })
+    }
+  }
+
   useEffect(() => {
     const idAccountCache = Number(localStorage.getItem('idAccount'))
     if (accountData.formsData.form1.id) {
@@ -108,12 +238,21 @@ const Security = () => {
       const data = accountData.formsData.form1.placementStructure as FormInformation
       setInformation(data)
     }
-  }, [accountData.formsData.form1.id, setAccountId])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [accountData.formsData.form1.id])
   useEffect(() => {
     if (account && information) {
       calculateSecurities(account.securities)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [account, information])
+  console.log({ allErrors })
+  useEffect(() => {
+    const isError = allErrors.find(error => error)
+    if (isNextStep && !isError) onStepChange(3)
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isNextStep])
 
   return (
     <SecurityContext.Provider
@@ -174,74 +313,83 @@ const Security = () => {
                 </FormControl>
               </Grid>
             </Grid>
-          </CardContent>
-          <div className='add-reinsurer'>
-            <Button
-              type='button'
-              onClick={addNewForm}
-              variant='text'
-              color='primary'
-              size='large'
-              fullWidth
-              sx={{ justifyContent: 'start' }}
-            >
-              <Icon icon='material-symbols:add-circle-outline' fontSize={20} className='icon-btn' /> ADD REINSURER
-            </Button>
-          </div>
-          <div className='section action-buttons' style={{ float: 'right', marginRight: 'auto', marginBottom: '20px' }}>
-            <Button className='btn-save' variant='contained'>
-              <div className='btn-icon'>
-                <Icon icon='mdi:content-save' />
-              </div>
-              SAVE CHANGES
-            </Button>
-            <Button className='btn-next'>
-              Next Step
-              <div className='btn-icon'>
-                <Icon icon='material-symbols:arrow-right-alt' />
-              </div>
-            </Button>
-
-            <Modal
-              className='next-step-modal'
-              open={false}
-              onClose={() => {
-                console.log('close')
+            <Grid
+              container
+              spacing={5}
+              sx={{
+                marginTop: '20px'
               }}
             >
-              <Box
-                sx={{
-                  position: 'absolute',
-                  bgcolor: 'white',
-                  top: '50%',
-                  left: '50%',
-                  boxShadow: 24,
-                  pl: 5,
-                  pr: 5,
-                  transform: 'translate(-50%, -50%)',
-                  borderRadius: '10px',
-                  padding: '15px'
-                }}
-              >
-                <HeaderTitleModal>
-                  <div className='next-modal-title'>Ready to continue?</div>
-                  <ButtonClose onClick={() => {}}>
-                    <CloseIcon />
-                  </ButtonClose>
-                </HeaderTitleModal>
-                <div className='next-modal-text'>
-                  You are about to advance to the next form. Make sure that all the fields have been completed with the
-                  correct information.
+              <Grid item xs={12} sm={6}>
+                <div className='add-reinsurer'>
+                  <Button
+                    type='button'
+                    onClick={addNewForm}
+                    variant='text'
+                    color='primary'
+                    size='large'
+                    fullWidth
+                    sx={{ justifyContent: 'start' }}
+                  >
+                    <Icon icon='material-symbols:add-circle-outline' fontSize={20} className='icon-btn' /> ADD REINSURER
+                  </Button>
                 </div>
-                <Button className='continue-modal-btn' variant='contained' onClick={() => {}}>
-                  CONTINUE
-                </Button>
-                <Button className='create-contact-modal' onClick={() => {}}>
-                  Keep editing information
-                </Button>
-              </Box>
-            </Modal>
-          </div>
+              </Grid>
+
+              <Grid item xs={12} sm={6}>
+                <div
+                  className='section action-buttons'
+                  style={{ float: 'right', marginRight: 'auto', marginBottom: '20px' }}
+                >
+                  <Button className='btn-save' variant='contained' onClick={SaveData}>
+                    <div className='btn-icon'>
+                      <Icon icon='mdi:content-save' />
+                    </div>
+                    SAVE CHANGES
+                  </Button>
+                  <Button className='btn-next' onClick={handleNextStep}>
+                    Next Step
+                    <div className='btn-icon'>
+                      <Icon icon='material-symbols:arrow-right-alt' />
+                    </div>
+                  </Button>
+                </div>
+              </Grid>
+            </Grid>
+          </CardContent>
+          <Modal className='next-step-modal' open={open} onClose={handleCloseModal}>
+            <Box
+              sx={{
+                position: 'absolute',
+                bgcolor: 'white',
+                top: '50%',
+                left: '50%',
+                boxShadow: 24,
+                pl: 5,
+                pr: 5,
+                transform: 'translate(-50%, -50%)',
+                borderRadius: '10px',
+                padding: '15px'
+              }}
+            >
+              <HeaderTitleModal>
+                <div className='next-modal-title'>Ready to continue?</div>
+                <ButtonClose onClick={handleCloseModal}>
+                  <CloseIcon />
+                </ButtonClose>
+              </HeaderTitleModal>
+              <div className='next-modal-text'>
+                You are about to advance to the next form. Make sure that all the fields have been completed with the
+                correct information.
+              </div>
+              <Button className='continue-modal-btn' variant='contained' onClick={onNextStep}>
+                CONTINUE
+              </Button>
+              <Button className='create-contact-modal' onClick={() => setOpen(false)}>
+                Keep editing information
+              </Button>
+            </Box>
+          </Modal>
         </form>
       </div>
     </SecurityContext.Provider>
