@@ -354,6 +354,7 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
         ...schema.fields,
         ...schemaRetrocedant.fields
       })
+
     combinedSchema
       .validate(securityParam, { abortEarly: false })
       .then(function () {
@@ -392,6 +393,8 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
     if (security?.id) {
       setIdRetroCedant(security.idCRetroCedant?.id)
       setIsGross(security.isGross)
+    }
+    if (security.idCReinsuranceCompany) {
       validateForm(security)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
