@@ -1,9 +1,11 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
 
 // Customed imports
+import { useAddTypeOfLimit, useGetAllTypeOfLimit, useUpdateTypeOfLimit } from '@/hooks/catalogs/typeOfLimit'
+import { useDeleteTypeOfLimit } from '@/hooks/catalogs/typeOfLimit/useDelete'
 import AddEditModal from '@/views/components/modals/add-edit-modal'
 import DeleteModal from '@/views/components/modals/delete-modal'
 
@@ -12,102 +14,123 @@ export interface ITypes {
   name: string
 }
 
-
 const TypesOFLimit = () => {
-
   // Handle Data
-  const [types, setTypes] = useState<ITypes[]>([])
-  const [selectedType, setSelectedType] = useState<ITypes | null>(null);
-  const [currentType, setCurrentType] = useState<ITypes | null>(null);
-  const [typeToDelete, setTypeToDelete] = useState<number | undefined>(0)
-  const [openAdd,setOpenAdd]= useState(false)
-  const [openEdit,setOpenEdit]= useState(false)
-  const [openDelete,setOpenDelete]= useState(false)
+  const [selectedType, setSelectedType] = useState<ITypes | null>(null)
+  const [currentType, setCurrentType] = useState<ITypes | null>(null)
+  const [typeToDelete, setTypeToDelete] = useState<number>(0)
+  const [openAdd, setOpenAdd] = useState(false)
+  const [openEdit, setOpenEdit] = useState(false)
+  const [openDelete, setOpenDelete] = useState(false)
 
-  const getTypes = () => { //Call to edit broker service
-    const data: ITypes[] = [
-      { id: 1, name: 'Type of Limit' },
-      { id: 2, name: 'Type of Limit' },
-      { id: 3, name: 'Type of Limit' },
-      { id: 4, name: 'Type of Limit' },
-    ]
+  //Hooks
+  const { deleteTypeOfLimit: deleteTypeOfLimitById } = useDeleteTypeOfLimit()
+  const { addTypeOfLimit: saveTypeOfLimit } = useAddTypeOfLimit()
+  const { typesOfLimits: types, getAllTypeOfLimit } = useGetAllTypeOfLimit()
+  const { updateTypeOfLimit } = useUpdateTypeOfLimit()
 
-    return data
+  // Handle Alerts
+  const [showAlert, setShowAlert] = useState(true)
+  const [alertType, setAlertType] = useState('')
+  const [alertText, setAlertText] = useState('')
+  const [alertIcon, setAlertIcon] = useState('')
+
+  const triggerAlert = (type: string, text: string) => {
+    setAlertType(type)
+
+    switch (type) {
+      case 'success':
+        setAlertText(text)
+        setAlertIcon('mdi:check-circle-outline')
+        break
+      case 'error':
+        setAlertText('UNKNOWN ERROR, TRY AGAIN')
+        setAlertIcon('mdi:alert-circle-outline')
+        break
+      case 'warn':
+        setAlertText('NO INTERNET CONNECTION')
+        setAlertIcon('mdi:alert-outline')
+        break
+      default:
+        break
+    }
+
+    setShowAlert(true)
+
+    setTimeout(() => {
+      setShowAlert(false)
+    }, 5000)
   }
 
   const handleEditType = (type: ITypes) => {
-
     setCurrentType(type)
-    setSelectedType(null);
+    setSelectedType(null)
     setOpenEdit(true)
   }
 
-
-  const handleDeleteType = (id: number | undefined) => {
-    setTypeToDelete(id);
-    setSelectedType(null);
-    setOpenDelete(true);
+  const handleDeleteType = (id: number) => {
+    setTypeToDelete(id)
+    setSelectedType(null)
+    setOpenDelete(true)
   }
 
-  const addTypeOfLimit = (value: string) => {
-    const newType = { id: types.length, name: value }
-    setTypes(prevTypes => [...prevTypes, newType]);
+  const addTypeOfLimit = async (value: string) => {
+    const result = await saveTypeOfLimit({
+      name: value
+    })
+    if (result) {
+      triggerAlert('success', 'NEW TYPE ADDED')
+      getAllTypeOfLimit()
+    }
     setOpenAdd(false)
   }
 
-  const editTypeOfLimit = (value: string) => {
+  const editTypeOfLimit = async (value: string) => {
     if (currentType) {
-      setTypes(prevCountries =>
-        prevCountries.map(type => {
-          if (type.id ===currentType.id) {
-            return { ...type, name: value };
-          }
-
-          return type;
-        })
-      );
+      const result = await updateTypeOfLimit(currentType.id, {
+        name: value
+      })
+      if (result) {
+        triggerAlert('success', 'CHANGES SAVED')
+        getAllTypeOfLimit()
+      }
     }
     setOpenEdit(false)
   }
 
-  const deleteTypeOfLimit = () => {
-    setTypes(prevTypes =>
-      prevTypes.filter(type => type.id !== typeToDelete)
-    );
+  const deleteTypeOfLimit = async () => {
+    const result = await deleteTypeOfLimitById(typeToDelete)
+    if (result) {
+      //it needs an alert o message
+      console.log('success')
+      getAllTypeOfLimit()
+    }
     setOpenDelete(false)
   }
-
-
-
-  // const getCurrencies = () => { //Call to add broker service
-  //   console.log("call add reinsurer service", newReinsurer.id)
-  //   setIsReinsurerSaved(true)
-  // }
-
-  useEffect(() => {
-    setTypes(getTypes)
-
-    //eslint-disable-next-line
-  }, [])
 
   return (
     <>
       <div className='country-currencies-wrapper'>
-        <div className="inner-container-long">
-          <div className="header-block">
+        {/* TODO:  */}
+        {showAlert && (
+          <div className={`${alertType} contacts-alert`}>
+            <div className='btn-icon'>
+              <Icon icon={alertIcon} />
+            </div>
+            {alertText}
+          </div>
+        )}
+        <div className='inner-container-long'>
+          <div className='header-block'>
             <div className='header-icon'>
-              <Icon  className='icon' icon='material-symbols:bar-chart' />
+              <Icon className='icon' icon='material-symbols:bar-chart' />
             </div>
             <div className='content'>
-              <div className='title'>
-                Types of limit   ({types.length})
-              </div>
-              <div className='description'>
-                You can add a type by clicking the plus button.
-              </div>
+              <div className='title'>Types of limit ({types.length})</div>
+              <div className='description'>You can add a type by clicking the plus button.</div>
             </div>
             <div className='add-btn'>
-            <Icon
+              <Icon
                 icon='mdi:plus-circle'
                 onClick={() => {
                   setOpenAdd(true)
@@ -115,27 +138,28 @@ const TypesOFLimit = () => {
               />
             </div>
           </div>
-          <div className="block-list">
-            {types.map((type) => {
-              const showActions = type === selectedType;
+          <div className='block-list'>
+            {types.map(type => {
+              const showActions = type === selectedType
 
               return (
                 <>
-
-                  <div className="list-item">
-                    <div className="item-name" key={type.id}>
+                  <div className='list-item'>
+                    <div className='item-name' key={type.id}>
                       {type.name}
                     </div>
-                    <div className="item-menu" onClick={() => {
-                      if (showActions) {
-                        setSelectedType(null);
-                      } else {
-                        setSelectedType(type);
-                      }
-                    }}
+                    <div
+                      className='item-menu'
+                      onClick={() => {
+                        if (showActions) {
+                          setSelectedType(null)
+                        } else {
+                          setSelectedType(type)
+                        }
+                      }}
                     >
                       <Icon icon='mdi:dots-vertical' />
-                      {showActions &&
+                      {showActions && (
                         <div className='actions-menu'>
                           <div className='menu-option' onClick={() => handleEditType(type)}>
                             Edit
@@ -143,7 +167,8 @@ const TypesOFLimit = () => {
                           <div className='menu-option' onClick={() => handleDeleteType(type.id)}>
                             Delete
                           </div>
-                        </div>}
+                        </div>
+                      )}
                     </div>
                   </div>
                 </>
@@ -155,8 +180,10 @@ const TypesOFLimit = () => {
         <AddEditModal
           openModal={openAdd}
           onSubmit={addTypeOfLimit}
-          onClose={() => { setOpenAdd(false) }}
-          title="Add Type of limit"
+          onClose={() => {
+            setOpenAdd(false)
+          }}
+          title='Add Type of limit'
           label='Type of limit'
           actionBtnText='CREATE'
         />
@@ -164,12 +191,13 @@ const TypesOFLimit = () => {
         <AddEditModal
           openModal={openEdit}
           onSubmit={editTypeOfLimit}
-          onClose={() => { setOpenEdit(false) }}
-          title="Edit Type of limit"
+          onClose={() => {
+            setOpenEdit(false)
+          }}
+          title='Edit Type of limit'
           label='Type of limit'
           actionBtnText='EDIT'
         />
-
 
         <DeleteModal
           openModal={openDelete}

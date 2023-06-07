@@ -1,10 +1,11 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
 
 //customed imports
 import { useAddCountry, useDeleteCountry, useGetAllCountries, useUpdateById } from '@/hooks/catalogs/country'
+import { useAddCurrency, useDeleteCurrency, useGetAllCurrencies, useUpdateCurrency } from '@/hooks/catalogs/currency'
 import AddEditModal from '@/views/components/modals/add-edit-modal'
 import DeleteModal from '@/views/components/modals/delete-modal'
 
@@ -15,7 +16,7 @@ export interface ICountries {
 
 export interface ICurrencies {
   id: number
-  currency: string
+  name: string
 }
 
 const CountriesCurrencies = () => {
@@ -24,10 +25,10 @@ const CountriesCurrencies = () => {
   const [currentCountry, setCurrentCountry] = useState<ICountries | null>(null)
   const [countryToDelete, setCountryToDelete] = useState<number>(0)
 
-  const [currencies, setCurrencies] = useState<ICurrencies[]>([])
+  //const [currencies, setCurrencies] = useState<ICurrencies[]>([])
   const [selectedCurrency, setSelectedCurrency] = useState<ICurrencies | null>(null)
   const [currentCurrency, setCurrentCurrency] = useState<ICurrencies | null>(null)
-  const [currencyToDelete, setCurrencyToDelete] = useState<number | undefined>(0)
+  const [currencyToDelete, setCurrencyToDelete] = useState<number>(0)
 
   //Handle Modals
   const [openAddCurrency, setOpenAddCurrency] = useState(false)
@@ -44,17 +45,24 @@ const CountriesCurrencies = () => {
   const [alertText, setAlertText] = useState('')
   const [alertIcon, setAlertIcon] = useState('')
 
+  //Country hooks
   const { deleteCountry: deleteCountryById } = useDeleteCountry()
   const { saveCountry } = useAddCountry()
   const { countries, getAllCountries } = useGetAllCountries()
   const { update } = useUpdateById()
 
-  const triggerAlert = (type: string, text?: string) => {
+  //Currency hooks
+  const { deleteCurrency: deleteCurrencyById } = useDeleteCurrency()
+  const { addCurrency: saveCurrency } = useAddCurrency()
+  const { currencies, getAllCurrencies } = useGetAllCurrencies()
+  const { updateCurrency } = useUpdateCurrency()
+
+  const triggerAlert = (type: string, text: string) => {
     setAlertType(type)
 
     switch (type) {
       case 'success':
-        setAlertText(text || 'NEW CONTACT ADDED')
+        setAlertText(text)
         setAlertIcon('mdi:check-circle-outline')
         break
       case 'error':
@@ -76,22 +84,6 @@ const CountriesCurrencies = () => {
     }, 5000)
   }
 
-  useEffect(() => {
-    setCurrencies(getCurrencies())
-  }, [])
-
-  const getCurrencies = () => {
-    //Call to edit broker service
-    const data: ICurrencies[] = [
-      { id: 1, currency: 'MX' },
-      { id: 2, currency: 'USD' },
-      { id: 3, currency: 'DOP' },
-      { id: 4, currency: 'BRL' }
-    ]
-
-    return data
-  }
-
   const handleEditCountry = (country: ICountries) => {
     setCurrentCountry(country)
     setSelectedCountry(null)
@@ -110,7 +102,7 @@ const CountriesCurrencies = () => {
     setOpenEditCurrency(true)
   }
 
-  const handleDeleteCurrency = (id: number | undefined) => {
+  const handleDeleteCurrency = (id: number) => {
     setCurrencyToDelete(id)
     setSelectedCurrency(null)
     setOpenDeleteCurrency(true)
@@ -121,7 +113,7 @@ const CountriesCurrencies = () => {
       name: value
     })
     if (result) {
-      triggerAlert('success')
+      triggerAlert('success', 'NEW COUNTRY ADDED')
       getAllCountries()
     }
     setOpenAddCountry(false)
@@ -150,30 +142,37 @@ const CountriesCurrencies = () => {
     setOpenDeleteCountry(false)
   }
 
-  const addCurrency = (value: string) => {
-    const newCurrency = { id: currencies.length, currency: value }
-    setCurrencies(prevCurrencies => [...prevCurrencies, newCurrency])
+  const addCurrency = async (value: string) => {
+    const result = await saveCurrency({
+      name: value
+    })
+    if (result) {
+      triggerAlert('success', 'NEW CURRENCY ADDED')
+      getAllCurrencies()
+    }
     setOpenAddCurrency(false)
   }
 
-  const editCurrency = (value: string) => {
+  const editCurrency = async (value: string) => {
     if (currentCurrency) {
-      setCurrencies(prevCurrencies =>
-        prevCurrencies.map(currency => {
-          if (currency.id === currentCurrency.id) {
-            return { ...currency, currency: value }
-          }
-
-          return currency
-        })
-      )
+      const result = await updateCurrency(currentCurrency.id, {
+        name: value
+      })
+      if (result) {
+        triggerAlert('success', 'CHANGES SAVED')
+        getAllCurrencies()
+      }
     }
     setOpenEditCurrency(false)
   }
 
-  const deleteCurrency = () => {
-    setCurrencies(prevCurrencies => prevCurrencies.filter(currency => currency.id !== currencyToDelete))
-
+  const deleteCurrency = async () => {
+    const result = await deleteCurrencyById(currencyToDelete)
+    if (result) {
+      //it needs an alert o message
+      console.log('success')
+      getAllCurrencies()
+    }
     setOpenDeleteCurrency(false)
   }
 
@@ -265,7 +264,7 @@ const CountriesCurrencies = () => {
 
               return (
                 <div className='list-item' key={currency.id}>
-                  <div className='item-name'>{currency.currency}</div>
+                  <div className='item-name'>{currency.name}</div>
                   <div
                     className='item-menu'
                     onClick={() => {
