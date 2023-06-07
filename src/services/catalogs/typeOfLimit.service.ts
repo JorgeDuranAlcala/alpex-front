@@ -51,6 +51,16 @@ class TypeOfLimitService {
       throw new Error(message)
     }
   }
+
+  async deleteById(id: number) {
+    try {
+      const { data } = await AppAlpexApiGateWay.delete<Promise<TypeOfLimitDto>>(`${TYPE_OF_LIMIT_ROUTES.DELETE}/${id}`)
+
+      return data
+    } catch (error) {
+      throw error
+    }
+  }
 }
 
 export default new TypeOfLimitService()
