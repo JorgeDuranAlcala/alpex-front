@@ -28,6 +28,7 @@ import {
 import { createContext, useEffect, useState } from 'react'
 import Icon from 'src/@core/components/icon'
 import UserThemeOptions from 'src/layouts/UserThemeOptions'
+import { SecurityMapper } from './mappers/SecurityForm.mapper'
 import { CalculateSecurity } from './utils/calculates-securities'
 
 export const SecurityContext = createContext<SecurityContextDto>({} as SecurityContextDto)
@@ -127,25 +128,8 @@ const Security = ({ onStepChange }: SecurityProps) => {
       const save: Partial<SecurityDto>[] = []
       debugger
       for (const security of securities) {
-        const mapper = {
-          netPremiumAt100: security.netPremiumAt100,
-          share: security.share,
-          frontingFeeActive: security.frontingFeeActive,
-          dynamicCommission: security.dynamicCommission,
-          frontingFee: security.frontingFee,
-          netReinsurancePremium: security.netReinsurancePremium,
-          taxes: security.taxes,
-          reinsuranceBrokerage: security.reinsuranceBrokerage,
-          active: true,
-          idCReinsuranceCompany: security.idCReinsuranceCompany,
-          idCRetroCedant: security.idCRetroCedant,
-          idCRetroCedantContact: security.idCRetroCedantContact,
-          idEndorsement: undefined,
-          idAccount: +accountData.formsData.form1.id,
-          receivedNetPremium: 0,
-          distributedNetPremium: 0,
-          difference: 0
-        }
+        const mapper = SecurityMapper.securityToSecurityForm(security, accountData)
+
         if (security.id) {
           update.push({
             ...mapper,
