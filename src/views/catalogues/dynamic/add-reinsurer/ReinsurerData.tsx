@@ -90,11 +90,12 @@ const ReinsurerData = ({ idReinsuranceCompany, setIdReinsuranceCompany }: IReins
     }, 5000)
   }
 
+  //1 = grossPremiun 2 =  netPremium
   const addReinsurer = async () => {
-    console.log(suscriptionValue)
     const result = await addReinsuranceCompany({
       name: newReinsuranceCompany.name,
-      idSubscriptionType: parseInt(suscriptionValue)
+      idSubscriptionType: parseInt(suscriptionValue),
+      special: parseInt(suscriptionValue) === 1
     })
     if (result) {
       setNewReinsuranceCompany({ id: result.id, name: result.name })
