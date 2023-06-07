@@ -132,7 +132,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
     if (!isError) {
       const update: Partial<SecurityDto>[] = []
       const save: Partial<SecurityDto>[] = []
-      debugger
+
       for (const security of securities) {
         const mapper = SecurityMapper.securityToSecurityForm(security, accountData)
 
@@ -236,7 +236,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [account, information])
-  console.log({ allErrors })
+
   useEffect(() => {
     const isError = allErrors.find(error => error)
     if (isNextStep && !isError) onStepChange(3)
