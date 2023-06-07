@@ -22,3 +22,18 @@ export const setDateFilterQuery = (rawFilter: any, filtersArray: any[], nameDate
     })
   }
 }
+
+export const formatUTC = (dateIn: string | Date | null, addOffset = false) => {
+  const date = !dateIn ? new Date() : new Date(dateIn)
+  if (typeof dateIn === 'string') {
+    return date
+  } else if (dateIn) {
+    const offset = addOffset ? date.getTimezoneOffset() : -date.getTimezoneOffset()
+    const offsetDate = new Date()
+    offsetDate.setTime(date.getTime() + offset * 60000)
+
+    return offsetDate
+  } else {
+    return dateIn
+  }
+}

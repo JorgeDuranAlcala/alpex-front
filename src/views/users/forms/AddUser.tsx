@@ -26,6 +26,8 @@ import { useAppDispatch, useAppSelector } from 'src/store'
 // import { ReinsuranceCompanyDto } from '@/services/catalogs/dtos/ReinsuranceCompanyDto'
 
 // import CompanySelect from '@/views/custom/select/CompanySelect'
+// import useAxiosErrorHandling from '@/hooks/catalogs/users/handleError'
+
 import { UserSection } from 'src/styles/Forms/usersSection'
 import CountrySelect, { ICountry } from 'src/views/custom/select/CountrySelect'
 import { StyledDescription, StyledSubtitle, StyledTitle } from 'src/views/custom/typography'
@@ -50,16 +52,17 @@ const UserForm: FormInfo = {
   role: '',
   dualRole: ''
 }
-const initialForm: UsersPutDto = {
-  id: 1,
-  name: '',
-  surname: '',
-  email: '',
-  phone: '',
-  idCompany: 0,
-  roles: [],
-  areaCode: ''
-}
+
+// const initialForm: UsersPutDto = {
+//   id: 1,
+//   name: '',
+//   surname: '',
+//   email: '',
+//   phone: '',
+//   idCompany: 0,
+//   roles: [],
+//   areaCode: ''
+// }
 
 interface IAddUser {
   selectUser: boolean
@@ -69,6 +72,7 @@ interface IAddUser {
 interface errorsEmail {
   fieldRequired: boolean | undefined
   validateEmail: boolean | undefined
+  duplicateEmail: boolean | undefined
 }
 const showErrors = (field: string, valueLen: number, min: number) => {
   if (valueLen === 0) {
@@ -113,14 +117,25 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
     resolver: yupResolver(schema)
   })
 
+  const { setUserPost, error } = useAddUser()
+  const { setUserPut } = useEditUser()
+
+  const { company } = useGetAllCompanies()
+  console.log({ error })
+  console.log('Error-->', error?.message)
+
+  const { roles } = useGetAllRoles()
+
   const ErrorsEmailText = {
     fieldRequired: 'This field is required.',
-    validEmail: 'Enter a valid email, example: name@gmail.com'
+    validEmail: 'Enter a valid email, example: name@gmail.com',
+    emailAlreadyExist: error?.message
   }
 
   const useWatchCompany = watch('company')
   const useWatchRole = watch('role')
   const useWatchEmail = watch('email')
+  const useWatchDualRole = watch('dualRole')
 
   const usersReducer = useAppSelector(state => state.users)
   const dispatch = useAppDispatch()
@@ -142,10 +157,12 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
   console.log(usersReducer)
 
   console.log({ idCompany })
-
+  console.log({ selectedCountry })
   console.log({ idRole })
   console.log({ informativeIdRole })
   console.log({ useWatchCompany })
+  console.log({ useWatchRole })
+  console.log({ useWatchDualRole })
 
   // console.log({ selectRol })
   // console.log({ selectDualRol })
@@ -154,55 +171,21 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
   // const [email, setEmail] = useState<string>('')
   const [errorsTextEmail, setErrorsTextEmail] = useState<any>({
     fieldRequired: '',
-    validEmail: ''
+    validEmail: '',
+    emailExisting: ''
   })
+
+  console.log(errorsTextEmail.emailExisting)
   const [errorEmail, setErrorEmail] = useState<errorsEmail>({
     fieldRequired: false,
-    validateEmail: false
+    validateEmail: false,
+    duplicateEmail: false
   })
-
-  const { setUserPost } = useAddUser()
-  const { setUserPut } = useEditUser()
-
-  const { company } = useGetAllCompanies()
-  console.log({ company })
-
-  const { roles } = useGetAllRoles()
-  console.log({ roles })
 
   const onSubmit = (data: any) => {
     if (selectUser) {
       const dataToSend: UsersPutDto = {
         id: usersReducer.current?.id || 1,
-        name: data.name || '',
-        surname: data.surname || '',
-        email: data.email || '',
-        phone: data.phone || '',
-        idCompany: parseInt(idCompany),
-        roles: parseInt(idRole)
-          ? [
-              {
-                id: parseInt(idRole)
-              }
-            ]
-          : parseInt(idRole) && parseInt(informativeIdRole)
-          ? [
-              {
-                id: parseInt(idRole)
-              },
-              {
-                id: parseInt(informativeIdRole)
-              }
-            ]
-          : [],
-        areaCode: selectedCountry?.phone || ''
-      }
-      setUserPut(dataToSend)
-      setTimeout(() => {
-        dispatch(fetchAccounts(usersReducer))
-      }, 100)
-    } else {
-      const dataToSend: UsersPostDto = {
         name: data.name || '',
         surname: data.surname || '',
         email: data.email || '',
@@ -218,10 +201,40 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
                   id: parseInt(informativeIdRole)
                 }
               ]
-            : parseInt(idRole)
+            : parseInt(idRole) && !parseInt(idRole)
             ? [
                 {
                   id: parseInt(idRole)
+                }
+              ]
+            : [],
+        areaCode: selectedCountry?.phone || ''
+      }
+      setUserPut(dataToSend)
+      setTimeout(() => {
+        dispatch(fetchAccounts(usersReducer))
+      }, 100)
+    } else {
+      const dataToSend: UsersPostDto = {
+        name: data.name || '',
+        surname: data.surname || '',
+        email: data.email || '',
+        phone: data.phone || '',
+        idCompany: parseInt(useWatchCompany),
+        roles:
+          parseInt(useWatchRole) && parseInt(useWatchDualRole)
+            ? [
+                {
+                  id: parseInt(useWatchRole)
+                },
+                {
+                  id: parseInt(useWatchDualRole)
+                }
+              ]
+            : parseInt(useWatchRole) && !parseInt(useWatchDualRole)
+            ? [
+                {
+                  id: parseInt(useWatchRole)
                 }
               ]
             : [],
@@ -231,14 +244,15 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
       setTimeout(() => {
         dispatch(fetchAccounts(usersReducer))
       }, 100)
-      reset({ ...initialForm })
+
+      // reset({ ...initialForm })
     }
   }
 
   const handleFormChange = (field: keyof FormInfo, value: FormInfo[keyof FormInfo]) => {
     setFormData({ ...formData, [field]: value })
   }
-  const handleInpuEmail = () => {
+  const handleInputEmail = () => {
     if (useWatchEmail === undefined || useWatchEmail === '') {
       setErrorEmail({
         ...errorEmail,
@@ -262,18 +276,20 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
       setErrorEmail({
         ...errorEmail,
         fieldRequired: true,
-        validateEmail: false
+        validateEmail: false,
+        duplicateEmail: false
       })
       setErrorsTextEmail({ ...errorsTextEmail, fieldRequired: ErrorsEmailText.fieldRequired })
     } else if (!regexEmail.test(input)) {
-      setErrorEmail({ ...errorEmail, validateEmail: true, fieldRequired: false })
+      setErrorEmail({ ...errorEmail, validateEmail: true, fieldRequired: false, duplicateEmail: false })
       setErrorsTextEmail({ ...errorsTextEmail, validEmail: ErrorsEmailText.validEmail })
       console.log('email no valido')
     } else {
       setErrorEmail({
         ...errorEmail,
         fieldRequired: false,
-        validateEmail: false
+        validateEmail: false,
+        duplicateEmail: false
       })
     }
   }
@@ -320,33 +336,53 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
   }, [useWatchRole, selectUser, idRole])
 
   useEffect(() => {
-    const reducersCompany = usersReducer?.current?.idCompany?.id
+    if (error?.statusCode === 417) {
+      setErrorEmail({
+        ...errorEmail,
+        fieldRequired: false,
+        validateEmail: false,
+        duplicateEmail: true
+      })
+      setErrorsTextEmail({ ...errorsTextEmail, emailExisting: ErrorsEmailText.emailAlreadyExist })
+    } else {
+      setErrorEmail({
+        ...errorEmail,
+        fieldRequired: false,
+        validateEmail: false,
+        duplicateEmail: false
+      })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [error])
 
-    const companySelect = company?.find(c => c.id === reducersCompany)
-    setIdCompany(companySelect?.id.toString())
-  }, [company, usersReducer, setIdCompany, selectUser])
+  useEffect(() => {
+    if (selectUser) {
+      const reducersCompany = usersReducer?.current?.idCompany?.id
+      const companySelect = company?.find(c => c.id === reducersCompany)
+      setIdCompany(companySelect?.id.toString())
+    } // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [company, setIdCompany])
 
   // useEffect(() => {
-  //   const nameCompany = usersReducer?.current?.idCompany?.name
-  //   const nameSelect = company?.find(c => c.name === nameCompany)
-  //   setSelectCompany(nameSelect?.name)
-  // }, [company, usersReducer, setIdCompany])
+  //   if (selectUser) {
+  //     setIdCompany(useWatchCompany)
+  //     setIdRole(useWatchRole)
+  //   }
+  // }, [selectUser, useWatchCompany, useWatchRole])
 
   useEffect(() => {
     const reducersRol = usersReducer?.current?.roles[0]?.id
     const rolSelect = roles?.find(rol => rol.id === reducersRol)
-
-    // setSelectRol(rolSelect)
     setIdRole(rolSelect?.id.toString())
-  }, [roles, usersReducer, setIdRole])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [roles, setIdRole])
 
   useEffect(() => {
     const reducersDualRol = usersReducer?.current?.roles[1]?.id
     const dualRolSelect = roles?.find(dualRol => dualRol.id === reducersDualRol)
-
-    // setSelectDualRol(dualRolSelect)
     setInformativeIdRole(dualRolSelect?.id.toString())
-  }, [roles, usersReducer, setInformativeIdRole])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [roles, setInformativeIdRole])
 
   // useEffect(() => {
   //   dispatch(fetchAccounts(usersReducer))
@@ -468,7 +504,7 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
                             value={value}
                             onBlur={handleBlur || onBlur}
                             onChange={onChange}
-                            error={errorEmail?.fieldRequired || errorEmail?.validateEmail}
+                            error={errorEmail?.fieldRequired || errorEmail?.validateEmail || errorEmail?.duplicateEmail}
                             sx={{
                               '& .MuiOutlinedInput-root.Mui-focused  .MuiOutlinedInput-notchedOutline': {
                                 borderColor: '#2535A8'
@@ -482,6 +518,8 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
                         <FormHelperText sx={{ color: 'error.main' }}>{errorsTextEmail.fieldRequired}</FormHelperText>
                       ) : errorEmail.validateEmail ? (
                         <FormHelperText sx={{ color: 'error.main' }}>{errorsTextEmail.validEmail}</FormHelperText>
+                      ) : errorEmail.duplicateEmail ? (
+                        <FormHelperText sx={{ color: 'error.main' }}>{errorsTextEmail.emailExisting}</FormHelperText>
                       ) : (
                         <FormHelperText>
                           The user will receive an automated password to this email so they can login.
@@ -577,7 +615,7 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
                             <Select
                               error={Boolean(errors.company)}
                               label='Company'
-                              value={value}
+                              value={selectUser ? idCompany : value}
                               onBlur={onBlur}
                               onChange={e => {
                                 onChange(e.target.value)
@@ -698,7 +736,7 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
                 color='primary'
                 size='large'
                 sx={{ float: 'right' }}
-                onClick={handleInpuEmail}
+                onClick={handleInputEmail}
               >
                 ADD USER
               </Button>
