@@ -16,7 +16,7 @@ import {
   TextField,
   Typography
 } from '@mui/material'
-import { ChangeEvent, useEffect, useState } from 'react'
+import { ChangeEvent, useState } from 'react'
 import { NumericFormat } from 'react-number-format'
 import Icon from 'src/@core/components/icon'
 import { ContainerCard, ContentCard, HeaderCard, InputForm, SubContainer } from 'src/styles/Forms/Sublimits'
@@ -68,9 +68,10 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
   handleOnChangeForm,
   formInformation,
   index = 0,
-  formErrors
+  formErrors,
+  data
 }: RenderFormGeneric) => {
-  const [dataForm, setDataForm] = useState<FormGenericCard>(initialData)
+  const [dataForm, setDataForm] = useState<FormGenericCard>(data ? data : initialData)
   const [selectedValueRadio, setSelectedValueRadio] = useState<string>('')
   const [, setErrorForm] = useState({})
   const [errors] = useState<FormErrors>({
@@ -83,35 +84,34 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
   const [checked, setChecked] = useState(false)
 
   const handleNumericInputChange = (value: any, e: any) => {
-    const { name } = e
-    setDataForm({ ...dataForm, [name]: value })
+    // const { name } = e
+    // setDataForm({ ...dataForm, [name]: value })
   }
 
   const handleChangeRadio = (event: ChangeEvent<HTMLInputElement>) => {
-    setSelectedValueRadio(event.target.value)
-    setDataForm({
-      ...dataForm,
-      percentage: 0,
-      price: 0,
-      min: 0,
-      typeDeductible: '',
-      typeDeductibleRadio: event.target.value
-    })
+    // setSelectedValueRadio(event.target.value)
+    // setDataForm({
+    //   ...dataForm,
+    //   percentage: 0,
+    //   price: 0,
+    //   min: 0,
+    //   typeDeductible: '',
+    //   typeDeductibleRadio: event.target.value
+    // })
   }
 
   const handleChangeRadioBI = (value: string) => {
-    setDataForm({ ...dataForm, days: 0, priceInterruption: 0, typeBi: value })
+    // setDataForm({ ...dataForm, days: 0, priceInterruption: 0, typeBi: value })
   }
 
   const handleChangeRadioYesLuc = (value: string) => {
-    if (value !== 'yes' && value !== 'luc') {
-      setDataForm({ ...dataForm, yes: false, luc: false })
-
-      return
-    }
-    value === 'yes'
-      ? setDataForm({ ...dataForm, yes: true, luc: false })
-      : setDataForm({ ...dataForm, yes: false, luc: true })
+    // if (value !== 'yes' && value !== 'luc') {
+    //   setDataForm({ ...dataForm, yes: false, luc: false })
+    //   return
+    // }
+    // value === 'yes'
+    //   ? setDataForm({ ...dataForm, yes: true, luc: false })
+    //   : setDataForm({ ...dataForm, yes: false, luc: true })
   }
 
   const options = [
@@ -121,33 +121,30 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
     { name: 'Affected item', value: 'Affected item' }
   ]
 
-  // const getErrorMessage = (name: keyof FormErrors) => {
-  //   return errors[name] ? 'This field is required' : ''
-  // }
-
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
   const size = userThemeConfig.typography?.size.px16
   const textColor = userThemeConfig.palette?.text.subTitle
-  useEffect(() => {
-    if (checked) {
-      setDataForm({ ...dataForm, sublimit: +formInformation?.informations[0].limit })
-    } else {
-      setDataForm({ ...dataForm, sublimit: 0 })
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [checked])
-  useEffect(() => {
-    if (dataForm) handleOnChangeForm(dataForm, index)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dataForm])
-  useEffect(() => {
-    setErrorForm(formErrors[index] || {})
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [formErrors])
+
+  // useEffect(() => {
+  //   if (checked) {
+  //     setDataForm({ ...dataForm, sublimit: +formInformation?.informations[0].limit })
+  //   } else {
+  //     setDataForm({ ...dataForm, sublimit: 0 })
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [checked])
+  // useEffect(() => {
+  //   if (dataForm) handleOnChangeForm(dataForm, index)
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [dataForm])
+  // useEffect(() => {
+  //   setErrorForm(formErrors[index] || {})
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [formErrors])
 
   return (
     <ContainerCard>
-      <HeaderCard sx={{ height: title === 'Business Interruption Machinery Breakdown' ? '68px' : '48px' }}>
+      <HeaderCard sx={{ height: data?.title === 'Business Interruption Machinery Breakdown' ? '68px' : '48px' }}>
         <Box
           sx={{
             display: 'flex',
@@ -155,13 +152,13 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
             alingItems: 'center',
             justifyContent: 'space-between',
             width: '100%',
-            height: title === 'Business Interruption Machinery Breakdown' ? '52px' : '26px'
+            height: data?.title === 'Business Interruption Machinery Breakdown' ? '52px' : '26px'
 
             // border: '1px solid white'
           }}
         >
           <Typography textTransform={'uppercase'} sx={{ color: '#FFF' }}>
-            {title}
+            {data?.title}
           </Typography>
           <IconButton onClick={deleteForm}>
             <Icon icon='mdi:delete-outline' fontSize={22} color='#FFF' />
@@ -173,7 +170,7 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
           <FormControl sx={{ width: '64%' }}>
             <NumericFormat
               name='sublimit'
-              value={dataForm.sublimit}
+              value={data?.sublimit}
               allowLeadingZeros
               thousandSeparator=','
               customInput={TextField}
@@ -218,7 +215,7 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
             <Typography>100%</Typography>
           </Box>
         </SubContainer>
-        {title === 'Terrorism' || title === 'Business interruption' ? (
+        {data?.title === 'Terrorism' || title === 'Business interruption' ? (
           <SubContainer sx={{ height: 'auto' }}>
             <RadioGroup
               aria-labelledby='demo-radio-buttons-group-label'
@@ -239,7 +236,7 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
             </RadioGroup>
           </SubContainer>
         ) : null}
-        {title !== 'Business interruption' ? (
+        {data?.title !== 'Business interruption' ? (
           <SubContainer sx={{ height: 'auto' }}>
             <Typography
               variant='body1'
@@ -276,7 +273,7 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
                   name='percentage'
                   disabled={!(selectedValueRadio === 'percentage')}
                   allowLeadingZeros
-                  value={dataForm.percentage}
+                  value={data?.deductible}
                   thousandSeparator=','
                   customInput={Input}
                   suffix={'%'}
@@ -297,7 +294,7 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
                   <FormControl fullWidth>
                     <NumericFormat
                       name='min'
-                      value={dataForm.min}
+                      value={data?.min}
                       allowLeadingZeros
                       thousandSeparator=','
                       customInput={TextField}
@@ -319,7 +316,7 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
                       sx={{ height: '56px' }}
                       label='Aplicable over'
                       labelId='controlled-select-label'
-                      value={dataForm.typeDeductible}
+                      value={data?.typeDeductible}
                       onChange={e => {
                         handleNumericInputChange(e.target.value, { name: 'typeDeductible' })
                       }}
@@ -346,7 +343,7 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
                   placeholder='$0.00'
                   name='price'
                   allowLeadingZeros
-                  value={dataForm.price}
+                  value={data?.amount}
                   disabled={!(selectedValueRadio === 'price')}
                   thousandSeparator=','
                   customInput={Input}
@@ -366,7 +363,7 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
             </RadioGroup>
           </SubContainer>
         ) : null}
-        {title === 'Machinery breakdown' || title === 'AMIT & SRCC' || title === 'Electronic Equipment' ? (
+        {data?.title === 'Machinery breakdown' || title === 'AMIT & SRCC' || title === 'Electronic Equipment' ? (
           <SubContainer sx={{ height: 'auto' }}>
             <Typography
               variant='body1'
@@ -401,10 +398,10 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
                   placeholder='0 days'
                   name='days'
                   allowLeadingZeros
-                  value={dataForm.days}
+                  value={data?.daysBi}
                   thousandSeparator=','
                   customInput={Input}
-                  disabled={!(dataForm.typeBi === 'BIDays')}
+                  disabled={!(data?.typeBi === 'days')}
                   decimalScale={2}
                   error={errors.daysError}
                   sx={{
@@ -426,10 +423,10 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
                 <NumericFormat
                   placeholder='$0.00'
                   name='priceInterruption'
-                  value={dataForm.priceInterruption}
+                  value={data?.amountBi}
                   allowLeadingZeros
                   thousandSeparator=','
-                  disabled={!(dataForm.typeBi === 'BIPrice')}
+                  disabled={!(data?.typeBi === 'money')}
                   customInput={Input}
                   prefix={'$'}
                   decimalScale={2}
@@ -462,6 +459,7 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
             allowLeadingZeros
             thousandSeparator=','
             customInput={TextField}
+            value={data?.coinsurance}
             suffix={'%'}
             decimalScale={2}
             sx={{

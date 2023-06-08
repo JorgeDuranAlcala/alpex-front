@@ -1,7 +1,8 @@
 import { useGetAccountById } from '@/hooks/accounts/forms'
 import { useUpdateAccountsStatus } from '@/hooks/accounts/status'
-import { useAddSublimits, useFindSublimitsByAccountId, useUpdateSublimits } from '@/hooks/accounts/sublimit'
+import { useAddSublimits, useUpdateSublimits } from '@/hooks/accounts/sublimit'
 import GenericCard from '@/layouts/components/SublimitsCards/GenericCard'
+import { SublimitDto } from '@/services/accounts/dtos/sublimit.dto'
 import { useAppSelector } from '@/store'
 import CustomAlert, { IAlert } from '@/views/custom/alerts'
 import CheckIcon from '@mui/icons-material/Check'
@@ -22,7 +23,7 @@ import {
 import { useEffect, useState } from 'react'
 import { NumericFormat } from 'react-number-format'
 import UserThemeOptions from 'src/layouts/UserThemeOptions'
-import SublimitCard, { RenderFormGeneric } from 'src/layouts/components/CardSublimit'
+import { RenderFormGeneric } from 'src/layouts/components/CardSublimit'
 import {
   ContainerTitleSublimits,
   GeneralContainerSublimits,
@@ -176,20 +177,22 @@ const schema = yup.object().shape({
     })
 })
 
-const initialValues = {
+const initialValues: Partial<SublimitDto> = {
+  id: 0,
   sublimit: 0,
-  percentage: 0,
-  price: 0,
+  deductible: 0,
+  amount: 0,
   min: 0,
-  days: 0,
-  priceInterruption: 0,
+  daysBi: 0,
+  amountBi: 0,
   coinsurance: 0,
   yes: false,
   luc: false,
   typeDeductible: '',
   typeBi: '',
-  at100: false,
-  typeDeductibleRadio: 'default'
+  at100: false
+
+  // typeDeductibleRadio: 'default'
 }
 
 const initialErrorValues = {
@@ -217,10 +220,10 @@ const Sublimits = () => {
   const [filteredOptions, setFilteredOptions] = useState<any[]>([])
   const [formInformationData, setFormInformationData] = useState<any>({})
   const accountData = useAppSelector(state => state.accounts)
-  const { account, setAccountId } = useGetAccountById()
+  const { account, setAccountId, getAccountById } = useGetAccountById()
   const { saveSublimits } = useAddSublimits()
   const { updateSublimits } = useUpdateSublimits()
-  const [sublimtsData, setSublimitsData] = useState<any>()
+  const [sublimts, setSublimits] = useState<Partial<SublimitDto>[]>([])
   const [badgeData, setBadgeData] = useState<IAlert>({
     message: '',
     theme: 'success',
@@ -231,7 +234,6 @@ const Sublimits = () => {
 
   // ** Custom hooks
   const { updateAccountsStatus } = useUpdateAccountsStatus()
-  const { sublimits } = useFindSublimitsByAccountId(accountData.formsData.form1?.id || null)
 
   useEffect(() => {
     if (accountData.formsData.form1?.id) {
@@ -239,10 +241,6 @@ const Sublimits = () => {
       setFormInformationData(accountData.formsData.form1)
     }
   }, [accountData, setAccountId])
-
-  useEffect(() => {
-    console.log(sublimits)
-  }, [sublimits])
 
   const [formsCheck] = useState<RenderFormGeneric[]>([])
 
@@ -280,28 +278,16 @@ const Sublimits = () => {
       })
   }
   const handleToggle = (value: number, label: string) => () => {
-    const currentIndex = checked.indexOf(value)
-    const newChecked = [...checked]
-
-    if (currentIndex === -1) {
-      newChecked.push(value)
-      allFormData.push({ ...initialValues })
-
-      console.log(formErrors)
-      formErrors.push({ ...initialErrorValues })
-      formsCheck.push({
-        type: value,
-        components: forms,
+    setSublimits(state => {
+      const tempSublimits = [...state]
+      tempSublimits.push({
+        ...initialValues,
         title: label,
-        handleOnChangeForm: handleOnChangeForm,
-        formInformation: account,
-        formErrors: formErrors
+        idCCoverage: value
       })
-    } else {
-      newChecked.splice(currentIndex, 1)
-    }
 
-    setChecked(newChecked)
+      return tempSublimits
+    })
   }
 
   const handleChangeSelect = (event: SelectChangeEvent<string[]>) => {
@@ -372,7 +358,8 @@ const Sublimits = () => {
           status: 'error'
         })
       }, 5000)
-      setSublimitsData(result)
+
+      // setSublimitsData(result)
     }
     setDisableBoundBtn(false)
   }
@@ -418,6 +405,20 @@ const Sublimits = () => {
   const inter = userThemeConfig.typography?.fontFamilyInter
   const size = userThemeConfig.typography?.size.px14
   const texButtonColor = userThemeConfig.palette?.buttonText.primary
+
+  const getAccountData = async () => {
+    const idAccountCache = Number(localStorage.getItem('idAccount'))
+    setAccountId(idAccountCache)
+    const accountData = await getAccountById(idAccountCache)
+
+    if (accountData && accountData.sublimits.length > 0) {
+      setSublimits([...accountData.sublimits])
+    }
+  }
+
+  useEffect(() => {
+    getAccountData()
+  }, [])
 
   return (
     <>
@@ -506,24 +507,13 @@ const Sublimits = () => {
         </ContainerTitleSublimits>
         <Box sx={{ flexGrow: 1, mt: 6, width: '100%' }}>
           <Grid container spacing={{ xs: 2, sm: 5.3, md: 5.3 }} rowSpacing={12} columns={{ xs: 4, sm: 8, md: 12 }}>
-            {formsCheck.map((item, index) => (
-              <Grid item xs={12} sm={4} md={4} key={index}>
-                <SublimitCard
-                  components={
-                    <item.components
-                      state={item.state}
-                      setState={item.setState}
-                      title={item.title}
-                      deleteForm={() => addOption(item.title ?? '', index)}
-                      handleOnChangeForm={item.handleOnChangeForm}
-                      index={index}
-                      formInformation={item.formInformation}
-                      formErrors={formErrors}
-                    />
-                  }
-                />
-              </Grid>
-            ))}
+            {sublimts &&
+              sublimts.length > 0 &&
+              sublimts.map((item, index) => (
+                <Grid item xs={12} sm={4} md={4} key={index}>
+                  <GenericCard data={item} title={item.title} index={index} formErrors={formErrors} />
+                </Grid>
+              ))}
           </Grid>
         </Box>
       </GeneralContainerSublimits>
