@@ -52,10 +52,8 @@ const navigation = (): VerticalNavItemsType => {
       icon: 'ic:baseline-payments',
       children: [
         {
-          title: 'List',
-          path: '/accounts/new-account'
+          title: 'List'
         },
-
         {
           title: 'Preview'
         },

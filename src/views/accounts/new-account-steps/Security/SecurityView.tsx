@@ -1,330 +1,64 @@
-import { useEffect, useState } from 'react'
-import UserThemeOptions from 'src/layouts/UserThemeOptions'
-import * as yup from 'yup'
-
-// ** MUI Imports
-import CloseIcon from '@mui/icons-material/Close'
-import { Box, Modal } from '@mui/material'
-import Button from '@mui/material/Button'
-import FormControl from '@mui/material/FormControl'
-import FormHelperText from '@mui/material/FormHelperText'
-import TextField from '@mui/material/TextField'
-
-// ** Icon Imports
-
-import { SecurityDto } from '@/services/accounts/dtos/security.dto'
-import { updateFormsData } from '@/store/apps/accounts'
-import CustomAlert, { IAlert } from '@/views/custom/alerts'
-import Icon from 'src/@core/components/icon'
-import { useAppDispatch, useAppSelector } from 'src/store'
-import { ButtonClose, HeaderTitleModal } from 'src/styles/Dashboard/ModalReinsurers/modalReinsurers'
-
-//Hooks
 import { useGetAccountById } from '@/hooks/accounts/forms'
 import { useAddSecurities, useUpdateSecurities } from '@/hooks/accounts/security'
 import { useAddSecurityTotal, useUpdateSecurityTotalById } from '@/hooks/accounts/securityTotal'
+import {
+  FormInformation,
+  FormSecurity,
+  SecurityContextDto,
+  SecurityDto,
+  SecurityProps
+} from '@/services/accounts/dtos/security.dto'
+import { useAppSelector } from '@/store'
+import { Title } from '@/styled-components/accounts/Security.styled'
+import { ButtonClose, HeaderTitleModal } from '@/styles/modal/modal.styled'
+import { FormSection } from '@/views/accounts/new-account-steps/Security/components/SecurityForm'
+import CustomAlert, { IAlert } from '@/views/custom/alerts'
+import CloseIcon from '@mui/icons-material/Close'
+import {
+  Box,
+  Button,
+  CardContent,
+  CardHeader,
+  FormControl,
+  FormHelperText,
+  Grid,
+  Modal,
+  TextField
+} from '@mui/material'
+import { createContext, useEffect, useState } from 'react'
+import Icon from 'src/@core/components/icon'
+import UserThemeOptions from 'src/layouts/UserThemeOptions'
+import { SecurityMapper } from './mappers/SecurityForm.mapper'
+import { CalculateSecurity } from './utils/calculates-securities'
 
-//Componentes
-import { FormSection } from './components/SecurityForm'
-
-interface FormInfo extends BrokerFormInfo {
-  [key: string]: string | boolean | undefined
-  NetPremium: string
-  SharePercent: string
-  DynamicComissionPercent: string
-  FrontingFee: string
-  ReinsuranceCompany: string
-  PremiumPerShare: string
-  DynamicComission: string
-  FrontingFeePercent: string
-  NetInsurancePremium: string
-  RetroCedant: string
-  RetroCedantContact: string
-  ContactEmail: string
-  ContactPhone: string
-  ContactCountry: string
-  HasFrontingFee: boolean
-  IsGross: boolean
-}
-
-interface PreviousFormInfo {
-  id?: number
-  RecievedNetPremium: string
-  DistribuitedNetPremium: string
-  Diference: string
-}
-
-interface BrokerFormInfo {
-  BrokerAge: string
-  Taxes: string
-  BrokerAgePercent: string
-  TaxesPercent: string
-}
-
-const SecurityForm: FormInfo = {
-  NetPremium: '',
-  SharePercent: '',
-  DynamicComissionPercent: '',
-  FrontingFee: '',
-  ReinsuranceCompany: '',
-  PremiumPerShare: '',
-  DynamicComission: '',
-  FrontingFeePercent: '',
-  NetInsurancePremium: '',
-  RetroCedant: '',
-  RetroCedantContact: '',
-  ContactEmail: '',
-  ContactPhone: '',
-  ContactCountry: '',
-  BrokerAge: '',
-  Taxes: '',
-  BrokerAgePercent: '',
-  TaxesPercent: '',
-  HasFrontingFee: false,
-  IsGross: false,
-  id: ''
-}
-
-interface FormSecurity extends PreviousFormInfo {
-  FormData: FormInfo[]
-}
-
-type SecurityProps = {
-  onStepChange: (step: number) => void
-}
-yup.setLocale({
-  mixed: {
-    required: 'This field is required',
-    notType: 'This field must be a number'
-  },
-  number: {
-    min: 'This field must be greater than ${min}',
-    max: 'This field must be less than ${max}'
-  }
-})
-
-const schemaNetPremium = yup.object().shape(
-  {
-    HasFrontingFee: yup.boolean(),
-    IsGross: yup.boolean(),
-    NetPremium: yup
-      .number()
-      .optional()
-      .transform(value => (isNaN(value) ? undefined : value))
-      .required(),
-    SharePercent: yup
-      .number()
-      .transform(value => (isNaN(value) ? undefined : value))
-      .test('max 100', 'This field must be less than 100', value => Number(value) <= 100)
-      .min(0, 'This field must be greater than 0')
-      .required(),
-    DynamicComissionPercent: yup
-      .number()
-      .transform(value => (isNaN(value) ? undefined : value))
-      .test('max 100', 'This field must be less than 100', value => Number(value) <= 100)
-      .min(0, 'This field must be greater than 0')
-      .required(),
-    FrontingFee: yup
-      .number()
-      .transform(value => (isNaN(value) ? undefined : value))
-      .when('HasFrontingFee', {
-        is: true,
-        then: yup.number().required()
-      }),
-    ReinsuranceCompany: yup
-      .string()
-      .test('is-valid', 'This field is required', value => value !== '-1')
-      .required(),
-    PremiumPerShare: yup
-      .number()
-      .transform(value => (isNaN(value) ? undefined : value))
-      .min(0, 'This field must be greater than 0')
-      .required(),
-    DynamicComission: yup
-      .number()
-      .transform(value => (isNaN(value) ? undefined : value))
-      .required(),
-    FrontingFeePercent: yup
-      .number()
-      .transform(value => (isNaN(value) ? undefined : value))
-      .test('max 100', 'This field must be less than 100', value => Number(value) <= 100)
-      .min(0, 'This field must be greater than 0')
-      .when('HasFrontingFee', {
-        is: true,
-        then: yup
-          .number()
-          .transform(value => (isNaN(value) ? undefined : value))
-          .required('This field is required')
-      }),
-    NetInsurancePremium: yup
-      .number()
-      .transform(value => (isNaN(value) ? undefined : value))
-      .required()
-      .test('Is positive?', 'ERROR: The number must be greater than 0!', value => {
-        const valueVal = value || 0
-
-        return +valueVal >= 0
-      })
-  },
-  [['IsGross', 'frontingFeeEnabled']]
-)
-
-const schema = yup.object().shape(
-  {
-    HasFrontingFee: yup.boolean(),
-    IsGross: yup.boolean(),
-    NetPremium: yup
-      .number()
-      .optional()
-      .transform(value => (isNaN(value) ? undefined : value))
-      .required(),
-    SharePercent: yup
-      .number()
-      .transform(value => (isNaN(value) ? undefined : value))
-      .test('max 100', 'This field must be less than 100', value => Number(value) <= 100)
-      .min(0, 'This field must be greater than 0')
-      .required(),
-    DynamicComissionPercent: yup
-      .number()
-      .transform(value => (isNaN(value) ? undefined : value))
-      .test('max 100', 'This field must be less than 100', value => Number(value) <= 100)
-      .min(0, 'This field must be greater than 0')
-      .required(),
-    FrontingFee: yup
-      .number()
-      .transform(value => (isNaN(value) ? undefined : value))
-      .when('HasFrontingFee', {
-        is: true,
-        then: yup.number().required()
-      }),
-    ReinsuranceCompany: yup
-      .string()
-      .test('is-valid', 'This field is required', value => value !== '-1')
-      .required(),
-    PremiumPerShare: yup
-      .number()
-      .transform(value => (isNaN(value) ? undefined : value))
-      .min(0, 'This field must be greater than 0')
-      .required(),
-    DynamicComission: yup
-      .number()
-      .transform(value => (isNaN(value) ? undefined : value))
-      .required(),
-    FrontingFeePercent: yup
-      .number()
-      .transform(value => (isNaN(value) ? undefined : value))
-      .test('max 100', 'This field must be less than 100', value => Number(value) <= 100)
-      .min(0, 'This field must be greater than 0')
-      .when('HasFrontingFee', {
-        is: true,
-        then: yup
-          .number()
-          .transform(value => (isNaN(value) ? undefined : value))
-          .required('This field is required')
-      }),
-    NetInsurancePremium: yup
-      .number()
-      .transform(value => (isNaN(value) ? undefined : value))
-      .required()
-      .test('Is positive?', 'ERROR: The number must be greater than 0!', value => {
-        const valueVal = value || 0
-
-        return +valueVal >= 0
-      }),
-    RetroCedant: yup.string().when('HasFrontingFee', {
-      is: true,
-      then: yup.string().required()
-    }),
-    RetroCedantContact: yup.string().when('HasFrontingFee', {
-      is: true,
-      then: yup.string().notRequired()
-    }),
-    BrokerAge: yup
-      .number()
-      .transform(value => (isNaN(value) ? undefined : value))
-      .nullable()
-      .when('IsGross', {
-        is: true,
-        then: yup.number().required()
-      }),
-    Taxes: yup
-      .number()
-      .transform(value => (isNaN(value) ? undefined : value))
-      .nullable()
-      .when('IsGross', {
-        is: true,
-        then: yup.number().required()
-      }),
-    BrokerAgePercent: yup
-      .number()
-      .transform(value => (isNaN(value) ? undefined : value))
-      .test('max 100', 'This field must be less than 100', value => Number(value) <= 100)
-      .min(0, 'This field must be greater than 0')
-      .nullable()
-      .when('IsGross', {
-        is: true,
-        then: yup.number().required()
-      }),
-    TaxesPercent: yup
-      .number()
-      .transform(value => (isNaN(value) ? undefined : value))
-      .test('max 100', 'This field must be less than 100', value => Number(value) <= 100)
-      .min(0, 'This field must be greater than 0')
-      .nullable()
-      .when('IsGross', {
-        is: true,
-        then: yup.number().required()
-      })
-  },
-  [['IsGross', 'frontingFeeEnabled']]
-)
-
-interface FormInformation {
-  frontingFee: number
-  netPremium: number
-  grossPremium: number
-}
+export const SecurityContext = createContext<SecurityContextDto>({} as SecurityContextDto)
 
 const Security = ({ onStepChange }: SecurityProps) => {
-  const [securitiesList, setSecuritiesList] = useState<FormInfo[]>([])
-  const [formErrors, setFormErrors] = useState<FormInfo[]>([{ ...SecurityForm }])
-  const { saveSecurityTotal } = useAddSecurityTotal()
-  const { updateSecurities } = useUpdateSecurities()
-  const { saveSecurities } = useAddSecurities()
-  const [canMakeRequest, setCanMakeRequest] = useState<boolean>(false)
-  const [isNextStep, SetIsNextStep] = useState<boolean>(false)
-  const dispatch = useAppDispatch()
-  const accountData = useAppSelector(state => state.accounts)
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
-  const { account, setAccountId, getAccountById } = useGetAccountById()
-  const { updateSecurityTotal } = useUpdateSecurityTotalById()
-  const [itemsChanged, setItemsChanged] = useState(false)
-
-  // const allValidated: boolean[] = []
-  const [validationsDone, setValidationsDone] = useState(false)
-
-  const handleItemChange = (index: number, item: FormInfo) => {
-    setItemsChanged(true)
-    setSecuritiesList(prevSecuritiesList => {
-      const tempSecurities = [...prevSecuritiesList.slice(0, index), item, ...prevSecuritiesList.slice(index + 1)]
-
-      return tempSecurities
-    })
-  }
-
+  const [securities, setSecurities] = useState<SecurityDto[]>([])
+  const [isNextStep, setIsNextStep] = useState<boolean>(false)
   const [allFormData, setAllFormData] = useState<FormSecurity>({
-    FormData: securitiesList,
-    RecievedNetPremium: '',
-    DistribuitedNetPremium: '',
-    Diference: ''
+    formData: [],
+    recievedNetPremium: 0,
+    distribuitedNetPremium: 0,
+    diference: 0
   })
+  const [allErrors, setAllErrors] = useState<boolean[]>([])
 
   const [open, setOpen] = useState<boolean>(false)
-  const [formInformation, setFormInformation] = useState<FormInformation>({
+  const [information, setInformation] = useState<FormInformation>({
     frontingFee: 0,
     netPremium: 0,
     grossPremium: 0
   })
+  const [companiesSelect] = useState<number[]>([])
+  const { account, setAccountId } = useGetAccountById()
+  const { saveSecurityTotal } = useAddSecurityTotal()
+  const { updateSecurityTotal } = useUpdateSecurityTotalById()
+  const { updateSecurities } = useUpdateSecurities()
+  const { saveSecurities } = useAddSecurities()
+  const accountData = useAppSelector(state => state.accounts)
+  const inter = userThemeConfig.typography?.fontFamilyInter
   const [badgeData, setBadgeData] = useState<IAlert>({
     message: '',
     theme: 'success',
@@ -332,469 +66,324 @@ const Security = ({ onStepChange }: SecurityProps) => {
     status: 'error'
   })
 
-  useEffect(() => {
-    accountData.formsData.form1.id && setAccountId(accountData.formsData.form1.id)
-  }, [accountData.formsData.form1.id, setAccountId])
+  const calculateSecurities = (securities: SecurityDto[]) => {
+    if (securities.length > 0 && information) {
+      const tempSecurities = []
+      companiesSelect.splice(0, companiesSelect.length)
+      allErrors.splice(0, allErrors.length)
 
-  const inter = userThemeConfig.typography?.fontFamilyInter
+      for (const security of securities) {
+        allErrors.push(false)
+        const operationSecurity: CalculateSecurity = new CalculateSecurity()
+          .setInformation(information)
+          .setSecurity(security)
+        if (security?.idCReinsuranceCompany?.id) companiesSelect.push(security.idCReinsuranceCompany.id)
 
+        security.premiumPerShareAmount = operationSecurity.getPremierPerShare() || 0
+        security.brokerAgeAmount = operationSecurity.getBrokerAge() || 0
+        security.dynamicCommissionAmount = operationSecurity.getDynamicComissionAmount() || 0
+        security.frontingFeeAmount = operationSecurity.getFrontingFeeAmount() || 0
+        security.taxesAmount = operationSecurity.getTaxesAmount() || 0
+        security.netReinsurancePremium = operationSecurity.getNetReinsurancePremium() || 0
+        tempSecurities.push({
+          ...security,
+          difference: Number(security.difference) || 0,
+          distributedNetPremium: Number(security.distributedNetPremium) || 0,
+          dynamicCommission: Number(security.dynamicCommission) || 0,
+          frontingFee: Number(security.frontingFee) || 0,
+          netPremiumAt100: Number(security.netPremiumAt100) || 0,
+          receivedNetPremium: Number(security.receivedNetPremium) || 0,
+          reinsuranceBrokerage: Number(security.reinsuranceBrokerage) || 0,
+          share: Number(security.share) || 0,
+          taxes: Number(security.taxes) || 0
+        })
+      }
+      let dataForm: FormSecurity = {
+        formData: tempSecurities,
+        ...CalculateSecurity.getData(tempSecurities, information)
+      }
+      if (account && account.securityTotal) {
+        dataForm = {
+          ...dataForm,
+          id: account.securityTotal.id
+        }
+      }
+      setAllFormData(dataForm)
+      setSecurities(tempSecurities)
+    }
+  }
   const addNewForm = () => {
-    setSecuritiesList([...securitiesList, { ...SecurityForm, NetPremium: '' + formInformation.netPremium }])
-    setFormErrors([...formErrors, { ...SecurityForm }])
+    const securityNew = {} as SecurityDto
+    calculateSecurities([...securities, securityNew])
   }
-
-  const DeleteNewForm = (index: number) => {
-    const updatedSecurities = [...securitiesList]
-    const updatedValidations = [...formErrors]
-    updatedSecurities.splice(index, 1)
-    updatedValidations.splice(index, 1)
-
-    setSecuritiesList(updatedSecurities)
-    setFormErrors(updatedValidations)
+  const handleNextStep = () => {
+    setOpen(true)
   }
-
   const handleCloseModal = () => {
     setOpen(false)
   }
-
   const onNextStep = () => {
-    validate()
-    SetIsNextStep(true)
+    setIsNextStep(true)
     handleCloseModal()
   }
-
-  const handleNext = () => {
-    setOpen(true)
-  }
-
-  const handleSubmit = async (isNextStep = false) => {
-    validate()
-    SetIsNextStep(isNextStep)
-  }
-
-  const validate = async () => {
-
-    securitiesList.forEach((form, index) => {
-      const data = [...formErrors]
-      data[index] = { ...SecurityForm }
-
-      if (form.IsGross) {
-        schema
-          .validate(form, { abortEarly: false })
-          .then(function () {
-            // console.log("validado form: ")
-            // console.log(index)
-            setCanMakeRequest(true)
-          })
-          .catch(function (err) {
-            // console.log("error form: ")
-            // console.log(index)
-            err?.inner?.forEach((e: any) => {
-              data[index][e.path] = e.message
-              setFormErrors(data)
-              setCanMakeRequest(false)
-            })
-          })
-      } else {
-        schemaNetPremium
-          .validate(form, { abortEarly: false })
-          .then(function () {
-            setCanMakeRequest(true)
-
-            // console.log("validado form: ")
-            // console.log(index)
-          })
-          .catch(function (err) {
-            // console.log("error form: ")
-            // console.log(index)
-
-            err?.inner?.forEach((e: any) => {
-              data[index][e.path] = e.message
-              setFormErrors(data)
-              setCanMakeRequest(false)
-            })
-          })
-      }
-      if(index == (securitiesList.length-1)) // Esta condición se agrego como prueba
-                                            // para determinar cuando habian sido validados
-                                            // todos los Reinsurers
-      {
-        // console.log("all validations are done")
-        setValidationsDone(true)
-
-      }
-    })
-  }
-
-  const calculateDistribuitedNetPremium = (item: FormInfo, index: number) => {
-    const tempSecurities = [...securitiesList.slice(0, index), item, ...securitiesList.slice(index + 1)]
-    let DistribuitedNetPremium = 0
-    let sumSharePercent = 0
-    let sumGrossShare = 0
-
-    tempSecurities.forEach(form => {
-      DistribuitedNetPremium +=
-        +form.BrokerAge + +form.Taxes + +form.DynamicComission + +form.FrontingFee + +form.NetInsurancePremium
-
-      if (!form.IsGross) sumSharePercent += +form.SharePercent
-      else sumGrossShare += +form.PremiumPerShare
-
-    })
-
-    const recievedNetPremium = (sumSharePercent * +formInformation.netPremium) / 100 + sumGrossShare
-
-    setAllFormData(state => ({
-      ...state,
-      Diference: (DistribuitedNetPremium - recievedNetPremium).toString(),
-      DistribuitedNetPremium: DistribuitedNetPremium.toString(),
-      RecievedNetPremium: recievedNetPremium.toString()
-
-    }))
-  }
-
-  const getSecurities = async (isSaving=false) => {
-    const idAccountCache = Number(localStorage.getItem('idAccount'))
-    const accountInfo = await getAccountById(idAccountCache)
-    if (accountInfo?.securities.length <= 0 && !accountInfo.securityTotal) {
-      setSecuritiesList([{ ...SecurityForm, NetPremium: '' + accountInfo.informations[0].netPremium }])
-      setFormErrors([{ ...SecurityForm }])
-
-      return
-    }
-
-    const securitiesTem: Partial<FormInfo>[] = []
-    const securitiesErrorsTemp: FormInfo[] = []
-    for (const security of accountInfo.securities) {
-      securitiesTem.push({
-        id: String(security.id),
-        BrokerAgePercent: String(security.reinsuranceBrokerage),
-        TaxesPercent: String(security.taxes),
-        IsGross: security.isGross || false,
-        NetPremium: String(security.netPremiumAt100),
-        FrontingFeePercent: String(security.frontingFee),
-        DynamicComissionPercent: String(security.dynamicCommission),
-        SharePercent: String(security.share),
-        NetInsurancePremium: String(security.netReinsurancePremium),
-        ReinsuranceCompany:
-          typeof security.idCReinsuranceCompany !== 'number' && security.idCReinsuranceCompany
-            ? String(security.idCReinsuranceCompany.id)
-            : String(security.idCReinsuranceCompany),
-        RetroCedant:
-          typeof security.idCRetroCedant !== 'number' && security.idCRetroCedant
-            ? String(security.idCRetroCedant!.id) ?? ''
-            : String(security.idCRetroCedant) ?? '',
-        RetroCedantContact:
-          typeof security.idCRetroCedantContact !== 'number' && security.idCRetroCedantContact
-            ? String(security.idCRetroCedantContact?.id)
-            : String(security.idCRetroCedantContact) ?? '',
-        HasFrontingFee: security.frontingFeeActive || false,
-        BrokerAge: '0',
-        ContactCountry:
-          typeof security.idCRetroCedantContact !== 'number' && security.idCRetroCedantContact
-            ? '' + security.idCRetroCedantContact['__idCCountry__']?.id ?? ''
-            : '',
-        ContactEmail: typeof security.idCRetroCedantContact !== 'number' ? security.idCRetroCedantContact?.email : '',
-        ContactPhone: typeof security.idCRetroCedantContact !== 'number' ? security.idCRetroCedantContact?.phone : '',
-        DynamicComission: '0',
-        FrontingFee: '0',
-        PremiumPerShare: '0',
-        Taxes: '0'
-      })
-    }
-
-    accountInfo.securities.forEach(() => securitiesErrorsTemp.push({ ...SecurityForm }))
-
-    if(!itemsChanged || isSaving ){ // Si no hubo cambios en el formulario  Ó si se está
-                                    //guardando la data entonces reasigna securitiesList
-      setSecuritiesList([...securitiesTem] as FormInfo[])
-    }
-    setFormErrors([...securitiesErrorsTemp])
-    setAllFormData({
-      ...allFormData,
-      DistribuitedNetPremium: accountInfo.securityTotal.distributedNetPremium.toString(),
-      RecievedNetPremium: accountInfo.securityTotal.receivedNetPremium.toString(),
-      Diference: accountInfo.securityTotal.difference.toString(),
-      id: accountInfo.securityTotal.id
-    })
-  }
-
   const SaveData = async () => {
-    const update: Partial<SecurityDto>[] = []
-    const save: Partial<SecurityDto>[] = []
-    securitiesList.forEach(form => {
-      if (form.id) {
-        update.push({
-          id: +form!.id,
-          netPremiumAt100: +form.NetPremium || 0,
-          share: +form.SharePercent || 0,
-          frontingFeeActive: form.HasFrontingFee || false,
-          dynamicCommission: +form.DynamicComissionPercent || 0,
-          frontingFee: +form.FrontingFeePercent || 0,
-          netReinsurancePremium: +form.NetInsurancePremium || 0,
-          taxes: +form.TaxesPercent || 0,
-          reinsuranceBrokerage: +form.BrokerAgePercent || 0,
-          active: true,
-          idCReinsuranceCompany: Number(form.ReinsuranceCompany),
-          idCRetroCedant: Number(form.RetroCedant) || null,
-          idCRetroCedantContact: Number(form.RetroCedantContact) || null,
-          idEndorsement: null,
-          idAccount: +accountData.formsData.form1.id,
-          receivedNetPremium: 0,
-          distributedNetPremium: 0,
-          difference: 0
-        })
-      } else {
-        save.push({
-          netPremiumAt100: +form.NetPremium || 0,
-          share: +form.SharePercent || 0,
-          frontingFeeActive: form.HasFrontingFee || false,
-          dynamicCommission: +form.DynamicComissionPercent || 0,
-          frontingFee: +form.FrontingFeePercent || 0,
-          netReinsurancePremium: +form.NetInsurancePremium || 0,
-          taxes: +form.TaxesPercent || 0,
-          reinsuranceBrokerage: +form.BrokerAgePercent || 0,
-          active: true,
-          idCReinsuranceCompany: Number(form.ReinsuranceCompany),
-          idCRetroCedant: Number(form.RetroCedant) || null,
-          idCRetroCedantContact: Number(form.RetroCedantContact) || null,
-          idEndorsement: null,
-          idAccount: +accountData.formsData.form1.id,
-          receivedNetPremium: 0,
-          distributedNetPremium: 0,
-          difference: 0
-        })
+    const isError = allErrors.find(error => error)
+    debugger
+    if (!isError) {
+      const update: Partial<SecurityDto>[] = []
+      const save: Partial<SecurityDto>[] = []
+
+      for (const security of securities) {
+        const mapper = SecurityMapper.securityToSecurityForm(security, accountData)
+
+        if (security.id) {
+          update.push({
+            ...mapper,
+            id: security.id
+          })
+        } else {
+          save.push({ ...mapper })
+        }
       }
-    })
 
-    let saveTotal = ''
-    if (!allFormData.id) {
-      saveTotal = (await saveSecurityTotal({
-        receivedNetPremium: +allFormData.RecievedNetPremium,
-        distributedNetPremium: +allFormData.DistribuitedNetPremium,
-        difference: +allFormData.Diference,
-        idAccount: +accountData.formsData.form1.id
-      })) as string
-    } else {
-      await updateSecurityTotal(allFormData.id, {
-        receivedNetPremium: +allFormData.RecievedNetPremium,
-        distributedNetPremium: +allFormData.DistribuitedNetPremium,
-        difference: +allFormData.Diference,
-        idAccount: +accountData.formsData.form1.id
-      })
-    }
-
-    let saveAll = ''
-    await updateSecurities(update)
-    saveSecurities(save)
-      .then(res => (saveAll = '' + res))
-      .finally(() => {
-        setCanMakeRequest(false)
-        setItemsChanged(false)
-        setSecuritiesList([])
-        getSecurities(true)
-      })
-
-    if (saveAll === 'error' || saveTotal === 'error') {
-      setBadgeData({
-        message: 'Error saving data',
-        theme: 'error',
-        open: true,
-        status: 'error',
-        icon: <Icon style={{ color: '#FF4D49' }} icon='icon-park-outline:error' />
-      })
-      setTimeout(() => {
-        setBadgeData({
-          message: 'Saved successfully',
-          theme: 'success',
-          open: false,
-          status: 'error'
+      if (!allFormData.id) {
+        saveSecurityTotal({
+          receivedNetPremium: +allFormData.recievedNetPremium,
+          distributedNetPremium: +allFormData.distribuitedNetPremium,
+          difference: +allFormData.diference,
+          idAccount: +accountData.formsData.form1.id
         })
-      }, 5000)
-    } else {
-      setBadgeData({
-        message: 'The information has been saved',
-        theme: 'success',
-        open: true,
-        status: 'error'
-      })
-      setTimeout(() => {
-        setBadgeData({
-          message: 'Saved successfully',
-          theme: 'success',
-          open: false,
-          status: 'error'
+          .then(response => {
+            console.log('saveSecurityTotal', { response })
+          })
+          .catch(e => {
+            console.log('saveSecurityTotal', e)
+          })
+      } else {
+        await updateSecurityTotal(allFormData?.id, {
+          receivedNetPremium: +allFormData.recievedNetPremium,
+          distributedNetPremium: +allFormData.distribuitedNetPremium,
+          difference: +allFormData.diference,
+          idAccount: +accountData.formsData.form1.id
         })
-      }, 5000)
+          .then(response => {
+            console.log('updateSecurityTotal', { response })
+          })
+          .catch(e => {
+            console.log('updateSecurityTotal', e)
+          })
+      }
+
+      if (update.length > 0)
+        updateSecurities(update)
+          .then(res => {
+            console.log('updateSecurities', { res })
+
+            setBadgeData({
+              message: 'Saved successfully',
+              theme: 'success',
+              open: true,
+              status: 'error'
+            })
+          })
+          .catch(e => {
+            console.log('ERROR updateSecurities', e)
+            setBadgeData({
+              message: 'Error saving data',
+              theme: 'error',
+              open: true,
+              status: 'error',
+              icon: <Icon style={{ color: '#FF4D49' }} icon='icon-park-outline:error' />
+            })
+          })
+      if (save.length > 0)
+        saveSecurities(save)
+          .then(res => {
+            console.log('saveSecurities', { res })
+
+            setBadgeData({
+              message: 'Saved successfully',
+              theme: 'success',
+              open: true,
+              status: 'error'
+            })
+          })
+          .catch(e => {
+            console.log('ERROR saveSecurities', e)
+            setBadgeData({
+              message: 'Error saving data',
+              theme: 'error',
+              open: true,
+              status: 'error',
+              icon: <Icon style={{ color: '#FF4D49' }} icon='icon-park-outline:error' />
+            })
+          })
     }
   }
 
-  const handleSuccess = () => {
-      SaveData()
-      dispatch(updateFormsData({ form2: allFormData }))
-  }
-
   useEffect(() => {
-    const data = accountData.formsData.form1.placementStructure as FormInformation
-    setFormInformation(data)
-    //eslint-disable-next-line
-  }, [accountData.formsData.form1])
-
-  useEffect(() => {
-    setAllFormData({
-      ...allFormData,
-      Diference: (+allFormData.RecievedNetPremium - +allFormData.DistribuitedNetPremium).toString()
-    })
-    //eslint-disable-next-line
-  }, [allFormData.DistribuitedNetPremium, allFormData.RecievedNetPremium])
-
-  useEffect(() => {
-    getSecurities()
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [account])
-
-  useEffect(() => {
-
-    if (validationsDone && canMakeRequest) {
-      handleSuccess()
-
+    const idAccountCache = Number(localStorage.getItem('idAccount'))
+    if (accountData.formsData.form1.id) {
+      setAccountId(accountData.formsData.form1.id || idAccountCache)
+      const data = accountData.formsData.form1.placementStructure as FormInformation
+      setInformation(data)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [accountData.formsData.form1.id])
+  useEffect(() => {
+    if (account && information) {
+      calculateSecurities(account.securities)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [account, information])
 
-    console.log({ isNextStep, canMakeRequest })
-
-    if (isNextStep && canMakeRequest && validationsDone) onStepChange(3)
+  useEffect(() => {
+    const isError = allErrors.find(error => error)
+    if (isNextStep && !isError) onStepChange(3)
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [canMakeRequest, isNextStep, validationsDone])
-
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  useEffect(() => {
-    // console.log("useffect")
-    // console.log(securitiesList)
-  }, [securitiesList]);
-
-   // eslint-disable-next-line @typescript-eslint/no-empty-function
-   useEffect(() => {
-  }, [itemsChanged, setItemsChanged]);
-
+  }, [isNextStep])
+  console.log({ allErrors })
 
   return (
-    <>
-      <div className='information' style={{ fontFamily: inter }}>
-        <div className='title'>Security</div>
+    <SecurityContext.Provider
+      value={{
+        securities,
+        setSecurities,
+        information,
+        allErrors,
+        companiesSelect,
+        calculateSecurities,
+        setAllErrors
+      }}
+    >
+      <div style={{ fontFamily: inter }}>
+        <CardHeader title={<Title>Security</Title>} />
+
         <div style={{ width: 'fit-content', float: 'right' }}>
           <CustomAlert {...badgeData} />
         </div>
-        <form noValidate autoComplete='on' onSubmit={() => handleSubmit(false)}>
-          <div className='section'>
-            {securitiesList.map((_, index) => (
-              <>
-                {index > 0 && <hr style={{ margin: '40px 0px', backgroundColor: 'lightgray' }} />}
-                <FormSection
-                  key={index}
-                  index={index}
-                  security={securitiesList[index]}
-                  onChangeItemList={handleItemChange}
-                  formErrors={formErrors}
-                  setFormErrors={setFormErrors}
-                  securities={securitiesList}
-                  onDeleteItemList={DeleteNewForm}
-                  onMakeTotals={calculateDistribuitedNetPremium}
-                />
-              </>
-            ))}
-          </div>
-          <div className='fullwidth'>
-            <FormControl className='form-col-input' sx={{ mb: 2, mt: 2 }}>
-              <TextField
-                autoFocus
-                label='Recieved net premium'
-                disabled
-                fullWidth
-                value={allFormData.RecievedNetPremium}
-              />
-            </FormControl>
-            <FormControl className='form-col-input' sx={{ mb: 2, mt: 2 }}>
-              <TextField
-                autoFocus
-                fullWidth
-                label='Distribuited net premium'
-                disabled
-                value={allFormData.DistribuitedNetPremium}
-              />
+        <form noValidate autoComplete='on'>
+          <CardContent>
+            {securities.length > 0 ? (
+              securities.map((security, index) => {
+                return <FormSection key={index} security={security} index={index} />
+              })
+            ) : (
+              <FormSection index={0} security={{} as SecurityDto} />
+            )}
 
-              {false && <FormHelperText sx={{ color: 'error.main' }}>Invalid field</FormHelperText>}
-            </FormControl>
-            <FormControl className='form-col-input' sx={{ mb: 2, mt: 2 }}>
-              <TextField autoFocus label='Diference' disabled value={allFormData.Diference} />
-
-              {false && <FormHelperText sx={{ color: 'error.main' }}>Invalid field</FormHelperText>}
-            </FormControl>
-          </div>
-          <div className='add-reinsurer'>
-            <Button
-              type='button'
-              onClick={addNewForm}
-              variant='text'
-              color='primary'
-              size='large'
-              fullWidth
-              sx={{ justifyContent: 'start' }}
+            <Grid container spacing={5}>
+              <Grid item xs={12} sm={4}>
+                <FormControl fullWidth>
+                  <TextField
+                    autoFocus
+                    label='Recieved net premium'
+                    disabled
+                    fullWidth
+                    value={allFormData.recievedNetPremium}
+                  />
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} sm={4}>
+                <FormControl fullWidth>
+                  <TextField
+                    autoFocus
+                    fullWidth
+                    label='Distribuited net premium'
+                    disabled
+                    value={allFormData.distribuitedNetPremium}
+                  />
+                  {false && <FormHelperText sx={{ color: 'error.main' }}>Invalid field</FormHelperText>}
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} sm={4}>
+                <FormControl fullWidth>
+                  <TextField autoFocus label='Diference' value={allFormData.diference} disabled />
+                  {false && <FormHelperText sx={{ color: 'error.main' }}>Invalid field</FormHelperText>}
+                </FormControl>
+              </Grid>
+            </Grid>
+            <Grid
+              container
+              spacing={5}
+              sx={{
+                marginTop: '20px'
+              }}
             >
-              <Icon icon='material-symbols:add-circle-outline' fontSize={20} className='icon-btn' /> ADD REINSURER
-            </Button>
-          </div>
-          <div className='section action-buttons' style={{ float: 'right', marginRight: 'auto', marginBottom: '20px' }}>
-            <Button className='btn-save' onClick={() => handleSubmit(false)} variant='contained'>
-              <div className='btn-icon'>
-                <Icon icon='mdi:content-save' />
-              </div>
-              SAVE CHANGES
-            </Button>
-            <Button className='btn-next' onClick={handleNext}>
-              Next Step
-              <div className='btn-icon'>
-                <Icon icon='material-symbols:arrow-right-alt' />
-              </div>
-            </Button>
-
-            <Modal className='next-step-modal' open={open} onClose={handleCloseModal}>
-              <Box
-                sx={{
-                  position: 'absolute',
-                  bgcolor: 'white',
-                  top: '50%',
-                  left: '50%',
-                  boxShadow: 24,
-                  pl: 5,
-                  pr: 5,
-                  transform: 'translate(-50%, -50%)',
-                  borderRadius: '10px',
-                  padding: '15px'
-                }}
-              >
-                <HeaderTitleModal>
-                  <div className='next-modal-title'>Ready to continue?</div>
-                  <ButtonClose onClick={handleCloseModal}>
-                    <CloseIcon />
-                  </ButtonClose>
-                </HeaderTitleModal>
-                <div className='next-modal-text'>
-                  You are about to advance to the next form. Make sure that all the fields have been completed with the
-                  correct information.
+              <Grid item xs={12} sm={6}>
+                <div className='add-reinsurer'>
+                  <Button
+                    type='button'
+                    onClick={addNewForm}
+                    variant='text'
+                    color='primary'
+                    size='large'
+                    fullWidth
+                    sx={{ justifyContent: 'start' }}
+                  >
+                    <Icon icon='material-symbols:add-circle-outline' fontSize={20} className='icon-btn' /> ADD REINSURER
+                  </Button>
                 </div>
-                <Button className='continue-modal-btn' variant='contained' onClick={onNextStep}>
-                  CONTINUE
-                </Button>
-                <Button className='create-contact-modal' onClick={() => setOpen(false)}>
-                  Keep editing information
-                </Button>
-              </Box>
-            </Modal>
-          </div>
+              </Grid>
+
+              <Grid item xs={12} sm={6}>
+                <div
+                  className='section action-buttons'
+                  style={{ float: 'right', marginRight: 'auto', marginBottom: '20px' }}
+                >
+                  <Button className='btn-save' variant='contained' onClick={SaveData}>
+                    <div className='btn-icon'>
+                      <Icon icon='mdi:content-save' />
+                    </div>
+                    SAVE CHANGES
+                  </Button>
+                  <Button className='btn-next' onClick={handleNextStep}>
+                    Next Step
+                    <div className='btn-icon'>
+                      <Icon icon='material-symbols:arrow-right-alt' />
+                    </div>
+                  </Button>
+                </div>
+              </Grid>
+            </Grid>
+          </CardContent>
+          <Modal className='next-step-modal' open={open} onClose={handleCloseModal}>
+            <Box
+              sx={{
+                position: 'absolute',
+                bgcolor: 'white',
+                top: '50%',
+                left: '50%',
+                boxShadow: 24,
+                pl: 5,
+                pr: 5,
+                transform: 'translate(-50%, -50%)',
+                borderRadius: '10px',
+                padding: '15px'
+              }}
+            >
+              <HeaderTitleModal>
+                <div className='next-modal-title'>Ready to continue?</div>
+                <ButtonClose onClick={handleCloseModal}>
+                  <CloseIcon />
+                </ButtonClose>
+              </HeaderTitleModal>
+              <div className='next-modal-text'>
+                You are about to advance to the next form. Make sure that all the fields have been completed with the
+                correct information.
+              </div>
+              <Button className='continue-modal-btn' variant='contained' onClick={onNextStep}>
+                CONTINUE
+              </Button>
+              <Button className='create-contact-modal' onClick={() => setOpen(false)}>
+                Keep editing information
+              </Button>
+            </Box>
+          </Modal>
         </form>
       </div>
-    </>
+    </SecurityContext.Provider>
   )
 }
 
