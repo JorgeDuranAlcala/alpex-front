@@ -1,3 +1,5 @@
+'use client'
+
 import React, { useEffect, useState } from 'react'
 
 //Hooks
@@ -13,6 +15,7 @@ import Select, { SelectChangeEvent } from '@mui/material/Select'
 import TextField from '@mui/material/TextField'
 
 // ** Third Party Imports
+import { useExchangePair } from '@/hooks/exchange-rate/useExchangePair'
 import { NumericFormat } from 'react-number-format'
 
 interface PlacementStructureErrors {
@@ -20,13 +23,11 @@ interface PlacementStructureErrors {
   totalError: boolean
   reinsuranceBrokeragePError: boolean
   taxesPError: boolean
-  frontingFeePError: boolean
   exchangeRateError: boolean
   limitError: boolean
   grossPremiumError: boolean
   reinsuranceBrokerageError: boolean
   taxesError: boolean
-  frontingFeeError: boolean
   typeOfLimitError: boolean
 }
 
@@ -46,7 +47,7 @@ export type PlacementStructureProps = {
     taxes: number
     frontingFee: number
     attachmentPoint: number
-    typeOfLimit: string
+    typeOfLimit: string | number | null
   }
   setPlacementStructure: React.Dispatch<
     React.SetStateAction<{
@@ -64,29 +65,28 @@ export type PlacementStructureProps = {
       taxes: number
       frontingFee: number
       attachmentPoint: number
-      typeOfLimit: string
+      typeOfLimit: string | number | null
     }>
   >
   makeValidations: boolean
   resetMakeValidations: () => void
-  isValidForm?: (valid: boolean) => void
+  isValidForm: (valid: boolean) => void
 }
 
 const PlacementStructure: React.FC<PlacementStructureProps> = ({
   placementStructure,
   setPlacementStructure,
   makeValidations,
-  resetMakeValidations,
   isValidForm
 }) => {
   const { currencies } = useGetAllCurrencies()
   const { typesOfLimits } = useGetAllTypeOfLimit()
 
-  const [reinsuranceBrokerageP, setReinsuranceBrokerageP] = useState<number>()
+  const [reinsuranceBrokerageP, setReinsuranceBrokerageP] = useState<number>(placementStructure.reinsuranceBrokerage)
   const [taxesP, setTaxesP] = useState<number>()
   const [frontingFeeP, setFrontingFeeP] = useState<number>()
   const [netPremium, setNetPremium] = useState<number>()
-  const [grossPremium, setGrossPremium] = useState<number>()
+  const [grossPremium, setGrossPremium] = useState<number>(placementStructure.grossPremium)
   const [reinsuranceBrokerage, setReinsuranceBrokerage] = useState<number>()
   const [taxes, setTaxes] = useState<number>()
   const [frontingFee, setFrontingFee] = useState<number>()
@@ -95,15 +95,14 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
     totalError: false,
     reinsuranceBrokeragePError: false,
     taxesPError: false,
-    frontingFeePError: false,
     exchangeRateError: false,
     limitError: false,
     grossPremiumError: false,
     reinsuranceBrokerageError: false,
     taxesError: false,
-    frontingFeeError: false,
     typeOfLimitError: false
   })
+  const { setPair, exchangeRate, pair } = useExchangePair()
   const calculate = async (type = 'any') => {
     const grossPremiumc: number = grossPremium || 0
     const reinsuranceBrokeragePc: number = reinsuranceBrokerageP || 0
@@ -139,8 +138,6 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
       case 'frontingFeeP': {
         const result = grossPremiumc * (frontingFeePc / 100)
         setFrontingFee(isFinite(result) ? result : 0)
-        console.log('frontingFee')
-        console.log(frontingFee)
         break
       }
       case 'frontingFee': {
@@ -149,12 +146,18 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
         break
       }
       case 'grossPremium': {
-        const resultBrokerage = (reinsuranceBrokeragec * 100) / grossPremiumc
-        const resultTaxes = (taxesPc * 100) / grossPremiumc
-        const resultFronting = (frontingFeec * 100) / grossPremiumc
-        setReinsuranceBrokerageP(isFinite(resultBrokerage) ? resultBrokerage : 0)
-        setTaxesP(isFinite(resultTaxes) ? resultTaxes : 0)
-        setFrontingFeeP(isFinite(resultFronting) ? resultFronting : 0)
+        console.log({ taxesPc, frontingFeePc })
+
+        const resultBrokerage = grossPremiumc * (reinsuranceBrokeragePc / 100)
+        const resultTaxes = grossPremiumc * (taxesPc / 100)
+        const resultFronting = grossPremiumc * (frontingFeePc / 100)
+
+        setReinsuranceBrokerageP(reinsuranceBrokeragePc)
+        setTaxes(taxesP)
+        setFrontingFee(frontingFeePc)
+        setReinsuranceBrokerage(isFinite(resultBrokerage) ? resultBrokerage : 0)
+        setTaxes(isFinite(resultTaxes) ? resultTaxes : 0)
+        setFrontingFee(isFinite(resultFronting) ? resultFronting : 0)
         break
       }
       default:
@@ -164,7 +167,6 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
     const taxesFinal = taxes ? taxes : 0
     const frontingFeeTotalFinal = frontingFee ? frontingFee : 0
     setNetPremium(grossPremiumc - reinsuranceBrokerageTotalFinal - taxesFinal - frontingFeeTotalFinal)
-    console.log(frontingFee)
     setPlacementStructure({
       ...placementStructure,
       reinsuranceBrokerageP: reinsuranceBrokerageP ?? 0,
@@ -181,22 +183,10 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
   const handleCurrencyChange = (e: SelectChangeEvent<string>) => {
     const target = e.target
     const value = target.value
-
-    switch (value) {
-      case 'USD':
-        setPlacementStructure({ ...placementStructure, currency: value, exchangeRate: 18.5 })
-        break
-      case 'MXN':
-        setPlacementStructure({ ...placementStructure, currency: value, exchangeRate: 20.0 })
-        break
-      case 'EUR':
-        setPlacementStructure({ ...placementStructure, currency: value, exchangeRate: 1 })
-        break
-    }
+    setPair({ targetCurrency: value, baseCurrency: 'USD' })
   }
 
-  const handleNumericInputChange = (value: any, e: any) => {
-    const { name } = e.event.target
+  const handleNumericInputChange = (value: any, name: string) => {
     setPlacementStructure({ ...placementStructure, [name]: value })
   }
 
@@ -211,29 +201,23 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
   }
 
   const validations = () => {
-    console.log('entro a la validación')
     const newErrors: PlacementStructureErrors = {
       currencyError: placementStructure.currency === '',
       totalError: placementStructure.total === 0,
       reinsuranceBrokeragePError: placementStructure.reinsuranceBrokerageP === 0,
       taxesPError: placementStructure.taxesP === 0,
-      frontingFeePError: placementStructure.frontingFeeP === 0,
       exchangeRateError: placementStructure.exchangeRate === 0,
       limitError: placementStructure.limit === 0,
       grossPremiumError: placementStructure.grossPremium === 0,
       reinsuranceBrokerageError: placementStructure.reinsuranceBrokerage === 0,
       taxesError: placementStructure.taxes === undefined,
-      frontingFeeError: placementStructure.frontingFee === undefined,
       typeOfLimitError: placementStructure.typeOfLimit === ''
     }
     setErrors(newErrors)
 
     if (Object.values(newErrors).every(error => !error)) {
       // enviar formulario si no hay errores
-      console.log('Formulario enviado')
-      if (isValidForm) {
-        isValidForm(true)
-      }
+      isValidForm(true)
     }
   }
 
@@ -243,17 +227,37 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
 
   useEffect(() => {
     if (makeValidations) {
-      console.log('La acción se realizó')
       validations()
-      resetMakeValidations()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [makeValidations])
+  }, [makeValidations, placementStructure])
 
   useEffect(() => {
     calculate()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reinsuranceBrokerageP, taxesP, frontingFeeP, netPremium, grossPremium, reinsuranceBrokerage, taxes, frontingFee])
+
+  useEffect(() => {
+    setGrossPremium(placementStructure.grossPremium)
+    setTaxes(placementStructure.taxes)
+    setTaxesP(placementStructure.taxesP)
+    setFrontingFee(placementStructure.frontingFee)
+    setFrontingFeeP(placementStructure.frontingFeeP)
+    setReinsuranceBrokerageP(placementStructure.reinsuranceBrokerageP)
+    setReinsuranceBrokerage(placementStructure.reinsuranceBrokerage)
+    setNetPremium(placementStructure.netPremium)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [placementStructure.grossPremium])
+  useEffect(() => {
+    if (exchangeRate) {
+      setPlacementStructure({
+        ...placementStructure,
+        currency: pair.targetCurrency,
+        exchangeRate: exchangeRate.conversionRate || 0
+      })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [exchangeRate])
 
   return (
     <>
@@ -270,13 +274,15 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               onChange={handleCurrencyChange}
               labelId='currency'
             >
-              {currencies?.map(currency => {
-                return (
-                  <MenuItem key={currency.code} value={currency.code}>
-                    {currency.code}
-                  </MenuItem>
-                )
-              })}
+              {currencies
+                ?.filter((obj, index, self) => index === self.findIndex(o => o.code === obj.code))
+                .map(currency => {
+                  return (
+                    <MenuItem key={currency.code} value={currency.code}>
+                      {currency.code}
+                    </MenuItem>
+                  )
+                })}
             </Select>
             {errors.currencyError && (
               <FormHelperText sx={{ color: 'error.main' }} id='invoice-country-error'>
@@ -284,7 +290,24 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               </FormHelperText>
             )}
           </FormControl>
-
+          <FormControl fullWidth sx={{ mb: 2, mt: 2 }} className='show-on-mobile'>
+            <NumericFormat
+              name='exchangeRate'
+              value={placementStructure.exchangeRate}
+              allowLeadingZeros
+              thousandSeparator=','
+              customInput={TextField}
+              id='exchange-rate'
+              label='Exchange rate'
+              multiline
+              variant='outlined'
+              prefix=''
+              decimalScale={2}
+              error={errors.exchangeRateError}
+              helperText={getErrorMessage('exchangeRateError')}
+            />
+            {false && <FormHelperText sx={{ color: 'error.main' }}>Required Field</FormHelperText>}
+          </FormControl>
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <NumericFormat
               name='total'
@@ -300,8 +323,8 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               variant='outlined'
               error={errors.totalError}
               helperText={getErrorMessage('totalError')}
-              onValueChange={(value, e) => {
-                handleNumericInputChange(value.floatValue, e)
+              onValueChange={value => {
+                handleNumericInputChange(value.floatValue, 'total')
               }}
             />
             {false && <FormHelperText sx={{ color: 'error.main' }}>Required Field</FormHelperText>}
@@ -319,8 +342,8 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               prefix={'$'}
               decimalScale={2}
               variant='outlined'
-              onValueChange={(value, e) => {
-                handleNumericInputChange(value.floatValue, e)
+              onValueChange={value => {
+                handleNumericInputChange(value.floatValue, 'sir')
               }}
             />
           </FormControl>
@@ -334,13 +357,18 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               id='reinsurance-brokerage'
               label='Reinsurance brokerage %'
               multiline
-              prefix={'%'}
+              suffix={'%'}
               decimalScale={2}
               variant='outlined'
+              isAllowed={values => {
+                const { floatValue } = values
+
+                return (floatValue! >= 0 && floatValue! <= 100) || floatValue === undefined
+              }}
               onBlur={() => calculate('reinsuranceBrokerageP')}
-              onValueChange={(value, e) => {
+              onValueChange={value => {
                 setReinsuranceBrokerageP(value.floatValue ?? 0)
-                handleNumericInputChange(value.floatValue, e)
+                handleNumericInputChange(value.floatValue, 'reinsuranceBrokerageP')
               }}
               error={errors.reinsuranceBrokeragePError}
               helperText={getErrorMessage('reinsuranceBrokeragePError')}
@@ -356,13 +384,18 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               id='taxes-p'
               label='Taxes %'
               multiline
-              prefix={'%'}
+              suffix={'%'}
               decimalScale={2}
               variant='outlined'
               onBlur={() => calculate('taxesP')}
-              onValueChange={(value, e) => {
+              isAllowed={values => {
+                const { floatValue } = values
+
+                return (floatValue! >= 0 && floatValue! <= 100) || floatValue === undefined
+              }}
+              onValueChange={value => {
                 setTaxesP(value.floatValue)
-                handleNumericInputChange(value.floatValue, e)
+                handleNumericInputChange(value.floatValue, 'taxesP')
               }}
               error={errors.taxesPError}
               helperText={getErrorMessage('taxesPError')}
@@ -379,17 +412,20 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               id='fronting-fee-p'
               label='Fronting fee %'
               multiline
-              prefix={'%'}
+              suffix={'%'}
               maxRows={4}
               decimalScale={2}
               variant='outlined'
               onBlur={() => calculate('frontingFeeP')}
-              onValueChange={(value, e) => {
-                setFrontingFeeP(value.floatValue)
-                handleNumericInputChange(value.floatValue, e)
+              isAllowed={values => {
+                const { floatValue } = values
+
+                return (floatValue! >= 0 && floatValue! <= 100) || floatValue === undefined
               }}
-              error={errors.frontingFeePError}
-              helperText={getErrorMessage('frontingFeePError')}
+              onValueChange={value => {
+                setFrontingFeeP(value.floatValue)
+                handleNumericInputChange(value.floatValue, 'frontingFeeP')
+              }}
             />
           </FormControl>
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
@@ -400,21 +436,22 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               thousandSeparator=','
               customInput={TextField}
               disabled
+              prefix='$'
               id='net-premium'
               label='Net premium'
               multiline
               variant='outlined'
               decimalScale={2}
-              onValueChange={(value, e) => {
+              onValueChange={value => {
                 setNetPremium(value.floatValue)
-                handleNumericInputChange(value.floatValue, e)
+                handleNumericInputChange(value.floatValue, 'netPremium')
               }}
             />
           </FormControl>
         </div>
 
         <div className='form-col'>
-          <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
+          <FormControl fullWidth sx={{ mb: 2, mt: 2 }} className='hide-on-mobile'>
             <NumericFormat
               name='exchangeRate'
               value={placementStructure.exchangeRate}
@@ -425,6 +462,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               label='Exchange rate'
               multiline
               variant='outlined'
+              prefix=''
               decimalScale={2}
               error={errors.exchangeRateError}
               helperText={getErrorMessage('exchangeRateError')}
@@ -442,9 +480,10 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               label='Limit'
               multiline
               variant='outlined'
+              prefix='$'
               decimalScale={2}
-              onValueChange={(value, e) => {
-                handleNumericInputChange(value.floatValue, e)
+              onValueChange={value => {
+                handleNumericInputChange(value.floatValue, 'limit')
               }}
               error={errors.limitError}
               helperText={getErrorMessage('limitError')}
@@ -454,6 +493,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <NumericFormat
               name='grossPremium'
+              prefix='$'
               value={grossPremium}
               allowLeadingZeros
               thousandSeparator=','
@@ -464,9 +504,9 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               variant='outlined'
               decimalScale={2}
               onBlur={() => calculate('grossPremium')}
-              onValueChange={(value, e) => {
-                setGrossPremium(value.floatValue)
-                handleNumericInputChange(value.floatValue, e)
+              onValueChange={value => {
+                setGrossPremium(value.floatValue ?? 0)
+                handleNumericInputChange(value.floatValue, 'grossPremium')
               }}
               error={errors.grossPremiumError}
               helperText={getErrorMessage('grossPremiumError')}
@@ -479,6 +519,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               name='reinsuranceBrokerage'
               value={reinsuranceBrokerage}
               allowLeadingZeros
+              prefix='$'
               thousandSeparator=','
               customInput={TextField}
               id='reinsurance-brokerage'
@@ -487,9 +528,15 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               variant='outlined'
               decimalScale={2}
               onBlur={() => calculate('reinsuranceBrokerage')}
-              onValueChange={(value, e) => {
+              isAllowed={values => {
+                const { floatValue } = values
+                const upLimit = grossPremium || 0
+
+                return (floatValue! >= 0 && floatValue! <= upLimit) || floatValue === undefined
+              }}
+              onValueChange={value => {
                 setReinsuranceBrokerage(value.floatValue)
-                handleNumericInputChange(value.floatValue, e)
+                handleNumericInputChange(value.floatValue, 'reinsuranceBrokerage')
               }}
               error={errors.reinsuranceBrokerageError}
               helperText={getErrorMessage('reinsuranceBrokerageError')}
@@ -507,12 +554,19 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               id='taxes'
               label='Taxes'
               multiline
+              prefix='$'
               variant='outlined'
               decimalScale={2}
               onBlur={() => calculate('taxes')}
-              onValueChange={(value, e) => {
+              isAllowed={values => {
+                const { floatValue } = values
+                const upLimit = grossPremium || 0
+
+                return (floatValue! >= 0 && floatValue! <= upLimit) || floatValue === undefined
+              }}
+              onValueChange={value => {
                 setTaxes(value.floatValue)
-                handleNumericInputChange(value.floatValue, e)
+                handleNumericInputChange(value.floatValue, 'taxes')
               }}
               error={errors.taxesError}
               helperText={getErrorMessage('taxesError')}
@@ -527,16 +581,21 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               customInput={TextField}
               id='fornting-fee'
               label='Fronting fee'
+              prefix='$'
               multiline
               variant='outlined'
               decimalScale={2}
               onBlur={() => calculate('frontingFee')}
-              onValueChange={(value, e) => {
-                setFrontingFee(value.floatValue)
-                handleNumericInputChange(value.floatValue, e)
+              isAllowed={values => {
+                const { floatValue } = values
+                const upLimit = grossPremium || 0
+
+                return (floatValue! >= 0 && floatValue! <= upLimit) || floatValue === undefined
               }}
-              error={errors.frontingFeeError}
-              helperText={getErrorMessage('frontingFeeError')}
+              onValueChange={value => {
+                setFrontingFee(value.floatValue)
+                handleNumericInputChange(value.floatValue, 'frontingFee')
+              }}
             />
           </FormControl>
         </div>
@@ -545,6 +604,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
             <NumericFormat
               name='attachmentPoint'
               value={placementStructure.attachmentPoint}
+              prefix='$'
               allowLeadingZeros
               thousandSeparator=','
               customInput={TextField}
@@ -553,8 +613,8 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               multiline
               variant='outlined'
               decimalScale={2}
-              onValueChange={(value, e) => {
-                handleNumericInputChange(value.floatValue, e)
+              onValueChange={value => {
+                handleNumericInputChange(value.floatValue, 'attachmentPoint')
               }}
             />
           </FormControl>
@@ -563,17 +623,23 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
             <Select
               name='typeOfLimit'
               label='Type of Limit'
-              value={placementStructure.typeOfLimit}
+              value={String(placementStructure.typeOfLimit)}
               onChange={handleSelectChange}
               labelId='type-of-limit'
             >
-              {typesOfLimits?.map(limit => {
-                return (
-                  <MenuItem key={limit.id} value={limit.id}>
-                    {limit.name}
-                  </MenuItem>
-                )
-              })}
+              {typesOfLimits && typesOfLimits.length > 0 ? (
+                typesOfLimits?.map(limit => {
+                  return (
+                    <MenuItem key={limit.id} value={limit.id}>
+                      {limit.name}
+                    </MenuItem>
+                  )
+                })
+              ) : (
+                <MenuItem key={null} value={''}>
+                  No options available
+                </MenuItem>
+              )}
             </Select>
             {errors.typeOfLimitError && (
               <FormHelperText sx={{ color: 'error.main' }} id='invoice-country-error'>

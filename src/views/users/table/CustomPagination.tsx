@@ -22,11 +22,11 @@ const CustomPagination = () => {
       <Pagination
         color={'standard'}
         count={pageCount}
-        page={page + 1}
+        page={Number(page)}
         onChange={(event, value) => handleDispatch(event, value)}
       />
       <Typography sx={{ marginRight: '1rem' }}>
-        {(page + 1) * pageSize - pageSize + 1}-{(page + 1) * pageSize} of {rowCount}
+        {1 + pageSize * (page - 1)} - {page * pageSize > rowCount ? rowCount : page * pageSize} of {rowCount}
       </Typography>
     </>
   )

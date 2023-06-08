@@ -1,9 +1,9 @@
 // ==== ROLES
 export enum ROLES {
-  ADMIN = 5,
-  LEAD_UNDERWRITER = 6,
-  UNDERWRITER = 8,
-  TECHNICAL_ASSISTANT = 9
+  ADMIN = 1,
+  LEAD_UNDERWRITER = 2,
+  UNDERWRITER = 3,
+  TECHNICAL_ASSISTANT = 4
 }
 
 // ==== AUTH
@@ -15,13 +15,19 @@ export enum AUTH_ROUTES {
 // ==== ACCOUNT
 export enum ACCOUNT_ROUTES {
   GET_BY_ID = 'account',
-  GET_ALL = 'account/all'
+  GET_ALL = 'account/all',
+  DELETE = 'account/delete',
+  DUPLICATE = 'account/duplicate',
+  UPDATE_STATUS = 'account/update-status'
 }
 
 export enum ACCOUNT_INFORMATION_ROUTES {
   ADD = 'account/information/add',
-  GET = 'account/Information',
-  UPDATE = 'account/Information'
+  GET = 'account/information',
+  UPDATE = 'account/information',
+  UPLOAD_FILE = 'account/information/upload-file',
+  DELETE_FILE = 'account/information/delete-file',
+  GET_FILES = 'account/information/all-doctos'
 }
 
 export enum ACCOUNT_SECURITY_ROUTES {
@@ -42,19 +48,27 @@ export enum ACCOUNT_SUBLIMIT_ROUTES {
   UPDATE = 'account/sublimit/update'
 }
 
+export enum ACCOUNT_STEP_FORM_DELETE_ROUTES {
+  DEL = 'account/deleteInfo'
+}
+
 // ==== CATALOGS
 export enum BROKER_ROUTES {
   GET_ALL = 'catalogs/broker/all',
   GET_BY_ID = 'catalogs/broker',
   ADD = 'catalogs/broker/add',
-  UPDATE = 'catalogs/broker'
+  UPDATE = 'catalogs/broker',
+  GET = 'catalogs/broker',
+  DELETE = 'catalogs/broker/delete'
 }
 
 export enum CEDANT_ROUTERS {
   GET_ALL = 'catalogs/cedant/all',
   GET_BY_ID = 'catalogs/cedant',
   ADD = 'catalogs/cedant/add',
-  UPDATE = 'catalogs/cedant'
+  UPDATE = 'catalogs/cedant',
+  GET = 'catalogs/cedant',
+  DELETE = 'catalogs/cedant/delete'
 }
 
 export enum BROKER_CONTACT_ROUTERS {
@@ -62,7 +76,9 @@ export enum BROKER_CONTACT_ROUTERS {
   GET_BY_ID = 'catalogs/broker-contact',
   ADD = 'catalogs/broker-contact/add',
   UPDATE = 'catalogs/broker-contact',
-  GET_BY_ID_BROKER = 'catalogs/broker-contact/broker'
+  GET_BY_ID_BROKER = 'catalogs/broker-contact/broker',
+  GET = 'catalogs/broker-contact/pagination/broker',
+  DELETE = 'catalogs/broker-contact/delete'
 }
 
 export enum CEDANT_CONTACT_ROUTERS {
@@ -70,20 +86,17 @@ export enum CEDANT_CONTACT_ROUTERS {
   GET_BY_ID = 'catalogs/cedant-contact',
   ADD = 'catalogs/cedant-contact/add',
   UPDATE = 'catalogs/cedant-contact',
-  GET_BY_ID_CEDANT = 'catalogs/cedant-contact/cedant'
-}
-
-export enum USERS_ROUTES {
-  GET = 'user',
-  ADD = 'user',
-  UPDATE = 'user'
+  GET_BY_ID_CEDANT = 'catalogs/cedant-contact/cedant',
+  GET = 'catalogs/cedant-contact/pagination/cedant',
+  DELETE = 'catalogs/cedant-contact/delete'
 }
 
 export enum COUNTRY_ROUTERS {
   GET_ALL = 'catalogs/country/all',
   GET_BY_ID = 'catalogs/country',
   ADD = 'catalogs/country/add',
-  UPDATE = `catalogs/country`
+  UPDATE = `catalogs/country`,
+  DELETE = 'catalogs/country'
 }
 
 export enum LINE_OF_BUSSINES_ROUTES {
@@ -97,14 +110,16 @@ export enum TYPE_OF_LIMIT_ROUTES {
   GET_ALL = 'catalogs/typeOfLimit/all',
   GET_BY_ID = 'catalogs/typeOfLimit',
   ADD = 'catalogs/typeOfLimit/add',
-  UPDATE = 'catalogs/typeOfLimit'
+  UPDATE = 'catalogs/typeOfLimit',
+  DELETE = 'catalogs/typeOfLimit'
 }
 
 export enum CURRENCY_ROUTES {
   GET_ALL = 'catalogs/currency/all',
   GET_BY_ID = 'catalogs/currency',
   ADD = 'catalogs/currency/add',
-  UPDATE = 'catalogs/currency'
+  UPDATE = 'catalogs/currency',
+  DELETE = 'catalogs/currency'
 }
 
 export enum RISK_ACTIVITY_ROUTES {
@@ -118,25 +133,75 @@ export enum REINSURANCE_COMPANY_ROUTES {
   GET_ALL = 'catalogs/reinsuranceCompany/all',
   GET_BY_ID = 'catalogs/reinsuranceCompany',
   ADD = 'catalogs/reinsuranceCompany/add',
-  UPDATE = 'catalogs/reinsuranceCompany'
+  UPDATE = 'catalogs/reinsuranceCompany',
+  GET = 'catalogs/reinsuranceCompany',
+  DELETE = 'catalogs/reinsuranceCompany/delete'
+}
+
+export enum REINSURANCE_COMPANY_CONTACT_ROUTES {
+  GET_ALL = 'catalogs/reinsuranceCompanyContact/all',
+  GET_BY_ID = 'catalogs/reinsuranceCompanyContact',
+  ADD = 'catalogs/reinsuranceCompanyContact/add',
+  UPDATE = 'catalogs/reinsuranceCompanyContact',
+  GET_BY_ID_REINSURANCE_COMPANY = 'catalogs/reinsuranceCompanyContact/reinsuranceCompany',
+  GET = 'catalogs/reinsuranceCompanyContact/pagination/reinsuranceCompany',
+  DELETE = 'catalogs/reinsuranceCompanyContact/delete'
 }
 
 export enum COMPANY_ROUTES {
   GET_ALL = 'catalogs/Company/all',
   GET_BY_ID = 'catalogs/Company',
   ADD = 'catalogs/Company/add',
-  UPDATE = 'catalogs/Company'
+  UPDATE = 'catalogs/Company',
+  ROLES = 'catalogs/role/all'
 }
 
 export enum RETRO_CEDANT_ROUTES {
   GET_ALL = 'catalogs/retroCedant/all',
   GET_BY_ID = 'catalogs/retroCedant',
   ADD = 'catalogs/retroCedant/add',
-  UPDATE = 'catalogs/retroCedant'
+  UPDATE = 'catalogs/retroCedant',
+  GET = 'catalogs/retroCedant',
+  DELETE = 'catalogs/retroCedant/delete'
+}
+
+export enum RETRO_CEDANT_CONTACT_ROUTES {
+  GET_ALL = 'catalogs/retroCedantContact/all',
+  GET_BY_ID = 'catalogs/retroCedantContact',
+  ADD = 'catalogs/retroCedantContact/add',
+  GET_BY_ID_RETROCEDANT = 'catalogs/retroCedantContact/retroCedant',
+  UPDATE = 'catalogs/retroCedantContact',
+  GET = 'catalogs/retroCedantContact/pagination/retroCedant',
+  DELETE = 'catalogs/retroCedantContact/delete'
 }
 
 export enum INSTALLMENT_ROUTERS {
   GET_ALL = 'account/installment/',
   ADD = 'account/installment/add',
-  UPDATE = 'account/installment/update'
+  UPDATE = 'account/installment/update',
+  DELETE = 'account/installment/delete'
+}
+
+export enum ACCOUNT_STATUS_ROUTERS {
+  GET_ALL = 'account/account-status/all',
+  GET_BY_ID = 'account/account-status/'
+}
+
+// ==== USER
+export enum USERS_ROUTES {
+  GET = 'user',
+  ADD = 'user',
+  UPDATE = 'user',
+  DELETE = 'user/delete'
+}
+
+// ==== RECOVERY PASSWORD
+export enum RECOVER_PASSWORD_ROUTES {
+  NOTIFICATION = 'notification/recovery-password',
+  UPDATE = 'user/update-password'
+}
+
+//EXCHANGE-RATE
+export enum EXCHANGE_RATE {
+  PAIR = 'exchange-rate/pair'
 }

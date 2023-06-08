@@ -1,11 +1,19 @@
 // ** MUI Import
-import { Typography } from '@mui/material'
+import { SxProps, Theme, Typography } from '@mui/material'
 import Box, { BoxProps } from '@mui/material/Box'
 import Lottie from 'react-lottie'
-
 import LoaderAlpex from './Alpex-loader.json'
 
-const Loader = () => {
+interface IPropsLoader {
+  width: string
+  height: string
+  sx?: SxProps<Theme>
+}
+
+// width: '59.31px', height: '66.52px'
+
+const Loader: React.FC<IPropsLoader> = props => {
+  const { width, height } = props
   const defaultOptions = {
     loop: true,
     autoplay: true,
@@ -16,7 +24,7 @@ const Loader = () => {
   }
 
   return (
-    <div>
+    <div style={{ width: width, height: height }}>
       <Lottie options={defaultOptions} />
     </div>
   )
@@ -34,7 +42,7 @@ const Spinner = ({ sx }: { sx?: BoxProps['sx'] }) => {
         ...sx
       }}
     >
-      <Loader />
+      <Loader width={'59.31px'} height={'66.52px'} />
       <Typography
         sx={{
           fontStyle: 'normal',

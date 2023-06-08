@@ -21,6 +21,7 @@ const EmailStep2 = ({ handleVariant }: EmailStep2) => {
         color='primary'
         size='large'
         startIcon={<Icon icon='mdi:arrow-left-thin' fontSize={15} />}
+        style={{ backgroundColor: '#2535A8' }}
       >
         BACK TO LOGIN
       </Button>

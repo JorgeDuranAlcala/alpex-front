@@ -87,6 +87,16 @@ const FilterMenuEffectiveDate = () => {
       : date!.toLocaleDateString('en-US', { year: 'numeric' })
   }
 
+  const dateTransformNumber = (date: DateType) => {
+    if (!date) return ''
+
+    return date!.toLocaleDateString('en-CA', {
+      year: 'numeric',
+      day: '2-digit',
+      month: '2-digit'
+    })
+  }
+
   useEffect(() => {
     if (subtype === 'fulldate') {
       setMonth(null)
@@ -103,9 +113,19 @@ const FilterMenuEffectiveDate = () => {
   }, [subtype])
 
   const handleClick = () => {
+    let newDateValue = ''
+
+    if (subtype === 'fulldate') {
+      newDateValue = dateTransformNumber(effectiveDate)
+    } else if (subtype === 'month') {
+      newDateValue = dateTransformNumber(month)
+    } else {
+      newDateValue = dateTransformNumber(year)
+    }
+
     dispatch(
       handleAccountFilter({
-        type: 'EffectiveDate',
+        type: 'effectiveDate',
         text: `Effective:  ${
           subtype === 'fulldate'
             ? dateTransform(effectiveDate)
@@ -113,13 +133,7 @@ const FilterMenuEffectiveDate = () => {
             ? dateTransform(month)
             : dateTransform(year)
         }`,
-        value: `${
-          subtype === 'fulldate'
-            ? dateTransform(effectiveDate)
-            : subtype === 'month'
-            ? dateTransform(month)
-            : dateTransform(year)
-        }`,
+        value: newDateValue,
         subtype
       })
     )
@@ -131,6 +145,9 @@ const FilterMenuEffectiveDate = () => {
         <DatePickerWrapper>
           <DatePicker
             selected={effectiveDate}
+            showMonthDropdown
+            showYearDropdown
+            showDisabledMonthNavigation
             shouldCloseOnSelect
             id='effective-date'
             customInput={<CustomInputWithIcon label='Write a full date' />}

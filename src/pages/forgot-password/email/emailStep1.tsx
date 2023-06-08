@@ -12,6 +12,8 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import * as yup from 'yup'
 
+import { useNotificationPassword } from '@/hooks/recoverPassword/recoveryPassword'
+
 // ** Layout Import
 import BlankLayout from 'src/@core/layouts/BlankLayout'
 
@@ -35,9 +37,12 @@ const EmailStep1 = ({ handleVariant }: EmailStep1) => {
     resolver: yupResolver(schema)
   })
 
+  const { recoveryPassword } = useNotificationPassword()
+
   const onSubmit: SubmitHandler<FormData> = data => {
     const { email } = data
     if (email) handleVariant('email', 2)
+    recoveryPassword({ email: email })
   }
 
   return (
@@ -59,9 +64,9 @@ const EmailStep1 = ({ handleVariant }: EmailStep1) => {
                   error={Boolean(errors.email)}
                   sx={{
                     '& .MuiOutlinedInput-root.Mui-focused  .MuiOutlinedInput-notchedOutline': {
-                      borderColor: '#0D567B'
+                      borderColor: '#2535A8'
                     },
-                    '& .MuiInputLabel-root.Mui-focused': { color: '#0D567B' }
+                    '& .MuiInputLabel-root.Mui-focused': { color: '#2535A8' }
                   }}
                 />
               )}
@@ -69,7 +74,7 @@ const EmailStep1 = ({ handleVariant }: EmailStep1) => {
             {errors.email && <FormHelperText sx={{ color: 'error.main' }}>Invalid email</FormHelperText>}
           </FormControl>
 
-          <Button type='submit' variant='contained' color='primary' size='large'>
+          <Button type='submit' variant='contained' color='primary' size='large' style={{ backgroundColor: '#2535A8' }}>
             CONTINUE
           </Button>
         </form>

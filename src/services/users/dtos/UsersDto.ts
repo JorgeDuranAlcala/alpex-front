@@ -5,11 +5,27 @@ export interface UsersGetDto {
   name?: string
   role?: string
   company?: string
+  status: boolean
+}
+
+export interface UserResponse {
+  name?: string
+  areaCode?: string
+  phone?: string
+  surname?: string
+  email?: string
+  roles: Roles[]
+  idCompany?: number
+  username?: string
+  id?: number
+  status: boolean
+  isDeleted: boolean
 }
 
 interface Roles {
   id: number
 }
+
 export interface UsersPostDto {
   name: string
   phone: string
@@ -29,4 +45,13 @@ export interface UsersPutDto {
   email: string
   roles: Roles[]
   idCompany: number
+}
+
+export interface UsersDeleteDto {
+  idUsersList: number[] | undefined
+}
+
+export interface IError {
+  statusCode: number
+  message: string
 }

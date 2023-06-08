@@ -1,4 +1,9 @@
+import { useGetAccountById } from '@/hooks/accounts/forms'
+import { useUpdateAccountsStatus } from '@/hooks/accounts/status'
+import { useAddSublimits, useFindSublimitsByAccountId, useUpdateSublimits } from '@/hooks/accounts/sublimit'
 import GenericCard from '@/layouts/components/SublimitsCards/GenericCard'
+import { useAppSelector } from '@/store'
+import CustomAlert, { IAlert } from '@/views/custom/alerts'
 import CheckIcon from '@mui/icons-material/Check'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import SaveIcon from '@mui/icons-material/Save'
@@ -14,7 +19,8 @@ import {
   TextField,
   Typography
 } from '@mui/material'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { NumericFormat } from 'react-number-format'
 import UserThemeOptions from 'src/layouts/UserThemeOptions'
 import SublimitCard, { RenderFormGeneric } from 'src/layouts/components/CardSublimit'
 import {
@@ -23,6 +29,7 @@ import {
   InputsContainerSublimits,
   NextContainer
 } from 'src/styles/Forms/Sublimits'
+import * as yup from 'yup'
 
 const ITEM_HEIGHT = 60
 const ITEM_PADDING_TOP = 8
@@ -48,28 +55,247 @@ const coverage = [
   { id: 9, label: 'Business Interruption Machinery Breakdown' }
 ]
 
+yup.setLocale({
+  mixed: {
+    required: 'This field is required',
+    notType: 'This field must be a number'
+  },
+  number: {
+    min: 'This field must be greater than ${min}',
+    max: 'This field must be less than ${max}'
+  }
+})
+
+/*  yes?: boolean
+  luc?: boolean
+  sublimit: number
+  percentage: number
+  price: number
+  min: number
+  days: number
+  priceInterruption: number
+  coinsurance: number
+  index?: number
+  typeDeductible?: string
+  typeBi?: string
+  type
+  */
+
+const schema = yup.object().shape({
+  sublimit: yup
+    .number()
+    .transform((_, val) => (val === Number(val) ? val : null))
+    .test('Validate sublimit', 'Sublimit cannot be greater than limit', (value, context) => {
+      const val = value || 0
+      const limit = context.parent.account?.informations[0]?.limit || 0
+
+      return +val <= +limit
+    })
+    .required()
+    .min(0),
+  yes: yup.boolean().notRequired(),
+  luc: yup.boolean().notRequired(),
+  typeDeductibleRadio: yup.string().notRequired(),
+  percentage: yup
+    .number()
+    .transform((_, val) => (val === Number(val) ? val : null))
+    .test('Validate percentage', 'Percentage cannot be greater than 100', value => {
+      const val = value || 0
+
+      return +val <= 100
+    })
+    .nullable()
+    .when('typeDeductibleRadio', {
+      is: (typeDeductibleRadio: string) => {
+        return typeDeductibleRadio === 'percentage'
+      },
+      then: yup.number().required('Field is required').min(1)
+    }),
+  price: yup
+    .number()
+    .transform((_, val) => (val === Number(val) ? val : null))
+    .nullable()
+    .when('typeDeductibleRadio', {
+      is: (typeDeductibleRadio: string) => {
+        return typeDeductibleRadio === 'price'
+      }, //just an e.g. you can return a function
+      then: yup.number().required('Field is required').min(1)
+    }),
+  min: yup
+    .number()
+    .transform((_, val) => (val === Number(val) ? val : null))
+    .nullable()
+    .when('typeDeductibleRadio', {
+      is: (typeDeductibleRadio: string) => {
+        return typeDeductibleRadio === 'percentage'
+      },
+      then: yup.number().required('Field is required').min(1)
+    }),
+  typeDeductible: yup.string().when('typeDeductibleRadio', {
+    is: (typeDeductibleRadio: string) => {
+      return typeDeductibleRadio === 'percentage'
+    },
+    then: yup.string().required('Field is required')
+  }),
+  typeBi: yup.string().notRequired(),
+  days: yup
+    .number()
+    .transform((_, val) => (val === Number(val) ? val : null))
+    .nullable()
+    .test('Validate days', 'Days cannot be greater than 999', value => {
+      const val = value || 0
+
+      return +val <= 999
+    })
+    .when('typeBi', {
+      is: (typeBi: string) => {
+        return typeBi === 'BIDays'
+      },
+      then: yup.number().required('Field is required').min(1)
+    }),
+  priceInterruption: yup
+    .number()
+    .transform((_, val) => (val === Number(val) ? val : null))
+    .nullable()
+    .when('typeBi', {
+      is: (typeBi: string) => {
+        return typeBi === 'BIPrice'
+      },
+      then: yup.number().required('Field is required').min(1)
+    }),
+  coinsurance: yup
+    .number()
+    .transform((_, val) => (val === Number(val) ? val : null))
+    .test('Validate coinsurance', 'Coinsurance cannot be greater than 100', value => {
+      if (value === 0) {
+        return true
+      }
+      const val = value || 0
+
+      return +val <= 100
+    })
+})
+
+const initialValues = {
+  sublimit: 0,
+  percentage: 0,
+  price: 0,
+  min: 0,
+  days: 0,
+  priceInterruption: 0,
+  coinsurance: 0,
+  yes: false,
+  luc: false,
+  typeDeductible: '',
+  typeBi: '',
+  at100: false,
+  typeDeductibleRadio: 'default'
+}
+
+const initialErrorValues = {
+  sublimit: '',
+  percentage: '',
+  price: '',
+  min: '',
+  days: '',
+  priceInterruption: '',
+  coinsurance: '',
+  yes: '',
+  luc: '',
+  typeDeductible: '',
+  typeBi: '',
+  at100: '',
+  typeDeductibleRadio: ''
+}
 const Sublimits = () => {
   const forms = GenericCard
-  console.log(forms)
   const [checked, setChecked] = useState<number[]>([])
+  const [allFormData, setAllFormData] = useState<any[]>([])
+  const [formErrors, setFormErrors] = useState<any[]>([])
   const [coverageSelect, setCoverageSelect] = useState<any>('')
   const [availableOptions, setAvailableOptions] = useState<any[]>(coverage)
   const [filteredOptions, setFilteredOptions] = useState<any[]>([])
-  console.log('Selected', availableOptions)
-  console.log('Pusheados', filteredOptions)
+  const [formInformationData, setFormInformationData] = useState<any>({})
+  const accountData = useAppSelector(state => state.accounts)
+  const { account, setAccountId } = useGetAccountById()
+  const { saveSublimits } = useAddSublimits()
+  const { updateSublimits } = useUpdateSublimits()
+  const [sublimtsData, setSublimitsData] = useState<any>()
+  const [badgeData, setBadgeData] = useState<IAlert>({
+    message: '',
+    theme: 'success',
+    open: false,
+    status: 'error'
+  })
+  const [disableBoundBtn, setDisableBoundBtn] = useState<boolean>(true)
+
+  // ** Custom hooks
+  const { updateAccountsStatus } = useUpdateAccountsStatus()
+  const { sublimits } = useFindSublimitsByAccountId(accountData.formsData.form1?.id || null)
+
+  useEffect(() => {
+    if (accountData.formsData.form1?.id) {
+      setAccountId(accountData.formsData.form1.id)
+      setFormInformationData(accountData.formsData.form1)
+    }
+  }, [accountData, setAccountId])
+
+  useEffect(() => {
+    console.log(sublimits)
+  }, [sublimits])
+
   const [formsCheck] = useState<RenderFormGeneric[]>([])
-  console.log('arrayForms--->', formsCheck)
+
+  const handleOnChangeForm = (value: any, index: number) => {
+    const data = allFormData
+    data[index] = value
+    data[index].index = index
+    validate(data[index], index)
+    setAllFormData(data)
+  }
+  const validate = (form: any, index: number) => {
+    const dataError = { ...initialErrorValues }
+
+    Object.keys(dataError).forEach(function (key) {
+      // @ts-ignore
+      dataError[key] = null
+    })
+    const data = [...formErrors]
+    data[index] = { ...dataError }
+
+    schema
+      .validate({ ...form, account }, { abortEarly: false })
+      .then(function () {
+        data[index] = { ...initialErrorValues }
+        setFormErrors(data)
+      })
+      .catch(function (err) {
+        for (const error of err?.inner) {
+          data[index][error.path] = error.message
+        }
+
+        setFormErrors(data)
+
+        //setEnableNextStep(false)
+      })
+  }
   const handleToggle = (value: number, label: string) => () => {
-    console.log(label)
     const currentIndex = checked.indexOf(value)
     const newChecked = [...checked]
 
     if (currentIndex === -1) {
       newChecked.push(value)
+      allFormData.push({ ...initialValues })
+
+      console.log(formErrors)
+      formErrors.push({ ...initialErrorValues })
       formsCheck.push({
         type: value,
         components: forms,
-        title: label
+        title: label,
+        handleOnChangeForm: handleOnChangeForm,
+        formInformation: account,
+        formErrors: formErrors
       })
     } else {
       newChecked.splice(currentIndex, 1)
@@ -80,7 +306,6 @@ const Sublimits = () => {
 
   const handleChangeSelect = (event: SelectChangeEvent<string[]>) => {
     const selectedValue = event.target.value
-    console.log(selectedValue)
     setCoverageSelect(selectedValue)
     setAvailableOptions(availableOptions.filter(option => option.label !== selectedValue))
     const filter = availableOptions.filter(option => option.label === selectedValue)
@@ -89,8 +314,99 @@ const Sublimits = () => {
     } else return
   }
 
-  const addOption = (name: string) => {
+  const handleSubmit = async () => {
+    if (sublimtsData) {
+      const dataToSubmit = allFormData.map(item => {
+        return {
+          id: sublimtsData[0].id,
+          sublimit: item.sublimit,
+          at100: true,
+          yes: true,
+          luc: true,
+          typeDeductible: 'none',
+          typeBi: 'days',
+          coinsurance: item.coinsurance,
+          idAccount: formInformationData.id
+        }
+      })
+      await updateSublimits(dataToSubmit)
+      setBadgeData({
+        message: 'The information has been updated',
+        theme: 'success',
+        open: true,
+        status: 'error'
+      })
+      setTimeout(() => {
+        setBadgeData({
+          message: 'updated successfully',
+          theme: 'success',
+          open: false,
+          status: 'error'
+        })
+      }, 5000)
+    } else {
+      const dataToSubmit = allFormData.map(item => {
+        return {
+          sublimit: item.sublimit,
+          at100: true,
+          yes: true,
+          luc: true,
+          typeDeductible: 'none',
+          typeBi: 'days',
+          coinsurance: item.coinsurance,
+          idAccount: formInformationData.id
+        }
+      })
+      const result = await saveSublimits(dataToSubmit)
+      setBadgeData({
+        message: 'The information has been saved',
+        theme: 'success',
+        open: true,
+        status: 'error'
+      })
+      setTimeout(() => {
+        setBadgeData({
+          message: 'saved successfully',
+          theme: 'success',
+          open: false,
+          status: 'error'
+        })
+      }, 5000)
+      setSublimitsData(result)
+    }
+    setDisableBoundBtn(false)
+  }
+
+  const handleUpdateStatus = async () => {
+    await updateAccountsStatus({
+      updateStatus: [
+        {
+          idAccount: formInformationData.id,
+          status: 5
+        }
+      ]
+    })
+    setBadgeData({
+      message: 'Account has been updated',
+      theme: 'success',
+      open: true,
+      status: 'error'
+    })
+    setTimeout(() => {
+      setBadgeData({
+        message: 'updated successfully',
+        theme: 'success',
+        open: false,
+        status: 'error'
+      })
+    }, 5000)
+  }
+
+  const addOption = (name: string, index: number) => {
+    formsCheck.splice(index, 1)
+    allFormData.splice(index, 1)
     const add = filteredOptions.filter(obj => obj.label === name)
+
     if (!availableOptions.some(item => item.label === add[0].label)) {
       setAvailableOptions(availableOptions.concat(add))
     } else {
@@ -108,13 +424,24 @@ const Sublimits = () => {
       <GeneralContainerSublimits>
         <ContainerTitleSublimits>
           <Typography variant='h5'>Sublimits</Typography>
+          <div style={{ width: 'fit-content', float: 'right', alignSelf: 'end' }}>
+            <CustomAlert {...badgeData} />
+          </div>
+
           <InputsContainerSublimits>
-            <TextField
+            <NumericFormat
+              value={account?.informations[0].limit || 'Limit'}
+              prefix='$'
+              allowLeadingZeros
+              thousandSeparator=','
+              customInput={TextField}
+              disabled
+              name='Limit'
+              label='Limit'
+              multiline
+              variant='outlined'
+              decimalScale={2}
               sx={{ width: '48.5%' }}
-              value={'Limit'}
-              InputProps={{
-                disabled: true
-              }}
             />
             <FormControl fullWidth>
               <Select
@@ -187,12 +514,13 @@ const Sublimits = () => {
                       state={item.state}
                       setState={item.setState}
                       title={item.title}
-                      deleteForm={() => addOption(item.title ?? '')}
+                      deleteForm={() => addOption(item.title ?? '', index)}
+                      handleOnChangeForm={item.handleOnChangeForm}
+                      index={index}
+                      formInformation={item.formInformation}
+                      formErrors={formErrors}
                     />
                   }
-                  state={item.state}
-                  setState={item.setState}
-                  type={item.type}
                 />
               </Grid>
             ))}
@@ -204,6 +532,7 @@ const Sublimits = () => {
           variant='contained'
           color='success'
           sx={{ mr: 2, fontFamily: inter, fontSize: size, letterSpacing: '0.4px' }}
+          onClick={handleSubmit}
         >
           <SaveIcon /> &nbsp; Save changes
         </Button>
@@ -214,7 +543,8 @@ const Sublimits = () => {
             fontSize: userThemeConfig.typography?.size.px15,
             color: texButtonColor
           }}
-          disabled
+          disabled={disableBoundBtn}
+          onClick={handleUpdateStatus}
         >
           <CheckIcon /> &nbsp; Add bound
         </Button>

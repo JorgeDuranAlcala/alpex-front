@@ -9,13 +9,13 @@ const useGetAllByIdBroker = () => {
     BrokerContactService.findByIdBroker(idBroker).then(setBrokerContacts)
   }
   useEffect(() => {
-    console.log(idBroker)
     idBroker && findByIdBroker(idBroker)
   }, [idBroker])
 
   return {
     brokerContacts,
-    setIdBroker
+    setIdBroker,
+    findByIdBroker
   }
 }
 export default useGetAllByIdBroker

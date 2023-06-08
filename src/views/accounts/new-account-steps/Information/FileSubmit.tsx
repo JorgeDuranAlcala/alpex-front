@@ -1,40 +1,33 @@
-import React, { Fragment, useRef, useState } from 'react'
+import React, { Fragment, useEffect, useRef, useState } from 'react'
 
 // // ** MUI Imports
-
-import Button from '@mui/material/Button'
-import IconButton from '@mui/material/IconButton'
-import Typography from '@mui/material/Typography'
-
-// ** Icon Imports
+import {
+  Button,
+  IconButton,
+  Typography
+} from '@mui/material'
 import Icon from 'src/@core/components/icon'
 
-type UserFileProps = {
-  userFile: {
-    file: File | null
-  }
-  setUserFile: React.Dispatch<
-    React.SetStateAction<{
-      file: File | null
-    }>
-  >
+interface UserFileProps {
+  userFile: any
+  setUserFile: React.Dispatch<React.SetStateAction<any>>
+  setUserFileToDelete: React.Dispatch<React.SetStateAction<any>>
+  changeTitle: (change: boolean) => void
 }
 
-const FileSubmit: React.FC<UserFileProps> = ({ setUserFile }) => {
+const FileSubmit: React.FC<UserFileProps> = ({ setUserFile, userFile, setUserFileToDelete, changeTitle }) => {
   // ** State
   const inputRef = useRef<HTMLInputElement>(null)
-  const [file, setFile] = useState<File>()
-  const [showFile, setShowFile] = useState(false)
+  const [file, setFile] = useState<File[]>([])
+  const [selectedFile, setSelectedFile] = useState<File | null>(null) // saves the row wehen user click on actions button
 
-  const setFilevalues = (uploadFiles: File) => {
-    setFile(uploadFiles)
-    setShowFile(true)
-  }
-
+  // const [openMenu, setOpenMenu] = useState(false)
   const onFileChange = function (e: any) {
     e.preventDefault()
-    setFilevalues(e.target.files[0])
-    setUserFile({ file: e.target.files[0] })
+    const rawFiles = e.target.files
+
+    setFile([...file, ...rawFiles])
+    setUserFile([...file, ...rawFiles])
   }
 
   const onButtonClick = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -44,11 +37,48 @@ const FileSubmit: React.FC<UserFileProps> = ({ setUserFile }) => {
     }
   }
 
-  const handleRemoveFile = (e: any) => {
-    e.preventDefault()
-    setUserFile({ file: null })
-    setShowFile(false)
+  const handlePreview = (e: any, index: number) => {
+    e.preventDefault
+    const fileToPreview = file[index];
+  const previewUrl = URL.createObjectURL(fileToPreview);
+  window.open(previewUrl, '_blank');
+    setSelectedFile(null)
   }
+
+  const handleDownload = (e: any, index: number) => {
+    e.preventDefault
+    const fileToDownload = file[index];
+    const downloadUrl = URL.createObjectURL(fileToDownload);
+    const link = document.createElement('a');
+    link.href = downloadUrl;
+    link.download = fileToDownload.name;
+    link.click();
+    setSelectedFile(null)
+  }
+
+  const handleRemoveFile = (e: any, index: number) => {
+    e.preventDefault
+    const deletedFile = file.splice(index, 1)
+    setFile([...file])
+    setUserFile([...file])
+    setUserFileToDelete && setUserFileToDelete(deletedFile[0])
+    setSelectedFile(null)
+  }
+
+  useEffect(() => {
+    if (userFile.length > 0) {
+      setFile([...userFile])
+    }
+  }, [userFile])
+
+  useEffect(() => {
+    if(file.length > 0){
+      changeTitle(true)
+    }else{
+      changeTitle(false)
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[file])
 
   return (
     <Fragment>
@@ -59,26 +89,55 @@ const FileSubmit: React.FC<UserFileProps> = ({ setUserFile }) => {
           type='file'
           className='input-file-upload'
           id='input-file-upload'
-          accept='image/*'
           onChange={onFileChange}
+          multiple
         />
+
+        {file.length > 0 &&
+          <div className='uploaded-files'>
+            {file.map((fileElement, index) => {
+              const openMenu = fileElement === selectedFile
+
+              return (
+                <div key={index} className='file-details'>
+                  <Typography className='file-name'>{fileElement?.name}</Typography>
+                  <div className='menu-btn'>
+                    <IconButton onClick={() => {
+                      if (openMenu) {
+                        setSelectedFile(null)
+                      } else {
+                        setSelectedFile(fileElement)
+                      }
+                    }}>
+                      <Icon icon='mdi:dots-vertical' fontSize={20} />
+                    </IconButton>
+                    {openMenu && (
+                      <div className='menu-options'>
+                        <div className='option' onClick={e => handlePreview(e, index)}>
+                          Preview
+                        </div>
+                        <div className='option' onClick={e => handleDownload(e, index)}>
+                          Download
+                        </div>
+                        <div className='option' onClick={e => handleRemoveFile(e, index)}>
+                          Delete
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                </div>
+              )
+            })}
+          </div>}
+
         <label id='label-file-upload' htmlFor='input-file-upload'>
-          {showFile ? (
-            <div className='file-details'>
-              <Icon icon='mdi:file-document-outline' />
-              <Typography className='file-name'>{file?.name}</Typography>
-              <IconButton onClick={e => handleRemoveFile(e)}>
-                <Icon icon='mdi:close' fontSize={20} />
-              </IconButton>
+          <Button className='upload-button' onClick={e => onButtonClick(e)} variant='outlined'>
+            <div className='btn-icon'>
+              <Icon icon='mdi:upload' />
             </div>
-          ) : (
-            <Button className='upload-button' onClick={e => onButtonClick(e)} variant='outlined'>
-              <div className='btn-icon'>
-                <Icon icon='mdi:upload' />
-              </div>
-              UPLOAD DOCUMENT
-            </Button>
-          )}
+            UPLOAD DOCUMENT
+          </Button>
         </label>
         {/* </form> */}
       </div>

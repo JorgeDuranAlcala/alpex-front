@@ -52,7 +52,9 @@
 /* - New accoun styles ----------------------------------------------------------------------------------------------  */
 
 .new-account .MuiCard-root {
-  margin: 20px 0;
+  margin: 0px 0 20px;
+  overflow: inherit;
+
 }
 
 /*---- Header----*/
@@ -61,7 +63,7 @@
   width: fit-content;
   height: 100%;
   margin: 0px;
-
+  overflow: inherit;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -114,6 +116,7 @@
   justify-content: flex-start;
   height: fit-content;
 }
+
 .actions-wrapper .MuiButton-root {
   width: 100%;
   padding: 5px 12px !important;
@@ -154,6 +157,7 @@
   padding: 15px 0;
   border-radius: 15px;
   box-shadow: 0px 4px 6px 1px rgba(0, 0, 0, 0.2);
+  z-index: 10;
 }
 
 .print-options .title {
@@ -191,6 +195,7 @@
     padding: 0 5px;
     margin: 10px 0;
   }
+
   .header-row {
     width: 100%;
     display: block;
@@ -317,6 +322,11 @@
   margin: 10px 0 !important;
 }
 
+.ok-modal-btn {
+  display: flex !important;
+  margin-left: auto !important;
+}
+
 .btn-icon {
   margin-right: 8px;
   display: flex;
@@ -337,13 +347,62 @@
   margin-bottom: 10px;
 }
 
-.upload-btn .file-details {
+.uploaded-files {
+  width: 100%;
   align-items: center;
   display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+.upload-btn .file-details {
+  width: 30%;
+  align-items: center;
+  display: flex;
+  background-color: rgba(130, 133, 151, 0.05);
+  margin-bottom: 20px;
+  padding: 5px 10px;
+  border-radius: 8px;
+  margin-right: 15px;
+  justify-content: space-between;
 }
 
 .upload-btn .file-name {
   margin: 0px 10px !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.menu-btn {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.menu-options {
+  position: absolute;
+  width: 100%;
+  max-width: 220px;
+  background-color: white;
+  min-width: 100px;
+  top: 43px;
+  right: -12px;
+  padding: 10px 0;
+  border-radius: 8px;
+  box-shadow: 0px 4px 6px 1px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+}
+
+.menu-options .option {
+  padding: 8px 10px;
+  font-size: 14px ;
+}
+
+.menu-options .option:hover {
+  background-color: rgba(130, 133, 151, 0.05);
+  cursor: pointer;
 }
 
 .section {
@@ -363,6 +422,10 @@
   color: red;
 }
 
+.show-on-mobile {
+  display: none !important;
+}
+
 @media (max-width: 800px) {
   .information .form-col {
     width: 45%;
@@ -370,6 +433,13 @@
 
   .modal-wrapper {
     min-width: 80vw;
+  }
+}
+
+@media (max-width: 600px) {
+
+  .upload-btn .file-details{
+    width: 46%;
   }
 }
 
@@ -381,7 +451,33 @@
   .information .MuiButton-root {
     width: 100%;
   }
+
+  .hide-on-mobile {
+    display: none !important;
+  }
+
+  .show-on-mobile {
+    display: inline-flex !important;
+  }
+
+  .uploaded-files{
+    justify-content: space-between;
+  }
+  .file-details{
+    width: 48%;
+  }
 }
+
+@media (max-width: 450px) {
+
+  .uploaded-files{
+    justify-content: center;
+  }
+  .upload-btn .file-details{
+    width: 98%;
+  }
+}
+
 
 /*---- Comment section ----*/
 
@@ -528,8 +624,7 @@
   }
 }
 
-@media (max-width: 550px) {
-}
+@media (max-width: 550px) {}
 
 /* Fin Stepper */
 
@@ -587,8 +682,12 @@
 
 .actions-header {
   width: 100%;
-  padding: 20px 0;
+  padding: 0;
   height: 100%;
+}
+
+.actions-header-mobile {
+  display: none;
 }
 
 .form-header-section:first-child {
@@ -710,13 +809,14 @@
   grid-row-gap: 0px;
   align-items: center;
   min-height: 80px;
-  padding-top: 80px;
   padding-bottom: 0px;
+  margin-bottom: 20px;
 }
 
 .form-header-grid:first-child {
   grid-column: span 10;
 }
+
 .form-header-title2 {
   font-family: 'Inter';
   font-style: normal;
@@ -728,4 +828,88 @@
   order: 0;
   align-self: stretch;
   flex-grow: 0;
+}
+
+
+.react-datepicker>.react-datepicker__navigation.react-datepicker__navigation--next--with-time {
+  right: 127px;
+  display: none;
+}
+
+.react-datepicker>.react-datepicker__navigation.react-datepicker__navigation--previous {
+  width: 24px;
+  height: 24px;
+  border: none;
+  left: 15px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' style='width:24px;height:24px' viewBox='0 0 24 24'%3E%3Cpath fill='rgba(76, 78, 100, 0.6)' d='M15.41,16.58L10.83,12L15.41,7.41L14,6L8,12L14,18L15.41,16.58Z' /%3E%3C/svg%3E");
+  display: none;
+}
+
+.react-datepicker .react-datepicker__current-month,
+.react-datepicker .react-datepicker-year-header {
+  line-height: 2.1;
+  font-size: 1rem;
+  font-weight: normal;
+  letter-spacing: 0.15px;
+  margin-bottom: 0.5rem;
+  color: rgba(77, 80, 98, 0.87);
+  display: none;
+}
+
+.react-datepicker .react-datepicker__header__dropdown .react-datepicker__month-read-view--selected-month,
+.react-datepicker .react-datepicker__header__dropdown .react-datepicker__year-read-view--selected-year {
+  font-size: 0.875rem;
+  margin-right: 0.25rem;
+  color: rgba(77, 80, 98, 0.87);
+  line-height: 2.1;
+  font-size: 1rem;
+  font-weight: normal;
+  letter-spacing: 0.15px;
+  margin-bottom: 0.5rem;
+  color: rgba(77, 80, 98, 0.87);
+}
+
+.react-datepicker .react-datepicker__header__dropdown .react-datepicker__month-read-view--down-arrow,
+.react-datepicker .react-datepicker__header__dropdown .react-datepicker__year-read-view--down-arrow {
+  top: 20px;
+  border-color: rgba(76, 78, 100, 0.38);
+}
+
+
+@media (max-width: 1320px) {
+  .info-header {
+    display: none;
+  }
+
+  .actions-header {
+    display: none;
+  }
+
+  .actions-header-mobile {
+    display: block;
+  }
+
+  .form-header-grid {
+    grid-template-columns: unset;
+  }
+}
+
+@media (max-width: 450px) {
+  .react-datepicker-popper {
+    max-width: 85vw !important;
+  }
+
+  .react-datepicker {
+    display: flex !important;
+    flex-wrap: wrap !important;
+  }
+
+  .react-datepicker:not(.react-datepicker--time-only) .react-datepicker__time-container {
+    width: 95% !important;
+    margin: 0 auto 10px !important;
+  }
+
+  .react-datepicker__month-container {
+    margin: auto !important;
+  }
 }

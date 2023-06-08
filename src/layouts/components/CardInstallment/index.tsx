@@ -2,7 +2,7 @@ import { FormControl, Grid, InputAdornment, SxProps, TextField, Theme, Typograph
 
 // import { useState } from 'react'
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
-import { ForwardedRef, forwardRef, useState } from 'react'
+import { ForwardedRef, forwardRef } from 'react'
 import ReactDatePicker from 'react-datepicker'
 import { NumericFormat } from 'react-number-format'
 import UserThemeOptions from 'src/layouts/UserThemeOptions'
@@ -16,16 +16,20 @@ interface GlobalInfo {
   inceptionDate: Date | null
   idAccount: number
 }
+
 interface ICardInstallment {
   index: number
   installment: InstallmentDto
-  onChangeList: (index: number, item: InstallmentDto) => void
+  onChangeList: (index: number, { name, value }: { name: keyof InstallmentDto; value: any }) => void
   globalInfo: GlobalInfo
+  count?: number
+  daysFirst?: number
 }
 
 interface PickerProps {
   label?: string
   sx?: SxProps<Theme>
+  count?: number
 }
 
 const CustomInput = forwardRef(({ ...props }: PickerProps, ref: ForwardedRef<HTMLElement>) => {
@@ -46,43 +50,12 @@ const CustomInput = forwardRef(({ ...props }: PickerProps, ref: ForwardedRef<HTM
   )
 })
 
-const CardInstallment = ({ index, installment, onChangeList, globalInfo }: ICardInstallment) => {
+const CardInstallment = ({ index, installment, onChangeList }: ICardInstallment) => {
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
   const textColor = userThemeConfig.palette?.text.subTitle
 
-  // const [error,setError]=useState<InstallmentsErrors>({percentagePaymentError:false})
-  const [formData, setFormData] = useState<InstallmentDto>({
-    paymentPercentage: installment.paymentPercentage,
-    balanceDue: installment.balanceDue,
-    premiumPaymentWarranty: installment.premiumPaymentWarranty,
-    settlementDueDate: installment.settlementDueDate,
-    idAccount: globalInfo.idAccount,
-    id: 0
-  })
-
-  const { receivedNetPremium, inceptionDate } = globalInfo
-
-  const handleNumericInputChange = (value: any, e: any) => {
-    const { name } = e.event.target
-
-    const formDataTemp = { ...formData }
-
-    if (name === 'premiumPaymentWarranty' && inceptionDate) {
-      formDataTemp.premiumPaymentWarranty = value
-      const days = formDataTemp.premiumPaymentWarranty * 24 * 60 * 60 * 1000
-      formDataTemp.settlementDueDate = new Date(inceptionDate.getTime() + days)
-    }
-
-    if (name === 'paymentPercentage' && receivedNetPremium) {
-      formDataTemp.paymentPercentage = value
-      formDataTemp.balanceDue = receivedNetPremium * (formDataTemp.paymentPercentage / 100)
-    }
-
-    setFormData({ ...formDataTemp, [name]: value })
-    onChangeList(index, {
-      ...formDataTemp,
-      [name]: value
-    })
+  const handleNumericInputChange = (value: any, name: keyof InstallmentDto) => {
+    onChangeList(index, { name, value })
   }
 
   return (
@@ -96,20 +69,27 @@ const CardInstallment = ({ index, installment, onChangeList, globalInfo }: ICard
             <FormControl fullWidth>
               <NumericFormat
                 name='premiumPaymentWarranty'
-                value={formData.premiumPaymentWarranty}
+                value={installment.premiumPaymentWarranty}
                 allowLeadingZeros
                 thousandSeparator=','
                 customInput={TextField}
                 id='filled-multiline-flexible'
-                label='PremiumPaymentWarranty'
+                label='Premium payment warranty'
                 multiline
+                defaultValue={0}
                 min={1}
                 max={999}
                 maxLength={4}
                 minLength={1}
                 decimalScale={0}
                 variant='outlined'
-                onValueChange={(value, e) => handleNumericInputChange(value.value, e)}
+                isAllowed={values => {
+                  const { floatValue } = values
+                  const upLimit = 999
+
+                  return (floatValue! >= 0 && floatValue! <= upLimit) || floatValue === undefined
+                }}
+                onValueChange={value => handleNumericInputChange(value.value, 'premiumPaymentWarranty')}
               />
             </FormControl>
             <FormControl fullWidth>
@@ -124,8 +104,14 @@ const CardInstallment = ({ index, installment, onChangeList, globalInfo }: ICard
                 prefix={'%'}
                 decimalScale={2}
                 variant='outlined'
-                value={formData.paymentPercentage}
-                onValueChange={(value, e) => handleNumericInputChange(value.floatValue, e)}
+                isAllowed={values => {
+                  const { floatValue } = values
+                  const upLimit = 100
+
+                  return (floatValue! >= 0 && floatValue! <= upLimit) || floatValue === undefined
+                }}
+                value={installment.paymentPercentage}
+                onValueChange={value => handleNumericInputChange(value.floatValue, 'paymentPercentage')}
               />
               {/* {error. && <FormHelperText sx={{ color: 'error.main' }}>Required Field</FormHelperText>} */}
             </FormControl>
@@ -141,18 +127,18 @@ const CardInstallment = ({ index, installment, onChangeList, globalInfo }: ICard
                 prefix={'$'}
                 decimalScale={2}
                 variant='outlined'
-                value={formData.balanceDue}
+                value={installment.balanceDue}
                 disabled={true}
               />
             </FormControl>
             <FormControl fullWidth>
               <ReactDatePicker
-                selected={formData.settlementDueDate}
+                selected={installment.settlementDueDate}
                 shouldCloseOnSelect
                 id='reception-date'
                 showTimeSelect
                 timeIntervals={15}
-                customInput={<CustomInput label='Reception date' sx={{ mb: 2, mt: 2, width: '100%' }} />}
+                customInput={<CustomInput label='Settlement due date' sx={{ mb: 2, mt: 2, width: '100%' }} />}
                 disabled={true}
                 onChange={() => {
                   return

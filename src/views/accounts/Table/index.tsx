@@ -11,6 +11,9 @@ import { DataGrid, GRID_CHECKBOX_SELECTION_COL_DEF, GridColumns, GridRowId } fro
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
 
+// ** Next Import
+import { useRouter } from 'next/router'
+
 // ** Custom Hooks imports
 
 // ** Custom Components Imports
@@ -21,9 +24,18 @@ import TableHeader from './TableHeader'
 import ModalAction from './modal'
 
 // ** Custom utilities
+import useAccountTable from '@/hooks/accounts/Table/useAccountTable'
+import { timestampToOnlyDate } from '@/utils/formatDates'
+import { formatStatus } from '@/utils/formatStatus'
 import { Link } from '@mui/material'
 import { useAppDispatch, useAppSelector } from 'src/store'
-import { deleteAccountFilter, fetchAccounts, handleAccountFilter, resetAccountFilter } from 'src/store/apps/accounts'
+import {
+  deleteAccountFilter,
+  fetchAccounts,
+  handleAccountFilter,
+  resetAccountFilter,
+  updateFormsData
+} from 'src/store/apps/accounts'
 import colors from 'src/views/accounts/colors'
 import fonts from 'src/views/accounts/font'
 import { IAlert } from 'src/views/custom/alerts'
@@ -67,21 +79,23 @@ const Table = ({ status }: IAccountTable) => {
 
   // ** Custom Hooks
   //const { accounts, getAccounts } = useAccountTable()
+  const { duplicateAccounts } = useAccountTable()
 
   // ** Hooks
+  const router = useRouter()
 
   const handleClickColumnHeader = (field: string) => {
     alert(field)
   }
 
   useEffect(() => {
-    dispatch(fetchAccounts())
+    dispatch(fetchAccounts(accountsReducer))
     //eslint-disable-next-line
-  }, [])
+  }, [accountsReducer.filters])
 
   useEffect(() => {
     dispatch(resetAccountFilter())
-    if (status === undefined) dispatch(deleteAccountFilter('Status'))
+    if (status === undefined) dispatch(deleteAccountFilter('status'))
     else {
       const index: string = Object.keys(EStatus)[Object.values(EStatus).indexOf(status as any)]
       dispatch(
@@ -95,10 +109,27 @@ const Table = ({ status }: IAccountTable) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status])
+
   useEffect(() => {
-    setAccounts(accountsReducer.accounts || [])
-    console.log(loading)
     setLoading(accountsReducer.loading)
+
+    const formatedRows = []
+    const rawRows = accountsReducer.accounts
+
+    if (rawRows && rawRows.length > 0) {
+      for (const rawRow of rawRows) {
+        formatedRows.push({
+          id: rawRow?.id,
+          status: formatStatus(rawRow?.idAccountStatus?.status),
+          insured: rawRow?.informations[0]?.insured,
+          lob: rawRow?.informations[0]?.idLineOfBussines?.lineOfBussines,
+          effectiveDate: timestampToOnlyDate(rawRow?.informations[0]?.effectiveDate),
+          expirationDate: timestampToOnlyDate(rawRow?.informations[0]?.expirationDate)
+        })
+      }
+    }
+
+    setAccounts(formatedRows || [])
     //eslint-disable-next-line
   }, [accountsReducer])
 
@@ -118,10 +149,17 @@ const Table = ({ status }: IAccountTable) => {
       disableColumnMenu: true,
       sortable: false,
       headerClassName: 'account-column-header',
-      renderHeader: ({ colDef }) => <ColumnHeader colDef={colDef} action={handleClickColumnHeader} />,
+      renderHeader: ({ colDef }) => (
+        <ColumnHeader colDef={colDef} action={handleClickColumnHeader} type={'idAccount'} />
+      ),
       renderCell: ({ row }) => (
         <Typography sx={{ color: colors.primary.main, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
-          <Link href='#'>{`#${row.id}`}</Link>
+          <Link
+            sx={{ cursor: 'pointer' }}
+            onClick={() => {
+              onEdit(+row.id)
+            }}
+          >{`#${row.id}`}</Link>
         </Typography>
       )
     },
@@ -138,7 +176,11 @@ const Table = ({ status }: IAccountTable) => {
       sortable: false,
       headerClassName: 'account-column-header',
       renderHeader: ({ colDef }) => (
-        <ColumnHeader colDef={colDef} action={status === undefined ? handleClickColumnHeader : undefined} />
+        <ColumnHeader
+          colDef={colDef}
+          action={status === undefined ? handleClickColumnHeader : undefined}
+          type={'status'}
+        />
       ),
       renderCell: ({ row }) => (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -156,7 +198,7 @@ const Table = ({ status }: IAccountTable) => {
       disableColumnMenu: true,
       sortable: false,
       headerClassName: 'account-column-header',
-      renderHeader: ({ colDef }) => <ColumnHeader colDef={colDef} action={handleClickColumnHeader} />,
+      renderHeader: ({ colDef }) => <ColumnHeader colDef={colDef} action={handleClickColumnHeader} type='insured' />,
       renderCell: ({ row }) => (
         <Typography
           sx={{ color: colors.text.primary, fontWeight: 500, fontSize: fonts.size.px14, fontFamily: fonts.inter }}
@@ -177,7 +219,9 @@ const Table = ({ status }: IAccountTable) => {
       disableColumnMenu: true,
       sortable: false,
       headerClassName: 'account-column-header',
-      renderHeader: ({ colDef }) => <ColumnHeader colDef={colDef} action={handleClickColumnHeader} />,
+      renderHeader: ({ colDef }) => (
+        <ColumnHeader colDef={colDef} action={handleClickColumnHeader} type='idLineOfBusiness' />
+      ),
       renderCell: ({ row }) => (
         <Typography sx={{ color: colors.text.secondary, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
           {row.lob}
@@ -194,7 +238,9 @@ const Table = ({ status }: IAccountTable) => {
       disableColumnMenu: true,
       sortable: false,
       headerClassName: 'account-column-header',
-      renderHeader: ({ colDef }) => <ColumnHeader colDef={colDef} action={handleClickColumnHeader} />,
+      renderHeader: ({ colDef }) => (
+        <ColumnHeader colDef={colDef} action={handleClickColumnHeader} type='effectiveDate' />
+      ),
       renderCell: ({ row }) => (
         <Typography sx={{ color: colors.text.secondary, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
           {row.effectiveDate}
@@ -211,7 +257,9 @@ const Table = ({ status }: IAccountTable) => {
       disableColumnMenu: true,
       sortable: false,
       headerClassName: 'account-column-header',
-      renderHeader: ({ colDef }) => <ColumnHeader colDef={colDef} action={handleClickColumnHeader} />,
+      renderHeader: ({ colDef }) => (
+        <ColumnHeader colDef={colDef} action={handleClickColumnHeader} type='expirationDate' />
+      ),
       renderCell: ({ row }) => (
         <Typography sx={{ color: colors.text.secondary, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
           {row.expirationDate}
@@ -228,8 +276,14 @@ const Table = ({ status }: IAccountTable) => {
       cellClassName: 'account-column-cell-pl-0',
       renderHeader: ({ colDef }) => <ColumnHeader colDef={colDef} showIcon={false} />,
       renderCell: ({ row }) => (
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <IconButton size='small' sx={{ mr: 1 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+          <IconButton
+            onClick={() => {
+              onEdit(+row.id)
+            }}
+            size='small'
+            sx={{ mr: 1 }}
+          >
             <Icon icon='ic:baseline-login' />
           </IconButton>
           <ModalAction
@@ -262,6 +316,7 @@ const Table = ({ status }: IAccountTable) => {
     }
   ]
 
+  // ACTIONS buttons functions
   const onDownload = (id: number) => {
     setBadgeData({
       message: `DOWNLOADING #${id.toLocaleString('en-US', { minimumIntegerDigits: 4, useGrouping: false })}`,
@@ -289,7 +344,10 @@ const Table = ({ status }: IAccountTable) => {
       }, 3000)
     }, 1000)
   }
-  const onDuplicated = (id: number) => {
+
+  const onDuplicated = async (id: number) => {
+    await duplicateAccounts([id])
+
     setBadgeData({
       message: `#${id.toLocaleString('en-US', {
         minimumIntegerDigits: 4,
@@ -307,10 +365,26 @@ const Table = ({ status }: IAccountTable) => {
     }, 3000)
   }
 
+  const onEdit = async (id: number) => {
+    dispatch(
+      updateFormsData({
+        form1: {
+          basicInfo: {},
+          placementStructure: {},
+          userFile: {},
+          id
+        }
+      })
+    )
+    localStorage.setItem('idAccount', String(id))
+    router.push(`/accounts/new-account/?&id=${id}`)
+  }
+
   return (
     <>
       <TableHeader selectedRows={selectedRows} badgeData={badgeData} />
       <DataGrid
+        loading={loading}
         autoHeight
         checkboxSelection
         disableSelectionOnClick

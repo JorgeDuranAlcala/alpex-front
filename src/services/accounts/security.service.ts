@@ -3,14 +3,13 @@ import { AppAlpexApiGateWay } from '../app.alpex.api-getway'
 import { SecurityDto } from './dtos/security.dto'
 
 class SecurityService {
-  async addSecurity(securitiesIn: Partial<SecurityDto>[]): Promise<SecurityDto[]> {
+  async addSecurity(securitiesIn: Partial<SecurityDto>[]): Promise<SecurityDto[] | string> {
     try {
       const { data } = await AppAlpexApiGateWay.post<Promise<SecurityDto[]>>(ACCOUNT_SECURITY_ROUTES.ADD, securitiesIn)
 
       return data
     } catch (error) {
-      const message = String(error)
-      throw new Error(message)
+      return 'error'
     }
   }
 

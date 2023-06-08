@@ -1,9 +1,10 @@
 export interface InformationDto {
   id: number
   insured: string
-  effetiveDate: Date | null
+  effectiveDate: Date | null
   expirationDate: Date | null
   receptionDate: Date | null
+  createdAt?: Date | null
   limit: number
   attachmentPoint: number
   reinsuranceBrokerage: number
@@ -15,21 +16,47 @@ export interface InformationDto {
   riskClass: number
   frontingFeeTotal: number
   frontingFee: number
-  step: number
+  step?: number
   currency: string
   exchangeRate: number
-  netPremiun: number
+  netPremium: number
   grossPremium: number
   idAccount: number
   idCountry: number
   idBroker: number
-  idBrokerContact: number
+  idBrokerContact: number | null
+  brokerContactEmail: string
+  brokerContactPhone: string
+  brokerContactCountry: string
   idCedant: number
-  idCedantContact: number
+  idCedantContact: number | null
+  cedantContactEmail: string
+  cedantContactPhone: string
+  cedantContactCountry: string
   idLineOfBussines: number
-  idTypeOfLimit: number
+  idTypeOfLimit: number | null
   idRiskActivity: number
   idLeadUnderwriter: number
   idUnderwriter: number
   idTechnicalAssistant: number
+}
+
+export interface DoctoDto {
+  type: string
+  name: string
+  base64: string
+}
+
+export interface UploadDoctoDto {
+  idAccount: number
+  idCDocto: number
+  docto: DoctoDto
+  idDocto?: number
+  name?: string
+}
+
+export interface DeleteDoctoDto {
+  idAccount: number
+  idDocto: number
+  fileName: string
 }

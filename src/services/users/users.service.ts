@@ -1,5 +1,5 @@
 import { ROLES, USERS_ROUTES } from 'src/configs/api'
-import { UsersGetDto, UsersPostDto, UsersPutDto } from 'src/services/users/dtos/UsersDto'
+import { UsersDeleteDto, UsersGetDto, UsersPostDto, UsersPutDto } from 'src/services/users/dtos/UsersDto'
 import { IUsersState } from 'src/types/apps/usersTypes'
 import { AppAlpexApiGateWay } from '../app.alpex.api-getway'
 import { queryBuilder } from '../helper/queryBuilder'
@@ -9,6 +9,7 @@ class UsersServices {
     try {
       const url = urlQ ? urlQ : queryBuilder(usersData.filters, USERS_ROUTES.GET)
       const { data } = await AppAlpexApiGateWay.get(`${url}&take=${usersData.info.take}&page=${usersData.info.page}`)
+      console.log({ data })
 
       return data
     } catch (error) {
@@ -51,9 +52,9 @@ class UsersServices {
     }
   }
 
-  async deleteUsers(user: number[]): Promise<UsersGetDto[]> {
+  async deleteUsers(user: Partial<UsersDeleteDto>): Promise<UsersGetDto[]> {
     try {
-      const { data } = await AppAlpexApiGateWay.post<Promise<UsersGetDto[]>>(`${USERS_ROUTES.ADD}`, {
+      const { data } = await AppAlpexApiGateWay.post<Promise<UsersGetDto[]>>(USERS_ROUTES.DELETE, {
         ...user
       })
 

@@ -1,7 +1,10 @@
 import { AppAlpexApiGateWay } from '../app.alpex.api-getway'
 
 //Routes
-import { ACCOUNT_ROUTES } from '../../configs/api'
+import { ACCOUNT_ROUTES } from '@/configs/api'
+import { queryBuilder } from '@/services/helper/queryBuilder'
+import { IAccountsState } from '@/types/apps/accountsTypes'
+import { UpdateStatusArrayDto } from './dtos/account.dto'
 
 /**
  *  service responsible of the  account methods
@@ -27,9 +30,61 @@ class AccountServices {
    * get the all accounts actives
    * @returns
    */
-  async getAccounts() {
+  async getAccounts(accountsData: IAccountsState, urlQ?: string) {
     try {
-      const { data } = await AppAlpexApiGateWay.get(`${ACCOUNT_ROUTES.GET_ALL}`)
+      const url = urlQ ? urlQ : queryBuilder(accountsData.filters, ACCOUNT_ROUTES.GET_ALL)
+      const { data } = await AppAlpexApiGateWay.get(
+        `${url}&take=${accountsData.info.take}&page=${accountsData.info.page}`
+      )
+
+      return data
+    } catch (error) {
+      const message = String(error)
+      throw new Error(message)
+    }
+  }
+
+  /**
+   * deactivate accounts by id
+   * @returns
+   */
+  async deleteAccounts(accountsIds: number[]) {
+    try {
+      const { data } = await AppAlpexApiGateWay.post(ACCOUNT_ROUTES.DELETE, {
+        accountsIds
+      })
+
+      return data
+    } catch (error) {
+      const message = String(error)
+      throw new Error(message)
+    }
+  }
+
+  /**
+   * duplicate accounts
+   * @returns
+   */
+  async duplicateAccounts(accountsIds: number[]) {
+    try {
+      const { data } = await AppAlpexApiGateWay.post(ACCOUNT_ROUTES.DUPLICATE, {
+        accountsIds
+      })
+
+      return data
+    } catch (error) {
+      const message = String(error)
+      throw new Error(message)
+    }
+  }
+
+  /**
+   * update accounts status, need an array
+   * @returns
+   */
+  async updateAccountsStatus(updateStatus: UpdateStatusArrayDto) {
+    try {
+      const { data } = await AppAlpexApiGateWay.post(ACCOUNT_ROUTES.UPDATE_STATUS, updateStatus)
 
       return data
     } catch (error) {

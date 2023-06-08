@@ -34,6 +34,16 @@ class SecurityService {
       throw error
     }
   }
+
+  async delete(update: Omit<InstallmentDto, 'id'>[]): Promise<InstallmentDto[]> {
+    try {
+      const { data } = await AppAlpexApiGateWay.put<Promise<InstallmentDto[]>>(INSTALLMENT_ROUTERS.DELETE, update)
+
+      return data
+    } catch (error) {
+      throw error
+    }
+  }
 }
 
 export default new SecurityService()

@@ -7,13 +7,14 @@ export const useGetByIdRole = (role: ROLES) => {
   const [users, setUsers] = useState<UsersGetDto[]>([])
 
   useEffect(() => {
-    UserService.getUserByIdRole(role)
-      .then(users => {
-        setUsers(users)
-      })
-      .catch(error => {
-        throw error
-      })
+    if (role)
+      UserService.getUserByIdRole(role)
+        .then(users => {
+          setUsers(users)
+        })
+        .catch(error => {
+          throw error
+        })
   }, [role])
 
   return {

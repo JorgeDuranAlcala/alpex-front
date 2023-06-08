@@ -1,4 +1,5 @@
 // ** MUI Imports
+import { useGetAllLineOfBussines } from '@/hooks/catalogs/lineOfBussines'
 import Box from '@mui/material/Box'
 import ListItemText from '@mui/material/ListItemText'
 import MenuItem from '@mui/material/MenuItem'
@@ -19,25 +20,19 @@ import fonts from 'src/views/accounts/font'
     OTHER2 = 'other2',
 }*/
 
-enum ELobString {
-  PROPERTY = 'Property',
-  FINANCIAL_LINES = 'Financial Lines',
-  OTHER = 'Other option',
-  OTHER2 = 'Other option'
-}
-
 interface IFilterMenuLobOptionProps {
-  lob: ELobString
+  lob: string
+  id: number
   handleClose?: () => void
 }
 
-const FilterMenuLobOption: React.FC<IFilterMenuLobOptionProps> = ({ lob }) => {
+const FilterMenuLobOption: React.FC<IFilterMenuLobOptionProps> = ({ lob, id }) => {
   const dispatch = useAppDispatch()
   const handleClick = () => {
     dispatch(
       handleAccountFilter({
-        type: 'Lob',
-        value: lob,
+        type: 'idLineOfBusiness',
+        value: id,
         text: lob
       })
     )
@@ -64,6 +59,8 @@ const FilterMenuLobOption: React.FC<IFilterMenuLobOptionProps> = ({ lob }) => {
 }
 
 const FilterMenuLob = ({}) => {
+  const { lineOfBussines } = useGetAllLineOfBussines()
+
   return (
     <>
       <Box component={'li'} sx={{ padding: '10px 10px', display: 'block', width: '100%', borderRadius: '0' }}>
@@ -73,10 +70,12 @@ const FilterMenuLob = ({}) => {
           </Typography>
         </Box>
       </Box>
-      <FilterMenuLobOption lob={ELobString.PROPERTY} />
-      <FilterMenuLobOption lob={ELobString.FINANCIAL_LINES} />
+      {lineOfBussines.map(lob => (
+        <FilterMenuLobOption key={lob.id} id={lob.id} lob={lob.lineOfBussines} />
+      ))}
+      {/* <FilterMenuLobOption lob={ELobString.FINANCIAL_LINES} />
       <FilterMenuLobOption lob={ELobString.OTHER} />
-      <FilterMenuLobOption lob={ELobString.OTHER2} />
+      <FilterMenuLobOption lob={ELobString.OTHER2} /> */}
     </>
   )
 }

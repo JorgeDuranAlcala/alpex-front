@@ -51,7 +51,7 @@ const AuthProvider = ({ children }: Props) => {
       if (storedToken) {
         setLoading(true)
         authServices
-          .authMe(storedToken)
+          .authMe()
           .then(async response => {
             setLoading(false)
             const resUser = response.data.userData
@@ -61,8 +61,8 @@ const AuthProvider = ({ children }: Props) => {
               fullName: resUser.name,
               id: resUser.id,
               role: resUser.roles[0].role,
-              username: resUser.name,
-              password: resUser.password
+              username: resUser.username,
+              password: ''
             }
 
             setUser({ ...newUserData })
@@ -129,15 +129,15 @@ const AuthProvider = ({ children }: Props) => {
           const tokenDecoded = jwt.decode(response.data.token, { complete: true })
 
           // @ts-ignore
-          const { email, name, id, roles } = tokenDecoded.payload
+          const { email, name, id, roles, username } = tokenDecoded.payload
 
           const newUserData = {
             email: email,
             fullName: name,
             id: id,
             role: roles[0].role,
-            username: name,
-            password: params.password
+            username: username,
+            password: ''
           }
 
           setUser({ ...newUserData })

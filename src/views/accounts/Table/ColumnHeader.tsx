@@ -7,6 +7,7 @@ import IconButton from '@mui/material/IconButton'
 import Menu from '@mui/material/Menu'
 import Typography from '@mui/material/Typography'
 import { GridStateColDef } from '@mui/x-data-grid/models/colDef'
+import { useAppSelector } from 'src/store'
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
@@ -21,19 +22,29 @@ interface IColunmHeader {
   colDef: GridStateColDef
   action?: (field: string) => void
   showIcon?: boolean
+  type?: string | undefined
 }
 
-const ColumnHeader: React.FC<IColunmHeader> = ({ colDef, action, showIcon = true }) => {
+const ColumnHeader: React.FC<IColunmHeader> = ({ colDef, action, showIcon = true, type }) => {
   // ** Props
   const { headerName, field } = colDef
+  const accountsReducer = useAppSelector(state => state.accounts)
+  const filterActive = accountsReducer?.filters
 
   // ** State
   const [anchorEl, setAnchorEl] = useState(null)
   const open = Boolean(anchorEl)
   const [widthMenu, setWidthMenu] = useState(0)
-
-  // ** Hooks
   const columnHeaderRef = useRef(null)
+
+  const activeButton = filterActive.map(f => f?.type)
+
+  const buttonIdAccount = activeButton?.find(active => active === 'idAccount')
+  const buttonStatus = activeButton?.find(active => active === 'status')
+  const buttonInsured = activeButton?.find(active => active === 'insured')
+  const buttonIdLineOfBusiness = activeButton?.find(active => active === 'idLineOfBusiness')
+  const buttoneffectiveDate = activeButton?.find(active => active === 'effectiveDate')
+  const buttonexpirationDate = activeButton?.find(active => active === 'expirationDate')
 
   const handleClose = () => {
     setAnchorEl(null)
@@ -72,7 +83,35 @@ const ColumnHeader: React.FC<IColunmHeader> = ({ colDef, action, showIcon = true
       </Typography>
       {showIcon && (
         <IconButton size='small' onClick={handleOnClick}>
-          <Icon icon='mdi:filter-variant' fontSize={20} />
+          {type === 'idAccount' ? (
+            <Icon
+              icon='mdi:filter-variant'
+              fontSize={20}
+              color={buttonIdAccount === 'idAccount' ? '#2535A8' : undefined}
+            />
+          ) : type === 'status' ? (
+            <Icon icon='mdi:filter-variant' fontSize={20} color={buttonStatus === 'status' ? '#2535A8' : undefined} />
+          ) : type === 'insured' ? (
+            <Icon icon='mdi:filter-variant' fontSize={20} color={buttonInsured === 'insured' ? '#2535A8' : undefined} />
+          ) : type === 'idLineOfBusiness' ? (
+            <Icon
+              icon='mdi:filter-variant'
+              fontSize={20}
+              color={buttonIdLineOfBusiness === 'idLineOfBusiness' ? '#2535A8' : undefined}
+            />
+          ) : type === 'effectiveDate' ? (
+            <Icon
+              icon='mdi:filter-variant'
+              fontSize={20}
+              color={buttoneffectiveDate === 'effectiveDate' ? '#2535A8' : undefined}
+            />
+          ) : type === 'expirationDate' ? (
+            <Icon
+              icon='mdi:filter-variant'
+              fontSize={20}
+              color={buttonexpirationDate === 'expirationDate' ? '#2535A8' : undefined}
+            />
+          ) : null}
         </IconButton>
       )}
       <Menu
@@ -92,3 +131,5 @@ const ColumnHeader: React.FC<IColunmHeader> = ({ colDef, action, showIcon = true
 }
 
 export default ColumnHeader
+
+// rgba(87, 90, 111, 0.54)
