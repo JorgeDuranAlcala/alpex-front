@@ -67,7 +67,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
   })
 
   const calculateSecurities = (securities: SecurityDto[]) => {
-    if (account && information) {
+    if (securities.length > 0 && information) {
       const tempSecurities = []
       companiesSelect.splice(0, companiesSelect.length)
       allErrors.splice(0, allErrors.length)
@@ -98,11 +98,17 @@ const Security = ({ onStepChange }: SecurityProps) => {
           taxes: Number(security.taxes) || 0
         })
       }
-      setAllFormData({
+      let dataForm: FormSecurity = {
         formData: tempSecurities,
-        ...CalculateSecurity.getData(tempSecurities, information),
-        id: account.securityTotal.id
-      })
+        ...CalculateSecurity.getData(tempSecurities, information)
+      }
+      if (account && account.securityTotal) {
+        dataForm = {
+          ...dataForm,
+          id: account.securityTotal.id
+        }
+      }
+      setAllFormData(dataForm)
       setSecurities(tempSecurities)
     }
   }
@@ -126,7 +132,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
     if (!isError) {
       const update: Partial<SecurityDto>[] = []
       const save: Partial<SecurityDto>[] = []
-      debugger
+
       for (const security of securities) {
         const mapper = SecurityMapper.securityToSecurityForm(security, accountData)
 
@@ -230,7 +236,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [account, information])
-  console.log({ allErrors })
+
   useEffect(() => {
     const isError = allErrors.find(error => error)
     if (isNextStep && !isError) onStepChange(3)

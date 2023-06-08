@@ -18,6 +18,7 @@ import VerticalNavItems from 'src/navigation/vertical'
 // import ServerSideVerticalNavItems from './components/vertical/ServerSideNavItems'
 // import ServerSideHorizontalNavItems from './components/horizontal/ServerSideNavItems'
 
+import InactivityDetector from './components/InactivityDetector'
 import HorizontalAppBarContent from './components/horizontal/AppBarContent'
 import VerticalAppBarContent from './components/vertical/AppBarContent'
 
@@ -111,6 +112,7 @@ const UserLayout = ({ children, contentHeightFixed }: Props) => {
         content: () => <Footer isLogin={false} />
       }}
     >
+      <InactivityDetector />
       {children}
     </Layout>
   )

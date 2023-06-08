@@ -201,10 +201,10 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
                   id: parseInt(informativeIdRole)
                 }
               ]
-            : parseInt(idRole) && !parseInt(idRole)
+            : parseInt(useWatchRole) && !parseInt(useWatchDualRole)
             ? [
                 {
-                  id: parseInt(idRole)
+                  id: parseInt(useWatchRole)
                 }
               ]
             : [],
@@ -317,19 +317,22 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
   }, [useWatchCompany])
 
   useEffect(() => {
-    if (selectUser) {
-      if (idRole === '5') {
-        setDualRoleDisabled(false)
-        setValue('dualRole', '', { shouldValidate: true })
+    if (roles) {
+      const roleIdAdmin = roles?.find(role => role.role === 'admin')
+      if (selectUser) {
+        if (roleIdAdmin && idRole === String(roleIdAdmin.id)) {
+          setDualRoleDisabled(false)
+          setValue('dualRole', '', { shouldValidate: true })
+        } else {
+          setDualRoleDisabled(true)
+        }
       } else {
-        setDualRoleDisabled(true)
-      }
-    } else {
-      if (useWatchRole === '5') {
-        setDualRoleDisabled(false)
-        setValue('dualRole', '', { shouldValidate: true })
-      } else {
-        setDualRoleDisabled(true)
+        if (roleIdAdmin && useWatchRole === String(roleIdAdmin.id)) {
+          setDualRoleDisabled(false)
+          setValue('dualRole', '', { shouldValidate: true })
+        } else {
+          setDualRoleDisabled(true)
+        }
       }
     }
     //eslint-disable-next-line
