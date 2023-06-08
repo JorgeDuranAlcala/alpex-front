@@ -30,7 +30,6 @@ const ColumnHeader: React.FC<IColunmHeader> = ({ colDef, action, showIcon = true
   const { headerName, field } = colDef
   const accountsReducer = useAppSelector(state => state.accounts)
   const filterActive = accountsReducer?.filters
-  console.log(filterActive)
 
   // ** State
   const [anchorEl, setAnchorEl] = useState(null)

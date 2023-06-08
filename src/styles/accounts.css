@@ -53,6 +53,8 @@
 
 .new-account .MuiCard-root {
   margin: 0px 0 20px;
+  overflow: inherit;
+
 }
 
 /*---- Header----*/
@@ -114,6 +116,7 @@
   justify-content: flex-start;
   height: fit-content;
 }
+
 .actions-wrapper .MuiButton-root {
   width: 100%;
   padding: 5px 12px !important;
@@ -192,6 +195,7 @@
     padding: 0 5px;
     margin: 10px 0;
   }
+
   .header-row {
     width: 100%;
     display: block;
@@ -318,7 +322,7 @@
   margin: 10px 0 !important;
 }
 
-.ok-modal-btn{
+.ok-modal-btn {
   display: flex !important;
   margin-left: auto !important;
 }
@@ -343,13 +347,62 @@
   margin-bottom: 10px;
 }
 
-.upload-btn .file-details {
+.uploaded-files {
+  width: 100%;
   align-items: center;
   display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+.upload-btn .file-details {
+  width: 30%;
+  align-items: center;
+  display: flex;
+  background-color: rgba(130, 133, 151, 0.05);
+  margin-bottom: 20px;
+  padding: 5px 10px;
+  border-radius: 8px;
+  margin-right: 15px;
+  justify-content: space-between;
 }
 
 .upload-btn .file-name {
   margin: 0px 10px !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.menu-btn {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.menu-options {
+  position: absolute;
+  width: 100%;
+  max-width: 220px;
+  background-color: white;
+  min-width: 100px;
+  top: 43px;
+  right: -12px;
+  padding: 10px 0;
+  border-radius: 8px;
+  box-shadow: 0px 4px 6px 1px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+}
+
+.menu-options .option {
+  padding: 8px 10px;
+  font-size: 14px ;
+}
+
+.menu-options .option:hover {
+  background-color: rgba(130, 133, 151, 0.05);
+  cursor: pointer;
 }
 
 .section {
@@ -369,7 +422,7 @@
   color: red;
 }
 
-.show-on-mobile{
+.show-on-mobile {
   display: none !important;
 }
 
@@ -383,6 +436,13 @@
   }
 }
 
+@media (max-width: 600px) {
+
+  .upload-btn .file-details{
+    width: 46%;
+  }
+}
+
 @media (max-width: 550px) {
   .information .form-col {
     width: 100%;
@@ -392,13 +452,32 @@
     width: 100%;
   }
 
-  .hide-on-mobile{
+  .hide-on-mobile {
     display: none !important;
   }
-  .show-on-mobile{
-    display: inline-flex;
+
+  .show-on-mobile {
+    display: inline-flex !important;
+  }
+
+  .uploaded-files{
+    justify-content: space-between;
+  }
+  .file-details{
+    width: 48%;
   }
 }
+
+@media (max-width: 450px) {
+
+  .uploaded-files{
+    justify-content: center;
+  }
+  .upload-btn .file-details{
+    width: 98%;
+  }
+}
+
 
 /*---- Comment section ----*/
 
@@ -545,8 +624,7 @@
   }
 }
 
-@media (max-width: 550px) {
-}
+@media (max-width: 550px) {}
 
 /* Fin Stepper */
 
@@ -607,9 +685,11 @@
   padding: 0;
   height: 100%;
 }
-.actions-header-mobile{
+
+.actions-header-mobile {
   display: none;
 }
+
 .form-header-section:first-child {
   grid-column: span 2;
   display: grid;
@@ -736,6 +816,7 @@
 .form-header-grid:first-child {
   grid-column: span 10;
 }
+
 .form-header-title2 {
   font-family: 'Inter';
   font-style: normal;
@@ -750,12 +831,12 @@
 }
 
 
-.react-datepicker > .react-datepicker__navigation.react-datepicker__navigation--next--with-time {
+.react-datepicker>.react-datepicker__navigation.react-datepicker__navigation--next--with-time {
   right: 127px;
   display: none;
 }
 
-.react-datepicker > .react-datepicker__navigation.react-datepicker__navigation--previous {
+.react-datepicker>.react-datepicker__navigation.react-datepicker__navigation--previous {
   width: 24px;
   height: 24px;
   border: none;
@@ -799,27 +880,30 @@
   .info-header {
     display: none;
   }
-  .actions-header{
+
+  .actions-header {
     display: none;
   }
 
-  .actions-header-mobile{
+  .actions-header-mobile {
     display: block;
   }
+
   .form-header-grid {
     grid-template-columns: unset;
   }
 }
 
-@media (max-width: 450px){
+@media (max-width: 450px) {
   .react-datepicker-popper {
-    max-width: 85vw !important  ;
+    max-width: 85vw !important;
   }
 
-  .react-datepicker{
+  .react-datepicker {
     display: flex !important;
     flex-wrap: wrap !important;
   }
+
   .react-datepicker:not(.react-datepicker--time-only) .react-datepicker__time-container {
     width: 95% !important;
     margin: 0 auto 10px !important;
@@ -827,5 +911,5 @@
 
   .react-datepicker__month-container {
     margin: auto !important;
-}
+  }
 }

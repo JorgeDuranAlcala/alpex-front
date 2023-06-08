@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { ForwardedRef, ReactNode, forwardRef, useEffect, useState } from 'react'; //ReactNode
+import React, { ForwardedRef, ReactNode, forwardRef, useEffect, useState } from 'react' //ReactNode
 
 // ** MUI Imports
-import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
 import {
   FormControl,
   FormHelperText,
@@ -12,18 +12,18 @@ import {
   SxProps,
   TextField,
   Theme
-} from '@mui/material';
-import Select, { SelectChangeEvent } from '@mui/material/Select'; //SelectChangeEvent
+} from '@mui/material'
+import Select, { SelectChangeEvent } from '@mui/material/Select' //SelectChangeEvent
 
 //Components
-import { ModalContact } from 'src/views/accounts/new-account-steps/Information/ModalContact';
+import { ContactModal } from '@/views/accounts/new-account-steps/Information/ContactModal'
 
 //hooks para base info y  modal contac
-import { useGetAllCountries as useCountyGetAll } from 'src/hooks/catalogs/country';
+import { useGetAllCountries as useCountyGetAll } from 'src/hooks/catalogs/country'
 
 // ** Third Party Imports
-import DatePicker from 'react-datepicker';
-import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker';
+import DatePicker from 'react-datepicker'
+import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 
 interface PickerProps {
   label?: string
@@ -122,14 +122,14 @@ const CustomInput = forwardRef(({ ...props }: PickerProps, ref: ForwardedRef<HTM
   )
 })
 
-import { ROLES } from '@/configs/api';
-import { useGetAll as useBrokerGetAll } from 'src/hooks/catalogs/broker';
-import { useGetAllByIdBroker } from 'src/hooks/catalogs/broker-contact/';
-import { useGetAll as useCedantGetAll } from 'src/hooks/catalogs/cedant';
-import { useGetAllByCedant } from 'src/hooks/catalogs/cedant-contact';
-import { useGetAllLineOfBussines } from 'src/hooks/catalogs/lineOfBussines';
-import { useGetAllRiskActivities } from 'src/hooks/catalogs/riskActivity';
-import { useGetByIdRole } from 'src/hooks/catalogs/users/';
+import { ROLES } from '@/configs/api'
+import { useGetAll as useBrokerGetAll } from 'src/hooks/catalogs/broker'
+import { useGetAllByIdBroker } from 'src/hooks/catalogs/broker-contact/'
+import { useGetAll as useCedantGetAll } from 'src/hooks/catalogs/cedant'
+import { useGetAllByCedant } from 'src/hooks/catalogs/cedant-contact'
+import { useGetAllLineOfBussines } from 'src/hooks/catalogs/lineOfBussines'
+import { useGetAllRiskActivities } from 'src/hooks/catalogs/riskActivity'
+import { useGetByIdRole } from 'src/hooks/catalogs/users/'
 
 const BasicInfo: React.FC<BasicInfoProps> = ({
   basicInfo,
@@ -410,28 +410,21 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
           </FormControl>
           {basicInfo.brokerContact !== '' && (
             <>
-              <FormControl fullWidth sx={{ marginBottom: "0.7rem", mt: 2 }}>
-                <TextField
-                  autoFocus
-                  disabled
-                  fullWidth
-                  label='Contact email'
-                  value={basicInfo.brokerContactEmail}
-                />
+              <FormControl fullWidth sx={{ marginBottom: '0.7rem', mt: 2 }}>
+                <TextField autoFocus disabled fullWidth label='Contact email' value={basicInfo.brokerContactEmail} />
               </FormControl>
 
-              <FormControl fullWidth sx={{ marginBottom: "0.7rem"  , mt: 2 }}>
-                <TextField
-                  autoFocus
-                  fullWidth
-                  disabled
-                  label='Contact phone'
-                  value={basicInfo.brokerContactPhone}
-                />
+              <FormControl fullWidth sx={{ marginBottom: '0.7rem', mt: 2 }}>
+                <TextField autoFocus fullWidth disabled label='Contact phone' value={basicInfo.brokerContactPhone} />
               </FormControl>
               <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
                 <InputLabel>Contact country'</InputLabel>
-                <Select label='Contact country' value={basicInfo.brokerContactCountry} labelId='Contactcountry' disabled>
+                <Select
+                  label='Contact country'
+                  value={basicInfo.brokerContactCountry}
+                  labelId='Contactcountry'
+                  disabled
+                >
                   {countries?.map(country => (
                     <MenuItem key={country.name} value={country.id}>
                       {country.name}
@@ -441,7 +434,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               </FormControl>
             </>
           )}
-          <ModalContact
+          <ContactModal
             service={'broker'}
             id={Number(basicInfo.broker)}
             updateContacts={updateBrokerContact}
@@ -510,28 +503,21 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
           </FormControl>
           {basicInfo.cedantContact !== '' && (
             <>
-              <FormControl fullWidth sx={{ marginBottom: "0.7rem", mt: 2 }}>
-                <TextField
-                  autoFocus
-                  disabled
-                  fullWidth
-                  label='Contact email'
-                  value={basicInfo.cedantContactEmail}
-                />
+              <FormControl fullWidth sx={{ marginBottom: '0.7rem', mt: 2 }}>
+                <TextField autoFocus disabled fullWidth label='Contact email' value={basicInfo.cedantContactEmail} />
               </FormControl>
 
-              <FormControl fullWidth sx={{ marginBottom: "0.7rem"  , mt: 2 }}>
-                <TextField
-                  autoFocus
-                  fullWidth
-                  disabled
-                  label='Contact phone'
-                  value={basicInfo.cedantContactPhone}
-                />
+              <FormControl fullWidth sx={{ marginBottom: '0.7rem', mt: 2 }}>
+                <TextField autoFocus fullWidth disabled label='Contact phone' value={basicInfo.cedantContactPhone} />
               </FormControl>
               <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
                 <InputLabel>Contact country'</InputLabel>
-                <Select label='Contact country' value={basicInfo.cedantContactCountry} labelId='Contactcountry' disabled>
+                <Select
+                  label='Contact country'
+                  value={basicInfo.cedantContactCountry}
+                  labelId='Contactcountry'
+                  disabled
+                >
                   {countries?.map(country => (
                     <MenuItem key={country.name} value={country.id}>
                       {country.name}
@@ -541,7 +527,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               </FormControl>
             </>
           )}
-          <ModalContact
+          <ContactModal
             service={'cedant'}
             id={Number(basicInfo.cedant)}
             updateContacts={updateCedantContact}
@@ -642,8 +628,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               selected={basicInfo.receptionDate}
               shouldCloseOnSelect
               id='reception-date'
-              customInput={<CustomInput label='Reception date'
-              sx={{ mb: 2, mt: 2, width: '100%'}} />}
+              customInput={<CustomInput label='Reception date' sx={{ mb: 2, mt: 2, width: '100%' }} />}
               onChange={handleReceptionDateChange}
               className={errors.receptionDateError ? 'error LACLASE' : 'LACLASE'}
               showTimeSelect

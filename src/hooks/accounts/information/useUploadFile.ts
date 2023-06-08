@@ -1,13 +1,10 @@
-import { useLocalStorage } from '@/hooks/useLocalStorage'
 import { UploadDoctoDto } from 'src/services/accounts/dtos/information.dto'
 import informationService from 'src/services/accounts/information.service'
 
 export const useUploadInformationDocument = () => {
-  const [jwtToken] = useLocalStorage('accessToken', false)
-
   const uploadInformationDocument = async (uploadDocto: UploadDoctoDto): Promise<any> => {
     try {
-      const res = await informationService.uploadDocument(uploadDocto, jwtToken)
+      const res = await informationService.uploadDocument(uploadDocto)
 
       return res
     } catch (error) {

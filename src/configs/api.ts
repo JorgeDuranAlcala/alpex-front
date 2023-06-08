@@ -1,9 +1,9 @@
 // ==== ROLES
 export enum ROLES {
-  ADMIN = 5,
-  LEAD_UNDERWRITER = 6,
-  UNDERWRITER = 8,
-  TECHNICAL_ASSISTANT = 9
+  ADMIN = 1,
+  LEAD_UNDERWRITER = 2,
+  UNDERWRITER = 3,
+  TECHNICAL_ASSISTANT = 4
 }
 
 // ==== AUTH
@@ -110,14 +110,16 @@ export enum TYPE_OF_LIMIT_ROUTES {
   GET_ALL = 'catalogs/typeOfLimit/all',
   GET_BY_ID = 'catalogs/typeOfLimit',
   ADD = 'catalogs/typeOfLimit/add',
-  UPDATE = 'catalogs/typeOfLimit'
+  UPDATE = 'catalogs/typeOfLimit',
+  DELETE = 'catalogs/typeOfLimit'
 }
 
 export enum CURRENCY_ROUTES {
   GET_ALL = 'catalogs/currency/all',
   GET_BY_ID = 'catalogs/currency',
   ADD = 'catalogs/currency/add',
-  UPDATE = 'catalogs/currency'
+  UPDATE = 'catalogs/currency',
+  DELETE = 'catalogs/currency'
 }
 
 export enum RISK_ACTIVITY_ROUTES {

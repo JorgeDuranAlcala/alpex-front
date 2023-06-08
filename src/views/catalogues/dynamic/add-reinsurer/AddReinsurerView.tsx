@@ -14,13 +14,12 @@ import ReinsurerContacts from 'src/views/catalogues/dynamic/add-reinsurer/Reinsu
 
 const AddReinsurerView = () => {
   const router = useRouter()
-  const { id = '0' } = router.query
-
   const [idReinsuranceCompany, setIdReinsuranceCompany] = useState(0)
 
   useEffect(() => {
-    setIdReinsuranceCompany(parseInt(id.toString()))
-  }, [id])
+    router.query.id && setIdReinsuranceCompany(parseInt(router.query.id.toString()))
+    //eslint-disable-next-line
+  }, [router.query])
 
   return (
     <Grid item xs={12}>
