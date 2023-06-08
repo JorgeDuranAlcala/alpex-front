@@ -136,6 +136,7 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
       .number()
       .transform((_, val) => (val === Number(val) ? val : null))
       .required('This field is required')
+      .min(1)
       .max(100),
     dynamicCommissionAmount: yup
       .number()
@@ -320,10 +321,11 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
     }
     calculateSecurities(tempSecurities)
   }
-  const handleChangeCompany = (e: SelectChangeEvent) => {
+  const handleChangeCompany = (e: SelectChangeEvent<HTMLSelectElement>): void => {
     const avaliableCompanies = avaliableReinsurers
       .filter(reinsure => !companiesSelect.includes(reinsure.id) || security?.idCReinsuranceCompany?.id === reinsure.id)
       .find(reinsurer => reinsurer.id === Number(e.target.value))
+
     if (avaliableCompanies) {
       const tempSecurities = [...securities]
       tempSecurities[index] = {
@@ -392,10 +394,10 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
   useEffect(() => {
     if (security?.id) {
       setIdRetroCedant(security.idCRetroCedant?.id)
-      setIsGross(security.isGross)
     }
     if (security.idCReinsuranceCompany) {
       validateForm(security)
+      setIsGross(security.isGross)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [security])
