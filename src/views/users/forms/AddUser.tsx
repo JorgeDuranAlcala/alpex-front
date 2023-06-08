@@ -184,7 +184,6 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
 
   const onSubmit = (data: any) => {
     if (selectUser) {
-      debugger
       const dataToSend: UsersPutDto = {
         id: usersReducer.current?.id || 1,
         name: data.name || '',
