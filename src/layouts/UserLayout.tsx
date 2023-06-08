@@ -112,7 +112,7 @@ const UserLayout = ({ children, contentHeightFixed }: Props) => {
         content: () => <Footer isLogin={false} />
       }}
     >
-      <InactivityDetector timeout={3000} warningTimeout={5000} />
+      <InactivityDetector />
       {children}
     </Layout>
   )

@@ -1,68 +1,70 @@
+import useIdleTimeout from '@/hooks/useIdleTimeout'
 import InactivityModal from '@/views/components/modals/InactivityModal'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 
-const InactivityDetector: React.FC<{ timeout: number; warningTimeout: number }> = ({ timeout, warningTimeout }) => {
-  const timeoutRef = useRef<number | null>(null)
-  const [showModal, setShowModal] = useState(false)
+const InactivityDetector: React.FC = () => {
+  const [openModal, setOpenModal] = useState(false)
+  const [remaining, setRemaining] = useState<number>(0)
+  const [userLocalData, setuserLocalData] = useState<userLocalDataDto>({})
+  const { idleTimer, handleIdle } = useIdleTimeout(() => {
+    setOpenModal(true)
+  }, 1 * 60)
 
-  const [openDeleteCountry, setOpenDeleteCountry] = useState(false)
-
-  const handleUserActivity = () => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current)
-    }
-
-    console.log('User is inactive')
-    setShowModal(true)
-
-    timeoutRef.current = window.setTimeout(() => {
-      // Perform your desired action here (e.g., show a warning)
-      console.log('After timeout')
-    }, timeout)
+  type userLocalDataDto = {
+    email?: string
+    fullName?: string
+    id?: string
+    role?: string
+    username?: string
   }
 
-  // Create a debounced version of the handleUserActivity function
-  const debouncedHandleUserActivity = useRef(
-    (() => {
-      let timer: number | null = null
+  const stay = () => {
+    setOpenModal(false)
+    idleTimer.reset()
+  }
 
-      return () => {
-        if (timer) {
-          clearTimeout(timer)
-        }
-        timer = window.setTimeout(handleUserActivity, warningTimeout)
-      }
-    })()
-  ).current
+  const handleLogout = () => {
+    handleIdle()
+    setOpenModal(false)
+    idleTimer.reset()
+  }
+
+  const formatTime = (seconds: number): string => {
+    const minutes = Math.floor(seconds / 60)
+    const remainingSeconds = seconds % 60
+
+    if (remainingSeconds <= 0 && minutes <= 0) {
+      return '00:00'
+    }
+
+    return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`
+  }
 
   useEffect(() => {
-    window.addEventListener('mousemove', debouncedHandleUserActivity)
-    window.addEventListener('keydown', debouncedHandleUserActivity)
+    const interval = setInterval(() => {
+      setRemaining(Math.ceil(Number(idleTimer.getRemainingTime()) / 1000))
+    }, 500)
 
     return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current)
-      }
-
-      window.removeEventListener('mousemove', debouncedHandleUserActivity)
-      window.removeEventListener('keydown', debouncedHandleUserActivity)
+      clearInterval(interval)
     }
-  }, [debouncedHandleUserActivity])
+  })
 
-  const deleteCountry = async () => {
-    console.log('LA acción we')
-    setOpenDeleteCountry(false)
-  }
+  useEffect(() => {
+    const userData = JSON.parse(String(localStorage.getItem('userData')))
+    setuserLocalData(userData)
+  }, [])
 
   return (
     <>
       <InactivityModal
-        openModal={showModal}
-        onClose={() => {
-          setOpenDeleteCountry(false)
-        }}
-        onDelete={deleteCountry}
-        textItem='Country'
+        renderButton={() => <span> </span>}
+        headingText={`Are you there, ${userLocalData?.username}`}
+        text='Your session will close due to inactivity, how do you want to proceed?'
+        handleClickContinue={handleLogout}
+        setShow={openModal}
+        onClose={stay}
+        remainingTime={formatTime(remaining)}
       />
     </>
   )

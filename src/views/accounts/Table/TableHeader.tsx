@@ -37,8 +37,6 @@ interface ITableHeader {
 }
 
 const TableHeader: React.FC<ITableHeader> = ({ selectedRows, badgeData }) => {
-  console.log({ selectedRows })
-
   // ** Custom Hooks
   const router = useRouter()
   const { deleteAccounts, changeStatusAccounts } = useAccountTable()
