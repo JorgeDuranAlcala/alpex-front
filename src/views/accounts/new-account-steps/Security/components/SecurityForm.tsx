@@ -45,11 +45,11 @@ const initialErrorValues: errorsSecurity = {
   idCRetroCedant: ''
 }
 export const FormSection = ({ index, security }: FormSectionProps) => {
-  const [isGross, setIsGross] = useState<boolean>(security?.isGross)
+  const [isGross, setIsGross] = useState<boolean>(false)
 
   const [errorsSecurity, setErrorsSecurity] = useState<errorsSecurity>(initialErrorValues)
 
-  const [frontingFeeEnabled, setFrontingFeeEnabled] = useState(security.frontingFeeActive || false)
+  const [frontingFeeEnabled, setFrontingFeeEnabled] = useState(false)
   const { securities, setSecurities, allErrors, setAllErrors, information, companiesSelect, calculateSecurities } =
     useContext(SecurityContext)
   const [avaliableReinsurers, setAvaliableReinsurers] = useState<ReinsuranceCompanyDto[]>([])
@@ -170,6 +170,7 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
       .number()
       .transform((_, val) => (val === Number(val) ? val : null))
       .required('This field is required')
+      .min(1)
       .max(100),
     netReinsurancePremium: yup
       .number()
@@ -321,7 +322,7 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
     }
     calculateSecurities(tempSecurities)
   }
-  const handleChangeCompany = (e: SelectChangeEvent<HTMLSelectElement>): void => {
+  const handleChangeCompany = (e: SelectChangeEvent<string>): void => {
     const avaliableCompanies = avaliableReinsurers
       .filter(reinsure => !companiesSelect.includes(reinsure.id) || security?.idCReinsuranceCompany?.id === reinsure.id)
       .find(reinsurer => reinsurer.id === Number(e.target.value))
@@ -332,7 +333,6 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
         ...tempSecurities[index],
         idCReinsuranceCompany: avaliableCompanies,
         frontingFeeActive: avaliableCompanies.special,
-
         isGross: avaliableCompanies.special,
         netPremiumAt100: avaliableCompanies.special ? information.grossPremium : information.netPremium
       }
@@ -397,8 +397,10 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
     }
     if (security.idCReinsuranceCompany) {
       validateForm(security)
-      setIsGross(security.isGross)
     }
+
+    setIsGross(security.isGross)
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [security])
 
