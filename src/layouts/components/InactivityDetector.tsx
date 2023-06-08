@@ -8,7 +8,7 @@ const InactivityDetector: React.FC = () => {
   const [userLocalData, setuserLocalData] = useState<userLocalDataDto>({})
   const { idleTimer, handleIdle } = useIdleTimeout(() => {
     setOpenModal(true)
-  }, 1 * 60)
+  }, 10 * 60)
 
   type userLocalDataDto = {
     email?: string
