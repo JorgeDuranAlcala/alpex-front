@@ -79,6 +79,7 @@
   text-align: center;
   width: 100%;
   cursor: pointer;
+  text-decoration: none;
 }
 
 @media (max-width: 768px) {
@@ -93,7 +94,7 @@
   }
 }
 
-@media (max-width: 450px){
+@media (max-width: 450px) {
   .login-view .login-form {
     min-width: 95vw;
   }

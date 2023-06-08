@@ -2,7 +2,7 @@
 import { ReactNode, useEffect, useState } from 'react'
 
 // ** MUI Components
-import { Button, FormHelperText, Grid, TextField } from '@mui/material'
+import { Button, FormHelperText, Grid, TextField, styled } from '@mui/material'
 import FormControl from '@mui/material/FormControl'
 import { useRouter } from 'next/router'
 
@@ -14,6 +14,19 @@ import * as yup from 'yup'
 // ** Layout Import
 import { Icon } from '@iconify/react'
 import BlankLayout from 'src/@core/layouts/BlankLayout'
+
+const TextFieldStyled = styled(TextField)(() => ({
+
+  '& .MuiOutlinedInput-root.Mui-focused  .MuiOutlinedInput-notchedOutline': {
+    borderColor: '#0D567B',
+    color: '#0D567B'
+  },
+  '& .MuiOutlinedInput-input': {
+    color: '#0D567B',
+  },
+  '& .MuiInputLabel-root.Mui-focused': { color: '#0D567B' }
+
+}));
 
 const schema = yup.object().shape({
   number1: yup.number(),
@@ -70,7 +83,7 @@ const WSStep2 = () => {
           // @ts-ignore
           setValue('number' + (index + 1), value[index] || '')
           submit()
-        } catch (error) {}
+        } catch (error) { }
       })
     }
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -127,7 +140,7 @@ const WSStep2 = () => {
                 control={control}
                 rules={{ required: true }}
                 render={({ field: { value, onChange, onBlur } }) => (
-                  <TextField
+                  <TextFieldStyled
                     autoFocus
                     value={value}
                     onBlur={onBlur}
@@ -135,12 +148,6 @@ const WSStep2 = () => {
                     error={Boolean(errors.number1)}
                     className='custom-input'
                     inputProps={{ maxLength: 1 }}
-                    sx={{
-                      '& .MuiOutlinedInput-root.Mui-focused  .MuiOutlinedInput-notchedOutline': {
-                        borderColor: '#0D567B'
-                      },
-                      '& .MuiInputLabel-root.Mui-focused': { color: '#0D567B' }
-                    }}
                   />
                 )}
               />
@@ -154,19 +161,14 @@ const WSStep2 = () => {
                 control={control}
                 rules={{ required: true }}
                 render={({ field: { value, onChange, onBlur } }) => (
-                  <TextField
+                  <TextFieldStyled
                     value={value}
                     onBlur={onBlur}
                     onChange={onChange}
                     error={Boolean(errors.number2)}
                     className='custom-input'
                     inputProps={{ maxLength: 1 }}
-                    sx={{
-                      '& .MuiOutlinedInput-root.Mui-focused  .MuiOutlinedInput-notchedOutline': {
-                        borderColor: '#0D567B'
-                      },
-                      '& .MuiInputLabel-root.Mui-focused': { color: '#0D567B' }
-                    }}
+
                   />
                 )}
               />
@@ -180,19 +182,14 @@ const WSStep2 = () => {
                 control={control}
                 rules={{ required: true }}
                 render={({ field: { value, onChange, onBlur } }) => (
-                  <TextField
+                  <TextFieldStyled
                     value={value}
                     onBlur={onBlur}
                     onChange={onChange}
                     error={Boolean(errors.number3)}
                     className='custom-input'
                     inputProps={{ maxLength: 1 }}
-                    sx={{
-                      '& .MuiOutlinedInput-root.Mui-focused  .MuiOutlinedInput-notchedOutline': {
-                        borderColor: '#0D567B'
-                      },
-                      '& .MuiInputLabel-root.Mui-focused': { color: '#0D567B' }
-                    }}
+
                   />
                 )}
               />
@@ -206,19 +203,14 @@ const WSStep2 = () => {
                 control={control}
                 rules={{ required: true }}
                 render={({ field: { value, onChange, onBlur } }) => (
-                  <TextField
+                  <TextFieldStyled
                     value={value}
                     onBlur={onBlur}
                     onChange={onChange}
                     error={Boolean(errors.number4)}
                     className='custom-input'
                     inputProps={{ maxLength: 1 }}
-                    sx={{
-                      '& .MuiOutlinedInput-root.Mui-focused  .MuiOutlinedInput-notchedOutline': {
-                        borderColor: '#0D567B'
-                      },
-                      '& .MuiInputLabel-root.Mui-focused': { color: '#0D567B' }
-                    }}
+
                   />
                 )}
               />
@@ -232,19 +224,14 @@ const WSStep2 = () => {
                 control={control}
                 rules={{ required: true }}
                 render={({ field: { value, onChange, onBlur } }) => (
-                  <TextField
+                  <TextFieldStyled
                     value={value}
                     onBlur={onBlur}
                     onChange={onChange}
                     error={Boolean(errors.number5)}
                     className='custom-input'
                     inputProps={{ maxLength: 1 }}
-                    sx={{
-                      '& .MuiOutlinedInput-root.Mui-focused  .MuiOutlinedInput-notchedOutline': {
-                        borderColor: '#0D567B'
-                      },
-                      '& .MuiInputLabel-root.Mui-focused': { color: '#0D567B' }
-                    }}
+
                   />
                 )}
               />
@@ -258,19 +245,14 @@ const WSStep2 = () => {
                 control={control}
                 rules={{ required: true }}
                 render={({ field: { value, onChange, onBlur } }) => (
-                  <TextField
+                  <TextFieldStyled
                     value={value}
                     onBlur={onBlur}
                     onChange={onChange}
                     error={Boolean(errors.number6)}
                     className='custom-input'
                     inputProps={{ maxLength: 1 }}
-                    sx={{
-                      '& .MuiOutlinedInput-root.Mui-focused  .MuiOutlinedInput-notchedOutline': {
-                        borderColor: '#0D567B'
-                      },
-                      '& .MuiInputLabel-root.Mui-focused': { color: '#0D567B' }
-                    }}
+
                   />
                 )}
               />
