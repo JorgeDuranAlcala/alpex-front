@@ -369,10 +369,14 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
     if (idAccount) {
       await updateInformation()
       await uploadDoctos(idAccount)
-
+      console.log('userfiles')
+      console.log(userFile)
       dispatch(updateFormsData({ form1: { basicInfo, placementStructure, userFile, id: idAccount } }))
     } else {
+      console.log('userfiles')
+      console.log(userFile)
       const res = await saveInformation()
+
       localStorage.setItem('idAccount', String(res.account.id))
       await uploadDoctos(res.account.id)
       dispatch(updateFormsData({ form1: { basicInfo, placementStructure, userFile, id: res.account.id } }))
@@ -437,7 +441,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   }
 
   const onSubmittedFiles = (change: boolean) => {
-    console.log("submited files")
+    console.log('submited files')
     console.log(change)
     setChangeTitle(change)
   }
@@ -468,6 +472,8 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
               newUserFiles.push(newFile)
             }
           }
+          console.log('newUserFiles')
+          console.log(newUserFiles)
           setUserFile(newUserFiles)
 
           setDoctoIdByName({
@@ -552,7 +558,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
           </div>
 
           <div className='section'>
-            <div className='title'>{changeTitle ? "Submited files" : "File submit"}</div>
+            <div className='title'>{changeTitle ? 'Submited files' : 'File submit'}</div>
             <FileSubmit
               userFile={userFile}
               setUserFile={setUserFile}

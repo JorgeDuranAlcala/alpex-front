@@ -45,11 +45,11 @@ const initialErrorValues: errorsSecurity = {
   idCRetroCedant: ''
 }
 export const FormSection = ({ index, security }: FormSectionProps) => {
-  const [isGross, setIsGross] = useState<boolean>(security?.isGross)
+  const [isGross, setIsGross] = useState<boolean>(false)
 
   const [errorsSecurity, setErrorsSecurity] = useState<errorsSecurity>(initialErrorValues)
 
-  const [frontingFeeEnabled, setFrontingFeeEnabled] = useState(security.frontingFeeActive || false)
+  const [frontingFeeEnabled, setFrontingFeeEnabled] = useState(false)
   const { securities, setSecurities, allErrors, setAllErrors, information, companiesSelect, calculateSecurities } =
     useContext(SecurityContext)
   const [avaliableReinsurers, setAvaliableReinsurers] = useState<ReinsuranceCompanyDto[]>([])
@@ -136,6 +136,7 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
       .number()
       .transform((_, val) => (val === Number(val) ? val : null))
       .required('This field is required')
+      .min(1)
       .max(100),
     dynamicCommissionAmount: yup
       .number()
@@ -168,7 +169,13 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
     taxes: yup
       .number()
       .transform((_, val) => (val === Number(val) ? val : null))
-      .required('This field is required')
+
+      .test('', 'This field is required', value => {
+        const val = value || 0
+        if (isGross) return +val > 0
+
+        return true
+      })
       .max(100),
     netReinsurancePremium: yup
       .number()
@@ -320,17 +327,17 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
     }
     calculateSecurities(tempSecurities)
   }
-  const handleChangeCompany = (e: SelectChangeEvent) => {
+  const handleChangeCompany = (e: SelectChangeEvent<string>): void => {
     const avaliableCompanies = avaliableReinsurers
       .filter(reinsure => !companiesSelect.includes(reinsure.id) || security?.idCReinsuranceCompany?.id === reinsure.id)
       .find(reinsurer => reinsurer.id === Number(e.target.value))
+
     if (avaliableCompanies) {
       const tempSecurities = [...securities]
       tempSecurities[index] = {
         ...tempSecurities[index],
         idCReinsuranceCompany: avaliableCompanies,
         frontingFeeActive: avaliableCompanies.special,
-
         isGross: avaliableCompanies.special,
         netPremiumAt100: avaliableCompanies.special ? information.grossPremium : information.netPremium
       }
@@ -349,11 +356,12 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
     })
 
     // Combinar los esquemas
-    if (frontingFeeEnabled)
+    if (security.frontingFeeActive && (security.share || security.premiumPerShareAmount)) {
       combinedSchema = yup.object().shape({
         ...schema.fields,
         ...schemaRetrocedant.fields
       })
+    }
 
     combinedSchema
       .validate(securityParam, { abortEarly: false })
@@ -371,7 +379,7 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
 
         errorsTemp[index] = true
         setAllErrors(errorsTemp)
-
+        console.log({ data, index })
         setErrorsSecurity(data)
 
         //setEnableNextStep(false)
@@ -392,11 +400,13 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
   useEffect(() => {
     if (security?.id) {
       setIdRetroCedant(security.idCRetroCedant?.id)
-      setIsGross(security.isGross)
     }
     if (security.idCReinsuranceCompany) {
       validateForm(security)
     }
+    setFrontingFeeEnabled(security.frontingFeeActive)
+    setIsGross(security.isGross)
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [security])
 
@@ -723,7 +733,11 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
                 <Select
                   id='outlined-Name'
                   label='Contact country'
-                  value={security.idCRetroCedantContact?.idCCountry ?? ''}
+                  value={
+                    security.idCRetroCedantContact.__idCCountry__
+                      ? security.idCRetroCedantContact?.__idCCountry__.id
+                      : security.idCRetroCedantContact.idCCountry ?? ''
+                  }
                   labelId='Contactcountry'
                   size='small'
                   disabled
