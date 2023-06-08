@@ -128,7 +128,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
   }
   const SaveData = async () => {
     const isError = allErrors.find(error => error)
-
+    debugger
     if (!isError) {
       const update: Partial<SecurityDto>[] = []
       const save: Partial<SecurityDto>[] = []
@@ -243,6 +243,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isNextStep])
+  console.log({ allErrors })
 
   return (
     <SecurityContext.Provider

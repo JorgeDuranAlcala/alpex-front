@@ -169,8 +169,13 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
     taxes: yup
       .number()
       .transform((_, val) => (val === Number(val) ? val : null))
-      .required('This field is required')
-      .min(1)
+
+      .test('', 'This field is required', value => {
+        const val = value || 0
+        if (isGross) return +val > 0
+
+        return true
+      })
       .max(100),
     netReinsurancePremium: yup
       .number()
@@ -351,11 +356,12 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
     })
 
     // Combinar los esquemas
-    if (frontingFeeEnabled)
+    if (security.frontingFeeActive && (security.share || security.premiumPerShareAmount)) {
       combinedSchema = yup.object().shape({
         ...schema.fields,
         ...schemaRetrocedant.fields
       })
+    }
 
     combinedSchema
       .validate(securityParam, { abortEarly: false })
@@ -373,7 +379,7 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
 
         errorsTemp[index] = true
         setAllErrors(errorsTemp)
-
+        console.log({ data, index })
         setErrorsSecurity(data)
 
         //setEnableNextStep(false)
@@ -398,7 +404,7 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
     if (security.idCReinsuranceCompany) {
       validateForm(security)
     }
-
+    setFrontingFeeEnabled(security.frontingFeeActive)
     setIsGross(security.isGross)
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -727,7 +733,11 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
                 <Select
                   id='outlined-Name'
                   label='Contact country'
-                  value={security.idCRetroCedantContact?.idCCountry ?? ''}
+                  value={
+                    security.idCRetroCedantContact.__idCCountry__
+                      ? security.idCRetroCedantContact?.__idCCountry__.id
+                      : security.idCRetroCedantContact.idCCountry ?? ''
+                  }
                   labelId='Contactcountry'
                   size='small'
                   disabled
