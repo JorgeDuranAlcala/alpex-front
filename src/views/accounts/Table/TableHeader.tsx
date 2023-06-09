@@ -28,15 +28,20 @@ import CustomAlert, { IAlert } from 'src/views/custom/alerts'
 enum EActions {
   SELECT_ALL = 'Select all',
   CHANGE_STATUS = 'Change status',
-  DELETE_ALL = 'Delete accounts'
+  DELETE_ALL = 'Delete accounts',
+  UNSELECT_ALL = 'Unselect all'
 }
 
 interface ITableHeader {
   selectedRows: GridRowId[]
   badgeData: IAlert
+  setSelectAll: any
+  selectAllOption: number[]
 }
 
-const TableHeader: React.FC<ITableHeader> = ({ selectedRows, badgeData }) => {
+const TableHeader: React.FC<ITableHeader> = ({ selectedRows, badgeData, setSelectAll, selectAllOption }) => {
+  console.log({ selectedRows })
+
   // ** Custom Hooks
   const router = useRouter()
   const { deleteAccounts, changeStatusAccounts } = useAccountTable()
@@ -54,6 +59,12 @@ const TableHeader: React.FC<ITableHeader> = ({ selectedRows, badgeData }) => {
   const [textChangeStatusModal, setTextChangeStatusModal] = useState('')
   const [changeStatusTo, setChangeStatusTo] = useState<EStatus | null>(null)
   const [value, setValue] = useState<string>('')
+
+  console.log({ accountsReducer })
+
+  // useEffect(() => {
+  //   setSelectAll(selectAllOption)
+  // }, [])
 
   // ** Handlers for Action menu
   const handleActionMenuOpen = () => {
@@ -78,6 +89,9 @@ const TableHeader: React.FC<ITableHeader> = ({ selectedRows, badgeData }) => {
     const selectedOption = event.target.value
     setValue(selectedOption)
     switch (event.target.value) {
+      case EActions.SELECT_ALL:
+        setSelectAll(selectAllOption)
+        break
       case EActions.DELETE_ALL:
         handleTextDeleteModal(selectedRows)
         setShowDeleteModal(true)
@@ -86,6 +100,9 @@ const TableHeader: React.FC<ITableHeader> = ({ selectedRows, badgeData }) => {
       case EActions.CHANGE_STATUS:
         const el = document.querySelector('#statusChangeActionMenu')
         setAnchorEl(el)
+        break
+      case EActions.UNSELECT_ALL:
+        setSelectAll([])
         break
       default:
         break
@@ -197,7 +214,6 @@ const TableHeader: React.FC<ITableHeader> = ({ selectedRows, badgeData }) => {
             onChange={handleSelectedAction}
             value={value}
             sx={{ mr: 4, mb: 2, width: '100%', height: '42px' }}
-            disabled={selectedRows && selectedRows.length === 0}
             renderValue={selected => (selected.length === 0 ? 'Action' : selected)}
           >
             <MenuItem sx={{ minWidth: '172px', display: 'flex', gap: '5%' }} value={EActions.SELECT_ALL}>
@@ -235,6 +251,10 @@ const TableHeader: React.FC<ITableHeader> = ({ selectedRows, badgeData }) => {
                 <MenuItem onClick={() => HandleChangeStatus(EStatus.DECLINED)}>{EStatusString.DECLINED}</MenuItem>
                 <MenuItem onClick={() => HandleChangeStatus(EStatus.BOUND)}>{EStatusString.BOUND}</MenuItem>
               </Menu>
+            </MenuItem>
+            <MenuItem value={EActions.UNSELECT_ALL} sx={{ minWidth: '172px', display: 'flex', gap: '5%' }}>
+              <Icon icon='carbon:close-filled' fontSize={23} color={'rgba(87, 90, 111, 0.54)'} />
+              {EActions.UNSELECT_ALL}
             </MenuItem>
             <MenuItem value={EActions.DELETE_ALL} sx={{ minWidth: '172px', display: 'flex', gap: '5%' }}>
               <Icon icon='ic:outline-delete' fontSize={30} color={'rgba(87, 90, 111, 0.54)'} />
@@ -321,3 +341,5 @@ const TableHeader: React.FC<ITableHeader> = ({ selectedRows, badgeData }) => {
 }
 
 export default TableHeader
+
+// disabled={selectedRows && selectedRows.length === 0}
