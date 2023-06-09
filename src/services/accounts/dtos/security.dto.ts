@@ -97,6 +97,7 @@ export type errorsSecurity = {
 export type SecurityContextDto = {
   securities: SecurityDto[]
   allErrors: boolean[]
+  activeErros: boolean
   information: FormInformation
   companiesSelect: number[]
   setSecurities: React.Dispatch<React.SetStateAction<SecurityDto[]>>

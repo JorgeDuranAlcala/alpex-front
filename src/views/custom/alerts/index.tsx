@@ -1,5 +1,5 @@
 import { Alert } from '@mui/material'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 export interface IAlert {
   status: 'success' | 'error' | 'secondary' | 'warning' | undefined
@@ -27,7 +27,11 @@ const customTheme = {
 }
 
 const CustomAlert = (props: IAlert) => {
-  const [open, setOpen] = useState(props.open || false)
+  const [open, setOpen] = useState(false)
+
+  useEffect(() => {
+    setOpen(props.open || false)
+  }, [props])
 
   return (
     <>
