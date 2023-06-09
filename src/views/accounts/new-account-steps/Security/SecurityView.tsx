@@ -12,6 +12,7 @@ import { useAppSelector } from '@/store'
 import { Title } from '@/styled-components/accounts/Security.styled'
 import { ButtonClose, HeaderTitleModal } from '@/styles/modal/modal.styled'
 import { FormSection } from '@/views/accounts/new-account-steps/Security/components/SecurityForm'
+import { NumericFormatCustom } from '@/views/components/inputs/numeric-format/NumericFormatCustom'
 import CustomAlert, { IAlert } from '@/views/custom/alerts'
 import CloseIcon from '@mui/icons-material/Close'
 import {
@@ -288,6 +289,12 @@ const Security = ({ onStepChange }: SecurityProps) => {
                     disabled
                     fullWidth
                     value={allFormData.recievedNetPremium}
+                    InputProps={{
+                      inputComponent: NumericFormatCustom as any
+                    }}
+                    inputProps={{
+                      suffix: ' '
+                    }}
                   />
                 </FormControl>
               </Grid>
@@ -295,17 +302,32 @@ const Security = ({ onStepChange }: SecurityProps) => {
                 <FormControl fullWidth>
                   <TextField
                     autoFocus
-                    fullWidth
                     label='Distributed net premium'
-                    disabled
                     value={allFormData.distribuitedNetPremium}
+                    InputProps={{
+                      inputComponent: NumericFormatCustom as any
+                    }}
+                    inputProps={{
+                      suffix: ' '
+                    }}
                   />
                   {false && <FormHelperText sx={{ color: 'error.main' }}>Invalid field</FormHelperText>}
                 </FormControl>
               </Grid>
               <Grid item xs={12} sm={4}>
                 <FormControl fullWidth>
-                  <TextField autoFocus label='Difference' value={allFormData.diference} disabled />
+                  <TextField
+                    autoFocus
+                    label='Difference'
+                    value={allFormData.diference}
+                    InputProps={{
+                      inputComponent: NumericFormatCustom as any
+                    }}
+                    inputProps={{
+                      suffix: ' '
+                    }}
+                    disabled
+                  />
                   {false && <FormHelperText sx={{ color: 'error.main' }}>Invalid field</FormHelperText>}
                 </FormControl>
               </Grid>
