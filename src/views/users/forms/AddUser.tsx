@@ -31,6 +31,7 @@ import { useAppDispatch, useAppSelector } from 'src/store'
 import { UserSection } from 'src/styles/Forms/usersSection'
 import CountrySelect, { ICountry } from 'src/views/custom/select/CountrySelect'
 import { StyledDescription, StyledSubtitle, StyledTitle } from 'src/views/custom/typography'
+import AlertAddUser from '../AlertUserAdded'
 
 interface FormInfo {
   name: string
@@ -53,16 +54,16 @@ const UserForm: FormInfo = {
   dualRole: ''
 }
 
-// const initialForm: UsersPutDto = {
-//   id: 1,
-//   name: '',
-//   surname: '',
-//   email: '',
-//   phone: '',
-//   idCompany: 0,
-//   roles: [],
-//   areaCode: ''
-// }
+const initialForm: UsersPutDto = {
+  id: 1,
+  name: '',
+  surname: '',
+  email: '',
+  phone: '',
+  idCompany: 0,
+  roles: [],
+  areaCode: ''
+}
 
 interface IAddUser {
   selectUser: boolean
@@ -117,7 +118,7 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
     resolver: yupResolver(schema)
   })
 
-  const { setUserPost, error } = useAddUser()
+  const { setUserPost, error, user } = useAddUser()
   const { setUserPut } = useEditUser()
 
   const { company } = useGetAllCompanies()
@@ -147,6 +148,8 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
   const [idCompany, setIdCompany] = useState<any>('')
   const [idRole, setIdRole] = useState<any>('')
   const [informativeIdRole, setInformativeIdRole] = useState<any>('')
+
+  // const [open, setopen] = useState(true)
 
   // const [selectCompany, setSelectCompany] = useState<ReinsuranceCompanyDto | undefined | string>()
   // const flagCompany = true
@@ -359,6 +362,29 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
   }, [error])
 
   useEffect(() => {
+    if (user?.statusCode === 201) {
+      reset({ ...initialForm })
+    }
+  }, [reset, user?.statusCode])
+
+  // useEffect(() => {
+
+  // if (open) {
+  //   document.body.classList.add('alertUser')
+  // } else {
+  //   document.body.classList.remove('alertUser')
+  // }
+  // }, [open])
+
+  // console.log({ open })
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     // setOpen(false)
+  //     document.body.classList.remove('alertUser')
+  //   }, 5000)
+  // }, [])
+
+  useEffect(() => {
     if (selectUser) {
       const reducersCompany = usersReducer?.current?.idCompany?.id
       const companySelect = company?.find(c => c.id === reducersCompany)
@@ -394,6 +420,7 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
 
   return (
     <>
+      <AlertAddUser />
       <div style={{ padding: '20px 20px 80px' }}>
         <UserSection>
           <StyledTitle sx={{ pb: 2 }}>{title}</StyledTitle>

@@ -65,6 +65,8 @@ interface IAccountTable {
 const Table = ({ status }: IAccountTable) => {
   // ** State
   const [selectedRows, setSelectedRows] = useState<GridRowId[]>([])
+  const [selectAll, setSelectAll] = useState<any>([])
+  const [selectAllFlag, setSelectAllFlag] = useState(false)
   const [accounts, setAccounts] = useState<any>([])
   const [loading, setLoading] = useState<any>([])
   const [badgeData, setBadgeData] = useState<IAlert>({
@@ -76,6 +78,9 @@ const Table = ({ status }: IAccountTable) => {
   // **Reducers
   const dispatch = useAppDispatch()
   const accountsReducer = useAppSelector(state => state.accounts)
+  console.log({ selectAll })
+  const selectAllOption = accountsReducer.accounts.map(account => account.id)
+  console.log({ selectAllOption })
 
   // ** Custom Hooks
   //const { accounts, getAccounts } = useAccountTable()
@@ -382,7 +387,14 @@ const Table = ({ status }: IAccountTable) => {
 
   return (
     <>
-      <TableHeader selectedRows={selectedRows} badgeData={badgeData} />
+      <TableHeader
+        selectedRows={selectedRows}
+        badgeData={badgeData}
+        setSelectAll={setSelectAll}
+        selectAllOption={selectAllOption}
+        setSelectAllFlag={setSelectAllFlag}
+        setSelectedRows={setSelectedRows}
+      />
       <DataGrid
         loading={loading}
         autoHeight
@@ -396,6 +408,7 @@ const Table = ({ status }: IAccountTable) => {
           Pagination: CustomPagination
         }}
         className={'account-datagrid'}
+        selectionModel={selectAllFlag ? selectAll : undefined}
         onSelectionModelChange={rows => setSelectedRows(rows)}
       />
     </>

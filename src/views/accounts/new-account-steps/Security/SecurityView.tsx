@@ -12,6 +12,7 @@ import { useAppSelector } from '@/store'
 import { Title } from '@/styled-components/accounts/Security.styled'
 import { ButtonClose, HeaderTitleModal } from '@/styles/modal/modal.styled'
 import { FormSection } from '@/views/accounts/new-account-steps/Security/components/SecurityForm'
+import { NumericFormatCustom } from '@/views/components/inputs/numeric-format/NumericFormatCustom'
 import CustomAlert, { IAlert } from '@/views/custom/alerts'
 import CloseIcon from '@mui/icons-material/Close'
 import {
@@ -36,6 +37,8 @@ export const SecurityContext = createContext<SecurityContextDto>({} as SecurityC
 const Security = ({ onStepChange }: SecurityProps) => {
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
   const [securities, setSecurities] = useState<SecurityDto[]>([])
+  const [activeErros, setActiveErrors] = useState<boolean>(false)
+
   const [isNextStep, setIsNextStep] = useState<boolean>(false)
   const [allFormData, setAllFormData] = useState<FormSecurity>({
     formData: [],
@@ -70,10 +73,10 @@ const Security = ({ onStepChange }: SecurityProps) => {
     if (securities.length > 0 && information) {
       const tempSecurities = []
       companiesSelect.splice(0, companiesSelect.length)
-      allErrors.splice(0, allErrors.length)
+
+      // allErrors.splice(0, allErrors.length)
 
       for (const security of securities) {
-        allErrors.push(false)
         const operationSecurity: CalculateSecurity = new CalculateSecurity()
           .setInformation(information)
           .setSecurity(security)
@@ -109,15 +112,20 @@ const Security = ({ onStepChange }: SecurityProps) => {
         }
       }
       setAllFormData(dataForm)
+
+      setAllErrors(allErrors.map(error => error))
+
       setSecurities(tempSecurities)
     }
   }
   const addNewForm = () => {
     const securityNew = {} as SecurityDto
-    calculateSecurities([...securities, securityNew])
+    calculateSecurities([...securities, { ...securityNew, frontingFeeActive: false }])
   }
   const handleNextStep = () => {
-    setOpen(true)
+    const isError = allErrors.find(error => error)
+    setActiveErrors(isError || false)
+    if (!isError) setOpen(true)
   }
   const handleCloseModal = () => {
     setOpen(false)
@@ -127,98 +135,112 @@ const Security = ({ onStepChange }: SecurityProps) => {
     handleCloseModal()
   }
   const SaveData = async () => {
-    const isError = allErrors.find(error => error)
-    debugger
-    if (!isError) {
-      const update: Partial<SecurityDto>[] = []
-      const save: Partial<SecurityDto>[] = []
+    // const isError = allErrors.find(error => error)
 
-      for (const security of securities) {
-        const mapper = SecurityMapper.securityToSecurityForm(security, accountData)
+    // if (!isError) {
+    const update: Partial<SecurityDto>[] = []
+    const save: Partial<SecurityDto>[] = []
 
-        if (security.id) {
-          update.push({
-            ...mapper,
-            id: security.id
-          })
-        } else {
-          save.push({ ...mapper })
-        }
-      }
+    for (const security of securities) {
+      const mapper = SecurityMapper.securityToSecurityForm(security, accountData)
 
-      if (!allFormData.id) {
-        saveSecurityTotal({
-          receivedNetPremium: +allFormData.recievedNetPremium,
-          distributedNetPremium: +allFormData.distribuitedNetPremium,
-          difference: +allFormData.diference,
-          idAccount: +accountData.formsData.form1.id
+      if (security.id) {
+        update.push({
+          ...mapper,
+          id: security.id
         })
-          .then(response => {
-            console.log('saveSecurityTotal', { response })
-          })
-          .catch(e => {
-            console.log('saveSecurityTotal', e)
-          })
       } else {
-        await updateSecurityTotal(allFormData?.id, {
-          receivedNetPremium: +allFormData.recievedNetPremium,
-          distributedNetPremium: +allFormData.distribuitedNetPremium,
-          difference: +allFormData.diference,
-          idAccount: +accountData.formsData.form1.id
-        })
-          .then(response => {
-            console.log('updateSecurityTotal', { response })
-          })
-          .catch(e => {
-            console.log('updateSecurityTotal', e)
-          })
+        save.push({ ...mapper })
       }
-
-      if (update.length > 0)
-        updateSecurities(update)
-          .then(res => {
-            console.log('updateSecurities', { res })
-
-            setBadgeData({
-              message: 'Saved successfully',
-              theme: 'success',
-              open: true,
-              status: 'error'
-            })
-          })
-          .catch(e => {
-            console.log('ERROR updateSecurities', e)
-            setBadgeData({
-              message: 'Error saving data',
-              theme: 'error',
-              open: true,
-              status: 'error',
-              icon: <Icon style={{ color: '#FF4D49' }} icon='icon-park-outline:error' />
-            })
-          })
-      if (save.length > 0)
-        saveSecurities(save)
-          .then(res => {
-            console.log('saveSecurities', { res })
-
-            setBadgeData({
-              message: 'Saved successfully',
-              theme: 'success',
-              open: true,
-              status: 'error'
-            })
-          })
-          .catch(e => {
-            console.log('ERROR saveSecurities', e)
-            setBadgeData({
-              message: 'Error saving data',
-              theme: 'error',
-              open: true,
-              status: 'error',
-              icon: <Icon style={{ color: '#FF4D49' }} icon='icon-park-outline:error' />
-            })
-          })
     }
+
+    if (!allFormData.id) {
+      await saveSecurityTotal({
+        receivedNetPremium: +allFormData.recievedNetPremium,
+        distributedNetPremium: +allFormData.distribuitedNetPremium,
+        difference: +allFormData.diference,
+        idAccount: +accountData.formsData.form1.id
+      })
+        .then(response => {
+          console.log('saveSecurityTotal', { response })
+        })
+        .catch(e => {
+          console.log('saveSecurityTotal', e)
+        })
+    } else {
+      await updateSecurityTotal(allFormData?.id, {
+        receivedNetPremium: +allFormData.recievedNetPremium,
+        distributedNetPremium: +allFormData.distribuitedNetPremium,
+        difference: +allFormData.diference,
+        idAccount: +accountData.formsData.form1.id
+      })
+        .then(response => {
+          console.log('updateSecurityTotal', { response })
+        })
+        .catch(e => {
+          console.log('updateSecurityTotal', e)
+        })
+    }
+
+    if (update.length > 0)
+      await updateSecurities(update)
+        .then(res => {
+          console.log('updateSecurities', { res })
+
+          setBadgeData({
+            message: 'Saved successfully',
+            theme: 'success',
+            open: true,
+            status: 'error'
+          })
+        })
+        .catch(e => {
+          console.log('ERROR updateSecurities', e)
+
+          setBadgeData({
+            message: 'Error saving data',
+            theme: 'error',
+            open: true,
+            status: 'error',
+            icon: <Icon style={{ color: '#FF4D49' }} icon='icon-park-outline:error' />
+          })
+        })
+    if (save.length > 0)
+      await saveSecurities(save)
+        .then(res => {
+          console.log('saveSecurities', { res })
+
+          update.length === 0 &&
+            setBadgeData({
+              message: 'Saved successfully',
+              theme: 'success',
+              open: true,
+              status: 'error'
+            })
+        })
+        .catch(e => {
+          console.log('ERROR saveSecurities', e)
+
+          setBadgeData({
+            message: 'Error saving data',
+            theme: 'error',
+            open: true,
+            status: 'error',
+            icon: <Icon style={{ color: '#FF4D49' }} icon='icon-park-outline:error' />
+          })
+        })
+
+    // }
+  }
+  const DeleteNewForm = (index: number) => {
+    const updatedSecurities = [...securities]
+    const updatedErrors = [...allErrors]
+
+    updatedSecurities.splice(index, 1)
+    updatedErrors.splice(index, 1)
+
+    calculateSecurities([...updatedSecurities])
+    setAllErrors(() => [...updatedErrors])
   }
 
   useEffect(() => {
@@ -230,6 +252,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accountData.formsData.form1.id])
+
   useEffect(() => {
     if (account && information) {
       calculateSecurities(account.securities)
@@ -238,12 +261,10 @@ const Security = ({ onStepChange }: SecurityProps) => {
   }, [account, information])
 
   useEffect(() => {
-    const isError = allErrors.find(error => error)
-    if (isNextStep && !isError) onStepChange(3)
+    if (isNextStep) onStepChange(3)
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isNextStep])
-  console.log({ allErrors })
 
   return (
     <SecurityContext.Provider
@@ -251,6 +272,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
         securities,
         setSecurities,
         information,
+        activeErros,
         allErrors,
         companiesSelect,
         calculateSecurities,
@@ -265,23 +287,24 @@ const Security = ({ onStepChange }: SecurityProps) => {
         </div>
         <form noValidate autoComplete='on'>
           <CardContent>
-            {securities.length > 0 ? (
-              securities.map((security, index) => {
-                return <FormSection key={index} security={security} index={index} />
-              })
-            ) : (
-              <FormSection index={0} security={{} as SecurityDto} />
-            )}
-
+            {securities.map((security, index) => {
+              return <FormSection key={index} security={security} index={index} onDeleteItemList={DeleteNewForm} />
+            })}
             <Grid container spacing={5}>
               <Grid item xs={12} sm={4}>
                 <FormControl fullWidth>
                   <TextField
                     autoFocus
-                    label='Recieved net premium'
+                    label='Received net premium'
                     disabled
                     fullWidth
                     value={allFormData.recievedNetPremium}
+                    InputProps={{
+                      inputComponent: NumericFormatCustom as any
+                    }}
+                    inputProps={{
+                      suffix: ' '
+                    }}
                   />
                 </FormControl>
               </Grid>
@@ -289,17 +312,32 @@ const Security = ({ onStepChange }: SecurityProps) => {
                 <FormControl fullWidth>
                   <TextField
                     autoFocus
-                    fullWidth
-                    label='Distribuited net premium'
-                    disabled
+                    label='Distributed net premium'
                     value={allFormData.distribuitedNetPremium}
+                    InputProps={{
+                      inputComponent: NumericFormatCustom as any
+                    }}
+                    inputProps={{
+                      suffix: ' '
+                    }}
                   />
                   {false && <FormHelperText sx={{ color: 'error.main' }}>Invalid field</FormHelperText>}
                 </FormControl>
               </Grid>
               <Grid item xs={12} sm={4}>
                 <FormControl fullWidth>
-                  <TextField autoFocus label='Diference' value={allFormData.diference} disabled />
+                  <TextField
+                    autoFocus
+                    label='Difference'
+                    value={allFormData.diference}
+                    InputProps={{
+                      inputComponent: NumericFormatCustom as any
+                    }}
+                    inputProps={{
+                      suffix: ' '
+                    }}
+                    disabled
+                  />
                   {false && <FormHelperText sx={{ color: 'error.main' }}>Invalid field</FormHelperText>}
                 </FormControl>
               </Grid>
@@ -311,7 +349,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
                 marginTop: '20px'
               }}
             >
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12} sm={12}>
                 <div className='add-reinsurer'>
                   <Button
                     type='button'
@@ -327,7 +365,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
                 </div>
               </Grid>
 
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12} sm={12}>
                 <div
                   className='section action-buttons'
                   style={{ float: 'right', marginRight: 'auto', marginBottom: '20px' }}

@@ -1,30 +1,30 @@
 // ** React Imports
-import { ReactNode } from 'react'
+import Link from 'next/link';
+import { ReactNode } from 'react';
 
 // ** MUI Components
-import { Icon } from '@iconify/react'
-import Button from '@mui/material/Button'
+import { Icon } from '@iconify/react';
+import Button from '@mui/material/Button';
 
-import BlankLayout from 'src/@core/layouts/BlankLayout'
+import BlankLayout from 'src/@core/layouts/BlankLayout';
 
 interface EmailStep2 {
   handleVariant: (variant: string, step: number) => void
 }
-const EmailStep2 = ({ handleVariant }: EmailStep2) => {
+const EmailStep2 = () => {
   return (
     <div className='buttons'>
-      <Button
-        onClick={() => {
-          handleVariant('', 0)
-        }}
-        variant='text'
-        color='primary'
-        size='large'
-        startIcon={<Icon icon='mdi:arrow-left-thin' fontSize={15} />}
-        style={{ backgroundColor: '#2535A8' }}
-      >
-        BACK TO LOGIN
-      </Button>
+      <Link href="/login">
+        <Button
+          variant='text'
+          color='primary'
+          size='large'
+          startIcon={<Icon icon='ant-design:arrow-left-outlined' fontSize={15} />}
+          style={{ color: '#2535A8' }}
+        >
+          BACK TO LOGIN
+        </Button>
+      </Link>
     </div>
   )
 }

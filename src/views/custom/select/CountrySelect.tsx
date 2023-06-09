@@ -1,3 +1,4 @@
+import { useAddUser } from '@/hooks/catalogs/users'
 import { TextField } from '@mui/material'
 import Autocomplete from '@mui/material/Autocomplete'
 import { useEffect, useState } from 'react'
@@ -26,6 +27,7 @@ export default function CountrySelect({
   const [value, setValue] = useState<string | null | undefined>(null)
   const [inputValue, setInputValue] = useState<string | undefined>('')
   const options = [...countries.map(country => country.label)]
+  const { user } = useAddUser()
 
   console.log({ areaCode })
   console.log({ value })
@@ -41,6 +43,11 @@ export default function CountrySelect({
       setValue(country?.label)
     }
   }, [areaCode, setSelectedCountry])
+  useEffect(() => {
+    if (user?.statusCode === 201) {
+      setValue(null)
+    }
+  }, [user?.statusCode, setValue])
 
   return (
     <div>
