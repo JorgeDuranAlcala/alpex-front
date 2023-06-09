@@ -1,5 +1,5 @@
 import { ROLES, USERS_ROUTES } from 'src/configs/api'
-import { UsersDeleteDto, UsersGetDto, UsersPostDto, UsersPutDto } from 'src/services/users/dtos/UsersDto'
+import { IResponse, UsersDeleteDto, UsersGetDto, UsersPostDto, UsersPutDto } from 'src/services/users/dtos/UsersDto'
 import { IUsersState } from 'src/types/apps/usersTypes'
 import { AppAlpexApiGateWay } from '../app.alpex.api-getway'
 import { queryBuilder } from '../helper/queryBuilder'
@@ -28,9 +28,9 @@ class UsersServices {
     }
   }
 
-  async addUser(user: Partial<UsersPostDto>): Promise<UsersGetDto[]> {
+  async addUser(user: Partial<UsersPostDto>): Promise<IResponse> {
     try {
-      const { data } = await AppAlpexApiGateWay.post<Promise<UsersGetDto[]>>(`${USERS_ROUTES.ADD}`, {
+      const { data } = await AppAlpexApiGateWay.post<Promise<IResponse>>(`${USERS_ROUTES.ADD}`, {
         ...user
       })
 
