@@ -232,6 +232,16 @@ const Security = ({ onStepChange }: SecurityProps) => {
 
     // }
   }
+  const DeleteNewForm = (index: number) => {
+    const updatedSecurities = [...securities]
+    const updatedErrors = [...allErrors]
+
+    updatedSecurities.splice(index, 1)
+    updatedErrors.splice(index, 1)
+
+    calculateSecurities([...updatedSecurities])
+    setAllErrors(() => [...updatedErrors])
+  }
 
   useEffect(() => {
     const idAccountCache = Number(localStorage.getItem('idAccount'))
@@ -278,7 +288,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
         <form noValidate autoComplete='on'>
           <CardContent>
             {securities.map((security, index) => {
-              return <FormSection key={index} security={security} index={index} />
+              return <FormSection key={index} security={security} index={index} onDeleteItemList={DeleteNewForm} />
             })}
             <Grid container spacing={5}>
               <Grid item xs={12} sm={4}>

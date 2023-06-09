@@ -39,6 +39,7 @@ export interface FormInformation {
 export interface FormSectionProps {
   index: number
   security: SecurityDto
+  onDeleteItemList: (index: number) => void
 }
 
 // [key: number]: string | boolean | undefined
