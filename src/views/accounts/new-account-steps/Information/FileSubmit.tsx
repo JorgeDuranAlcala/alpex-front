@@ -1,11 +1,10 @@
 import React, { Fragment, useEffect, useRef, useState } from 'react'
 
 // // ** MUI Imports
-import {
-  Button,
-  IconButton,
-  Typography
-} from '@mui/material'
+import CloseIcon from '@mui/icons-material/Close'
+import { Box, Button, IconButton, Modal, Typography } from '@mui/material'
+import { ButtonClose, HeaderTitleModal } from 'src/styles/Dashboard/ModalReinsurers/modalReinsurers'
+
 import Icon from 'src/@core/components/icon'
 
 interface UserFileProps {
@@ -20,6 +19,7 @@ const FileSubmit: React.FC<UserFileProps> = ({ setUserFile, userFile, setUserFil
   const inputRef = useRef<HTMLInputElement>(null)
   const [file, setFile] = useState<File[]>([])
   const [selectedFile, setSelectedFile] = useState<File | null>(null) // saves the row wehen user click on actions button
+  const [openDelete, setOpenDelete] = useState(false)
 
   // const [openMenu, setOpenMenu] = useState(false)
   const onFileChange = function (e: any) {
@@ -39,20 +39,20 @@ const FileSubmit: React.FC<UserFileProps> = ({ setUserFile, userFile, setUserFil
 
   const handlePreview = (e: any, index: number) => {
     e.preventDefault
-    const fileToPreview = file[index];
-  const previewUrl = URL.createObjectURL(fileToPreview);
-  window.open(previewUrl, '_blank');
+    const fileToPreview = file[index]
+    const previewUrl = URL.createObjectURL(fileToPreview)
+    window.open(previewUrl, '_blank')
     setSelectedFile(null)
   }
 
   const handleDownload = (e: any, index: number) => {
     e.preventDefault
-    const fileToDownload = file[index];
-    const downloadUrl = URL.createObjectURL(fileToDownload);
-    const link = document.createElement('a');
-    link.href = downloadUrl;
-    link.download = fileToDownload.name;
-    link.click();
+    const fileToDownload = file[index]
+    const downloadUrl = URL.createObjectURL(fileToDownload)
+    const link = document.createElement('a')
+    link.href = downloadUrl
+    link.download = fileToDownload.name
+    link.click()
     setSelectedFile(null)
   }
 
@@ -63,6 +63,7 @@ const FileSubmit: React.FC<UserFileProps> = ({ setUserFile, userFile, setUserFil
     setUserFile([...file])
     setUserFileToDelete && setUserFileToDelete(deletedFile[0])
     setSelectedFile(null)
+    setOpenDelete(false)
   }
 
   useEffect(() => {
@@ -72,13 +73,13 @@ const FileSubmit: React.FC<UserFileProps> = ({ setUserFile, userFile, setUserFil
   }, [userFile])
 
   useEffect(() => {
-    if(file.length > 0){
+    if (file.length > 0) {
       changeTitle(true)
-    }else{
+    } else {
       changeTitle(false)
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[file])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [file])
 
   return (
     <Fragment>
@@ -93,7 +94,7 @@ const FileSubmit: React.FC<UserFileProps> = ({ setUserFile, userFile, setUserFil
           multiple
         />
 
-        {file.length > 0 &&
+        {file.length > 0 && (
           <div className='uploaded-files'>
             {file.map((fileElement, index) => {
               const openMenu = fileElement === selectedFile
@@ -102,13 +103,15 @@ const FileSubmit: React.FC<UserFileProps> = ({ setUserFile, userFile, setUserFil
                 <div key={index} className='file-details'>
                   <Typography className='file-name'>{fileElement?.name}</Typography>
                   <div className='menu-btn'>
-                    <IconButton onClick={() => {
-                      if (openMenu) {
-                        setSelectedFile(null)
-                      } else {
-                        setSelectedFile(fileElement)
-                      }
-                    }}>
+                    <IconButton
+                      onClick={() => {
+                        if (openMenu) {
+                          setSelectedFile(null)
+                        } else {
+                          setSelectedFile(fileElement)
+                        }
+                      }}
+                    >
                       <Icon icon='mdi:dots-vertical' fontSize={20} />
                     </IconButton>
                     {openMenu && (
@@ -119,17 +122,54 @@ const FileSubmit: React.FC<UserFileProps> = ({ setUserFile, userFile, setUserFil
                         <div className='option' onClick={e => handleDownload(e, index)}>
                           Download
                         </div>
-                        <div className='option' onClick={e => handleRemoveFile(e, index)}>
+                        <div className='option' onClick={() => setOpenDelete(true)}>
                           Delete
                         </div>
+
+                        <Modal
+                          className='delete-modal'
+                          open={openDelete}
+                          onClose={() => {
+                            setOpenDelete(false)
+                          }}
+                        >
+                          <Box className='modal-wrapper'>
+                            <HeaderTitleModal>
+                              <Typography variant='h6'>Are you sure you want to delete this file?</Typography>
+                              <ButtonClose
+                                onClick={() => {
+                                  setOpenDelete(false)
+                                }}
+                              >
+                                <CloseIcon />
+                              </ButtonClose>
+                            </HeaderTitleModal>
+                            <div className='delete-modal-text'>This action can’t be undone.</div>
+                            <Button
+                              className='header-modal-btn'
+                              variant='contained'
+                              onClick={e => handleRemoveFile(e, index)}
+                            >
+                              DELETE
+                            </Button>
+                            <Button
+                              className='close-modal header-modal-btn'
+                              onClick={() => {
+                                setOpenDelete(false)
+                              }}
+                            >
+                              CANCEL
+                            </Button>
+                          </Box>
+                        </Modal>
                       </div>
                     )}
                   </div>
-
                 </div>
               )
             })}
-          </div>}
+          </div>
+        )}
 
         <label id='label-file-upload' htmlFor='input-file-upload'>
           <Button className='upload-button' onClick={e => onButtonClick(e)} variant='outlined'>

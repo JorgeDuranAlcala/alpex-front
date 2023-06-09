@@ -9,6 +9,7 @@ import { useAddUser } from '@/hooks/catalogs/users/addUser'
 import { UsersPostDto, UsersPutDto } from '@/services/users/dtos/UsersDto'
 import { fetchAccounts } from '@/store/apps/users'
 import {
+  Box,
   Button,
   FormControl,
   FormHelperText,
@@ -17,7 +18,8 @@ import {
   InputLabel,
   MenuItem,
   Select,
-  TextField
+  TextField,
+  Typography
 } from '@mui/material'
 import { FocusEvent, FocusEventHandler, useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
@@ -201,10 +203,10 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
                   id: parseInt(informativeIdRole)
                 }
               ]
-            : parseInt(idRole) && !parseInt(idRole)
+            : parseInt(useWatchRole) && !parseInt(useWatchDualRole)
             ? [
                 {
-                  id: parseInt(idRole)
+                  id: parseInt(useWatchRole)
                 }
               ]
             : [],
@@ -317,19 +319,22 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
   }, [useWatchCompany])
 
   useEffect(() => {
-    if (selectUser) {
-      if (idRole === '5') {
-        setDualRoleDisabled(false)
-        setValue('dualRole', '', { shouldValidate: true })
+    if (roles) {
+      const roleIdAdmin = roles?.find(role => role.role === 'admin')
+      if (selectUser) {
+        if (roleIdAdmin && idRole === String(roleIdAdmin.id)) {
+          setDualRoleDisabled(false)
+          setValue('dualRole', '', { shouldValidate: true })
+        } else {
+          setDualRoleDisabled(true)
+        }
       } else {
-        setDualRoleDisabled(true)
-      }
-    } else {
-      if (useWatchRole === '5') {
-        setDualRoleDisabled(false)
-        setValue('dualRole', '', { shouldValidate: true })
-      } else {
-        setDualRoleDisabled(true)
+        if (roleIdAdmin && useWatchRole === String(roleIdAdmin.id)) {
+          setDualRoleDisabled(false)
+          setValue('dualRole', '', { shouldValidate: true })
+        } else {
+          setDualRoleDisabled(true)
+        }
       }
     }
     //eslint-disable-next-line
@@ -389,9 +394,36 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
   //   //eslint-disable-next-line
   // }, [usersReducer.filters])
 
+  const AlertAddUser = () => {
+    return (
+      <Box
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'center',
+          padding: '6px 16px',
+          height: '54px',
+          width: '17%',
+          background: 'linear-gradient(0deg, rgba(255, 255, 255, 0.88), rgba(255, 255, 255, 0.88)), #72E128',
+          borderRadius: '8px',
+          gap: '12px',
+          position: 'absolute',
+          zIndex: '13000',
+          right: '3%'
+        }}
+      >
+        <Icon icon='mdi:check-circle-outline' color='#72E128' />
+        <Typography sx={{ letterSpacing: '0.15px', color: '#72E128', fontSize: '16px', fontWeight: 500 }}>
+          NEW USER ADDED
+        </Typography>
+      </Box>
+    )
+  }
+
   return (
     <>
       <div style={{ padding: '20px 20px 80px' }}>
+        <AlertAddUser />
         <UserSection>
           <StyledTitle sx={{ pb: 2 }}>{title}</StyledTitle>
         </UserSection>

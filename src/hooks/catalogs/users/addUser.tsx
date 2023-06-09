@@ -4,7 +4,8 @@ import UserService from 'src/services/users/users.service'
 
 export const useAddUser = () => {
   const [error, setError] = useState<IError>()
-  const [user, setUser] = useState<UsersGetDto[]>([])
+
+  const [user, setUser] = useState<UsersGetDto[]>()
   const [userPost, setUserPost] = useState<UsersPostDto | null>()
 
   useEffect(() => {
