@@ -231,7 +231,7 @@ const Sublimits = () => {
         sublimit = { ...sublimit, amount: 0 }
         break
       case 'amount':
-        sublimit = { ...sublimit, deductible: 0, min: 0, amount: 0, idCDeductiblePer: null }
+        sublimit = { ...sublimit, deductible: 0, min: 0, idCDeductiblePer: null }
         break
     }
 
