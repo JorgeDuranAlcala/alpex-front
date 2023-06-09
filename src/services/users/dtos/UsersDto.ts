@@ -5,7 +5,13 @@ export interface UsersGetDto {
   name?: string
   role?: string
   company?: string
-  statusCode?: number
+}
+
+export interface IResponse {
+  statusCode: number
+  data: UserResponse[]
+  message: string
+  error: string
 }
 
 export interface UserResponse {
@@ -14,12 +20,16 @@ export interface UserResponse {
   phone?: string
   surname?: string
   email?: string
+  password?: string
   roles: Roles[]
   idCompany?: number
   username?: string
   id?: number
-  status: boolean
-  isDeleted: boolean
+  createdAt?: string
+  updatedAt?: string
+  status?: boolean
+  isDeleted?: boolean
+  passwordDesencriptado?: string
 }
 
 interface Roles {
