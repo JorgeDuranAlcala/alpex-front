@@ -339,6 +339,7 @@ const Sublimits = () => {
     console.log({ save, update })
     await updateSublimits(update)
     await saveSublimits(save)
+    await getAccountData()
     setDisableBoundBtn(false)
     setDisableSaveBtn(false)
 
