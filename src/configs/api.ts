@@ -46,7 +46,8 @@ export enum ACCOUNT_SECURITY_TOTAL_ROUTES {
 export enum ACCOUNT_SUBLIMIT_ROUTES {
   ADD = 'account/sublimit/add',
   GET_BY_ID_ACCOUNT = 'account/sublimit',
-  UPDATE = 'account/sublimit/update'
+  UPDATE = 'account/sublimit/update',
+  DELETE = 'account/sublimit/delete'
 }
 
 export enum ACCOUNT_STEP_FORM_DELETE_ROUTES {
@@ -174,6 +175,10 @@ export enum RETRO_CEDANT_CONTACT_ROUTES {
   UPDATE = 'catalogs/retroCedantContact',
   GET = 'catalogs/retroCedantContact/pagination/retroCedant',
   DELETE = 'catalogs/retroCedantContact/delete'
+}
+
+export enum COVERAGE_ROUTES {
+  GET_ALL = 'catalogs/coverage/all'
 }
 
 export enum INSTALLMENT_ROUTERS {
