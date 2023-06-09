@@ -1,5 +1,5 @@
 // ** React Imports
-import { useRouter } from 'next/router'
+import Link from 'next/link'
 import { ReactNode, useState } from 'react'
 import Lottie from 'react-lottie'
 import loginAnimation from './animations/login-animation.json'
@@ -11,6 +11,7 @@ import Button from '@mui/material/Button'
 import { Icon } from '@iconify/react'
 import { Typography } from '@mui/material'
 import BlankLayout from 'src/@core/layouts/BlankLayout'
+import TitleForm from './TitleForm'
 import EmailStep1 from './email/emailStep1'
 import EmailStep2 from './email/emailStep2'
 import InitialStep from './initialStep'
@@ -36,10 +37,11 @@ const Background = () => {
   )
 }
 
+// type VariantStep = 'email' | 'whatsapp' | '';
+
 const ForgotPasswordPage = () => {
   const [step, setStep] = useState(0)
-  const [variantStep, setVariantStep] = useState('')
-  const router = useRouter()
+  const [variantStep, setVariantStep] = useState<string>('')
   const handleVariant = (variant: string, step: number) => {
     setVariantStep(variant)
     setStep(step)
@@ -64,18 +66,17 @@ const ForgotPasswordPage = () => {
   const BackLogin = () => {
     return (
       <div className='back'>
-        <Button
-          onClick={e => {
-            router.push('src/pages/login/')
-            e.preventDefault()
-          }}
-          variant='text'
-          color='primary'
-          size='large'
-          startIcon={<Icon icon='mdi:arrow-left-thin' fontSize={15} />}
-        >
-          BACK
-        </Button>
+        <Link href="/login">
+          <Button
+
+            variant='text'
+            color='primary'
+            size='large'
+            startIcon={<Icon icon='mdi:arrow-left-thin' fontSize={15} />}
+          >
+            BACK
+          </Button>
+        </Link>
       </div>
     )
   }
@@ -102,7 +103,7 @@ const ForgotPasswordPage = () => {
           {step == 0 ? <BackLogin /> : null}
           <div className='content-form'>
             <Typography variant='h6' sx={{ mb: 2 }}>
-              Forgot Password
+              <TitleForm step={step} variantStep={variantStep} />
             </Typography>
             <Typography variant='subtitle2' sx={{ mb: 6 }}>
               {variantStep === 'email' || variantStep === '' ? subtitles[step] : wssubtitles[step]}
@@ -113,7 +114,7 @@ const ForgotPasswordPage = () => {
               step === 1 ? (
                 <EmailStep1 handleVariant={handleVariant} />
               ) : step === 2 ? (
-                <EmailStep2 handleVariant={handleVariant} />
+                <EmailStep2 />
               ) : (
                 <InitialStep handleVariant={handleVariant} />
               )

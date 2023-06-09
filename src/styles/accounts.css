@@ -54,7 +54,6 @@
 .new-account .MuiCard-root {
   margin: 0px 0 20px;
   overflow: inherit;
-
 }
 
 /*---- Header----*/
@@ -200,6 +199,18 @@
     width: 100%;
     display: block;
     padding: 10px 5px;
+  }
+}
+
+@media (max-width: 600px) {
+  .history-modal .modal-wrapper {
+    width: 90vws;
+  }
+
+  .modal-wrapper .name,
+  .modal-wrapper .date {
+    min-width: unset;
+    width: 50%;
   }
 }
 
@@ -397,7 +408,7 @@
 
 .menu-options .option {
   padding: 8px 10px;
-  font-size: 14px ;
+  font-size: 14px;
 }
 
 .menu-options .option:hover {
@@ -437,8 +448,7 @@
 }
 
 @media (max-width: 600px) {
-
-  .upload-btn .file-details{
+  .upload-btn .file-details {
     width: 46%;
   }
 }
@@ -460,24 +470,22 @@
     display: inline-flex !important;
   }
 
-  .uploaded-files{
+  .uploaded-files {
     justify-content: space-between;
   }
-  .file-details{
+  .file-details {
     width: 48%;
   }
 }
 
 @media (max-width: 450px) {
-
-  .uploaded-files{
+  .uploaded-files {
     justify-content: center;
   }
-  .upload-btn .file-details{
+  .upload-btn .file-details {
     width: 98%;
   }
 }
-
 
 /*---- Comment section ----*/
 
@@ -624,7 +632,8 @@
   }
 }
 
-@media (max-width: 550px) {}
+@media (max-width: 550px) {
+}
 
 /* Fin Stepper */
 
@@ -830,13 +839,12 @@
   flex-grow: 0;
 }
 
-
-.react-datepicker>.react-datepicker__navigation.react-datepicker__navigation--next--with-time {
+.react-datepicker > .react-datepicker__navigation.react-datepicker__navigation--next--with-time {
   right: 127px;
   display: none;
 }
 
-.react-datepicker>.react-datepicker__navigation.react-datepicker__navigation--previous {
+.react-datepicker > .react-datepicker__navigation.react-datepicker__navigation--previous {
   width: 24px;
   height: 24px;
   border: none;
@@ -874,7 +882,6 @@
   top: 20px;
   border-color: rgba(76, 78, 100, 0.38);
 }
-
 
 @media (max-width: 1320px) {
   .info-header {

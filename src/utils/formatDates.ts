@@ -37,3 +37,14 @@ export const formatUTC = (dateIn: string | Date | null, addOffset = false) => {
     return dateIn
   }
 }
+
+export const formatTime = (seconds: number): string => {
+  const minutes = Math.floor(seconds / 60)
+  const remainingSeconds = seconds % 60
+
+  if (remainingSeconds <= 0 && minutes <= 0) {
+    return '00:00'
+  }
+
+  return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`
+}
