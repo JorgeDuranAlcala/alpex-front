@@ -339,7 +339,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
                 marginTop: '20px'
               }}
             >
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12} sm={12}>
                 <div className='add-reinsurer'>
                   <Button
                     type='button'
@@ -355,7 +355,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
                 </div>
               </Grid>
 
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12} sm={12}>
                 <div
                   className='section action-buttons'
                   style={{ float: 'right', marginRight: 'auto', marginBottom: '20px' }}
