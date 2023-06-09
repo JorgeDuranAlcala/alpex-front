@@ -30,6 +30,12 @@ export const useGetAccountById = () => {
     if (accountId) {
       AccountServices.getAccountById(accountId)
         .then(accounts => {
+          if (accounts) {
+            accounts.securities =
+              accounts.securities.length === 0
+                ? [{ frontingFeeActive: false, isGross: false } as SecurityDto]
+                : accounts.securities
+          }
           setAccount(accounts)
         })
         .catch((error: Error) => {
