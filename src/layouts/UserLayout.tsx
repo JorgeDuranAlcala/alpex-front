@@ -26,7 +26,7 @@ import VerticalAppBarContent from './components/vertical/AppBarContent'
 // import { Box, Typography } from '@mui/material'
 // import { Box } from '@mui/material'
 import { useSettings } from 'src/@core/hooks/useSettings'
-import CheckTokenValidityLayout from './components/TimeValidationJWT'
+import TokenTimeValidateLayout from './components/TimeValidationJWT'
 import Footer from './components/footer'
 
 interface Props {
@@ -113,7 +113,7 @@ const UserLayout = ({ children, contentHeightFixed }: Props) => {
         content: () => <Footer isLogin={false} />
       }}
     >
-      <CheckTokenValidityLayout />
+      <TokenTimeValidateLayout />
       <InactivityDetector />
       {children}
     </Layout>

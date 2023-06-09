@@ -9,7 +9,8 @@ export enum ROLES {
 // ==== AUTH
 export enum AUTH_ROUTES {
   LOGIN = '/auth',
-  AUTH_ME = '/auth/me/'
+  AUTH_ME = '/auth/me',
+  REFRESH_JWT = '/auth/refresh-jwt'
 }
 
 // ==== ACCOUNT

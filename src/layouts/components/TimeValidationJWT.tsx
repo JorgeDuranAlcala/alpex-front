@@ -13,15 +13,21 @@ import { formatTime } from '@/utils/formatDates'
 // ** Custom Hooks
 import { useAuth } from '@/hooks/useAuth'
 
-const TOKEN_WARNING_THRESHOLD = 20 // s
-const INTERVAL_TIME_CHECK = 10 * 1000 // ms
+// ** Services
+import AuthServices from '@/services/auth/auth.service'
 
-const CheckTokenValidityLayout: React.FC = () => {
+const TOKEN_WARNING_THRESHOLD = 60 // s
+const INTERVAL_TIME_CHECK = 20 // s
+
+const TokenTimeValidateLayout: React.FC = () => {
   // ** Hooks
   const [userLocalData, setuserLocalData] = useState<userLocalDataDto>({})
   const [openModal, setOpenModal] = useState(false)
   const [remaining, setRemaining] = useState<number>(0)
   const { logout } = useAuth()
+
+  // ** Services
+  const authServices = new AuthServices()
 
   type userLocalDataDto = {
     email?: string
@@ -33,8 +39,6 @@ const CheckTokenValidityLayout: React.FC = () => {
 
   const checkTokenValidity = (): void => {
     const remainingTime = calculateRemainingTime()
-    console.log('Low remainingTime', remainingTime)
-
     if (remainingTime <= TOKEN_WARNING_THRESHOLD) {
       if (!openModal) setOpenModal(true)
     }
@@ -54,12 +58,22 @@ const CheckTokenValidityLayout: React.FC = () => {
     }
   }
 
-  const refreshToken = () => {
-    console.log('refreshToken')
+  const refreshToken = async () => {
+    authServices
+      .refreshJWT()
+      .then(async response => {
+        const newToken = response.data.token
+        if (newToken) {
+          localStorage.setItem(defaultAuthConfig.storageTokenKeyName, newToken)
+        }
+      })
+      .catch(() => {
+        logout()
+      })
+    setOpenModal(false)
   }
 
   const handleLogout = () => {
-    console.log('closeSession')
     setOpenModal(false)
     logout()
   }
@@ -73,7 +87,7 @@ const CheckTokenValidityLayout: React.FC = () => {
 
       const interval = setInterval(() => {
         checkTokenValidity()
-      }, INTERVAL_TIME_CHECK)
+      }, INTERVAL_TIME_CHECK * 1000)
 
       return () => {
         clearInterval(interval)
@@ -87,7 +101,6 @@ const CheckTokenValidityLayout: React.FC = () => {
     if (openModal) {
       const interval = setInterval(() => {
         const remainingTime = calculateRemainingTime()
-        console.log('Fast remainingTime', remainingTime)
         setRemaining(remainingTime)
         remainingTime < 0 && logout()
       }, 500)
@@ -120,4 +133,4 @@ const CheckTokenValidityLayout: React.FC = () => {
   )
 }
 
-export default CheckTokenValidityLayout
+export default TokenTimeValidateLayout
