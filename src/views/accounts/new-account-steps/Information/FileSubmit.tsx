@@ -12,20 +12,21 @@ interface UserFileProps {
   setUserFile: React.Dispatch<React.SetStateAction<any>>
   setUserFileToDelete: React.Dispatch<React.SetStateAction<any>>
   changeTitle: (change: boolean) => void
+  urls: string[]
 }
 
-const FileSubmit: React.FC<UserFileProps> = ({ setUserFile, userFile, setUserFileToDelete, changeTitle }) => {
+const FileSubmit: React.FC<UserFileProps> = ({ setUserFile, userFile, urls, setUserFileToDelete, changeTitle }) => {
   // ** State
   const inputRef = useRef<HTMLInputElement>(null)
   const [file, setFile] = useState<File[]>([])
   const [selectedFile, setSelectedFile] = useState<File | null>(null) // saves the row wehen user click on actions button
   const [openDelete, setOpenDelete] = useState(false)
+  const fileUrls: string[] = urls
 
   // const [openMenu, setOpenMenu] = useState(false)
   const onFileChange = function (e: any) {
     e.preventDefault()
     const rawFiles = e.target.files
-
     setFile([...file, ...rawFiles])
     setUserFile([...file, ...rawFiles])
   }
@@ -37,10 +38,18 @@ const FileSubmit: React.FC<UserFileProps> = ({ setUserFile, userFile, setUserFil
     }
   }
 
+  function removeUrl(index: number): void {
+    if (index < 0 || index >= fileUrls.length) {
+      return
+    }
+
+    fileUrls.splice(index, 1)
+  }
+
   const handlePreview = (e: any, index: number) => {
     e.preventDefault
-    const fileToPreview = file[index]
-    const previewUrl = URL.createObjectURL(fileToPreview)
+    const fileToPreview = userFile[index]
+    const previewUrl = fileUrls[index] || URL.createObjectURL(fileToPreview)
     window.open(previewUrl, '_blank')
     setSelectedFile(null)
   }
@@ -62,6 +71,7 @@ const FileSubmit: React.FC<UserFileProps> = ({ setUserFile, userFile, setUserFil
     setFile([...file])
     setUserFile([...file])
     setUserFileToDelete && setUserFileToDelete(deletedFile[0])
+    removeUrl(index) // cambiamos la lista de urls cuando se ha borrado sin guardar
     setSelectedFile(null)
     setOpenDelete(false)
   }
@@ -91,7 +101,6 @@ const FileSubmit: React.FC<UserFileProps> = ({ setUserFile, userFile, setUserFil
           className='input-file-upload'
           id='input-file-upload'
           onChange={onFileChange}
-          multiple
         />
 
         {file.length > 0 && (

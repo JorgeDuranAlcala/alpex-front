@@ -8,7 +8,7 @@ import { useRouter } from 'next/router'
 import CloseIcon from '@mui/icons-material/Close'
 import { Box, Button, Modal, Typography } from '@mui/material'
 import IconButton from '@mui/material/IconButton'
-import { DataGrid, GRID_CHECKBOX_SELECTION_COL_DEF, GridColumns } from '@mui/x-data-grid'
+import { DataGrid, GridColumns, GRID_CHECKBOX_SELECTION_COL_DEF } from '@mui/x-data-grid'
 import { ButtonClose, HeaderTitleModal } from 'src/styles/modal/modal.styled'
 
 // ** Icon Imports

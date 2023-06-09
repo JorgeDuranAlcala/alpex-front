@@ -107,6 +107,10 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   const idAccount = useAppSelector(state => state.accounts?.formsData?.form1?.id)
   const lastForm1Information = useAppSelector(state => state.accounts?.formsData?.form1)
 
+  // const [urls, setUrls] = useState<string[]>([]);
+  const [fileUrls, setFileUrls] = useState<string[]>([])
+
+  // let fileUrls = File []
   // ** Custom Hooks
   const { getInformaByIdAccount } = useFindInformationByIdAccount()
   const { addInformation } = useAddInformation()
@@ -369,7 +373,6 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
     if (idAccount) {
       await updateInformation()
       await uploadDoctos(idAccount)
-
       dispatch(updateFormsData({ form1: { basicInfo, placementStructure, userFile, id: idAccount } }))
     } else {
       const res = await saveInformation()
@@ -437,8 +440,6 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   }
 
   const onSubmittedFiles = (change: boolean) => {
-    console.log("submited files")
-    console.log(change)
     setChangeTitle(change)
   }
 
@@ -453,6 +454,10 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   }, [basicInfo, setBasicInfo])
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fileUrls])
+
+  useEffect(() => {
     const getFiles = async () => {
       const idAccountCache = Number(localStorage.getItem('idAccount'))
       if (idAccountCache) {
@@ -461,13 +466,17 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
         const newUserFiles: File[] = []
 
         if (res.length > 0) {
+          const urls: string[] = []
           for (const docto of res) {
             newDoctoIdByName[docto.name] = docto.id
+            urls.push(docto.url)
             const newFile = await getFileFromUrl(docto.url, docto.name)
             if (newFile) {
               newUserFiles.push(newFile)
             }
           }
+
+          setFileUrls(urls)
           setUserFile(newUserFiles)
 
           setDoctoIdByName({
@@ -552,9 +561,10 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
           </div>
 
           <div className='section'>
-            <div className='title'>{changeTitle ? "Submited files" : "File submit"}</div>
+            <div className='title'>{changeTitle ? 'Submited files' : 'File submit'}</div>
             <FileSubmit
               userFile={userFile}
+              urls={fileUrls}
               setUserFile={setUserFile}
               setUserFileToDelete={setUserFileToDelete}
               changeTitle={onSubmittedFiles}

@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 // ** MUI Imports
 import CloseIcon from '@mui/icons-material/Close'
 import { Box, Button, FormControl, IconButton, Modal, TextField, Typography } from '@mui/material'
-import { DataGrid, GRID_CHECKBOX_SELECTION_COL_DEF, GridColumns } from '@mui/x-data-grid'
+import { DataGrid, GridColumns, GRID_CHECKBOX_SELECTION_COL_DEF } from '@mui/x-data-grid'
 
 import FormHelperText from '@mui/material/FormHelperText'
 
