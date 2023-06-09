@@ -5,7 +5,7 @@ export interface UsersGetDto {
   name?: string
   role?: string
   company?: string
-  status: boolean
+  statusCode?: number
 }
 
 export interface UserResponse {
@@ -54,4 +54,8 @@ export interface UsersDeleteDto {
 export interface IError {
   statusCode: number
   message: string
+}
+
+export interface ISuccess {
+  statusCode?: number
 }
