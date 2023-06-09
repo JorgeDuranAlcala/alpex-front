@@ -66,6 +66,7 @@ const Table = ({ status }: IAccountTable) => {
   // ** State
   const [selectedRows, setSelectedRows] = useState<GridRowId[]>([])
   const [selectAll, setSelectAll] = useState<any>([])
+  const [selectAllFlag, setSelectAllFlag] = useState(false)
   const [accounts, setAccounts] = useState<any>([])
   const [loading, setLoading] = useState<any>([])
   const [badgeData, setBadgeData] = useState<IAlert>({
@@ -391,6 +392,8 @@ const Table = ({ status }: IAccountTable) => {
         badgeData={badgeData}
         setSelectAll={setSelectAll}
         selectAllOption={selectAllOption}
+        setSelectAllFlag={setSelectAllFlag}
+        setSelectedRows={setSelectedRows}
       />
       <DataGrid
         loading={loading}
@@ -405,7 +408,7 @@ const Table = ({ status }: IAccountTable) => {
           Pagination: CustomPagination
         }}
         className={'account-datagrid'}
-        selectionModel={selectAll}
+        selectionModel={selectAllFlag ? selectAll : undefined}
         onSelectionModelChange={rows => setSelectedRows(rows)}
       />
     </>
