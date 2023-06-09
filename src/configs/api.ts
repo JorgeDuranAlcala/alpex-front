@@ -150,6 +150,16 @@ export enum REINSURANCE_COMPANY_CONTACT_ROUTES {
   DELETE = 'catalogs/reinsuranceCompanyContact/delete'
 }
 
+export enum REINSURANCE_COMPANY_BINDER_ROUTES {
+  GET_ALL = 'catalogs/reinsuranceCompanyBinder/all',
+  GET_BY_ID = 'catalogs/reinsuranceCompanyBinder',
+  ADD = 'catalogs/reinsuranceCompanyBinder/add',
+  UPDATE = 'catalogs/reinsuranceCompanyBinder',
+  GET_BY_ID_REINSURANCE_COMPANY = 'catalogs/reinsuranceCompanyBinder/reinsuranceCompany',
+  GET = 'catalogs/reinsuranceCompanyBinder/pagination/reinsuranceCompany',
+  DELETE = 'catalogs/reinsuranceCompanyBinder/delete'
+}
+
 export enum COMPANY_ROUTES {
   GET_ALL = 'catalogs/Company/all',
   GET_BY_ID = 'catalogs/Company',
