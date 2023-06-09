@@ -284,7 +284,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
                 <FormControl fullWidth>
                   <TextField
                     autoFocus
-                    label='Recieved net premium'
+                    label='Received net premium'
                     disabled
                     fullWidth
                     value={allFormData.recievedNetPremium}
@@ -296,7 +296,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
                   <TextField
                     autoFocus
                     fullWidth
-                    label='Distribuited net premium'
+                    label='Distributed net premium'
                     disabled
                     value={allFormData.distribuitedNetPremium}
                   />
@@ -305,7 +305,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
               </Grid>
               <Grid item xs={12} sm={4}>
                 <FormControl fullWidth>
-                  <TextField autoFocus label='Diference' value={allFormData.diference} disabled />
+                  <TextField autoFocus label='Difference' value={allFormData.diference} disabled />
                   {false && <FormHelperText sx={{ color: 'error.main' }}>Invalid field</FormHelperText>}
                 </FormControl>
               </Grid>
