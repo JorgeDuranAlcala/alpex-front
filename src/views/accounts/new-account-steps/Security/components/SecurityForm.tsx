@@ -8,10 +8,12 @@ import { RetroCedantDto } from '@/services/catalogs/dtos/RetroCedantDto'
 import { RetroCedantContactDto } from '@/services/catalogs/dtos/retroCedantContact.dto'
 import { NumericFormatCustom } from '@/views/components/inputs/numeric-format/NumericFormatCustom'
 import SwitchAlpex from '@/views/custom/switchs'
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
 import {
   FormControl,
   FormHelperText,
   Grid,
+  Icon,
   InputLabel,
   MenuItem,
   Select,
@@ -44,7 +46,7 @@ const initialErrorValues: errorsSecurity = {
   idCRetroCedantContact: '',
   idCRetroCedant: ''
 }
-export const FormSection = ({ index, security }: FormSectionProps) => {
+export const FormSection = ({ index, security, onDeleteItemList }: FormSectionProps) => {
   const [isGross, setIsGross] = useState<boolean>(false)
 
   const [errorsSecurity, setErrorsSecurity] = useState<errorsSecurity>(initialErrorValues)
@@ -467,6 +469,27 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
       ) : (
         <></>
       )}
+      <>
+        {!security.id && (
+          <Grid item xs={12} sm={12}>
+            <div
+              className='section action-buttons'
+              style={{ float: 'right', marginRight: 'auto', marginBottom: '20px' }}
+            >
+              <Icon
+                component={DeleteOutlineIcon}
+                amplitude={10}
+                style={{
+                  fontSize: '34px',
+                  cursor: 'pointer',
+                  zIndex: '1000'
+                }}
+                onClick={() => onDeleteItemList(index)}
+              />
+            </div>
+          </Grid>
+        )}
+      </>
       <Grid container spacing={5}>
         {/* Col-1 */}
         <Grid item xs={12} sm={4}>
