@@ -20,7 +20,7 @@ const EmailStep2 = () => {
           color='primary'
           size='large'
           startIcon={<Icon icon='ant-design:arrow-left-outlined' fontSize={15} />}
-          style={{ color: '#0D567B' }}
+          style={{ color: '#2535A8' }}
         >
           BACK TO LOGIN
         </Button>

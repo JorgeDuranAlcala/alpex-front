@@ -4,6 +4,7 @@ import { InformationDto } from '@/services/accounts/dtos/information.dto'
 import { InstallmentDto } from '@/services/accounts/dtos/installments.dto'
 import { SecurityDto } from '@/services/accounts/dtos/security.dto'
 import { SecurityTotalDto } from '@/services/accounts/dtos/securityTotal.dto'
+import { SublimitDto } from '@/services/accounts/dtos/sublimit.dto'
 import AccountServices from 'src/services/accounts/account.service'
 
 interface Response {
@@ -12,6 +13,7 @@ interface Response {
   securities: SecurityDto[]
   securityTotal: SecurityTotalDto
   installments: InstallmentDto[]
+  sublimits: SublimitDto[]
 }
 
 export const useGetAccountById = () => {
@@ -28,6 +30,12 @@ export const useGetAccountById = () => {
     if (accountId) {
       AccountServices.getAccountById(accountId)
         .then(accounts => {
+          if (accounts) {
+            accounts.securities =
+              accounts.securities.length === 0
+                ? [{ frontingFeeActive: false, isGross: false } as SecurityDto]
+                : accounts.securities
+          }
           setAccount(accounts)
         })
         .catch((error: Error) => {
