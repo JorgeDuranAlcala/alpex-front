@@ -37,6 +37,17 @@ class SublimitService {
       throw new Error(message)
     }
   }
+
+  async delete(sublimits: Partial<SublimitDto>[]): Promise<SublimitDto[]> {
+    try {
+      const { data } = await AppAlpexApiGateWay.put<Promise<SublimitDto[]>>(ACCOUNT_SUBLIMIT_ROUTES.DELETE, sublimits)
+
+      return data
+    } catch (error) {
+      const message = String(error)
+      throw new Error(message)
+    }
+  }
 }
 
 export default new SublimitService()

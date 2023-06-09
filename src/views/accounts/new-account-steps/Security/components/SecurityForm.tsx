@@ -8,10 +8,12 @@ import { RetroCedantDto } from '@/services/catalogs/dtos/RetroCedantDto'
 import { RetroCedantContactDto } from '@/services/catalogs/dtos/retroCedantContact.dto'
 import { NumericFormatCustom } from '@/views/components/inputs/numeric-format/NumericFormatCustom'
 import SwitchAlpex from '@/views/custom/switchs'
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
 import {
   FormControl,
   FormHelperText,
   Grid,
+  Icon,
   InputLabel,
   MenuItem,
   Select,
@@ -44,16 +46,25 @@ const initialErrorValues: errorsSecurity = {
   idCRetroCedantContact: '',
   idCRetroCedant: ''
 }
-export const FormSection = ({ index, security }: FormSectionProps) => {
+export const FormSection = ({ index, security, onDeleteItemList }: FormSectionProps) => {
   const [isGross, setIsGross] = useState<boolean>(false)
 
   const [errorsSecurity, setErrorsSecurity] = useState<errorsSecurity>(initialErrorValues)
 
-  const [frontingFeeEnabled, setFrontingFeeEnabled] = useState(false)
-  const { securities, setSecurities, allErrors, setAllErrors, information, companiesSelect, calculateSecurities } =
-    useContext(SecurityContext)
+  const [frontingFeeEnabled, setFrontingFeeEnabled] = useState(security.frontingFeeActive || false)
+
   const [avaliableReinsurers, setAvaliableReinsurers] = useState<ReinsuranceCompanyDto[]>([])
   const switchAlpex = useRef(null)
+  const {
+    securities,
+    activeErros,
+    setSecurities,
+    allErrors,
+    setAllErrors,
+    information,
+    companiesSelect,
+    calculateSecurities
+  } = useContext(SecurityContext)
   const { reinsuranceCompany } = useGetAllReinsuranceCompanies()
   const { retroCedants } = useGetAllRetroCedants()
   const { retroCedantContacts, setIdRetroCedant } = useGetAllByIdRetroCedant()
@@ -106,8 +117,9 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
 
         return +val > 0
       })
-      .required('This field is required')
-      .max(100),
+      .min(1)
+      .max(100)
+      .required('This field is required'),
     premiumPerShareAmount: yup
       .number()
       .transform((_, val) => (val === Number(val) ? val : null))
@@ -131,12 +143,16 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
 
         return true
       }),
-
     dynamicCommission: yup
       .number()
       .transform((_, val) => (val === Number(val) ? val : null))
       .required('This field is required')
-      .min(1)
+      .test('', 'This field is required', value => {
+        const val = value || 0
+
+        return +val > 0
+      })
+
       .max(100),
     dynamicCommissionAmount: yup
       .number()
@@ -146,15 +162,6 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
 
         return +val > 0
       })
-      .required('This field is required'),
-    frontingFee: yup
-      .number()
-      .transform((_, val) => (val === Number(val) ? val : null))
-      .required('This field is required')
-      .max(100),
-    frontingFeeAmount: yup
-      .number()
-      .transform((_, val) => (val === Number(val) ? val : null))
       .required('This field is required'),
     taxesAmount: yup
       .number()
@@ -169,7 +176,6 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
     taxes: yup
       .number()
       .transform((_, val) => (val === Number(val) ? val : null))
-
       .test('', 'This field is required', value => {
         const val = value || 0
         if (isGross) return +val > 0
@@ -181,7 +187,29 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
       .number()
       .transform((_, val) => (val === Number(val) ? val : null))
       .required('This field is required')
-      .min(1, 'The number must be greater than 0!')
+      .min(1, 'The number must be greater than 0!'),
+    frontingFee: yup
+      .number()
+      .transform((_, val) => (val === Number(val) ? val : null))
+      .test('', 'This field is required', value => {
+        const val = value || 0
+        if (frontingFeeEnabled) return +val > 0
+
+        return true
+      })
+      .required('This field is required')
+
+      .max(100),
+    frontingFeeAmount: yup
+      .number()
+      .transform((_, val) => (val === Number(val) ? val : null))
+      .test('', 'This field is required', value => {
+        const val = value || 0
+        if (frontingFeeEnabled) return +val > 0
+
+        return true
+      })
+      .required('This field is required')
   })
 
   const handleSwitch = () => {
@@ -207,9 +235,9 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
         idCRetroCedant: retroCedant,
         idCRetroCedantContact: {} as RetroCedantContactDto
       }
+      validateForm(tempSecurities[index])
       setSecurities(tempSecurities)
       setIdRetroCedant(retroCedant.id)
-      validateForm(tempSecurities[index])
     }
   }
   const handleChangeRetroCedantContact = (e: SelectChangeEvent<string>) => {
@@ -232,6 +260,7 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
       ...tempSecurities[index],
       netPremiumAt100: parseFloat(e.target.value)
     }
+    validateForm(tempSecurities[index])
     calculateSecurities(tempSecurities)
   }
   const handleChangeSharePercent = (e: ChangeEvent<HTMLInputElement>) => {
@@ -240,6 +269,7 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
       ...tempSecurities[index],
       share: parseFloat(e.target.value)
     }
+    validateForm(tempSecurities[index])
     calculateSecurities(tempSecurities)
   }
   const handleChangeBrokerRagePercent = (e: ChangeEvent<HTMLInputElement>) => {
@@ -248,6 +278,7 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
       ...tempSecurities[index],
       reinsuranceBrokerage: parseFloat(e.target.value)
     }
+    validateForm(tempSecurities[index])
     calculateSecurities(tempSecurities)
   }
   const handleChangeDynamicComissionPercent = (e: ChangeEvent<HTMLInputElement>) => {
@@ -256,6 +287,7 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
       ...tempSecurities[index],
       dynamicCommission: parseFloat(e.target.value)
     }
+    validateForm(tempSecurities[index])
     calculateSecurities(tempSecurities)
   }
 
@@ -266,6 +298,7 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
       ...tempSecurities[index],
       taxes: parseFloat(e.target.value)
     }
+    validateForm(tempSecurities[index])
     calculateSecurities(tempSecurities)
   }
   const handleChangeFrontingFeePercent = (e: ChangeEvent<HTMLInputElement>) => {
@@ -274,6 +307,7 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
       ...tempSecurities[index],
       frontingFee: parseFloat(e.target.value)
     }
+    validateForm(tempSecurities[index])
     calculateSecurities(tempSecurities)
   }
   const handleChangePremiumPerShareAmount = (e: ChangeEvent<HTMLInputElement>) => {
@@ -282,6 +316,7 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
       ...tempSecurities[index],
       share: operationSecurity.getsharePercent(parseFloat(e.target.value))
     }
+    validateForm(tempSecurities[index])
     calculateSecurities(tempSecurities)
   }
 
@@ -296,6 +331,7 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
       ...tempSecurities[index],
       reinsuranceBrokerage: operationSecurity.getBrokerAgePercent(parseFloat(e.target.value))
     }
+    validateForm(tempSecurities[index])
     calculateSecurities(tempSecurities)
 
     //   // Limpiar el intervalo
@@ -308,6 +344,7 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
       ...tempSecurities[index],
       dynamicCommission: operationSecurity.getDynamicComissionPercent(parseFloat(e.target.value))
     }
+    validateForm(tempSecurities[index])
     calculateSecurities(tempSecurities)
   }
 
@@ -317,6 +354,7 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
       ...tempSecurities[index],
       taxes: operationSecurity.getTaxesPercent(parseFloat(e.target.value))
     }
+    validateForm(tempSecurities[index])
     calculateSecurities(tempSecurities)
   }
   const handleChangeFrontingFeeAmount = (e: ChangeEvent<HTMLInputElement>) => {
@@ -325,6 +363,7 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
       ...tempSecurities[index],
       frontingFee: operationSecurity.getFrontingFeePercent(parseFloat(e.target.value))
     }
+    validateForm(tempSecurities[index])
     calculateSecurities(tempSecurities)
   }
   const handleChangeCompany = (e: SelectChangeEvent<string>): void => {
@@ -343,6 +382,7 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
       }
 
       setFrontingFeeEnabled(() => false)
+      validateForm(tempSecurities[index])
       calculateSecurities(tempSecurities)
     }
   }
@@ -350,7 +390,7 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
     let data = { ...initialErrorValues }
 
     const errorsTemp = [...allErrors]
-    errorsTemp[index] = false
+
     let combinedSchema = yup.object().shape({
       ...schema.fields
     })
@@ -366,7 +406,8 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
     combinedSchema
       .validate(securityParam, { abortEarly: false })
       .then(function () {
-        setAllErrors(errorsTemp)
+        errorsTemp[index] = false
+        setAllErrors(() => errorsTemp)
         setErrorsSecurity(initialErrorValues)
       })
       .catch(function (err) {
@@ -376,10 +417,10 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
             [error.path]: error.message
           }
         }
-
         errorsTemp[index] = true
-        setAllErrors(errorsTemp)
-        console.log({ data, index })
+
+        setAllErrors(() => errorsTemp)
+        console.log({ error: data, index, security })
         setErrorsSecurity(data)
 
         //setEnableNextStep(false)
@@ -401,14 +442,17 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
     if (security?.id) {
       setIdRetroCedant(security.idCRetroCedant?.id)
     }
-    if (security.idCReinsuranceCompany) {
-      validateForm(security)
-    }
+
     setFrontingFeeEnabled(security.frontingFeeActive)
     setIsGross(security.isGross)
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [security])
+
+  useEffect(() => {
+    validateForm(security)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <div>
@@ -425,6 +469,27 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
       ) : (
         <></>
       )}
+      <>
+        {!security.id && (
+          <Grid item xs={12} sm={12}>
+            <div
+              className='section action-buttons'
+              style={{ float: 'right', marginRight: 'auto', marginBottom: '20px' }}
+            >
+              <Icon
+                component={DeleteOutlineIcon}
+                amplitude={10}
+                style={{
+                  fontSize: '34px',
+                  cursor: 'pointer',
+                  zIndex: '1000'
+                }}
+                onClick={() => onDeleteItemList(index)}
+              />
+            </div>
+          </Grid>
+        )}
+      </>
       <Grid container spacing={5}>
         {/* Col-1 */}
         <Grid item xs={12} sm={4}>
@@ -436,12 +501,11 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
               InputProps={{
                 inputComponent: NumericFormatCustom as any
               }}
-              value={security.netPremiumAt100}
               defaultValue={security.netPremiumAt100}
               onChange={handleChangeBaseAmount}
             />
             <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
-              {errorsSecurity.netPremiumAt100}
+              {activeErros && errorsSecurity.netPremiumAt100}
             </FormHelperText>
           </FormControl>
           <FormControl fullWidth sx={{ mb: 2 }}>
@@ -458,7 +522,9 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
               }}
             />
 
-            <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>{errorsSecurity.share}</FormHelperText>
+            <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
+              {activeErros && errorsSecurity.share}
+            </FormHelperText>
           </FormControl>
           {isGross && (
             <FormControl fullWidth sx={{ mb: 2 }}>
@@ -476,7 +542,7 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
               />
 
               <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
-                {errorsSecurity.reinsuranceBrokerage}
+                {activeErros && errorsSecurity.reinsuranceBrokerage}
               </FormHelperText>
             </FormControl>
           )}
@@ -494,7 +560,7 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
               onChange={handleChangeDynamicComissionPercent}
             />
             <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
-              {errorsSecurity.dynamicCommission}
+              {activeErros && errorsSecurity.dynamicCommission}
             </FormHelperText>
           </FormControl>
           {isGross && (
@@ -512,7 +578,9 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
                 onChange={handleChangeTaxesPercent}
               />
 
-              <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>{errorsSecurity.taxes}</FormHelperText>
+              <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
+                {activeErros && errorsSecurity.taxes}
+              </FormHelperText>
             </FormControl>
           )}
           {frontingFeeEnabled && (
@@ -531,7 +599,7 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
               />
 
               <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
-                {errorsSecurity.frontingFee}
+                {activeErros && errorsSecurity.frontingFee}
               </FormHelperText>
             </FormControl>
           )}
@@ -559,7 +627,7 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
                 ))}
             </Select>
             <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
-              {errorsSecurity.idCReinsuranceCompany}
+              {activeErros && errorsSecurity.idCReinsuranceCompany}
             </FormHelperText>
           </FormControl>
           <FormControl fullWidth sx={{ mb: 2 }}>
@@ -573,7 +641,7 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
               onChange={handleChangePremiumPerShareAmount}
             />
             <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
-              {errorsSecurity.premiumPerShareAmount}
+              {activeErros && errorsSecurity.premiumPerShareAmount}
             </FormHelperText>
           </FormControl>
           {isGross && (
@@ -589,7 +657,7 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
               />
 
               <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
-                {errorsSecurity.brokerAgeAmount}
+                {activeErros && errorsSecurity.brokerAgeAmount}
               </FormHelperText>
             </FormControl>
           )}
@@ -605,7 +673,7 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
             />
 
             <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
-              {errorsSecurity.dynamicCommissionAmount}
+              {activeErros && errorsSecurity.dynamicCommissionAmount}
             </FormHelperText>
           </FormControl>
           {isGross && (
@@ -620,7 +688,7 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
                 onChange={handleChangeTaxesAmount}
               />
               <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
-                {errorsSecurity.taxesAmount}
+                {activeErros && errorsSecurity.taxesAmount}
               </FormHelperText>
             </FormControl>
           )}
@@ -637,7 +705,7 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
               />
 
               <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
-                {errorsSecurity.frontingFeeAmount}
+                {activeErros && errorsSecurity.frontingFeeAmount}
               </FormHelperText>
             </FormControl>
           )}
@@ -657,7 +725,7 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
             />
 
             <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
-              {errorsSecurity.netReinsurancePremium}
+              {activeErros && errorsSecurity.netReinsurancePremium}
             </FormHelperText>
           </FormControl>
           {frontingFeeEnabled && (security.share || security.premiumPerShareAmount) ? (
@@ -676,7 +744,7 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
                 ))}
               </Select>
               <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
-                {errorsSecurity.idCRetroCedant}
+                {activeErros && errorsSecurity.idCRetroCedant}
               </FormHelperText>
             </FormControl>
           ) : (
@@ -699,7 +767,7 @@ export const FormSection = ({ index, security }: FormSectionProps) => {
                 ))}
               </Select>
               <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
-                {errorsSecurity.idCRetroCedantContact}
+                {activeErros && errorsSecurity.idCRetroCedantContact}
               </FormHelperText>
             </FormControl>
           ) : (

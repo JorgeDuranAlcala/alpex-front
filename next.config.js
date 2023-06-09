@@ -22,6 +22,9 @@ module.exports = withTM({
   experimental: {
     esmExternals: false
   },
+  images: {
+    unoptimized: true
+  },
   webpack: config => {
     config.resolve.alias = {
       ...config.resolve.alias,

@@ -1,6 +1,13 @@
-import useIdleTimeout from '@/hooks/useIdleTimeout'
-import InactivityModal from '@/views/components/modals/InactivityModal'
 import { useEffect, useState } from 'react'
+
+// ** Custom Hooks
+import useIdleTimeout from '@/hooks/useIdleTimeout'
+
+// ** Components
+import InactivityModal from '@/views/components/modals/InactivityModal'
+
+// ** Utils
+import { formatTime } from '@/utils/formatDates'
 
 const InactivityDetector: React.FC = () => {
   const [openModal, setOpenModal] = useState(false)
@@ -29,17 +36,6 @@ const InactivityDetector: React.FC = () => {
     idleTimer.reset()
   }
 
-  const formatTime = (seconds: number): string => {
-    const minutes = Math.floor(seconds / 60)
-    const remainingSeconds = seconds % 60
-
-    if (remainingSeconds <= 0 && minutes <= 0) {
-      return '00:00'
-    }
-
-    return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`
-  }
-
   useEffect(() => {
     const interval = setInterval(() => {
       setRemaining(Math.ceil(Number(idleTimer.getRemainingTime()) / 1000))
@@ -59,7 +55,7 @@ const InactivityDetector: React.FC = () => {
     <>
       <InactivityModal
         renderButton={() => <span> </span>}
-        headingText={`Are you there, ${userLocalData?.username}`}
+        headingText={`Are you there, ${userLocalData?.username}?`}
         text='Your session will close due to inactivity, how do you want to proceed?'
         handleClickContinue={handleLogout}
         setShow={openModal}

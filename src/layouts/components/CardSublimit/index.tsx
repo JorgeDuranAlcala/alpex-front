@@ -1,16 +1,19 @@
 // import { ReactNode } from 'react'
 
+import { SublimitDto } from '@/services/accounts/dtos/sublimit.dto'
+
 export interface RenderFormGeneric {
   title?: string
   type?: number
   components?: any
   state?: any
   setState?: (data: any) => {}
-  deleteForm?: (data: any) => {}
-  handleOnChangeForm: (value: any, index: number) => void
+  handleOnDeleteForm: (index: number) => void
+  handleOnChangeByInputForm: (index: number, { name, value }: { name: keyof SublimitDto; value: any }) => void
   index?: number
-  formInformation: any
+  formInformation?: any
   formErrors: any
+  data?: Partial<SublimitDto>
 }
 
 const SublimitCard = ({ components }: { components?: any }) => {

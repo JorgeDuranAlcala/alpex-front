@@ -30,7 +30,7 @@ const AddReinsurerView = () => {
         <ReinsurerContacts idReinsuranceCompany={idReinsuranceCompany} />
       </Card>
       <Card>
-        <ReinsurerBinders />
+        <ReinsurerBinders idReinsuranceCompany={idReinsuranceCompany} />
       </Card>
     </Grid>
   )
