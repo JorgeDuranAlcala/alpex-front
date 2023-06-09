@@ -336,12 +336,17 @@ const Sublimits = () => {
       }
     }
 
-    console.log({ save, update })
-    await updateSublimits(update)
-    await saveSublimits(save)
-    await getAccountData()
-    setDisableBoundBtn(false)
-    setDisableSaveBtn(false)
+    try {
+      await updateSublimits(update)
+      await saveSublimits(save)
+      await getAccountData()
+
+      setDisableBoundBtn(false)
+      setDisableSaveBtn(false)
+    } catch (error) {
+      setDisableBoundBtn(false)
+      setDisableSaveBtn(false)
+    }
 
     // if (sublimts) {
     //   setBadgeData({
