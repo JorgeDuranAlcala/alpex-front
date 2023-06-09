@@ -8,12 +8,12 @@ export interface RenderFormGeneric {
   components?: any
   state?: any
   setState?: (data: any) => {}
-  deleteForm?: (data: any) => {}
-  handleOnChangeForm?: (value: any, index: number) => void
+  handleOnDeleteForm: (index: number) => void
+  handleOnChangeByInputForm: (index: number, { name, value }: { name: keyof SublimitDto; value: any }) => void
   index?: number
   formInformation?: any
   formErrors: any
-  data?: SublimitDto
+  data?: Partial<SublimitDto>
 }
 
 const SublimitCard = ({ components }: { components?: any }) => {
