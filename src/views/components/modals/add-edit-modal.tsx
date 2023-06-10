@@ -15,6 +15,8 @@ interface IAddEditModal {
   label: string
   errorMsg?: string
   actionBtnText?: string
+  value: string
+  setValue: (value: string) => void
 }
 
 const AddEditModal: React.FC<IAddEditModal> = ({
@@ -24,9 +26,11 @@ const AddEditModal: React.FC<IAddEditModal> = ({
   title,
   label,
   errorMsg = 'Required field',
-  actionBtnText = 'CONFIRM'
+  actionBtnText = 'CONFIRM',
+  value,
+  setValue
 }) => {
-  const [value, setValue] = useState('')
+  //const [value, setValue] = useState('')
   const [disableBtn, setDisableBtn] = useState(true)
   const [error, setError] = useState(false)
   const handleChangeModal = (value: string) => {

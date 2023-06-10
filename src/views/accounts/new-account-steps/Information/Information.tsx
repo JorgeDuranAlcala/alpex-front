@@ -13,7 +13,7 @@ import {
 
 // // ** MUI Imports
 import CloseIcon from '@mui/icons-material/Close'
-import { Box, Button, Modal } from '@mui/material'
+import { Box, Button, CircularProgress, Modal } from '@mui/material'
 import { ButtonClose, HeaderTitleModal } from 'src/styles/modal/modal.styled'
 import BasicInfo from './BasicInfo'
 import FileSubmit from './FileSubmit'
@@ -107,6 +107,10 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   const idAccount = useAppSelector(state => state.accounts?.formsData?.form1?.id)
   const lastForm1Information = useAppSelector(state => state.accounts?.formsData?.form1)
 
+  // const [urls, setUrls] = useState<string[]>([]);
+  const [fileUrls, setFileUrls] = useState<string[]>([])
+
+  // let fileUrls = File []
   // ** Custom Hooks
   const { getInformaByIdAccount } = useFindInformationByIdAccount()
   const { addInformation } = useAddInformation()
@@ -161,50 +165,75 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   })
 
   const updateInformation = async () => {
-    if (idAccount) {
-      const res = await updateInformationByIdAccount(idAccount, {
-        insured: basicInfo.insured,
-        idCountry: Number(basicInfo.country),
-        idBroker: Number(basicInfo.broker),
-        idBrokerContact: Number(basicInfo.brokerContact),
+    const res = await updateInformationByIdAccount(idAccount, {
+      insured: basicInfo.insured,
+      idCountry: Number(basicInfo.country),
+      idBroker: Number(basicInfo.broker),
+      idBrokerContact: Number(basicInfo.brokerContact),
 
-        // brokerContactEmail: basicInfo.brokerContactEmail,
-        // brokerContactPhone: basicInfo.brokerContactPhone,
-        // brokerContactCountry: basicInfo.brokerContactCountry,
-        idCedant: Number(basicInfo.cedant),
-        idCedantContact: Number(basicInfo.cedantContact),
+      // brokerContactEmail: basicInfo.brokerContactEmail,
+      // brokerContactPhone: basicInfo.brokerContactPhone,
+      // brokerContactCountry: basicInfo.brokerContactCountry,
+      idCedant: Number(basicInfo.cedant),
+      idCedantContact: Number(basicInfo.cedantContact),
 
-        // cedantContactEmail: basicInfo.cedantContactEmail,
-        // cedantContactPhone: basicInfo.cedantContactPhone,
-        // cedantContactCountry: basicInfo.cedantContactCountry,
-        idLineOfBussines: Number(basicInfo.lineOfBusiness),
-        idRiskActivity: Number(basicInfo.industryCode),
-        effectiveDate: basicInfo.effectiveDate,
-        expirationDate: basicInfo.expirationDate,
-        receptionDate: basicInfo.receptionDate && new Date(basicInfo.receptionDate),
-        idLeadUnderwriter: Number(basicInfo.leadUnderwriter),
-        idTechnicalAssistant: Number(basicInfo.technicalAssistant),
-        idUnderwriter: Number(basicInfo.underwriter),
-        riskClass: basicInfo.riskClass,
-        currency: placementStructure.currency,
-        exchangeRate: placementStructure.exchangeRate,
-        attachmentPoint: placementStructure.attachmentPoint,
-        frontingFee: placementStructure.frontingFee,
-        frontingFeeTotal: placementStructure.frontingFeeP,
-        grossPremium: placementStructure.grossPremium,
-        limit: placementStructure.limit,
-        netPremium: placementStructure.netPremium,
-        reinsuranceBrokerage: placementStructure.reinsuranceBrokerage,
-        reinsuranceBrokerageTotal: placementStructure.reinsuranceBrokerageP,
-        sir: placementStructure.sir,
-        taxes: placementStructure.taxes,
-        taxesTotal: placementStructure.taxesP,
-        totalValues: placementStructure.total,
-        idTypeOfLimit: Number(placementStructure.typeOfLimit)
+      // cedantContactEmail: basicInfo.cedantContactEmail,
+      // cedantContactPhone: basicInfo.cedantContactPhone,
+      // cedantContactCountry: basicInfo.cedantContactCountry,
+      idLineOfBussines: Number(basicInfo.lineOfBusiness),
+      idRiskActivity: Number(basicInfo.industryCode),
+      effectiveDate: basicInfo.effectiveDate,
+      expirationDate: basicInfo.expirationDate,
+      receptionDate: basicInfo.receptionDate && new Date(basicInfo.receptionDate),
+      idLeadUnderwriter: Number(basicInfo.leadUnderwriter),
+      idTechnicalAssistant: Number(basicInfo.technicalAssistant),
+      idUnderwriter: Number(basicInfo.underwriter),
+      riskClass: basicInfo.riskClass,
+      currency: placementStructure.currency,
+      exchangeRate: placementStructure.exchangeRate,
+      attachmentPoint: placementStructure.attachmentPoint,
+      frontingFee: placementStructure.frontingFee,
+      frontingFeeTotal: placementStructure.frontingFeeP,
+      grossPremium: placementStructure.grossPremium,
+      limit: placementStructure.limit,
+      netPremium: placementStructure.netPremium,
+      reinsuranceBrokerage: placementStructure.reinsuranceBrokerage,
+      reinsuranceBrokerageTotal: placementStructure.reinsuranceBrokerageP,
+      sir: placementStructure.sir,
+      taxes: placementStructure.taxes,
+      taxesTotal: placementStructure.taxesP,
+      totalValues: placementStructure.total,
+      idTypeOfLimit: Number(placementStructure.typeOfLimit)
+    })
+
+    if (typeof res === 'string' && res === 'error') {
+      setTimeout(() => {
+        setBadgeData({
+          message: `ERROR UPDATING INFORMATION`,
+          theme: 'error',
+          open: true,
+          status: 'error',
+          icon: (
+            <Icon
+              style={{
+                color: '#FF4D49',
+                marginTop: '-1px'
+              }}
+              icon='jam:alert'
+            />
+          )
+        })
+      }, 1000)
+    } else {
+      setBadgeData({
+        message: `UPDATED SUCCESSFULLY`,
+        status: 'success',
+        open: true,
+        icon: <Icon icon='ic:baseline-check-circle' />
       })
-
-      return res
     }
+
+    return res
   }
 
   const saveInformation = async () => {
@@ -251,36 +280,30 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
     const res = await addInformation(dataToSave)
 
     if (typeof res === 'string' && res === 'error') {
-      setBadgeData({
-        message: 'Error saving data',
-        theme: 'error',
-        open: true,
-        status: 'error',
-        icon: <Icon style={{ color: '#FF4D49' }} icon='icon-park-outline:error' />
-      })
       setTimeout(() => {
         setBadgeData({
-          message: 'Saved successfully',
-          theme: 'success',
-          open: false,
-          status: 'error'
+          message: `ERROR SAVING INFORMATION`,
+          theme: 'error',
+          open: true,
+          status: 'error',
+          icon: (
+            <Icon
+              style={{
+                color: '#FF4D49',
+                marginTop: '-1px'
+              }}
+              icon='jam:alert'
+            />
+          )
         })
-      }, 5000)
+      }, 1000)
     } else {
       setBadgeData({
-        message: 'The information has been saved',
-        theme: 'success',
+        message: `SAVED SUCCESSFULLY`,
+        status: 'success',
         open: true,
-        status: 'error'
+        icon: <Icon icon='ic:baseline-check-circle' />
       })
-      setTimeout(() => {
-        setBadgeData({
-          message: 'Saved successfully',
-          theme: 'success',
-          open: false,
-          status: 'error'
-        })
-      }, 5000)
     }
 
     return res
@@ -351,13 +374,58 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
     const formatedDoctos = await formatInformationDoctos(userFile, idAccount, 1, doctoIdByName)
     const newDoctoIdByName: any = {}
 
+    setTimeout(() => {
+      setBadgeData({
+        message: `UPDATING DOCUMENTS`,
+        status: 'secondary',
+        open: true,
+        icon: <CircularProgress size={20} color='primary' />,
+        backgroundColor: '#828597',
+        theme: 'info'
+      })
+    }, 1000)
+
     for (const docto of formatedDoctos) {
       const res = await uploadInformationDocument(docto)
       const createdDoctoData = res?.createdDoctoDB
       if (createdDoctoData) {
         newDoctoIdByName[createdDoctoData.name] = createdDoctoData.id
       }
+
+      if (!res) {
+        setBadgeData({
+          message: `ERROR UPDATING DOCUMENT: ${docto.name}`,
+          theme: 'error',
+          open: true,
+          status: 'error',
+          icon: (
+            <Icon
+              style={{
+                color: '#FF4D49',
+                marginTop: '-1px'
+              }}
+              icon='jam:alert'
+            />
+          )
+        })
+      }
     }
+
+    setTimeout(() => {
+      setBadgeData({
+        message: `DOCUMENTS SAVED SUCCESSFULLY`,
+        status: 'success',
+        open: true,
+        icon: <Icon icon='ic:baseline-check-circle' />
+      })
+      setTimeout(() => {
+        setBadgeData({
+          message: '',
+          status: undefined,
+          icon: undefined
+        })
+      }, 3000)
+    }, 1000)
 
     setDoctoIdByName({
       ...doctoIdByName,
@@ -367,11 +435,28 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
 
   const handleSaveInformation = async () => {
     if (idAccount) {
+      setBadgeData({
+        message: `UPDATING INFORMATION`,
+        status: 'secondary',
+        open: true,
+        icon: <CircularProgress size={20} color='primary' />,
+        backgroundColor: '#828597',
+        theme: 'info'
+      })
+
       await updateInformation()
       await uploadDoctos(idAccount)
-
       dispatch(updateFormsData({ form1: { basicInfo, placementStructure, userFile, id: idAccount } }))
     } else {
+      setBadgeData({
+        message: `SAVING INFORMATION`,
+        status: 'secondary',
+        open: true,
+        icon: <CircularProgress size={20} color='secondary' />,
+        backgroundColor: '#828597',
+        theme: 'secondary'
+      })
+
       const res = await saveInformation()
       localStorage.setItem('idAccount', String(res.account.id))
       await uploadDoctos(res.account.id)
@@ -437,8 +522,6 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   }
 
   const onSubmittedFiles = (change: boolean) => {
-    console.log("submited files")
-    console.log(change)
     setChangeTitle(change)
   }
 
@@ -453,6 +536,10 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   }, [basicInfo, setBasicInfo])
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fileUrls])
+
+  useEffect(() => {
     const getFiles = async () => {
       const idAccountCache = Number(localStorage.getItem('idAccount'))
       if (idAccountCache) {
@@ -461,13 +548,17 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
         const newUserFiles: File[] = []
 
         if (res.length > 0) {
+          const urls: string[] = []
           for (const docto of res) {
             newDoctoIdByName[docto.name] = docto.id
+            urls.push(docto.url)
             const newFile = await getFileFromUrl(docto.url, docto.name)
             if (newFile) {
               newUserFiles.push(newFile)
             }
           }
+
+          setFileUrls(urls)
           setUserFile(newUserFiles)
 
           setDoctoIdByName({
@@ -552,9 +643,10 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
           </div>
 
           <div className='section'>
-            <div className='title'>{changeTitle ? "Submited files" : "File submit"}</div>
+            <div className='title'>{changeTitle ? 'Submited files' : 'File submit'}</div>
             <FileSubmit
               userFile={userFile}
+              urls={fileUrls}
               setUserFile={setUserFile}
               setUserFileToDelete={setUserFileToDelete}
               changeTitle={onSubmittedFiles}

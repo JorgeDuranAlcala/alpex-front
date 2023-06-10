@@ -37,9 +37,18 @@ interface ITableHeader {
   badgeData: IAlert
   setSelectAll: any
   selectAllOption: number[]
+  setSelectAllFlag: any
+  setSelectedRows: any
 }
 
-const TableHeader: React.FC<ITableHeader> = ({ selectedRows, badgeData, setSelectAll, selectAllOption }) => {
+const TableHeader: React.FC<ITableHeader> = ({
+  selectedRows,
+  badgeData,
+  setSelectAll,
+  selectAllOption,
+  setSelectAllFlag,
+  setSelectedRows
+}) => {
   console.log({ selectedRows })
 
   // ** Custom Hooks
@@ -61,6 +70,7 @@ const TableHeader: React.FC<ITableHeader> = ({ selectedRows, badgeData, setSelec
   const [value, setValue] = useState<string>('')
 
   console.log({ accountsReducer })
+  console.log({ value })
 
   // useEffect(() => {
   //   setSelectAll(selectAllOption)
@@ -73,6 +83,7 @@ const TableHeader: React.FC<ITableHeader> = ({ selectedRows, badgeData, setSelec
   const handleActionMenuClose = () => {
     setActionMenu(false)
     setValue('')
+    setSelectAllFlag(false)
   }
   const handleClose = () => {
     setAnchorEl(null)
@@ -91,6 +102,8 @@ const TableHeader: React.FC<ITableHeader> = ({ selectedRows, badgeData, setSelec
     switch (event.target.value) {
       case EActions.SELECT_ALL:
         setSelectAll(selectAllOption)
+        setSelectedRows(selectAllOption)
+        setSelectAllFlag(true)
         break
       case EActions.DELETE_ALL:
         handleTextDeleteModal(selectedRows)
@@ -103,6 +116,8 @@ const TableHeader: React.FC<ITableHeader> = ({ selectedRows, badgeData, setSelec
         break
       case EActions.UNSELECT_ALL:
         setSelectAll([])
+        setSelectedRows([])
+        setSelectAllFlag(true)
         break
       default:
         break
@@ -214,6 +229,7 @@ const TableHeader: React.FC<ITableHeader> = ({ selectedRows, badgeData, setSelec
             onChange={handleSelectedAction}
             value={value}
             sx={{ mr: 4, mb: 2, width: '100%', height: '42px' }}
+            disabled={selectedRows && selectedRows.length === 0}
             renderValue={selected => (selected.length === 0 ? 'Action' : selected)}
           >
             <MenuItem sx={{ minWidth: '172px', display: 'flex', gap: '5%' }} value={EActions.SELECT_ALL}>
@@ -341,5 +357,3 @@ const TableHeader: React.FC<ITableHeader> = ({ selectedRows, badgeData, setSelec
 }
 
 export default TableHeader
-
-// disabled={selectedRows && selectedRows.length === 0}

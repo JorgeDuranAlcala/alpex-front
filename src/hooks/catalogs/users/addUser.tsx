@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react'
-import { IError, UsersGetDto, UsersPostDto } from 'src/services/users/dtos/UsersDto'
+import { IError, IResponse, UsersPostDto } from 'src/services/users/dtos/UsersDto'
 import UserService from 'src/services/users/users.service'
 
 export const useAddUser = () => {
   const [error, setError] = useState<IError>()
 
-  const [user, setUser] = useState<UsersGetDto[]>()
+  const [user, setUser] = useState<IResponse>()
   const [userPost, setUserPost] = useState<UsersPostDto | null>()
 
   useEffect(() => {
@@ -17,7 +17,7 @@ export const useAddUser = () => {
       })
       .catch(error => {
         if (error?.response?.data?.statusCode === 417) {
-          console.log(error.response.data)
+          console.log({ error })
           setError(error.response.data)
 
           // throw error

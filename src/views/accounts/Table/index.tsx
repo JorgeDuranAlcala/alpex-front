@@ -66,6 +66,7 @@ const Table = ({ status }: IAccountTable) => {
   // ** State
   const [selectedRows, setSelectedRows] = useState<GridRowId[]>([])
   const [selectAll, setSelectAll] = useState<any>([])
+  const [selectAllFlag, setSelectAllFlag] = useState(false)
   const [accounts, setAccounts] = useState<any>([])
   const [loading, setLoading] = useState<any>([])
   const [badgeData, setBadgeData] = useState<IAlert>({
@@ -325,9 +326,10 @@ const Table = ({ status }: IAccountTable) => {
     setBadgeData({
       message: `DOWNLOADING #${id.toLocaleString('en-US', { minimumIntegerDigits: 4, useGrouping: false })}`,
       status: 'secondary',
-      icon: <CircularProgress size={20} color='secondary' />,
+      open: true,
+      icon: <CircularProgress size={20} color='primary' />,
       backgroundColor: '#828597',
-      theme: 'secondary'
+      theme: 'info'
     })
 
     setTimeout(() => {
@@ -337,6 +339,7 @@ const Table = ({ status }: IAccountTable) => {
           useGrouping: false
         })} DOWNLOADED SUCCESSFULLY`,
         status: 'success',
+        open: true,
         icon: <Icon icon='ic:baseline-check-circle' />
       })
       setTimeout(() => {
@@ -358,6 +361,7 @@ const Table = ({ status }: IAccountTable) => {
         useGrouping: false
       })} WAS DUPLICATED SUCCESSFULLY`,
       status: 'success',
+      open: true,
       icon: <Icon icon='ic:baseline-check-circle' />
     })
     setTimeout(() => {
@@ -391,6 +395,8 @@ const Table = ({ status }: IAccountTable) => {
         badgeData={badgeData}
         setSelectAll={setSelectAll}
         selectAllOption={selectAllOption}
+        setSelectAllFlag={setSelectAllFlag}
+        setSelectedRows={setSelectedRows}
       />
       <DataGrid
         loading={loading}
@@ -405,7 +411,7 @@ const Table = ({ status }: IAccountTable) => {
           Pagination: CustomPagination
         }}
         className={'account-datagrid'}
-        selectionModel={selectAll}
+        selectionModel={selectAllFlag ? selectAll : undefined}
         onSelectionModelChange={rows => setSelectedRows(rows)}
       />
     </>
