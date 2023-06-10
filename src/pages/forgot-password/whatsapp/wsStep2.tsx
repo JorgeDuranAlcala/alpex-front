@@ -18,13 +18,13 @@ import BlankLayout from 'src/@core/layouts/BlankLayout'
 const TextFieldStyled = styled(TextField)(() => ({
 
   '& .MuiOutlinedInput-root.Mui-focused  .MuiOutlinedInput-notchedOutline': {
-    borderColor: '#0D567B',
-    color: '#0D567B'
+    borderColor: '#2535A8',
+    color: '#2535A8'
   },
   '& .MuiOutlinedInput-input': {
-    color: '#0D567B',
+    color: '#2535A8',
   },
-  '& .MuiInputLabel-root.Mui-focused': { color: '#0D567B' }
+  '& .MuiInputLabel-root.Mui-focused': { color: '#2535A8' }
 
 }));
 

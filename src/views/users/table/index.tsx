@@ -9,6 +9,7 @@ import { DataGrid, GRID_CHECKBOX_SELECTION_COL_DEF, GridColumns, GridRowId } fro
 // ** Icon Imports
 
 // ** Custom Hooks imports
+
 import { useDeleteUser } from '@/hooks/catalogs/users/deleteUser'
 
 // import { UsersDeleteDto } from '@/services/users/dtos/UsersDto'
@@ -46,7 +47,8 @@ export interface IUsersGrid {
   name: string
   roles: IRolesUserGrid[]
   idCompany: {
-    alias: string
+    alias?: string
+    name: string
   }
   phone: string
   email: string
@@ -243,7 +245,7 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
             }}
           >
             <Link sx={{ color: colors.text.primary }} href='#'>
-              <StyledChip color='primary' sx={{}} label={row.idCompany?.alias || 'W/ company'} />
+              <StyledChip color='primary' sx={{}} label={row.idCompany?.name || 'W/ company'} />
             </Link>
           </Typography>
         </Box>
