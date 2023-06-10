@@ -7,7 +7,7 @@ export interface IAlert {
   icon?: JSX.Element | undefined
   backgroundColor?: string
   fontColor?: string
-  theme?: 'success' | 'secondary' | 'error'
+  theme?: 'success' | 'error' | 'secondary' | 'warning' | 'info'
   open?: boolean
 }
 
@@ -23,6 +23,14 @@ const customTheme = {
   error: {
     backgroundColor: '#FF4D4940',
     color: '#FF4D49'
+  },
+  warning: {
+    backgroundColor: '#FFB446',
+    color: '#EF9713'
+  },
+  info: {
+    backgroundColor: 'rgba(45, 103, 235, .22)',
+    color: '#174BC1'
   }
 }
 
@@ -41,8 +49,9 @@ const CustomAlert = (props: IAlert) => {
           backgroundColor: props.theme ? customTheme[props.theme] || '' : props.backgroundColor,
           color: props.fontColor,
           fontWeight: 500,
-          margin: '0.5rem',
-          marginTop: '-2rem',
+          top: '100px',
+          right: '36px',
+          position: 'fixed',
           visibility: open ? 'visible' : 'hidden'
         }}
         icon={props.icon || ''}

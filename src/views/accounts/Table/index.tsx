@@ -326,9 +326,10 @@ const Table = ({ status }: IAccountTable) => {
     setBadgeData({
       message: `DOWNLOADING #${id.toLocaleString('en-US', { minimumIntegerDigits: 4, useGrouping: false })}`,
       status: 'secondary',
-      icon: <CircularProgress size={20} color='secondary' />,
+      open: true,
+      icon: <CircularProgress size={20} color='primary' />,
       backgroundColor: '#828597',
-      theme: 'secondary'
+      theme: 'info'
     })
 
     setTimeout(() => {
@@ -338,6 +339,7 @@ const Table = ({ status }: IAccountTable) => {
           useGrouping: false
         })} DOWNLOADED SUCCESSFULLY`,
         status: 'success',
+        open: true,
         icon: <Icon icon='ic:baseline-check-circle' />
       })
       setTimeout(() => {
@@ -359,6 +361,7 @@ const Table = ({ status }: IAccountTable) => {
         useGrouping: false
       })} WAS DUPLICATED SUCCESSFULLY`,
       status: 'success',
+      open: true,
       icon: <Icon icon='ic:baseline-check-circle' />
     })
     setTimeout(() => {
