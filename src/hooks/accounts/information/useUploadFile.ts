@@ -9,8 +9,6 @@ export const useUploadInformationDocument = () => {
       return res
     } catch (error) {
       console.log('[uploadInformationDocument] Error', error)
-
-      throw new Error('error')
     }
   }
 
