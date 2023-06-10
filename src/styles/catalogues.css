@@ -41,6 +41,11 @@
   min-width: 0 !important;
 }
 
+.catalogue-datagrid .MuiDataGrid-virtualScroller,
+.catalogue-datagrid .MuiDataGrid-main {
+  overflow: inherit !important;
+}
+
 /*
 .catalogue-datepicker-popper-only-month .react-datepicker__navigation {
   display: none;
@@ -87,6 +92,7 @@
   background-color: rgb(255 0 0 / 8%);
 }
 
+.catalogue-item-alert,
 .add-new-alert,
 .contacts-alert {
   position: absolute;
@@ -107,6 +113,11 @@
 .contacts-alert {
   bottom: 120px;
   right: 17px;
+}
+
+.catalogue-item-alert {
+  top: 245px;
+  right: 45px;
 }
 
 .success {
