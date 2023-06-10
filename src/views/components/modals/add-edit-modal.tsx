@@ -41,11 +41,11 @@ const AddEditModal: React.FC<IAddEditModal> = ({
   }
 
   return (
-    <Modal className='create-contact-modal' open={openModal} onClose={() => onClose}>
+    <Modal className='create-contact-modal' open={openModal} onClose={onClose}>
       <Box className='modal-wrapper'>
         <HeaderTitleModal>
           <Typography variant='h6'>{title}</Typography>
-          <ButtonClose onClick={() => onClose}>
+          <ButtonClose onClick={onClose}>
             <CloseIcon />
           </ButtonClose>
         </HeaderTitleModal>

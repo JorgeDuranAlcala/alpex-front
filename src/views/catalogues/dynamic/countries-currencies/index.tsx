@@ -94,6 +94,7 @@ const CountriesCurrencies = () => {
     setCountryToDelete(id)
     setSelectedCountry(null)
     setOpenDeleteCountry(true)
+    console.log('delete country')
   }
 
   const handleEditCurrency = (newCurrency: ICurrencies) => {
@@ -181,7 +182,7 @@ const CountriesCurrencies = () => {
       <div className='country-currencies-wrapper'>
         {/* TODO:  */}
         {showAlert && (
-          <div className={`${alertType} contacts-alert`}>
+          <div className={`${alertType} catalogue-item-alert`}>
             <div className='btn-icon'>
               <Icon icon={alertIcon} />
             </div>
@@ -335,15 +336,15 @@ const CountriesCurrencies = () => {
 
         <DeleteModal
           openModal={openDeleteCurrency}
-          onClose={() => {
-            setOpenDeleteCurrency(false)
+          onCloseModal={() => {
+            setOpenDeleteCountry(false)
           }}
           onDelete={deleteCurrency}
           textItem='Currency'
         />
         <DeleteModal
           openModal={openDeleteCountry}
-          onClose={() => {
+          onCloseModal={() => {
             setOpenDeleteCountry(false)
           }}
           onDelete={deleteCountry}
