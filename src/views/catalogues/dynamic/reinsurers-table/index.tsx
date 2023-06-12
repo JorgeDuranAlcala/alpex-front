@@ -130,7 +130,7 @@ const ReinsurersTable = () => {
             size='small'
             sx={{ mr: 1 }}
           >
-            <Icon icon='mdi:delete' />
+            <Icon icon='mdi:delete-outline' />
           </IconButton>
         </Box>
       )
