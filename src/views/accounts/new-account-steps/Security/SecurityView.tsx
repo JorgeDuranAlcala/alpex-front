@@ -139,6 +139,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
     setOpen(false)
   }
   const onNextStep = () => {
+    SaveData()
     setIsNextStep(true)
     handleCloseModal()
   }
