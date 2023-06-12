@@ -139,6 +139,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
     setOpen(false)
   }
   const onNextStep = () => {
+    SaveData()
     setIsNextStep(true)
     handleCloseModal()
   }
@@ -196,7 +197,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
           console.log('updateSecurities', { res })
 
           setBadgeData({
-            message: 'Saved successfully',
+            message: 'THE INFORMATION HAS BEEN SAVED',
             theme: 'success',
             open: true,
             status: 'error'
@@ -220,7 +221,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
 
           update.length === 0 &&
             setBadgeData({
-              message: 'Saved successfully',
+              message: 'THE INFORMATION HAS BEEN SAVED',
               theme: 'success',
               open: true,
               status: 'error'
