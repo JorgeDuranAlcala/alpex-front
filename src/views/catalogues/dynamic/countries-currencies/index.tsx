@@ -16,7 +16,7 @@ export interface ICountries {
 
 export interface ICurrencies {
   id: number
-  name: string
+  code: string
 }
 
 const CountriesCurrencies = () => {
@@ -57,6 +57,9 @@ const CountriesCurrencies = () => {
   const { currencies, getAllCurrencies } = useGetAllCurrencies()
   const { updateCurrency } = useUpdateCurrency()
 
+  //edit modal
+  const [value, setValue] = useState('')
+
   const triggerAlert = (type: string, text: string) => {
     setAlertType(type)
 
@@ -86,6 +89,7 @@ const CountriesCurrencies = () => {
 
   const handleEditCountry = (country: ICountries) => {
     setCurrentCountry(country)
+    setValue(country.name)
     setSelectedCountry(null)
     setOpenEditCountry(true)
   }
@@ -94,10 +98,12 @@ const CountriesCurrencies = () => {
     setCountryToDelete(id)
     setSelectedCountry(null)
     setOpenDeleteCountry(true)
+    console.log('delete country')
   }
 
   const handleEditCurrency = (newCurrency: ICurrencies) => {
     setCurrentCurrency(newCurrency)
+    setValue(newCurrency.code)
     setSelectedCurrency(null)
     setOpenEditCurrency(true)
   }
@@ -144,7 +150,7 @@ const CountriesCurrencies = () => {
 
   const addCurrency = async (value: string) => {
     const result = await saveCurrency({
-      name: value
+      code: value
     })
     if (result) {
       triggerAlert('success', 'NEW CURRENCY ADDED')
@@ -156,7 +162,7 @@ const CountriesCurrencies = () => {
   const editCurrency = async (value: string) => {
     if (currentCurrency) {
       const result = await updateCurrency(currentCurrency.id, {
-        name: value
+        code: value
       })
       if (result) {
         triggerAlert('success', 'CHANGES SAVED')
@@ -181,7 +187,7 @@ const CountriesCurrencies = () => {
       <div className='country-currencies-wrapper'>
         {/* TODO:  */}
         {showAlert && (
-          <div className={`${alertType} contacts-alert`}>
+          <div className={`${alertType} catalogue-item-alert`}>
             <div className='btn-icon'>
               <Icon icon={alertIcon} />
             </div>
@@ -264,7 +270,7 @@ const CountriesCurrencies = () => {
 
               return (
                 <div className='list-item' key={currency.id}>
-                  <div className='item-name'>{currency.name}</div>
+                  <div className='item-name'>{currency.code}</div>
                   <div
                     className='item-menu'
                     onClick={() => {
@@ -301,6 +307,8 @@ const CountriesCurrencies = () => {
           title='Add new Currency'
           label='New Currency'
           actionBtnText='CREATE'
+          value={value}
+          setValue={setValue}
         />
         <AddEditModal
           openModal={openAddCountry}
@@ -311,6 +319,8 @@ const CountriesCurrencies = () => {
           title='Add new Country'
           label='New Country'
           actionBtnText='CREATE'
+          value={value}
+          setValue={setValue}
         />
         <AddEditModal
           openModal={openEditCurrency}
@@ -321,6 +331,8 @@ const CountriesCurrencies = () => {
           title='Edit Currency'
           label='Type a Currency'
           actionBtnText='EDIT'
+          value={value}
+          setValue={setValue}
         />
         <AddEditModal
           openModal={openEditCountry}
@@ -331,19 +343,21 @@ const CountriesCurrencies = () => {
           title='Edit Country'
           label='Type a country'
           actionBtnText='EDIT'
+          value={value}
+          setValue={setValue}
         />
 
         <DeleteModal
           openModal={openDeleteCurrency}
-          onClose={() => {
-            setOpenDeleteCurrency(false)
+          onCloseModal={() => {
+            setOpenDeleteCountry(false)
           }}
           onDelete={deleteCurrency}
           textItem='Currency'
         />
         <DeleteModal
           openModal={openDeleteCountry}
-          onClose={() => {
+          onCloseModal={() => {
             setOpenDeleteCountry(false)
           }}
           onDelete={deleteCountry}
