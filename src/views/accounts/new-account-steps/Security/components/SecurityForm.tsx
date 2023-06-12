@@ -737,7 +737,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
             </FormHelperText>
           </FormControl>
           {frontingFeeEnabled && (security.share || security.premiumPerShareAmount) ? (
-            <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
+            <FormControl fullWidth sx={{ mb: 2 }}>
               <InputLabel>Select Retro cedant</InputLabel>
               <Select
                 label='Select Retro cedant'
@@ -759,7 +759,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
             <></>
           )}
           {frontingFeeEnabled && (security.share || security.premiumPerShareAmount) ? (
-            <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
+            <FormControl fullWidth sx={{ mb: 2 }}>
               <InputLabel>Select Retro Cedant contact</InputLabel>
               <Select
                 label='Select Retro Cedant contact '
@@ -784,7 +784,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
 
           {frontingFeeEnabled && security.idCRetroCedantContact?.id && (
             <>
-              <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
+              <FormControl fullWidth sx={{ mb: 2 }}>
                 <TextField
                   autoFocus
                   disabled
@@ -794,7 +794,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
                   value={security.idCRetroCedantContact?.email ?? ''}
                 />
               </FormControl>
-              <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
+              <FormControl fullWidth sx={{ mb: 2 }}>
                 <TextField
                   autoFocus
                   fullWidth
@@ -804,7 +804,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
                   value={security.idCRetroCedantContact?.phone ?? ''}
                 />
               </FormControl>
-              <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
+              <FormControl fullWidth sx={{ mb: 2 }}>
                 <InputLabel id='Contactcountry'>Contact country</InputLabel>
                 <Select
                   id='outlined-Name'
