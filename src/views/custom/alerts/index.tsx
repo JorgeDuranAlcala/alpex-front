@@ -1,4 +1,4 @@
-import { Alert } from '@mui/material'
+import { Alert, Snackbar } from '@mui/material'
 import { useEffect, useState } from 'react'
 
 export interface IAlert {
@@ -42,7 +42,7 @@ const CustomAlert = (props: IAlert) => {
   }, [props])
 
   return (
-    <>
+    <Snackbar open={open} autoHideDuration={3000} onClose={() => setOpen(false)}>
       <Alert
         onClose={() => setOpen(false)}
         sx={{
@@ -58,7 +58,7 @@ const CustomAlert = (props: IAlert) => {
       >
         {props.message}
       </Alert>
-    </>
+    </Snackbar>
   )
 }
 
