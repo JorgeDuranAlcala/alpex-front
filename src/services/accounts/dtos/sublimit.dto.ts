@@ -16,5 +16,6 @@ export interface SublimitDto {
   idCCoverage: number | null
   idCDeductiblePer: number | null
   idEndorsement: number | null
+  title: string
   idAccount: number
 }

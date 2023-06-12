@@ -26,6 +26,17 @@ class AuthServices {
       throw new Error(errMessage)
     }
   }
+
+  async refreshJWT() {
+    try {
+      const resp = await AppAlpexApiGateWay.get(`${AUTH_ROUTES.REFRESH_JWT}`)
+
+      return resp
+    } catch (error) {
+      const errMessage = String(error)
+      throw new Error(errMessage)
+    }
+  }
 }
 
 export default AuthServices

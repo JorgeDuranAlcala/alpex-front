@@ -1,4 +1,5 @@
 import UserThemeOptions from '@/layouts/UserThemeOptions'
+import { SublimitDto } from '@/services/accounts/dtos/sublimit.dto'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import {
   Box,
@@ -16,7 +17,7 @@ import {
   TextField,
   Typography
 } from '@mui/material'
-import { ChangeEvent, useEffect, useState } from 'react'
+import { ChangeEvent, useState } from 'react'
 import { NumericFormat } from 'react-number-format'
 import Icon from 'src/@core/components/icon'
 import { ContainerCard, ContentCard, HeaderCard, InputForm, SubContainer } from 'src/styles/Forms/Sublimits'
@@ -29,50 +30,17 @@ interface FormErrors {
   priceInterruptionError: boolean
 }
 
-export type FormGenericCard = {
-  yes?: boolean
-  luc?: boolean
-  sublimit: number
-  percentage: number
-  price: number
-  min: number
-  days: number
-  priceInterruption: number
-  coinsurance: number
-  index?: number
-  typeDeductible?: string
-  typeBi?: string
-  at100?: boolean
-  typeDeductibleRadio?: string
-}
-
-const initialData: FormGenericCard = {
-  sublimit: 0,
-  percentage: 0,
-  price: 0,
-  min: 0,
-  days: 0,
-  priceInterruption: 0,
-  coinsurance: 0,
-  yes: false,
-  luc: false,
-  typeDeductible: '',
-  typeBi: 'BIDays',
-  at100: false,
-  typeDeductibleRadio: ''
-}
-
 const GenericCard: React.FC<RenderFormGeneric> = ({
   title,
-  deleteForm,
-  handleOnChangeForm,
+  handleOnDeleteForm,
+  handleOnChangeByInputForm,
   formInformation,
   index = 0,
-  formErrors
+  formErrors,
+  data
 }: RenderFormGeneric) => {
-  const [dataForm, setDataForm] = useState<FormGenericCard>(initialData)
-  const [selectedValueRadio, setSelectedValueRadio] = useState<string>('')
-  const [, setErrorForm] = useState({})
+  // const [selectedValueRadio, setSelectedValueRadio] = useState<string>('')
+  // const [, setErrorForm] = useState({})
   const [errors] = useState<FormErrors>({
     minError: false,
     coinsuranceError: false,
@@ -80,74 +48,61 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
     priceInterruptionError: false
   })
   const [numericError, setNumericError] = useState<string>('')
-  const [checked, setChecked] = useState(false)
 
-  const handleNumericInputChange = (value: any, e: any) => {
-    const { name } = e
-    setDataForm({ ...dataForm, [name]: value })
+  const onChangeItem = (value: any, name: keyof SublimitDto) => {
+    handleOnChangeByInputForm(index, { name, value })
   }
 
   const handleChangeRadio = (event: ChangeEvent<HTMLInputElement>) => {
-    setSelectedValueRadio(event.target.value)
-    setDataForm({
-      ...dataForm,
-      percentage: 0,
-      price: 0,
-      min: 0,
-      typeDeductible: '',
-      typeDeductibleRadio: event.target.value
-    })
+    handleOnChangeByInputForm(index, { name: 'typeDeductible', value: event.target.value })
   }
 
   const handleChangeRadioBI = (value: string) => {
-    setDataForm({ ...dataForm, days: 0, priceInterruption: 0, typeBi: value })
+    value === 'days'
+      ? handleOnChangeByInputForm(index, { name: 'typeBi', value: 'days' })
+      : handleOnChangeByInputForm(index, { name: 'typeBi', value: 'money' })
   }
 
   const handleChangeRadioYesLuc = (value: string) => {
-    if (value !== 'yes' && value !== 'luc') {
-      setDataForm({ ...dataForm, yes: false, luc: false })
-
-      return
-    }
     value === 'yes'
-      ? setDataForm({ ...dataForm, yes: true, luc: false })
-      : setDataForm({ ...dataForm, yes: false, luc: true })
+      ? handleOnChangeByInputForm(index, { name: 'yes', value: true })
+      : handleOnChangeByInputForm(index, { name: 'luc', value: true })
+  }
+
+  const onDeleteItem = async () => {
+    await handleOnDeleteForm(index)
   }
 
   const options = [
-    { name: 'Select option', value: '' },
-    { name: 'Loss', value: 'Loss' },
-    { name: "TIV's", value: "TIV's" },
-    { name: 'Affected item', value: 'Affected item' }
+    { name: 'Loss', id: 1 },
+    { name: "TIV's", id: 2 },
+    { name: 'Affected item', id: 3 }
   ]
-
-  // const getErrorMessage = (name: keyof FormErrors) => {
-  //   return errors[name] ? 'This field is required' : ''
-  // }
 
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
   const size = userThemeConfig.typography?.size.px16
   const textColor = userThemeConfig.palette?.text.subTitle
-  useEffect(() => {
-    if (checked) {
-      setDataForm({ ...dataForm, sublimit: +formInformation?.informations[0].limit })
-    } else {
-      setDataForm({ ...dataForm, sublimit: 0 })
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [checked])
-  useEffect(() => {
-    if (dataForm) handleOnChangeForm(dataForm, index)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dataForm])
-  useEffect(() => {
-    setErrorForm(formErrors[index] || {})
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [formErrors])
+
+  // useEffect(() => {
+  //   if (checked) {
+  //     setDataForm({ ...dataForm, sublimit: +formInformation?.informations[0].limit })
+  //   } else {
+  //     setDataForm({ ...dataForm, sublimit: 0 })
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [checked])
+  // useEffect(() => {
+  //   if (dataForm) handleOnChangeForm(dataForm, index)
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [dataForm])
+  // useEffect(() => {
+  //   setErrorForm(formErrors[index] || {})
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [formErrors])
 
   return (
     <ContainerCard>
-      <HeaderCard sx={{ height: title === 'Business Interruption Machinery Breakdown' ? '68px' : '48px' }}>
+      <HeaderCard sx={{ height: data?.title === 'Business Interruption Machinery Breakdown' ? '68px' : '48px' }}>
         <Box
           sx={{
             display: 'flex',
@@ -155,15 +110,15 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
             alingItems: 'center',
             justifyContent: 'space-between',
             width: '100%',
-            height: title === 'Business Interruption Machinery Breakdown' ? '52px' : '26px'
+            height: data?.title === 'Business Interruption Machinery Breakdown' ? '52px' : '26px'
 
             // border: '1px solid white'
           }}
         >
           <Typography textTransform={'uppercase'} sx={{ color: '#FFF' }}>
-            {title}
+            {data?.title}
           </Typography>
-          <IconButton onClick={deleteForm}>
+          <IconButton onClick={onDeleteItem}>
             <Icon icon='mdi:delete-outline' fontSize={22} color='#FFF' />
           </IconButton>
         </Box>
@@ -173,7 +128,7 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
           <FormControl sx={{ width: '64%' }}>
             <NumericFormat
               name='sublimit'
-              value={dataForm.sublimit}
+              value={data?.sublimit}
               allowLeadingZeros
               thousandSeparator=','
               customInput={TextField}
@@ -195,17 +150,18 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
                 return false
               }}
               variant='outlined'
-              disabled={checked}
+              disabled={data?.at100}
               onValueChange={value => {
-                handleNumericInputChange(value.floatValue, { name: 'sublimit' })
+                onChangeItem(value.floatValue, 'sublimit')
               }}
             />
             <FormHelperText sx={{ color: 'error.main' }}>{numericError}</FormHelperText>
           </FormControl>
           <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', paddingRight: '8px', width: '88px' }}>
             <Checkbox
-              onChange={() => {
-                setChecked(!checked)
+              checked={data?.at100}
+              onChange={e => {
+                onChangeItem(e.target.checked, 'at100')
               }}
               inputProps={{ 'aria-label': 'controlled' }}
               sx={{
@@ -218,12 +174,13 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
             <Typography>100%</Typography>
           </Box>
         </SubContainer>
-        {title === 'Terrorism' || title === 'Business interruption' ? (
+        {data?.title === 'Terrorism' || title === 'Business interruption' ? (
           <SubContainer sx={{ height: 'auto' }}>
             <RadioGroup
               aria-labelledby='demo-radio-buttons-group-label'
               defaultValue='yes'
               name='radio-buttons-group'
+              value={data?.yes ? 'yes' : 'luc'}
               onChange={(_, val) => handleChangeRadioYesLuc(val)}
               sx={{
                 height: '100%',
@@ -239,7 +196,7 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
             </RadioGroup>
           </SubContainer>
         ) : null}
-        {title !== 'Business interruption' ? (
+        {data?.title !== 'Business interruption' ? (
           <SubContainer sx={{ height: 'auto' }}>
             <Typography
               variant='body1'
@@ -248,6 +205,7 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
               Deductible material damage
             </Typography>
             <RadioGroup
+              value={data?.typeDeductible}
               aria-labelledby='demo-radio-buttons-group-label'
               defaultValue='none'
               name='radio-buttons-group'
@@ -268,15 +226,15 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
               <InputForm>
                 <FormControlLabel
                   sx={{ ml: 0.3 }}
-                  control={<Radio sx={{ mr: -1 }} value={'percentage'} onChange={handleChangeRadio} />}
+                  control={<Radio sx={{ mr: -1 }} value={'per'} onChange={handleChangeRadio} />}
                   label=''
                 />
                 <NumericFormat
                   placeholder='0%'
-                  name='percentage'
-                  disabled={!(selectedValueRadio === 'percentage')}
+                  name='per'
+                  disabled={!(data?.typeDeductible === 'per')}
                   allowLeadingZeros
-                  value={dataForm.percentage}
+                  value={data?.deductible}
                   thousandSeparator=','
                   customInput={Input}
                   suffix={'%'}
@@ -286,18 +244,23 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
                     height: '100%',
                     '&:before, &:after': { display: 'none' }
                   }}
+                  isAllowed={values => {
+                    const { floatValue } = values
+
+                    return (floatValue! >= 0 && floatValue! <= 100) || floatValue === undefined
+                  }}
                   onValueChange={value => {
-                    handleNumericInputChange(value.floatValue, { name: 'percentage' })
+                    onChangeItem(value.floatValue, 'deductible')
                   }}
                 />
                 <FormHelperText sx={{ color: 'error.main' }}>{formErrors[index]?.percentage}</FormHelperText>
               </InputForm>
-              {selectedValueRadio === 'percentage' ? (
+              {data?.typeDeductible === 'per' ? (
                 <>
                   <FormControl fullWidth>
                     <NumericFormat
                       name='min'
-                      value={dataForm.min}
+                      value={data?.min}
                       allowLeadingZeros
                       thousandSeparator=','
                       customInput={TextField}
@@ -308,7 +271,12 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
                       decimalScale={2}
                       variant='outlined'
                       onValueChange={value => {
-                        handleNumericInputChange(value.floatValue, { name: 'min' })
+                        onChangeItem(value.floatValue, 'min')
+                      }}
+                      isAllowed={values => {
+                        const { floatValue } = values
+
+                        return floatValue! >= 0 || floatValue === undefined
                       }}
                     />
                     <FormHelperText sx={{ color: 'error.main' }}>{formErrors[index]?.min}</FormHelperText>
@@ -319,14 +287,14 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
                       sx={{ height: '56px' }}
                       label='Aplicable over'
                       labelId='controlled-select-label'
-                      value={dataForm.typeDeductible}
+                      value={data?.idCDeductiblePer}
                       onChange={e => {
-                        handleNumericInputChange(e.target.value, { name: 'typeDeductible' })
+                        onChangeItem(e.target.value, 'idCDeductiblePer')
                       }}
                       IconComponent={KeyboardArrowDownIcon}
                     >
                       {options?.map((item, index) => (
-                        <MenuItem key={index} value={item.name}>
+                        <MenuItem key={index} value={item.id}>
                           {item.name}
                         </MenuItem>
                       ))}
@@ -338,16 +306,16 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
               <InputForm>
                 <FormControlLabel
                   sx={{ ml: 0.3 }}
-                  value='price'
-                  control={<Radio sx={{ mr: -1 }} value='price' onChange={handleChangeRadio} />}
+                  value='amount'
+                  control={<Radio sx={{ mr: -1 }} value='amount' onChange={handleChangeRadio} />}
                   label=''
                 />
                 <NumericFormat
                   placeholder='$0.00'
-                  name='price'
+                  name='amount'
                   allowLeadingZeros
-                  value={dataForm.price}
-                  disabled={!(selectedValueRadio === 'price')}
+                  value={data?.amount}
+                  disabled={!(data?.typeDeductible === 'amount')}
                   thousandSeparator=','
                   customInput={Input}
                   prefix={'$'}
@@ -358,7 +326,12 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
                     '&:before, &:after': { display: 'none' }
                   }}
                   onValueChange={value => {
-                    handleNumericInputChange(value.floatValue, { name: 'price' })
+                    onChangeItem(value.floatValue, 'amount')
+                  }}
+                  isAllowed={values => {
+                    const { floatValue } = values
+
+                    return floatValue! >= 0 || floatValue === undefined
                   }}
                 />
                 <FormHelperText sx={{ color: 'error.main' }}>{formErrors[index]?.price}</FormHelperText>
@@ -366,7 +339,7 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
             </RadioGroup>
           </SubContainer>
         ) : null}
-        {title === 'Machinery breakdown' || title === 'AMIT & SRCC' || title === 'Electronic Equipment' ? (
+        {data?.title === 'Machinery Breakdown' || title === 'AMIT & SRCC' || title === 'Electronic Equipment' ? (
           <SubContainer sx={{ height: 'auto' }}>
             <Typography
               variant='body1'
@@ -390,21 +363,21 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
             </Typography>
             <RadioGroup
               aria-labelledby='demo-radio-buttons-group-label'
-              defaultValue='BIDays'
+              value={data?.typeBi}
               name='radio-buttons-group'
               sx={{ height: '100%', gap: '10px', mt: 1 }}
               onChange={(_, val) => handleChangeRadioBI(val)}
             >
               <InputForm>
-                <FormControlLabel sx={{ ml: 0.3 }} value='BIDays' control={<Radio sx={{ mr: -1 }} />} label='' />
+                <FormControlLabel sx={{ ml: 0.3 }} value='days' control={<Radio sx={{ mr: -1 }} />} label='' />
                 <NumericFormat
                   placeholder='0 days'
                   name='days'
                   allowLeadingZeros
-                  value={dataForm.days}
+                  value={data?.daysBi}
                   thousandSeparator=','
                   customInput={Input}
-                  disabled={!(dataForm.typeBi === 'BIDays')}
+                  disabled={!(data?.typeBi === 'days')}
                   decimalScale={2}
                   error={errors.daysError}
                   sx={{
@@ -413,7 +386,12 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
                     '&:before, &:after': { display: 'none' }
                   }}
                   onValueChange={value => {
-                    handleNumericInputChange(value.floatValue, { name: 'days' })
+                    onChangeItem(value.floatValue, 'daysBi')
+                  }}
+                  isAllowed={values => {
+                    const { floatValue } = values
+
+                    return (floatValue! >= 0 && floatValue! <= 999) || floatValue === undefined
                   }}
                 />
                 <FormHelperText sx={{ color: 'error.main' }}>{formErrors[index]?.days}</FormHelperText>
@@ -422,14 +400,14 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
               </InputForm>
 
               <InputForm>
-                <FormControlLabel sx={{ ml: 0.3 }} value='BIPrice' control={<Radio sx={{ mr: -1 }} />} label='' />
+                <FormControlLabel sx={{ ml: 0.3 }} value='money' control={<Radio sx={{ mr: -1 }} />} label='' />
                 <NumericFormat
                   placeholder='$0.00'
                   name='priceInterruption'
-                  value={dataForm.priceInterruption}
+                  value={data?.amountBi}
                   allowLeadingZeros
                   thousandSeparator=','
-                  disabled={!(dataForm.typeBi === 'BIPrice')}
+                  disabled={!(data?.typeBi === 'money')}
                   customInput={Input}
                   prefix={'$'}
                   decimalScale={2}
@@ -439,7 +417,7 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
                     '&:before, &:after': { display: 'none' }
                   }}
                   onValueChange={value => {
-                    handleNumericInputChange(value.floatValue, { name: 'priceInterruption' })
+                    onChangeItem(value.floatValue, 'amountBi')
                   }}
                 />
                 <FormHelperText sx={{ color: 'error.main' }}>{formErrors[index]?.priceInterruption}</FormHelperText>
@@ -462,6 +440,7 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
             allowLeadingZeros
             thousandSeparator=','
             customInput={TextField}
+            value={data?.coinsurance}
             suffix={'%'}
             decimalScale={2}
             sx={{
@@ -470,7 +449,12 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
               '&:before, &:after': { display: 'none' }
             }}
             onValueChange={value => {
-              handleNumericInputChange(value.floatValue, { name: 'coinsurance' })
+              onChangeItem(value.floatValue, 'coinsurance')
+            }}
+            isAllowed={values => {
+              const { floatValue } = values
+
+              return (floatValue! >= 0 && floatValue! <= 100) || floatValue === undefined
             }}
           />
           <FormHelperText sx={{ color: 'error.main' }}>{formErrors[index]?.coinsurance}</FormHelperText>

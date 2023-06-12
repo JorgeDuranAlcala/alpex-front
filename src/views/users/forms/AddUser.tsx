@@ -28,9 +28,12 @@ import { useAppDispatch, useAppSelector } from 'src/store'
 // import CompanySelect from '@/views/custom/select/CompanySelect'
 // import useAxiosErrorHandling from '@/hooks/catalogs/users/handleError'
 
+import AlertAddUser from '@/views/users/AlertUserAdded'
 import { UserSection } from 'src/styles/Forms/usersSection'
 import CountrySelect, { ICountry } from 'src/views/custom/select/CountrySelect'
 import { StyledDescription, StyledSubtitle, StyledTitle } from 'src/views/custom/typography'
+
+// import AlertAddUser from '../AlertUserAdded'
 
 interface FormInfo {
   name: string
@@ -53,16 +56,16 @@ const UserForm: FormInfo = {
   dualRole: ''
 }
 
-// const initialForm: UsersPutDto = {
-//   id: 1,
-//   name: '',
-//   surname: '',
-//   email: '',
-//   phone: '',
-//   idCompany: 0,
-//   roles: [],
-//   areaCode: ''
-// }
+const initialForm: UsersPutDto = {
+  id: 1,
+  name: '',
+  surname: '',
+  email: '',
+  phone: '',
+  idCompany: 0,
+  roles: [],
+  areaCode: ''
+}
 
 interface IAddUser {
   selectUser: boolean
@@ -117,7 +120,7 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
     resolver: yupResolver(schema)
   })
 
-  const { setUserPost, error } = useAddUser()
+  const { setUserPost, error, user } = useAddUser()
   const { setUserPut } = useEditUser()
 
   const { company } = useGetAllCompanies()
@@ -147,6 +150,8 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
   const [idCompany, setIdCompany] = useState<any>('')
   const [idRole, setIdRole] = useState<any>('')
   const [informativeIdRole, setInformativeIdRole] = useState<any>('')
+
+  const [open, setOpen] = useState(false)
 
   // const [selectCompany, setSelectCompany] = useState<ReinsuranceCompanyDto | undefined | string>()
   // const flagCompany = true
@@ -201,7 +206,7 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
                   id: parseInt(informativeIdRole)
                 }
               ]
-            : parseInt(idRole) && !parseInt(idRole)
+            : parseInt(idRole) && !parseInt(informativeIdRole)
             ? [
                 {
                   id: parseInt(idRole)
@@ -317,19 +322,22 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
   }, [useWatchCompany])
 
   useEffect(() => {
-    if (selectUser) {
-      if (idRole === '5') {
-        setDualRoleDisabled(false)
-        setValue('dualRole', '', { shouldValidate: true })
+    if (roles) {
+      const roleIdAdmin = roles?.find(role => role.role === 'admin')
+      if (selectUser) {
+        if (roleIdAdmin && idRole === String(roleIdAdmin.id)) {
+          setDualRoleDisabled(false)
+          setValue('dualRole', '', { shouldValidate: true })
+        } else {
+          setDualRoleDisabled(true)
+        }
       } else {
-        setDualRoleDisabled(true)
-      }
-    } else {
-      if (useWatchRole === '5') {
-        setDualRoleDisabled(false)
-        setValue('dualRole', '', { shouldValidate: true })
-      } else {
-        setDualRoleDisabled(true)
+        if (roleIdAdmin && useWatchRole === String(roleIdAdmin.id)) {
+          setDualRoleDisabled(false)
+          setValue('dualRole', '', { shouldValidate: true })
+        } else {
+          setDualRoleDisabled(true)
+        }
       }
     }
     //eslint-disable-next-line
@@ -356,11 +364,45 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
   }, [error])
 
   useEffect(() => {
-    if (selectUser) {
-      const reducersCompany = usersReducer?.current?.idCompany?.id
-      const companySelect = company?.find(c => c.id === reducersCompany)
-      setIdCompany(companySelect?.id.toString())
-    } // eslint-disable-next-line react-hooks/exhaustive-deps
+    if (user?.statusCode === 201) {
+      reset({ ...initialForm })
+    }
+  }, [reset, user?.statusCode])
+
+  console.log(user?.statusCode)
+
+  useEffect(() => {
+    if (user?.statusCode === 201) {
+      setOpen(true)
+    }
+    const anchor = document.querySelector('body')
+    if (anchor) {
+      anchor.scrollIntoView({ behavior: 'smooth' })
+    }
+  }, [user?.statusCode])
+
+  useEffect(() => {
+    setTimeout(() => {
+      setOpen(false)
+    }, 3000)
+  }, [open])
+
+  // useEffect(() => {
+
+  // if (open) {
+  //   document.body.classList.add('alertUser')
+  // } else {
+  //   document.body.classList.remove('alertUser')
+  // }
+  // }, [open])
+
+  // console.log({ open })
+
+  useEffect(() => {
+    const reducersCompany = usersReducer?.current?.idCompany?.id
+    const companySelect = company?.find(c => c.id === reducersCompany)
+    setIdCompany(companySelect?.id.toString())
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [company, setIdCompany])
 
   // useEffect(() => {
@@ -391,6 +433,7 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
 
   return (
     <>
+      {open && <AlertAddUser />}
       <div style={{ padding: '20px 20px 80px' }}>
         <UserSection>
           <StyledTitle sx={{ pb: 2 }}>{title}</StyledTitle>
@@ -619,7 +662,6 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
                               onBlur={onBlur}
                               onChange={e => {
                                 onChange(e.target.value)
-                                setIdCompany(e.target.value)
                               }}
                               labelId='broker'
                             >
@@ -632,7 +674,7 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
                           </>
                         )}
                       />
-                      {errors.company && (
+                      {errors?.company && (
                         <FormHelperText sx={{ color: 'error.main' }}>This action is required.</FormHelperText>
                       )}
                     </FormControl>

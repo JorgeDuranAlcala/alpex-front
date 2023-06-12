@@ -1,15 +1,16 @@
 // ==== ROLES
 export enum ROLES {
-  ADMIN = 5,
-  LEAD_UNDERWRITER = 6,
-  UNDERWRITER = 8,
-  TECHNICAL_ASSISTANT = 9
+  ADMIN = 1,
+  LEAD_UNDERWRITER = 2,
+  UNDERWRITER = 3,
+  TECHNICAL_ASSISTANT = 4
 }
 
 // ==== AUTH
 export enum AUTH_ROUTES {
   LOGIN = '/auth',
-  AUTH_ME = '/auth/me/'
+  AUTH_ME = '/auth/me',
+  REFRESH_JWT = '/auth/refresh-jwt'
 }
 
 // ==== ACCOUNT
@@ -45,7 +46,8 @@ export enum ACCOUNT_SECURITY_TOTAL_ROUTES {
 export enum ACCOUNT_SUBLIMIT_ROUTES {
   ADD = 'account/sublimit/add',
   GET_BY_ID_ACCOUNT = 'account/sublimit',
-  UPDATE = 'account/sublimit/update'
+  UPDATE = 'account/sublimit/update',
+  DELETE = 'account/sublimit/delete'
 }
 
 export enum ACCOUNT_STEP_FORM_DELETE_ROUTES {
@@ -148,6 +150,16 @@ export enum REINSURANCE_COMPANY_CONTACT_ROUTES {
   DELETE = 'catalogs/reinsuranceCompanyContact/delete'
 }
 
+export enum REINSURANCE_COMPANY_BINDER_ROUTES {
+  GET_ALL = 'catalogs/reinsuranceCompanyBinder/all',
+  GET_BY_ID = 'catalogs/reinsuranceCompanyBinder',
+  ADD = 'catalogs/reinsuranceCompanyBinder/add',
+  UPDATE = 'catalogs/reinsuranceCompanyBinder',
+  GET_BY_ID_REINSURANCE_COMPANY = 'catalogs/reinsuranceCompanyBinder/reinsuranceCompany',
+  GET = 'catalogs/reinsuranceCompanyBinder/pagination/reinsuranceCompany',
+  DELETE = 'catalogs/reinsuranceCompanyBinder/delete'
+}
+
 export enum COMPANY_ROUTES {
   GET_ALL = 'catalogs/Company/all',
   GET_BY_ID = 'catalogs/Company',
@@ -173,6 +185,10 @@ export enum RETRO_CEDANT_CONTACT_ROUTES {
   UPDATE = 'catalogs/retroCedantContact',
   GET = 'catalogs/retroCedantContact/pagination/retroCedant',
   DELETE = 'catalogs/retroCedantContact/delete'
+}
+
+export enum COVERAGE_ROUTES {
+  GET_ALL = 'catalogs/coverage/all'
 }
 
 export enum INSTALLMENT_ROUTERS {

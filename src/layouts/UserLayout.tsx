@@ -18,6 +18,7 @@ import VerticalNavItems from 'src/navigation/vertical'
 // import ServerSideVerticalNavItems from './components/vertical/ServerSideNavItems'
 // import ServerSideHorizontalNavItems from './components/horizontal/ServerSideNavItems'
 
+import InactivityDetector from './components/InactivityDetector'
 import HorizontalAppBarContent from './components/horizontal/AppBarContent'
 import VerticalAppBarContent from './components/vertical/AppBarContent'
 
@@ -25,6 +26,7 @@ import VerticalAppBarContent from './components/vertical/AppBarContent'
 // import { Box, Typography } from '@mui/material'
 // import { Box } from '@mui/material'
 import { useSettings } from 'src/@core/hooks/useSettings'
+import TokenTimeValidateLayout from './components/TimeValidationJWT'
 import Footer from './components/footer'
 
 interface Props {
@@ -111,6 +113,8 @@ const UserLayout = ({ children, contentHeightFixed }: Props) => {
         content: () => <Footer isLogin={false} />
       }}
     >
+      <TokenTimeValidateLayout />
+      <InactivityDetector />
       {children}
     </Layout>
   )

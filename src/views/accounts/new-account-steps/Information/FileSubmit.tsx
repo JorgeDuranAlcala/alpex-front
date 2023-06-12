@@ -1,11 +1,10 @@
 import React, { Fragment, useEffect, useRef, useState } from 'react'
 
 // // ** MUI Imports
-import {
-  Button,
-  IconButton,
-  Typography
-} from '@mui/material'
+import CloseIcon from '@mui/icons-material/Close'
+import { Box, Button, IconButton, Modal, Typography } from '@mui/material'
+import { ButtonClose, HeaderTitleModal } from 'src/styles/Dashboard/ModalReinsurers/modalReinsurers'
+
 import Icon from 'src/@core/components/icon'
 
 interface UserFileProps {
@@ -13,19 +12,21 @@ interface UserFileProps {
   setUserFile: React.Dispatch<React.SetStateAction<any>>
   setUserFileToDelete: React.Dispatch<React.SetStateAction<any>>
   changeTitle: (change: boolean) => void
+  urls: string[]
 }
 
-const FileSubmit: React.FC<UserFileProps> = ({ setUserFile, userFile, setUserFileToDelete, changeTitle }) => {
+const FileSubmit: React.FC<UserFileProps> = ({ setUserFile, userFile, urls, setUserFileToDelete, changeTitle }) => {
   // ** State
   const inputRef = useRef<HTMLInputElement>(null)
   const [file, setFile] = useState<File[]>([])
   const [selectedFile, setSelectedFile] = useState<File | null>(null) // saves the row wehen user click on actions button
+  const [openDelete, setOpenDelete] = useState(false)
+  const fileUrls: string[] = urls
 
   // const [openMenu, setOpenMenu] = useState(false)
   const onFileChange = function (e: any) {
     e.preventDefault()
     const rawFiles = e.target.files
-
     setFile([...file, ...rawFiles])
     setUserFile([...file, ...rawFiles])
   }
@@ -37,22 +38,30 @@ const FileSubmit: React.FC<UserFileProps> = ({ setUserFile, userFile, setUserFil
     }
   }
 
+  function removeUrl(index: number): void {
+    if (index < 0 || index >= fileUrls.length) {
+      return
+    }
+
+    fileUrls.splice(index, 1)
+  }
+
   const handlePreview = (e: any, index: number) => {
     e.preventDefault
-    const fileToPreview = file[index];
-  const previewUrl = URL.createObjectURL(fileToPreview);
-  window.open(previewUrl, '_blank');
+    const fileToPreview = userFile[index]
+    const previewUrl = fileUrls[index] || URL.createObjectURL(fileToPreview)
+    window.open(previewUrl, '_blank')
     setSelectedFile(null)
   }
 
   const handleDownload = (e: any, index: number) => {
     e.preventDefault
-    const fileToDownload = file[index];
-    const downloadUrl = URL.createObjectURL(fileToDownload);
-    const link = document.createElement('a');
-    link.href = downloadUrl;
-    link.download = fileToDownload.name;
-    link.click();
+    const fileToDownload = file[index]
+    const downloadUrl = URL.createObjectURL(fileToDownload)
+    const link = document.createElement('a')
+    link.href = downloadUrl
+    link.download = fileToDownload.name
+    link.click()
     setSelectedFile(null)
   }
 
@@ -62,7 +71,9 @@ const FileSubmit: React.FC<UserFileProps> = ({ setUserFile, userFile, setUserFil
     setFile([...file])
     setUserFile([...file])
     setUserFileToDelete && setUserFileToDelete(deletedFile[0])
+    removeUrl(index) // cambiamos la lista de urls cuando se ha borrado sin guardar
     setSelectedFile(null)
+    setOpenDelete(false)
   }
 
   useEffect(() => {
@@ -72,13 +83,13 @@ const FileSubmit: React.FC<UserFileProps> = ({ setUserFile, userFile, setUserFil
   }, [userFile])
 
   useEffect(() => {
-    if(file.length > 0){
+    if (file.length > 0) {
       changeTitle(true)
-    }else{
+    } else {
       changeTitle(false)
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[file])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [file])
 
   return (
     <Fragment>
@@ -90,10 +101,9 @@ const FileSubmit: React.FC<UserFileProps> = ({ setUserFile, userFile, setUserFil
           className='input-file-upload'
           id='input-file-upload'
           onChange={onFileChange}
-          multiple
         />
 
-        {file.length > 0 &&
+        {file.length > 0 && (
           <div className='uploaded-files'>
             {file.map((fileElement, index) => {
               const openMenu = fileElement === selectedFile
@@ -102,13 +112,15 @@ const FileSubmit: React.FC<UserFileProps> = ({ setUserFile, userFile, setUserFil
                 <div key={index} className='file-details'>
                   <Typography className='file-name'>{fileElement?.name}</Typography>
                   <div className='menu-btn'>
-                    <IconButton onClick={() => {
-                      if (openMenu) {
-                        setSelectedFile(null)
-                      } else {
-                        setSelectedFile(fileElement)
-                      }
-                    }}>
+                    <IconButton
+                      onClick={() => {
+                        if (openMenu) {
+                          setSelectedFile(null)
+                        } else {
+                          setSelectedFile(fileElement)
+                        }
+                      }}
+                    >
                       <Icon icon='mdi:dots-vertical' fontSize={20} />
                     </IconButton>
                     {openMenu && (
@@ -119,17 +131,54 @@ const FileSubmit: React.FC<UserFileProps> = ({ setUserFile, userFile, setUserFil
                         <div className='option' onClick={e => handleDownload(e, index)}>
                           Download
                         </div>
-                        <div className='option' onClick={e => handleRemoveFile(e, index)}>
+                        <div className='option' onClick={() => setOpenDelete(true)}>
                           Delete
                         </div>
+
+                        <Modal
+                          className='delete-modal'
+                          open={openDelete}
+                          onClose={() => {
+                            setOpenDelete(false)
+                          }}
+                        >
+                          <Box className='modal-wrapper'>
+                            <HeaderTitleModal>
+                              <Typography variant='h6'>Are you sure you want to delete this file?</Typography>
+                              <ButtonClose
+                                onClick={() => {
+                                  setOpenDelete(false)
+                                }}
+                              >
+                                <CloseIcon />
+                              </ButtonClose>
+                            </HeaderTitleModal>
+                            <div className='delete-modal-text'>This action can’t be undone.</div>
+                            <Button
+                              className='header-modal-btn'
+                              variant='contained'
+                              onClick={e => handleRemoveFile(e, index)}
+                            >
+                              DELETE
+                            </Button>
+                            <Button
+                              className='close-modal header-modal-btn'
+                              onClick={() => {
+                                setOpenDelete(false)
+                              }}
+                            >
+                              CANCEL
+                            </Button>
+                          </Box>
+                        </Modal>
                       </div>
                     )}
                   </div>
-
                 </div>
               )
             })}
-          </div>}
+          </div>
+        )}
 
         <label id='label-file-upload' htmlFor='input-file-upload'>
           <Button className='upload-button' onClick={e => onButtonClick(e)} variant='outlined'>
