@@ -2,8 +2,8 @@
 import { useRef, useState } from 'react'
 
 // ** MUI Import
-import List from '@mui/material/List'
 import Box, { BoxProps } from '@mui/material/Box'
+import List from '@mui/material/List'
 import { styled, useTheme } from '@mui/material/styles'
 
 // ** Third Party Components
@@ -16,8 +16,8 @@ import themeConfig from 'src/configs/themeConfig'
 
 // ** Component Imports
 import Drawer from './Drawer'
-import VerticalNavItems from './VerticalNavItems'
 import VerticalNavHeader from './VerticalNavHeader'
+import VerticalNavItems from './VerticalNavItems'
 
 // ** Util Import
 import { hexToRGBA } from 'src/@core/utils/hex-to-rgba'
@@ -143,14 +143,14 @@ const Navigation = (props: Props) => {
         <ScrollWrapper
           {...(hidden
             ? {
-                onScroll: (container: any) => scrollMenu(container),
-                sx: { height: '100%', overflowY: 'auto', overflowX: 'hidden' }
-              }
+              onScroll: (container: any) => scrollMenu(container),
+              sx: { height: '100%', overflowY: 'auto', overflowX: 'hidden' }
+            }
             : {
-                options: { wheelPropagation: false },
-                onScrollY: (container: any) => scrollMenu(container),
-                containerRef: (ref: any) => handleInfiniteScroll(ref)
-              })}
+              options: { wheelPropagation: false },
+              onScrollY: (container: any) => scrollMenu(container),
+              containerRef: (ref: any) => handleInfiniteScroll(ref)
+            })}
         >
           {beforeNavMenuContent && beforeVerticalNavMenuContentPosition === 'static'
             ? beforeNavMenuContent(props)
@@ -158,7 +158,7 @@ const Navigation = (props: Props) => {
           {userNavMenuContent ? (
             userNavMenuContent(props)
           ) : (
-            <List className='nav-items' sx={{ pt: 0, '& > :first-child': { mt: '0' } }}>
+            <List className='nav-items' sx={{ pt: 0, '& > :first-of-type': { mt: '0' } }}>
               <VerticalNavItems
                 navHover={navHover}
                 groupActive={groupActive}
