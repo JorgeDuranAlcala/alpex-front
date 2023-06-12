@@ -120,10 +120,18 @@ const Security = ({ onStepChange }: SecurityProps) => {
   }
   const addNewForm = () => {
     const securityNew = {} as SecurityDto
+    setBadgeData({
+      ...badgeData,
+      open: false
+    })
     calculateSecurities([...securities, { ...securityNew, frontingFeeActive: false }])
   }
   const handleNextStep = () => {
     const isError = allErrors.find(error => error)
+    setBadgeData({
+      ...badgeData,
+      open: false
+    })
     setActiveErrors(isError || false)
     if (!isError) setOpen(true)
   }
@@ -370,7 +378,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
                   className='section action-buttons'
                   style={{ float: 'right', marginRight: 'auto', marginBottom: '20px' }}
                 >
-                  <Button className='btn-save' variant='contained' onClick={SaveData}>
+                  <Button className='btn-save' color='success' variant='contained' onClick={SaveData}>
                     <div className='btn-icon'>
                       <Icon icon='mdi:content-save' />
                     </div>
