@@ -120,6 +120,10 @@ const Security = ({ onStepChange }: SecurityProps) => {
   }
   const addNewForm = () => {
     const securityNew = {} as SecurityDto
+    setBadgeData({
+      ...badgeData,
+      open: false
+    })
     calculateSecurities([...securities, { ...securityNew, frontingFeeActive: false }])
   }
   const handleNextStep = () => {
