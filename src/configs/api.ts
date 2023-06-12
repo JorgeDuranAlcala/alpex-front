@@ -101,6 +101,14 @@ export enum COUNTRY_ROUTERS {
   DELETE = 'catalogs/country'
 }
 
+export enum SUBSCRIPTION_TYPE_ROUTERS {
+  GET_ALL = 'catalogs/subscriptionType/all',
+  GET_BY_ID = 'catalogs/subscriptionType',
+  ADD = 'catalogs/subscriptionType/add',
+  UPDATE = `catalogs/subscriptionType`,
+  DELETE = 'catalogs/subscriptionType'
+}
+
 export enum LINE_OF_BUSSINES_ROUTES {
   GET_ALL = 'catalogs/lineOfBussines/all',
   GET_BY_ID = 'catalogs/lineOfBussines',
