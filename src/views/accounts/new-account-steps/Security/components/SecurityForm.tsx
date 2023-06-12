@@ -465,21 +465,21 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
   return (
     <div>
       {index > 0 && <hr style={{ margin: '40px 0px', backgroundColor: 'lightgray' }} />}
-      {information?.frontingFee <= 0 || isGross ? (
-        <Grid container item xs={12} sm={12}>
-          <FormControl fullWidth sx={{ mb: 5 }}>
-            <div>
-              <span className='switch-text'>Fronting fee </span>
-              <SwitchAlpex innerRef={switchAlpex} checked={frontingFeeEnabled} onClick={handleSwitch} />
-            </div>
-          </FormControl>
+      <Grid container item xs={12} sm={12}>
+        <Grid item xs={6} sm={6}>
+          {information?.frontingFee <= 0 || isGross ? (
+            <FormControl fullWidth sx={{ mb: 5 }}>
+              <div>
+                <span className='switch-text'>Fronting fee </span>
+                <SwitchAlpex innerRef={switchAlpex} checked={frontingFeeEnabled} onClick={handleSwitch} />
+              </div>
+            </FormControl>
+          ) : (
+            <></>
+          )}
         </Grid>
-      ) : (
-        <></>
-      )}
-      <>
-        {!security.id && index > 0 && (
-          <Grid item xs={12} sm={12}>
+        <Grid item xs={6} sm={6}>
+          {!security.id && index > 0 && (
             <div
               className='section action-buttons'
               style={{ float: 'right', marginRight: 'auto', marginBottom: '20px' }}
@@ -495,9 +495,10 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
                 onClick={() => onDeleteItemList(index)}
               />
             </div>
-          </Grid>
-        )}
-      </>
+          )}
+        </Grid>
+      </Grid>
+
       <Grid container spacing={5}>
         {/* Col-1 */}
         <Grid item xs={12} sm={4}>
