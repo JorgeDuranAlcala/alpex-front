@@ -1,14 +1,15 @@
 // ** React Imports
+import { useRouter } from 'next/router'
 import { useState } from 'react'
 
 // ** MUI Imports
+import { Grid, styled } from '@mui/material'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
 import Select, { SelectChangeEvent } from '@mui/material/Select'
 import { GridRowId } from '@mui/x-data-grid'
-import { useRouter } from 'next/router'
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
@@ -17,7 +18,6 @@ import ModalAction from './modal'
 
 // ** Custom Hooks imports
 import { formatStatusToNumber } from '@/utils/formatStatus'
-import { Grid } from '@mui/material'
 import Chip from 'src/@core/components/mui/chip'
 import useAccountTable from 'src/hooks/accounts/Table/useAccountTable'
 import { useAppDispatch, useAppSelector } from 'src/store'
@@ -25,6 +25,21 @@ import { deleteAccountFilter } from 'src/store/apps/accounts'
 import { IFilters } from 'src/types/apps/accountsTypes'
 import CustomAlert, { IAlert } from 'src/views/custom/alerts'
 
+
+const AddAccountButton = styled(Button)(({ theme }) => ({
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  mb: 2,
+  width: '100%',
+  minWidth: '209px',
+  maxWidth: '209px',
+  height: '42px',
+
+  [theme.breakpoints.down('sm')]: {
+    maxWidth: '100%',
+  }
+}))
 enum EActions {
   SELECT_ALL = 'Select all',
   CHANGE_STATUS = 'Change status',
@@ -302,7 +317,7 @@ const TableHeader: React.FC<ITableHeader> = ({
           />
         </Grid>
         {accountsReducer.filters.length === 0 ? null : (
-          <Grid item xs={12} sm={6} md={7} sx={{ height: 'auto' }}>
+          <Grid item xs={12} sm={5} md={7} sx={{ height: 'auto' }}>
             {accountsReducer.filters.map((filter, index) =>
               filter.unDeleteable ? (
                 <Chip
@@ -338,15 +353,18 @@ const TableHeader: React.FC<ITableHeader> = ({
             )}
           </Grid>
         )}
-        <Grid item xs={12} sm={3} md={3}>
+        <Grid item xs={12} sm={4} md={3}>
           {!badgeData.status ? (
-            <Button
-              variant='contained'
-              onClick={() => router.push('/accounts/new-account')}
-              sx={{ width: '100%', height: '42px', mb: 2 }}
-            >
-              ADD ACCOUNT &nbsp; <Icon icon='mdi:plus' />
-            </Button>
+            <Box sx={{ width: '100%', display: 'flex', justifyContent: 'flex-end' }}>
+
+              <AddAccountButton
+                variant='contained'
+                onClick={() => router.push('/accounts/new-account')}
+
+              >
+                ADD ACCOUNT &nbsp; <Icon icon='mdi:plus' />
+              </AddAccountButton>
+            </Box>
           ) : (
             <CustomAlert {...badgeData} />
           )}

@@ -1,10 +1,22 @@
-import { styled } from '@mui/material/styles'
+import { Box, styled } from '@mui/material';
 
 const Container = styled('div')({
   height: '100%',
   width: '100%',
   marginTop: '-23px'
 })
+
+const TopCardsContainer = styled(Box)(() => ({
+  display: 'flex',
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  gap: '16px',
+  marginBottom: '16px',
+
+  '@media screen and (max-width: 990px)': {
+    flexDirection: 'column',
+  }
+}));
 
 const ContainerHeader = styled('div')({
   display: 'flex',
@@ -33,8 +45,10 @@ const Frame = styled('div')({
   alignItems: 'flex-start',
   gap: '16px',
   width: '100%',
-  height: '393px',
+
+  // height: '393px',
   justifyContent: 'space-between',
   marginBottom: '16px'
 })
-export { Container, ContainerHeader, Body, Frame }
+export { Body, Container, ContainerHeader, Frame, TopCardsContainer };
+

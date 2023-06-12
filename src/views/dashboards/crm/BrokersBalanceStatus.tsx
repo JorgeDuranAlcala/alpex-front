@@ -1,7 +1,6 @@
 // ** MUI Imports
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import { Box, MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material'
-import Card from '@mui/material/Card'
 import { useTheme } from '@mui/material/styles'
 import { ApexOptions } from 'apexcharts'
 import { useState } from 'react'
@@ -12,14 +11,18 @@ import UserThemeOptions from 'src/layouts/UserThemeOptions'
 // import ModalReinsurers from './ModalReinsurers'
 
 import {
+  AccountsDescription,
+  AccountsNumber,
   ContainerAccounts,
+  ContainerCard,
   ContainerCircularProgress,
   ContainerFrame,
   ContainerPayments,
+  ContainerRightFrame,
   ContainerTitle,
   ContainerTotal,
   ContentTextAccounts,
-  HeaderTitle
+  HeaderTitle,
 } from 'src/styles/Dashboard/Brokers/brokerBalanceStatus'
 
 const BrokersBalanceStatus = () => {
@@ -82,7 +85,7 @@ const BrokersBalanceStatus = () => {
   const lato = userThemeConfig.typography?.fontFamilyLato
 
   return (
-    <Card sx={{ position: 'relative', width: '100%', height: '393px' }}>
+    <ContainerCard>
       <HeaderTitle>
         <ContainerTitle>
           <Typography variant='h6' sx={{ color: title, fontFamily: inter }}>
@@ -119,61 +122,55 @@ const BrokersBalanceStatus = () => {
           <ContainerAccounts>
             <ContentTextAccounts>
               <Box sx={{ width: '24px', height: '24px', backgroundColor: '#72E128', borderRadius: '4px' }} />
-              <Typography sx={{ fontSize: '16px', fontFamily: lato }}>Paid accounts:</Typography>
+              <AccountsDescription>Paid accounts:</AccountsDescription>
             </ContentTextAccounts>
-            <Typography
-              sx={{
-                fontSize: '16px',
-                fontWeight: '700',
-                color: userThemeConfig.palette?.text.paidsText,
-                fontFamily: lato
-              }}
-            >
+            <AccountsNumber>
               29
-            </Typography>
+            </AccountsNumber>
           </ContainerAccounts>
           <ContainerAccounts>
             <ContentTextAccounts>
               <Box sx={{ width: '24px', height: '24px', backgroundColor: '#C4F6B3', borderRadius: '4px' }} />
-              <Typography sx={{ fontSize: '16px', fontFamily: lato }}>Unpaid accounts:</Typography>
+              <AccountsDescription>Unpaid accounts:</AccountsDescription>
             </ContentTextAccounts>
+            <AccountsNumber>
+              21
+            </AccountsNumber>
+          </ContainerAccounts>
+
+        </ContainerPayments>
+        <ContainerRightFrame>
+
+          <ContainerCircularProgress>
             <Typography
               sx={{
-                fontSize: '16px',
-                fontWeight: '700',
-                color: userThemeConfig.palette?.text.paidsText,
-                fontFamily: lato
+                position: 'absolute',
+                fontSize: '14px',
+                fontWeight: '600',
+                color: 'rgba(76,78,100,0.87)',
+                letterSpacing: 0.3,
+                bottom: '55%'
               }}
             >
-              21
+              Paid
             </Typography>
-          </ContainerAccounts>
-          <ContainerTotal>
-            <Typography sx={{ fontSize: '14px', fontWeight: '700', color: '#444444', fontFamily: lato }}>
-              Total debt:
-            </Typography>
-            <Typography sx={{ fontSize: '15px', fontWeight: '700', color: '#444444', fontFamily: lato }}>
-              $3,500,000.00 USD
-            </Typography>
-          </ContainerTotal>
-        </ContainerPayments>
-        <ContainerCircularProgress>
-          <Typography
-            sx={{
-              position: 'absolute',
-              fontSize: '14px',
-              fontWeight: '600',
-              color: 'rgba(76,78,100,0.87)',
-              letterSpacing: 0.3,
-              bottom: '55%'
-            }}
-          >
-            Paid
-          </Typography>
-          <ReactApexcharts type='radialBar' height={240} width={240} series={[64]} options={options} />
-        </ContainerCircularProgress>
+
+            <ReactApexcharts type='radialBar' height={240} width={240} series={[64]} options={options} />
+          </ContainerCircularProgress>
+        </ContainerRightFrame>
       </ContainerFrame>
-    </Card>
+      <ContainerFrame sx={{ paddingBottom: '25px' }}>
+
+        <ContainerTotal>
+          <Typography sx={{ fontSize: '14px', fontWeight: '700', color: '#444444', fontFamily: lato }}>
+            Total debt:
+          </Typography>
+          <Typography sx={{ fontSize: '15px', fontWeight: '700', color: '#444444', fontFamily: lato }}>
+            $3,500,000.00 USD
+          </Typography>
+        </ContainerTotal>
+      </ContainerFrame>
+    </ContainerCard>
   )
 }
 
