@@ -784,7 +784,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
 
           {frontingFeeEnabled && security.idCRetroCedantContact?.id && (
             <>
-              <FormControl fullWidth sx={{ mb: 2 }}>
+              <FormControl fullWidth sx={{ mb: 4 }}>
                 <TextField
                   autoFocus
                   disabled
@@ -794,7 +794,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
                   value={security.idCRetroCedantContact?.email ?? ''}
                 />
               </FormControl>
-              <FormControl fullWidth sx={{ mb: 2 }}>
+              <FormControl fullWidth sx={{ mb: 4 }}>
                 <TextField
                   autoFocus
                   fullWidth
@@ -804,7 +804,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
                   value={security.idCRetroCedantContact?.phone ?? ''}
                 />
               </FormControl>
-              <FormControl fullWidth sx={{ mb: 2 }}>
+              <FormControl fullWidth sx={{ mb: 4 }}>
                 <InputLabel id='Contactcountry'>Contact country</InputLabel>
                 <Select
                   id='outlined-Name'
