@@ -35,6 +35,9 @@ const TypesOFLimit = () => {
   const [alertText, setAlertText] = useState('')
   const [alertIcon, setAlertIcon] = useState('')
 
+  //edit modal
+  const [value, setValue] = useState('')
+
   const triggerAlert = (type: string, text: string) => {
     setAlertType(type)
 
@@ -64,6 +67,7 @@ const TypesOFLimit = () => {
 
   const handleEditType = (type: ITypes) => {
     setCurrentType(type)
+    setValue(type.name)
     setSelectedType(null)
     setOpenEdit(true)
   }
@@ -143,35 +147,31 @@ const TypesOFLimit = () => {
               const showActions = type === selectedType
 
               return (
-                <>
-                  <div className='list-item'>
-                    <div className='item-name' key={type.id}>
-                      {type.name}
-                    </div>
-                    <div
-                      className='item-menu'
-                      onClick={() => {
-                        if (showActions) {
-                          setSelectedType(null)
-                        } else {
-                          setSelectedType(type)
-                        }
-                      }}
-                    >
-                      <Icon icon='mdi:dots-vertical' />
-                      {showActions && (
-                        <div className='actions-menu'>
-                          <div className='menu-option' onClick={() => handleEditType(type)}>
-                            Edit
-                          </div>
-                          <div className='menu-option' onClick={() => handleDeleteType(type.id)}>
-                            Delete
-                          </div>
+                <div className='list-item' key={type.id}>
+                  <div className='item-name'>{type.name}</div>
+                  <div
+                    className='item-menu'
+                    onClick={() => {
+                      if (showActions) {
+                        setSelectedType(null)
+                      } else {
+                        setSelectedType(type)
+                      }
+                    }}
+                  >
+                    <Icon icon='mdi:dots-vertical' />
+                    {showActions && (
+                      <div className='actions-menu'>
+                        <div className='menu-option' onClick={() => handleEditType(type)}>
+                          Edit
                         </div>
-                      )}
-                    </div>
+                        <div className='menu-option' onClick={() => handleDeleteType(type.id)}>
+                          Delete
+                        </div>
+                      </div>
+                    )}
                   </div>
-                </>
+                </div>
               )
             })}
           </div>
@@ -186,6 +186,8 @@ const TypesOFLimit = () => {
           title='Add Type of limit'
           label='Type of limit'
           actionBtnText='CREATE'
+          value={value}
+          setValue={setValue}
         />
 
         <AddEditModal
@@ -197,6 +199,8 @@ const TypesOFLimit = () => {
           title='Edit Type of limit'
           label='Type of limit'
           actionBtnText='EDIT'
+          value={value}
+          setValue={setValue}
         />
 
         <DeleteModal

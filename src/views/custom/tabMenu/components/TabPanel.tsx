@@ -1,4 +1,3 @@
-// import AlertAddUser from '@/views/users/AlertUserAdded'
 import { Box, Typography } from '@mui/material'
 import { ReactNode } from 'react'
 
@@ -13,7 +12,6 @@ export default function TabPanel(props: TabPanelProps) {
 
   return (
     <>
-      {/* <AlertAddUser /> */}
       {value === index && (
         <div
           role='tabpanel'
