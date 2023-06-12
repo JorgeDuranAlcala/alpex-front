@@ -17,15 +17,15 @@ const customTheme = {
     color: '#828597'
   },
   success: {
-    backgroundColor: '#72E12840',
-    color: '#72E128'
+    backgroundColor: 'rgba(114, 225, 40, .22)',
+    color: '#52B611'
   },
   error: {
-    backgroundColor: '#FF4D4940',
-    color: '#FF4D49'
+    backgroundColor: 'rgba(255, 77, 73, .22)',
+    color: '#E04440'
   },
   warning: {
-    backgroundColor: '#FFB446',
+    backgroundColor: 'rgba(255, 180, 70, .22)',
     color: '#EF9713'
   },
   info: {
@@ -42,7 +42,7 @@ const CustomAlert = (props: IAlert) => {
   }, [props])
 
   return (
-    <Snackbar open={open} autoHideDuration={3000} onClose={() => setOpen(false)}>
+    <Snackbar open={open} onClose={() => setOpen(false)}>
       <Alert
         onClose={() => setOpen(false)}
         sx={{
