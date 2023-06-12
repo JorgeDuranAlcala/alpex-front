@@ -124,6 +124,10 @@ const Security = ({ onStepChange }: SecurityProps) => {
   }
   const handleNextStep = () => {
     const isError = allErrors.find(error => error)
+    setBadgeData({
+      ...badgeData,
+      open: false
+    })
     setActiveErrors(isError || false)
     if (!isError) setOpen(true)
   }
