@@ -699,7 +699,7 @@
   display: none;
 }
 
-.form-header-section:first-child {
+.form-header-section:first-of-type {
   grid-column: span 2;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -822,7 +822,7 @@
   margin-bottom: 20px;
 }
 
-.form-header-grid:first-child {
+.form-header-grid:first-of-type {
   grid-column: span 10;
 }
 
