@@ -47,7 +47,7 @@ const initialErrorValues: errorsSecurity = {
   idCRetroCedant: ''
 }
 export const FormSection = ({ index, security, onDeleteItemList }: FormSectionProps) => {
-  const [isGross, setIsGross] = useState<boolean>(false)
+  const [isGross, setIsGross] = useState<boolean>(security.isGross)
 
   const [errorsSecurity, setErrorsSecurity] = useState<errorsSecurity>(initialErrorValues)
 
@@ -132,7 +132,12 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
     reinsuranceBrokerage: yup
       .number()
       .transform((_, val) => (val === Number(val) ? val : null))
-      .required('This field is required')
+      .test('', 'This field is required', value => {
+        const val = value || 0
+        if (isGross) return +val > 0
+
+        return true
+      })
       .max(100),
     brokerAgeAmount: yup
       .number()
@@ -178,6 +183,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
       .transform((_, val) => (val === Number(val) ? val : null))
       .test('', 'This field is required', value => {
         const val = value || 0
+
         if (isGross) return +val > 0
 
         return true
@@ -371,19 +377,20 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
       .filter(reinsure => !companiesSelect.includes(reinsure.id) || security?.idCReinsuranceCompany?.id === reinsure.id)
       .find(reinsurer => reinsurer.id === Number(e.target.value))
 
+    const tempSecurities = [...securities]
     if (avaliableCompanies) {
-      const tempSecurities = [...securities]
       tempSecurities[index] = {
         ...tempSecurities[index],
         idCReinsuranceCompany: avaliableCompanies,
-        frontingFeeActive: avaliableCompanies.special,
+        frontingFeeActive: false,
         isGross: avaliableCompanies.special,
         netPremiumAt100: avaliableCompanies.special ? information.grossPremium : information.netPremium
       }
 
+      setIsGross(() => avaliableCompanies.special)
       setFrontingFeeEnabled(() => false)
-      validateForm(tempSecurities[index])
       calculateSecurities(tempSecurities)
+      validateForm(tempSecurities[index])
     }
   }
   const validateForm = (securityParam: SecurityDto) => {
@@ -445,6 +452,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
 
     setFrontingFeeEnabled(security.frontingFeeActive)
     setIsGross(security.isGross)
+    validateForm(security)
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [security])
@@ -470,7 +478,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
         <></>
       )}
       <>
-        {!security.id && (
+        {!security.id && index > 0 && (
           <Grid item xs={12} sm={12}>
             <div
               className='section action-buttons'
