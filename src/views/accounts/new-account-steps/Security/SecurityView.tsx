@@ -370,7 +370,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
                   className='section action-buttons'
                   style={{ float: 'right', marginRight: 'auto', marginBottom: '20px' }}
                 >
-                  <Button className='btn-save' variant='contained' onClick={SaveData}>
+                  <Button className='btn-save' color='success' variant='contained' onClick={SaveData}>
                     <div className='btn-icon'>
                       <Icon icon='mdi:content-save' />
                     </div>
