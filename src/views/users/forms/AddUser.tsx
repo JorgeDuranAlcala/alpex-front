@@ -28,10 +28,12 @@ import { useAppDispatch, useAppSelector } from 'src/store'
 // import CompanySelect from '@/views/custom/select/CompanySelect'
 // import useAxiosErrorHandling from '@/hooks/catalogs/users/handleError'
 
+import AlertAddUser from '@/views/users/AlertUserAdded'
 import { UserSection } from 'src/styles/Forms/usersSection'
 import CountrySelect, { ICountry } from 'src/views/custom/select/CountrySelect'
 import { StyledDescription, StyledSubtitle, StyledTitle } from 'src/views/custom/typography'
-import AlertAddUser from '../AlertUserAdded'
+
+// import AlertAddUser from '../AlertUserAdded'
 
 interface FormInfo {
   name: string
@@ -149,7 +151,7 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
   const [idRole, setIdRole] = useState<any>('')
   const [informativeIdRole, setInformativeIdRole] = useState<any>('')
 
-  // const [open, setopen] = useState(true)
+  const [open, setOpen] = useState(false)
 
   // const [selectCompany, setSelectCompany] = useState<ReinsuranceCompanyDto | undefined | string>()
   // const flagCompany = true
@@ -204,10 +206,10 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
                   id: parseInt(informativeIdRole)
                 }
               ]
-            : parseInt(useWatchRole) && !parseInt(useWatchDualRole)
+            : parseInt(idRole) && !parseInt(informativeIdRole)
             ? [
                 {
-                  id: parseInt(useWatchRole)
+                  id: parseInt(idRole)
                 }
               ]
             : [],
@@ -367,6 +369,24 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
     }
   }, [reset, user?.statusCode])
 
+  console.log(user?.statusCode)
+
+  useEffect(() => {
+    if (user?.statusCode === 201) {
+      setOpen(true)
+    }
+    const anchor = document.querySelector('body')
+    if (anchor) {
+      anchor.scrollIntoView({ behavior: 'smooth' })
+    }
+  }, [user?.statusCode])
+
+  useEffect(() => {
+    setTimeout(() => {
+      setOpen(false)
+    }, 3000)
+  }, [open])
+
   // useEffect(() => {
 
   // if (open) {
@@ -377,19 +397,12 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
   // }, [open])
 
   // console.log({ open })
-  // useEffect(() => {
-  //   setTimeout(() => {
-  //     // setOpen(false)
-  //     document.body.classList.remove('alertUser')
-  //   }, 5000)
-  // }, [])
 
   useEffect(() => {
-    if (selectUser) {
-      const reducersCompany = usersReducer?.current?.idCompany?.id
-      const companySelect = company?.find(c => c.id === reducersCompany)
-      setIdCompany(companySelect?.id.toString())
-    } // eslint-disable-next-line react-hooks/exhaustive-deps
+    const reducersCompany = usersReducer?.current?.idCompany?.id
+    const companySelect = company?.find(c => c.id === reducersCompany)
+    setIdCompany(companySelect?.id.toString())
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [company, setIdCompany])
 
   // useEffect(() => {
@@ -420,7 +433,7 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
 
   return (
     <>
-      <AlertAddUser />
+      {open && <AlertAddUser />}
       <div style={{ padding: '20px 20px 80px' }}>
         <UserSection>
           <StyledTitle sx={{ pb: 2 }}>{title}</StyledTitle>
@@ -649,7 +662,6 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
                               onBlur={onBlur}
                               onChange={e => {
                                 onChange(e.target.value)
-                                setIdCompany(e.target.value)
                               }}
                               labelId='broker'
                             >
@@ -662,7 +674,7 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
                           </>
                         )}
                       />
-                      {errors.company && (
+                      {errors?.company && (
                         <FormHelperText sx={{ color: 'error.main' }}>This action is required.</FormHelperText>
                       )}
                     </FormControl>
