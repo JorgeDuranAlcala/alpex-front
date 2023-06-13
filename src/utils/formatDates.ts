@@ -48,3 +48,7 @@ export const formatTime = (seconds: number): string => {
 
   return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`
 }
+
+export const delayMs = (ms: number) => {
+  return new Promise<void>(resolve => setTimeout(resolve, ms))
+}

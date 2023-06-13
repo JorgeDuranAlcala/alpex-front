@@ -26,7 +26,7 @@ import { useAppDispatch, useAppSelector } from 'src/store'
 import { updateFormsData } from 'src/store/apps/accounts'
 
 // ** Utils
-import { formatUTC } from '@/utils/formatDates'
+import { delayMs, formatUTC } from '@/utils/formatDates'
 import { formatInformationDoctos, getFileFromUrl } from '@/utils/formatDoctos'
 
 type InformationProps = {
@@ -206,30 +206,31 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
       idTypeOfLimit: Number(placementStructure.typeOfLimit)
     })
 
+    await delayMs(1000)
     if (typeof res === 'string' && res === 'error') {
-      setTimeout(() => {
-        setBadgeData({
-          message: `ERROR UPDATING INFORMATION`,
-          theme: 'error',
-          open: true,
-          status: 'error',
-          icon: (
-            <Icon
-              style={{
-                color: '#FF4D49',
-                marginTop: '-1px'
-              }}
-              icon='jam:alert'
-            />
-          )
-        })
-      }, 1000)
+      setBadgeData({
+        message: `ERROR UPDATING INFORMATION`,
+        theme: 'error',
+        open: true,
+        status: 'error',
+        icon: (
+          <Icon
+            style={{
+              color: '#FF4D49',
+              marginTop: '-1px'
+            }}
+            icon='jam:alert'
+          />
+        ),
+        disableAutoHide: true
+      })
     } else {
       setBadgeData({
         message: `UPDATED SUCCESSFULLY`,
         status: 'success',
         open: true,
-        icon: <Icon icon='ic:baseline-check-circle' />
+        icon: <Icon icon='ic:baseline-check-circle' />,
+        disableAutoHide: true
       })
     }
 
@@ -279,30 +280,31 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
 
     const res = await addInformation(dataToSave)
 
+    await delayMs(1000)
     if (typeof res === 'string' && res === 'error') {
-      setTimeout(() => {
-        setBadgeData({
-          message: `ERROR SAVING INFORMATION`,
-          theme: 'error',
-          open: true,
-          status: 'error',
-          icon: (
-            <Icon
-              style={{
-                color: '#FF4D49',
-                marginTop: '-1px'
-              }}
-              icon='jam:alert'
-            />
-          )
-        })
-      }, 1000)
+      setBadgeData({
+        message: `ERROR SAVING INFORMATION`,
+        theme: 'error',
+        open: true,
+        status: 'error',
+        icon: (
+          <Icon
+            style={{
+              color: '#FF4D49',
+              marginTop: '-1px'
+            }}
+            icon='jam:alert'
+          />
+        ),
+        disableAutoHide: true
+      })
     } else {
       setBadgeData({
         message: `SAVED SUCCESSFULLY`,
         status: 'success',
         open: true,
-        icon: <Icon icon='ic:baseline-check-circle' />
+        icon: <Icon icon='ic:baseline-check-circle' />,
+        disableAutoHide: true
       })
     }
 
@@ -374,16 +376,27 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
     const formatedDoctos = await formatInformationDoctos(userFile, idAccount, 1, doctoIdByName)
     const newDoctoIdByName: any = {}
 
-    setTimeout(() => {
+    await delayMs(1000)
+    if (formatedDoctos.length === 0) {
       setBadgeData({
-        message: `UPDATING DOCUMENTS`,
-        status: 'secondary',
-        open: true,
-        icon: <CircularProgress size={20} color='primary' />,
-        backgroundColor: '#828597',
-        theme: 'info'
+        message: '',
+        status: undefined,
+        icon: undefined,
+        open: false
       })
-    }, 1000)
+
+      return
+    }
+
+    setBadgeData({
+      message: `UPDATING DOCUMENTS`,
+      status: 'secondary',
+      open: true,
+      icon: <CircularProgress size={20} color='primary' />,
+      backgroundColor: '#828597',
+      theme: 'info',
+      disableAutoHide: true
+    })
 
     for (const docto of formatedDoctos) {
       const res = await uploadInformationDocument(docto)
@@ -406,26 +419,29 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
               }}
               icon='jam:alert'
             />
-          )
+          ),
+          disableAutoHide: true
+        })
+      } else {
+        setBadgeData({
+          message: `DOC: "${docto.name.toUpperCase()}", SAVED SUCCESSFULLY`,
+          status: 'success',
+          open: true,
+          icon: <Icon icon='ic:baseline-check-circle' />,
+          theme: 'success',
+          disableAutoHide: true
         })
       }
+
+      await delayMs(800)
     }
 
-    setTimeout(() => {
-      setBadgeData({
-        message: `DOCUMENTS SAVED SUCCESSFULLY`,
-        status: 'success',
-        open: true,
-        icon: <Icon icon='ic:baseline-check-circle' />
-      })
-      setTimeout(() => {
-        setBadgeData({
-          message: '',
-          status: undefined,
-          icon: undefined
-        })
-      }, 3000)
-    }, 1000)
+    setBadgeData({
+      message: '',
+      status: undefined,
+      icon: undefined,
+      open: false
+    })
 
     setDoctoIdByName({
       ...doctoIdByName,
@@ -441,7 +457,8 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
         open: true,
         icon: <CircularProgress size={20} color='primary' />,
         backgroundColor: '#828597',
-        theme: 'info'
+        theme: 'info',
+        disableAutoHide: true
       })
 
       await updateInformation()
@@ -454,7 +471,8 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
         open: true,
         icon: <CircularProgress size={20} color='secondary' />,
         backgroundColor: '#828597',
-        theme: 'secondary'
+        theme: 'secondary',
+        disableAutoHide: true
       })
 
       const res = await saveInformation()
