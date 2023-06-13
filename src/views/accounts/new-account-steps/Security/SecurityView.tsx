@@ -102,6 +102,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
         })
       }
       let dataForm: FormSecurity = {
+        ...allFormData,
         formData: tempSecurities,
         ...CalculateSecurity.getData(tempSecurities, information)
       }
@@ -269,7 +270,10 @@ const Security = ({ onStepChange }: SecurityProps) => {
       account.securityTotal &&
         setAllFormData({
           ...allFormData,
-          ...account.securityTotal
+          recievedNetPremium: Number(account.securityTotal.receivedNetPremium),
+          distribuitedNetPremium: Number(account.securityTotal.distributedNetPremium),
+          diference: Number(account.securityTotal.difference),
+          id: Number(account.securityTotal.id)
         })
     }
 
@@ -343,6 +347,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
                     inputProps={{
                       suffix: ' '
                     }}
+                    disabled
                   />
                   {false && <FormHelperText sx={{ color: 'error.main' }}>Invalid field</FormHelperText>}
                 </FormControl>
