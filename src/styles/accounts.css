@@ -52,8 +52,9 @@
 /* - New accoun styles ----------------------------------------------------------------------------------------------  */
 
 .new-account .MuiCard-root {
-  margin: 0px 0 20px;
-  overflow: inherit;
+    margin: 0 0 20px;
+    overflow: inherit;
+    height: 100%;
 }
 
 /*---- Header----*/
@@ -122,6 +123,7 @@
   justify-content: flex-start;
   height: fit-content;
 }
+
 
 .modal-wrapper .headers,
 .modal-wrapper .history-status {
@@ -363,18 +365,18 @@
   align-items: center;
   display: flex;
   flex-wrap: wrap;
+  gap: 2%;
   justify-content: flex-start;
 }
 
 .upload-btn .file-details {
-  width: 30%;
+  width: 32%;
   align-items: center;
   display: flex;
   background-color: rgba(130, 133, 151, 0.05);
   margin-bottom: 20px;
   padding: 5px 10px;
   border-radius: 8px;
-  margin-right: 15px;
   justify-content: space-between;
 }
 

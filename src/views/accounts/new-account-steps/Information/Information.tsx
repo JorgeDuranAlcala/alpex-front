@@ -26,7 +26,7 @@ import { useAppDispatch, useAppSelector } from 'src/store'
 import { updateFormsData } from 'src/store/apps/accounts'
 
 // ** Utils
-import { formatUTC } from '@/utils/formatDates'
+import { delayMs, formatUTC } from '@/utils/formatDates'
 import { formatInformationDoctos, getFileFromUrl } from '@/utils/formatDoctos'
 
 type InformationProps = {
@@ -81,16 +81,17 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
   const inter = userThemeConfig.typography?.fontFamilyInter
   const [makeValidations, setMakeValidations] = useState(false)
-  const [makeValidationsPlacement, setMakeValidationsPlacement] = useState(false)
+  const [disableSave, setDisableSave]=useState(false)
   const [changeTitle, setChangeTitle] = useState(false)
 
   //Validaciones
-  const [basicInfoValidated, setbasicInfoValidated] = useState(false)
-  const [placementStructureValidated, setPlacementStructureValidated] = useState(false)
   const [allValidated, setAllValidated] = useState(false)
+  const [validationCount, setValidationCount] = useState(0);
+  const [validatedForms, setValidatedForms] = useState(0);
 
   const [open, setOpen] = useState<boolean>(false)
   const [nextClicked, setNextClicked] = useState<boolean>(false)
+  const [saveClicked, setSaveClicked] = useState<boolean>(false)
   const [badgeData, setBadgeData] = useState<IAlert>({
     message: '',
     theme: 'success',
@@ -106,11 +107,9 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   //store
   const idAccount = useAppSelector(state => state.accounts?.formsData?.form1?.id)
   const lastForm1Information = useAppSelector(state => state.accounts?.formsData?.form1)
-
-  // const [urls, setUrls] = useState<string[]>([]);
   const [fileUrls, setFileUrls] = useState<string[]>([])
 
-  // let fileUrls = File []
+
   // ** Custom Hooks
   const { getInformaByIdAccount } = useFindInformationByIdAccount()
   const { addInformation } = useAddInformation()
@@ -206,30 +205,31 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
       idTypeOfLimit: Number(placementStructure.typeOfLimit)
     })
 
+    await delayMs(1000)
     if (typeof res === 'string' && res === 'error') {
-      setTimeout(() => {
-        setBadgeData({
-          message: `ERROR UPDATING INFORMATION`,
-          theme: 'error',
-          open: true,
-          status: 'error',
-          icon: (
-            <Icon
-              style={{
-                color: '#FF4D49',
-                marginTop: '-1px'
-              }}
-              icon='jam:alert'
-            />
-          )
-        })
-      }, 1000)
+      setBadgeData({
+        message: `ERROR UPDATING INFORMATION`,
+        theme: 'error',
+        open: true,
+        status: 'error',
+        icon: (
+          <Icon
+            style={{
+              color: '#FF4D49',
+              marginTop: '-1px'
+            }}
+            icon='jam:alert'
+          />
+        ),
+        disableAutoHide: true
+      })
     } else {
       setBadgeData({
         message: `UPDATED SUCCESSFULLY`,
         status: 'success',
         open: true,
-        icon: <Icon icon='ic:baseline-check-circle' />
+        icon: <Icon icon='ic:baseline-check-circle' />,
+        disableAutoHide: true
       })
     }
 
@@ -279,30 +279,31 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
 
     const res = await addInformation(dataToSave)
 
+    await delayMs(1000)
     if (typeof res === 'string' && res === 'error') {
-      setTimeout(() => {
-        setBadgeData({
-          message: `ERROR SAVING INFORMATION`,
-          theme: 'error',
-          open: true,
-          status: 'error',
-          icon: (
-            <Icon
-              style={{
-                color: '#FF4D49',
-                marginTop: '-1px'
-              }}
-              icon='jam:alert'
-            />
-          )
-        })
-      }, 1000)
+      setBadgeData({
+        message: `ERROR SAVING INFORMATION`,
+        theme: 'error',
+        open: true,
+        status: 'error',
+        icon: (
+          <Icon
+            style={{
+              color: '#FF4D49',
+              marginTop: '-1px'
+            }}
+            icon='jam:alert'
+          />
+        ),
+        disableAutoHide: true
+      })
     } else {
       setBadgeData({
         message: `SAVED SUCCESSFULLY`,
         status: 'success',
         open: true,
-        icon: <Icon icon='ic:baseline-check-circle' />
+        icon: <Icon icon='ic:baseline-check-circle' />,
+        disableAutoHide: true
       })
     }
 
@@ -374,16 +375,27 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
     const formatedDoctos = await formatInformationDoctos(userFile, idAccount, 1, doctoIdByName)
     const newDoctoIdByName: any = {}
 
-    setTimeout(() => {
+    await delayMs(1000)
+    if (formatedDoctos.length === 0) {
       setBadgeData({
-        message: `UPDATING DOCUMENTS`,
-        status: 'secondary',
-        open: true,
-        icon: <CircularProgress size={20} color='primary' />,
-        backgroundColor: '#828597',
-        theme: 'info'
+        message: '',
+        status: undefined,
+        icon: undefined,
+        open: false
       })
-    }, 1000)
+
+      return
+    }
+
+    setBadgeData({
+      message: `UPDATING DOCUMENTS`,
+      status: 'secondary',
+      open: true,
+      icon: <CircularProgress size={20} color='primary' />,
+      backgroundColor: '#828597',
+      theme: 'info',
+      disableAutoHide: true
+    })
 
     for (const docto of formatedDoctos) {
       const res = await uploadInformationDocument(docto)
@@ -406,26 +418,29 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
               }}
               icon='jam:alert'
             />
-          )
+          ),
+          disableAutoHide: true
+        })
+      } else {
+        setBadgeData({
+          message: `DOC: "${docto.name.toUpperCase()}", SAVED SUCCESSFULLY`,
+          status: 'success',
+          open: true,
+          icon: <Icon icon='ic:baseline-check-circle' />,
+          theme: 'success',
+          disableAutoHide: true
         })
       }
+
+      await delayMs(800)
     }
 
-    setTimeout(() => {
-      setBadgeData({
-        message: `DOCUMENTS SAVED SUCCESSFULLY`,
-        status: 'success',
-        open: true,
-        icon: <Icon icon='ic:baseline-check-circle' />
-      })
-      setTimeout(() => {
-        setBadgeData({
-          message: '',
-          status: undefined,
-          icon: undefined
-        })
-      }, 3000)
-    }, 1000)
+    setBadgeData({
+      message: '',
+      status: undefined,
+      icon: undefined,
+      open: false
+    })
 
     setDoctoIdByName({
       ...doctoIdByName,
@@ -441,12 +456,14 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
         open: true,
         icon: <CircularProgress size={20} color='primary' />,
         backgroundColor: '#828597',
-        theme: 'info'
+        theme: 'info',
+        disableAutoHide: true
       })
 
       await updateInformation()
       await uploadDoctos(idAccount)
       dispatch(updateFormsData({ form1: { basicInfo, placementStructure, userFile, id: idAccount } }))
+      setDisableSave(false)
     } else {
       setBadgeData({
         message: `SAVING INFORMATION`,
@@ -454,10 +471,12 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
         open: true,
         icon: <CircularProgress size={20} color='secondary' />,
         backgroundColor: '#828597',
-        theme: 'secondary'
+        theme: 'secondary',
+        disableAutoHide: true
       })
 
       const res = await saveInformation()
+      setDisableSave(false)
       localStorage.setItem('idAccount', String(res.account.id))
       await uploadDoctos(res.account.id)
       dispatch(updateFormsData({ form1: { basicInfo, placementStructure, userFile, id: res.account.id } }))
@@ -468,57 +487,48 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
 
   //Evento que controla el evento de continuar
   const handleNextStep = async () => {
-    if (nextClicked) {
-      if (basicInfoValidated && placementStructureValidated) {
+
+    if (allValidated) {
         await handleSaveInformation()
         onStepChange(2)
-      }
     }
     handleCloseModal()
   }
 
-  const verifyValidations = async () => {
-    if (placementStructureValidated && basicInfoValidated) {
-      setAllValidated(true)
-    } else {
-      setAllValidated(false)
-    }
-  }
-
-  //Evento para controlar el botÃ³n de save
-  const handleSave = () => {
-    // if (nextClicked) {
-    if (basicInfoValidated) {
-      handleSaveInformation()
+  const handleValidationComplete = (valid: boolean) => {
+    setValidationCount((prevCount) => prevCount + 1);
+    if(valid){
+     setValidatedForms((prevCount) => prevCount + 1);
     }
 
-    // }
+  };
+
+
+  const handleAction = (action: string) => {
+    setValidationCount(0);
+    setValidatedForms(0);
+    switch (action) {
+      case 'save':
+        setSaveClicked(true)
+        break;
+      case 'next':
+        setNextClicked(true)
+        break;
+      default:
+        break;
+    }
+
+    setMakeValidations(true)
+
   }
+
 
   const handleCloseModal = () => {
     setOpen(false)
   }
 
-  const handleNext = () => {
-    setNextClicked(true)
-    setOpen(true)
-    setMakeValidations(true)
-    setMakeValidationsPlacement(true)
-  }
-
   const resetMakeValidations = () => {
     setMakeValidations(false)
-  }
-
-  const resetMakeValidationsPlacements = () => {
-    setMakeValidationsPlacement(false)
-  }
-
-  const setValidBasicInfo = (valid: boolean) => {
-    setbasicInfoValidated(valid)
-  }
-  const setValidPlacementStructure = (valid: boolean) => {
-    setPlacementStructureValidated(valid)
   }
 
   const onSubmittedFiles = (change: boolean) => {
@@ -532,6 +542,11 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   }, [])
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [allValidated])
+
+  useEffect(() => {
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [basicInfo, setBasicInfo])
 
@@ -602,18 +617,30 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [idAccount])
 
-  useEffect(() => {
-    async function verify() {
-      await verifyValidations()
-    }
-    verify()
 
-    if (nextClicked) {
-      setOpen(true)
-    }
+  React.useEffect(() => {
+    if (validationCount === 2 && validatedForms ===2) {
+      setAllValidated(true)
+      if(nextClicked){
+        setOpen(true)
+        setNextClicked(false)
+      }
+      if(saveClicked){
+        setDisableSave(true)
+        handleSaveInformation()
+        setSaveClicked(false)
+      }
+    }else{
+      setAllValidated(false)
+      if(nextClicked){
+        setOpen(true)
+        setNextClicked(false)
+      }
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [basicInfoValidated, placementStructureValidated, setbasicInfoValidated, setPlacementStructureValidated])
+    }
+    resetMakeValidations()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [validationCount, validatedForms]);
 
   return (
     <>
@@ -627,8 +654,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
               basicInfo={basicInfo}
               setBasicInfo={setBasicInfo}
               makeValidations={makeValidations}
-              resetMakeValidations={resetMakeValidations}
-              isValidForm={setValidBasicInfo}
+              onValidationComplete={handleValidationComplete}
             />
           </div>
 
@@ -636,9 +662,8 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
             <PlacementStructure
               placementStructure={placementStructure}
               setPlacementStructure={setPlacementStructure}
-              makeValidations={makeValidationsPlacement}
-              resetMakeValidations={resetMakeValidationsPlacements}
-              isValidForm={setValidPlacementStructure}
+              makeValidations={makeValidations}
+              onValidationComplete={handleValidationComplete}
             />
           </div>
 
@@ -655,19 +680,16 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
           <div className='section action-buttons'>
             <Button
               className='btn-save'
-              onClick={handleSave}
-              onMouseEnter={() => {
-                // setNextClicked(true)
-                setMakeValidations(true)
-              }}
+              onClick={() => handleAction('save')}
               variant='contained'
+              disabled={disableSave}
             >
               <div className='btn-icon'>
                 <Icon icon='mdi:content-save' />
               </div>
               SAVE CHANGES
             </Button>
-            <Button className='btn-next' onClick={handleNext}>
+            <Button className='btn-next' onClick={() => {handleAction('next')}}>
               Next Step
               <div className='btn-icon'>
                 <Icon icon='material-symbols:arrow-right-alt' />
