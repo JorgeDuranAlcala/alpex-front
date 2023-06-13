@@ -102,6 +102,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
         })
       }
       let dataForm: FormSecurity = {
+        ...allFormData,
         formData: tempSecurities,
         ...CalculateSecurity.getData(tempSecurities, information)
       }
@@ -128,6 +129,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
   }
   const handleNextStep = () => {
     const isError = allErrors.find(error => error)
+    debugger
     setBadgeData({
       ...badgeData,
       open: false
@@ -265,7 +267,16 @@ const Security = ({ onStepChange }: SecurityProps) => {
   useEffect(() => {
     if (account && information) {
       calculateSecurities(account.securities)
+      account.securityTotal &&
+        setAllFormData({
+          ...allFormData,
+          recievedNetPremium: Number(account.securityTotal.receivedNetPremium),
+          distribuitedNetPremium: Number(account.securityTotal.distributedNetPremium),
+          diference: Number(account.securityTotal.difference),
+          id: Number(account.securityTotal.id)
+        })
     }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [account, information])
 
@@ -297,7 +308,14 @@ const Security = ({ onStepChange }: SecurityProps) => {
         <form noValidate autoComplete='on'>
           <CardContent>
             {securities.map((security, index) => {
-              return <FormSection key={index} security={security} index={index} onDeleteItemList={DeleteNewForm} />
+              return (
+                <FormSection
+                  key={`${index}-${security?.id}`}
+                  security={security}
+                  index={index}
+                  onDeleteItemList={DeleteNewForm}
+                />
+              )
             })}
             <Grid container spacing={5}>
               <Grid item xs={12} sm={4}>
@@ -329,6 +347,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
                     inputProps={{
                       suffix: ' '
                     }}
+                    disabled
                   />
                   {false && <FormHelperText sx={{ color: 'error.main' }}>Invalid field</FormHelperText>}
                 </FormControl>
