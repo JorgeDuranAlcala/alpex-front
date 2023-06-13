@@ -6,6 +6,7 @@ import CheckIcon from '@mui/icons-material/Check'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import SaveIcon from '@mui/icons-material/Save'
 import * as yup from 'yup'
+import { ValidationError } from 'yup'
 
 import { Box, Button, Checkbox, FormControl, Grid, MenuItem, TextField, Typography } from '@mui/material'
 import Select, { SelectChangeEvent } from '@mui/material/Select'
@@ -49,100 +50,128 @@ yup.setLocale({
   }
 })
 
-// const schema = yup.object().shape({
-//   sublimit: yup
-//     .number()
-//     .transform((_, val) => (val === Number(val) ? val : null))
-//     .test('Validate sublimit', 'Sublimit cannot be greater than limit', (value, context) => {
-//       const val = value || 0
-//       const limit = context.parent.account?.informations[0]?.limit || 0
+const schema = yup.object().shape({
+  sublimit: yup
+    .number()
+    .transform((_, val) => (val === Number(val) ? val : null))
+    .test('Validate sublimit', 'Sublimit cannot be greater than limit', (value, context) => {
+      const val = value || 0
+      let limit = 0
 
-//       return +val <= +limit
-//     })
-//     .required()
-//     .min(0),
-//   yes: yup.boolean().notRequired(),
-//   luc: yup.boolean().notRequired(),
-//   typeDeductibleRadio: yup.string().notRequired(),
-//   percentage: yup
-//     .number()
-//     .transform((_, val) => (val === Number(val) ? val : null))
-//     .test('Validate percentage', 'Percentage cannot be greater than 100', value => {
-//       const val = value || 0
+      if (context.options.context && context.options.context.informations[0]?.limit) {
+        limit = context.options?.context.informations[0]?.limit
+      }
 
-//       return +val <= 100
-//     })
-//     .nullable()
-//     .when('typeDeductibleRadio', {
-//       is: (typeDeductibleRadio: string) => {
-//         return typeDeductibleRadio === 'percentage'
-//       },
-//       then: yup.number().required('Field is required').min(1)
-//     }),
-//   price: yup
-//     .number()
-//     .transform((_, val) => (val === Number(val) ? val : null))
-//     .nullable()
-//     .when('typeDeductibleRadio', {
-//       is: (typeDeductibleRadio: string) => {
-//         return typeDeductibleRadio === 'price'
-//       }, //just an e.g. you can return a function
-//       then: yup.number().required('Field is required').min(1)
-//     }),
-//   min: yup
-//     .number()
-//     .transform((_, val) => (val === Number(val) ? val : null))
-//     .nullable()
-//     .when('typeDeductibleRadio', {
-//       is: (typeDeductibleRadio: string) => {
-//         return typeDeductibleRadio === 'percentage'
-//       },
-//       then: yup.number().required('Field is required').min(1)
-//     }),
-//   typeDeductible: yup.string().when('typeDeductibleRadio', {
-//     is: (typeDeductibleRadio: string) => {
-//       return typeDeductibleRadio === 'percentage'
-//     },
-//     then: yup.string().required('Field is required')
-//   }),
-//   typeBi: yup.string().notRequired(),
-//   days: yup
-//     .number()
-//     .transform((_, val) => (val === Number(val) ? val : null))
-//     .nullable()
-//     .test('Validate days', 'Days cannot be greater than 999', value => {
-//       const val = value || 0
+      return +val <= +limit
+    })
+    .required()
+    .min(1),
+  at100: yup.boolean().notRequired(),
+  yes: yup.boolean().notRequired(),
+  luc: yup.boolean().notRequired(),
+  typeDeductible: yup.string().required().nullable(),
+  deductible: yup
+    .number()
+    .transform((_, val) => (val === Number(val) ? val : null))
+    .test('Validate percentage', 'Field is required', value => {
+      const val = value || 0
 
-//       return +val <= 999
-//     })
-//     .when('typeBi', {
-//       is: (typeBi: string) => {
-//         return typeBi === 'BIDays'
-//       },
-//       then: yup.number().required('Field is required').min(1)
-//     }),
-//   priceInterruption: yup
-//     .number()
-//     .transform((_, val) => (val === Number(val) ? val : null))
-//     .nullable()
-//     .when('typeBi', {
-//       is: (typeBi: string) => {
-//         return typeBi === 'BIPrice'
-//       },
-//       then: yup.number().required('Field is required').min(1)
-//     }),
-//   coinsurance: yup
-//     .number()
-//     .transform((_, val) => (val === Number(val) ? val : null))
-//     .test('Validate coinsurance', 'Coinsurance cannot be greater than 100', value => {
-//       if (value === 0) {
-//         return true
-//       }
-//       const val = value || 0
+      return +val <= 100
+    })
+    .nullable()
+    .when('typeDeductible', {
+      is: (typeDeductible: string) => {
+        return typeDeductible === 'per'
+      },
+      then: yup.number().required('Field is required').min(1, 'Field is required')
+    }),
+  amount: yup
+    .number()
+    .transform((_, val) => (val === Number(val) ? val : null))
+    .nullable()
+    .when('typeDeductible', {
+      is: (typeDeductible: string) => {
+        return typeDeductible === 'amount'
+      }, //just an e.g. you can return a function
+      then: yup.number().required('Field is required').min(1)
+    }),
+  min: yup
+    .number()
+    .transform((_, val) => (val === Number(val) ? val : null))
+    .nullable()
+    .when('typeDeductible', {
+      is: (typeDeductible: string) => {
+        return typeDeductible === 'per'
+      },
+      then: yup.number().required('Field is required').min(1)
+    }),
+  typeBi: yup
+    .string()
+    .when('title', {
+      is: (title: string) => {
+        return title != 'Machinery Breakdown' && title != 'AMIT & SRCC' && title === 'Electronic Equipment'
+      },
+      then: yup.string().notRequired()
+    })
+    .when('title', {
+      is: (title: string) => {
+        return title !== 'Machinery Breakdown' && title !== 'AMIT & SRCC' && title !== 'Electronic Equipment'
+      },
+      then: yup.string().required()
+    }),
+  daysBi: yup
+    .number()
+    .transform((_, val) => (val === Number(val) ? val : null))
+    .nullable()
+    .test('Validate days', 'Days cannot be greater than 999', value => {
+      const val = value || 0
 
-//       return +val <= 100
-//     })
-// })
+      return +val <= 999
+    })
+    .when(['typeBi', 'title'], {
+      is: (typeBi: string, title: string) => {
+        return (
+          typeBi === 'days' &&
+          title !== 'Machinery Breakdown' &&
+          title !== 'AMIT & SRCC' &&
+          title !== 'Electronic Equipment'
+        )
+      },
+      then: yup.number().required('Field is required').min(1)
+    }),
+  amountBi: yup
+    .number()
+    .transform((_, val) => (val === Number(val) ? val : null))
+    .nullable()
+    .when('typeBi', {
+      is: (typeBi: string) => {
+        return typeBi === 'money'
+      },
+      then: yup.number().required('Field is required').min(1)
+    }),
+  idCDeductiblePer: yup
+    .number()
+    .transform((_, val) => (val === Number(val) ? val : null))
+    .nullable()
+    .when('typeDeductible', {
+      is: (typeDeductible: string) => {
+        return typeDeductible === 'per'
+      },
+      then: yup.number().required('Field is required').min(1)
+    }),
+  coinsurance: yup
+    .number()
+    .required()
+    .transform((_, val) => (val === Number(val) ? val : null))
+    .test('Validate coinsurance', 'Coinsurance cannot be greater than 100', value => {
+      if (value === 0) {
+        return true
+      }
+      const val = value || 0
+
+      return +val <= 100
+    })
+})
 
 const initialValues: Partial<SublimitDto> = {
   id: undefined,
@@ -157,29 +186,49 @@ const initialValues: Partial<SublimitDto> = {
   luc: false,
   typeDeductible: '',
   typeBi: '',
-  at100: true
+  at100: false,
+  idCDeductiblePer: 0
 
   // typeDeductibleRadio: 'default'
 }
 
-// const initialErrorValues = {
-//   sublimit: '',
-//   percentage: '',
-//   price: '',
-//   min: '',
-//   days: '',
-//   priceInterruption: '',
-//   coinsurance: '',
-//   yes: '',
-//   luc: '',
-//   typeDeductible: '',
-//   typeBi: '',
-//   at100: '',
-//   typeDeductibleRadio: ''
-// }
+interface FormErrors {
+  sublimit: string
+  at100: string
+  deductible: string
+  amount: string
+  min: string
+  coinsurance: string
+  yes: string
+  luc: string
+  typeBi: string
+  typeDeductible: string
+  daysBi: string
+  idCCoverage: string
+  amountBi: string
+  idCDeductiblePer: string
+}
+
+export const initialErrorValues: FormErrors = {
+  sublimit: '',
+  deductible: '',
+  amount: '',
+  min: '',
+  amountBi: '',
+  coinsurance: '',
+  yes: '',
+  luc: '',
+  typeDeductible: '',
+  typeBi: '',
+  daysBi: '',
+  at100: '',
+  idCCoverage: '',
+  idCDeductiblePer: ''
+}
+
 const Sublimits = () => {
   const [checked] = useState<number[]>([])
-  const [formErrors] = useState<any[]>([])
+  const [formErrors, setFormErrors] = useState<FormErrors[]>([])
   const [coverageSelect, setCoverageSelect] = useState<CoverageDto>()
   const [filteredOptions, setFilteredOptions] = useState<any[]>([])
   const [formInformationData, setFormInformationData] = useState<any>({})
@@ -187,7 +236,7 @@ const Sublimits = () => {
   const { coverages } = useGetAllCoverage()
   const [availableOptions, setAvailableOptions] = useState<CoverageDto[]>([])
 
-  //hooks para informacion general de la cuenta
+  //hooks para información general de la cuenta
   const accountData = useAppSelector(state => state.accounts)
   const { account, setAccountId, getAccountById } = useGetAccountById()
 
@@ -199,6 +248,7 @@ const Sublimits = () => {
   //state para lo botones
   const [disableBoundBtn, setDisableBoundBtn] = useState<boolean>(true)
   const [disableSaveBtn, setDisableSaveBtn] = useState<boolean>(false)
+  const [, setHasError] = useState<boolean>(true)
 
   const [sublimts, setSublimits] = useState<Partial<SublimitDto>[]>([])
   const [badgeData, setBadgeData] = useState<IAlert>({
@@ -243,7 +293,7 @@ const Sublimits = () => {
         sublimit = { ...sublimit, daysBi: 0 }
         break
     }
-
+    validateInput(sublimit, index)
     setSublimits(state => {
       const newState = [...state]
       newState[index] = sublimit
@@ -255,12 +305,21 @@ const Sublimits = () => {
   const handleDeleteSublimit = async (index: number) => {
     const sublimit = sublimts[index]
     const coverage = coverages.find(cov => cov.coverage === sublimit.title)
+    setCoverageSelect(undefined)
+
     await deleteSublimits([sublimit])
     setSublimits(state => {
-      const newState = state.filter(sub => sub.id !== sublimit.id)
+      const newState = state.filter((sub, i) => index !== i)
 
       return newState
     })
+
+    setFormErrors(state => {
+      const newState = state.filter((errors, i) => index !== i)
+
+      return newState
+    })
+
     if (coverage) {
       setAvailableOptions(state => {
         const newState = [...state, coverage]
@@ -270,37 +329,80 @@ const Sublimits = () => {
     }
   }
 
-  // const validate = (form: any, index: number) => {
-  //   const dataError = { ...initialErrorValues }
+  const validateInput = (form: Partial<SublimitDto>, index: number) => {
+    const errors = [...formErrors]
+    const data = { ...form }
 
-  //   Object.keys(dataError).forEach(function (key) {
-  //     // @ts-ignore
-  //     dataError[key] = null
-  //   })
-  //   const data = [...formErrors]
-  //   data[index] = { ...dataError }
+    try {
+      schema.validateSync(data, { abortEarly: false, context: account })
+      errors[index] = { ...initialErrorValues }
+      setFormErrors(errors)
+      setHasError(false)
+    } catch (err) {
+      if (err instanceof ValidationError) {
+        errors[index] = { ...initialErrorValues }
+        for (const result of err.inner) {
+          const property = result.path as keyof FormErrors
+          errors[index][property] = result.message
+        }
+        setHasError(true)
+        setDisableBoundBtn(true)
+        setFormErrors(errors)
+      }
+    }
+  }
 
-  //   schema
-  //     .validate({ ...form, account }, { abortEarly: false })
-  //     .then(function () {
-  //       data[index] = { ...initialErrorValues }
-  //       setFormErrors(data)
-  //     })
-  //     .catch(function (err) {
-  //       for (const error of err?.inner) {
-  //         data[index][error.path] = error.message
-  //       }
+  const validateForm = () => {
+    const forms = [...sublimts]
+    const errors = [...formErrors]
+    let tempIndex = 0
+    let hasErrors = true
+    for (const [index, form] of forms.entries()) {
+      try {
+        schema.validateSync(form, { abortEarly: false, context: account })
+        hasErrors = false
+        errors[tempIndex] = { ...initialErrorValues }
+      } catch (err) {
+        if (err instanceof ValidationError) {
+          errors[index] = { ...initialErrorValues }
+          for (const result of err.inner) {
+            const property = result.path as keyof FormErrors
+            errors[index][property] = result.message
+          }
+          setHasError(true)
+          setFormErrors(errors)
+          setDisableBoundBtn(true)
+          hasErrors = true
+          break
+        }
+      }
+      tempIndex = index
+    }
+    console.log(formErrors, sublimts)
 
-  //       setFormErrors(data)
-  //     })
-  // }
+    if (!hasErrors) {
+      setFormErrors(errors)
+      setHasError(false)
+      setDisableBoundBtn(false)
+    }
+
+    return hasErrors
+  }
+
   const handleToggle = (value: number, label: string) => () => {
     const idAccountCache = Number(localStorage.getItem('idAccount'))
+
+    setFormErrors(state => {
+      const tempError = [...state]
+      tempError.push(initialErrorValues)
+
+      return tempError
+    })
+
     setSublimits(state => {
       const tempSublimits = [...state]
       tempSublimits.push({
         ...initialValues,
-        sublimit: account?.informations[0]?.limit,
         title: label,
         idCCoverage: value,
         idAccount: idAccountCache || account?.id
@@ -311,14 +413,26 @@ const Sublimits = () => {
   }
 
   const handleChangeSelect = (event: SelectChangeEvent<string>) => {
+    setDisableBoundBtn(true)
     const selectedValue = event.target.value
     const coverage = coverages.filter(cov => cov.coverage === selectedValue)[0]
     setCoverageSelect(coverage)
-    setAvailableOptions(availableOptions.filter(option => option.coverage !== selectedValue))
+    setAvailableOptions(state => {
+      const newState = state.filter(cov => cov.coverage !== selectedValue)
+
+      return newState
+    })
     const filter = availableOptions.filter(option => option.coverage === selectedValue)
     if (!filteredOptions.some(item => item.label === filter[0]?.coverage)) {
       setFilteredOptions(current => current.concat(filter))
     } else return
+  }
+
+  const handleClickSave = () => {
+    const errors = validateForm()
+    if (!errors && sublimts.length > 0) {
+      handleSubmit()
+    }
   }
 
   const handleSubmit = async () => {
@@ -329,6 +443,7 @@ const Sublimits = () => {
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     for (const { title, ...sublimit } of sublimts) {
+      sublimit.typeBi = sublimit.typeBi === '' ? 'days' : sublimit.typeBi
       if (sublimit.id) {
         update.push(sublimit)
       } else {
@@ -343,82 +458,54 @@ const Sublimits = () => {
 
       setDisableBoundBtn(false)
       setDisableSaveBtn(false)
+      setHasError(true)
+
+      setBadgeData({
+        message: 'The information has been updated',
+        theme: 'success',
+        open: true,
+        status: 'error'
+      })
+      setTimeout(() => {
+        setBadgeData({
+          message: '',
+          theme: 'success',
+          open: false,
+          status: 'error'
+        })
+      }, 1000)
     } catch (error) {
       setDisableBoundBtn(false)
       setDisableSaveBtn(false)
     }
-
-    // if (sublimts) {
-    //   setBadgeData({
-    //     message: 'The information has been updated',
-    //     theme: 'success',
-    //     open: true,
-    //     status: 'error'
-    //   })
-    //   setTimeout(() => {
-    //     setBadgeData({
-    //       message: 'updated successfully',
-    //       theme: 'success',
-    //       open: false,
-    //       status: 'error'
-    //     })
-    //   }, 5000)
-    // } else {
-    //   const dataToSubmit = allFormData.map(item => {
-    //     return {
-    //       sublimit: item.sublimit,
-    //       at100: true,
-    //       yes: true,
-    //       luc: true,
-    //       typeDeductible: 'none',
-    //       typeBi: 'days',
-    //       coinsurance: item.coinsurance,
-    //       idAccount: formInformationData.id
-    //     }
-    //   })
-
-    //   setBadgeData({
-    //     message: 'The information has been saved',
-    //     theme: 'success',
-    //     open: true,
-    //     status: 'error'
-    //   })
-    //   setTimeout(() => {
-    //     setBadgeData({
-    //       message: 'saved successfully',
-    //       theme: 'success',
-    //       open: false,
-    //       status: 'error'
-    //     })
-    //   }, 5000)
-
-    // setSublimitsData(result)
-    // }
   }
 
   const handleUpdateStatus = async () => {
-    await updateAccountsStatus({
-      updateStatus: [
-        {
-          idAccount: formInformationData.id,
-          status: 5
-        }
-      ]
-    })
-    setBadgeData({
-      message: 'Account has been updated',
-      theme: 'success',
-      open: true,
-      status: 'error'
-    })
-    setTimeout(() => {
+    const hasErrors = validateForm()
+    if (!hasErrors) {
+      await updateAccountsStatus({
+        updateStatus: [
+          {
+            idAccount: formInformationData.id,
+            status: 5
+          }
+        ]
+      })
       setBadgeData({
-        message: 'updated successfully',
+        message: 'Account has been updated',
         theme: 'success',
-        open: false,
+        open: true,
         status: 'error'
       })
-    }, 5000)
+      setTimeout(() => {
+        setBadgeData({
+          message: 'updated successfully',
+          theme: 'success',
+          open: false,
+          status: 'error'
+        })
+      }, 50)
+    }
   }
 
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
@@ -428,12 +515,17 @@ const Sublimits = () => {
   const texButtonColor = userThemeConfig.palette?.buttonText.primary
 
   const getAccountData = async () => {
+    const errors: FormErrors[] = []
     const idAccountCache = Number(localStorage.getItem('idAccount'))
     setAccountId(idAccountCache)
     const accountData = await getAccountById(idAccountCache)
 
     if (accountData && accountData.sublimits.length > 0) {
       setSublimits([...accountData.sublimits])
+      accountData.sublimits.forEach(() => {
+        errors.push(initialErrorValues)
+      })
+      setFormErrors([...errors])
     }
   }
 
@@ -489,14 +581,14 @@ const Sublimits = () => {
             />
             <FormControl fullWidth>
               <Select
-                sx={{ width: '48.5%', outline: 'none' }}
+                sx={{ width: '48.5%', outline: 'none', borderColor: texButtonColor }}
                 IconComponent={KeyboardArrowDownIcon}
                 MenuProps={MenuProps}
-                value={String(coverageSelect?.coverage) || ''}
+                value={coverageSelect?.coverage || ''}
                 displayEmpty
                 onChange={handleChangeSelect}
                 renderValue={selected => {
-                  if ((selected as unknown as string[]).length === 0) {
+                  if (selected.length === 0) {
                     return (
                       <Typography
                         sx={{
@@ -560,7 +652,7 @@ const Sublimits = () => {
                     index={index}
                     handleOnChangeByInputForm={handleOnChangeByInputForm}
                     formInformation={account}
-                    formErrors={formErrors}
+                    formErrors={formErrors[index]}
                     handleOnDeleteForm={handleDeleteSublimit}
                   />
                 </Grid>
@@ -574,7 +666,7 @@ const Sublimits = () => {
           color='success'
           sx={{ mr: 2, fontFamily: inter, fontSize: size, letterSpacing: '0.4px' }}
           disabled={disableSaveBtn}
-          onClick={handleSubmit}
+          onClick={handleClickSave}
         >
           <SaveIcon /> &nbsp; Save changes
         </Button>

@@ -9,6 +9,7 @@ export interface IAlert {
   fontColor?: string
   theme?: 'success' | 'error' | 'secondary' | 'warning' | 'info'
   open?: boolean
+  disableAutoHide?: boolean
 }
 
 const customTheme = {
@@ -42,7 +43,7 @@ const CustomAlert = (props: IAlert) => {
   }, [props])
 
   return (
-    <Snackbar open={open} onClose={() => setOpen(false)}>
+    <Snackbar open={open} autoHideDuration={props.disableAutoHide ? null : 3000} onClose={() => setOpen(false)}>
       <Alert
         onClose={() => setOpen(false)}
         sx={{

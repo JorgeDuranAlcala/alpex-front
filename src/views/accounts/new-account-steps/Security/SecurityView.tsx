@@ -48,7 +48,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
   })
   const [allErrors, setAllErrors] = useState<boolean[]>([])
 
-  const [open, setOpen] = useState<boolean>(false)
+  const [openNextModal, setOpenNextModal] = useState<boolean>(false)
   const [information, setInformation] = useState<FormInformation>({
     frontingFee: 0,
     netPremium: 0,
@@ -102,6 +102,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
         })
       }
       let dataForm: FormSecurity = {
+        ...allFormData,
         formData: tempSecurities,
         ...CalculateSecurity.getData(tempSecurities, information)
       }
@@ -120,23 +121,15 @@ const Security = ({ onStepChange }: SecurityProps) => {
   }
   const addNewForm = () => {
     const securityNew = {} as SecurityDto
-    setBadgeData({
-      ...badgeData,
-      open: false
-    })
     calculateSecurities([...securities, { ...securityNew, frontingFeeActive: false }])
   }
   const handleNextStep = () => {
     const isError = allErrors.find(error => error)
-    setBadgeData({
-      ...badgeData,
-      open: false
-    })
     setActiveErrors(isError || false)
-    if (!isError) setOpen(true)
+    if (!isError) setOpenNextModal(true)
   }
   const handleCloseModal = () => {
-    setOpen(false)
+    setOpenNextModal(false)
   }
   const onNextStep = () => {
     SaveData()
@@ -191,7 +184,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
         })
     }
 
-    if (update.length > 0)
+    if (update.length > 0) {
       await updateSecurities(update)
         .then(res => {
           console.log('updateSecurities', { res })
@@ -214,7 +207,15 @@ const Security = ({ onStepChange }: SecurityProps) => {
             icon: <Icon style={{ color: '#FF4D49' }} icon='icon-park-outline:error' />
           })
         })
-    if (save.length > 0)
+
+      setTimeout(() => {
+        setBadgeData({
+          ...badgeData,
+          open: false
+        })
+      }, 2000)
+    }
+    if (save.length > 0) {
       await saveSecurities(save)
         .then(res => {
           console.log('saveSecurities', { res })
@@ -239,7 +240,13 @@ const Security = ({ onStepChange }: SecurityProps) => {
           })
         })
 
-    // }
+      setTimeout(() => {
+        setBadgeData({
+          ...badgeData,
+          open: false
+        })
+      }, 2000)
+    }
   }
   const DeleteNewForm = (index: number) => {
     const updatedSecurities = [...securities]
@@ -265,7 +272,16 @@ const Security = ({ onStepChange }: SecurityProps) => {
   useEffect(() => {
     if (account && information) {
       calculateSecurities(account.securities)
+      account.securityTotal &&
+        setAllFormData({
+          ...allFormData,
+          recievedNetPremium: Number(account.securityTotal.receivedNetPremium),
+          distribuitedNetPremium: Number(account.securityTotal.distributedNetPremium),
+          diference: Number(account.securityTotal.difference),
+          id: Number(account.securityTotal.id)
+        })
     }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [account, information])
 
@@ -290,14 +306,18 @@ const Security = ({ onStepChange }: SecurityProps) => {
     >
       <div style={{ fontFamily: inter }}>
         <CardHeader title={<Title>Security</Title>} />
-
-        <div style={{ width: 'fit-content', float: 'right' }}>
-          <CustomAlert {...badgeData} />
-        </div>
+        <CustomAlert {...badgeData} />
         <form noValidate autoComplete='on'>
           <CardContent>
             {securities.map((security, index) => {
-              return <FormSection key={index} security={security} index={index} onDeleteItemList={DeleteNewForm} />
+              return (
+                <FormSection
+                  key={`${index}-${security?.id}`}
+                  security={security}
+                  index={index}
+                  onDeleteItemList={DeleteNewForm}
+                />
+              )
             })}
             <Grid container spacing={5}>
               <Grid item xs={12} sm={4}>
@@ -329,6 +349,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
                     inputProps={{
                       suffix: ' '
                     }}
+                    disabled
                   />
                   {false && <FormHelperText sx={{ color: 'error.main' }}>Invalid field</FormHelperText>}
                 </FormControl>
@@ -395,7 +416,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
               </Grid>
             </Grid>
           </CardContent>
-          <Modal className='next-step-modal' open={open} onClose={handleCloseModal}>
+          <Modal className='next-step-modal' open={openNextModal} onClose={handleCloseModal}>
             <Box
               sx={{
                 position: 'absolute',
@@ -423,7 +444,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
               <Button className='continue-modal-btn' variant='contained' onClick={onNextStep}>
                 CONTINUE
               </Button>
-              <Button className='create-contact-modal' onClick={() => setOpen(false)}>
+              <Button className='create-contact-modal' onClick={() => setOpenNextModal(false)}>
                 Keep editing information
               </Button>
             </Box>
