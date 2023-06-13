@@ -440,7 +440,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
       return {
         id: company.id,
         name: company.name,
-        special: company.special,
+        special: company.idSubscriptionType === 1,
         active: true
       }
     })

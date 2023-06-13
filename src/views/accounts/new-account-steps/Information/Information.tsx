@@ -221,14 +221,16 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
             }}
             icon='jam:alert'
           />
-        )
+        ),
+        disableAutoHide: true
       })
     } else {
       setBadgeData({
         message: `UPDATED SUCCESSFULLY`,
         status: 'success',
         open: true,
-        icon: <Icon icon='ic:baseline-check-circle' />
+        icon: <Icon icon='ic:baseline-check-circle' />,
+        disableAutoHide: true
       })
     }
 
@@ -293,14 +295,16 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
             }}
             icon='jam:alert'
           />
-        )
+        ),
+        disableAutoHide: true
       })
     } else {
       setBadgeData({
         message: `SAVED SUCCESSFULLY`,
         status: 'success',
         open: true,
-        icon: <Icon icon='ic:baseline-check-circle' />
+        icon: <Icon icon='ic:baseline-check-circle' />,
+        disableAutoHide: true
       })
     }
 
@@ -390,7 +394,8 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
       open: true,
       icon: <CircularProgress size={20} color='primary' />,
       backgroundColor: '#828597',
-      theme: 'info'
+      theme: 'info',
+      disableAutoHide: true
     })
 
     for (const docto of formatedDoctos) {
@@ -414,7 +419,8 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
               }}
               icon='jam:alert'
             />
-          )
+          ),
+          disableAutoHide: true
         })
       } else {
         setBadgeData({
@@ -422,7 +428,8 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
           status: 'success',
           open: true,
           icon: <Icon icon='ic:baseline-check-circle' />,
-          theme: 'success'
+          theme: 'success',
+          disableAutoHide: true
         })
       }
 
@@ -450,7 +457,8 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
         open: true,
         icon: <CircularProgress size={20} color='primary' />,
         backgroundColor: '#828597',
-        theme: 'info'
+        theme: 'info',
+        disableAutoHide: true
       })
 
       await updateInformation()
@@ -463,7 +471,8 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
         open: true,
         icon: <CircularProgress size={20} color='secondary' />,
         backgroundColor: '#828597',
-        theme: 'secondary'
+        theme: 'secondary',
+        disableAutoHide: true
       })
 
       const res = await saveInformation()
