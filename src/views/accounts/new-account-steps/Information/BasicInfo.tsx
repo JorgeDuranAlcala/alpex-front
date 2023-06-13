@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { ForwardedRef, ReactNode, forwardRef, useEffect, useState } from 'react' //ReactNode
+import React, { ForwardedRef, ReactNode, forwardRef, useEffect, useState } from 'react'; //ReactNode
 
 // ** MUI Imports
-import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import {
   FormControl,
   FormHelperText,
@@ -12,18 +12,18 @@ import {
   SxProps,
   TextField,
   Theme
-} from '@mui/material'
-import Select, { SelectChangeEvent } from '@mui/material/Select' //SelectChangeEvent
+} from '@mui/material';
+import Select, { SelectChangeEvent } from '@mui/material/Select'; //SelectChangeEvent
 
 //Components
-import { ContactModal } from '@/views/accounts/new-account-steps/Information/ContactModal'
+import { ContactModal } from '@/views/accounts/new-account-steps/Information/ContactModal';
 
 //hooks para base info y  modal contac
-import { useGetAllCountries as useCountyGetAll } from 'src/hooks/catalogs/country'
+import { useGetAllCountries as useCountyGetAll } from 'src/hooks/catalogs/country';
 
 // ** Third Party Imports
-import DatePicker from 'react-datepicker'
-import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
+import DatePicker from 'react-datepicker';
+import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker';
 
 interface PickerProps {
   label?: string
@@ -99,8 +99,7 @@ type BasicInfoProps = {
     }>
   >
   makeValidations: boolean
-  resetMakeValidations: () => void
-  isValidForm?: (valid: boolean) => void
+  onValidationComplete: (valid: boolean) => void;
 }
 
 /* eslint-disable */
@@ -122,21 +121,20 @@ const CustomInput = forwardRef(({ ...props }: PickerProps, ref: ForwardedRef<HTM
   )
 })
 
-import { ROLES } from '@/configs/api'
-import { useGetAll as useBrokerGetAll } from 'src/hooks/catalogs/broker'
-import { useGetAllByIdBroker } from 'src/hooks/catalogs/broker-contact/'
-import { useGetAll as useCedantGetAll } from 'src/hooks/catalogs/cedant'
-import { useGetAllByCedant } from 'src/hooks/catalogs/cedant-contact'
-import { useGetAllLineOfBussines } from 'src/hooks/catalogs/lineOfBussines'
-import { useGetAllRiskActivities } from 'src/hooks/catalogs/riskActivity'
-import { useGetByIdRole } from 'src/hooks/catalogs/users/'
+import { ROLES } from '@/configs/api';
+import { useGetAll as useBrokerGetAll } from 'src/hooks/catalogs/broker';
+import { useGetAllByIdBroker } from 'src/hooks/catalogs/broker-contact/';
+import { useGetAll as useCedantGetAll } from 'src/hooks/catalogs/cedant';
+import { useGetAllByCedant } from 'src/hooks/catalogs/cedant-contact';
+import { useGetAllLineOfBussines } from 'src/hooks/catalogs/lineOfBussines';
+import { useGetAllRiskActivities } from 'src/hooks/catalogs/riskActivity';
+import { useGetByIdRole } from 'src/hooks/catalogs/users/';
 
 const BasicInfo: React.FC<BasicInfoProps> = ({
   basicInfo,
   setBasicInfo,
   makeValidations,
-  resetMakeValidations,
-  isValidForm
+  onValidationComplete
 }) => {
   //cargamos la información de los catálogos de base de datos
   const { countries } = useCountyGetAll()
@@ -150,7 +148,10 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
   const { users: leadUnderwriters } = useGetByIdRole(ROLES.LEAD_UNDERWRITER)
   const { users: technicalAssistants } = useGetByIdRole(ROLES.TECHNICAL_ASSISTANT)
 
+
   const [bussinesFields, setBussinesFields] = useState(true)
+
+  // const [valid, setValid]= useState(false)
   const [errors, setErrors] = useState<BasicInfoErrors>({
     insuredError: false,
     countryError: false,
@@ -252,9 +253,9 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
     setErrors(newErrors)
 
     if (Object.values(newErrors).every(error => !error)) {
-      if (isValidForm) {
-        isValidForm(true)
-      }
+      onValidationComplete(true);
+    }else{
+      onValidationComplete(false);
     }
   }
 
@@ -290,11 +291,12 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
     }))
   }, [basicInfo.industryCode, riskActivities])
 
-  useEffect(() => {
+
+  React.useEffect(() => {
     if (makeValidations) {
-      validations()
+        validations()
     }
-  }, [makeValidations, basicInfo])
+  }, [makeValidations]);
 
   return (
     <>
