@@ -414,8 +414,9 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
       .validate(securityParam, { abortEarly: false })
       .then(function () {
         errorsTemp[index] = false
-        setAllErrors(() => errorsTemp)
+        console.log({ error: data, index, security })
         setErrorsSecurity(initialErrorValues)
+        setAllErrors(() => errorsTemp)
       })
       .catch(function (err) {
         for (const error of err?.inner) {
