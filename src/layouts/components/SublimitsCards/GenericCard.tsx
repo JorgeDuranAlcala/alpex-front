@@ -88,23 +88,6 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
   const size = userThemeConfig.typography?.size.px16
   const textColor = userThemeConfig.palette?.text.subTitle
 
-  // useEffect(() => {
-  //   if (checked) {
-  //     setDataForm({ ...dataForm, sublimit: +formInformation?.informations[0].limit })
-  //   } else {
-  //     setDataForm({ ...dataForm, sublimit: 0 })
-  //   }
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [checked])
-  // useEffect(() => {
-  //   if (dataForm) handleOnChangeForm(dataForm, index)
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [dataForm])
-  // useEffect(() => {
-  //   setErrorForm(formErrors[index] || {})
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [formErrors])
-
   return (
     <ContainerCard>
       <HeaderCard sx={{ height: data?.title === 'Business Interruption Machinery Breakdown' ? '68px' : '48px' }}>

@@ -346,7 +346,7 @@ const Sublimits = () => {
           errors[index][property] = result.message
         }
         setHasError(true)
-
+        setDisableBoundBtn(true)
         setFormErrors(errors)
       }
     }
@@ -371,6 +371,7 @@ const Sublimits = () => {
           }
           setHasError(true)
           setFormErrors(errors)
+          setDisableBoundBtn(true)
           hasErrors = true
           break
         }
@@ -382,6 +383,7 @@ const Sublimits = () => {
     if (!hasErrors) {
       setFormErrors(errors)
       setHasError(false)
+      setDisableBoundBtn(false)
     }
 
     return hasErrors
@@ -411,6 +413,7 @@ const Sublimits = () => {
   }
 
   const handleChangeSelect = (event: SelectChangeEvent<string>) => {
+    setDisableBoundBtn(true)
     const selectedValue = event.target.value
     const coverage = coverages.filter(cov => cov.coverage === selectedValue)[0]
     setCoverageSelect(coverage)
@@ -478,28 +481,31 @@ const Sublimits = () => {
   }
 
   const handleUpdateStatus = async () => {
-    await updateAccountsStatus({
-      updateStatus: [
-        {
-          idAccount: formInformationData.id,
-          status: 5
-        }
-      ]
-    })
-    setBadgeData({
-      message: 'Account has been updated',
-      theme: 'success',
-      open: true,
-      status: 'error'
-    })
-    setTimeout(() => {
+    const hasErrors = validateForm()
+    if (!hasErrors) {
+      await updateAccountsStatus({
+        updateStatus: [
+          {
+            idAccount: formInformationData.id,
+            status: 5
+          }
+        ]
+      })
       setBadgeData({
-        message: 'updated successfully',
+        message: 'Account has been updated',
         theme: 'success',
-        open: false,
+        open: true,
         status: 'error'
       })
-    }, 50)
+      setTimeout(() => {
+        setBadgeData({
+          message: 'updated successfully',
+          theme: 'success',
+          open: false,
+          status: 'error'
+        })
+      }, 50)
+    }
   }
 
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
