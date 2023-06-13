@@ -1,9 +1,9 @@
-// ** MUI Imports
 
 // ** MUI Imports
-import { Grid, Typography } from '@mui/material'
+import { useAuth } from '@/hooks/useAuth'
+import { Typography } from '@mui/material'
 import UserThemeOptions from 'src/layouts/UserThemeOptions'
-import { Container, ContainerHeader } from 'src/styles/Dashboard/dashboard'
+import { Container, ContainerHeader, TopCardsContainer } from 'src/styles/Dashboard/dashboard'
 
 import BrokersBalanceStatus from 'src/views/dashboards/crm/BrokersBalanceStatus'
 
@@ -15,6 +15,8 @@ import LastBoundAccount from 'src/views/dashboards/crm/LastBoundAccount'
 
 import CrmTable from 'src/views/dashboards/crm/Table'
 
+
+
 // import CrmTable from 'src/views/dashboards/crm/CrmTable'
 const userThemeConfig: any = Object.assign({}, UserThemeOptions())
 
@@ -24,11 +26,13 @@ const weight = userThemeConfig.typography?.fontWeight.weight500
 const textSize = userThemeConfig.typography?.size.px24
 
 const CrmDashboard = () => {
+  const { user } = useAuth();
+
   return (
     <Container>
       <ContainerHeader>
         <Typography variant='h5' sx={{ fontSize: textSize, fontWeight: weight, fontFamily: inter, color: textColor }}>
-          Hi Alejandro
+          Hi {user?.fullName}
         </Typography>
         <Typography
           variant='body2'
@@ -43,14 +47,12 @@ const CrmDashboard = () => {
           Welcome to your dashboard!
         </Typography>
       </ContainerHeader>
-      <Grid container spacing={{ xs: 2, sm: 2, md: 4 }} sx={{ mb: 4, height: 'auto' }}>
-        <Grid item xs={12} md={6} sm={6}>
-          <BrokersBalanceStatus />
-        </Grid>
-        <Grid item xs={12} md={6} sm={6}>
-          <LastBoundAccount />
-        </Grid>
-      </Grid>
+
+      <TopCardsContainer>
+        <BrokersBalanceStatus />
+
+        <LastBoundAccount />
+      </TopCardsContainer>
       <CrmTable />
       <DowlandAccountInfo />
     </Container>
