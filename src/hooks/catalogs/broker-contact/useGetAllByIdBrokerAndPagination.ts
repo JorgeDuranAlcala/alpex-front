@@ -40,8 +40,6 @@ const useGetAllByIdBrokerAndPagination = () => {
     )
     setBrokerContacts(results)
     setBrokerContactInfoPage(info)
-
-    return results
   }
 
   useEffect(() => {
