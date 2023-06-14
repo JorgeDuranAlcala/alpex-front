@@ -432,9 +432,8 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
     combinedSchema
       .validate(securityParam, { abortEarly: false })
       .then(function () {
-        console.log({ error: data, index, security })
+        errorsTemp[index] = false
         setErrorsSecurity(initialErrorValues)
-        setAllErrors(() => [...errorsTemp])
       })
       .catch(function (err) {
         for (const error of err?.inner) {
@@ -444,12 +443,14 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
           }
         }
         errorsTemp[index] = true
-
-        setAllErrors(() => [...errorsTemp])
-        console.log({ error: data, index, security })
+        console.log({ data, index })
         setErrorsSecurity(data)
 
         //setEnableNextStep(false)
+      })
+      .finally(() => {
+        console.log({ errorsTemp, index })
+        setAllErrors(() => [...errorsTemp])
       })
   }
 
@@ -470,12 +471,16 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
       setIdRetroCedant(security.idCRetroCedant?.id)
     }
 
-    setFrontingFeeEnabled(security.frontingFeeActive)
-    setIsGross(security.isGross)
-    validateForm(security)
+    setFrontingFeeEnabled(() => security.frontingFeeActive)
+    setIsGross(() => security.isGross)
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [security])
+
+  useEffect(() => {
+    validateForm(security)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isGross, frontingFeeEnabled])
 
   useEffect(() => {
     validateForm(security)
