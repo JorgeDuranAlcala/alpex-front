@@ -16,12 +16,8 @@ const AddBrokerView = () => {
   const [idBroker, setIdBroker] = useState(0)
 
   useEffect(() => {
-    router.query?.id && setIdBroker(parseInt(router.query.id.toString()))
-    //eslint-disable-next-line
-  }, [])
-
-  useEffect(() => {
     router.query.id && setIdBroker(parseInt(router.query.id.toString()))
+    //eslint-disable-next-line
   }, [router.query])
 
   return (
