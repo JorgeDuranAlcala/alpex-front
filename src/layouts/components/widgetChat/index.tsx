@@ -34,8 +34,7 @@ const WidgetChat = () => {
   return (
     <div id='chatbotDiv' className='Chat'>
       <Widget
-        value={'Hwlo'}
-        title='The Rocket Code'
+        title='Alpy'
         subtitle='How can I help you?'
         handleNewUserMessage={handleNewUserMessage('Hola')}
         senderPlaceHolder='Type your message here...'
