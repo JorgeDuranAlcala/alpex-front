@@ -70,6 +70,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
   const { retroCedantContacts, setIdRetroCedant } = useGetAllByIdRetroCedant()
   const { countries } = useGetAllCountries()
   const operationSecurity: CalculateSecurity = new CalculateSecurity().setInformation(information).setSecurity(security)
+
   const schemaRetrocedant = yup.object().shape({
     idCRetroCedant: yup
       .object()
@@ -97,8 +98,33 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
         }
 
         return true
+      }),
+
+    frontingFee: yup
+      .number()
+      .transform((_, val) => (val === Number(val) ? val : null))
+      .test('', 'This field is required', value => {
+        const val = value || 0
+        if (frontingFeeEnabled) return +val > 0
+
+        return true
       })
+      .required('This field is required')
+
+      .max(100),
+
+    frontingFeeAmount: yup
+      .number()
+      .transform((_, val) => (val === Number(val) ? val : null))
+      .test('', 'This field is required', value => {
+        const val = value || 0
+        if (frontingFeeEnabled) return +val > 0
+
+        return true
+      })
+      .required('This field is required')
   })
+
   const schema = yup.object().shape({
     netPremiumAt100: yup
       .number()
@@ -193,29 +219,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
       .number()
       .transform((_, val) => (val === Number(val) ? val : null))
       .required('This field is required')
-      .min(1, 'The number must be greater than 0!'),
-    frontingFee: yup
-      .number()
-      .transform((_, val) => (val === Number(val) ? val : null))
-      .test('', 'This field is required', value => {
-        const val = value || 0
-        if (frontingFeeEnabled) return +val > 0
-
-        return true
-      })
-      .required('This field is required')
-
-      .max(100),
-    frontingFeeAmount: yup
-      .number()
-      .transform((_, val) => (val === Number(val) ? val : null))
-      .test('', 'This field is required', value => {
-        const val = value || 0
-        if (frontingFeeEnabled) return +val > 0
-
-        return true
-      })
-      .required('This field is required')
+      .min(1, 'The number must be greater than 0!')
   })
 
   const handleSwitch = () => {
@@ -224,6 +228,8 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
       ...tempSecurities[index],
       idCRetroCedant: {} as RetroCedantDto,
       idCRetroCedantContact: {} as RetroCedantContactDto,
+      frontingFee: Number(null),
+      frontingFeeAmount: Number(null),
       frontingFeeActive: !frontingFeeEnabled
     }
     setFrontingFeeEnabled(state => !state)
