@@ -103,7 +103,15 @@ const ModalTokenAction: React.FC<IModalAction> = ({
               left: '50%',
               transform: 'translate(-50%, -50%)',
               width: '600px',
-              padding: '56px 0 26px 0'
+              padding: '56px 0 26px 0',
+              '@media (max-width: 650px)': {
+                width: '90vw',
+              },
+              '@media (max-width: 450px)': {
+                top: '53%',
+                width: '100vw',
+                height: '95vh',
+              },
             }}
           >
             <CardContent>
@@ -145,7 +153,17 @@ const ModalTokenAction: React.FC<IModalAction> = ({
                 </Typography>
               </Box>
             </CardContent>
-            <CardActions sx={{ display: 'flex', flexDirection: 'column', marginTop: '20px' }}>
+            <CardActions
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                marginTop: '20px',
+                '@media (max-width: 450px)': {
+                  position: 'inherit',
+                  width: '100%',
+                  bottom: '30px',
+                },
+              }}>
               <Button onClick={onCancel} variant='contained' size='large' sx={{ width: '100%' }}>
                 EXTEND SESSION
               </Button>

@@ -69,15 +69,14 @@ export type PlacementStructureProps = {
     }>
   >
   makeValidations: boolean
-  resetMakeValidations: () => void
-  isValidForm: (valid: boolean) => void
+  onValidationComplete: (valid: boolean) => void
 }
 
 const PlacementStructure: React.FC<PlacementStructureProps> = ({
   placementStructure,
   setPlacementStructure,
   makeValidations,
-  isValidForm
+  onValidationComplete,
 }) => {
   const { currencies } = useGetAllCurrencies()
   const { typesOfLimits } = useGetAllTypeOfLimit()
@@ -90,6 +89,8 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
   const [reinsuranceBrokerage, setReinsuranceBrokerage] = useState<number>()
   const [taxes, setTaxes] = useState<number>()
   const [frontingFee, setFrontingFee] = useState<number>()
+
+  // const [valid, setValid] = useState(false)
   const [errors, setErrors] = useState<PlacementStructureErrors>({
     currencyError: false,
     totalError: false,
@@ -217,20 +218,17 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
 
     if (Object.values(newErrors).every(error => !error)) {
       // enviar formulario si no hay errores
-      isValidForm(true)
+      onValidationComplete(true);
+
+      // isValidForm(true)
+    } else {
+      onValidationComplete(false);
     }
   }
 
   const getErrorMessage = (name: keyof PlacementStructureErrors) => {
     return errors[name] ? 'This field is required' : ''
   }
-
-  useEffect(() => {
-    if (makeValidations) {
-      validations()
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [makeValidations, placementStructure])
 
   useEffect(() => {
     calculate()
@@ -258,6 +256,14 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [exchangeRate])
+
+  React.useEffect(() => {
+    if (makeValidations) {
+      validations();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [makeValidations]);
+
 
   return (
     <>

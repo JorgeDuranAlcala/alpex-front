@@ -350,7 +350,7 @@ const CountriesCurrencies = () => {
         <DeleteModal
           openModal={openDeleteCurrency}
           onCloseModal={() => {
-            setOpenDeleteCountry(false)
+            setOpenDeleteCurrency(false)
           }}
           onDelete={deleteCurrency}
           textItem='Currency'

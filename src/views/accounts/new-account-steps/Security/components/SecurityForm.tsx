@@ -6,7 +6,6 @@ import { FormSectionProps, SecurityDto, errorsSecurity } from '@/services/accoun
 import { ReinsuranceCompanyDto } from '@/services/catalogs/dtos/ReinsuranceCompanyDto'
 import { RetroCedantDto } from '@/services/catalogs/dtos/RetroCedantDto'
 import { RetroCedantContactDto } from '@/services/catalogs/dtos/retroCedantContact.dto'
-import { NumericFormatCustom } from '@/views/components/inputs/numeric-format/NumericFormatCustom'
 import SwitchAlpex from '@/views/custom/switchs'
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
 import {
@@ -21,7 +20,8 @@ import {
   TextField
 } from '@mui/material'
 
-import { ChangeEvent, useContext, useEffect, useRef, useState } from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
+import { NumericFormat } from 'react-number-format'
 import * as yup from 'yup'
 import { SecurityContext } from '../SecurityView'
 import { CalculateSecurity } from '../utils/calculates-securities'
@@ -231,6 +231,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
     validateForm(tempSecurities[index])
     calculateSecurities(tempSecurities)
   }
+
   const handleChangeRetroCedant = (e: SelectChangeEvent<string>) => {
     const selectedRetroCendantId = e.target.value
     const retroCedant = retroCedants?.find(retroCedant => retroCedant.id === Number(selectedRetroCendantId))
@@ -246,6 +247,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
       setIdRetroCedant(retroCedant.id)
     }
   }
+
   const handleChangeRetroCedantContact = (e: SelectChangeEvent<string>) => {
     const selectedRetroCendantContactId = e.target.value
     const retroCedantContact = retroCedantContacts?.find(
@@ -260,73 +262,79 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
     validateForm(tempSecurities[index])
     setSecurities(tempSecurities)
   }
-  const handleChangeBaseAmount = (e: ChangeEvent<HTMLInputElement>) => {
+
+  const handleChangeBaseAmount = (value: number) => {
     const tempSecurities = [...securities]
     tempSecurities[index] = {
       ...tempSecurities[index],
-      netPremiumAt100: parseFloat(e.target.value)
-    }
-    validateForm(tempSecurities[index])
-    calculateSecurities(tempSecurities)
-  }
-  const handleChangeSharePercent = (e: ChangeEvent<HTMLInputElement>) => {
-    const tempSecurities = [...securities]
-    tempSecurities[index] = {
-      ...tempSecurities[index],
-      share: parseFloat(e.target.value)
-    }
-    validateForm(tempSecurities[index])
-    calculateSecurities(tempSecurities)
-  }
-  const handleChangeBrokerRagePercent = (e: ChangeEvent<HTMLInputElement>) => {
-    const tempSecurities = [...securities]
-    tempSecurities[index] = {
-      ...tempSecurities[index],
-      reinsuranceBrokerage: parseFloat(e.target.value)
-    }
-    validateForm(tempSecurities[index])
-    calculateSecurities(tempSecurities)
-  }
-  const handleChangeDynamicComissionPercent = (e: ChangeEvent<HTMLInputElement>) => {
-    const tempSecurities = [...securities]
-    tempSecurities[index] = {
-      ...tempSecurities[index],
-      dynamicCommission: parseFloat(e.target.value)
+      netPremiumAt100: value
     }
     validateForm(tempSecurities[index])
     calculateSecurities(tempSecurities)
   }
 
-  const handleChangeTaxesPercent = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleChangeSharePercent = (value: number) => {
+    const tempSecurities = [...securities]
+    tempSecurities[index] = {
+      ...tempSecurities[index],
+      share: value
+    }
+    validateForm(tempSecurities[index])
+    calculateSecurities(tempSecurities)
+  }
+
+  const handleChangeBrokerRagePercent = (value: number) => {
+    const tempSecurities = [...securities]
+    tempSecurities[index] = {
+      ...tempSecurities[index],
+      reinsuranceBrokerage: value
+    }
+    validateForm(tempSecurities[index])
+    calculateSecurities(tempSecurities)
+  }
+
+  const handleChangeDynamicComissionPercent = (value: number) => {
+    const tempSecurities = [...securities]
+    tempSecurities[index] = {
+      ...tempSecurities[index],
+      dynamicCommission: value
+    }
+    validateForm(tempSecurities[index])
+    calculateSecurities(tempSecurities)
+  }
+
+  const handleChangeTaxesPercent = (value: number) => {
     // Código a ejecutar cuando se deja de escribir
     const tempSecurities = [...securities]
     tempSecurities[index] = {
       ...tempSecurities[index],
-      taxes: parseFloat(e.target.value)
-    }
-    validateForm(tempSecurities[index])
-    calculateSecurities(tempSecurities)
-  }
-  const handleChangeFrontingFeePercent = (e: ChangeEvent<HTMLInputElement>) => {
-    const tempSecurities = [...securities]
-    tempSecurities[index] = {
-      ...tempSecurities[index],
-      frontingFee: parseFloat(e.target.value)
-    }
-    validateForm(tempSecurities[index])
-    calculateSecurities(tempSecurities)
-  }
-  const handleChangePremiumPerShareAmount = (e: ChangeEvent<HTMLInputElement>) => {
-    const tempSecurities = [...securities]
-    tempSecurities[index] = {
-      ...tempSecurities[index],
-      share: operationSecurity.getsharePercent(parseFloat(e.target.value))
+      taxes: value
     }
     validateForm(tempSecurities[index])
     calculateSecurities(tempSecurities)
   }
 
-  const handleChangeBrokerAgeAmount = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleChangeFrontingFeePercent = (value: number) => {
+    const tempSecurities = [...securities]
+    tempSecurities[index] = {
+      ...tempSecurities[index],
+      frontingFee: value
+    }
+    validateForm(tempSecurities[index])
+    calculateSecurities(tempSecurities)
+  }
+
+  const handleChangePremiumPerShareAmount = (value: number) => {
+    const tempSecurities = [...securities]
+    tempSecurities[index] = {
+      ...tempSecurities[index],
+      share: operationSecurity.getsharePercent(value)
+    }
+    validateForm(tempSecurities[index])
+    calculateSecurities(tempSecurities)
+  }
+
+  const handleChangeBrokerAgeAmount = (value: number) => {
     // clearInterval(typingTimer)
 
     // // Iniciar un nuevo intervalo
@@ -335,7 +343,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
     const tempSecurities = [...securities]
     tempSecurities[index] = {
       ...tempSecurities[index],
-      reinsuranceBrokerage: operationSecurity.getBrokerAgePercent(parseFloat(e.target.value))
+      reinsuranceBrokerage: operationSecurity.getBrokerAgePercent(value)
     }
     validateForm(tempSecurities[index])
     calculateSecurities(tempSecurities)
@@ -344,34 +352,37 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
     //   clearInterval(typingTimer)
     // }, doneTypingInterval)
   }
-  const handleChangeDynamicComissionAmount = (e: any) => {
+
+  const handleChangeDynamicComissionAmount = (value: number) => {
     const tempSecurities = [...securities]
     tempSecurities[index] = {
       ...tempSecurities[index],
-      dynamicCommission: operationSecurity.getDynamicComissionPercent(parseFloat(e.target.value))
+      dynamicCommission: operationSecurity.getDynamicComissionPercent(value)
     }
     validateForm(tempSecurities[index])
     calculateSecurities(tempSecurities)
   }
 
-  const handleChangeTaxesAmount = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleChangeTaxesAmount = (value: number) => {
     const tempSecurities = [...securities]
     tempSecurities[index] = {
       ...tempSecurities[index],
-      taxes: operationSecurity.getTaxesPercent(parseFloat(e.target.value))
+      taxes: operationSecurity.getTaxesPercent(value)
     }
     validateForm(tempSecurities[index])
     calculateSecurities(tempSecurities)
   }
-  const handleChangeFrontingFeeAmount = (e: ChangeEvent<HTMLInputElement>) => {
+
+  const handleChangeFrontingFeeAmount = (value: number) => {
     const tempSecurities = [...securities]
     tempSecurities[index] = {
       ...tempSecurities[index],
-      frontingFee: operationSecurity.getFrontingFeePercent(parseFloat(e.target.value))
+      frontingFee: operationSecurity.getFrontingFeePercent(value)
     }
     validateForm(tempSecurities[index])
     calculateSecurities(tempSecurities)
   }
+
   const handleChangeCompany = (e: SelectChangeEvent<string>): void => {
     const avaliableCompanies = avaliableReinsurers
       .filter(reinsure => !companiesSelect.includes(reinsure.id) || security?.idCReinsuranceCompany?.id === reinsure.id)
@@ -393,6 +404,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
       validateForm(tempSecurities[index])
     }
   }
+
   const validateForm = (securityParam: SecurityDto) => {
     let data = { ...initialErrorValues }
 
@@ -446,6 +458,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
     })
     setAvaliableReinsurers(companies || [])
   }, [reinsuranceCompany])
+
   useEffect(() => {
     if (security?.id) {
       setIdRetroCedant(security.idCRetroCedant?.id)
@@ -504,31 +517,37 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
         {/* Col-1 */}
         <Grid item xs={12} sm={4}>
           <FormControl fullWidth sx={{ mb: 2 }}>
-            <TextField
+            <NumericFormat
               fullWidth
               autoFocus
               label={isGross ? 'Gross premium at %100' : 'Net premium at %100'}
-              InputProps={{
-                inputComponent: NumericFormatCustom as any
+              value={security.netPremiumAt100}
+              onValueChange={value => {
+                handleChangeBaseAmount(Number(value.floatValue))
               }}
-              defaultValue={security.netPremiumAt100}
-              onChange={handleChangeBaseAmount}
+              prefix={'$'}
+              customInput={TextField}
+              decimalScale={2}
+              thousandSeparator=','
             />
+
             <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
               {activeErros && errorsSecurity.netPremiumAt100}
             </FormHelperText>
           </FormControl>
           <FormControl fullWidth sx={{ mb: 2 }}>
-            <TextField
+            <NumericFormat
               autoFocus
               label='Share %'
               value={security.share}
-              onChange={handleChangeSharePercent}
-              InputProps={{
-                inputComponent: NumericFormatCustom as any
+              onValueChange={value => {
+                handleChangeSharePercent(Number(value.floatValue))
               }}
-              inputProps={{
-                suffix: '%'
+              suffix={'%'}
+              customInput={TextField}
+              decimalScale={2}
+              isAllowed={values => {
+                return (values.floatValue! >= 0 && values.floatValue! <= 100) || values.floatValue === undefined
               }}
             />
 
@@ -538,17 +557,19 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
           </FormControl>
           {isGross && (
             <FormControl fullWidth sx={{ mb: 2 }}>
-              <TextField
+              <NumericFormat
                 autoFocus
                 label='Reinsurance brokerage %'
                 value={security.reinsuranceBrokerage}
-                InputProps={{
-                  inputComponent: NumericFormatCustom as any
+                onValueChange={value => {
+                  handleChangeBrokerRagePercent(Number(value.floatValue))
                 }}
-                inputProps={{
-                  suffix: '%'
+                suffix={'%'}
+                customInput={TextField}
+                decimalScale={2}
+                isAllowed={values => {
+                  return (values.floatValue! >= 0 && values.floatValue! <= 100) || values.floatValue === undefined
                 }}
-                onChange={handleChangeBrokerRagePercent}
               />
 
               <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
@@ -557,35 +578,40 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
             </FormControl>
           )}
           <FormControl fullWidth sx={{ mb: 2 }}>
-            <TextField
+            <NumericFormat
               autoFocus
               label='Dynamic comission %'
               value={security.dynamicCommission}
-              InputProps={{
-                inputComponent: NumericFormatCustom as any
+              onValueChange={value => {
+                handleChangeDynamicComissionPercent(Number(value.floatValue))
               }}
-              inputProps={{
-                suffix: '%'
+              suffix={'%'}
+              customInput={TextField}
+              decimalScale={2}
+              isAllowed={values => {
+                return (values.floatValue! >= 0 && values.floatValue! <= 100) || values.floatValue === undefined
               }}
-              onChange={handleChangeDynamicComissionPercent}
             />
+
             <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
               {activeErros && errorsSecurity.dynamicCommission}
             </FormHelperText>
           </FormControl>
           {isGross && (
             <FormControl fullWidth sx={{ mb: 2 }}>
-              <TextField
+              <NumericFormat
                 autoFocus
                 label='Taxes %'
-                InputProps={{
-                  inputComponent: NumericFormatCustom as any
-                }}
-                inputProps={{
-                  suffix: '%'
-                }}
                 value={security.taxes}
-                onChange={handleChangeTaxesPercent}
+                onValueChange={value => {
+                  handleChangeTaxesPercent(Number(value.floatValue))
+                }}
+                suffix={'%'}
+                customInput={TextField}
+                decimalScale={2}
+                isAllowed={values => {
+                  return (values.floatValue! >= 0 && values.floatValue! <= 100) || values.floatValue === undefined
+                }}
               />
 
               <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
@@ -595,17 +621,19 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
           )}
           {frontingFeeEnabled && (
             <FormControl fullWidth sx={{ mb: 2 }}>
-              <TextField
+              <NumericFormat
                 autoFocus
                 label='Fronting fee %'
                 value={security.frontingFee}
-                InputProps={{
-                  inputComponent: NumericFormatCustom as any
+                onValueChange={value => {
+                  handleChangeFrontingFeePercent(Number(value.floatValue))
                 }}
-                inputProps={{
-                  suffix: '%'
+                suffix={'%'}
+                customInput={TextField}
+                decimalScale={2}
+                isAllowed={values => {
+                  return (values.floatValue! >= 0 && values.floatValue! <= 100) || values.floatValue === undefined
                 }}
-                onChange={handleChangeFrontingFeePercent}
               />
 
               <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
@@ -641,14 +669,17 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
             </FormHelperText>
           </FormControl>
           <FormControl fullWidth sx={{ mb: 2 }}>
-            <TextField
+            <NumericFormat
               autoFocus
               label='Premium per share'
               value={security.premiumPerShareAmount}
-              InputProps={{
-                inputComponent: NumericFormatCustom as any
+              onValueChange={value => {
+                handleChangePremiumPerShareAmount(Number(value.floatValue))
               }}
-              onChange={handleChangePremiumPerShareAmount}
+              prefix={'$'}
+              customInput={TextField}
+              decimalScale={2}
+              thousandSeparator=','
             />
             <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
               {activeErros && errorsSecurity.premiumPerShareAmount}
@@ -656,14 +687,17 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
           </FormControl>
           {isGross && (
             <FormControl fullWidth sx={{ mb: 2 }}>
-              <TextField
+              <NumericFormat
                 autoFocus
                 label='Reinsurance brokerage'
                 value={security.brokerAgeAmount}
-                InputProps={{
-                  inputComponent: NumericFormatCustom as any
+                onValueChange={value => {
+                  handleChangeBrokerAgeAmount(Number(value.floatValue))
                 }}
-                onChange={handleChangeBrokerAgeAmount}
+                prefix={'$'}
+                customInput={TextField}
+                decimalScale={2}
+                thousandSeparator=','
               />
 
               <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
@@ -672,14 +706,17 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
             </FormControl>
           )}
           <FormControl fullWidth sx={{ mb: 2 }}>
-            <TextField
+            <NumericFormat
               autoFocus
               label='Dynamic comission'
               value={security.dynamicCommissionAmount}
-              InputProps={{
-                inputComponent: NumericFormatCustom as any
+              onValueChange={value => {
+                handleChangeDynamicComissionAmount(Number(value.floatValue))
               }}
-              onChange={handleChangeDynamicComissionAmount}
+              prefix={'$'}
+              customInput={TextField}
+              decimalScale={2}
+              thousandSeparator=','
             />
 
             <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
@@ -688,14 +725,17 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
           </FormControl>
           {isGross && (
             <FormControl fullWidth sx={{ mb: 2 }}>
-              <TextField
+              <NumericFormat
                 autoFocus
                 label='Taxes'
                 value={security.taxesAmount}
-                InputProps={{
-                  inputComponent: NumericFormatCustom as any
+                onValueChange={value => {
+                  handleChangeTaxesAmount(Number(value.floatValue))
                 }}
-                onChange={handleChangeTaxesAmount}
+                prefix={'$'}
+                customInput={TextField}
+                decimalScale={2}
+                thousandSeparator=','
               />
               <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
                 {activeErros && errorsSecurity.taxesAmount}
@@ -704,14 +744,17 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
           )}
           {frontingFeeEnabled && (
             <FormControl fullWidth sx={{ mb: 2 }}>
-              <TextField
+              <NumericFormat
                 autoFocus
                 label='Fronting fee'
                 value={security.frontingFeeAmount}
-                InputProps={{
-                  inputComponent: NumericFormatCustom as any
+                onValueChange={value => {
+                  handleChangeFrontingFeeAmount(Number(value.floatValue))
                 }}
-                onChange={handleChangeFrontingFeeAmount}
+                prefix={'$'}
+                customInput={TextField}
+                decimalScale={2}
+                thousandSeparator=','
               />
 
               <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
@@ -723,14 +766,15 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
         {/* Col-3 */}
         <Grid item xs={12} sm={4}>
           <FormControl fullWidth sx={{ mb: 2 }}>
-            <TextField
+            <NumericFormat
               autoFocus
               fullWidth
               label='Net reinsurance premium'
               value={security.netReinsurancePremium}
-              InputProps={{
-                inputComponent: NumericFormatCustom as any
-              }}
+              prefix={'$'}
+              customInput={TextField}
+              decimalScale={2}
+              thousandSeparator=','
               disabled={true}
             />
 

@@ -55,7 +55,7 @@ const InactivityDetector: React.FC = () => {
     <>
       <InactivityModal
         renderButton={() => <span> </span>}
-        headingText={`Are you there, ${userLocalData?.username}?`}
+        headingText={`Are you there, ${userLocalData?.fullName}?`}
         text='Your session will close due to inactivity, how do you want to proceed?'
         handleClickContinue={handleLogout}
         setShow={openModal}
