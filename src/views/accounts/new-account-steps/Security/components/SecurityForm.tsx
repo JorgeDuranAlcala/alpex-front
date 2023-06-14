@@ -230,9 +230,9 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
       idCRetroCedantContact: {} as RetroCedantContactDto,
       frontingFee: Number(null),
       frontingFeeAmount: Number(null),
-      frontingFeeActive: !frontingFeeEnabled
+      frontingFeeActive: !security.frontingFeeActive
     }
-    setFrontingFeeEnabled(state => !state)
+    setFrontingFeeEnabled(() => !security.frontingFeeActive)
 
     validateForm(tempSecurities[index])
     calculateSecurities(tempSecurities)
@@ -421,20 +421,20 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
     })
 
     // Combinar los esquemas
-    if (security.frontingFeeActive && (security.share || security.premiumPerShareAmount)) {
+    if (securityParam.frontingFeeActive && (securityParam.share || securityParam.premiumPerShareAmount)) {
       combinedSchema = yup.object().shape({
         ...schema.fields,
         ...schemaRetrocedant.fields
       })
     }
 
+    errorsTemp[index] = false
     combinedSchema
       .validate(securityParam, { abortEarly: false })
       .then(function () {
-        errorsTemp[index] = false
         console.log({ error: data, index, security })
         setErrorsSecurity(initialErrorValues)
-        setAllErrors(() => errorsTemp)
+        setAllErrors(() => [...errorsTemp])
       })
       .catch(function (err) {
         for (const error of err?.inner) {
@@ -445,7 +445,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
         }
         errorsTemp[index] = true
 
-        setAllErrors(() => errorsTemp)
+        setAllErrors(() => [...errorsTemp])
         console.log({ error: data, index, security })
         setErrorsSecurity(data)
 
