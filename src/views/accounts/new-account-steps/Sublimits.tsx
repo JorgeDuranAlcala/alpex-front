@@ -65,7 +65,7 @@ const schema = yup.object().shape({
       return +val <= +limit
     })
     .required()
-    .min(1),
+    .min(1, 'Field is required'),
   at100: yup.boolean().notRequired(),
   yes: yup.boolean().notRequired(),
   luc: yup.boolean().notRequired(),
@@ -93,7 +93,7 @@ const schema = yup.object().shape({
       is: (typeDeductible: string) => {
         return typeDeductible === 'amount'
       }, //just an e.g. you can return a function
-      then: yup.number().required('Field is required').min(1)
+      then: yup.number().required('Field is required').min(1, 'Field is required')
     }),
   min: yup
     .number()
@@ -103,7 +103,7 @@ const schema = yup.object().shape({
       is: (typeDeductible: string) => {
         return typeDeductible === 'per'
       },
-      then: yup.number().required('Field is required').min(1)
+      then: yup.number().required('Field is required').min(1, 'Field is required')
     }),
   typeBi: yup
     .string()
@@ -137,7 +137,7 @@ const schema = yup.object().shape({
           title !== 'Electronic Equipment'
         )
       },
-      then: yup.number().required('Field is required').min(1)
+      then: yup.number().required('Field is required').min(1, 'Field is required')
     }),
   amountBi: yup
     .number()
@@ -147,17 +147,38 @@ const schema = yup.object().shape({
       is: (typeBi: string) => {
         return typeBi === 'money'
       },
-      then: yup.number().required('Field is required').min(1)
+      then: yup.number().required('Field is required').min(1, 'Field is required')
     }),
   idCDeductiblePer: yup
-    .number()
+    .mixed()
+    .test('mixed-validation', 'Field is required', value => {
+      return typeof value === 'number' || typeof value === 'string'
+    })
+    .test('mixed-validation2', 'Field is required', value => {
+      return value !== ''
+    })
+    .test('mixed-validation3', 'Field is required', value => {
+      return value !== 0
+    })
     .transform((_, val) => (val === Number(val) ? val : null))
     .nullable()
+
     .when('typeDeductible', {
       is: (typeDeductible: string) => {
         return typeDeductible === 'per'
       },
-      then: yup.number().required('Field is required').min(1)
+      then: yup
+        .mixed()
+        .test('mixed-validation', 'Field is required', value => {
+          return typeof value === 'number' || typeof value === 'string'
+        })
+        .test('mixed-validation2', 'Field is required', value => {
+          return value !== ''
+        })
+        .test('mixed-validation3', 'Field is required', value => {
+          return value !== 0
+        })
+        .required('Field is required')
     }),
   coinsurance: yup
     .number()
@@ -461,7 +482,7 @@ const Sublimits = () => {
       setHasError(true)
 
       setBadgeData({
-        message: 'The information has been updated',
+        message: 'THE INFORMATION HAS BEEN SAVED',
         theme: 'success',
         open: true,
         status: 'error'
@@ -473,7 +494,7 @@ const Sublimits = () => {
           open: false,
           status: 'error'
         })
-      }, 1000)
+      }, 4000)
     } catch (error) {
       setDisableBoundBtn(false)
       setDisableSaveBtn(false)
