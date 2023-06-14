@@ -180,7 +180,6 @@ const TableHeader: React.FC<ITableHeader> = ({ badgeData, handleView, selectedRo
         </Grid>
         <Grid
           item
-          md={4}
           sx={{
             '@media (max-width:900px)': {
               width: '100%',
