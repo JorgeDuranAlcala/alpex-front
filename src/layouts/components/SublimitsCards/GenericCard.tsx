@@ -47,7 +47,6 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
     daysError: false,
     priceInterruptionError: false
   })
-  const [numericError, setNumericError] = useState<string>('')
 
   const onChangeItem = (value: any, name: keyof SublimitDto) => {
     handleOnChangeByInputForm(index, { name, value })
@@ -69,6 +68,12 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
       : handleOnChangeByInputForm(index, { name: 'luc', value: true })
   }
 
+  const handleRadio = () => {
+    if (data?.yes) return 'yes'
+    if (data?.luc) return 'luc'
+    if (!data?.yes && !data?.luc) return ''
+  }
+
   const onDeleteItem = async () => {
     await handleOnDeleteForm(index)
   }
@@ -82,23 +87,6 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
   const size = userThemeConfig.typography?.size.px16
   const textColor = userThemeConfig.palette?.text.subTitle
-
-  // useEffect(() => {
-  //   if (checked) {
-  //     setDataForm({ ...dataForm, sublimit: +formInformation?.informations[0].limit })
-  //   } else {
-  //     setDataForm({ ...dataForm, sublimit: 0 })
-  //   }
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [checked])
-  // useEffect(() => {
-  //   if (dataForm) handleOnChangeForm(dataForm, index)
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [dataForm])
-  // useEffect(() => {
-  //   setErrorForm(formErrors[index] || {})
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [formErrors])
 
   return (
     <ContainerCard>
@@ -141,11 +129,8 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
                 const { floatValue } = values
                 const upLimit = +formInformation?.informations[0].limit
                 if ((floatValue! >= 0 && floatValue! <= upLimit) || floatValue === undefined) {
-                  setNumericError('')
-
                   return true
                 }
-                setNumericError(`Sublimit cannot be greater than limit`)
 
                 return false
               }}
@@ -155,7 +140,7 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
                 onChangeItem(value.floatValue, 'sublimit')
               }}
             />
-            <FormHelperText sx={{ color: 'error.main' }}>{numericError}</FormHelperText>
+            <FormHelperText sx={{ color: 'error.main' }}>{formErrors.sublimit}</FormHelperText>
           </FormControl>
           <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', paddingRight: '8px', width: '88px' }}>
             <Checkbox
@@ -174,13 +159,13 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
             <Typography>100%</Typography>
           </Box>
         </SubContainer>
-        {data?.title === 'Terrorism' || title === 'Business interruption' ? (
+        {data?.title === 'Terrorism' || title === 'Business  Interruption' ? (
           <SubContainer sx={{ height: 'auto' }}>
             <RadioGroup
               aria-labelledby='demo-radio-buttons-group-label'
               defaultValue='yes'
               name='radio-buttons-group'
-              value={data?.yes ? 'yes' : 'luc'}
+              value={handleRadio()}
               onChange={(_, val) => handleChangeRadioYesLuc(val)}
               sx={{
                 height: '100%',
@@ -253,7 +238,7 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
                     onChangeItem(value.floatValue, 'deductible')
                   }}
                 />
-                <FormHelperText sx={{ color: 'error.main' }}>{formErrors[index]?.percentage}</FormHelperText>
+                <FormHelperText sx={{ color: 'error.main' }}>{formErrors.deductible}</FormHelperText>
               </InputForm>
               {data?.typeDeductible === 'per' ? (
                 <>
@@ -279,7 +264,7 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
                         return floatValue! >= 0 || floatValue === undefined
                       }}
                     />
-                    <FormHelperText sx={{ color: 'error.main' }}>{formErrors[index]?.min}</FormHelperText>
+                    <FormHelperText sx={{ color: 'error.main' }}>{formErrors.min}</FormHelperText>
                   </FormControl>
                   <FormControl fullWidth>
                     <InputLabel id='controlled-select-label'>Aplicable over</InputLabel>
@@ -293,13 +278,14 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
                       }}
                       IconComponent={KeyboardArrowDownIcon}
                     >
-                      {options?.map((item, index) => (
-                        <MenuItem key={index} value={item.id}>
-                          {item.name}
-                        </MenuItem>
-                      ))}
+                      {options.length > 0 &&
+                        options?.map((item, index) => (
+                          <MenuItem key={index} value={item.id}>
+                            {item.name}
+                          </MenuItem>
+                        ))}
                     </Select>
-                    <FormHelperText sx={{ color: 'error.main' }}>{formErrors[index]?.typeDeductible}</FormHelperText>
+                    <FormHelperText sx={{ color: 'error.main' }}>{formErrors.idCDeductiblePer}</FormHelperText>
                   </FormControl>
                 </>
               ) : null}
@@ -334,7 +320,7 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
                     return floatValue! >= 0 || floatValue === undefined
                   }}
                 />
-                <FormHelperText sx={{ color: 'error.main' }}>{formErrors[index]?.price}</FormHelperText>
+                <FormHelperText sx={{ color: 'error.main' }}>{formErrors.amount}</FormHelperText>
               </InputForm>
             </RadioGroup>
           </SubContainer>
@@ -351,7 +337,11 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
               sx={{ width: '100%', height: '48px', outline: 'none' }}
               displayEmpty
               IconComponent={KeyboardArrowDownIcon}
-            ></Select>
+            >
+              <MenuItem key={0} value={0}>
+                {'No options available'}
+              </MenuItem>
+            </Select>
           </SubContainer>
         ) : (
           <SubContainer sx={{ height: 'auto' }}>
@@ -394,7 +384,7 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
                     return (floatValue! >= 0 && floatValue! <= 999) || floatValue === undefined
                   }}
                 />
-                <FormHelperText sx={{ color: 'error.main' }}>{formErrors[index]?.days}</FormHelperText>
+                <FormHelperText sx={{ color: 'error.main' }}>{formErrors.daysBi}</FormHelperText>
 
                 {false && <FormHelperText sx={{ color: 'error.main' }}>Required Field</FormHelperText>}
               </InputForm>
@@ -403,7 +393,7 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
                 <FormControlLabel sx={{ ml: 0.3 }} value='money' control={<Radio sx={{ mr: -1 }} />} label='' />
                 <NumericFormat
                   placeholder='$0.00'
-                  name='priceInterruption'
+                  name='amountBi'
                   value={data?.amountBi}
                   allowLeadingZeros
                   thousandSeparator=','
@@ -420,7 +410,7 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
                     onChangeItem(value.floatValue, 'amountBi')
                   }}
                 />
-                <FormHelperText sx={{ color: 'error.main' }}>{formErrors[index]?.priceInterruption}</FormHelperText>
+                <FormHelperText sx={{ color: 'error.main' }}>{formErrors.amountBi}</FormHelperText>
               </InputForm>
             </RadioGroup>
           </SubContainer>
@@ -457,7 +447,7 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
               return (floatValue! >= 0 && floatValue! <= 100) || floatValue === undefined
             }}
           />
-          <FormHelperText sx={{ color: 'error.main' }}>{formErrors[index]?.coinsurance}</FormHelperText>
+          <FormHelperText sx={{ color: 'error.main' }}>{formErrors.coinsurance}</FormHelperText>
         </SubContainer>
       </ContentCard>
     </ContainerCard>
