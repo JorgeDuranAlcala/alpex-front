@@ -151,20 +151,14 @@ const schema = yup.object().shape({
     }),
   idCDeductiblePer: yup
     .mixed()
-    .test('mixed-validation', 'Field is required', value => {
-      return typeof value === 'number' || typeof value === 'string'
+    .test('test-data-type', 'Field is required', value => {
+      return typeof value === 'number' || typeof value === 'string' || value === null
     })
-    .test('mixed-validation2', 'Field is required', value => {
-      return value !== ''
-    })
-    .test('mixed-validation3', 'Field is required', value => {
-      return value !== 0
-    })
-    .transform((_, val) => (val === Number(val) ? val : null))
-    .nullable()
-
+    .nullable(true)
     .when('typeDeductible', {
       is: (typeDeductible: string) => {
+        console.log(typeDeductible === 'per')
+
         return typeDeductible === 'per'
       },
       then: yup
