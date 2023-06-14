@@ -4,7 +4,13 @@ import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 // ** MUI Imports
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
-import { DataGrid, GRID_CHECKBOX_SELECTION_COL_DEF, GridColumns, GridRowId } from '@mui/x-data-grid'
+import {
+  DataGrid,
+  GridColumns,
+  GridRowId,
+  GRID_ACTIONS_COL_DEF,
+  GRID_CHECKBOX_SELECTION_COL_DEF
+} from '@mui/x-data-grid'
 
 // ** Icon Imports
 
@@ -295,10 +301,8 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
     },
     {
       flex: 0.1,
-      field: '',
-      headerName: '',
-      minWidth: 10,
-      maxWidth: 50,
+      ...GRID_ACTIONS_COL_DEF,
+      field: 'Actions',
       sortable: false,
       disableColumnMenu: true,
       cellClassName: 'account-column-cell-pl-0',

@@ -2,20 +2,20 @@
 import { SyntheticEvent, useState } from 'react'
 
 // ** MUI Import
-import Box from '@mui/material/Box'
-import Tab from '@mui/material/Tab'
-import Card from '@mui/material/Card'
+import TabContext from '@mui/lab/TabContext'
 import TabList from '@mui/lab/TabList'
-import Table from '@mui/material/Table'
 import TabPanel from '@mui/lab/TabPanel'
 import Avatar from '@mui/material/Avatar'
-import TabContext from '@mui/lab/TabContext'
-import TableRow from '@mui/material/TableRow'
+import Box from '@mui/material/Box'
+import Card from '@mui/material/Card'
+import CardHeader from '@mui/material/CardHeader'
+import Tab from '@mui/material/Tab'
+import Table from '@mui/material/Table'
 import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
-import TableHead from '@mui/material/TableHead'
-import CardHeader from '@mui/material/CardHeader'
 import TableContainer from '@mui/material/TableContainer'
+import TableHead from '@mui/material/TableHead'
+import TableRow from '@mui/material/TableRow'
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
@@ -230,7 +230,7 @@ const RenderTabContent = ({ data }: { data: TabContentType[] }) => {
                   border: 0,
                   py: theme => `${theme.spacing(1.5)} !important`
                 },
-                '&:first-child .MuiTableCell-body': {
+                '&:first-of-type .MuiTableCell-body': {
                   pt: theme => `${theme.spacing(3)} !important`
                 },
                 '&:last-child .MuiTableCell-body': {
