@@ -117,7 +117,7 @@ const TypesOFLimit = () => {
       <div className='country-currencies-wrapper'>
         {/* TODO:  */}
         {showAlert && (
-          <div className={`${alertType} contacts-alert`}>
+          <div className={`${alertType} catalogue-item-alert`}>
             <div className='btn-icon'>
               <Icon icon={alertIcon} />
             </div>
@@ -205,7 +205,7 @@ const TypesOFLimit = () => {
 
         <DeleteModal
           openModal={openDelete}
-          onClose={() => {
+          onCloseModal={() => {
             setOpenDelete(false)
           }}
           onDelete={deleteTypeOfLimit}

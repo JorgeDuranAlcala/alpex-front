@@ -5,6 +5,7 @@ import CloseIcon from '@mui/icons-material/Close'
 import { Box, Button, IconButton, Modal, Typography } from '@mui/material'
 import { ButtonClose, HeaderTitleModal } from 'src/styles/Dashboard/ModalReinsurers/modalReinsurers'
 
+import CustomAlert, { IAlert } from '@/views/custom/alerts'
 import Icon from 'src/@core/components/icon'
 
 interface UserFileProps {
@@ -23,12 +24,50 @@ const FileSubmit: React.FC<UserFileProps> = ({ setUserFile, userFile, urls, setU
   const [openDelete, setOpenDelete] = useState(false)
   const fileUrls: string[] = urls
 
+  const [badgeData, setBadgeData] = useState<IAlert>({
+    message: '',
+    theme: 'success',
+    open: false,
+    status: 'error'
+  })
+
   // const [openMenu, setOpenMenu] = useState(false)
   const onFileChange = function (e: any) {
     e.preventDefault()
     const rawFiles = e.target.files
-    setFile([...file, ...rawFiles])
-    setUserFile([...file, ...rawFiles])
+    const fileSize = rawFiles?.[0]?.size
+    const fileName = rawFiles?.[0]?.name
+    const maxFileSize = 5 * 1024 * 1024 // 5MB (example maximum file size)
+
+    if (fileSize > maxFileSize) {
+      setTimeout(() => {
+        setBadgeData({
+          message: `FILE "${fileName.toUpperCase()}" EXCEEDS SIZE LIMIT (5MB).`,
+          status: 'error',
+          theme: 'error',
+          open: true,
+          icon: (
+            <Icon
+              style={{
+                color: '#FF4D49',
+                marginTop: '-1px'
+              }}
+              icon='jam:alert'
+            />
+          )
+        })
+        setTimeout(() => {
+          setBadgeData({
+            message: '',
+            status: undefined,
+            icon: undefined
+          })
+        }, 3000)
+      }, 500)
+    } else {
+      setFile([...file, ...rawFiles])
+      setUserFile([...file, ...rawFiles])
+    }
   }
 
   const onButtonClick = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -93,6 +132,7 @@ const FileSubmit: React.FC<UserFileProps> = ({ setUserFile, userFile, urls, setU
 
   return (
     <Fragment>
+      <CustomAlert {...badgeData} />
       <div className='upload-btn'>
         {/* <form id="form-file-upload" onSubmit={(e) => e.preventDefault()}> */}
         <input

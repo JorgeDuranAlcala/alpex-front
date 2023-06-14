@@ -25,16 +25,26 @@ import {
   useUpdateReinsuranceCompany
 } from '@/hooks/catalogs/reinsuranceCompany'
 import { useDeleteReinsuranceCompany } from '@/hooks/catalogs/reinsuranceCompany/useDelete'
+import { useGetAllSubscriptionType } from '@/hooks/catalogs/subscriptionType'
 import { ButtonClose, HeaderTitleModal } from 'src/styles/modal/modal.styled'
-import { IReinsurer } from '../reinsurers-table'
 
 interface IReinsuranceCompanyData {
   idReinsuranceCompany: number
   setIdReinsuranceCompany: (id: number) => void
 }
 
+interface IReinsurer {
+  id: number
+  name: string
+  idSubscriptionType: number
+}
+
 const ReinsurerData = ({ idReinsuranceCompany, setIdReinsuranceCompany }: IReinsuranceCompanyData) => {
-  const [newReinsuranceCompany, setNewReinsuranceCompany] = useState<IReinsurer>({ id: 0, name: '' })
+  const [newReinsuranceCompany, setNewReinsuranceCompany] = useState<IReinsurer>({
+    id: 0,
+    name: '',
+    idSubscriptionType: 1
+  })
   const [isReinsuranceCompanySaved, setIsReinsuranceCompanySaved] = useState(false)
   const [disableAddReinsuranceCompany, setDisableAddReinsuranceCompany] = useState(true)
   const [openDelete, setOpenDelete] = useState(false)
@@ -42,7 +52,6 @@ const ReinsurerData = ({ idReinsuranceCompany, setIdReinsuranceCompany }: IReins
   const [alertType, setAlertType] = useState('')
   const [alertText, setAlertText] = useState('')
   const [alertIcon, setAlertIcon] = useState('')
-  const [suscriptionValue, setSuscriptionValue] = useState('1')
   const [isEditing, setIsEditing] = useState(false)
   const [nameDisabled, setNameDisabled] = useState(false)
 
@@ -51,11 +60,16 @@ const ReinsurerData = ({ idReinsuranceCompany, setIdReinsuranceCompany }: IReins
   const { deleteReinsuranceCompany: deleteReinsuranceCompanys } = useDeleteReinsuranceCompany()
   const { updateReinsuranceCompany: update } = useUpdateReinsuranceCompany()
   const { setId, reinsuranceCompany } = useGetReinsuranceCompanyById()
+  const { subscriptionTypes } = useGetAllSubscriptionType()
 
   useEffect(() => {
     if (idReinsuranceCompany !== 0) {
       setId(idReinsuranceCompany)
-      setNewReinsuranceCompany({ id: idReinsuranceCompany, name: reinsuranceCompany?.name || '' })
+      setNewReinsuranceCompany({
+        id: idReinsuranceCompany,
+        name: reinsuranceCompany?.name || '',
+        idSubscriptionType: reinsuranceCompany?.idSubscriptionType || 0
+      })
       setIsReinsuranceCompanySaved(true)
       setNameDisabled(true)
       setIsEditing(false)
@@ -94,11 +108,11 @@ const ReinsurerData = ({ idReinsuranceCompany, setIdReinsuranceCompany }: IReins
   const addReinsurer = async () => {
     const result = await addReinsuranceCompany({
       name: newReinsuranceCompany.name,
-      idSubscriptionType: parseInt(suscriptionValue),
-      special: parseInt(suscriptionValue) === 1
+      idSubscriptionType: newReinsuranceCompany.idSubscriptionType,
+      special: newReinsuranceCompany.idSubscriptionType === 1
     })
     if (result) {
-      setNewReinsuranceCompany({ id: result.id, name: result.name })
+      setNewReinsuranceCompany({ id: result.id, name: result.name, idSubscriptionType: result.idSubscriptionType || 0 })
       triggerAlert('success')
       setIdReinsuranceCompany(result.id)
       setNameDisabled(true)
@@ -116,10 +130,10 @@ const ReinsurerData = ({ idReinsuranceCompany, setIdReinsuranceCompany }: IReins
   const editReinsurer = async () => {
     const result = await update(newReinsuranceCompany.id, {
       ...newReinsuranceCompany,
-      idSubscriptionType: parseInt(suscriptionValue)
+      special: newReinsuranceCompany.idSubscriptionType === 1
     })
     if (result) {
-      setNewReinsuranceCompany({ id: result.id, name: result.name })
+      setNewReinsuranceCompany({ id: result.id, name: result.name, idSubscriptionType: result.idSubscriptionType || 0 })
       setIsReinsuranceCompanySaved(true)
       setNameDisabled(true)
       setIsEditing(false)
@@ -141,7 +155,11 @@ const ReinsurerData = ({ idReinsuranceCompany, setIdReinsuranceCompany }: IReins
   }
 
   const handleChangeRadio = (event: ChangeEvent<HTMLInputElement>) => {
-    setSuscriptionValue((event.target as HTMLInputElement).value)
+    //setSuscriptionValue((event.target as HTMLInputElement).value)
+    setNewReinsuranceCompany({
+      ...newReinsuranceCompany,
+      idSubscriptionType: parseInt((event.target as HTMLInputElement).value)
+    })
   }
 
   useEffect(() => {
@@ -193,11 +211,20 @@ const ReinsurerData = ({ idReinsuranceCompany, setIdReinsuranceCompany }: IReins
               row
               aria-label='controlled'
               name='controlled'
-              value={suscriptionValue}
+              value={newReinsuranceCompany.idSubscriptionType}
               onChange={handleChangeRadio}
             >
-              <FormControlLabel value='1' control={<Radio />} label='Gross premium' />
-              <FormControlLabel value='2' control={<Radio />} label='Net premium' />
+              {subscriptionTypes.map(subscriptionType => {
+                return (
+                  <FormControlLabel
+                    key={subscriptionType.id}
+                    value={subscriptionType.id}
+                    control={<Radio />}
+                    label={subscriptionType.type}
+                    disabled={nameDisabled}
+                  />
+                )
+              })}
             </RadioGroup>
           </div>
           {isReinsuranceCompanySaved ? (
