@@ -106,7 +106,7 @@ const NewAccount = () => {
         {/* <InvoiceAdd /> */}
       </Card>
       <Card>
-        <CommentSection disable={disableComments} />
+        <CommentSection disable={disableComments} step={activeStep} />
       </Card>
     </Grid>
   )
