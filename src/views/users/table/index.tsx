@@ -145,6 +145,7 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
     return (
       <>
         <Menu
+          disableScrollLock={true}
           anchorEl={anchorEl}
           open={open}
           onClose={handleClose}
