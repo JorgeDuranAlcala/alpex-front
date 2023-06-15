@@ -41,7 +41,7 @@ const MenuProps = {
 
 yup.setLocale({
   mixed: {
-    required: 'This field is required',
+    required: 'Field is required',
     notType: 'This field must be a number'
   },
   number: {
@@ -62,7 +62,8 @@ const schema = yup.object().shape({
         limit = context.options?.context.informations[0]?.limit
       }
 
-      return +val <= +limit
+     return +val <= +limit
+
     })
     .required()
     .min(1, 'Field is required'),
@@ -83,7 +84,7 @@ const schema = yup.object().shape({
       is: (typeDeductible: string) => {
         return typeDeductible === 'per'
       },
-      then: yup.number().required('Field is required').min(1, 'Field is required')
+      then: yup.number().required('Field is required').min(1, 'Value must be greater than 0')
     }),
   amount: yup
     .number()
@@ -93,7 +94,7 @@ const schema = yup.object().shape({
       is: (typeDeductible: string) => {
         return typeDeductible === 'amount'
       }, //just an e.g. you can return a function
-      then: yup.number().required('Field is required').min(1, 'Field is required')
+      then: yup.number().required('Field is required').min(1, 'Value must be greater than 0')
     }),
   min: yup
     .number()
@@ -103,7 +104,7 @@ const schema = yup.object().shape({
       is: (typeDeductible: string) => {
         return typeDeductible === 'per'
       },
-      then: yup.number().required('Field is required').min(1, 'Field is required')
+      then: yup.number().required('Field is required').min(1, 'Value must be greater than 0')
     }),
   typeBi: yup
     .string()
@@ -117,7 +118,7 @@ const schema = yup.object().shape({
       is: (title: string) => {
         return title !== 'Machinery Breakdown' && title !== 'AMIT & SRCC' && title !== 'Electronic Equipment'
       },
-      then: yup.string().required()
+      then: yup.string().required('One of these two fields is required.')
     }),
   daysBi: yup
     .number()
@@ -137,7 +138,7 @@ const schema = yup.object().shape({
           title !== 'Electronic Equipment'
         )
       },
-      then: yup.number().required('Field is required').min(1, 'Field is required')
+      then: yup.number().required('Field is required').min(1, 'Value must be greater than 0')
     }),
   amountBi: yup
     .number()
@@ -147,7 +148,7 @@ const schema = yup.object().shape({
       is: (typeBi: string) => {
         return typeBi === 'money'
       },
-      then: yup.number().required('Field is required').min(1, 'Field is required')
+      then: yup.number().required('Field is required').min(1, "Value must be greater than 0")
     }),
   idCDeductiblePer: yup
     .mixed()
