@@ -30,14 +30,14 @@ const TitleForm = ({ step, variantStep }: TitleFormProps) => {
           <span>
             Check your email
           </span>
-          <img src="/svg/envelope-arrow.svg" alt="envelope" width={28} height={28} />
+          <img src="/svg/envelope-arrow-big.svg" alt="envelope" width={28} height={28} />
         </>
         :
         <>
           <span>
             Forgot Password
           </span>
-          <img src="/images/misc/lock-icon.png" alt="lock-icon" width={28} height={28} />
+          <img src="/svg/lock-big.svg" alt="lock-icon" width={28} height={28} />
         </>
       }
 
