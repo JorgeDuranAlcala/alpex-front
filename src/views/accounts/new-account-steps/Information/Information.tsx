@@ -285,8 +285,6 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
       step: 1
     }
 
-    console.log('Mierda we', dataToSave)
-
     const res = await addInformation(dataToSave)
 
     await delayMs(1000)
