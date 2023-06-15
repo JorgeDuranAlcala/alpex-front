@@ -1,4 +1,4 @@
-import { useGetAccountById } from '@/hooks/accounts/forms'
+import { ResponseGetAccount, useGetAccountById } from '@/hooks/accounts/forms'
 import { useAddSecurities, useUpdateSecurities } from '@/hooks/accounts/security'
 import { useAddSecurityTotal, useUpdateSecurityTotalById } from '@/hooks/accounts/securityTotal'
 import {
@@ -55,7 +55,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
     grossPremium: 0
   })
   const [companiesSelect] = useState<number[]>([])
-  const { account, setAccountId } = useGetAccountById()
+  const { account, setAccountId, getAccountById, accountId } = useGetAccountById()
   const { saveSecurityTotal } = useAddSecurityTotal()
   const { updateSecurityTotal } = useUpdateSecurityTotalById()
   const { updateSecurities } = useUpdateSecurities()
@@ -119,23 +119,28 @@ const Security = ({ onStepChange }: SecurityProps) => {
       setSecurities(tempSecurities)
     }
   }
+
   const addNewForm = () => {
     const securityNew = {} as SecurityDto
     calculateSecurities([...securities, { ...securityNew, frontingFeeActive: false }])
   }
+
   const handleNextStep = () => {
     const isError = allErrors.find(error => error)
     setActiveErrors(isError || false)
     if (!isError) setOpenNextModal(true)
   }
+
   const handleCloseModal = () => {
     setOpenNextModal(false)
   }
+
   const onNextStep = () => {
     SaveData()
     setIsNextStep(true)
     handleCloseModal()
   }
+
   const SaveData = async () => {
     // const isError = allErrors.find(error => error)
 
@@ -215,10 +220,41 @@ const Security = ({ onStepChange }: SecurityProps) => {
         })
       }, 2000)
     }
+
     if (save.length > 0) {
       await saveSecurities(save)
-        .then(res => {
+        .then(async res => {
           console.log('saveSecurities', { res })
+          const accountById: Partial<ResponseGetAccount> = await getAccountById(Number(accountId))
+            .then(account => {
+              if (account) {
+                account.securities =
+                  account.securities.length === 0
+                    ? [{ frontingFeeActive: false, isGross: false } as SecurityDto]
+                    : account.securities
+              }
+
+              return account
+            })
+            .catch((error: Error) => {
+              console.log(error)
+
+              return {}
+            })
+
+          const accountSecurities = accountById?.securities as SecurityDto[]
+
+          if (accountSecurities && information) {
+            calculateSecurities(accountSecurities)
+            accountById.securityTotal &&
+              setAllFormData({
+                ...allFormData,
+                recievedNetPremium: Number(accountById.securityTotal.receivedNetPremium),
+                distribuitedNetPremium: Number(accountById.securityTotal.distributedNetPremium),
+                diference: Number(accountById.securityTotal.difference),
+                id: Number(accountById.securityTotal.id)
+              })
+          }
 
           update.length === 0 &&
             setBadgeData({
@@ -248,6 +284,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
       }, 2000)
     }
   }
+
   const DeleteNewForm = (index: number) => {
     const updatedSecurities = [...securities]
     const updatedErrors = [...allErrors]

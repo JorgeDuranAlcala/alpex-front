@@ -141,8 +141,7 @@ const CountriesCurrencies = () => {
   const deleteCountry = async () => {
     const result = await deleteCountryById(countryToDelete)
     if (result) {
-      //it needs an alert o message
-      console.log('success')
+      triggerAlert('success', 'DELETED')
       getAllCountries()
     }
     setOpenDeleteCountry(false)
@@ -175,8 +174,7 @@ const CountriesCurrencies = () => {
   const deleteCurrency = async () => {
     const result = await deleteCurrencyById(currencyToDelete)
     if (result) {
-      //it needs an alert o message
-      console.log('success')
+      triggerAlert('success', 'DELETED')
       getAllCurrencies()
     }
     setOpenDeleteCurrency(false)

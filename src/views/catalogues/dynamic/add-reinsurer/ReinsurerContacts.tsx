@@ -384,9 +384,8 @@ const ReinsurerContacts = ({ idReinsuranceCompany }: IReinsuranceCompanyContacts
   const deleteContact = async () => {
     const result = await deleteReinsuranceCompanyContact({ idDeleteList: [contactToDelete] })
     if (result) {
-      //it needs an alert o message
-      console.log('success')
       getReinsuranceCompanyContactsByIdReinsuranceCompany(reinsuranceCompanyContactsPagination)
+      triggerAlert('success', 'DELETED')
     }
     setOpenDelete(false)
   }
@@ -394,9 +393,8 @@ const ReinsurerContacts = ({ idReinsuranceCompany }: IReinsuranceCompanyContacts
   const deleteRows = async () => {
     const result = await deleteReinsuranceCompanyContact({ idDeleteList: selectedRows })
     if (result) {
-      //it needs an alert o message
-      console.log('success')
       getReinsuranceCompanyContactsByIdReinsuranceCompany(reinsuranceCompanyContactsPagination)
+      triggerAlert('success', 'DELETED')
     }
     setOpenDeleteRows(false)
   }
