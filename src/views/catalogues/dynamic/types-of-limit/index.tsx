@@ -105,8 +105,7 @@ const TypesOFLimit = () => {
   const deleteTypeOfLimit = async () => {
     const result = await deleteTypeOfLimitById(typeToDelete)
     if (result) {
-      //it needs an alert o message
-      console.log('success')
+      triggerAlert('success', 'DELETED')
       getAllTypeOfLimit()
     }
     setOpenDelete(false)

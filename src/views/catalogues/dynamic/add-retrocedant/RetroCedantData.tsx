@@ -11,6 +11,7 @@ import Icon from 'src/@core/components/icon'
 // ** Custom Imports
 import { useAddRetroCedant, useGetRetroCedantById, useUpdateRetroCedant } from '@/hooks/catalogs/retroCedant'
 import { useDeleteRetroCedant } from '@/hooks/catalogs/retroCedant/useDelete'
+import { useRouter } from 'next/router'
 import { ButtonClose, HeaderTitleModal } from 'src/styles/modal/modal.styled'
 import { ICedant } from '../retrocedants-table'
 
@@ -45,6 +46,9 @@ const RetroCedantData = ({ idRetroCedant, setIdRetroCedant }: IRetroCedantData) 
   const { updateRetroCedant: update } = useUpdateRetroCedant()
   const { deleteRetroCedant: deleteRetroCedants } = useDeleteRetroCedant()
   const { setId, retroCedant } = useGetRetroCedantById()
+
+  //router
+  const router = useRouter()
 
   useEffect(() => {
     if (idRetroCedant !== 0) {
@@ -82,6 +86,7 @@ const RetroCedantData = ({ idRetroCedant, setIdRetroCedant }: IRetroCedantData) 
 
     setTimeout(() => {
       setShowAlert(false)
+      text === 'DELETED' && router.push('/catalogues/dynamic/')
     }, 5000)
   }
 
@@ -119,7 +124,7 @@ const RetroCedantData = ({ idRetroCedant, setIdRetroCedant }: IRetroCedantData) 
   const deleteRetroCedant = async () => {
     const result = await deleteRetroCedants({ idDeleteList: [newRetroCedant.id] })
     if (result) {
-      triggerAlert('success', 'CEDANT DELETED')
+      triggerAlert('success', 'DELETED')
       setIdRetroCedant(0)
     } else {
       triggerAlert('error')

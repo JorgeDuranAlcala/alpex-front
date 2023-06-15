@@ -15,6 +15,7 @@ import { IBroker } from '../broker-table'
 // Hooks
 import { useFindByIdBroker, useUpdateById } from '@/hooks/catalogs/broker'
 import { useDeleteBroker } from '@/hooks/catalogs/broker/useDelete'
+import { useRouter } from 'next/router'
 import { useAddBroker } from 'src/hooks/catalogs/broker/useAdd'
 
 interface IBrokerData {
@@ -39,6 +40,9 @@ const BrokerData = ({ idBroker, setIdBroker }: IBrokerData) => {
   const { deleteBroker: deleteBrokers } = useDeleteBroker()
   const { update } = useUpdateById()
   const { setId, broker } = useFindByIdBroker()
+
+  //router
+  const router = useRouter()
 
   useEffect(() => {
     if (idBroker !== 0) {
@@ -75,6 +79,7 @@ const BrokerData = ({ idBroker, setIdBroker }: IBrokerData) => {
 
     setTimeout(() => {
       setShowAlert(false)
+      text === 'DELETED' && router.push('/catalogues/dynamic/')
     }, 5000)
   }
 
@@ -112,7 +117,7 @@ const BrokerData = ({ idBroker, setIdBroker }: IBrokerData) => {
   const deleteBroker = async () => {
     const result = await deleteBrokers({ idDeleteList: [newBroker.id] })
     if (result) {
-      triggerAlert('success')
+      triggerAlert('success', 'DELETED')
       setIdBroker(0)
     } else {
       triggerAlert('error')
