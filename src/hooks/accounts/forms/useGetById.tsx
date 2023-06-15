@@ -7,7 +7,7 @@ import { SecurityTotalDto } from '@/services/accounts/dtos/securityTotal.dto'
 import { SublimitDto } from '@/services/accounts/dtos/sublimit.dto'
 import AccountServices from 'src/services/accounts/account.service'
 
-interface Response {
+export interface ResponseGetAccount {
   id: number
   informations: InformationDto[]
   securities: SecurityDto[]
@@ -17,10 +17,10 @@ interface Response {
 }
 
 export const useGetAccountById = () => {
-  const [account, setAccount] = useState<Response>()
+  const [account, setAccount] = useState<ResponseGetAccount>()
   const [accountId, setAccountId] = useState<number | null>(null)
 
-  const getAccountById = async (idAccount: number): Promise<Response> => {
+  const getAccountById = async (idAccount: number): Promise<ResponseGetAccount> => {
     const account = await AccountServices.getAccountById(idAccount)
 
     return account
@@ -48,6 +48,7 @@ export const useGetAccountById = () => {
   return {
     account,
     setAccountId,
-    getAccountById
+    getAccountById,
+    accountId
   }
 }

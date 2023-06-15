@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 // ** MUI Imports
 import CloseIcon from '@mui/icons-material/Close'
 import { Box, Button, FormControl, IconButton, Modal, TextField, Typography } from '@mui/material'
-import { DataGrid, GridColumns, GRID_CHECKBOX_SELECTION_COL_DEF } from '@mui/x-data-grid'
+import { DataGrid, GRID_CHECKBOX_SELECTION_COL_DEF, GridColumns } from '@mui/x-data-grid'
 
 import FormHelperText from '@mui/material/FormHelperText'
 
@@ -254,9 +254,8 @@ const ReinsurerBinders = ({ idReinsuranceCompany }: IReinsuranceCompanyBinders) 
   const deleteBinder = async () => {
     const result = await deleteReinsuranceCompanyBinder({ idDeleteList: [binderToDelete] })
     if (result) {
-      //it needs an alert o message
-      console.log('success')
       getReinsuranceCompanyBindersByIdReinsuranceCompany(reinsuranceCompanyBindersPagination)
+      triggerAlert('success', 'DELETED')
     }
     setOpenDelete(false)
   }
@@ -264,9 +263,8 @@ const ReinsurerBinders = ({ idReinsuranceCompany }: IReinsuranceCompanyBinders) 
   const deleteRows = async () => {
     const result = await deleteReinsuranceCompanyBinder({ idDeleteList: selectedRows })
     if (result) {
-      //it needs an alert o message
-      console.log('success')
       getReinsuranceCompanyBindersByIdReinsuranceCompany(reinsuranceCompanyBindersPagination)
+      triggerAlert('success', 'DELETED')
     }
     setOpenDeleteRows(false)
   }

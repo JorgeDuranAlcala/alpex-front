@@ -8,7 +8,7 @@ import { useRouter } from 'next/router'
 import CloseIcon from '@mui/icons-material/Close'
 import { Box, Button, Modal, Typography } from '@mui/material'
 import IconButton from '@mui/material/IconButton'
-import { DataGrid, GridColumns, GRID_CHECKBOX_SELECTION_COL_DEF } from '@mui/x-data-grid'
+import { DataGrid, GRID_CHECKBOX_SELECTION_COL_DEF, GridColumns } from '@mui/x-data-grid'
 import { ButtonClose, HeaderTitleModal } from 'src/styles/modal/modal.styled'
 
 // ** Icon Imports
@@ -51,6 +51,12 @@ const RetroCedantsTable = () => {
     retroCedantInfoPage
   } = useGetAllPagination()
   const { deleteRetroCedant } = useDeleteRetroCedant()
+
+  // Handle Alerts
+  const [showAlert, setShowAlert] = useState(true)
+  const [alertType, setAlertType] = useState('')
+  const [alertText, setAlertText] = useState('')
+  const [alertIcon, setAlertIcon] = useState('')
 
   const handleSelectCedantEdit = (id: number | null) => {
     router.push({ pathname: '/catalogues/dynamic/add-retrocedants', query: { id } })
@@ -141,6 +147,33 @@ const RetroCedantsTable = () => {
     setRetroCedantList(retroCedants || [])
   }, [retroCedants])
 
+  const triggerAlert = (type: string, text: string) => {
+    setAlertType(type)
+
+    switch (type) {
+      case 'success':
+        setAlertText(text)
+        setAlertIcon('mdi:check-circle-outline')
+        break
+      case 'error':
+        setAlertText('UNKNOWN ERROR, TRY AGAIN')
+        setAlertIcon('mdi:alert-circle-outline')
+        break
+      case 'warn':
+        setAlertText('NO INTERNET CONNECTION')
+        setAlertIcon('mdi:alert-outline')
+        break
+      default:
+        break
+    }
+
+    setShowAlert(true)
+
+    setTimeout(() => {
+      setShowAlert(false)
+    }, 5000)
+  }
+
   const searchRetroCedant = (value: string) => {
     //must be replaced with the respective broker service
     if (value === '') {
@@ -162,9 +195,8 @@ const RetroCedantsTable = () => {
     //must be replaced with the respective broker service
     const result = await deleteRetroCedant({ idDeleteList: selectedRows })
     if (result) {
-      //it needs an alert o message
-      console.log('success')
       getRetroCedantsPagination({ ...retroCedantPagination })
+      triggerAlert('success', 'DELETED')
     }
     setOpenDeleteRows(false)
   }
@@ -177,9 +209,8 @@ const RetroCedantsTable = () => {
   const deleteSingleCedant = async () => {
     const result = await deleteRetroCedant({ idDeleteList: [retroCedantToDelete] })
     if (result) {
-      //it needs an alert o message
-      console.log('success')
       getRetroCedantsPagination({ ...retroCedantPagination })
+      triggerAlert('success', 'DELETED')
     }
     setOpenDelete(false)
   }
@@ -194,6 +225,15 @@ const RetroCedantsTable = () => {
   return (
     <>
       <div className='outter-wrapper'>
+        {/* TODO:  */}
+        {showAlert && (
+          <div className={`${alertType} catalogue-item-alert`}>
+            <div className='btn-icon'>
+              <Icon icon={alertIcon} />
+            </div>
+            {alertText}
+          </div>
+        )}
         <TableHeader
           onDeleteRows={() => {
             setOpenDeleteRows(true)
