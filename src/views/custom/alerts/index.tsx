@@ -18,19 +18,19 @@ const customTheme = {
     color: '#828597'
   },
   success: {
-    backgroundColor: 'rgba(114, 225, 40, .22)',
+    backgroundColor: '#EEFBE5',
     color: '#52B611'
   },
   error: {
-    backgroundColor: 'rgba(255, 77, 73, .22)',
+    backgroundColor: '#FFEAE9',
     color: '#E04440'
   },
   warning: {
-    backgroundColor: 'rgba(255, 180, 70, .22)',
+    backgroundColor: '#FFF6E9',
     color: '#EF9713'
   },
   info: {
-    backgroundColor: 'rgba(45, 103, 235, .22)',
+    backgroundColor: '#E6EDFD',
     color: '#174BC1'
   }
 }
