@@ -89,7 +89,10 @@ const showErrors = (field: string, valueLen: number, min: number) => {
 
 const schema = yup.object().shape({
   phone: yup.string().required(),
-  company: yup.string().required(),
+
+  company: yup.string(),
+
+  // company: yup.string().required(),
   email: yup.string().email().required(),
 
   // role: yup.string().required(),
@@ -128,6 +131,8 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
   console.log('Error-->', error?.message)
 
   const { roles } = useGetAllRoles()
+
+  // console.log('Esto es roles', roles, company, selectUser, user)
 
   const ErrorsEmailText = {
     fieldRequired: 'This field is required.',
@@ -188,7 +193,10 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
   })
 
   const onSubmit = (data: any) => {
+    // console.log('se hace algo acá, pero no entra', data, selectUser)
     if (selectUser) {
+      // console.log('se hace algo', idCompany)
+
       const dataToSend: UsersPutDto = {
         id: usersReducer.current?.id || 1,
         name: data.name || '',
@@ -215,7 +223,11 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
             : [],
         areaCode: selectedCountry?.phone || ''
       }
+
+      console.log('Esto se envía:', dataToSend)
+
       setUserPut(dataToSend)
+
       setTimeout(() => {
         dispatch(fetchAccounts(usersReducer))
       }, 100)
@@ -650,7 +662,6 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
                       <Controller
                         name='company'
                         control={control}
-                        defaultValue={''}
                         render={({ field: { value, onChange, onBlur } }) => (
                           <>
                             <InputLabel>Company</InputLabel>
@@ -661,6 +672,8 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
                               value={selectUser ? idCompany : value}
                               onBlur={onBlur}
                               onChange={e => {
+                                // console.log('Esto se selecciona', e.target.value)
+
                                 onChange(e.target.value)
                               }}
                               labelId='broker'
@@ -703,6 +716,7 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
                               value={selectUser ? idRole : value}
                               onBlur={onBlur}
                               onChange={e => {
+                                // console.log('Esto se selecciona', e.target.value)
                                 onChange(e.target.value)
                                 setIdRole(e.target.value)
                               }}
@@ -804,6 +818,9 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
                     color='primary'
                     size='large'
                     sx={{ float: 'right', ml: 5 }}
+                    onClick={() => {
+                      // console.log('se hace algo por acá')
+                    }}
                   >
                     SAVE
                   </Button>
