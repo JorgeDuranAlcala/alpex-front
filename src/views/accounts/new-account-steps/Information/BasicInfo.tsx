@@ -639,7 +639,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               id='reception-date'
               customInput={<CustomInput label='Reception date' sx={{ mb: 2, mt: 2, width: '100%' }} />}
               onChange={handleReceptionDateChange}
-              className={errors.receptionDateError ? 'error LACLASE' : 'LACLASE'}
+              className={errors.receptionDateError ? 'error' : ''}
               showTimeSelect
               showMonthDropdown
               showYearDropdown
