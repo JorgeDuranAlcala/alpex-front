@@ -1,8 +1,18 @@
 
-import { Box } from '@mui/material';
-import Img from 'next/image';
+import { Box, styled } from '@mui/material';
 
-
+const BoxStyled = styled(Box)(({ theme }) => ({
+  display: 'flex', alignItems: 'base-line', gap: '8px',
+  [theme.breakpoints.down('sm')]: {
+    alignItems: 'center',
+    fontSize: '20px',
+    'img': {
+      paddingBottom: '2px',
+      width: '20px',
+      height: '22px',
+    }
+  }
+}))
 
 interface TitleFormProps {
   step: number;
@@ -14,24 +24,24 @@ interface TitleFormProps {
 
 const TitleForm = ({ step, variantStep }: TitleFormProps) => {
   return (
-    <Box sx={{ display: 'flex', alignItems: 'base-line', gap: '8px' }}>
+    <BoxStyled >
       {(variantStep === 'email' || variantStep === '') && step === 2 ?
         <>
           <span>
             Check your email
           </span>
-          <Img src="/svg/envelope-arrow.svg" alt="envelope" width={28} height={28} />
+          <img src="/svg/envelope-arrow-big.svg" alt="envelope" width={28} height={28} />
         </>
         :
         <>
           <span>
             Forgot Password
           </span>
-          <Img src="/images/misc/lock-icon.png" alt="lock-icon" width={28} height={28} />
+          <img src="/svg/lock-big.svg" alt="lock-icon" width={28} height={28} />
         </>
       }
 
-    </Box>
+    </BoxStyled>
   )
 }
 
