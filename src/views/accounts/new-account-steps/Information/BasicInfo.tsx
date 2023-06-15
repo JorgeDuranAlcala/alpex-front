@@ -735,7 +735,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
           </DatePickerWrapper>
         </div>
         <div className='form-col'>
-          <div className='title'>Underwriter team</div>
+          <div className='title'>Underwriting team</div>
           {/* <FormControl fullWidth sx={{ mb: 2, mt: 2 }} error={errors.underwriterError}> */}
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <InputLabel>Underwriter</InputLabel>
