@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import UserThemeOptions from 'src/layouts/UserThemeOptions'
 
 // ** MUI Imports
@@ -7,70 +7,113 @@ import FormControl from '@mui/material/FormControl'
 import InputAdornment from '@mui/material/InputAdornment'
 import TextField from '@mui/material/TextField'
 
-interface Comment {
-  message: string
-  time: string
-}
-interface UserComment {
-  id: number
-  userId: number
-  color: string
-  letter: string
-  userName: string
-  role: string
-  updateDate: string
-  comments: Comment[]
-}
+//hooks
+import { useAddComment, useGetCommentsByIdAccount } from '@/hooks/accounts/comments'
+import { CommentDto } from '@/services/accounts/dtos/comment.dto'
 
 interface CommentSectionProps {
   disable?: boolean
+  step: number
 }
 
-const userComments: UserComment[] = [
-  {
-    id: 1,
-    userId: 1,
-    color: '#477FFF',
-    letter: 'A',
-    userName: 'Alejandro Hernández',
-    role: 'Admin',
-    updateDate: 'Today 1:15 PM',
-    comments: []
-  }
-]
+interface Comment {
+  comment: string
+}
 
-const CommentSection = ({ disable = false }: CommentSectionProps) => {
+interface CommentGroup {
+  name: string
+  role: string
+  createdAt: Date
+  comments: Comment[]
+}
+
+const CommentSection = ({ disable = false, step }: CommentSectionProps) => {
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
   const inter = userThemeConfig.typography?.fontFamilyInter
 
   // const [disable, setDisable] = useState(false)
   const [currentComment, setCurrentComment] = useState('')
+  const { getComments } = useGetCommentsByIdAccount()
+  const { addComment } = useAddComment()
+  const [commentGroups, setCommentGroup] = useState<CommentGroup[]>([])
 
-  const handleSend = () => {
-    for (let i = 0; i < userComments.length; i++) {
-      if (userComments[i].id === 1) {
-        // Solo para el usuario con id = 1
+  //disable buttons
+  const [disableSaveCommentBtn, setDisableSaveCommentBtn] = useState<boolean>(false)
 
-        const formatter = new Intl.DateTimeFormat('en-US', {
-          weekday: 'short',
-          year: 'numeric',
-          month: 'numeric',
-          day: 'numeric',
-          hour: 'numeric',
-          minute: 'numeric',
-          hour12: true
-        })
-        const formattedDate = formatter.format(new Date())
+  const isToday = (commentDate: Date, today: Date) => {
+    return (
+      commentDate.getFullYear() === today.getFullYear() &&
+      commentDate.getMonth() === today.getMonth() &&
+      commentDate.getDate() === today.getDate()
+    )
+  }
 
-        userComments[i].comments.push({
-          message: currentComment,
-          time: formattedDate
-        })
-        userComments[i].updateDate = formattedDate
-        break
-      }
+  const isYesterDay = (commentDate: Date, today: Date) => {
+    return (
+      commentDate.getFullYear() === today.getFullYear() &&
+      commentDate.getMonth() === today.getMonth() &&
+      commentDate.getDate() === today.getDate() - 1
+    )
+  }
+  const isSameTime = (comment: Date, nextComment: Date) => {
+    const date1 = new Date(comment)
+    const date2 = new Date(nextComment)
+
+    return (
+      date1.getDate() === date2.getDate() &&
+      date1.getMonth() === date2.getMonth() &&
+      date1.getFullYear() === date2.getFullYear() &&
+      date1.getHours() === date2.getHours() &&
+      date1.getMinutes() === date2.getMinutes()
+    )
+  }
+
+  const formatDate = (date: Date) => {
+    const today = new Date()
+    const commentDate = new Date(date)
+    const formatter = new Intl.DateTimeFormat('en-US', {
+      weekday: 'short',
+      year: 'numeric',
+      month: 'numeric',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+      hour12: true
+    })
+    const formattedDate = formatter.format(commentDate)
+
+    if (isToday(commentDate, today)) {
+      const splitDate = formattedDate.split(',')
+      const dataWithoutSlash = splitDate.filter((s, index) => index !== 1)
+      dataWithoutSlash[0] = 'Today'
+
+      return dataWithoutSlash.join(', ')
     }
-    setCurrentComment('')
+
+    if (isYesterDay(commentDate, today)) {
+      const splitDate = formattedDate.split(',')
+      const dataWithoutSlash = splitDate.filter((s, index) => index !== 1)
+      dataWithoutSlash[0] = 'Yesterday'
+
+      return dataWithoutSlash.join(', ')
+    }
+
+    return formattedDate
+  }
+
+  const handleSend = async () => {
+    setDisableSaveCommentBtn(true)
+    const idAccountCache = Number(localStorage.getItem('idAccount'))
+    if (currentComment !== '') {
+      await addComment({
+        accountId: idAccountCache,
+        comment: currentComment
+      })
+      setCurrentComment('')
+      const data = await getComments(idAccountCache)
+      groupComments(data)
+    }
+    setDisableSaveCommentBtn(false)
   }
 
   const handleTextFieldKeyDown = (event: { keyCode: number; shiftKey: boolean; preventDefault: () => void }) => {
@@ -80,40 +123,83 @@ const CommentSection = ({ disable = false }: CommentSectionProps) => {
     }
   }
 
+  const groupComments = (comments: CommentDto[]) => {
+    setCommentGroup([])
+    const commentGroupsTemp: CommentGroup[] = []
+    for (const comment of comments) {
+      const existingGroup = commentGroupsTemp.find(
+        group => group.name === comment.name && isSameTime(comment.createdAt, group.createdAt)
+      )
+      if (existingGroup) {
+        existingGroup.comments.push({ comment: comment.comment })
+      } else {
+        commentGroupsTemp.push({
+          name: comment.name,
+          role: comment.role,
+          createdAt: new Date(comment.createdAt),
+          comments: [{ comment: comment.comment }]
+        })
+      }
+    }
+
+    setCommentGroup([...commentGroupsTemp])
+  }
+
+  const getAccountComments = async () => {
+    const idAccountCache = Number(localStorage.getItem('idAccount'))
+    if (idAccountCache) {
+      const data = await getComments(idAccountCache)
+      groupComments(data)
+    }
+  }
+
+  useEffect(() => {
+    getAccountComments()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  useEffect(() => {
+    getAccountComments()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [step])
+
   return (
     <>
       <div className='comments' style={{ fontFamily: inter }}>
         <form noValidate autoComplete='off'>
           <div className='title'>Comments</div>
           <div className='comment-wrapper'>
-            {userComments.map(user => (
-              <>
-                {user.comments.length > 0 ? (
-                  <div className='comment-view'>
-                    <div className='user' key={user.id}>
-                      <div className='avatar' style={{ backgroundColor: `${user.color}` }}>
-                        {user.letter}
+            {commentGroups.length > 0 ? (
+              commentGroups.map((group, index) => {
+                return (
+                  <div className='comment-view' key={index}>
+                    <div className='user'>
+                      <div className='avatar' style={{ backgroundColor: `#477FFF` }}>
+                        {group.name.charAt(0).toLocaleUpperCase()}
                       </div>
                       <div className='user-role'>
-                        <div className='name'>{user.userName}</div>
-                        <div className='role'>{user.role}</div>
+                        <div className='name'>{group.name}</div>
+                        <div className='role'>{group.role}</div>
                       </div>
                     </div>
                     <div className='messages'>
-                      {user.comments.map((comment, index) => (
-                        <div className='message-globe' key={index}>
-                          {comment.message}
-                        </div>
-                      ))}
-                      <div className='message-time'>{user.updateDate} </div>
+                      {group.comments.length > 0
+                        ? group.comments.map((comment, index) => {
+                            return (
+                              <div className='message-globe' key={index}>
+                                {comment.comment}
+                              </div>
+                            )
+                          })
+                        : null}
+                      <div className='message-time'>{formatDate(group.createdAt)} </div>
                     </div>
                   </div>
-                ) : (
-                  <div className='comment-text'>There are no comments in this account yet.</div>
-                )}
-              </>
-            ))}
-
+                )
+              })
+            ) : (
+              <div className='comment-text'>There are no comments in this account yet.</div>
+            )}
             <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
               <TextField
                 value={currentComment}
@@ -125,11 +211,21 @@ const CommentSection = ({ disable = false }: CommentSectionProps) => {
                 label='Type your message here...'
                 className='comment-area'
                 onChange={e => setCurrentComment(e.target.value)}
-                onKeyDown={handleTextFieldKeyDown}
+                onKeyDown={event => {
+                  if (!disableSaveCommentBtn) {
+                    handleTextFieldKeyDown(event)
+                  }
+                }}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position='end' sx={{ cursor: 'pointer' }}>
-                      <SendOutlinedIcon onClick={handleSend} />
+                      <SendOutlinedIcon
+                        onClick={() => {
+                          if (!disableSaveCommentBtn) {
+                            handleSend()
+                          }
+                        }}
+                      />
                     </InputAdornment>
                   )
                 }}
