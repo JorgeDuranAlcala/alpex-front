@@ -82,8 +82,9 @@ const NewAccount = () => {
     const formSecurity = account?.securities
     const formPayment = account?.installments
     const formSublimits = account?.sublimits
-
-    if (
+    if (activeStep == 1 && isNewAccount) {
+      setActiveStep(1)
+    } else if (
       formInformation?.length !== 0 &&
       formSecurity?.length === 0 &&
       formPayment?.length === 0 &&
@@ -107,7 +108,7 @@ const NewAccount = () => {
     } else {
       setActiveStep(4)
     }
-  }, [account?.informations, account?.installments, account?.securities, account?.sublimits])
+  }, [account?.informations, account?.installments, account?.securities, account?.sublimits, activeStep, isNewAccount])
 
   useEffect(() => {
     const handleExit = () => {
