@@ -42,9 +42,9 @@ export interface BasicInfoInterface {
   cedantContactPhone: string
   cedantContactCountry: string
   lineOfBusiness: number | string
-  underwriter: number | string
-  leadUnderwriter: number | string
-  technicalAssistant: number | string
+  underwriter: number | string | null
+  leadUnderwriter: number | string | null
+  technicalAssistant: number | string | null
   industryCode: number | string
   riskActivity: string
   riskClass: number
@@ -182,9 +182,9 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
       effectiveDate: basicInfo.effectiveDate,
       expirationDate: basicInfo.expirationDate,
       receptionDate: basicInfo.receptionDate && new Date(basicInfo.receptionDate),
-      idLeadUnderwriter: Number(basicInfo.leadUnderwriter),
-      idTechnicalAssistant: Number(basicInfo.technicalAssistant),
-      idUnderwriter: Number(basicInfo.underwriter),
+      idLeadUnderwriter: Number(basicInfo.leadUnderwriter) === 0 ? null : Number(basicInfo.leadUnderwriter),
+      idTechnicalAssistant: Number(basicInfo.technicalAssistant) === 0 ? null : Number(basicInfo.leadUnderwriter),
+      idUnderwriter: Number(basicInfo.underwriter) === 0 ? null : Number(basicInfo.leadUnderwriter),
       riskClass: basicInfo.riskClass,
       currency: placementStructure.currency,
       exchangeRate: placementStructure.exchangeRate,
@@ -262,9 +262,9 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
       receptionDate: formatUTC(basicInfo.receptionDate),
       effectiveDate: formatUTC(basicInfo.effectiveDate),
       expirationDate: formatUTC(basicInfo.expirationDate),
-      idLeadUnderwriter: basicInfo.leadUnderwriter,
-      idTechnicalAssistant: basicInfo.technicalAssistant,
-      idUnderwriter: basicInfo.underwriter,
+      idLeadUnderwriter: Number(basicInfo.leadUnderwriter) === 0 ? null : Number(basicInfo.leadUnderwriter),
+      idTechnicalAssistant: Number(basicInfo.technicalAssistant) === 0 ? null : Number(basicInfo.leadUnderwriter),
+      idUnderwriter: Number(basicInfo.underwriter) === 0 ? null : Number(basicInfo.leadUnderwriter),
       riskClass: basicInfo.riskClass,
 
       currency: 'USD',

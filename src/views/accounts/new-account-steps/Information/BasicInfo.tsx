@@ -63,12 +63,12 @@ type BasicInfoProps = {
     cedantContactPhone: string
     cedantContactCountry: string
     lineOfBusiness: number | string
-    underwriter: number | string
-    leadUnderwriter: number | string
+    underwriter: number | string | null
+    leadUnderwriter: number | string | null
+    technicalAssistant: number | string | null
     industryCode: number | string
     riskActivity: string
     riskClass: number
-    technicalAssistant: number | string
     receptionDate: Date | null
     effectiveDate: Date | null
     expirationDate: Date | null
@@ -88,12 +88,12 @@ type BasicInfoProps = {
       cedantContactPhone: string
       cedantContactCountry: string
       lineOfBusiness: number | string
-      underwriter: number | string
-      leadUnderwriter: number | string
+      underwriter: number | string | null
+      leadUnderwriter: number | string | null
+      technicalAssistant: number | string | null
       industryCode: number | string
       riskActivity: string
       riskClass: number
-      technicalAssistant: number | string
       receptionDate: Date | null
       effectiveDate: Date | null
       expirationDate: Date | null
