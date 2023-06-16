@@ -108,7 +108,7 @@ import { useGetAllRiskActivities } from 'src/hooks/catalogs/riskActivity'
 import { useGetByIdRole } from 'src/hooks/catalogs/users/'
 
 const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeValidations, onValidationComplete }) => {
-  //cargamos la informaci�n de los cat�logos de base de datos
+  //cargamos la informacion de los catalogos de base de datos
   const { countries } = useCountyGetAll()
   const { brokers } = useBrokerGetAll()
   const { cedant } = useCedantGetAll()
