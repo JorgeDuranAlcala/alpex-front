@@ -36,9 +36,10 @@ interface BasicInfoErrors {
   brokerError: boolean
   cedantError: boolean
   lineOfBusinessError: boolean
-  underwriterError: boolean
-  leadUnderwriterError: boolean
-  technicalAssistantError: boolean
+
+  // underwriterError: boolean
+  // leadUnderwriterError: boolean
+  // technicalAssistantError: boolean
   industryCodeError: boolean
   riskActivityError: boolean
   riskClassError: boolean
@@ -62,12 +63,12 @@ type BasicInfoProps = {
     cedantContactPhone: string
     cedantContactCountry: string
     lineOfBusiness: number | string
-    underwriter: number | string
-    leadUnderwriter: number | string
+    underwriter: number | string | null
+    leadUnderwriter: number | string | null
+    technicalAssistant: number | string | null
     industryCode: number | string
     riskActivity: string
     riskClass: number
-    technicalAssistant: number | string
     receptionDate: Date | null
     effectiveDate: Date | null
     expirationDate: Date | null
@@ -87,12 +88,12 @@ type BasicInfoProps = {
       cedantContactPhone: string
       cedantContactCountry: string
       lineOfBusiness: number | string
-      underwriter: number | string
-      leadUnderwriter: number | string
+      underwriter: number | string | null
+      leadUnderwriter: number | string | null
+      technicalAssistant: number | string | null
       industryCode: number | string
       riskActivity: string
       riskClass: number
-      technicalAssistant: number | string
       receptionDate: Date | null
       effectiveDate: Date | null
       expirationDate: Date | null
@@ -152,9 +153,9 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
     brokerError: false,
     cedantError: false,
     lineOfBusinessError: false,
-    underwriterError: false,
-    leadUnderwriterError: false,
-    technicalAssistantError: false,
+    // underwriterError: false,
+    // leadUnderwriterError: false,
+    // technicalAssistantError: false,
     receptionDateError: false,
     effectiveDateError: false,
     expirationDateError: false,
@@ -234,9 +235,9 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
       brokerError: basicInfo.broker === '',
       cedantError: basicInfo.cedant === '',
       lineOfBusinessError: basicInfo.lineOfBusiness === '',
-      underwriterError: basicInfo.underwriter === '',
-      leadUnderwriterError: basicInfo.leadUnderwriter === '',
-      technicalAssistantError: basicInfo.technicalAssistant === '',
+      // underwriterError: basicInfo.underwriter === '',
+      // leadUnderwriterError: basicInfo.leadUnderwriter === '',
+      // technicalAssistantError: basicInfo.technicalAssistant === '',
       industryCodeError: basicInfo.industryCode === '',
       riskActivityError: basicInfo.riskActivity === '',
       riskClassError: basicInfo.riskClass === 0,
@@ -312,7 +313,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
     }))
   }, [basicInfo.industryCode, riskActivities])
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (makeValidations) {
       validations()
     }
@@ -743,7 +744,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
         </div>
         <div className='form-col'>
           <div className='title'>Underwriter team</div>
-          <FormControl fullWidth sx={{ mb: 2, mt: 2 }} error={errors.underwriterError}>
+          <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <InputLabel>Underwriter</InputLabel>
 
             <Select
@@ -767,13 +768,8 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
                 </MenuItem>
               )}
             </Select>
-            {errors.underwriterError && (
-              <FormHelperText sx={{ color: 'error.main' }} id='expirationDate-error'>
-                {getErrorMessage('underwriterError')}
-              </FormHelperText>
-            )}
           </FormControl>
-          <FormControl fullWidth sx={{ mb: 2, mt: 2 }} error={errors.leadUnderwriterError}>
+          <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <InputLabel>Lead underwriter</InputLabel>
 
             <Select
@@ -797,14 +793,9 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
                 </MenuItem>
               )}
             </Select>
-            {errors.leadUnderwriterError && (
-              <FormHelperText sx={{ color: 'error.main' }} id='expirationDate-error'>
-                {getErrorMessage('leadUnderwriterError')}
-              </FormHelperText>
-            )}
           </FormControl>
 
-          <FormControl fullWidth sx={{ mb: 2, mt: 2 }} error={errors.technicalAssistantError}>
+          <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <InputLabel>Technical assistant</InputLabel>
 
             <Select
@@ -828,11 +819,6 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
                 </MenuItem>
               )}
             </Select>
-            {errors.technicalAssistantError && (
-              <FormHelperText sx={{ color: 'error.main' }} id='expirationDate-error'>
-                {getErrorMessage('technicalAssistantError')}
-              </FormHelperText>
-            )}
           </FormControl>
         </div>
       </div>
