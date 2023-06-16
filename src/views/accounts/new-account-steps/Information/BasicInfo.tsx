@@ -318,6 +318,11 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
     }
   }, [makeValidations])
 
+  React.useEffect(() => {
+    console.log("basic info cambio")
+    console.log(basicInfo)
+  }, [basicInfo]);
+
   return (
     <>
       <div className='title'>Basic info</div>
@@ -458,6 +463,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
           )}
           <ContactModal
             service={'broker'}
+            disabledBtn={basicInfo.broker !== '' ? false : true}
             id={Number(basicInfo.broker)}
             updateContacts={updateBrokerContact}
             setIdCreated={setBasicInfo}
@@ -551,6 +557,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
           )}
           <ContactModal
             service={'cedant'}
+            disabledBtn={basicInfo.cedant !== '' ? false : true}
             id={Number(basicInfo.cedant)}
             updateContacts={updateCedantContact}
             setIdCreated={setBasicInfo}
@@ -653,7 +660,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
               id='reception-date'
               customInput={<CustomInput label='Reception date' sx={{ mb: 2, mt: 2, width: '100%' }} />}
               onChange={handleReceptionDateChange}
-              className={errors.receptionDateError ? 'error LACLASE' : 'LACLASE'}
+              className={errors.receptionDateError ? 'error' : ''}
               showTimeSelect
               showMonthDropdown
               showYearDropdown
