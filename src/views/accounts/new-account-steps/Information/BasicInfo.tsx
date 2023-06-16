@@ -108,7 +108,7 @@ import { useGetAllRiskActivities } from 'src/hooks/catalogs/riskActivity'
 import { useGetByIdRole } from 'src/hooks/catalogs/users/'
 
 const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeValidations, onValidationComplete }) => {
-  //cargamos la informaci√≥n de los cat√°logos de base de datos
+  //cargamos la informaci¢n de los cat†logos de base de datos
   const { countries } = useCountyGetAll()
   const { brokers } = useBrokerGetAll()
   const { cedant } = useCedantGetAll()
@@ -724,7 +724,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
           </Grid>
         </div>
         <div className='form-col'>
-          <div className='title'>Underwriter team</div>
+          <div className='title'>Underwriting team</div>
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <InputLabel>Underwriter</InputLabel>
 
