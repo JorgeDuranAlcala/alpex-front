@@ -36,9 +36,10 @@ interface BasicInfoErrors {
   brokerError: boolean
   cedantError: boolean
   lineOfBusinessError: boolean
-  underwriterError: boolean
-  leadUnderwriterError: boolean
-  technicalAssistantError: boolean
+
+  // underwriterError: boolean
+  // leadUnderwriterError: boolean
+  // technicalAssistantError: boolean
   industryCodeError: boolean
   riskActivityError: boolean
   riskClassError: boolean
@@ -46,58 +47,33 @@ interface BasicInfoErrors {
   effectiveDateError: boolean
   expirationDateError: boolean
 }
-
+type BasicInputType = {
+  insured: string
+  country: number | string
+  broker: number | string
+  brokerContact: number | null | string
+  brokerContactEmail: string
+  brokerContactPhone: string
+  brokerContactCountry: string
+  cedant: number | string
+  cedantContact: number | null | string
+  cedantContactEmail: string
+  cedantContactPhone: string
+  cedantContactCountry: string
+  lineOfBusiness: number | string
+  underwriter: number | string | null
+  leadUnderwriter: number | string | null
+  technicalAssistant: number | string | null
+  industryCode: number | string
+  riskActivity: string
+  riskClass: number
+  receptionDate: Date | null
+  effectiveDate: Date | null
+  expirationDate: Date | null
+}
 type BasicInfoProps = {
-  basicInfo: {
-    insured: string
-    country: number | string
-    broker: number | string
-    brokerContact: number | null | string
-    brokerContactEmail: string
-    brokerContactPhone: string
-    brokerContactCountry: string
-    cedant: number | string
-    cedantContact: number | null | string
-    cedantContactEmail: string
-    cedantContactPhone: string
-    cedantContactCountry: string
-    lineOfBusiness: number | string
-    underwriter: number | string
-    leadUnderwriter: number | string
-    industryCode: number | string
-    riskActivity: string
-    riskClass: number
-    technicalAssistant: number | string
-    receptionDate: Date | null
-    effectiveDate: Date | null
-    expirationDate: Date | null
-  }
-  setBasicInfo: React.Dispatch<
-    React.SetStateAction<{
-      insured: string
-      country: number | string
-      broker: number | string
-      brokerContact: number | null | string
-      brokerContactEmail: string
-      brokerContactPhone: string
-      brokerContactCountry: string
-      cedant: number | string
-      cedantContact: number | null | string
-      cedantContactEmail: string
-      cedantContactPhone: string
-      cedantContactCountry: string
-      lineOfBusiness: number | string
-      underwriter: number | string
-      leadUnderwriter: number | string
-      industryCode: number | string
-      riskActivity: string
-      riskClass: number
-      technicalAssistant: number | string
-      receptionDate: Date | null
-      effectiveDate: Date | null
-      expirationDate: Date | null
-    }>
-  >
+  basicInfo: BasicInputType
+  setBasicInfo: React.Dispatch<React.SetStateAction<BasicInputType>>
   makeValidations: boolean
   onValidationComplete: (valid: boolean) => void
 }
@@ -121,6 +97,7 @@ const CustomInput = forwardRef(({ ...props }: PickerProps, ref: ForwardedRef<HTM
   )
 })
 
+import DatePickerWrapper from '@/@core/styles/libs/react-datepicker'
 import { ROLES } from '@/configs/api'
 import { useGetAll as useBrokerGetAll } from 'src/hooks/catalogs/broker'
 import { useGetAllByIdBroker } from 'src/hooks/catalogs/broker-contact/'
@@ -131,7 +108,7 @@ import { useGetAllRiskActivities } from 'src/hooks/catalogs/riskActivity'
 import { useGetByIdRole } from 'src/hooks/catalogs/users/'
 
 const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeValidations, onValidationComplete }) => {
-  //cargamos la informaci√≥n de los cat√°logos de base de datos
+  //cargamos la informaci¢n de los cat†logos de base de datos
   const { countries } = useCountyGetAll()
   const { brokers } = useBrokerGetAll()
   const { cedant } = useCedantGetAll()
@@ -152,9 +129,9 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
     brokerError: false,
     cedantError: false,
     lineOfBusinessError: false,
-    underwriterError: false,
-    leadUnderwriterError: false,
-    technicalAssistantError: false,
+    // underwriterError: false,
+    // leadUnderwriterError: false,
+    // technicalAssistantError: false,
     receptionDateError: false,
     effectiveDateError: false,
     expirationDateError: false,
@@ -174,6 +151,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     setBasicInfo({ ...basicInfo, [name]: value })
+    validations({ ...basicInfo, [name]: value })
   }
 
   const handleSelectChange = (event: SelectChangeEvent<string>, child?: ReactNode) => {
@@ -211,38 +189,42 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
       ...basicInfoTem,
       [name]: value
     }
-
+    validations(basicInfoTem)
     setBasicInfo(basicInfoTem)
   }
 
   const handleReceptionDateChange = (date: Date) => {
     setBasicInfo({ ...basicInfo, receptionDate: date })
+    validations({ ...basicInfo, receptionDate: date })
   }
 
   const handleEffectiveDateChange = (date: Date) => {
     setBasicInfo({ ...basicInfo, effectiveDate: date })
+    validations({ ...basicInfo, effectiveDate: date })
   }
 
   const handleExpirationDateChange = (date: Date | null) => {
     setBasicInfo({ ...basicInfo, expirationDate: date })
+    validations({ ...basicInfo, expirationDate: date })
   }
 
-  const validations = () => {
+  const validations = (basicInfoParama: BasicInputType | null = null) => {
+    const basicInfoTemp = basicInfoParama ? basicInfoParama : basicInfo
     const newErrors: BasicInfoErrors = {
-      insuredError: basicInfo.insured === '',
-      countryError: basicInfo.country === '',
-      brokerError: basicInfo.broker === '',
-      cedantError: basicInfo.cedant === '',
-      lineOfBusinessError: basicInfo.lineOfBusiness === '',
-      underwriterError: basicInfo.underwriter === '',
-      leadUnderwriterError: basicInfo.leadUnderwriter === '',
-      technicalAssistantError: basicInfo.technicalAssistant === '',
-      industryCodeError: basicInfo.industryCode === '',
-      riskActivityError: basicInfo.riskActivity === '',
-      riskClassError: basicInfo.riskClass === 0,
-      receptionDateError: basicInfo.receptionDate === null,
-      effectiveDateError: basicInfo.effectiveDate === null,
-      expirationDateError: basicInfo.expirationDate === null
+      insuredError: basicInfoTemp.insured === '',
+      countryError: basicInfoTemp.country === '',
+      brokerError: basicInfoTemp.broker === '',
+      cedantError: basicInfoTemp.cedant === '',
+      lineOfBusinessError: basicInfoTemp.lineOfBusiness === '',
+      // underwriterError: basicInfoTemp.underwriter === '',
+      // leadUnderwriterError: basicInfoTemp.leadUnderwriter === '',
+      // technicalAssistantError: basicInfoTemp.technicalAssistant === '',
+      industryCodeError: basicInfoTemp.industryCode === '',
+      riskActivityError: basicInfoTemp.riskActivity === '',
+      riskClassError: basicInfoTemp.riskClass === 0,
+      receptionDateError: basicInfoTemp.receptionDate === null,
+      effectiveDateError: basicInfoTemp.effectiveDate === null,
+      expirationDateError: basicInfoTemp.expirationDate === null
     }
 
     setErrors(newErrors)
@@ -312,16 +294,16 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
     }))
   }, [basicInfo.industryCode, riskActivities])
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (makeValidations) {
       validations()
     }
   }, [makeValidations])
 
   React.useEffect(() => {
-    console.log("basic info cambio")
+    console.log('basic info cambio')
     console.log(basicInfo)
-  }, [basicInfo]);
+  }, [basicInfo])
 
   return (
     <>
@@ -652,98 +634,98 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
         </div>
         <div className='form-col'>
           <div className='title'>Dates</div>
-          {/* <DatePickerWrapper className='information-datepicker'> */}
           <Grid item xs={12} sm={12} sx={{ width: '100%' }}>
-            <DatePicker
-              selected={basicInfo.receptionDate}
-              shouldCloseOnSelect
-              id='reception-date'
-              customInput={<CustomInput label='Reception date' sx={{ mb: 2, mt: 2, width: '100%' }} />}
-              onChange={handleReceptionDateChange}
-              className={errors.receptionDateError ? 'error' : ''}
-              showTimeSelect
-              showMonthDropdown
-              showYearDropdown
-              showDisabledMonthNavigation
-              timeFormat='HH:mm'
-              timeIntervals={15}
-              dateFormat='dd/MM/yyyy h:mm aa'
-            />
-            {errors.receptionDateError && (
-              <FormHelperText
-                sx={{
-                  color: 'error.main',
-                  marginTop: '-5px',
-                  marginBottom: '6px',
-                  marginLeft: '10px'
-                }}
-                id='receptionDate-error'
-              >
-                {getErrorMessage('receptionDateError')}
-              </FormHelperText>
-            )}
-            <DatePicker
-              selected={basicInfo.effectiveDate}
-              shouldCloseOnSelect
-              id='effective-date'
-              customInput={<CustomInput label='Effective date' sx={{ mb: 2, mt: 2, width: '100%' }} />}
-              onChange={handleEffectiveDateChange}
-              className={errors.effectiveDateError ? 'error' : ''}
-              showTimeSelect
-              showMonthDropdown
-              showYearDropdown
-              showDisabledMonthNavigation
-              timeFormat='HH:mm'
-              timeIntervals={15}
-              dateFormat='dd/MM/yyyy h:mm aa'
-            />
-            {errors.effectiveDateError && (
-              <FormHelperText
-                sx={{
-                  color: 'error.main',
-                  marginTop: '-5px',
-                  marginBottom: '5px',
-                  marginLeft: '10px'
-                }}
-                id='effectiveDate-error'
-              >
-                {getErrorMessage('effectiveDateError')}
-              </FormHelperText>
-            )}
-            <DatePicker
-              selected={basicInfo.expirationDate}
-              shouldCloseOnSelect
-              id='expiration-date'
-              customInput={<CustomInput label='Expiration date' sx={{ mb: 2, mt: 2, width: '100%' }} />}
-              onChange={handleExpirationDateChange}
-              className={errors.expirationDateError ? 'error' : ''}
-              showTimeSelect
-              showMonthDropdown
-              showYearDropdown
-              showDisabledMonthNavigation
-              timeFormat='HH:mm'
-              timeIntervals={15}
-              dateFormat='dd/MM/yyyy h:mm aa'
-            />
-            {errors.expirationDateError && (
-              <FormHelperText
-                sx={{
-                  color: 'error.main',
-                  marginTop: '-5px',
-                  marginBottom: '6px',
-                  marginLeft: '10px'
-                }}
-                id='expirationDate-error'
-              >
-                {getErrorMessage('expirationDateError')}
-              </FormHelperText>
-            )}
+            <DatePickerWrapper className='information-datepicker'>
+              <DatePicker
+                selected={basicInfo.receptionDate}
+                shouldCloseOnSelect
+                id='reception-date'
+                customInput={<CustomInput label='Reception date' sx={{ mb: 2, mt: 2, width: '100%' }} />}
+                onChange={handleReceptionDateChange}
+                className={errors.receptionDateError ? 'error' : ''}
+                showTimeSelect
+                showMonthDropdown
+                showYearDropdown
+                showDisabledMonthNavigation
+                timeFormat='HH:mm'
+                timeIntervals={15}
+                dateFormat='dd/MM/yyyy h:mm aa'
+              />
+              {errors.receptionDateError && (
+                <FormHelperText
+                  sx={{
+                    color: 'error.main',
+                    marginTop: '-5px',
+                    marginBottom: '6px',
+                    marginLeft: '10px'
+                  }}
+                  id='receptionDate-error'
+                >
+                  {getErrorMessage('receptionDateError')}
+                </FormHelperText>
+              )}
+              <DatePicker
+                selected={basicInfo.effectiveDate}
+                shouldCloseOnSelect
+                id='effective-date'
+                customInput={<CustomInput label='Effective date' sx={{ mb: 2, mt: 2, width: '100%' }} />}
+                onChange={handleEffectiveDateChange}
+                className={errors.effectiveDateError ? 'error' : ''}
+                showTimeSelect
+                showMonthDropdown
+                showYearDropdown
+                showDisabledMonthNavigation
+                timeFormat='HH:mm'
+                timeIntervals={15}
+                dateFormat='dd/MM/yyyy h:mm aa'
+              />
+              {errors.effectiveDateError && (
+                <FormHelperText
+                  sx={{
+                    color: 'error.main',
+                    marginTop: '-5px',
+                    marginBottom: '5px',
+                    marginLeft: '10px'
+                  }}
+                  id='effectiveDate-error'
+                >
+                  {getErrorMessage('effectiveDateError')}
+                </FormHelperText>
+              )}
+              <DatePicker
+                selected={basicInfo.expirationDate}
+                shouldCloseOnSelect
+                id='expiration-date'
+                customInput={<CustomInput label='Expiration date' sx={{ mb: 2, mt: 2, width: '100%' }} />}
+                onChange={handleExpirationDateChange}
+                className={errors.expirationDateError ? 'error' : ''}
+                showTimeSelect
+                showMonthDropdown
+                showYearDropdown
+                showDisabledMonthNavigation
+                timeFormat='HH:mm'
+                timeIntervals={15}
+                dateFormat='dd/MM/yyyy h:mm aa'
+              />
+              {errors.expirationDateError && (
+                <FormHelperText
+                  sx={{
+                    color: 'error.main',
+                    marginTop: '-5px',
+                    marginBottom: '6px',
+                    marginLeft: '10px'
+                  }}
+                  id='expirationDate-error'
+                >
+                  {getErrorMessage('expirationDateError')}
+                </FormHelperText>
+              )}
+            </DatePickerWrapper>
           </Grid>
-          {/* </DatePickerWrapper> */}
         </div>
         <div className='form-col'>
-          <div className='title'>Underwriter team</div>
-          <FormControl fullWidth sx={{ mb: 2, mt: 2 }} error={errors.underwriterError}>
+          <div className='title'>Underwriting team</div>
+          <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <InputLabel>Underwriter</InputLabel>
 
             <Select
@@ -767,13 +749,8 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
                 </MenuItem>
               )}
             </Select>
-            {errors.underwriterError && (
-              <FormHelperText sx={{ color: 'error.main' }} id='expirationDate-error'>
-                {getErrorMessage('underwriterError')}
-              </FormHelperText>
-            )}
           </FormControl>
-          <FormControl fullWidth sx={{ mb: 2, mt: 2 }} error={errors.leadUnderwriterError}>
+          <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <InputLabel>Lead underwriter</InputLabel>
 
             <Select
@@ -797,14 +774,9 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
                 </MenuItem>
               )}
             </Select>
-            {errors.leadUnderwriterError && (
-              <FormHelperText sx={{ color: 'error.main' }} id='expirationDate-error'>
-                {getErrorMessage('leadUnderwriterError')}
-              </FormHelperText>
-            )}
           </FormControl>
 
-          <FormControl fullWidth sx={{ mb: 2, mt: 2 }} error={errors.technicalAssistantError}>
+          <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <InputLabel>Technical assistant</InputLabel>
 
             <Select
@@ -828,11 +800,6 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
                 </MenuItem>
               )}
             </Select>
-            {errors.technicalAssistantError && (
-              <FormHelperText sx={{ color: 'error.main' }} id='expirationDate-error'>
-                {getErrorMessage('technicalAssistantError')}
-              </FormHelperText>
-            )}
           </FormControl>
         </div>
       </div>
