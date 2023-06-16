@@ -18,9 +18,10 @@ const useIdleTimeout = (onIdle: () => void, idleTime = 1) => {
     logout()
   }
 
+  // promptTimeout: idleTimeout / 2, <-- deprecated
   const idleTimer = useIdleTimer({
     timeout: idleTimeout,
-    promptTimeout: idleTimeout / 2,
+    promptBeforeIdle: idleTimeout / 2,
     onPrompt: onIdle,
     onIdle: handleIdle,
     debounce: 500

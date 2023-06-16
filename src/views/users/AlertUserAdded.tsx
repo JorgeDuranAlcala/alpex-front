@@ -10,14 +10,14 @@ const AlertAddUser = () => {
         alignItems: 'center',
         padding: '6px 16px',
         height: '54px',
-        width: '17%',
+        minWidth: '210px',
         background: 'linear-gradient(0deg, rgba(255, 255, 255, 0.88), rgba(255, 255, 255, 0.88)), #72E128',
         borderRadius: '8px',
         gap: '12px',
         position: 'absolute',
         zIndex: '13000',
-        right: '3%',
-        top: '17%'
+        right: '18px',
+        top: '10px'
       }}
       id='alert'
       className='alertUser'
