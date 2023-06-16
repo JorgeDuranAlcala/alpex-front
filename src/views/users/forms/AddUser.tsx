@@ -2,6 +2,9 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import Icon from 'src/@core/components/icon'
 import * as yup from 'yup'
 
+//Google Analytics
+import Analytics from '@/utils/analytics'
+
 import { useGetAllCompanies } from '@/hooks/catalogs/company/getAllCompanies'
 import { useGetAllRoles } from '@/hooks/catalogs/roles/getAllRoles'
 import { useEditUser } from '@/hooks/catalogs/users'
@@ -257,6 +260,33 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
             : [],
         areaCode: selectedCountry?.phone || ''
       }
+
+      const userCompany = company?.find(com => com.id === dataToSend.idCompany)
+      let userRoles = ''
+      roles?.forEach(role => {
+        dataToSend.roles.forEach(userRole => {
+          if (role.id === userRole.id) {
+            userRoles += role.role + ','
+          }
+        })
+      })
+
+      if (userCompany) {
+        Analytics.event({
+          category: 'company_info',
+          action: 'company_info',
+          label: userCompany.name
+        })
+      }
+
+      if (userRoles.length > 0) {
+        Analytics.event({
+          category: 'user_role',
+          action: 'user_role',
+          label: userRoles
+        })
+      }
+
       setUserPost(dataToSend)
       setTimeout(() => {
         dispatch(fetchAccounts(usersReducer))

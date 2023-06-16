@@ -8,6 +8,9 @@ import 'react-chat-widget-2/lib/styles.css'
 
 // import '../../../../styles/widgetChat.css'
 
+//Google Analytics
+import Analytics from '@/utils/analytics'
+
 // import logo from './rocket_logo.svg';
 
 const WidgetChat = () => {
@@ -31,6 +34,13 @@ const WidgetChat = () => {
     // addResponseMessage(chatOpenAIResponse);
   }
 
+  const requestWidget = () => {
+    Analytics.event({
+      action: 'request_widget',
+      category: 'request_widget'
+    })
+  }
+
   return (
     <div id='chatbotDiv' className='Chat'>
       <Widget
@@ -38,6 +48,7 @@ const WidgetChat = () => {
         subtitle='How can I help you?'
         handleNewUserMessage={handleNewUserMessage('Hola')}
         senderPlaceHolder='Type your message here...'
+        handleToggle={requestWidget}
       />
     </div>
   )
