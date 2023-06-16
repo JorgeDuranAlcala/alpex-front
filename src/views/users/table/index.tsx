@@ -6,10 +6,10 @@ import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import {
   DataGrid,
-  GridColumns,
-  GridRowId,
   GRID_ACTIONS_COL_DEF,
-  GRID_CHECKBOX_SELECTION_COL_DEF
+  GRID_CHECKBOX_SELECTION_COL_DEF,
+  GridColumns,
+  GridRowId
 } from '@mui/x-data-grid'
 
 // ** Icon Imports
@@ -78,7 +78,7 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
   // ** State
   const [selectedRows, setSelectedRows] = useState<GridRowId[]>([])
   const [accounts, setAccounts] = useState<any>([])
-  const [loading, setLoading] = useState<any>([])
+  const [loading, setLoading] = useState<boolean>(false)
   const [selectedUser, setSelectedUser] = useState<IUsersGrid | null>()
   const [modalShow, setModalShow] = useState<boolean>(false)
   const [idMultiple, setIdMultiple] = useState<any>([])
@@ -145,6 +145,7 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
     return (
       <>
         <Menu
+          disableScrollLock={true}
           anchorEl={anchorEl}
           open={open}
           onClose={handleClose}
@@ -186,6 +187,8 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
   const column: GridColumns<IUsersGrid> = [
     {
       ...GRID_CHECKBOX_SELECTION_COL_DEF,
+      resizable: false,
+      type: 'string',
       headerClassName: 'account-column-header-checkbox'
     },
     {
@@ -242,7 +245,8 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
       renderHeader: ({ colDef }) => <ColumnHeader colDef={colDef} action={handleClickColumnHeader} />,
       renderCell: ({ row }) => (
         <Box sx={{ marginLeft: '-6%' }}>
-          <Typography
+          <Box
+
             sx={{
               color: colors.text.primary,
               fontWeight: 500,
@@ -253,7 +257,7 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
             <Link sx={{ color: colors.text.primary }} href='#'>
               <StyledChip color='primary' sx={{}} label={row.idCompany?.name || 'W/ company'} />
             </Link>
-          </Typography>
+          </Box>
         </Box>
       )
     },
@@ -304,7 +308,9 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
       ...GRID_ACTIONS_COL_DEF,
       field: 'Actions',
       sortable: false,
+      resizable: false,
       disableColumnMenu: true,
+      type: 'string',
       cellClassName: 'account-column-cell-pl-0',
       renderHeader: ({ colDef }) => <ColumnHeader colDef={colDef} showIcon={false} />,
       renderCell: ({ row }) => {
