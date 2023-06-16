@@ -83,8 +83,11 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
   const [modalShow, setModalShow] = useState<boolean>(false)
   const [idMultiple, setIdMultiple] = useState<any>([])
 
+  // const [deleteModal, setDeleteModal] = useState<boolean>(false)
+
   // console.log({ selectedRows })
   // console.log({ idMultiple })
+  console.log({ selectedUser })
 
   //WIP
   //eslint-disable-next-line
@@ -141,6 +144,14 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
     }, 50)
   }
 
+  // const handleDeleteModal = (id: number[] | undefined) => {
+  //   deleteUser({ idUsersList: id })
+
+  //   setTimeout(() => {
+  //     dispatch(fetchAccounts(usersReducer))
+  //   }, 50)
+  // }
+
   const ModalActions = () => {
     return (
       <>
@@ -170,6 +181,8 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
           </MenuItem>
           <MenuItem
             onClick={() => {
+              // setDeleteModal(true)
+
               setModalShow(true)
               handleClose()
             }}
@@ -246,7 +259,6 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
       renderCell: ({ row }) => (
         <Box sx={{ marginLeft: '-6%' }}>
           <Box
-
             sx={{
               color: colors.text.primary,
               fontWeight: 500,
@@ -332,6 +344,7 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
   ]
 
   const onDelete = () => {
+    debugger
     setBadgeData({
       message: `${selectedUser?.name} ${selectedUser?.surname} WAS DELETED SUCCESSFULLY`,
       status: 'success',
@@ -393,3 +406,5 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
 }
 
 export default Table
+
+// deleteModal ? handleDeleteModal([selectedUser !== undefined ? selectedUser!.id : 0]) : handleDelete()
