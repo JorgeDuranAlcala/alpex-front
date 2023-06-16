@@ -94,10 +94,7 @@ const showErrors = (field: string, valueLen: number, min: number) => {
 
 const schema = yup.object().shape({
   phone: yup.string().required(),
-
-  company: yup.string(),
-
-  // company: yup.string().required(),
+  company: yup.string().required(),
   email: yup.string().email().required(),
 
   // role: yup.string().required(),
@@ -198,6 +195,10 @@ const AddUser = ({ selectUser, title, subTitle, handleView }: IAddUser) => {
 
   const onSubmit = (data: any) => {
     // console.log('se hace algo acá, pero no entra', data, selectUser)
+    // console.log('onSubmit', data);
+
+    // return;
+
     if (selectUser) {
       // console.log('se hace algo', idCompany)
 
@@ -211,20 +212,20 @@ const AddUser = ({ selectUser, title, subTitle, handleView }: IAddUser) => {
         roles:
           parseInt(idRole) && parseInt(informativeIdRole)
             ? [
-                {
-                  id: parseInt(idRole)
-                },
-                {
-                  id: parseInt(informativeIdRole)
-                }
-              ]
+              {
+                id: parseInt(idRole)
+              },
+              {
+                id: parseInt(informativeIdRole)
+              }
+            ]
             : parseInt(idRole) && !parseInt(informativeIdRole)
-            ? [
+              ? [
                 {
                   id: parseInt(idRole)
                 }
               ]
-            : [],
+              : [],
         areaCode: selectedCountry?.phone || ''
       }
 
@@ -246,20 +247,20 @@ const AddUser = ({ selectUser, title, subTitle, handleView }: IAddUser) => {
         roles:
           parseInt(useWatchRole) && parseInt(useWatchDualRole)
             ? [
-                {
-                  id: parseInt(useWatchRole)
-                },
-                {
-                  id: parseInt(useWatchDualRole)
-                }
-              ]
+              {
+                id: parseInt(useWatchRole)
+              },
+              {
+                id: parseInt(useWatchDualRole)
+              }
+            ]
             : parseInt(useWatchRole) && !parseInt(useWatchDualRole)
-            ? [
+              ? [
                 {
                   id: parseInt(useWatchRole)
                 }
               ]
-            : [],
+              : [],
         areaCode: selectedCountry?.phone || ''
       }
 
@@ -729,6 +730,8 @@ const AddUser = ({ selectUser, title, subTitle, handleView }: IAddUser) => {
                       <Controller
                         name='company'
                         control={control}
+
+                        rules={{ required: true }}
                         render={({ field: { value, onChange, onBlur } }) => (
                           <>
                             <InputLabel>Company</InputLabel>
@@ -739,7 +742,7 @@ const AddUser = ({ selectUser, title, subTitle, handleView }: IAddUser) => {
                               }}
                               error={Boolean(errors.company)}
                               label='Company'
-                              value={selectUser ? idCompany : value}
+                              value={selectUser ? idCompany : value || ''}
                               onBlur={onBlur}
                               onChange={e => {
                                 // console.log('Esto se selecciona', e.target.value)

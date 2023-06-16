@@ -137,7 +137,13 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
   }
 
   const handleDelete = () => {
-    deleteUser({ idUsersList: idMultiple })
+    if (selectedUser) {
+      deleteUser({ idUsersList: [selectedUser.id] })
+      setSelectedUser(null);
+    } else {
+
+      deleteUser({ idUsersList: idMultiple })
+    }
 
     setTimeout(() => {
       dispatch(fetchAccounts(usersReducer))
@@ -321,9 +327,10 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
       field: 'Actions',
       sortable: false,
       resizable: false,
+      maxWidth: 50,
       disableColumnMenu: true,
       type: 'string',
-      cellClassName: 'account-column-cell-pl-0',
+      cellClassName: 'account-column-cell-pl-0 ',
       renderHeader: ({ colDef }) => <ColumnHeader colDef={colDef} showIcon={false} />,
       renderCell: ({ row }) => {
         return (
@@ -331,6 +338,7 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
             <IconButton
               size='small'
               onClick={e => {
+                // console.log(row)
                 setSelectedUser(row)
                 handleClick(e)
               }}
@@ -344,7 +352,7 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
   ]
 
   const onDelete = () => {
-    debugger
+    // debugger
     setBadgeData({
       message: `${selectedUser?.name} ${selectedUser?.surname} WAS DELETED SUCCESSFULLY`,
       status: 'success',
