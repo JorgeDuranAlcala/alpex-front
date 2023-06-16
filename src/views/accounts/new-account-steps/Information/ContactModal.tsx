@@ -30,6 +30,7 @@ type Service = 'broker' | 'cedant'
 interface Props {
   service: Service
   id: number
+  disabledBtn: boolean
   updateContacts: (id: number) => void
   setIdCreated: React.Dispatch<React.SetStateAction<BasicInfoInterface>>
 }
@@ -55,7 +56,7 @@ const expresions = {
   phone: /^\d{10}$/ // 7 a 10 numeros.
 }
 
-export const ContactModal = ({ id, service, updateContacts, setIdCreated }: Props) => {
+export const ContactModal = ({ id, service, updateContacts, setIdCreated,  disabledBtn }: Props) => {
   const [contactData, setContactData] = useState<ContactData>(initialContactData)
   const [open, setOpen] = useState<boolean>(false)
 
@@ -85,6 +86,7 @@ export const ContactModal = ({ id, service, updateContacts, setIdCreated }: Prop
   }
 
   const saveContact = async () => {
+    console.log('save contact')
     switch (service) {
       case 'broker':
         saveBrokerContact({
@@ -95,6 +97,8 @@ export const ContactModal = ({ id, service, updateContacts, setIdCreated }: Prop
           idCBroker: id
         })
           .then(contactBroker => {
+            console.log("se guardo el contacto")
+            console.log(contactBroker)
             setIdCreated(state => ({
               ...state,
               brokerContact: contactBroker.id
@@ -116,6 +120,7 @@ export const ContactModal = ({ id, service, updateContacts, setIdCreated }: Prop
           idCCedant: id
         })
           .then(contactCedant => {
+
             setIdCreated(state => ({
               ...state,
               cedantContact: contactCedant.id
@@ -156,7 +161,7 @@ export const ContactModal = ({ id, service, updateContacts, setIdCreated }: Prop
   }
 
   const validateForm = () => {
-
+    console.log("en validaciones")
     const nameErrorTemp = !expresions.name.test(contactData.name)
     const phoneErrorTemp = !expresions.phone.test(contactData.phone)
     const countryErrorTemp = contactData.country === undefined || contactData.country === ''
@@ -164,6 +169,8 @@ export const ContactModal = ({ id, service, updateContacts, setIdCreated }: Prop
 
     const errorTemp = nameErrorTemp || emailErrorTemp || phoneErrorTemp || countryErrorTemp
 
+    console.log("error temp")
+    console.log(errorTemp)
     setError(errorTemp)
     setEmptyForm(errorTemp)
     setNameError(nameErrorTemp)
@@ -175,18 +182,26 @@ export const ContactModal = ({ id, service, updateContacts, setIdCreated }: Prop
 
   useEffect(() => {
     startValidations && validateForm()
+    console.log("start validation")
+    console.log(startValidations)
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [startValidations])
+  }, [startValidations, setStartValidations])
 
 
   useEffect(() => {
     !error && saveContact()
+    console.log("error")
+    console.log(error)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [error])
 
   return (
     <>
-      <Button className='create-contact-btn' onClick={() => setOpen(true)}>
+      <Button
+        className='create-contact-btn'
+        disabled={disabledBtn}
+        onClick={() => setOpen(true)}>
         <div className='btn-icon'>
           <Icon icon='mdi:plus-circle-outline' />
         </div>

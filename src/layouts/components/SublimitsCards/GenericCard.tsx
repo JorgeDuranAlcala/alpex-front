@@ -90,7 +90,7 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
 
   return (
     <ContainerCard>
-      <HeaderCard sx={{ height: data?.title === 'Business Interruption Machinery Breakdown' ? '68px' : '48px' }}>
+      <HeaderCard sx={{ padding: '5px 10px 5px 26px' }}>
         <Box
           sx={{
             display: 'flex',
@@ -98,12 +98,13 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
             alingItems: 'center',
             justifyContent: 'space-between',
             width: '100%',
-            height: data?.title === 'Business Interruption Machinery Breakdown' ? '52px' : '26px'
+
+            //height: data?.title === 'Business Interruption Machinery Breakdown' ? '52px' : '26px'
 
             // border: '1px solid white'
           }}
         >
-          <Typography textTransform={'uppercase'} sx={{ color: '#FFF' }}>
+          <Typography  className="ÑACÑASE" textTransform={'uppercase'} sx={{ color: '#FFF', display: 'flex', alignItems: "center" }}>
             {data?.title}
           </Typography>
           <IconButton onClick={onDeleteItem}>
@@ -140,7 +141,7 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
                 onChangeItem(value.floatValue, 'sublimit')
               }}
             />
-            <FormHelperText sx={{ color: 'error.main' }}>{formErrors.sublimit}</FormHelperText>
+            <FormHelperText sx={{ color: 'error.main', marginLeft: '2px' }}>{formErrors.sublimit}</FormHelperText>
           </FormControl>
           <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', paddingRight: '8px', width: '88px' }}>
             <Checkbox
@@ -238,8 +239,9 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
                     onChangeItem(value.floatValue, 'deductible')
                   }}
                 />
-                <FormHelperText sx={{ color: 'error.main' }}>{formErrors.deductible}</FormHelperText>
+
               </InputForm>
+              <FormHelperText sx={{ color: 'error.main', marginTop:'-3px' }}>{formErrors.deductible}</FormHelperText>
               {data?.typeDeductible === 'per' ? (
                 <>
                   <FormControl fullWidth>
@@ -320,8 +322,8 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
                     return floatValue! >= 0 || floatValue === undefined
                   }}
                 />
-                <FormHelperText sx={{ color: 'error.main' }}>{formErrors.amount}</FormHelperText>
               </InputForm>
+              <FormHelperText sx={{ color: 'error.main', marginTop:'-3px' }}>{formErrors.amount}</FormHelperText>
             </RadioGroup>
           </SubContainer>
         ) : null}
@@ -384,11 +386,9 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
                     return (floatValue! >= 0 && floatValue! <= 999) || floatValue === undefined
                   }}
                 />
-                <FormHelperText sx={{ color: 'error.main' }}>{formErrors.daysBi}</FormHelperText>
 
-                {false && <FormHelperText sx={{ color: 'error.main' }}>Required Field</FormHelperText>}
               </InputForm>
-
+               { <FormHelperText sx={{ color: 'error.main' }}>{formErrors.daysBi}</FormHelperText>}
               <InputForm>
                 <FormControlLabel sx={{ ml: 0.3 }} value='money' control={<Radio sx={{ mr: -1 }} />} label='' />
                 <NumericFormat
@@ -410,8 +410,11 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
                     onChangeItem(value.floatValue, 'amountBi')
                   }}
                 />
-                <FormHelperText sx={{ color: 'error.main' }}>{formErrors.amountBi}</FormHelperText>
+
               </InputForm>
+              <FormHelperText sx={{ color: 'error.main' }}>{formErrors.amountBi}</FormHelperText>
+              <FormHelperText sx={{ color: 'error.main', marginTop: '-5px' }}>{formErrors.typeBi}</FormHelperText>
+
             </RadioGroup>
           </SubContainer>
         )}

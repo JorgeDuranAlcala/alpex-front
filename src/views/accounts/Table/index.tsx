@@ -81,6 +81,7 @@ const Table = ({ status }: IAccountTable) => {
   console.log({ selectAll })
   const selectAllOption = accountsReducer.accounts.map(account => account.id)
   console.log({ selectAllOption })
+  console.log(accounts.effectiveDate)
 
   // ** Custom Hooks
   //const { accounts, getAccounts } = useAccountTable()
@@ -265,11 +266,15 @@ const Table = ({ status }: IAccountTable) => {
       renderHeader: ({ colDef }) => (
         <ColumnHeader colDef={colDef} action={handleClickColumnHeader} type='expirationDate' />
       ),
-      renderCell: ({ row }) => (
-        <Typography sx={{ color: colors.text.secondary, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
-          {row.expirationDate}
-        </Typography>
-      )
+      renderCell: ({ row }) => {
+        console.log(row.expirationDate)
+
+        return (
+          <Typography sx={{ color: colors.text.secondary, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
+            {row.expirationDate}
+          </Typography>
+        )
+      }
     },
     {
       flex: 0.1,

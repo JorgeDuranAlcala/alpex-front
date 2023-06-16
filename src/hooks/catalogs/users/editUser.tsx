@@ -3,14 +3,14 @@ import { UsersGetDto, UsersPutDto } from 'src/services/users/dtos/UsersDto'
 import UserService from 'src/services/users/users.service'
 
 export const useEditUser = () => {
-  const [user, setUser] = useState<UsersGetDto[]>([])
+  const [user, setUser] = useState<UsersGetDto[] | null>(null)
   const [userPut, setUserPut] = useState<UsersPutDto | null>()
 
   useEffect(() => {
     if (!userPut) return
     UserService.editUser(userPut)
-      .then(user => {
-        setUser(user)
+      .then(userResponse => {
+        setUser(userResponse)
       })
       .catch(error => {
         throw error
