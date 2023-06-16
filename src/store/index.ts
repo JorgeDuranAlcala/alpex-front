@@ -14,10 +14,13 @@ import invoice from 'src/store/apps/invoice'
 import permissions from 'src/store/apps/permissions'
 import user from 'src/store/apps/user'
 import users from 'src/store/apps/users'
+import uiUserSlice from './apps/user/uiUserSlice'
+
 
 export const store = configureStore({
   reducer: {
     user,
+    uiUserSlice,
     chat,
     email,
     invoice,
@@ -26,7 +29,7 @@ export const store = configureStore({
     accounts,
     users,
     brokers,
-    brokerContacts
+    brokerContacts,
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
