@@ -108,10 +108,11 @@ import { useGetAllRiskActivities } from 'src/hooks/catalogs/riskActivity'
 import { useGetByIdRole } from 'src/hooks/catalogs/users/'
 
 const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeValidations, onValidationComplete }) => {
-  //cargamos la información de los catálogos de base de datos
+  //cargamos la informacion de los catalogos de base de datos
   const { countries } = useCountyGetAll()
   const { brokers } = useBrokerGetAll()
   const { cedant } = useCedantGetAll()
+  const [validateForm, setValidateForm] = useState<boolean>(true)
   const { brokerContacts, setIdBroker, findByIdBroker } = useGetAllByIdBroker()
   const { contacts: cedantContacts, setIdCedant, findByIdCedant } = useGetAllByCedant()
   const { riskActivities } = useGetAllRiskActivities()
@@ -151,7 +152,8 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     setBasicInfo({ ...basicInfo, [name]: value })
-    validations({ ...basicInfo, [name]: value })
+
+    !validateForm && validations({ ...basicInfo, [name]: value })
   }
 
   const handleSelectChange = (event: SelectChangeEvent<string>, child?: ReactNode) => {
@@ -189,23 +191,23 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
       ...basicInfoTem,
       [name]: value
     }
-    validations(basicInfoTem)
+    !validateForm && validations(basicInfoTem)
     setBasicInfo(basicInfoTem)
   }
 
   const handleReceptionDateChange = (date: Date) => {
     setBasicInfo({ ...basicInfo, receptionDate: date })
-    validations({ ...basicInfo, receptionDate: date })
+    !validateForm && validations({ ...basicInfo, receptionDate: date })
   }
 
   const handleEffectiveDateChange = (date: Date) => {
     setBasicInfo({ ...basicInfo, effectiveDate: date })
-    validations({ ...basicInfo, effectiveDate: date })
+    !validateForm && validations({ ...basicInfo, effectiveDate: date })
   }
 
   const handleExpirationDateChange = (date: Date | null) => {
     setBasicInfo({ ...basicInfo, expirationDate: date })
-    validations({ ...basicInfo, expirationDate: date })
+    !validateForm && validations({ ...basicInfo, expirationDate: date })
   }
 
   const validations = (basicInfoParama: BasicInputType | null = null) => {
@@ -231,8 +233,10 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
 
     if (Object.values(newErrors).every(error => !error)) {
       onValidationComplete(true)
+      setValidateForm(true)
     } else {
       onValidationComplete(false)
+      setValidateForm(false)
     }
   }
 
@@ -297,6 +301,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
   useEffect(() => {
     if (makeValidations) {
       validations()
+      setValidateForm(false)
     }
   }, [makeValidations])
 
@@ -724,7 +729,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
           </Grid>
         </div>
         <div className='form-col'>
-          <div className='title'>Underwriter team</div>
+          <div className='title'>Underwriting team</div>
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <InputLabel>Underwriter</InputLabel>
 
@@ -739,7 +744,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
                 underwriters.map(underwriter => {
                   return (
                     <MenuItem key={underwriter.id} value={underwriter.id}>
-                      {underwriter.name}
+                      {`${underwriter.name} ${underwriter.surname || ''} ${underwriter.secondSurname || ''}`}
                     </MenuItem>
                   )
                 })
@@ -764,7 +769,9 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
                 leadUnderwriters.map(leadUnderwriter => {
                   return (
                     <MenuItem key={leadUnderwriter.id} value={leadUnderwriter.id}>
-                      {leadUnderwriter.name}
+                      {`${leadUnderwriter.name} ${leadUnderwriter.surname || ''} ${
+                        leadUnderwriter.secondSurname || ''
+                      }`}
                     </MenuItem>
                   )
                 })
@@ -790,7 +797,9 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
                 technicalAssistants.map(technicalAssistant => {
                   return (
                     <MenuItem key={technicalAssistant.id} value={technicalAssistant.id}>
-                      {technicalAssistant.name}
+                      {`${technicalAssistant.name} ${technicalAssistant.surname || ''} ${
+                        technicalAssistant.secondSurname || ''
+                      }`}
                     </MenuItem>
                   )
                 })
