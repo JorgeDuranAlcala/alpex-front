@@ -263,8 +263,8 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
       effectiveDate: formatUTC(basicInfo.effectiveDate),
       expirationDate: formatUTC(basicInfo.expirationDate),
       idLeadUnderwriter: Number(basicInfo.leadUnderwriter) === 0 ? null : Number(basicInfo.leadUnderwriter),
-      idTechnicalAssistant: Number(basicInfo.technicalAssistant) === 0 ? null : Number(basicInfo.leadUnderwriter),
-      idUnderwriter: Number(basicInfo.underwriter) === 0 ? null : Number(basicInfo.leadUnderwriter),
+      idTechnicalAssistant: Number(basicInfo.technicalAssistant) === 0 ? null : Number(basicInfo.technicalAssistant),
+      idUnderwriter: Number(basicInfo.underwriter) === 0 ? null : Number(basicInfo.underwriter),
       riskClass: basicInfo.riskClass,
 
       currency: 'USD',
