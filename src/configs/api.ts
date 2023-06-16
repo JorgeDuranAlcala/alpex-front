@@ -235,3 +235,7 @@ export enum RECOVER_PASSWORD_ROUTES {
 export enum EXCHANGE_RATE {
   PAIR = 'exchange-rate/pair'
 }
+
+export enum CHAT_BOT {
+  CHAT = 'ai/chat'
+}
