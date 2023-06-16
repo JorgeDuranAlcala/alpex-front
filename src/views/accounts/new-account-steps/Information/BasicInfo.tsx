@@ -112,6 +112,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
   const { countries } = useCountyGetAll()
   const { brokers } = useBrokerGetAll()
   const { cedant } = useCedantGetAll()
+  const [validateForm, setValidateForm] = useState<boolean>(true)
   const { brokerContacts, setIdBroker, findByIdBroker } = useGetAllByIdBroker()
   const { contacts: cedantContacts, setIdCedant, findByIdCedant } = useGetAllByCedant()
   const { riskActivities } = useGetAllRiskActivities()
@@ -151,7 +152,8 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     setBasicInfo({ ...basicInfo, [name]: value })
-    validations({ ...basicInfo, [name]: value })
+
+    !validateForm && validations({ ...basicInfo, [name]: value })
   }
 
   const handleSelectChange = (event: SelectChangeEvent<string>, child?: ReactNode) => {
@@ -189,23 +191,23 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
       ...basicInfoTem,
       [name]: value
     }
-    validations(basicInfoTem)
+    !validateForm && validations(basicInfoTem)
     setBasicInfo(basicInfoTem)
   }
 
   const handleReceptionDateChange = (date: Date) => {
     setBasicInfo({ ...basicInfo, receptionDate: date })
-    validations({ ...basicInfo, receptionDate: date })
+    !validateForm && validations({ ...basicInfo, receptionDate: date })
   }
 
   const handleEffectiveDateChange = (date: Date) => {
     setBasicInfo({ ...basicInfo, effectiveDate: date })
-    validations({ ...basicInfo, effectiveDate: date })
+    !validateForm && validations({ ...basicInfo, effectiveDate: date })
   }
 
   const handleExpirationDateChange = (date: Date | null) => {
     setBasicInfo({ ...basicInfo, expirationDate: date })
-    validations({ ...basicInfo, expirationDate: date })
+    !validateForm && validations({ ...basicInfo, expirationDate: date })
   }
 
   const validations = (basicInfoParama: BasicInputType | null = null) => {
@@ -231,8 +233,10 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
 
     if (Object.values(newErrors).every(error => !error)) {
       onValidationComplete(true)
+      setValidateForm(true)
     } else {
       onValidationComplete(false)
+      setValidateForm(false)
     }
   }
 
@@ -297,6 +301,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
   useEffect(() => {
     if (makeValidations) {
       validations()
+      setValidateForm(false)
     }
   }, [makeValidations])
 
