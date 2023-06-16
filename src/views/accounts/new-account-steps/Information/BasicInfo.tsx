@@ -47,58 +47,33 @@ interface BasicInfoErrors {
   effectiveDateError: boolean
   expirationDateError: boolean
 }
-
+type BasicInputType = {
+  insured: string
+  country: number | string
+  broker: number | string
+  brokerContact: number | null | string
+  brokerContactEmail: string
+  brokerContactPhone: string
+  brokerContactCountry: string
+  cedant: number | string
+  cedantContact: number | null | string
+  cedantContactEmail: string
+  cedantContactPhone: string
+  cedantContactCountry: string
+  lineOfBusiness: number | string
+  underwriter: number | string | null
+  leadUnderwriter: number | string | null
+  technicalAssistant: number | string | null
+  industryCode: number | string
+  riskActivity: string
+  riskClass: number
+  receptionDate: Date | null
+  effectiveDate: Date | null
+  expirationDate: Date | null
+}
 type BasicInfoProps = {
-  basicInfo: {
-    insured: string
-    country: number | string
-    broker: number | string
-    brokerContact: number | null | string
-    brokerContactEmail: string
-    brokerContactPhone: string
-    brokerContactCountry: string
-    cedant: number | string
-    cedantContact: number | null | string
-    cedantContactEmail: string
-    cedantContactPhone: string
-    cedantContactCountry: string
-    lineOfBusiness: number | string
-    underwriter: number | string | null
-    leadUnderwriter: number | string | null
-    technicalAssistant: number | string | null
-    industryCode: number | string
-    riskActivity: string
-    riskClass: number
-    receptionDate: Date | null
-    effectiveDate: Date | null
-    expirationDate: Date | null
-  }
-  setBasicInfo: React.Dispatch<
-    React.SetStateAction<{
-      insured: string
-      country: number | string
-      broker: number | string
-      brokerContact: number | null | string
-      brokerContactEmail: string
-      brokerContactPhone: string
-      brokerContactCountry: string
-      cedant: number | string
-      cedantContact: number | null | string
-      cedantContactEmail: string
-      cedantContactPhone: string
-      cedantContactCountry: string
-      lineOfBusiness: number | string
-      underwriter: number | string | null
-      leadUnderwriter: number | string | null
-      technicalAssistant: number | string | null
-      industryCode: number | string
-      riskActivity: string
-      riskClass: number
-      receptionDate: Date | null
-      effectiveDate: Date | null
-      expirationDate: Date | null
-    }>
-  >
+  basicInfo: BasicInputType
+  setBasicInfo: React.Dispatch<React.SetStateAction<BasicInputType>>
   makeValidations: boolean
   onValidationComplete: (valid: boolean) => void
 }
@@ -176,6 +151,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     setBasicInfo({ ...basicInfo, [name]: value })
+    validations({ ...basicInfo, [name]: value })
   }
 
   const handleSelectChange = (event: SelectChangeEvent<string>, child?: ReactNode) => {
@@ -213,38 +189,42 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
       ...basicInfoTem,
       [name]: value
     }
-
+    validations(basicInfoTem)
     setBasicInfo(basicInfoTem)
   }
 
   const handleReceptionDateChange = (date: Date) => {
     setBasicInfo({ ...basicInfo, receptionDate: date })
+    validations({ ...basicInfo, receptionDate: date })
   }
 
   const handleEffectiveDateChange = (date: Date) => {
     setBasicInfo({ ...basicInfo, effectiveDate: date })
+    validations({ ...basicInfo, effectiveDate: date })
   }
 
   const handleExpirationDateChange = (date: Date | null) => {
     setBasicInfo({ ...basicInfo, expirationDate: date })
+    validations({ ...basicInfo, expirationDate: date })
   }
 
-  const validations = () => {
+  const validations = (basicInfoParama: BasicInputType | null = null) => {
+    const basicInfoTemp = basicInfoParama ? basicInfoParama : basicInfo
     const newErrors: BasicInfoErrors = {
-      insuredError: basicInfo.insured === '',
-      countryError: basicInfo.country === '',
-      brokerError: basicInfo.broker === '',
-      cedantError: basicInfo.cedant === '',
-      lineOfBusinessError: basicInfo.lineOfBusiness === '',
-      // underwriterError: basicInfo.underwriter === '',
-      // leadUnderwriterError: basicInfo.leadUnderwriter === '',
-      // technicalAssistantError: basicInfo.technicalAssistant === '',
-      industryCodeError: basicInfo.industryCode === '',
-      riskActivityError: basicInfo.riskActivity === '',
-      riskClassError: basicInfo.riskClass === 0,
-      receptionDateError: basicInfo.receptionDate === null,
-      effectiveDateError: basicInfo.effectiveDate === null,
-      expirationDateError: basicInfo.expirationDate === null
+      insuredError: basicInfoTemp.insured === '',
+      countryError: basicInfoTemp.country === '',
+      brokerError: basicInfoTemp.broker === '',
+      cedantError: basicInfoTemp.cedant === '',
+      lineOfBusinessError: basicInfoTemp.lineOfBusiness === '',
+      // underwriterError: basicInfoTemp.underwriter === '',
+      // leadUnderwriterError: basicInfoTemp.leadUnderwriter === '',
+      // technicalAssistantError: basicInfoTemp.technicalAssistant === '',
+      industryCodeError: basicInfoTemp.industryCode === '',
+      riskActivityError: basicInfoTemp.riskActivity === '',
+      riskClassError: basicInfoTemp.riskClass === 0,
+      receptionDateError: basicInfoTemp.receptionDate === null,
+      effectiveDateError: basicInfoTemp.effectiveDate === null,
+      expirationDateError: basicInfoTemp.expirationDate === null
     }
 
     setErrors(newErrors)
