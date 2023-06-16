@@ -148,7 +148,7 @@ const FormHeader = () => {
 
   return (
     <div className='form-header-grid'>
-      <Card className='info-header' style={{marginBottom: "0px"}}>
+      <Card className='info-header' style={{ marginBottom: "0px" }} >
         <div className='form-header-data'>
           <div className='form-header'>
             <div className='form-header-section'>

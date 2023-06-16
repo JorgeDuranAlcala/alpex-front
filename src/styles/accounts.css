@@ -52,9 +52,9 @@
 /* - New accoun styles ----------------------------------------------------------------------------------------------  */
 
 .new-account .MuiCard-root {
-    margin: 0 0 20px;
-    overflow: inherit;
-    height: 100%;
+  margin: 0 0 20px;
+  overflow: inherit;
+  height: 100%;
 }
 
 /*---- Header----*/
@@ -123,7 +123,6 @@
   justify-content: flex-start;
   height: fit-content;
 }
-
 
 .modal-wrapper .headers,
 .modal-wrapper .history-status {
@@ -703,15 +702,26 @@
 
 .form-header-section:first-of-type {
   grid-column: span 2;
-  display: grid;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  /* display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-column-gap: 0px;
-  grid-row-gap: 0px;
+  grid-row-gap: 0px; */
+}
+
+@media screen and (max-width: 1500px) {
+  .form-header-section:first-of-type {
+    grid-column: span 5;
+    margin-bottom: 24px;
+    gap: 16px;
+  }
 }
 
 .double-gap {
   grid-column: span 2;
-  margin-top: 20px;
+  /* margin-top: 20px; */
 }
 
 .block {
@@ -730,6 +740,7 @@
   padding: 20px;
   padding-top: 80px;
   padding-bottom: 0px;
+  align-items: flex-start;
 }
 
 .form-header2 {
@@ -761,6 +772,9 @@
 
 .header-form-main {
   display: inline-block;
+}
+.header-form-main button {
+  padding: 0px;
 }
 
 .form-header-title {

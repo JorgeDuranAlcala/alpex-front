@@ -5,6 +5,8 @@ export interface UsersGetDto {
   name?: string
   role?: string
   company?: string
+  surname?: string
+  secondSurname?: string
 }
 
 export interface IResponse {
