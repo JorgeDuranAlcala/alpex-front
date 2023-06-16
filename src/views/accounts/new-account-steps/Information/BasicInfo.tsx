@@ -1,29 +1,29 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { ForwardedRef, ReactNode, forwardRef, useEffect, useState } from 'react'; //ReactNode
+import React, { ForwardedRef, ReactNode, forwardRef, useEffect, useState } from 'react' //ReactNode
 
 // ** MUI Imports
-import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
 import {
   FormControl,
   FormHelperText,
+  Grid,
   InputAdornment,
   InputLabel,
   MenuItem,
   SxProps,
   TextField,
   Theme
-} from '@mui/material';
-import Select, { SelectChangeEvent } from '@mui/material/Select'; //SelectChangeEvent
+} from '@mui/material'
+import Select, { SelectChangeEvent } from '@mui/material/Select' //SelectChangeEvent
 
 //Components
-import { ContactModal } from '@/views/accounts/new-account-steps/Information/ContactModal';
+import { ContactModal } from '@/views/accounts/new-account-steps/Information/ContactModal'
 
 //hooks para base info y  modal contac
-import { useGetAllCountries as useCountyGetAll } from 'src/hooks/catalogs/country';
+import { useGetAllCountries as useCountyGetAll } from 'src/hooks/catalogs/country'
 
 // ** Third Party Imports
-import DatePicker from 'react-datepicker';
-import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker';
+import DatePicker from 'react-datepicker'
 
 interface PickerProps {
   label?: string
@@ -36,9 +36,10 @@ interface BasicInfoErrors {
   brokerError: boolean
   cedantError: boolean
   lineOfBusinessError: boolean
-  underwriterError: boolean
-  leadUnderwriterError: boolean
-  technicalAssistantError: boolean
+
+  // underwriterError: boolean
+  // leadUnderwriterError: boolean
+  // technicalAssistantError: boolean
   industryCodeError: boolean
   riskActivityError: boolean
   riskClassError: boolean
@@ -46,60 +47,35 @@ interface BasicInfoErrors {
   effectiveDateError: boolean
   expirationDateError: boolean
 }
-
+type BasicInputType = {
+  insured: string
+  country: number | string
+  broker: number | string
+  brokerContact: number | null | string
+  brokerContactEmail: string
+  brokerContactPhone: string
+  brokerContactCountry: string
+  cedant: number | string
+  cedantContact: number | null | string
+  cedantContactEmail: string
+  cedantContactPhone: string
+  cedantContactCountry: string
+  lineOfBusiness: number | string
+  underwriter: number | string | null
+  leadUnderwriter: number | string | null
+  technicalAssistant: number | string | null
+  industryCode: number | string
+  riskActivity: string
+  riskClass: number
+  receptionDate: Date | null
+  effectiveDate: Date | null
+  expirationDate: Date | null
+}
 type BasicInfoProps = {
-  basicInfo: {
-    insured: string
-    country: number | string
-    broker: number | string
-    brokerContact: number | null | string
-    brokerContactEmail: string
-    brokerContactPhone: string
-    brokerContactCountry: string
-    cedant: number | string
-    cedantContact: number | null | string
-    cedantContactEmail: string
-    cedantContactPhone: string
-    cedantContactCountry: string
-    lineOfBusiness: number | string
-    underwriter: number | string
-    leadUnderwriter: number | string
-    industryCode: number | string
-    riskActivity: string
-    riskClass: number
-    technicalAssistant: number | string
-    receptionDate: Date | null
-    effectiveDate: Date | null
-    expirationDate: Date | null
-  }
-  setBasicInfo: React.Dispatch<
-    React.SetStateAction<{
-      insured: string
-      country: number | string
-      broker: number | string
-      brokerContact: number | null | string
-      brokerContactEmail: string
-      brokerContactPhone: string
-      brokerContactCountry: string
-      cedant: number | string
-      cedantContact: number | null | string
-      cedantContactEmail: string
-      cedantContactPhone: string
-      cedantContactCountry: string
-      lineOfBusiness: number | string
-      underwriter: number | string
-      leadUnderwriter: number | string
-      industryCode: number | string
-      riskActivity: string
-      riskClass: number
-      technicalAssistant: number | string
-      receptionDate: Date | null
-      effectiveDate: Date | null
-      expirationDate: Date | null
-    }>
-  >
+  basicInfo: BasicInputType
+  setBasicInfo: React.Dispatch<React.SetStateAction<BasicInputType>>
   makeValidations: boolean
-  onValidationComplete: (valid: boolean) => void;
+  onValidationComplete: (valid: boolean) => void
 }
 
 /* eslint-disable */
@@ -121,25 +97,22 @@ const CustomInput = forwardRef(({ ...props }: PickerProps, ref: ForwardedRef<HTM
   )
 })
 
-import { ROLES } from '@/configs/api';
-import { useGetAll as useBrokerGetAll } from 'src/hooks/catalogs/broker';
-import { useGetAllByIdBroker } from 'src/hooks/catalogs/broker-contact/';
-import { useGetAll as useCedantGetAll } from 'src/hooks/catalogs/cedant';
-import { useGetAllByCedant } from 'src/hooks/catalogs/cedant-contact';
-import { useGetAllLineOfBussines } from 'src/hooks/catalogs/lineOfBussines';
-import { useGetAllRiskActivities } from 'src/hooks/catalogs/riskActivity';
-import { useGetByIdRole } from 'src/hooks/catalogs/users/';
+import DatePickerWrapper from '@/@core/styles/libs/react-datepicker'
+import { ROLES } from '@/configs/api'
+import { useGetAll as useBrokerGetAll } from 'src/hooks/catalogs/broker'
+import { useGetAllByIdBroker } from 'src/hooks/catalogs/broker-contact/'
+import { useGetAll as useCedantGetAll } from 'src/hooks/catalogs/cedant'
+import { useGetAllByCedant } from 'src/hooks/catalogs/cedant-contact'
+import { useGetAllLineOfBussines } from 'src/hooks/catalogs/lineOfBussines'
+import { useGetAllRiskActivities } from 'src/hooks/catalogs/riskActivity'
+import { useGetByIdRole } from 'src/hooks/catalogs/users/'
 
-const BasicInfo: React.FC<BasicInfoProps> = ({
-  basicInfo,
-  setBasicInfo,
-  makeValidations,
-  onValidationComplete
-}) => {
-  //cargamos la información de los catálogos de base de datos
+const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeValidations, onValidationComplete }) => {
+  //cargamos la informacion de los catalogos de base de datos
   const { countries } = useCountyGetAll()
   const { brokers } = useBrokerGetAll()
   const { cedant } = useCedantGetAll()
+  const [validateForm, setValidateForm] = useState<boolean>(true)
   const { brokerContacts, setIdBroker, findByIdBroker } = useGetAllByIdBroker()
   const { contacts: cedantContacts, setIdCedant, findByIdCedant } = useGetAllByCedant()
   const { riskActivities } = useGetAllRiskActivities()
@@ -147,7 +120,6 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
   const { users: underwriters } = useGetByIdRole(ROLES.UNDERWRITER)
   const { users: leadUnderwriters } = useGetByIdRole(ROLES.LEAD_UNDERWRITER)
   const { users: technicalAssistants } = useGetByIdRole(ROLES.TECHNICAL_ASSISTANT)
-
 
   const [bussinesFields, setBussinesFields] = useState(true)
 
@@ -158,9 +130,9 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
     brokerError: false,
     cedantError: false,
     lineOfBusinessError: false,
-    underwriterError: false,
-    leadUnderwriterError: false,
-    technicalAssistantError: false,
+    // underwriterError: false,
+    // leadUnderwriterError: false,
+    // technicalAssistantError: false,
     receptionDateError: false,
     effectiveDateError: false,
     expirationDateError: false,
@@ -180,6 +152,8 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     setBasicInfo({ ...basicInfo, [name]: value })
+
+    !validateForm && validations({ ...basicInfo, [name]: value })
   }
 
   const handleSelectChange = (event: SelectChangeEvent<string>, child?: ReactNode) => {
@@ -198,6 +172,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
       basicInfoTem.brokerContact = ''
       setIdBroker(Number(value))
     }
+
     if (name === 'cedant') {
       //reset del  valor del contact
       basicInfoTem.cedantContact = ''
@@ -216,46 +191,52 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
       ...basicInfoTem,
       [name]: value
     }
-
+    !validateForm && validations(basicInfoTem)
     setBasicInfo(basicInfoTem)
   }
 
   const handleReceptionDateChange = (date: Date) => {
     setBasicInfo({ ...basicInfo, receptionDate: date })
+    !validateForm && validations({ ...basicInfo, receptionDate: date })
   }
 
   const handleEffectiveDateChange = (date: Date) => {
     setBasicInfo({ ...basicInfo, effectiveDate: date })
+    !validateForm && validations({ ...basicInfo, effectiveDate: date })
   }
 
   const handleExpirationDateChange = (date: Date | null) => {
     setBasicInfo({ ...basicInfo, expirationDate: date })
+    !validateForm && validations({ ...basicInfo, expirationDate: date })
   }
 
-  const validations = () => {
+  const validations = (basicInfoParama: BasicInputType | null = null) => {
+    const basicInfoTemp = basicInfoParama ? basicInfoParama : basicInfo
     const newErrors: BasicInfoErrors = {
-      insuredError: basicInfo.insured === '',
-      countryError: basicInfo.country === '',
-      brokerError: basicInfo.broker === '',
-      cedantError: basicInfo.cedant === '',
-      lineOfBusinessError: basicInfo.lineOfBusiness === '',
-      underwriterError: basicInfo.underwriter === '',
-      leadUnderwriterError: basicInfo.leadUnderwriter === '',
-      technicalAssistantError: basicInfo.technicalAssistant === '',
-      industryCodeError: basicInfo.industryCode === '',
-      riskActivityError: basicInfo.riskActivity === '',
-      riskClassError: basicInfo.riskClass === 0,
-      receptionDateError: basicInfo.receptionDate === null,
-      effectiveDateError: basicInfo.effectiveDate === null,
-      expirationDateError: basicInfo.expirationDate === null
+      insuredError: basicInfoTemp.insured === '',
+      countryError: basicInfoTemp.country === '',
+      brokerError: basicInfoTemp.broker === '',
+      cedantError: basicInfoTemp.cedant === '',
+      lineOfBusinessError: basicInfoTemp.lineOfBusiness === '',
+      // underwriterError: basicInfoTemp.underwriter === '',
+      // leadUnderwriterError: basicInfoTemp.leadUnderwriter === '',
+      // technicalAssistantError: basicInfoTemp.technicalAssistant === '',
+      industryCodeError: basicInfoTemp.industryCode === '',
+      riskActivityError: basicInfoTemp.riskActivity === '',
+      riskClassError: basicInfoTemp.riskClass === 0,
+      receptionDateError: basicInfoTemp.receptionDate === null,
+      effectiveDateError: basicInfoTemp.effectiveDate === null,
+      expirationDateError: basicInfoTemp.expirationDate === null
     }
 
     setErrors(newErrors)
 
     if (Object.values(newErrors).every(error => !error)) {
-      onValidationComplete(true);
-    }else{
-      onValidationComplete(false);
+      onValidationComplete(true)
+      setValidateForm(true)
+    } else {
+      onValidationComplete(false)
+      setValidateForm(false)
     }
   }
 
@@ -270,6 +251,32 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
   useEffect(() => {
     setIdCedant(Number(basicInfo.cedant))
   }, [basicInfo.cedant, cedant])
+
+  useEffect(() => {
+    //get broker contact info
+    const idBrokerContact = basicInfo.brokerContact ? parseInt(basicInfo.brokerContact.toString()) : 0
+    const brokerContactInfo = brokerContacts.find(brokerContact => brokerContact.id === idBrokerContact)
+    setBasicInfo(prevBasicInfo => ({
+      ...prevBasicInfo,
+      brokerContactEmail: brokerContactInfo?.email || 'test',
+      brokerContactPhone: brokerContactInfo?.phone || '123123',
+      brokerContactCountry: brokerContactInfo?.idCCountry.toString() || '1'
+    }))
+  }, [basicInfo.brokerContact, brokerContacts])
+
+  useEffect(() => {
+    setTimeout(() => {
+      //get cedant contact info
+      const idCedantContact = basicInfo.cedantContact ? parseInt(basicInfo.cedantContact.toString()) : 0
+      const cedantContactInfo = cedantContacts.find(cedantContact => cedantContact.id === idCedantContact)
+      setBasicInfo(prevBasicInfo => ({
+        ...prevBasicInfo,
+        cedantContactEmail: cedantContactInfo?.email || '',
+        cedantContactPhone: cedantContactInfo?.phone || '',
+        cedantContactCountry: cedantContactInfo?.idCCountry.toString() || ''
+      }))
+    }, 0)
+  }, [basicInfo.cedantContact, cedantContacts])
 
   useEffect(() => {
     let riskActivity = {
@@ -291,12 +298,17 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
     }))
   }, [basicInfo.industryCode, riskActivities])
 
+  useEffect(() => {
+    if (makeValidations) {
+      validations()
+      setValidateForm(false)
+    }
+  }, [makeValidations])
 
   React.useEffect(() => {
-    if (makeValidations) {
-        validations()
-    }
-  }, [makeValidations]);
+    console.log('basic info cambio')
+    console.log(basicInfo)
+  }, [basicInfo])
 
   return (
     <>
@@ -438,6 +450,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
           )}
           <ContactModal
             service={'broker'}
+            disabledBtn={basicInfo.broker !== '' ? false : true}
             id={Number(basicInfo.broker)}
             updateContacts={updateBrokerContact}
             setIdCreated={setBasicInfo}
@@ -531,6 +544,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
           )}
           <ContactModal
             service={'cedant'}
+            disabledBtn={basicInfo.cedant !== '' ? false : true}
             id={Number(basicInfo.cedant)}
             updateContacts={updateCedantContact}
             setIdCreated={setBasicInfo}
@@ -625,96 +639,98 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
         </div>
         <div className='form-col'>
           <div className='title'>Dates</div>
-          <DatePickerWrapper className='information-datepicker'>
-            <DatePicker
-              selected={basicInfo.receptionDate}
-              shouldCloseOnSelect
-              id='reception-date'
-              customInput={<CustomInput label='Reception date' sx={{ mb: 2, mt: 2, width: '100%' }} />}
-              onChange={handleReceptionDateChange}
-              className={errors.receptionDateError ? 'error LACLASE' : 'LACLASE'}
-              showTimeSelect
-              showMonthDropdown
-              showYearDropdown
-              showDisabledMonthNavigation
-              timeFormat='HH:mm'
-              timeIntervals={15}
-              dateFormat='dd/MM/yyyy h:mm aa'
-            />
-            {errors.receptionDateError && (
-              <FormHelperText
-                sx={{
-                  color: 'error.main',
-                  marginTop: '-5px',
-                  marginBottom: '6px',
-                  marginLeft: '10px'
-                }}
-                id='receptionDate-error'
-              >
-                {getErrorMessage('receptionDateError')}
-              </FormHelperText>
-            )}
-            <DatePicker
-              selected={basicInfo.effectiveDate}
-              shouldCloseOnSelect
-              id='effective-date'
-              customInput={<CustomInput label='Effective date' sx={{ mb: 2, mt: 2, width: '100%' }} />}
-              onChange={handleEffectiveDateChange}
-              className={errors.effectiveDateError ? 'error' : ''}
-              showTimeSelect
-              showMonthDropdown
-              showYearDropdown
-              showDisabledMonthNavigation
-              timeFormat='HH:mm'
-              timeIntervals={15}
-              dateFormat='dd/MM/yyyy h:mm aa'
-            />
-            {errors.effectiveDateError && (
-              <FormHelperText
-                sx={{
-                  color: 'error.main',
-                  marginTop: '-5px',
-                  marginBottom: '5px',
-                  marginLeft: '10px'
-                }}
-                id='effectiveDate-error'
-              >
-                {getErrorMessage('effectiveDateError')}
-              </FormHelperText>
-            )}
-            <DatePicker
-              selected={basicInfo.expirationDate}
-              shouldCloseOnSelect
-              id='expiration-date'
-              customInput={<CustomInput label='Expiration date' sx={{ mb: 2, mt: 2, width: '100%' }} />}
-              onChange={handleExpirationDateChange}
-              className={errors.expirationDateError ? 'error' : ''}
-              showTimeSelect
-              showMonthDropdown
-              showYearDropdown
-              showDisabledMonthNavigation
-              timeFormat='HH:mm'
-              timeIntervals={15}
-              dateFormat='dd/MM/yyyy h:mm aa'
-            />
-            {errors.expirationDateError && (
-              <FormHelperText
-                sx={{
-                  color: 'error.main',
-                  marginTop: '-5px',
-                  marginBottom: '6px',
-                  marginLeft: '10px'
-                }}
-                id='expirationDate-error'
-              >
-                {getErrorMessage('expirationDateError')}
-              </FormHelperText>
-            )}
-          </DatePickerWrapper>
+          <Grid item xs={12} sm={12} sx={{ width: '100%' }}>
+            <DatePickerWrapper className='information-datepicker'>
+              <DatePicker
+                selected={basicInfo.receptionDate}
+                shouldCloseOnSelect
+                id='reception-date'
+                customInput={<CustomInput label='Reception date' sx={{ mb: 2, mt: 2, width: '100%' }} />}
+                onChange={handleReceptionDateChange}
+                className={errors.receptionDateError ? 'error' : ''}
+                showTimeSelect
+                showMonthDropdown
+                showYearDropdown
+                showDisabledMonthNavigation
+                timeFormat='HH:mm'
+                timeIntervals={15}
+                dateFormat='dd/MM/yyyy h:mm aa'
+              />
+              {errors.receptionDateError && (
+                <FormHelperText
+                  sx={{
+                    color: 'error.main',
+                    marginTop: '-5px',
+                    marginBottom: '6px',
+                    marginLeft: '10px'
+                  }}
+                  id='receptionDate-error'
+                >
+                  {getErrorMessage('receptionDateError')}
+                </FormHelperText>
+              )}
+              <DatePicker
+                selected={basicInfo.effectiveDate}
+                shouldCloseOnSelect
+                id='effective-date'
+                customInput={<CustomInput label='Effective date' sx={{ mb: 2, mt: 2, width: '100%' }} />}
+                onChange={handleEffectiveDateChange}
+                className={errors.effectiveDateError ? 'error' : ''}
+                showTimeSelect
+                showMonthDropdown
+                showYearDropdown
+                showDisabledMonthNavigation
+                timeFormat='HH:mm'
+                timeIntervals={15}
+                dateFormat='dd/MM/yyyy h:mm aa'
+              />
+              {errors.effectiveDateError && (
+                <FormHelperText
+                  sx={{
+                    color: 'error.main',
+                    marginTop: '-5px',
+                    marginBottom: '5px',
+                    marginLeft: '10px'
+                  }}
+                  id='effectiveDate-error'
+                >
+                  {getErrorMessage('effectiveDateError')}
+                </FormHelperText>
+              )}
+              <DatePicker
+                selected={basicInfo.expirationDate}
+                shouldCloseOnSelect
+                id='expiration-date'
+                customInput={<CustomInput label='Expiration date' sx={{ mb: 2, mt: 2, width: '100%' }} />}
+                onChange={handleExpirationDateChange}
+                className={errors.expirationDateError ? 'error' : ''}
+                showTimeSelect
+                showMonthDropdown
+                showYearDropdown
+                showDisabledMonthNavigation
+                timeFormat='HH:mm'
+                timeIntervals={15}
+                dateFormat='dd/MM/yyyy h:mm aa'
+              />
+              {errors.expirationDateError && (
+                <FormHelperText
+                  sx={{
+                    color: 'error.main',
+                    marginTop: '-5px',
+                    marginBottom: '6px',
+                    marginLeft: '10px'
+                  }}
+                  id='expirationDate-error'
+                >
+                  {getErrorMessage('expirationDateError')}
+                </FormHelperText>
+              )}
+            </DatePickerWrapper>
+          </Grid>
         </div>
         <div className='form-col'>
-          <div className='title'>Underwriter team</div>
-          <FormControl fullWidth sx={{ mb: 2, mt: 2 }} error={errors.underwriterError}>
+          <div className='title'>Underwriting team</div>
+          <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <InputLabel>Underwriter</InputLabel>
 
             <Select
@@ -728,7 +744,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
                 underwriters.map(underwriter => {
                   return (
                     <MenuItem key={underwriter.id} value={underwriter.id}>
-                      {underwriter.name}
+                      {`${underwriter.name} ${underwriter.surname || ''} ${underwriter.secondSurname || ''}`}
                     </MenuItem>
                   )
                 })
@@ -738,13 +754,8 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
                 </MenuItem>
               )}
             </Select>
-            {errors.underwriterError && (
-              <FormHelperText sx={{ color: 'error.main' }} id='expirationDate-error'>
-                {getErrorMessage('underwriterError')}
-              </FormHelperText>
-            )}
           </FormControl>
-          <FormControl fullWidth sx={{ mb: 2, mt: 2 }} error={errors.leadUnderwriterError}>
+          <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <InputLabel>Lead underwriter</InputLabel>
 
             <Select
@@ -758,7 +769,9 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
                 leadUnderwriters.map(leadUnderwriter => {
                   return (
                     <MenuItem key={leadUnderwriter.id} value={leadUnderwriter.id}>
-                      {leadUnderwriter.name}
+                      {`${leadUnderwriter.name} ${leadUnderwriter.surname || ''} ${
+                        leadUnderwriter.secondSurname || ''
+                      }`}
                     </MenuItem>
                   )
                 })
@@ -768,14 +781,9 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
                 </MenuItem>
               )}
             </Select>
-            {errors.leadUnderwriterError && (
-              <FormHelperText sx={{ color: 'error.main' }} id='expirationDate-error'>
-                {getErrorMessage('leadUnderwriterError')}
-              </FormHelperText>
-            )}
           </FormControl>
 
-          <FormControl fullWidth sx={{ mb: 2, mt: 2 }} error={errors.technicalAssistantError}>
+          <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <InputLabel>Technical assistant</InputLabel>
 
             <Select
@@ -789,7 +797,9 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
                 technicalAssistants.map(technicalAssistant => {
                   return (
                     <MenuItem key={technicalAssistant.id} value={technicalAssistant.id}>
-                      {technicalAssistant.name}
+                      {`${technicalAssistant.name} ${technicalAssistant.surname || ''} ${
+                        technicalAssistant.secondSurname || ''
+                      }`}
                     </MenuItem>
                   )
                 })
@@ -799,11 +809,6 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
                 </MenuItem>
               )}
             </Select>
-            {errors.technicalAssistantError && (
-              <FormHelperText sx={{ color: 'error.main' }} id='expirationDate-error'>
-                {getErrorMessage('technicalAssistantError')}
-              </FormHelperText>
-            )}
           </FormControl>
         </div>
       </div>

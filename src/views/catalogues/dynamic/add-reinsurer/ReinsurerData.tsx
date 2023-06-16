@@ -26,6 +26,7 @@ import {
 } from '@/hooks/catalogs/reinsuranceCompany'
 import { useDeleteReinsuranceCompany } from '@/hooks/catalogs/reinsuranceCompany/useDelete'
 import { useGetAllSubscriptionType } from '@/hooks/catalogs/subscriptionType'
+import { useRouter } from 'next/router'
 import { ButtonClose, HeaderTitleModal } from 'src/styles/modal/modal.styled'
 
 interface IReinsuranceCompanyData {
@@ -61,6 +62,9 @@ const ReinsurerData = ({ idReinsuranceCompany, setIdReinsuranceCompany }: IReins
   const { updateReinsuranceCompany: update } = useUpdateReinsuranceCompany()
   const { setId, reinsuranceCompany } = useGetReinsuranceCompanyById()
   const { subscriptionTypes } = useGetAllSubscriptionType()
+
+  //router
+  const router = useRouter()
 
   useEffect(() => {
     if (idReinsuranceCompany !== 0) {
@@ -101,6 +105,7 @@ const ReinsurerData = ({ idReinsuranceCompany, setIdReinsuranceCompany }: IReins
 
     setTimeout(() => {
       setShowAlert(false)
+      text === 'DELETED' && router.push('/catalogues/dynamic/')
     }, 5000)
   }
 
@@ -146,7 +151,7 @@ const ReinsurerData = ({ idReinsuranceCompany, setIdReinsuranceCompany }: IReins
   const deleteReinsurer = async () => {
     const result = await deleteReinsuranceCompanys({ idDeleteList: [newReinsuranceCompany.id] })
     if (result) {
-      triggerAlert('success')
+      triggerAlert('success', 'DELETED')
       setIdReinsuranceCompany(0)
     } else {
       triggerAlert('error')

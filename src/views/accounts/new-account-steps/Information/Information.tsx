@@ -4,20 +4,14 @@ import UserThemeOptions from 'src/layouts/UserThemeOptions'
 // ** Custom Hooks
 import {
   useAddInformation,
-  useDeleteInformationDocument,
   useFindInformationByIdAccount,
-  useGetInfoDoctosByIdAccount,
-  useUpdateInformationByIdAccount,
-  useUploadInformationDocument
+  useUpdateInformationByIdAccount
 } from 'src/hooks/accounts/information'
 
-// // ** MUI Imports
+// ** MUI Imports
 import CloseIcon from '@mui/icons-material/Close'
 import { Box, Button, CircularProgress, Modal } from '@mui/material'
-import { ButtonClose, HeaderTitleModal } from 'src/styles/modal/modal.styled'
 import BasicInfo from './BasicInfo'
-import FileSubmit from './FileSubmit'
-import PlacementStructure from './PlacementStructure'
 
 // ** Icon Imports
 import CustomAlert, { IAlert } from '@/views/custom/alerts'
@@ -26,8 +20,8 @@ import { useAppDispatch, useAppSelector } from 'src/store'
 import { updateFormsData } from 'src/store/apps/accounts'
 
 // ** Utils
+import { ButtonClose, HeaderTitleModal } from '@/styles/modal/modal.styled'
 import { delayMs, formatUTC } from '@/utils/formatDates'
-import { formatInformationDoctos, getFileFromUrl } from '@/utils/formatDoctos'
 
 type InformationProps = {
   onStepChange: (step: number) => void
@@ -48,9 +42,9 @@ export interface BasicInfoInterface {
   cedantContactPhone: string
   cedantContactCountry: string
   lineOfBusiness: number | string
-  underwriter: number | string
-  leadUnderwriter: number | string
-  technicalAssistant: number | string
+  underwriter: number | string | null
+  leadUnderwriter: number | string | null
+  technicalAssistant: number | string | null
   industryCode: number | string
   riskActivity: string
   riskClass: number
@@ -81,13 +75,14 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
   const inter = userThemeConfig.typography?.fontFamilyInter
   const [makeValidations, setMakeValidations] = useState(false)
-  const [disableSave, setDisableSave]=useState(false)
-  const [changeTitle, setChangeTitle] = useState(false)
+  const [disableSave, setDisableSave] = useState(false)
+
+  // const [changeTitle, setChangeTitle] = useState(false)
 
   //Validaciones
   const [allValidated, setAllValidated] = useState(false)
-  const [validationCount, setValidationCount] = useState(0);
-  const [validatedForms, setValidatedForms] = useState(0);
+  const [validationCount, setValidationCount] = useState(0)
+  const [validatedForms, setValidatedForms] = useState(0)
 
   const [open, setOpen] = useState<boolean>(false)
   const [nextClicked, setNextClicked] = useState<boolean>(false)
@@ -100,23 +95,26 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   })
 
   // Save id doctos by file name
-  const [doctoIdByName, setDoctoIdByName] = useState({})
-  const [userFile, setUserFile] = useState<File[]>([])
-  const [userFileToDelete, setUserFileToDelete] = useState<File>()
+  // const [doctoIdByName, setDoctoIdByName] = useState({})
+  const [userFile] = useState<File[]>([])
+
+  // const [userFileToDelete, setUserFileToDelete] = useState<File>()
 
   //store
   const idAccount = useAppSelector(state => state.accounts?.formsData?.form1?.id)
   const lastForm1Information = useAppSelector(state => state.accounts?.formsData?.form1)
-  const [fileUrls, setFileUrls] = useState<string[]>([])
 
+  // const [fileUrls, setFileUrls] = useState<string[]>([])
 
   // ** Custom Hooks
   const { getInformaByIdAccount } = useFindInformationByIdAccount()
   const { addInformation } = useAddInformation()
   const { updateInformationByIdAccount } = useUpdateInformationByIdAccount()
-  const { uploadInformationDocument } = useUploadInformationDocument()
-  const { getInfoDoctosByIdAccount } = useGetInfoDoctosByIdAccount()
-  const { deleteInformationDocument } = useDeleteInformationDocument()
+
+  // const { uploadInformationDocument } = useUploadInformationDocument()
+  // const { getInfoDoctosByIdAccount } = useGetInfoDoctosByIdAccount()
+
+  // const { deleteInformationDocument } = useDeleteInformationDocument()
 
   const dispatch = useAppDispatch()
 
@@ -184,9 +182,9 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
       effectiveDate: basicInfo.effectiveDate,
       expirationDate: basicInfo.expirationDate,
       receptionDate: basicInfo.receptionDate && new Date(basicInfo.receptionDate),
-      idLeadUnderwriter: Number(basicInfo.leadUnderwriter),
-      idTechnicalAssistant: Number(basicInfo.technicalAssistant),
-      idUnderwriter: Number(basicInfo.underwriter),
+      idLeadUnderwriter: Number(basicInfo.leadUnderwriter) === 0 ? null : Number(basicInfo.leadUnderwriter),
+      idTechnicalAssistant: Number(basicInfo.technicalAssistant) === 0 ? null : Number(basicInfo.technicalAssistant),
+      idUnderwriter: Number(basicInfo.underwriter) === 0 ? null : Number(basicInfo.underwriter),
       riskClass: basicInfo.riskClass,
       currency: placementStructure.currency,
       exchangeRate: placementStructure.exchangeRate,
@@ -206,7 +204,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
     })
 
     await delayMs(1000)
-    if (typeof res === 'string' && res === 'error') {
+    if (!res) {
       setBadgeData({
         message: `ERROR UPDATING INFORMATION`,
         theme: 'error',
@@ -227,11 +225,20 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
       setBadgeData({
         message: `UPDATED SUCCESSFULLY`,
         status: 'success',
+        theme: 'success',
         open: true,
         icon: <Icon icon='ic:baseline-check-circle' />,
         disableAutoHide: true
       })
     }
+
+    await delayMs(1000)
+    setBadgeData({
+      message: '',
+      status: undefined,
+      icon: undefined,
+      open: false
+    })
 
     return res
   }
@@ -255,32 +262,33 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
       receptionDate: formatUTC(basicInfo.receptionDate),
       effectiveDate: formatUTC(basicInfo.effectiveDate),
       expirationDate: formatUTC(basicInfo.expirationDate),
-      idLeadUnderwriter: Number(basicInfo.leadUnderwriter),
-      idTechnicalAssistant: Number(basicInfo.technicalAssistant),
-      idUnderwriter: Number(basicInfo.underwriter),
+      idLeadUnderwriter: Number(basicInfo.leadUnderwriter) === 0 ? null : Number(basicInfo.leadUnderwriter),
+      idTechnicalAssistant: Number(basicInfo.technicalAssistant) === 0 ? null : Number(basicInfo.technicalAssistant),
+      idUnderwriter: Number(basicInfo.underwriter) === 0 ? null : Number(basicInfo.underwriter),
       riskClass: basicInfo.riskClass,
-      currency: placementStructure.currency,
-      exchangeRate: placementStructure.exchangeRate,
-      attachmentPoint: placementStructure.attachmentPoint,
-      frontingFee: placementStructure.frontingFee,
-      frontingFeeTotal: placementStructure.frontingFeeP,
-      grossPremium: placementStructure.grossPremium,
-      limit: placementStructure.limit,
-      netPremium: placementStructure.netPremium,
-      reinsuranceBrokerage: placementStructure.reinsuranceBrokerage,
-      reinsuranceBrokerageTotal: placementStructure.reinsuranceBrokerageP,
-      sir: placementStructure.sir,
-      taxes: placementStructure.taxes,
-      taxesTotal: placementStructure.taxesP,
-      totalValues: placementStructure.total,
-      idTypeOfLimit: Number(placementStructure.typeOfLimit),
+
+      currency: 'USD',
+      exchangeRate: 1,
+      attachmentPoint: 0,
+      frontingFee: 4400,
+      frontingFeeTotal: 2,
+      grossPremium: 220000,
+      limit: 3000000,
+      netPremium: 180400,
+      reinsuranceBrokerage: 22000,
+      reinsuranceBrokerageTotal: 10,
+      sir: 0,
+      taxes: 13.2,
+      taxesTotal: 6,
+      totalValues: 3500000,
+      idTypeOfLimit: 2,
       step: 1
     }
 
     const res = await addInformation(dataToSave)
 
     await delayMs(1000)
-    if (typeof res === 'string' && res === 'error') {
+    if (!res) {
       setBadgeData({
         message: `ERROR SAVING INFORMATION`,
         theme: 'error',
@@ -301,11 +309,20 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
       setBadgeData({
         message: `SAVED SUCCESSFULLY`,
         status: 'success',
+        theme: 'success',
         open: true,
         icon: <Icon icon='ic:baseline-check-circle' />,
         disableAutoHide: true
       })
     }
+
+    await delayMs(1000)
+    setBadgeData({
+      message: '',
+      status: undefined,
+      icon: undefined,
+      open: false
+    })
 
     return res
   }
@@ -335,28 +352,33 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
         technicalAssistant: information.idTechnicalAssistant || '',
         industryCode: information.idRiskActivity || '',
         riskActivity: '',
-        riskClass: 0,
+        riskClass: information.riskClass,
         receptionDate: information.receptionDate ? new Date(information.receptionDate) : null,
         effectiveDate: information.effectiveDate ? new Date(information.effectiveDate) : null,
         expirationDate: information.expirationDate ? new Date(information.expirationDate) : null
       }
 
       const obPlacementStructure = {
-        currency: information.currency || '',
-        total: Number(information.totalValues) || 0.0,
-        sir: Number(information.sir) || 0.0,
-        reinsuranceBrokerageP: Number(information.reinsuranceBrokerageTotal) || 0.0,
-        taxesP: Number(information.taxesTotal) || 0.0,
-        frontingFeeP: Number(information.frontingFeeTotal) || 0.0,
-        netPremium: Number(information.netPremium) || 0.0,
-        exchangeRate: Number(information.exchangeRate) || 0.0,
-        limit: Number(information.limit) || 0.0,
-        grossPremium: Number(information.grossPremium) || 0.0,
-        reinsuranceBrokerage: Number(information.reinsuranceBrokerage) || 0.0,
-        taxes: Number(information.taxes) || 0.0,
-        frontingFee: Number(information.frontingFee) || 0.0,
-        attachmentPoint: Number(information.attachmentPoint) || 0.0,
-        typeOfLimit: information.idTypeOfLimit || ''
+        currency: 'USD',
+        typeOfLimit: '',
+        exchangeRate: 1,
+        attachmentPoint: 0,
+        frontingFee: 4400,
+        frontingFeeTotal: 2,
+        grossPremium: 220000,
+        limit: 3000000,
+        netPremium: 180400,
+        reinsuranceBrokerage: 22000,
+        reinsuranceBrokerageTotal: 10,
+        sir: 0,
+        taxes: 13.2,
+        taxesTotal: 6,
+        totalValues: 3500000,
+        idTypeOfLimit: '2',
+        total: 234,
+        reinsuranceBrokerageP: 0.0,
+        taxesP: 0.0,
+        frontingFeeP: 0.0
       }
 
       setBasicInfo(obBasicInfo)
@@ -371,82 +393,82 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
     onIsNewAccountChange(false)
   }
 
-  const uploadDoctos = async (idAccount: number) => {
-    const formatedDoctos = await formatInformationDoctos(userFile, idAccount, 1, doctoIdByName)
-    const newDoctoIdByName: any = {}
+  // const uploadDoctos = async (idAccount: number) => {
+  //   const formatedDoctos = await formatInformationDoctos(userFile, idAccount, 1, doctoIdByName)
+  //   const newDoctoIdByName: any = {}
 
-    await delayMs(1000)
-    if (formatedDoctos.length === 0) {
-      setBadgeData({
-        message: '',
-        status: undefined,
-        icon: undefined,
-        open: false
-      })
+  //   await delayMs(1000)
+  //   if (formatedDoctos.length === 0) {
+  //     setBadgeData({
+  //       message: '',
+  //       status: undefined,
+  //       icon: undefined,
+  //       open: false
+  //     })
 
-      return
-    }
+  //     return
+  //   }
 
-    setBadgeData({
-      message: `UPDATING DOCUMENTS`,
-      status: 'secondary',
-      open: true,
-      icon: <CircularProgress size={20} color='primary' />,
-      backgroundColor: '#828597',
-      theme: 'info',
-      disableAutoHide: true
-    })
+  //   setBadgeData({
+  //     message: `UPDATING DOCUMENTS`,
+  //     status: 'secondary',
+  //     open: true,
+  //     icon: <CircularProgress size={20} color='primary' />,
+  //     backgroundColor: '#828597',
+  //     theme: 'info',
+  //     disableAutoHide: true
+  //   })
 
-    for (const docto of formatedDoctos) {
-      const res = await uploadInformationDocument(docto)
-      const createdDoctoData = res?.createdDoctoDB
-      if (createdDoctoData) {
-        newDoctoIdByName[createdDoctoData.name] = createdDoctoData.id
-      }
+  //   for (const docto of formatedDoctos) {
+  //     const res = await uploadInformationDocument(docto)
+  //     const createdDoctoData = res?.createdDoctoDB
+  //     if (createdDoctoData) {
+  //       newDoctoIdByName[createdDoctoData.name] = createdDoctoData.id
+  //     }
 
-      if (!res) {
-        setBadgeData({
-          message: `ERROR UPDATING DOCUMENT: ${docto.name}`,
-          theme: 'error',
-          open: true,
-          status: 'error',
-          icon: (
-            <Icon
-              style={{
-                color: '#FF4D49',
-                marginTop: '-1px'
-              }}
-              icon='jam:alert'
-            />
-          ),
-          disableAutoHide: true
-        })
-      } else {
-        setBadgeData({
-          message: `DOC: "${docto.name.toUpperCase()}", SAVED SUCCESSFULLY`,
-          status: 'success',
-          open: true,
-          icon: <Icon icon='ic:baseline-check-circle' />,
-          theme: 'success',
-          disableAutoHide: true
-        })
-      }
+  //     if (!res) {
+  //       setBadgeData({
+  //         message: `ERROR UPDATING DOCUMENT: ${docto.name}`,
+  //         theme: 'error',
+  //         open: true,
+  //         status: 'error',
+  //         icon: (
+  //           <Icon
+  //             style={{
+  //               color: '#FF4D49',
+  //               marginTop: '-1px'
+  //             }}
+  //             icon='jam:alert'
+  //           />
+  //         ),
+  //         disableAutoHide: true
+  //       })
+  //     } else {
+  //       setBadgeData({
+  //         message: `DOC: "${docto.name.toUpperCase()}", SAVED SUCCESSFULLY`,
+  //         status: 'success',
+  //         open: true,
+  //         icon: <Icon icon='ic:baseline-check-circle' />,
+  //         theme: 'success',
+  //         disableAutoHide: true
+  //       })
+  //     }
 
-      await delayMs(800)
-    }
+  //     await delayMs(800)
+  //   }
 
-    setBadgeData({
-      message: '',
-      status: undefined,
-      icon: undefined,
-      open: false
-    })
+  //   setBadgeData({
+  //     message: '',
+  //     status: undefined,
+  //     icon: undefined,
+  //     open: false
+  //   })
 
-    setDoctoIdByName({
-      ...doctoIdByName,
-      ...newDoctoIdByName
-    })
-  }
+  //   setDoctoIdByName({
+  //     ...doctoIdByName,
+  //     ...newDoctoIdByName
+  //   })
+  // }
 
   const handleSaveInformation = async () => {
     if (idAccount) {
@@ -461,7 +483,8 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
       })
 
       await updateInformation()
-      await uploadDoctos(idAccount)
+
+      // await uploadDoctos(idAccount)
       dispatch(updateFormsData({ form1: { basicInfo, placementStructure, userFile, id: idAccount } }))
       setDisableSave(false)
     } else {
@@ -471,15 +494,18 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
         open: true,
         icon: <CircularProgress size={20} color='secondary' />,
         backgroundColor: '#828597',
-        theme: 'secondary',
+        theme: 'info',
         disableAutoHide: true
       })
 
       const res = await saveInformation()
       setDisableSave(false)
-      localStorage.setItem('idAccount', String(res.account.id))
-      await uploadDoctos(res.account.id)
-      dispatch(updateFormsData({ form1: { basicInfo, placementStructure, userFile, id: res.account.id } }))
+      if (res) {
+        localStorage.setItem('idAccount', String(res.account.id))
+      }
+
+      // await uploadDoctos(res.account.id)
+      dispatch(updateFormsData({ form1: { basicInfo, placementStructure, userFile, id: res?.account?.id } }))
 
       onIsNewAccountChange(false)
     }
@@ -487,41 +513,36 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
 
   //Evento que controla el evento de continuar
   const handleNextStep = async () => {
-
     if (allValidated) {
-        await handleSaveInformation()
-        onStepChange(2)
+      await handleSaveInformation()
+      onStepChange(2)
     }
     handleCloseModal()
   }
 
   const handleValidationComplete = (valid: boolean) => {
-    setValidationCount((prevCount) => prevCount + 1);
-    if(valid){
-     setValidatedForms((prevCount) => prevCount + 1);
+    setValidationCount(prevCount => prevCount + 1)
+    if (valid) {
+      setValidatedForms(prevCount => prevCount + 1)
     }
-
-  };
-
+  }
 
   const handleAction = (action: string) => {
-    setValidationCount(0);
-    setValidatedForms(0);
+    setValidationCount(0)
+    setValidatedForms(0)
     switch (action) {
       case 'save':
         setSaveClicked(true)
-        break;
+        break
       case 'next':
         setNextClicked(true)
-        break;
+        break
       default:
-        break;
+        break
     }
 
     setMakeValidations(true)
-
   }
-
 
   const handleCloseModal = () => {
     setOpen(false)
@@ -531,9 +552,9 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
     setMakeValidations(false)
   }
 
-  const onSubmittedFiles = (change: boolean) => {
-    setChangeTitle(change)
-  }
+  // const onSubmittedFiles = (change: boolean) => {
+  //   setChangeTitle(change)
+  // }
 
   useEffect(() => {
     const idAccountCache = Number(localStorage.getItem('idAccount'))
@@ -546,68 +567,67 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   }, [allValidated])
 
   useEffect(() => {
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [basicInfo, setBasicInfo])
 
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fileUrls])
+  // useEffect(() => {
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [fileUrls])
 
-  useEffect(() => {
-    const getFiles = async () => {
-      const idAccountCache = Number(localStorage.getItem('idAccount'))
-      if (idAccountCache) {
-        const res = await getInfoDoctosByIdAccount(idAccountCache)
-        const newDoctoIdByName: any = {}
-        const newUserFiles: File[] = []
+  // useEffect(() => {
+  //   const getFiles = async () => {
+  //     const idAccountCache = Number(localStorage.getItem('idAccount'))
+  //     if (idAccountCache) {
+  //       const res = await getInfoDoctosByIdAccount(idAccountCache)
+  //       const newDoctoIdByName: any = {}
+  //       const newUserFiles: File[] = []
 
-        if (res.length > 0) {
-          const urls: string[] = []
-          for (const docto of res) {
-            newDoctoIdByName[docto.name] = docto.id
-            urls.push(docto.url)
-            const newFile = await getFileFromUrl(docto.url, docto.name)
-            if (newFile) {
-              newUserFiles.push(newFile)
-            }
-          }
+  //       if (res.length > 0) {
+  //         const urls: string[] = []
+  //         for (const docto of res) {
+  //           newDoctoIdByName[docto.name] = docto.id
+  //           urls.push(docto.url)
+  //           const newFile = await getFileFromUrl(docto.url, docto.name)
+  //           if (newFile) {
+  //             newUserFiles.push(newFile)
+  //           }
+  //         }
 
-          setFileUrls(urls)
-          setUserFile(newUserFiles)
+  //         setFileUrls(urls)
+  //         setUserFile(newUserFiles)
 
-          setDoctoIdByName({
-            ...doctoIdByName,
-            ...newDoctoIdByName
-          })
-        }
-      }
-    }
-    getFiles()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  //         setDoctoIdByName({
+  //           ...doctoIdByName,
+  //           ...newDoctoIdByName
+  //         })
+  //       }
+  //     }
+  //   }
+  //   getFiles()
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [])
 
-  useEffect(() => {
-    const deleteFile = async (userFileToDelete: File) => {
-      const fileName = String(userFileToDelete.name)
-      const idDocto = doctoIdByName[fileName as keyof typeof doctoIdByName]
+  // useEffect(() => {
+  //   const deleteFile = async (userFileToDelete: File) => {
+  //     const fileName = String(userFileToDelete.name)
+  //     const idDocto = doctoIdByName[fileName as keyof typeof doctoIdByName]
 
-      if (idDocto) {
-        const bodyToDelete = {
-          idAccount: idAccount,
-          idDocto,
-          fileName: fileName
-        }
-        await deleteInformationDocument(bodyToDelete)
-        delete doctoIdByName[fileName as keyof typeof doctoIdByName]
-      }
-    }
+  //     if (idDocto) {
+  //       const bodyToDelete = {
+  //         idAccount: idAccount,
+  //         idDocto,
+  //         fileName: fileName
+  //       }
+  //       await deleteInformationDocument(bodyToDelete)
+  //       delete doctoIdByName[fileName as keyof typeof doctoIdByName]
+  //     }
+  //   }
 
-    if (userFileToDelete && idAccount) {
-      deleteFile(userFileToDelete)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userFileToDelete])
+  //   if (userFileToDelete && idAccount) {
+  //     deleteFile(userFileToDelete)
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [userFileToDelete])
 
   useEffect(() => {
     if (idAccount) {
@@ -617,30 +637,30 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [idAccount])
 
-
-  React.useEffect(() => {
-    if (validationCount === 2 && validatedForms ===2) {
+  useEffect(() => {
+    console.log(validationCount)
+    console.log(validatedForms)
+    if (validationCount === 1 && validatedForms === 1) {
       setAllValidated(true)
-      if(nextClicked){
+      if (nextClicked) {
         setOpen(true)
         setNextClicked(false)
       }
-      if(saveClicked){
+      if (saveClicked) {
         setDisableSave(true)
         handleSaveInformation()
         setSaveClicked(false)
       }
-    }else{
+    } else {
       setAllValidated(false)
-      if(nextClicked){
+      if (nextClicked) {
         setOpen(true)
         setNextClicked(false)
       }
-
     }
     resetMakeValidations()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [validationCount, validatedForms]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [validationCount, validatedForms])
 
   return (
     <>
@@ -658,7 +678,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
             />
           </div>
 
-          <div className='section'>
+          {/* <div className='section'>
             <PlacementStructure
               placementStructure={placementStructure}
               setPlacementStructure={setPlacementStructure}
@@ -676,7 +696,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
               setUserFileToDelete={setUserFileToDelete}
               changeTitle={onSubmittedFiles}
             />
-          </div>
+          </div> */}
           <div className='section action-buttons'>
             <Button
               className='btn-save'
@@ -689,12 +709,17 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
               </div>
               SAVE CHANGES
             </Button>
-            <Button className='btn-next' onClick={() => {handleAction('next')}}>
+            {/* <Button
+              className='btn-next'
+              onClick={() => {
+                handleAction('next')
+              }}
+            >
               Next Step
               <div className='btn-icon'>
                 <Icon icon='material-symbols:arrow-right-alt' />
               </div>
-            </Button>
+            </Button> */}
 
             <Modal className='next-step-modal' open={open} onClose={handleCloseModal}>
               <Box

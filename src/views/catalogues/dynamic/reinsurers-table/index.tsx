@@ -8,7 +8,7 @@ import { useRouter } from 'next/router'
 import CloseIcon from '@mui/icons-material/Close'
 import { Box, Button, Modal, Typography } from '@mui/material'
 import IconButton from '@mui/material/IconButton'
-import { DataGrid, GridColumns, GRID_CHECKBOX_SELECTION_COL_DEF } from '@mui/x-data-grid'
+import { DataGrid, GRID_CHECKBOX_SELECTION_COL_DEF, GridColumns } from '@mui/x-data-grid'
 import { ButtonClose, HeaderTitleModal } from 'src/styles/modal/modal.styled'
 
 // ** Icon Imports
@@ -51,6 +51,12 @@ const ReinsurersTable = () => {
     reinsuranceCompanyInfoPage
   } = useGetAllPagination()
   const { deleteReinsuranceCompany: deleteReinsuranceCompanys } = useDeleteReinsuranceCompany()
+
+  // Handle Alerts
+  const [showAlert, setShowAlert] = useState(true)
+  const [alertType, setAlertType] = useState('')
+  const [alertText, setAlertText] = useState('')
+  const [alertIcon, setAlertIcon] = useState('')
 
   useEffect(() => {
     setReinsuranceCompanyPagination({ ...reinsuranceCompanyPagination })
@@ -137,6 +143,33 @@ const ReinsurersTable = () => {
     }
   ]
 
+  const triggerAlert = (type: string, text: string) => {
+    setAlertType(type)
+
+    switch (type) {
+      case 'success':
+        setAlertText(text)
+        setAlertIcon('mdi:check-circle-outline')
+        break
+      case 'error':
+        setAlertText('UNKNOWN ERROR, TRY AGAIN')
+        setAlertIcon('mdi:alert-circle-outline')
+        break
+      case 'warn':
+        setAlertText('NO INTERNET CONNECTION')
+        setAlertIcon('mdi:alert-outline')
+        break
+      default:
+        break
+    }
+
+    setShowAlert(true)
+
+    setTimeout(() => {
+      setShowAlert(false)
+    }, 5000)
+  }
+
   const handleSelectReinsuranceCompanyEdit = (id: number | null) => {
     router.push({ pathname: '/catalogues/dynamic/add-reinsurer', query: { id } })
   }
@@ -160,8 +193,8 @@ const ReinsurersTable = () => {
   const deleteRows = async () => {
     const result = await deleteReinsuranceCompanys({ idDeleteList: selectedRows })
     if (result) {
-      console.log('success')
       getReinsuranceCompanysPagination({ ...reinsuranceCompanyPagination })
+      triggerAlert('success', 'DELETED')
     }
     setOpenDeleteRows(false)
   }
@@ -174,9 +207,8 @@ const ReinsurersTable = () => {
   const deleteSingleReinsuranceCompany = async () => {
     const result = await deleteReinsuranceCompanys({ idDeleteList: [reinsuranceCompanyToDelete] })
     if (result) {
-      //it needs an alert o message
-      console.log('success')
       getReinsuranceCompanysPagination({ ...reinsuranceCompanyPagination })
+      triggerAlert('success', 'DELETED')
     }
     setOpenDelete(false)
   }
@@ -191,10 +223,20 @@ const ReinsurersTable = () => {
   return (
     <>
       <div className='outter-wrapper'>
+        {/* TODO:  */}
+        {showAlert && (
+          <div className={`${alertType} catalogue-item-alert`}>
+            <div className='btn-icon'>
+              <Icon icon={alertIcon} />
+            </div>
+            {alertText}
+          </div>
+        )}
         <TableHeader
           onDeleteRows={() => {
             setOpenDeleteRows(true)
           }}
+          deleteBtn={selectedRows.length > 0 ? true : false}
           onSearch={searchReinsurer}
           textBtn='ADD NEW REINSURER'
           onClickBtn={() => router.push('/catalogues/dynamic/add-reinsurer')}

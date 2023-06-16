@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react'
 import CloseIcon from '@mui/icons-material/Close'
 import { Box, Button, FormControl, IconButton, InputLabel, MenuItem, Modal, TextField, Typography } from '@mui/material'
 import Select from '@mui/material/Select'
-import { DataGrid, GridColumns, GRID_CHECKBOX_SELECTION_COL_DEF } from '@mui/x-data-grid'
+import { DataGrid, GRID_CHECKBOX_SELECTION_COL_DEF, GridColumns } from '@mui/x-data-grid'
 
 import FormHelperText from '@mui/material/FormHelperText'
 
@@ -378,9 +378,8 @@ const CedantContacts = ({ idCedant }: ICedantContacts) => {
   const deleteContact = async () => {
     const result = await deleteCedantContact({ idDeleteList: [contactToDelete] })
     if (result) {
-      //it needs an alert o message
-      console.log('success')
       getCedantContactsByIdCedant(cedantContactsPagination)
+      triggerAlert('success', 'DELETED')
     }
     setOpenDelete(false)
   }
@@ -388,9 +387,8 @@ const CedantContacts = ({ idCedant }: ICedantContacts) => {
   const deleteRows = async () => {
     const result = await deleteCedantContact({ idDeleteList: selectedRows })
     if (result) {
-      //it needs an alert o message
-      console.log('success')
       getCedantContactsByIdCedant(cedantContactsPagination)
+      triggerAlert('success', 'DELETED')
     }
     setOpenDeleteRows(false)
   }

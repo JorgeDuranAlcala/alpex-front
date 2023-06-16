@@ -19,6 +19,7 @@ import NewAccountStepper from 'src/views/components/new-accounts/NewAccountStepp
 
 // import TabAccount from 'src/views/pages/account-settings/TabAccount'
 
+// import { useGetAccountById } from '@/hooks/accounts/forms'
 import { updateFormsData } from '@/store/apps/accounts'
 import Sublimits from 'src/views/accounts/new-account-steps/Sublimits'
 import FormHeader from 'src/views/accounts/new-account-steps/headers/formHeader'
@@ -32,10 +33,13 @@ const NewAccount = () => {
   const router = useRouter()
   const dispatch = useAppDispatch()
 
+  // const { account, setAccountId } = useGetAccountById()
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [disableComments, setDisableComments] = useState(false)
   const [isNewAccount, setIsNewAccount] = useState<boolean>(true)
   const [activeStep, setActiveStep] = useState(1)
+
+  // console.log({ account })
 
   const handleStepChange = (step: number) => {
     setActiveStep(step)
@@ -61,12 +65,51 @@ const NewAccount = () => {
     }
   }
 
-  useEffect(() => {
-    const idAccount = router.query.id
-    if (idAccount) {
-      setIsNewAccount(false)
-    }
-  }, [router])
+  // useEffect(() => {
+  //   const idAccount = router.query.id
+  //   if (idAccount) {
+  //     setIsNewAccount(false)
+  //   }
+  // }, [router])
+
+  // useEffect(() => {
+  //   const idAccount = router.query.id
+  //   console.log({ idAccount })
+  //   setAccountId(Number(idAccount))
+  // }, [router, setAccountId])
+
+  // useEffect(() => {
+  //   const formInformation = account?.informations
+  //   const formSecurity = account?.securities
+  //   const formPayment = account?.installments
+  //   const formSublimits = account?.sublimits
+  //   if (activeStep == 1 && isNewAccount) {
+  //     setActiveStep(1)
+  //   } else if (
+  //     formInformation?.length !== 0 &&
+  //     formSecurity?.length === 0 &&
+  //     formPayment?.length === 0 &&
+  //     formSublimits?.length === 0
+  //   ) {
+  //     setActiveStep(1)
+  //   } else if (
+  //     formInformation?.length !== 0 &&
+  //     formSecurity?.length !== 0 &&
+  //     formPayment?.length === 0 &&
+  //     formSublimits?.length === 0
+  //   ) {
+  //     setActiveStep(2)
+  //   } else if (
+  //     formInformation?.length !== 0 &&
+  //     formSecurity?.length !== 0 &&
+  //     formPayment?.length !== 0 &&
+  //     formSublimits?.length === 0
+  //   ) {
+  //     setActiveStep(3)
+  //   } else {
+  //     setActiveStep(4)
+  //   }
+  // }, [])
 
   useEffect(() => {
     const handleExit = () => {

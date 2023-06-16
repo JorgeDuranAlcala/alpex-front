@@ -27,6 +27,22 @@ const TabHeader = ({ value, handleChange, setValue, tabsInfo, setTabsInfo }: ITa
     return findElementButton(children as HTMLElement)
   }
 
+  const closeTabInfo = (index: number) => {
+    console.log(index)
+
+    setTabsInfo((prev) => {
+      const newTabInfo = prev.map((tab, i) => {
+        if (i === index) {
+          tab.active = false
+        }
+
+        return tab;
+      });
+
+      return newTabInfo;
+    })
+  }
+
   useEffect(() => {
     if (tabsInfo.length === 0) return
     const data = tabsInfo
@@ -58,7 +74,11 @@ const TabHeader = ({ value, handleChange, setValue, tabsInfo, setTabsInfo }: ITa
       if (index > 0) {
         const element = Tabs[index]
         const Icon = document.createElement('section')
+
+        // if (index < (Tabs.length - 1)) {
         Icon.innerHTML = '/'
+
+        // }
         Icon.style.marginLeft = '3px'
         Icon.style.marginRight = '3px'
         Icon.style.color = 'rgba(77, 80, 98, 0.68)'
@@ -77,12 +97,17 @@ const TabHeader = ({ value, handleChange, setValue, tabsInfo, setTabsInfo }: ITa
   return (
     <Box
       sx={{
+        // backgroundColor: 'lightcoral',
         width: '100%',
         marginBottom: '20px',
         '@media (min-width: 780px)': {
           position: 'absolute',
-          top: '10px'
-        }
+          top: '-75px',
+          paddingLeft: '35px',
+        },
+        '@media (min-width: 1200px)': {
+          paddingLeft: '0px',
+        },
       }}
     >
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
@@ -135,7 +160,7 @@ const TabHeader = ({ value, handleChange, setValue, tabsInfo, setTabsInfo }: ITa
                     icon={
                       <Icon
                         onClick={() => {
-                          alert('close')
+                          closeTabInfo(index)
                         }}
                         style={{ marginLeft: '10px', display: tab.isDeleteable ? 'block' : 'none' }}
                         icon='mdi:close-circle-outline'
