@@ -204,7 +204,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
     })
 
     await delayMs(1000)
-    if (typeof res === 'string' && res === 'error') {
+    if (!res) {
       setBadgeData({
         message: `ERROR UPDATING INFORMATION`,
         theme: 'error',
