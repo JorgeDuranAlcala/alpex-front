@@ -319,6 +319,11 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
     }
   }, [makeValidations])
 
+  React.useEffect(() => {
+    console.log("basic info cambio")
+    console.log(basicInfo)
+  }, [basicInfo]);
+
   return (
     <>
       <div className='title'>Basic info</div>
@@ -459,6 +464,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
           )}
           <ContactModal
             service={'broker'}
+            disabledBtn={basicInfo.broker !== '' ? false : true}
             id={Number(basicInfo.broker)}
             updateContacts={updateBrokerContact}
             setIdCreated={setBasicInfo}
@@ -552,6 +558,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
           )}
           <ContactModal
             service={'cedant'}
+            disabledBtn={basicInfo.cedant !== '' ? false : true}
             id={Number(basicInfo.cedant)}
             updateContacts={updateCedantContact}
             setIdCreated={setBasicInfo}
