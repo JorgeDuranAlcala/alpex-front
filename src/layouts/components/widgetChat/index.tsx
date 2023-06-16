@@ -3,6 +3,7 @@
 import { useEffect } from 'react'
 import { Widget, addResponseMessage } from 'react-chat-widget-2'
 import { useConversationalBot } from '../../../hooks/chatbot/conversationalBot'
+
 // import { chatOpenAI } from './services/chatOpenAI.service'
 import 'react-chat-widget-2/lib/styles.css'
 
@@ -24,12 +25,12 @@ const WidgetChat = () => {
     }
   }, [])
 
-  const handleNewUserMessage = async (newMessage: string) => {    
+  const handleNewUserMessage = async (newMessage: string) => {
     const responseAI = await sendMessage({
       userMessage: newMessage,
       idSession: Number(sessionStorage.getItem('idSession')) || undefined
-    });        
-    addResponseMessage(responseAI);
+    })
+    addResponseMessage(responseAI)
   }
 
   return (
