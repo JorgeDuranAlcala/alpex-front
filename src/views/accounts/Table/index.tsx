@@ -81,6 +81,7 @@ const Table = ({ status }: IAccountTable) => {
   console.log({ selectAll })
   const selectAllOption = accountsReducer.accounts.map(account => account.id)
   console.log({ selectAllOption })
+  console.log(accounts.effectiveDate)
 
   // ** Custom Hooks
   //const { accounts, getAccounts } = useAccountTable()
@@ -246,11 +247,24 @@ const Table = ({ status }: IAccountTable) => {
       renderHeader: ({ colDef }) => (
         <ColumnHeader colDef={colDef} action={handleClickColumnHeader} type='effectiveDate' />
       ),
-      renderCell: ({ row }) => (
-        <Typography sx={{ color: colors.text.secondary, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
-          {row.effectiveDate}
-        </Typography>
-      )
+      renderCell: ({ row }) => {
+        const replaceDashes = row.effectiveDate.replace(/-/g, '/')
+        const fromatDate = new Date(replaceDashes)
+
+        const options: Intl.DateTimeFormatOptions = {
+          year: 'numeric',
+          month: '2-digit',
+          day: 'numeric'
+        }
+
+        const effectiveDate = fromatDate.toLocaleDateString('Es-MX', options).replace(/\//g, '-')
+
+        return (
+          <Typography sx={{ color: colors.text.secondary, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
+            {effectiveDate}
+          </Typography>
+        )
+      }
     },
     {
       flex: 0.1,
@@ -265,11 +279,26 @@ const Table = ({ status }: IAccountTable) => {
       renderHeader: ({ colDef }) => (
         <ColumnHeader colDef={colDef} action={handleClickColumnHeader} type='expirationDate' />
       ),
-      renderCell: ({ row }) => (
-        <Typography sx={{ color: colors.text.secondary, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
-          {row.expirationDate}
-        </Typography>
-      )
+      renderCell: ({ row }) => {
+        console.log(row.expirationDate)
+        const replaceDashes = row.expirationDate.replace(/-/g, '/')
+        const fromatDate = new Date(replaceDashes)
+
+        const options: Intl.DateTimeFormatOptions = {
+          year: 'numeric',
+          month: '2-digit',
+          day: 'numeric'
+        }
+
+        const expirationDate = fromatDate.toLocaleDateString('Es-MX', options).replace(/\//g, '-')
+
+        return (
+          <Typography sx={{ color: colors.text.secondary, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
+            {/* {row.expirationDate} */}
+            {expirationDate}
+          </Typography>
+        )
+      }
     },
     {
       flex: 0.1,

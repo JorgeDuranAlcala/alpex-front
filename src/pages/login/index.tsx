@@ -121,7 +121,7 @@ const LoginPage = () => {
                   <TextField
                     autoFocus
                     label='Email'
-                    value={value}
+                    value={value || ''}
                     onBlur={onBlur}
                     onChange={onChange}
                     error={Boolean(errors.email)}
@@ -150,7 +150,7 @@ const LoginPage = () => {
                 rules={{ required: true }}
                 render={({ field: { value, onChange, onBlur } }) => (
                   <OutlinedInput
-                    value={value}
+                    value={value || ''}
                     onBlur={onBlur}
                     label='Password'
                     onChange={onChange}

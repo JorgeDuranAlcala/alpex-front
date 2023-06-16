@@ -22,7 +22,7 @@ import {
   Select,
   TextField
 } from '@mui/material'
-import { FocusEvent, FocusEventHandler, useEffect, useState } from 'react'
+import { Dispatch, FocusEvent, FocusEventHandler, SetStateAction, useEffect, useRef, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useAppDispatch, useAppSelector } from 'src/store'
 
@@ -31,7 +31,8 @@ import { useAppDispatch, useAppSelector } from 'src/store'
 // import CompanySelect from '@/views/custom/select/CompanySelect'
 // import useAxiosErrorHandling from '@/hooks/catalogs/users/handleError'
 
-import AlertAddUser from '@/views/users/AlertUserAdded'
+import { setUIUserNotification } from '@/store/apps/user/uiUserSlice'
+import { TUIUserNotificationTypes } from '@/types/apps/uiUserTypes'
 import { UserSection } from 'src/styles/Forms/usersSection'
 import CountrySelect, { ICountry } from 'src/views/custom/select/CountrySelect'
 import { StyledDescription, StyledSubtitle, StyledTitle } from 'src/views/custom/typography'
@@ -74,6 +75,7 @@ interface IAddUser {
   selectUser: boolean
   title: string
   subTitle: string
+  handleView: Dispatch<SetStateAction<number>>
 }
 interface errorsEmail {
   fieldRequired: boolean | undefined
@@ -113,7 +115,7 @@ const schema = yup.object().shape({
 // const ADMIN_COMPANIES = ['dynamic', 'claims']
 const ADMIN_COMPANIES = ['1', '2']
 
-const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
+const AddUser = ({ selectUser, title, subTitle, handleView }: IAddUser) => {
   const {
     control,
     handleSubmit,
@@ -127,7 +129,7 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
   })
 
   const { setUserPost, error, user } = useAddUser()
-  const { setUserPut } = useEditUser()
+  const { setUserPut, user: userEdited } = useEditUser()
 
   const { company } = useGetAllCompanies()
   console.log({ error })
@@ -158,8 +160,7 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
   const [idCompany, setIdCompany] = useState<any>('')
   const [idRole, setIdRole] = useState<any>('')
   const [informativeIdRole, setInformativeIdRole] = useState<any>('')
-
-  const [open, setOpen] = useState(false)
+  const submitUserTypeRef = useRef<TUIUserNotificationTypes | null>(null)
 
   // const [selectCompany, setSelectCompany] = useState<ReinsuranceCompanyDto | undefined | string>()
   // const flagCompany = true
@@ -229,6 +230,7 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
 
       console.log('Esto se envía:', dataToSend)
 
+      submitUserTypeRef.current = 'edited'
       setUserPut(dataToSend)
 
       setTimeout(() => {
@@ -287,7 +289,9 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
         })
       }
 
+      submitUserTypeRef.current = 'added'
       setUserPost(dataToSend)
+
       setTimeout(() => {
         dispatch(fetchAccounts(usersReducer))
       }, 100)
@@ -348,6 +352,7 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
   }, [usersReducer.current])
 
   useEffect(() => {
+    console.log('useEffect - watchCOmpany', useWatchCompany)
     if (selectUser) {
       setRoleDisabled(false)
     } else {
@@ -415,19 +420,46 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
 
   useEffect(() => {
     if (user?.statusCode === 201) {
-      setOpen(true)
+      if (submitUserTypeRef.current) {
+        dispatch(
+          setUIUserNotification({
+            isOpen: true,
+            type: submitUserTypeRef.current
+          })
+        )
+      }
     }
     const anchor = document.querySelector('body')
     if (anchor) {
       anchor.scrollIntoView({ behavior: 'smooth' })
     }
+
+    if (submitUserTypeRef.current) {
+      submitUserTypeRef.current = null
+
+      handleView(0)
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.statusCode])
 
   useEffect(() => {
-    setTimeout(() => {
-      setOpen(false)
-    }, 3000)
-  }, [open])
+    if (userEdited) {
+      if (submitUserTypeRef.current) {
+        dispatch(
+          setUIUserNotification({
+            isOpen: true,
+            type: submitUserTypeRef.current
+          })
+        )
+
+        handleView(0)
+        submitUserTypeRef.current = null
+      }
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userEdited])
 
   // useEffect(() => {
 
@@ -455,6 +487,12 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
   // }, [selectUser, useWatchCompany, useWatchRole])
 
   useEffect(() => {
+    if (selectUser) {
+      setIdCompany(useWatchCompany)
+    }
+  }, [selectUser, useWatchCompany])
+
+  useEffect(() => {
     const reducersRol = usersReducer?.current?.roles[0]?.id
     const rolSelect = roles?.find(rol => rol.id === reducersRol)
     setIdRole(rolSelect?.id.toString())
@@ -475,7 +513,6 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
 
   return (
     <>
-      {open && <AlertAddUser />}
       <div style={{ padding: '20px 20px 80px' }}>
         <UserSection>
           <StyledTitle sx={{ pb: 2 }}>{title}</StyledTitle>
@@ -697,6 +734,9 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
                             <InputLabel>Company</InputLabel>
 
                             <Select
+                              MenuProps={{
+                                disableScrollLock: true
+                              }}
                               error={Boolean(errors.company)}
                               label='Company'
                               value={selectUser ? idCompany : value}
@@ -741,6 +781,9 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
                           <>
                             <InputLabel>Role</InputLabel>
                             <Select
+                              MenuProps={{
+                                disableScrollLock: true
+                              }}
                               error={Boolean(errors.role)}
                               label='Select a role'
                               value={selectUser ? idRole : value}
@@ -783,6 +826,9 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
                           <>
                             <InputLabel>Role</InputLabel>
                             <Select
+                              MenuProps={{
+                                disableScrollLock: true
+                              }}
                               label='Select a role'
                               value={selectUser ? informativeIdRole : value}
                               error={Boolean(errors.dualRole)}
