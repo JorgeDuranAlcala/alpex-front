@@ -129,6 +129,7 @@
   right: 0 !important;
   width: 90vw !important;
   z-index: 9999 !important;
+  gap: 16px !important;
 }
 
 .rcw-conversation-container {
@@ -165,7 +166,7 @@
 }
 .rcw-launcher {
   background-color: #2d67eb !important;
-  margin-top: 16px !important;
+  margin-top: 0px !important;
 }
 .rcw-sender {
   border-radius: 0 0 10px 10px !important;
@@ -189,6 +190,9 @@
 
 .rcw-send .rcw-send-icon {
   height: 24px !important;
+}
+.rcw-close-widget-container {
+  max-width: 60px !important;
 }
 .rcw-send {
   transform: rotate(-45deg) !important;
