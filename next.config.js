@@ -18,7 +18,7 @@ module.exports = withTM({
     // Will be available on both server and client
     staticFolder: '/public'
   },
-  reactStrictMode: true,
+  reactStrictMode: false,
   experimental: {
     esmExternals: false
   },
