@@ -42,9 +42,9 @@ export interface BasicInfoInterface {
   cedantContactPhone: string
   cedantContactCountry: string
   lineOfBusiness: number | string
-  underwriter: number | string
-  leadUnderwriter: number | string
-  technicalAssistant: number | string
+  underwriter: number | string | null
+  leadUnderwriter: number | string | null
+  technicalAssistant: number | string | null
   industryCode: number | string
   riskActivity: string
   riskClass: number
@@ -168,23 +168,23 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
       idBroker: Number(basicInfo.broker),
       idBrokerContact: Number(basicInfo.brokerContact),
 
-      brokerContactEmail: basicInfo.brokerContactEmail,
-      brokerContactPhone: basicInfo.brokerContactPhone,
-      brokerContactCountry: basicInfo.brokerContactCountry,
+      // brokerContactEmail: basicInfo.brokerContactEmail,
+      // brokerContactPhone: basicInfo.brokerContactPhone,
+      // brokerContactCountry: basicInfo.brokerContactCountry,
       idCedant: Number(basicInfo.cedant),
       idCedantContact: Number(basicInfo.cedantContact),
 
-      cedantContactEmail: basicInfo.cedantContactEmail,
-      cedantContactPhone: basicInfo.cedantContactPhone,
-      cedantContactCountry: basicInfo.cedantContactCountry,
+      // cedantContactEmail: basicInfo.cedantContactEmail,
+      // cedantContactPhone: basicInfo.cedantContactPhone,
+      // cedantContactCountry: basicInfo.cedantContactCountry,
       idLineOfBussines: Number(basicInfo.lineOfBusiness),
       idRiskActivity: Number(basicInfo.industryCode),
       effectiveDate: basicInfo.effectiveDate,
       expirationDate: basicInfo.expirationDate,
       receptionDate: basicInfo.receptionDate && new Date(basicInfo.receptionDate),
-      idLeadUnderwriter: Number(basicInfo.leadUnderwriter),
-      idTechnicalAssistant: Number(basicInfo.technicalAssistant),
-      idUnderwriter: Number(basicInfo.underwriter),
+      idLeadUnderwriter: Number(basicInfo.leadUnderwriter) === 0 ? null : Number(basicInfo.leadUnderwriter),
+      idTechnicalAssistant: Number(basicInfo.technicalAssistant) === 0 ? null : Number(basicInfo.technicalAssistant),
+      idUnderwriter: Number(basicInfo.underwriter) === 0 ? null : Number(basicInfo.underwriter),
       riskClass: basicInfo.riskClass,
       currency: placementStructure.currency,
       exchangeRate: placementStructure.exchangeRate,
@@ -204,7 +204,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
     })
 
     await delayMs(1000)
-    if (typeof res === 'string' && res === 'error') {
+    if (!res) {
       setBadgeData({
         message: `ERROR UPDATING INFORMATION`,
         theme: 'error',
@@ -262,9 +262,9 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
       receptionDate: formatUTC(basicInfo.receptionDate),
       effectiveDate: formatUTC(basicInfo.effectiveDate),
       expirationDate: formatUTC(basicInfo.expirationDate),
-      idLeadUnderwriter: basicInfo.leadUnderwriter,
-      idTechnicalAssistant: basicInfo.technicalAssistant,
-      idUnderwriter: basicInfo.underwriter,
+      idLeadUnderwriter: Number(basicInfo.leadUnderwriter) === 0 ? null : Number(basicInfo.leadUnderwriter),
+      idTechnicalAssistant: Number(basicInfo.technicalAssistant) === 0 ? null : Number(basicInfo.technicalAssistant),
+      idUnderwriter: Number(basicInfo.underwriter) === 0 ? null : Number(basicInfo.underwriter),
       riskClass: basicInfo.riskClass,
 
       currency: 'USD',
