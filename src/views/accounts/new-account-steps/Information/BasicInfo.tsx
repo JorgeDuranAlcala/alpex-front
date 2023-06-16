@@ -122,6 +122,7 @@ const CustomInput = forwardRef(({ ...props }: PickerProps, ref: ForwardedRef<HTM
   )
 })
 
+import DatePickerWrapper from '@/@core/styles/libs/react-datepicker'
 import { ROLES } from '@/configs/api'
 import { useGetAll as useBrokerGetAll } from 'src/hooks/catalogs/broker'
 import { useGetAllByIdBroker } from 'src/hooks/catalogs/broker-contact/'
@@ -320,9 +321,9 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
   }, [makeValidations])
 
   React.useEffect(() => {
-    console.log("basic info cambio")
+    console.log('basic info cambio')
     console.log(basicInfo)
-  }, [basicInfo]);
+  }, [basicInfo])
 
   return (
     <>
@@ -653,94 +654,94 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
         </div>
         <div className='form-col'>
           <div className='title'>Dates</div>
-          {/* <DatePickerWrapper className='information-datepicker'> */}
           <Grid item xs={12} sm={12} sx={{ width: '100%' }}>
-            <DatePicker
-              selected={basicInfo.receptionDate}
-              shouldCloseOnSelect
-              id='reception-date'
-              customInput={<CustomInput label='Reception date' sx={{ mb: 2, mt: 2, width: '100%' }} />}
-              onChange={handleReceptionDateChange}
-              className={errors.receptionDateError ? 'error' : ''}
-              showTimeSelect
-              showMonthDropdown
-              showYearDropdown
-              showDisabledMonthNavigation
-              timeFormat='HH:mm'
-              timeIntervals={15}
-              dateFormat='dd/MM/yyyy h:mm aa'
-            />
-            {errors.receptionDateError && (
-              <FormHelperText
-                sx={{
-                  color: 'error.main',
-                  marginTop: '-5px',
-                  marginBottom: '6px',
-                  marginLeft: '10px'
-                }}
-                id='receptionDate-error'
-              >
-                {getErrorMessage('receptionDateError')}
-              </FormHelperText>
-            )}
-            <DatePicker
-              selected={basicInfo.effectiveDate}
-              shouldCloseOnSelect
-              id='effective-date'
-              customInput={<CustomInput label='Effective date' sx={{ mb: 2, mt: 2, width: '100%' }} />}
-              onChange={handleEffectiveDateChange}
-              className={errors.effectiveDateError ? 'error' : ''}
-              showTimeSelect
-              showMonthDropdown
-              showYearDropdown
-              showDisabledMonthNavigation
-              timeFormat='HH:mm'
-              timeIntervals={15}
-              dateFormat='dd/MM/yyyy h:mm aa'
-            />
-            {errors.effectiveDateError && (
-              <FormHelperText
-                sx={{
-                  color: 'error.main',
-                  marginTop: '-5px',
-                  marginBottom: '5px',
-                  marginLeft: '10px'
-                }}
-                id='effectiveDate-error'
-              >
-                {getErrorMessage('effectiveDateError')}
-              </FormHelperText>
-            )}
-            <DatePicker
-              selected={basicInfo.expirationDate}
-              shouldCloseOnSelect
-              id='expiration-date'
-              customInput={<CustomInput label='Expiration date' sx={{ mb: 2, mt: 2, width: '100%' }} />}
-              onChange={handleExpirationDateChange}
-              className={errors.expirationDateError ? 'error' : ''}
-              showTimeSelect
-              showMonthDropdown
-              showYearDropdown
-              showDisabledMonthNavigation
-              timeFormat='HH:mm'
-              timeIntervals={15}
-              dateFormat='dd/MM/yyyy h:mm aa'
-            />
-            {errors.expirationDateError && (
-              <FormHelperText
-                sx={{
-                  color: 'error.main',
-                  marginTop: '-5px',
-                  marginBottom: '6px',
-                  marginLeft: '10px'
-                }}
-                id='expirationDate-error'
-              >
-                {getErrorMessage('expirationDateError')}
-              </FormHelperText>
-            )}
+            <DatePickerWrapper className='information-datepicker'>
+              <DatePicker
+                selected={basicInfo.receptionDate}
+                shouldCloseOnSelect
+                id='reception-date'
+                customInput={<CustomInput label='Reception date' sx={{ mb: 2, mt: 2, width: '100%' }} />}
+                onChange={handleReceptionDateChange}
+                className={errors.receptionDateError ? 'error' : ''}
+                showTimeSelect
+                showMonthDropdown
+                showYearDropdown
+                showDisabledMonthNavigation
+                timeFormat='HH:mm'
+                timeIntervals={15}
+                dateFormat='dd/MM/yyyy h:mm aa'
+              />
+              {errors.receptionDateError && (
+                <FormHelperText
+                  sx={{
+                    color: 'error.main',
+                    marginTop: '-5px',
+                    marginBottom: '6px',
+                    marginLeft: '10px'
+                  }}
+                  id='receptionDate-error'
+                >
+                  {getErrorMessage('receptionDateError')}
+                </FormHelperText>
+              )}
+              <DatePicker
+                selected={basicInfo.effectiveDate}
+                shouldCloseOnSelect
+                id='effective-date'
+                customInput={<CustomInput label='Effective date' sx={{ mb: 2, mt: 2, width: '100%' }} />}
+                onChange={handleEffectiveDateChange}
+                className={errors.effectiveDateError ? 'error' : ''}
+                showTimeSelect
+                showMonthDropdown
+                showYearDropdown
+                showDisabledMonthNavigation
+                timeFormat='HH:mm'
+                timeIntervals={15}
+                dateFormat='dd/MM/yyyy h:mm aa'
+              />
+              {errors.effectiveDateError && (
+                <FormHelperText
+                  sx={{
+                    color: 'error.main',
+                    marginTop: '-5px',
+                    marginBottom: '5px',
+                    marginLeft: '10px'
+                  }}
+                  id='effectiveDate-error'
+                >
+                  {getErrorMessage('effectiveDateError')}
+                </FormHelperText>
+              )}
+              <DatePicker
+                selected={basicInfo.expirationDate}
+                shouldCloseOnSelect
+                id='expiration-date'
+                customInput={<CustomInput label='Expiration date' sx={{ mb: 2, mt: 2, width: '100%' }} />}
+                onChange={handleExpirationDateChange}
+                className={errors.expirationDateError ? 'error' : ''}
+                showTimeSelect
+                showMonthDropdown
+                showYearDropdown
+                showDisabledMonthNavigation
+                timeFormat='HH:mm'
+                timeIntervals={15}
+                dateFormat='dd/MM/yyyy h:mm aa'
+              />
+              {errors.expirationDateError && (
+                <FormHelperText
+                  sx={{
+                    color: 'error.main',
+                    marginTop: '-5px',
+                    marginBottom: '6px',
+                    marginLeft: '10px'
+                  }}
+                  id='expirationDate-error'
+                >
+                  {getErrorMessage('expirationDateError')}
+                </FormHelperText>
+              )}
+            </DatePickerWrapper>
           </Grid>
-          {/* </DatePickerWrapper> */}
         </div>
         <div className='form-col'>
           <div className='title'>Underwriter team</div>
