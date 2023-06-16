@@ -25,6 +25,8 @@ import { deleteAccountFilter } from 'src/store/apps/accounts'
 import { IFilters } from 'src/types/apps/accountsTypes'
 import CustomAlert, { IAlert } from 'src/views/custom/alerts'
 
+//Google Analytics
+import Analytics from '@/utils/analytics'
 
 const AddAccountButton = styled(Button)(({ theme }) => ({
   display: 'flex',
@@ -37,7 +39,7 @@ const AddAccountButton = styled(Button)(({ theme }) => ({
   height: '42px',
 
   [theme.breakpoints.down('sm')]: {
-    maxWidth: '100%',
+    maxWidth: '100%'
   }
 }))
 enum EActions {
@@ -83,9 +85,6 @@ const TableHeader: React.FC<ITableHeader> = ({
   const [textChangeStatusModal, setTextChangeStatusModal] = useState('')
   const [changeStatusTo, setChangeStatusTo] = useState<EStatus | null>(null)
   const [value, setValue] = useState<string>('')
-
-  console.log({ accountsReducer })
-  console.log({ value })
 
   // useEffect(() => {
   //   setSelectAll(selectAllOption)
@@ -212,6 +211,15 @@ const TableHeader: React.FC<ITableHeader> = ({
 
   const handleDeleteAction = () => {
     deleteAccounts(selectedRows)
+  }
+
+  const handleAddAccount = () => {
+    Analytics.event({
+      category: 'add_account',
+      action: 'Add Account'
+    })
+
+    router.push('/accounts/new-account')
   }
 
   return (
@@ -356,12 +364,7 @@ const TableHeader: React.FC<ITableHeader> = ({
         <Grid item xs={12} sm={4} md={3}>
           {!badgeData.status ? (
             <Box sx={{ width: '100%', display: 'flex', justifyContent: 'flex-end' }}>
-
-              <AddAccountButton
-                variant='contained'
-                onClick={() => router.push('/accounts/new-account')}
-
-              >
+              <AddAccountButton variant='contained' onClick={handleAddAccount}>
                 ADD ACCOUNT &nbsp; <Icon icon='mdi:plus' />
               </AddAccountButton>
             </Box>
