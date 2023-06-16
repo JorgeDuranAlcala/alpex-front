@@ -17,6 +17,9 @@ import { deleteUsersFilter, handleUsersFilter } from 'src/store/apps/users'
 import { IUserFilters } from 'src/types/apps/usersTypes'
 import CustomAlert, { IAlert } from 'src/views/custom/alerts'
 
+//Google Analytics
+import Analytics from '@/utils/analytics'
+
 interface ITableHeader {
   selectedRows: GridRowId[]
   badgeData: IAlert
@@ -56,6 +59,14 @@ const TableHeader: React.FC<ITableHeader> = ({ badgeData, handleView, selectedRo
 
   const handleDelete = (filter: IUserFilters) => {
     dispatch(deleteUsersFilter(filter.type))
+  }
+
+  const handleChangePagination = () => {
+    Analytics.event({
+      category: 'add_user',
+      action: 'add_user'
+    })
+    handleView(1)
   }
 
   useEffect(() => {
@@ -199,7 +210,7 @@ const TableHeader: React.FC<ITableHeader> = ({ badgeData, handleView, selectedRo
                   }
                 }}
                 variant='contained'
-                onClick={() => handleView(1)}
+                onClick={handleChangePagination}
                 style={{ backgroundColor: ' #14249D' }}
               >
                 ADD USER &nbsp;

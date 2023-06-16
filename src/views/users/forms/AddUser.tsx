@@ -2,6 +2,9 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import Icon from 'src/@core/components/icon'
 import * as yup from 'yup'
 
+//Google Analytics
+import Analytics from '@/utils/analytics'
+
 import { useGetAllCompanies } from '@/hooks/catalogs/company/getAllCompanies'
 import { useGetAllRoles } from '@/hooks/catalogs/roles/getAllRoles'
 import { useEditUser } from '@/hooks/catalogs/users'
@@ -157,8 +160,7 @@ const AddUser = ({ selectUser, title, subTitle, handleView }: IAddUser) => {
   const [idCompany, setIdCompany] = useState<any>('')
   const [idRole, setIdRole] = useState<any>('')
   const [informativeIdRole, setInformativeIdRole] = useState<any>('')
-  const submitUserTypeRef = useRef<TUIUserNotificationTypes | null>(null);
-
+  const submitUserTypeRef = useRef<TUIUserNotificationTypes | null>(null)
 
   // const [selectCompany, setSelectCompany] = useState<ReinsuranceCompanyDto | undefined | string>()
   // const flagCompany = true
@@ -209,30 +211,30 @@ const AddUser = ({ selectUser, title, subTitle, handleView }: IAddUser) => {
         roles:
           parseInt(idRole) && parseInt(informativeIdRole)
             ? [
-              {
-                id: parseInt(idRole)
-              },
-              {
-                id: parseInt(informativeIdRole)
-              }
-            ]
+                {
+                  id: parseInt(idRole)
+                },
+                {
+                  id: parseInt(informativeIdRole)
+                }
+              ]
             : parseInt(idRole) && !parseInt(informativeIdRole)
-              ? [
+            ? [
                 {
                   id: parseInt(idRole)
                 }
               ]
-              : [],
+            : [],
         areaCode: selectedCountry?.phone || ''
       }
 
       console.log('Esto se envía:', dataToSend)
 
-      submitUserTypeRef.current = 'edited';
+      submitUserTypeRef.current = 'edited'
       setUserPut(dataToSend)
 
       setTimeout(() => {
-        dispatch(fetchAccounts(usersReducer));
+        dispatch(fetchAccounts(usersReducer))
       }, 100)
     } else {
       const dataToSend: UsersPostDto = {
@@ -244,27 +246,54 @@ const AddUser = ({ selectUser, title, subTitle, handleView }: IAddUser) => {
         roles:
           parseInt(useWatchRole) && parseInt(useWatchDualRole)
             ? [
-              {
-                id: parseInt(useWatchRole)
-              },
-              {
-                id: parseInt(useWatchDualRole)
-              }
-            ]
+                {
+                  id: parseInt(useWatchRole)
+                },
+                {
+                  id: parseInt(useWatchDualRole)
+                }
+              ]
             : parseInt(useWatchRole) && !parseInt(useWatchDualRole)
-              ? [
+            ? [
                 {
                   id: parseInt(useWatchRole)
                 }
               ]
-              : [],
+            : [],
         areaCode: selectedCountry?.phone || ''
       }
-      submitUserTypeRef.current = 'added';
+
+      const userCompany = company?.find(com => com.id === dataToSend.idCompany)
+      let userRoles = ''
+      roles?.forEach(role => {
+        dataToSend.roles.forEach(userRole => {
+          if (role.id === userRole.id) {
+            userRoles += role.role + ','
+          }
+        })
+      })
+
+      if (userCompany) {
+        Analytics.event({
+          category: 'company_info',
+          action: 'company_info',
+          label: userCompany.name
+        })
+      }
+
+      if (userRoles.length > 0) {
+        Analytics.event({
+          category: 'user_role',
+          action: 'user_role',
+          label: userRoles
+        })
+      }
+
+      submitUserTypeRef.current = 'added'
       setUserPost(dataToSend)
 
       setTimeout(() => {
-        dispatch(fetchAccounts(usersReducer));
+        dispatch(fetchAccounts(usersReducer))
       }, 100)
 
       // reset({ ...initialForm })
@@ -272,7 +301,6 @@ const AddUser = ({ selectUser, title, subTitle, handleView }: IAddUser) => {
   }
 
   const handleFormChange = (field: keyof FormInfo, value: FormInfo[keyof FormInfo]) => {
-
     setFormData({ ...formData, [field]: value })
   }
   const handleInputEmail = () => {
@@ -393,12 +421,13 @@ const AddUser = ({ selectUser, title, subTitle, handleView }: IAddUser) => {
   useEffect(() => {
     if (user?.statusCode === 201) {
       if (submitUserTypeRef.current) {
-        dispatch(setUIUserNotification({
-          isOpen: true,
-          type: submitUserTypeRef.current
-        }));
+        dispatch(
+          setUIUserNotification({
+            isOpen: true,
+            type: submitUserTypeRef.current
+          })
+        )
       }
-
     }
     const anchor = document.querySelector('body')
     if (anchor) {
@@ -406,9 +435,9 @@ const AddUser = ({ selectUser, title, subTitle, handleView }: IAddUser) => {
     }
 
     if (submitUserTypeRef.current) {
-      submitUserTypeRef.current = null;
+      submitUserTypeRef.current = null
 
-      handleView(0);
+      handleView(0)
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -417,15 +446,16 @@ const AddUser = ({ selectUser, title, subTitle, handleView }: IAddUser) => {
   useEffect(() => {
     if (userEdited) {
       if (submitUserTypeRef.current) {
-        dispatch(setUIUserNotification({
-          isOpen: true,
-          type: submitUserTypeRef.current
-        }));
+        dispatch(
+          setUIUserNotification({
+            isOpen: true,
+            type: submitUserTypeRef.current
+          })
+        )
 
-        handleView(0);
-        submitUserTypeRef.current = null;
+        handleView(0)
+        submitUserTypeRef.current = null
       }
-
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -448,8 +478,6 @@ const AddUser = ({ selectUser, title, subTitle, handleView }: IAddUser) => {
     setIdCompany(companySelect?.id.toString())
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [company, setIdCompany])
-
-
 
   // useEffect(() => {
   //   if (selectUser) {
@@ -707,10 +735,8 @@ const AddUser = ({ selectUser, title, subTitle, handleView }: IAddUser) => {
 
                             <Select
                               MenuProps={{
-
                                 disableScrollLock: true
-                              }
-                              }
+                              }}
                               error={Boolean(errors.company)}
                               label='Company'
                               value={selectUser ? idCompany : value}
@@ -755,12 +781,9 @@ const AddUser = ({ selectUser, title, subTitle, handleView }: IAddUser) => {
                           <>
                             <InputLabel>Role</InputLabel>
                             <Select
-
                               MenuProps={{
-
                                 disableScrollLock: true
-                              }
-                              }
+                              }}
                               error={Boolean(errors.role)}
                               label='Select a role'
                               value={selectUser ? idRole : value}
@@ -804,10 +827,8 @@ const AddUser = ({ selectUser, title, subTitle, handleView }: IAddUser) => {
                             <InputLabel>Role</InputLabel>
                             <Select
                               MenuProps={{
-
                                 disableScrollLock: true
-                              }
-                              }
+                              }}
                               label='Select a role'
                               value={selectUser ? informativeIdRole : value}
                               error={Boolean(errors.dualRole)}
