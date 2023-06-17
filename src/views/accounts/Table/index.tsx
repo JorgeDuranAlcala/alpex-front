@@ -248,13 +248,15 @@ const Table = ({ status }: IAccountTable) => {
         <ColumnHeader colDef={colDef} action={handleClickColumnHeader} type='effectiveDate' />
       ),
       renderCell: ({ row }) => {
+        if (!row || !row.effectiveDate) return
+
         const replaceDashes = row.effectiveDate.replace(/-/g, '/')
         const fromatDate = new Date(replaceDashes)
 
         const options: Intl.DateTimeFormatOptions = {
           year: 'numeric',
           month: '2-digit',
-          day: 'numeric'
+          day: '2-digit'
         }
 
         const effectiveDate = fromatDate.toLocaleDateString('Es-MX', options).replace(/\//g, '-')
@@ -280,14 +282,15 @@ const Table = ({ status }: IAccountTable) => {
         <ColumnHeader colDef={colDef} action={handleClickColumnHeader} type='expirationDate' />
       ),
       renderCell: ({ row }) => {
-        console.log(row.expirationDate)
+        if (!row || !row.expirationDate) return
+
         const replaceDashes = row.expirationDate.replace(/-/g, '/')
         const fromatDate = new Date(replaceDashes)
 
         const options: Intl.DateTimeFormatOptions = {
           year: 'numeric',
           month: '2-digit',
-          day: 'numeric'
+          day: '2-digit'
         }
 
         const expirationDate = fromatDate.toLocaleDateString('Es-MX', options).replace(/\//g, '-')

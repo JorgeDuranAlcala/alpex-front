@@ -37,6 +37,10 @@
   padding-left: 0 !important;
 }
 
+.max-width-10 {
+  max-width: 10px;
+}
+
 .account-list-item {
   min-width: 0 !important;
 }
