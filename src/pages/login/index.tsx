@@ -1,36 +1,39 @@
 // ** React Imports
-import Link from 'next/link';
-import { ReactNode, useState } from 'react';
-import Lottie from 'react-lottie';
-import loginAnimation from './animations/login-animation.json';
+import Link from 'next/link'
+import { ReactNode, useState } from 'react'
+import Lottie from 'react-lottie'
+import loginAnimation from './animations/login-animation.json'
 
 // ** MUI Components
-import Button from '@mui/material/Button';
-import Checkbox from '@mui/material/Checkbox';
-import FormControl from '@mui/material/FormControl';
-import MuiFormControlLabel, { FormControlLabelProps } from '@mui/material/FormControlLabel';
-import FormHelperText from '@mui/material/FormHelperText';
-import IconButton from '@mui/material/IconButton';
-import InputAdornment from '@mui/material/InputAdornment';
-import InputLabel from '@mui/material/InputLabel';
-import OutlinedInput from '@mui/material/OutlinedInput';
-import { styled } from '@mui/material/styles';
-import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button'
+import Checkbox from '@mui/material/Checkbox'
+import FormControl from '@mui/material/FormControl'
+import MuiFormControlLabel, { FormControlLabelProps } from '@mui/material/FormControlLabel'
+import FormHelperText from '@mui/material/FormHelperText'
+import IconButton from '@mui/material/IconButton'
+import InputAdornment from '@mui/material/InputAdornment'
+import InputLabel from '@mui/material/InputLabel'
+import OutlinedInput from '@mui/material/OutlinedInput'
+import { styled } from '@mui/material/styles'
+import TextField from '@mui/material/TextField'
+
+//Google Analytics
+import Analytics from '@/utils/analytics'
 
 // ** Icon Imports
-import Icon from 'src/@core/components/icon';
+import Icon from 'src/@core/components/icon'
 
 // ** Third Party Imports
-import { yupResolver } from '@hookform/resolvers/yup';
-import { Controller, SubmitHandler, useForm } from 'react-hook-form';
-import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup'
+import { Controller, SubmitHandler, useForm } from 'react-hook-form'
+import * as yup from 'yup'
 
 // ** Hooks
-import { useAuth } from 'src/hooks/useAuth';
+import { useAuth } from 'src/hooks/useAuth'
 
 // ** Layout Import
-import BlankLayout from 'src/@core/layouts/BlankLayout';
-import Footer from 'src/layouts/components/footer';
+import BlankLayout from 'src/@core/layouts/BlankLayout'
+import Footer from 'src/layouts/components/footer'
 
 // ** Styled Components
 const FormControlLabel = styled(MuiFormControlLabel)<FormControlLabelProps>(({ theme }) => ({
@@ -85,6 +88,11 @@ const LoginPage = () => {
   })
 
   const onSubmit: SubmitHandler<FormData> = data => {
+    Analytics.event({
+      action: 'click_login',
+      category: 'click_login',
+      label: 'login_device '
+    })
     const { email, password } = data
     auth.login({ email, password, rememberMe }, () => {
       setAuthError(true)
@@ -113,7 +121,7 @@ const LoginPage = () => {
                   <TextField
                     autoFocus
                     label='Email'
-                    value={value}
+                    value={value || ''}
                     onBlur={onBlur}
                     onChange={onChange}
                     error={Boolean(errors.email)}
@@ -142,7 +150,7 @@ const LoginPage = () => {
                 rules={{ required: true }}
                 render={({ field: { value, onChange, onBlur } }) => (
                   <OutlinedInput
-                    value={value}
+                    value={value || ''}
                     onBlur={onBlur}
                     label='Password'
                     onChange={onChange}
@@ -204,8 +212,7 @@ const LoginPage = () => {
           </Button>
         </div>
         <div className='form-row'>
-          <Link href="/forgot-password/" className="forgot-text">
-
+          <Link href='/forgot-password/' className='forgot-text'>
             Forgot your password?
           </Link>
         </div>

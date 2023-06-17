@@ -116,6 +116,7 @@ const ColumnHeader: React.FC<IColunmHeader> = ({ colDef, action, showIcon = true
       )}
       <Menu
         id='account-menu-filter'
+        disableScrollLock={true}
         anchorEl={anchorEl}
         open={open}
         onClose={handleClose}

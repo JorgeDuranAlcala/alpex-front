@@ -22,6 +22,12 @@ export enum ACCOUNT_ROUTES {
   UPDATE_STATUS = 'account/update-status'
 }
 
+//Comentario
+export enum ACCOUNT_COMMENTS {
+  ADD = 'account/comment',
+  GET_ALL = 'account/comments'
+}
+
 export enum ACCOUNT_INFORMATION_ROUTES {
   ADD = 'account/information/add',
   GET = 'account/information',
@@ -228,4 +234,8 @@ export enum RECOVER_PASSWORD_ROUTES {
 //EXCHANGE-RATE
 export enum EXCHANGE_RATE {
   PAIR = 'exchange-rate/pair'
+}
+
+export enum CHAT_BOT {
+  CHAT = 'ai/chat'
 }

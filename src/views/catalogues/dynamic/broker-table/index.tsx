@@ -8,7 +8,7 @@ import { useRouter } from 'next/router'
 import CloseIcon from '@mui/icons-material/Close'
 import { Box, Button, Modal, Typography } from '@mui/material'
 import IconButton from '@mui/material/IconButton'
-import { DataGrid, GridColumns, GRID_CHECKBOX_SELECTION_COL_DEF } from '@mui/x-data-grid'
+import { DataGrid, GRID_CHECKBOX_SELECTION_COL_DEF, GridColumns } from '@mui/x-data-grid'
 import { ButtonClose, HeaderTitleModal } from 'src/styles/Dashboard/ModalReinsurers/modalReinsurers'
 
 // ** Icon Imports
@@ -46,6 +46,12 @@ const Table = () => {
   //hooks
   const { brokerPagination, setBrokerPagination, brokers, getBrokersPagination, brokerInfoPage } = useGetAllPagination()
   const { deleteBroker: deleteBrokers } = useDeleteBroker()
+
+  // Handle Alerts
+  const [showAlert, setShowAlert] = useState(true)
+  const [alertType, setAlertType] = useState('')
+  const [alertText, setAlertText] = useState('')
+  const [alertIcon, setAlertIcon] = useState('')
 
   useEffect(() => {
     setBrokerPagination({ ...brokerPagination })
@@ -132,6 +138,33 @@ const Table = () => {
     }
   ]
 
+  const triggerAlert = (type: string, text: string) => {
+    setAlertType(type)
+
+    switch (type) {
+      case 'success':
+        setAlertText(text)
+        setAlertIcon('mdi:check-circle-outline')
+        break
+      case 'error':
+        setAlertText('UNKNOWN ERROR, TRY AGAIN')
+        setAlertIcon('mdi:alert-circle-outline')
+        break
+      case 'warn':
+        setAlertText('NO INTERNET CONNECTION')
+        setAlertIcon('mdi:alert-outline')
+        break
+      default:
+        break
+    }
+
+    setShowAlert(true)
+
+    setTimeout(() => {
+      setShowAlert(false)
+    }, 5000)
+  }
+
   const handleSelectBrokerEdit = (id: number | null) => {
     router.push({ pathname: '/catalogues/dynamic/add-broker', query: { id } })
   }
@@ -155,8 +188,8 @@ const Table = () => {
   const deleteRows = async () => {
     const result = await deleteBrokers({ idDeleteList: selectedRows })
     if (result) {
-      console.log('success')
       getBrokersPagination({ ...brokerPagination })
+      triggerAlert('success', 'DELETED')
     }
     setOpenDeleteRows(false)
   }
@@ -169,9 +202,8 @@ const Table = () => {
   const deleteSingleBroker = async () => {
     const result = await deleteBrokers({ idDeleteList: [brokerToDelete] })
     if (result) {
-      //it needs an alert o message
-      console.log('success')
       getBrokersPagination({ ...brokerPagination })
+      triggerAlert('success', 'DELETED')
     }
     setOpenDelete(false)
   }
@@ -186,6 +218,15 @@ const Table = () => {
   return (
     <>
       <div className='outter-wrapper'>
+        {/* TODO:  */}
+        {showAlert && (
+          <div className={`${alertType} catalogue-item-alert`}>
+            <div className='btn-icon'>
+              <Icon icon={alertIcon} />
+            </div>
+            {alertText}
+          </div>
+        )}
         <TableHeader
           onDeleteRows={() => {
             setOpenDeleteRows(true)

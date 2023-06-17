@@ -9,6 +9,7 @@ import UserThemeOptions from 'src/layouts/UserThemeOptions'
 import { ContainerCard, ContainerCardInputs } from '../../../styles/Forms/PaymentWarranty/paymentWarranty'
 
 //dtos
+import { isValidDate } from '@/utils/formatDates'
 import { InstallmentDto } from 'src/services/accounts/dtos/installments.dto'
 
 interface GlobalInfo {
@@ -133,7 +134,7 @@ const CardInstallment = ({ index, installment, onChangeList }: ICardInstallment)
             </FormControl>
             <FormControl fullWidth>
               <ReactDatePicker
-                selected={installment.settlementDueDate}
+                selected={isValidDate(String(installment.settlementDueDate)) ? installment.settlementDueDate : null}
                 shouldCloseOnSelect
                 id='reception-date'
                 showTimeSelect

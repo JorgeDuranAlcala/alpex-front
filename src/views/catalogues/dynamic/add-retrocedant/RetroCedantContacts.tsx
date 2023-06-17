@@ -379,8 +379,8 @@ const RetroCedantContacts = ({ idRetroCedant }: IRetroCedantContacts) => {
   const deleteContact = async () => {
     const result = await deleteRetroCedantContact({ idDeleteList: [contactToDelete] })
     if (result) {
-      //it needs an alert o message
       getRetroCedantContactsByIdRetroCedant(retroCedantContactsPagination)
+      triggerAlert('success', 'DELETED')
     }
     setOpenDelete(false)
   }
@@ -388,9 +388,8 @@ const RetroCedantContacts = ({ idRetroCedant }: IRetroCedantContacts) => {
   const deleteRows = async () => {
     const result = await deleteRetroCedantContact({ idDeleteList: selectedRows })
     if (result) {
-      //it needs an alert o message
-      console.log('success')
       getRetroCedantContactsByIdRetroCedant(retroCedantContactsPagination)
+      triggerAlert('success', 'DELETED')
     }
     setOpenDeleteRows(false)
   }

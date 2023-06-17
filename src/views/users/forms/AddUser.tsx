@@ -2,6 +2,9 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import Icon from 'src/@core/components/icon'
 import * as yup from 'yup'
 
+//Google Analytics
+import Analytics from '@/utils/analytics'
+
 import { useGetAllCompanies } from '@/hooks/catalogs/company/getAllCompanies'
 import { useGetAllRoles } from '@/hooks/catalogs/roles/getAllRoles'
 import { useEditUser } from '@/hooks/catalogs/users'
@@ -19,7 +22,7 @@ import {
   Select,
   TextField
 } from '@mui/material'
-import { FocusEvent, FocusEventHandler, useEffect, useState } from 'react'
+import { Dispatch, FocusEvent, FocusEventHandler, SetStateAction, useEffect, useRef, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useAppDispatch, useAppSelector } from 'src/store'
 
@@ -28,7 +31,8 @@ import { useAppDispatch, useAppSelector } from 'src/store'
 // import CompanySelect from '@/views/custom/select/CompanySelect'
 // import useAxiosErrorHandling from '@/hooks/catalogs/users/handleError'
 
-import AlertAddUser from '@/views/users/AlertUserAdded'
+import { setUIUserNotification } from '@/store/apps/user/uiUserSlice'
+import { TUIUserNotificationTypes } from '@/types/apps/uiUserTypes'
 import { UserSection } from 'src/styles/Forms/usersSection'
 import CountrySelect, { ICountry } from 'src/views/custom/select/CountrySelect'
 import { StyledDescription, StyledSubtitle, StyledTitle } from 'src/views/custom/typography'
@@ -71,6 +75,7 @@ interface IAddUser {
   selectUser: boolean
   title: string
   subTitle: string
+  handleView: Dispatch<SetStateAction<number>>
 }
 interface errorsEmail {
   fieldRequired: boolean | undefined
@@ -107,7 +112,7 @@ const schema = yup.object().shape({
 // const ADMIN_COMPANIES = ['dynamic', 'claims']
 const ADMIN_COMPANIES = ['1', '2']
 
-const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
+const AddUser = ({ selectUser, title, subTitle, handleView }: IAddUser) => {
   const {
     control,
     handleSubmit,
@@ -121,13 +126,15 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
   })
 
   const { setUserPost, error, user } = useAddUser()
-  const { setUserPut } = useEditUser()
+  const { setUserPut, user: userEdited } = useEditUser()
 
   const { company } = useGetAllCompanies()
   console.log({ error })
   console.log('Error-->', error?.message)
 
   const { roles } = useGetAllRoles()
+
+  // console.log('Esto es roles', roles, company, selectUser, user)
 
   const ErrorsEmailText = {
     fieldRequired: 'This field is required.',
@@ -150,8 +157,7 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
   const [idCompany, setIdCompany] = useState<any>('')
   const [idRole, setIdRole] = useState<any>('')
   const [informativeIdRole, setInformativeIdRole] = useState<any>('')
-
-  const [open, setOpen] = useState(false)
+  const submitUserTypeRef = useRef<TUIUserNotificationTypes | null>(null)
 
   // const [selectCompany, setSelectCompany] = useState<ReinsuranceCompanyDto | undefined | string>()
   // const flagCompany = true
@@ -188,7 +194,14 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
   })
 
   const onSubmit = (data: any) => {
+    // console.log('se hace algo acá, pero no entra', data, selectUser)
+    // console.log('onSubmit', data);
+
+    // return;
+
     if (selectUser) {
+      // console.log('se hace algo', idCompany)
+
       const dataToSend: UsersPutDto = {
         id: usersReducer.current?.id || 1,
         name: data.name || '',
@@ -199,23 +212,28 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
         roles:
           parseInt(idRole) && parseInt(informativeIdRole)
             ? [
-                {
-                  id: parseInt(idRole)
-                },
-                {
-                  id: parseInt(informativeIdRole)
-                }
-              ]
+              {
+                id: parseInt(idRole)
+              },
+              {
+                id: parseInt(informativeIdRole)
+              }
+            ]
             : parseInt(idRole) && !parseInt(informativeIdRole)
-            ? [
+              ? [
                 {
                   id: parseInt(idRole)
                 }
               ]
-            : [],
+              : [],
         areaCode: selectedCountry?.phone || ''
       }
+
+      console.log('Esto se envía:', dataToSend)
+
+      submitUserTypeRef.current = 'edited'
       setUserPut(dataToSend)
+
       setTimeout(() => {
         dispatch(fetchAccounts(usersReducer))
       }, 100)
@@ -229,23 +247,52 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
         roles:
           parseInt(useWatchRole) && parseInt(useWatchDualRole)
             ? [
-                {
-                  id: parseInt(useWatchRole)
-                },
-                {
-                  id: parseInt(useWatchDualRole)
-                }
-              ]
+              {
+                id: parseInt(useWatchRole)
+              },
+              {
+                id: parseInt(useWatchDualRole)
+              }
+            ]
             : parseInt(useWatchRole) && !parseInt(useWatchDualRole)
-            ? [
+              ? [
                 {
                   id: parseInt(useWatchRole)
                 }
               ]
-            : [],
+              : [],
         areaCode: selectedCountry?.phone || ''
       }
+
+      const userCompany = company?.find(com => com.id === dataToSend.idCompany)
+      let userRoles = ''
+      roles?.forEach(role => {
+        dataToSend.roles.forEach(userRole => {
+          if (role.id === userRole.id) {
+            userRoles += role.role + ','
+          }
+        })
+      })
+
+      if (userCompany) {
+        Analytics.event({
+          category: 'company_info',
+          action: 'company_info',
+          label: userCompany.name
+        })
+      }
+
+      if (userRoles.length > 0) {
+        Analytics.event({
+          category: 'user_role',
+          action: 'user_role',
+          label: userRoles
+        })
+      }
+
+      submitUserTypeRef.current = 'added'
       setUserPost(dataToSend)
+
       setTimeout(() => {
         dispatch(fetchAccounts(usersReducer))
       }, 100)
@@ -306,6 +353,7 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
   }, [usersReducer.current])
 
   useEffect(() => {
+    console.log('useEffect - watchCOmpany', useWatchCompany)
     if (selectUser) {
       setRoleDisabled(false)
     } else {
@@ -373,19 +421,46 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
 
   useEffect(() => {
     if (user?.statusCode === 201) {
-      setOpen(true)
+      if (submitUserTypeRef.current) {
+        dispatch(
+          setUIUserNotification({
+            isOpen: true,
+            type: submitUserTypeRef.current
+          })
+        )
+      }
     }
     const anchor = document.querySelector('body')
     if (anchor) {
       anchor.scrollIntoView({ behavior: 'smooth' })
     }
+
+    if (submitUserTypeRef.current) {
+      submitUserTypeRef.current = null
+
+      handleView(0)
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.statusCode])
 
   useEffect(() => {
-    setTimeout(() => {
-      setOpen(false)
-    }, 3000)
-  }, [open])
+    if (userEdited) {
+      if (submitUserTypeRef.current) {
+        dispatch(
+          setUIUserNotification({
+            isOpen: true,
+            type: submitUserTypeRef.current
+          })
+        )
+
+        handleView(0)
+        submitUserTypeRef.current = null
+      }
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userEdited])
 
   // useEffect(() => {
 
@@ -413,6 +488,12 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
   // }, [selectUser, useWatchCompany, useWatchRole])
 
   useEffect(() => {
+    if (selectUser) {
+      setIdCompany(useWatchCompany)
+    }
+  }, [selectUser, useWatchCompany])
+
+  useEffect(() => {
     const reducersRol = usersReducer?.current?.roles[0]?.id
     const rolSelect = roles?.find(rol => rol.id === reducersRol)
     setIdRole(rolSelect?.id.toString())
@@ -433,7 +514,6 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
 
   return (
     <>
-      {open && <AlertAddUser />}
       <div style={{ padding: '20px 20px 80px' }}>
         <UserSection>
           <StyledTitle sx={{ pb: 2 }}>{title}</StyledTitle>
@@ -650,17 +730,23 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
                       <Controller
                         name='company'
                         control={control}
-                        defaultValue={''}
+
+                        rules={{ required: true }}
                         render={({ field: { value, onChange, onBlur } }) => (
                           <>
                             <InputLabel>Company</InputLabel>
 
                             <Select
+                              MenuProps={{
+                                disableScrollLock: true
+                              }}
                               error={Boolean(errors.company)}
                               label='Company'
-                              value={selectUser ? idCompany : value}
+                              value={selectUser ? idCompany : value || ''}
                               onBlur={onBlur}
                               onChange={e => {
+                                // console.log('Esto se selecciona', e.target.value)
+
                                 onChange(e.target.value)
                               }}
                               labelId='broker'
@@ -698,11 +784,15 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
                           <>
                             <InputLabel>Role</InputLabel>
                             <Select
+                              MenuProps={{
+                                disableScrollLock: true
+                              }}
                               error={Boolean(errors.role)}
                               label='Select a role'
                               value={selectUser ? idRole : value}
                               onBlur={onBlur}
                               onChange={e => {
+                                // console.log('Esto se selecciona', e.target.value)
                                 onChange(e.target.value)
                                 setIdRole(e.target.value)
                               }}
@@ -739,6 +829,9 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
                           <>
                             <InputLabel>Role</InputLabel>
                             <Select
+                              MenuProps={{
+                                disableScrollLock: true
+                              }}
                               label='Select a role'
                               value={selectUser ? informativeIdRole : value}
                               error={Boolean(errors.dualRole)}
@@ -804,6 +897,9 @@ const AddUser = ({ selectUser, title, subTitle }: IAddUser) => {
                     color='primary'
                     size='large'
                     sx={{ float: 'right', ml: 5 }}
+                    onClick={() => {
+                      // console.log('se hace algo por acá')
+                    }}
                   >
                     SAVE
                   </Button>

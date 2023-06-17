@@ -70,6 +70,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
   const { retroCedantContacts, setIdRetroCedant } = useGetAllByIdRetroCedant()
   const { countries } = useGetAllCountries()
   const operationSecurity: CalculateSecurity = new CalculateSecurity().setInformation(information).setSecurity(security)
+
   const schemaRetrocedant = yup.object().shape({
     idCRetroCedant: yup
       .object()
@@ -97,8 +98,33 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
         }
 
         return true
+      }),
+
+    frontingFee: yup
+      .number()
+      .transform((_, val) => (val === Number(val) ? val : null))
+      .test('', 'This field is required', value => {
+        const val = value || 0
+        if (frontingFeeEnabled) return +val > 0
+
+        return true
       })
+      .required('This field is required')
+
+      .max(100),
+
+    frontingFeeAmount: yup
+      .number()
+      .transform((_, val) => (val === Number(val) ? val : null))
+      .test('', 'This field is required', value => {
+        const val = value || 0
+        if (frontingFeeEnabled) return +val > 0
+
+        return true
+      })
+      .required('This field is required')
   })
+
   const schema = yup.object().shape({
     netPremiumAt100: yup
       .number()
@@ -193,29 +219,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
       .number()
       .transform((_, val) => (val === Number(val) ? val : null))
       .required('This field is required')
-      .min(1, 'The number must be greater than 0!'),
-    frontingFee: yup
-      .number()
-      .transform((_, val) => (val === Number(val) ? val : null))
-      .test('', 'This field is required', value => {
-        const val = value || 0
-        if (frontingFeeEnabled) return +val > 0
-
-        return true
-      })
-      .required('This field is required')
-
-      .max(100),
-    frontingFeeAmount: yup
-      .number()
-      .transform((_, val) => (val === Number(val) ? val : null))
-      .test('', 'This field is required', value => {
-        const val = value || 0
-        if (frontingFeeEnabled) return +val > 0
-
-        return true
-      })
-      .required('This field is required')
+      .min(1, 'The number must be greater than 0!')
   })
 
   const handleSwitch = () => {
@@ -224,9 +228,11 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
       ...tempSecurities[index],
       idCRetroCedant: {} as RetroCedantDto,
       idCRetroCedantContact: {} as RetroCedantContactDto,
-      frontingFeeActive: !frontingFeeEnabled
+      frontingFee: Number(null),
+      frontingFeeAmount: Number(null),
+      frontingFeeActive: !security.frontingFeeActive
     }
-    setFrontingFeeEnabled(state => !state)
+    setFrontingFeeEnabled(() => !security.frontingFeeActive)
 
     validateForm(tempSecurities[index])
     calculateSecurities(tempSecurities)
@@ -415,20 +421,19 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
     })
 
     // Combinar los esquemas
-    if (security.frontingFeeActive && (security.share || security.premiumPerShareAmount)) {
+    if (securityParam.frontingFeeActive && (securityParam.share || securityParam.premiumPerShareAmount)) {
       combinedSchema = yup.object().shape({
         ...schema.fields,
         ...schemaRetrocedant.fields
       })
     }
 
+    errorsTemp[index] = false
     combinedSchema
       .validate(securityParam, { abortEarly: false })
       .then(function () {
         errorsTemp[index] = false
-        console.log({ error: data, index, security })
         setErrorsSecurity(initialErrorValues)
-        setAllErrors(() => errorsTemp)
       })
       .catch(function (err) {
         for (const error of err?.inner) {
@@ -438,12 +443,14 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
           }
         }
         errorsTemp[index] = true
-
-        setAllErrors(() => errorsTemp)
-        console.log({ error: data, index, security })
+        console.log({ data, index })
         setErrorsSecurity(data)
 
         //setEnableNextStep(false)
+      })
+      .finally(() => {
+        console.log({ errorsTemp, index })
+        setAllErrors(() => [...errorsTemp])
       })
   }
 
@@ -464,12 +471,16 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
       setIdRetroCedant(security.idCRetroCedant?.id)
     }
 
-    setFrontingFeeEnabled(security.frontingFeeActive)
-    setIsGross(security.isGross)
-    validateForm(security)
+    setFrontingFeeEnabled(() => security.frontingFeeActive)
+    setIsGross(() => security.isGross)
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [security])
+
+  useEffect(() => {
+    validateForm(security)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isGross, frontingFeeEnabled])
 
   useEffect(() => {
     validateForm(security)

@@ -17,6 +17,7 @@ import { useAddCedant } from '@/hooks/catalogs/cedant'
 import { useDeleteCedant } from '@/hooks/catalogs/cedant/useDelete'
 import { useFindByIdCedant } from '@/hooks/catalogs/cedant/useFindById'
 import { useUpdateById } from '@/hooks/catalogs/cedant/useUpdateById'
+import { useRouter } from 'next/router'
 
 interface ICedantData {
   idCedant: number
@@ -42,6 +43,9 @@ const CedantData = ({ idCedant, setIdCedant }: ICedantData) => {
   const { update } = useUpdateById()
   const { deleteCedant: deleteCedants } = useDeleteCedant()
   const { setId, cedant } = useFindByIdCedant()
+
+  //router
+  const router = useRouter()
 
   useEffect(() => {
     if (idCedant !== 0) {
@@ -78,6 +82,7 @@ const CedantData = ({ idCedant, setIdCedant }: ICedantData) => {
 
     setTimeout(() => {
       setShowAlert(false)
+      text === 'DELETED' && router.push('/catalogues/dynamic/')
     }, 5000)
   }
 
@@ -115,7 +120,7 @@ const CedantData = ({ idCedant, setIdCedant }: ICedantData) => {
   const deleteCedant = async () => {
     const result = await deleteCedants({ idDeleteList: [newCedant.id] })
     if (result) {
-      triggerAlert('success', 'CEDANT DELETED')
+      triggerAlert('success', 'DELETED')
       setIdCedant(0)
     } else {
       triggerAlert('error')

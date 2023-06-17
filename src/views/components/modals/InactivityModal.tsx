@@ -56,6 +56,7 @@ const ModalAction: React.FC<IModalAction> = ({
   // ** Handlers for opening and closing
   const handleOpen = () => setOpen(true)
   const handleClose = (event?: any, reason?: string) => {
+    // console.log("handle close")
     if (reason === 'escapeKeyDown' || reason === 'backdropClick') {
       return
     }

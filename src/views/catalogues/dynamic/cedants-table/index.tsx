@@ -8,7 +8,7 @@ import { useRouter } from 'next/router'
 import CloseIcon from '@mui/icons-material/Close'
 import { Box, Button, Modal, Typography } from '@mui/material'
 import IconButton from '@mui/material/IconButton'
-import { DataGrid, GridColumns, GRID_CHECKBOX_SELECTION_COL_DEF } from '@mui/x-data-grid'
+import { DataGrid, GRID_CHECKBOX_SELECTION_COL_DEF, GridColumns } from '@mui/x-data-grid'
 import { ButtonClose, HeaderTitleModal } from 'src/styles/modal/modal.styled'
 
 // ** Icon Imports
@@ -43,6 +43,12 @@ const CedantsTable = () => {
   //hooks
   const { cedantPagination, setCedantPagination, cedants, getCedantsPagination, cedantInfoPage } = useGetAllPagination()
   const { deleteCedant } = useDeleteCedant()
+
+  // Handle Alerts
+  const [showAlert, setShowAlert] = useState(true)
+  const [alertType, setAlertType] = useState('')
+  const [alertText, setAlertText] = useState('')
+  const [alertIcon, setAlertIcon] = useState('')
 
   const router = useRouter()
 
@@ -137,6 +143,33 @@ const CedantsTable = () => {
     setCedantList(cedants || [])
   }, [cedants])
 
+  const triggerAlert = (type: string, text: string) => {
+    setAlertType(type)
+
+    switch (type) {
+      case 'success':
+        setAlertText(text)
+        setAlertIcon('mdi:check-circle-outline')
+        break
+      case 'error':
+        setAlertText('UNKNOWN ERROR, TRY AGAIN')
+        setAlertIcon('mdi:alert-circle-outline')
+        break
+      case 'warn':
+        setAlertText('NO INTERNET CONNECTION')
+        setAlertIcon('mdi:alert-outline')
+        break
+      default:
+        break
+    }
+
+    setShowAlert(true)
+
+    setTimeout(() => {
+      setShowAlert(false)
+    }, 5000)
+  }
+
   const handleSelectCedantEdit = (id: number | null) => {
     router.push({ pathname: '/catalogues/dynamic/add-cedants', query: { id } })
   }
@@ -156,9 +189,8 @@ const CedantsTable = () => {
   const deleteRows = async () => {
     const result = await deleteCedant({ idDeleteList: selectedRows })
     if (result) {
-      //it needs an alert o message
-      console.log('success')
       getCedantsPagination({ ...cedantPagination })
+      triggerAlert('success', 'DELETED')
     }
     setOpenDeleteRows(false)
   }
@@ -171,9 +203,8 @@ const CedantsTable = () => {
   const deleteSingleCedant = async () => {
     const result = await deleteCedant({ idDeleteList: [cedantToDelete] })
     if (result) {
-      //it needs an alert o message
-      console.log('success')
       getCedantsPagination({ ...cedantPagination })
+      triggerAlert('success', 'DELETED')
     }
     setOpenDelete(false)
   }
@@ -188,6 +219,15 @@ const CedantsTable = () => {
   return (
     <>
       <div className='outter-wrapper'>
+        {/* TODO:  */}
+        {showAlert && (
+          <div className={`${alertType} catalogue-item-alert`}>
+            <div className='btn-icon'>
+              <Icon icon={alertIcon} />
+            </div>
+            {alertText}
+          </div>
+        )}
         <TableHeader
           onDeleteRows={() => {
             setOpenDeleteRows(true)

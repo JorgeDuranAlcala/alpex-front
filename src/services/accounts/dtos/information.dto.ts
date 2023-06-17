@@ -36,9 +36,9 @@ export interface InformationDto {
   idLineOfBussines: number
   idTypeOfLimit: number | null
   idRiskActivity: number
-  idLeadUnderwriter: number
-  idUnderwriter: number
-  idTechnicalAssistant: number
+  idLeadUnderwriter: number | null | string
+  idUnderwriter: number | null | string
+  idTechnicalAssistant: number | null | string
 }
 
 export interface DoctoDto {

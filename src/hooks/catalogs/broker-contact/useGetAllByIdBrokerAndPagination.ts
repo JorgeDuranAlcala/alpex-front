@@ -40,12 +40,13 @@ const useGetAllByIdBrokerAndPagination = () => {
     )
     setBrokerContacts(results)
     setBrokerContactInfoPage(info)
-
-    return results
   }
 
   useEffect(() => {
-    brokerContactsPagination && getBrokerContactsByIdBroker(brokerContactsPagination)
+    brokerContactsPagination &&
+      brokerContactsPagination.idCBroker !== 0 &&
+      getBrokerContactsByIdBroker(brokerContactsPagination)
+    //eslint-disable-next-line
   }, [brokerContactsPagination])
 
   return {
