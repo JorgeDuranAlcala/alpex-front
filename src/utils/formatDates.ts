@@ -56,7 +56,5 @@ export const delayMs = (ms: number) => {
 export const isValidDate = (input: string): boolean => {
   const parsedDate = Date.parse(input)
 
-  console.log('Desde el util', input)
-
   return !isNaN(parsedDate)
 }
