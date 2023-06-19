@@ -94,7 +94,7 @@ const LoginPage = () => {
       label: 'login_device '
     })
     const { email, password } = data
-    auth.login({ email, password, rememberMe }, () => {
+    auth.login({ email: email.trim(), password: password.trim(), rememberMe }, () => {
       setAuthError(true)
     })
   }
