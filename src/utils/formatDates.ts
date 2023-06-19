@@ -52,3 +52,9 @@ export const formatTime = (seconds: number): string => {
 export const delayMs = (ms: number) => {
   return new Promise<void>(resolve => setTimeout(resolve, ms))
 }
+
+export const isValidDate = (input: string): boolean => {
+  const parsedDate = Date.parse(input)
+
+  return !isNaN(parsedDate)
+}

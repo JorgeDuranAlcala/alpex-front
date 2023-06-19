@@ -92,6 +92,22 @@ class AccountServices {
       throw new Error(message)
     }
   }
+
+  /**
+   * brings the last account with the specified id broker
+   * @param id
+   * @returns
+   */
+  async getLastAccountByIdBroker(idBroker: number) {
+    try {
+      const { data } = await AppAlpexApiGateWay.get(`${ACCOUNT_ROUTES.GET_LAST_BY_ID_BROKER}/${idBroker}`)
+
+      return data
+    } catch (error) {
+      const message = String(error)
+      throw new Error(message)
+    }
+  }
 }
 
 export default new AccountServices()

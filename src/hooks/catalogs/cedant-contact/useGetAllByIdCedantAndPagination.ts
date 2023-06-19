@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
 import CedantContactService from 'src/services/catalogs/cedant-contact.service'
 import {
+  CedantContactTableDto,
   CedantContactsInfoDto,
-  CedantContactsPaginationDto,
-  CedantContactTableDto
+  CedantContactsPaginationDto
 } from 'src/services/catalogs/dtos/cedant-contact.dto'
 
 const initialState: CedantContactsPaginationDto = {
@@ -43,7 +43,9 @@ const useGetAllByIdCedantAndPagination = () => {
   }
 
   useEffect(() => {
-    cedantContactsPagination && getCedantContactsByIdCedant(cedantContactsPagination)
+    cedantContactsPagination &&
+      cedantContactsPagination.idCCedant !== 0 &&
+      getCedantContactsByIdCedant(cedantContactsPagination)
   }, [cedantContactsPagination])
 
   return {
