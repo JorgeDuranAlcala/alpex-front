@@ -1,7 +1,17 @@
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
 import SaveIcon from '@mui/icons-material/Save'
-import { Button, FormHelperText, Grid, InputAdornment, SxProps, TextField, Theme, Typography } from '@mui/material'
+import {
+  Button,
+  CircularProgress,
+  FormHelperText,
+  Grid,
+  InputAdornment,
+  SxProps,
+  TextField,
+  Theme,
+  Typography
+} from '@mui/material'
 import { FocusEvent, ForwardedRef, forwardRef, useEffect, useState } from 'react'
 import DatePicker from 'react-datepicker'
 
@@ -27,6 +37,9 @@ import * as yup from 'yup'
 //dtos
 import { useGetAccountById } from '@/hooks/accounts/forms'
 import { ButtonClose, HeaderTitleModal } from '@/styles/modal/modal.styled'
+import { delayMs } from '@/utils/formatDates'
+import CustomAlert, { IAlert } from '@/views/custom/alerts'
+import { Icon } from '@iconify/react'
 import { NumericFormat } from 'react-number-format'
 import { InstallmentDto } from 'src/services/accounts/dtos/installments.dto'
 
@@ -34,6 +47,7 @@ interface InstallmentErrors {
   errorFieldRequired: boolean
   erorrRangeInstallments: boolean
   errorOnlyNumbers: boolean
+  error100Percent: boolean
 }
 
 interface PickerProps {
@@ -88,7 +102,8 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
   const [error, setError] = useState<InstallmentErrors>({
     errorFieldRequired: false,
     erorrRangeInstallments: false,
-    errorOnlyNumbers: false
+    errorOnlyNumbers: false,
+    error100Percent: false
   })
 
   const { addInstallments } = useAddInstallments()
@@ -96,6 +111,13 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
   const idAccount = accountData?.formsData?.form1?.id
   const { account, setAccountId } = useGetAccountById()
   const { deleteInstallments } = useDeleteInstallments()
+
+  const [badgeData, setBadgeData] = useState<IAlert>({
+    message: '',
+    theme: 'success',
+    open: false,
+    status: 'error'
+  })
 
   const handleNumericInputChange = (count: number | undefined) => {
     if (!count) {
@@ -193,16 +215,28 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
   }
 
   const validations = async () => {
-    if (!count) return
+    if (!count) {
+      setBtnNext(false)
+
+      return
+    }
 
     for (let i = 0; i < count; i++) {
       const item = installmentsList[i]
       try {
         await schema.isValid(item, { abortEarly: false })
         const sum = getTwoDecimals(installmentsList.reduce((acc, item) => acc + item.paymentPercentage, 0))
-        if (sum >= 99.99) {
+        if (sum === 99.99 || sum === 100) {
+          setError({
+            ...error,
+            error100Percent: false
+          })
           setBtnNext(true)
         } else {
+          setError({
+            ...error,
+            error100Percent: true
+          })
           setBtnNext(false)
         }
       } catch (err) {
@@ -214,10 +248,36 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
   const saveInstallments = async () => {
     setDisableSaveBtn(true)
     if (isChange) {
+      setBadgeData({
+        message: `SAVING INSTALLMENTS`,
+        status: 'secondary',
+        open: true,
+        icon: <CircularProgress size={20} color='secondary' />,
+        backgroundColor: '#828597',
+        theme: 'info',
+        disableAutoHide: true
+      })
       await deleteInstallments(initialInstallmentList)
       const newInitialInstallments = await addInstallments(installmentsList)
       setIsChange(false)
       setInitialInstallmentList(newInitialInstallments)
+
+      await delayMs(1000)
+      setBadgeData({
+        message: `SAVED SUCCESSFULLY`,
+        status: 'success',
+        theme: 'success',
+        open: true,
+        icon: <Icon icon='ic:baseline-check-circle' />,
+        disableAutoHide: true
+      })
+      await delayMs(1500)
+      setBadgeData({
+        message: '',
+        status: undefined,
+        icon: undefined,
+        open: false
+      })
     }
     setDisableSaveBtn(false)
   }
@@ -232,6 +292,11 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
 
   const openModal = () => {
     validations()
+    if (count === 0)
+      setError({
+        ...error,
+        erorrRangeInstallments: true
+      })
     setOpen(true)
   }
 
@@ -280,8 +345,14 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [account])
 
+  useEffect(() => {
+    validations()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [installmentsList])
+
   return (
     <>
+      <CustomAlert {...badgeData} />
       <GeneralContainer>
         <TitleContainer>
           <Typography variant='h5'>Payment warranty</Typography>
@@ -343,7 +414,9 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
                 {error.errorFieldRequired && (
                   <FormHelperText sx={{ color: 'error.main' }}>This field is required</FormHelperText>
                 )}
-                {error.erorrRangeInstallments && <FormHelperText sx={{ color: 'error.main' }}></FormHelperText>}
+                {error.erorrRangeInstallments && (
+                  <FormHelperText sx={{ color: 'error.main' }}>This field cannot be 0</FormHelperText>
+                )}
                 {error.errorOnlyNumbers && <FormHelperText sx={{ color: 'error.main' }}>Only numbers</FormHelperText>}
               </Grid>
             </Grid>
@@ -373,6 +446,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
               }}
               count={count}
               key={index}
+              error100Percent={error.error100Percent}
             />
           ))}
         </Grid>
