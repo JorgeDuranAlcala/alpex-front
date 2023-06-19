@@ -7,6 +7,9 @@ import { useState } from 'react'
 import UserThemeOptions from 'src/layouts/UserThemeOptions'
 import { ContainerSelectDowland, HeaderTitle } from 'src/styles/Dashboard/DowlandAcounts/dowlandAccountsInfo'
 
+//Google Analytics
+import Analytics from '@/utils/analytics'
+
 const DowlandAccountInfo = () => {
   const [broker, setBroker] = useState('')
   const brokers = [
@@ -22,6 +25,17 @@ const DowlandAccountInfo = () => {
 
   const handleOnchange = (e: SelectChangeEvent) => {
     setBroker(e.target.value)
+  }
+
+  const handleOnDownload = () => {
+    const select = brokers.find(status => status.value === broker)
+    if (broker !== '' && select && select.name) {
+      Analytics.event({
+        action: 'download_report',
+        category: 'download_report',
+        label: select.name
+      })
+    }
   }
 
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
@@ -91,6 +105,7 @@ const DowlandAccountInfo = () => {
             '@media (max-width:599px)': { width: '100%', height: '38px' }
           }}
           startIcon={<FileDownloadIcon />}
+          onClick={handleOnDownload}
         >
           Download
         </Button>
