@@ -19,7 +19,7 @@ import FilterMenu from 'src/views/users/table/FilterMenu'
 interface IColunmHeader {
   colDef: GridStateColDef
   action?: (field: string) => void
-  showIcon?: boolean
+  showIcon?: boolean;
 }
 
 const ColumnHeader: React.FC<IColunmHeader> = ({ colDef, action, showIcon = true }) => {
@@ -56,7 +56,10 @@ const ColumnHeader: React.FC<IColunmHeader> = ({ colDef, action, showIcon = true
   return (
     <Box
       ref={columnHeaderRef}
-      sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative' }}
+      sx={{
+        display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative',
+
+      }}
     >
       <Typography
         component={'span'}

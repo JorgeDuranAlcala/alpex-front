@@ -744,7 +744,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
                 underwriters.map(underwriter => {
                   return (
                     <MenuItem key={underwriter.id} value={underwriter.id}>
-                      {underwriter.name}
+                      {`${underwriter.name} ${underwriter.surname || ''} ${underwriter.secondSurname || ''}`}
                     </MenuItem>
                   )
                 })
@@ -769,7 +769,9 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
                 leadUnderwriters.map(leadUnderwriter => {
                   return (
                     <MenuItem key={leadUnderwriter.id} value={leadUnderwriter.id}>
-                      {leadUnderwriter.name}
+                      {`${leadUnderwriter.name} ${leadUnderwriter.surname || ''} ${
+                        leadUnderwriter.secondSurname || ''
+                      }`}
                     </MenuItem>
                   )
                 })
@@ -795,7 +797,9 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
                 technicalAssistants.map(technicalAssistant => {
                   return (
                     <MenuItem key={technicalAssistant.id} value={technicalAssistant.id}>
-                      {technicalAssistant.name}
+                      {`${technicalAssistant.name} ${technicalAssistant.surname || ''} ${
+                        technicalAssistant.secondSurname || ''
+                      }`}
                     </MenuItem>
                   )
                 })

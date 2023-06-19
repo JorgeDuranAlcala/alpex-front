@@ -17,6 +17,9 @@ import OutlinedInput from '@mui/material/OutlinedInput'
 import { styled } from '@mui/material/styles'
 import TextField from '@mui/material/TextField'
 
+//Google Analytics
+import Analytics from '@/utils/analytics'
+
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
 
@@ -85,6 +88,11 @@ const LoginPage = () => {
   })
 
   const onSubmit: SubmitHandler<FormData> = data => {
+    Analytics.event({
+      action: 'click_login',
+      category: 'click_login',
+      label: 'login_device '
+    })
     const { email, password } = data
     auth.login({ email: email.trim(), password: password.trim(), rememberMe }, () => {
       setAuthError(true)

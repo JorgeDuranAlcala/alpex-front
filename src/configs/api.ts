@@ -19,7 +19,8 @@ export enum ACCOUNT_ROUTES {
   GET_ALL = 'account/all',
   DELETE = 'account/delete',
   DUPLICATE = 'account/duplicate',
-  UPDATE_STATUS = 'account/update-status'
+  UPDATE_STATUS = 'account/update-status',
+  GET_LAST_BY_ID_BROKER = 'account/broker'
 }
 
 //Comentario

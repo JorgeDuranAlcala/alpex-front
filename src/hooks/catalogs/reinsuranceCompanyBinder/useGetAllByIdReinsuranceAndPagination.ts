@@ -48,6 +48,7 @@ const useGetAllByIdReinsuranceCompanyAndPagination = () => {
 
   useEffect(() => {
     reinsuranceCompanyBindersPagination &&
+      reinsuranceCompanyBindersPagination.idCReinsuranceCompany !== 0 &&
       getReinsuranceCompanyBindersByIdReinsuranceCompany(reinsuranceCompanyBindersPagination)
   }, [reinsuranceCompanyBindersPagination])
 

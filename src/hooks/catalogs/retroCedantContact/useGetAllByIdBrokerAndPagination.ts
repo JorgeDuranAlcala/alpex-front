@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 import {
+  RetroCedantContactTableDto,
   RetroCedantContactsInfoDto,
-  RetroCedantContactsPaginationDto,
-  RetroCedantContactTableDto
+  RetroCedantContactsPaginationDto
 } from 'src/services/catalogs/dtos/retroCedantContact.dto'
 import RetroCedantContactService from 'src/services/catalogs/retroCedantContact.service'
 
@@ -47,7 +47,9 @@ const useGetAllByIdRetroCedantAndPagination = () => {
   }
 
   useEffect(() => {
-    retroCedantContactsPagination && getRetroCedantContactsByIdRetroCedant(retroCedantContactsPagination)
+    retroCedantContactsPagination &&
+      retroCedantContactsPagination.idCRetroCedant !== 0 &&
+      getRetroCedantContactsByIdRetroCedant(retroCedantContactsPagination)
   }, [retroCedantContactsPagination])
 
   return {
