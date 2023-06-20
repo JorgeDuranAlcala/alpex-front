@@ -64,15 +64,16 @@ const ContainerCardInputs = styled('div')({
   alignItems: 'flex-start',
   width: '100%',
   height: '87%',
-  justifyContent: 'space-between'
+  justifyContent: 'space-between',
+  gap: '12px'
 })
 
 export {
-  GeneralContainer,
-  NextContainer,
-  TitleContainer,
-  InstallmentContainer,
-  InputsContainer,
   ContainerCard,
-  ContainerCardInputs
+  ContainerCardInputs,
+  GeneralContainer,
+  InputsContainer,
+  InstallmentContainer,
+  NextContainer,
+  TitleContainer
 }
