@@ -29,6 +29,14 @@ export enum ACCOUNT_COMMENTS {
   GET_ALL = 'account/comments'
 }
 
+//Discounts
+export enum ACCOUNT_DISCOUNT_ROUTERS {
+  ADD = 'account/discount/add',
+  GET_ALL = 'account/discount/',
+  UPDATE = 'account/discount/',
+  DELETE = 'account/discount/'
+}
+
 export enum ACCOUNT_INFORMATION_ROUTES {
   ADD = 'account/information/add',
   GET = 'account/information',
