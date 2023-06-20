@@ -349,6 +349,16 @@
   align-items: center;
 }
 
+.form-row{
+  width: 100%;
+  margin: 0 0 20px;
+  gap: 20px;
+  display: flex;
+}
+.form-row .MuiFormGroup-root{
+  flex-direction: row;
+}
+
 .form-col {
   width: 32%;
   display: flex;
@@ -583,10 +593,10 @@
 }
 
 .steps .step {
-  width: 25%;
+  width: 9%;
   display: flex;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
   background-color: rgba(255, 255, 255, 1);
   color: rgba(77, 80, 98, 0.68);
   border-radius: 20px;
@@ -606,35 +616,40 @@
 }
 
 .steps .step .step-name {
-  font-size: 16px;
-  color: rgba(77, 80, 98, 0.68);
+  display: none;
 }
 
+
 .steps .step.active {
-  background-color: #f7f7f9;
-  color: #2535a8;
+    background-color: #f7f7f9;
+    width: 65%;
+    color: rgba(77, 80, 98, 0.87);
+    justify-content: flex-start;
+    border-radius: 6px;
+    border-bottom: 1px solid rgb(219 212 212);
 }
+
 
 .steps .step.active .step-number {
   background-color: rgba(255, 255, 255, 1);
-  color: #2535a8;
   font-weight: 700;
 }
 
 .steps .step.active .step-name {
-  color: #2535a8;
   font-weight: 700;
+  display: block;
+  font-size: 16px;
 }
 
 @media (max-width: 700px) {
-  .steps .step.active {
+  /* .steps .step.active {
     width: 100%;
     display: flex;
   }
 
   .steps .step {
     display: none;
-  }
+  } */
 }
 
 @media (max-width: 550px) {
