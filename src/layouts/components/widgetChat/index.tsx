@@ -1,7 +1,7 @@
 // import { Widget, addResponseMessage } from 'react-chat-widget-2';
 
 import { useEffect } from 'react'
-import { Widget, addResponseMessage } from 'react-chat-widget-2'
+import { Widget, addResponseMessage, toggleMsgLoader } from 'react-chat-widget-2'
 import { useConversationalBot } from '../../../hooks/chatbot/conversationalBot'
 
 // import { chatOpenAI } from './services/chatOpenAI.service'
@@ -29,10 +29,12 @@ const WidgetChat = () => {
   }, [])
 
   const handleNewUserMessage = async (newMessage: string) => {
+    toggleMsgLoader()
     const responseAI = await sendMessage({
       userMessage: newMessage,
       idSession: Number(sessionStorage.getItem('idSession')) || undefined
     })
+    toggleMsgLoader()
     addResponseMessage(responseAI)
   }
 

@@ -1,5 +1,5 @@
 // ** React Imports
-import { useEffect, useState } from 'react'
+import { useRef } from 'react'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -15,27 +15,35 @@ import { deleteAccountFilter, handleAccountFilter } from 'src/store/apps/account
 import fonts from '../../font'
 
 const FilterMenuInsured = () => {
-  const [query, setQuery] = useState('')
-  const dispatch = useAppDispatch()
-  useEffect(() => {
-    if (query === '') dispatch(deleteAccountFilter('Insured'))
-    else
-      dispatch(
-        handleAccountFilter({
-          type: 'insured',
-          value: `${query}`,
-          text: `Insured:  ${query}`
-        })
-      )
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [query])
+  const dispatch = useAppDispatch();
+  const searchTimeOutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+
+
+
+  const handleOnChangeSearch = (value: string) => {
+    if (searchTimeOutRef.current) {
+
+      clearTimeout(searchTimeOutRef.current);
+    }
+    searchTimeOutRef.current = setTimeout(() => {
+      if (value === '') dispatch(deleteAccountFilter('insured'))
+      else
+        dispatch(
+          handleAccountFilter({
+            type: 'insured',
+            value: `${value}`,
+            text: `${value}`
+          })
+        )
+    }, 500);
+  }
 
   return (
     <Box component={'li'} sx={{ padding: '3px 30px', display: 'flex', alignItems: 'center', width: '100%' }}>
       <Input
-        value={query}
         placeholder='Search by Insured'
-        onChange={e => setQuery(e.target.value)}
+        onChange={e => handleOnChangeSearch(e.target.value)}
         sx={{
           fontFamily: fonts.inter,
           fontSize: fonts.size.px16,
