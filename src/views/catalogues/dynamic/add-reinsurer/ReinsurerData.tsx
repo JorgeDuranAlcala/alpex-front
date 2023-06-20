@@ -111,18 +111,26 @@ const ReinsurerData = ({ idReinsuranceCompany, setIdReinsuranceCompany }: IReins
 
   //1 = grossPremiun 2 =  netPremium
   const addReinsurer = async () => {
-    const result = await addReinsuranceCompany({
-      name: newReinsuranceCompany.name,
-      idSubscriptionType: newReinsuranceCompany.idSubscriptionType,
-      special: newReinsuranceCompany.idSubscriptionType === 1
-    })
-    if (result) {
-      setNewReinsuranceCompany({ id: result.id, name: result.name, idSubscriptionType: result.idSubscriptionType || 0 })
-      triggerAlert('success')
-      setIdReinsuranceCompany(result.id)
-      setNameDisabled(true)
-      setIsReinsuranceCompanySaved(true)
-    } else {
+    try {
+      const result = await addReinsuranceCompany({
+        name: newReinsuranceCompany.name,
+        idSubscriptionType: newReinsuranceCompany.idSubscriptionType,
+        special: newReinsuranceCompany.idSubscriptionType === 1
+      })
+      if (result) {
+        setNewReinsuranceCompany({
+          id: result.id,
+          name: result.name,
+          idSubscriptionType: result.idSubscriptionType || 0
+        })
+        triggerAlert('success')
+        setIdReinsuranceCompany(result.id)
+        setNameDisabled(true)
+        setIsReinsuranceCompanySaved(true)
+      } else {
+        triggerAlert('error')
+      }
+    } catch (error) {
       triggerAlert('error')
     }
   }
@@ -133,17 +141,25 @@ const ReinsurerData = ({ idReinsuranceCompany, setIdReinsuranceCompany }: IReins
   }
 
   const editReinsurer = async () => {
-    const result = await update(newReinsuranceCompany.id, {
-      ...newReinsuranceCompany,
-      special: newReinsuranceCompany.idSubscriptionType === 1
-    })
-    if (result) {
-      setNewReinsuranceCompany({ id: result.id, name: result.name, idSubscriptionType: result.idSubscriptionType || 0 })
-      setIsReinsuranceCompanySaved(true)
-      setNameDisabled(true)
-      setIsEditing(false)
-      triggerAlert('success', 'CHANGES SAVED')
-    } else {
+    try {
+      const result = await update(newReinsuranceCompany.id, {
+        ...newReinsuranceCompany,
+        special: newReinsuranceCompany.idSubscriptionType === 1
+      })
+      if (result) {
+        setNewReinsuranceCompany({
+          id: result.id,
+          name: result.name,
+          idSubscriptionType: result.idSubscriptionType || 0
+        })
+        setIsReinsuranceCompanySaved(true)
+        setNameDisabled(true)
+        setIsEditing(false)
+        triggerAlert('success', 'CHANGES SAVED')
+      } else {
+        triggerAlert('error')
+      }
+    } catch (error) {
       triggerAlert('error')
     }
   }
