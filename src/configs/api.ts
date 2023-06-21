@@ -191,6 +191,10 @@ export enum COMPANY_ROUTES {
   ROLES = 'catalogs/role/all'
 }
 
+export enum ACCOUNT_TYPE_ROUTES {
+  GET_ALL = 'catalogs/account-type/all'
+}
+
 export enum RETRO_CEDANT_ROUTES {
   GET_ALL = 'catalogs/retroCedant/all',
   GET_BY_ID = 'catalogs/retroCedant',

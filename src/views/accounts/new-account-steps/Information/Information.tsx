@@ -200,7 +200,8 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
       taxes: placementStructure.taxes,
       taxesTotal: placementStructure.taxesP,
       totalValues: placementStructure.total,
-      idTypeOfLimit: Number(placementStructure.typeOfLimit)
+      idTypeOfLimit: Number(placementStructure.typeOfLimit),
+      idAccountType: 1
     })
 
     await delayMs(1000)
@@ -265,6 +266,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
       idLeadUnderwriter: Number(basicInfo.leadUnderwriter) === 0 ? null : Number(basicInfo.leadUnderwriter),
       idTechnicalAssistant: Number(basicInfo.technicalAssistant) === 0 ? null : Number(basicInfo.technicalAssistant),
       idUnderwriter: Number(basicInfo.underwriter) === 0 ? null : Number(basicInfo.underwriter),
+      idAccountType: 1,
       riskClass: basicInfo.riskClass,
 
       currency: 'USD',
