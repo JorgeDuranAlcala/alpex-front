@@ -641,18 +641,33 @@
   font-size: 16px;
 }
 
-@media (max-width: 700px) {
-  /* .steps .step.active {
-    width: 100%;
-    display: flex;
+@media (max-width: 800px) {
+  .steps .step.active {
+    width: 55%;
   }
 
   .steps .step {
-    display: none;
-  } */
+    width: 11%;
+  }
 }
 
-@media (max-width: 550px) {
+@media (max-width: 650px) {
+  .steps .step.active {
+    width: 20%;
+    justify-content: center;
+  }
+  .steps .step.active .step-name {
+    display: none;
+  }
+
+  .steps .step {
+    width: 20%;
+  }
+
+  .steps .step .step-number {
+
+    margin-right: 0;
+  }
 }
 
 /* Fin Stepper */
