@@ -59,15 +59,15 @@ const BrokerData = ({ idBroker, setIdBroker }: IBrokerData) => {
     setAlertType(type)
 
     switch (type) {
-      case 'success':
+      case 'success-alert':
         setAlertText(text || 'NEW BROKER ADDED')
         setAlertIcon('mdi:check-circle-outline')
         break
-      case 'error':
+      case 'error-alert':
         setAlertText('UNKNOWN ERROR, TRY AGAIN')
         setAlertIcon('mdi:alert-circle-outline')
         break
-      case 'warn':
+      case 'warn-alert':
         setAlertText('NO INTERNET CONNECTION')
         setAlertIcon('mdi:alert-outline')
         break
@@ -87,12 +87,12 @@ const BrokerData = ({ idBroker, setIdBroker }: IBrokerData) => {
     const result = await saveBroker({ name: newBroker.name })
     if (result) {
       setNewBroker({ id: result.id, name: result.name })
-      triggerAlert('success')
+      triggerAlert('success-alert')
       setIdBroker(result.id)
       setNameDisabled(true)
       setIsBrokerSaved(true)
     } else {
-      triggerAlert('error')
+      triggerAlert('error-alert')
     }
   }
 
@@ -110,7 +110,7 @@ const BrokerData = ({ idBroker, setIdBroker }: IBrokerData) => {
       setIsEditing(false)
       triggerAlert('success', 'CHANGES SAVED')
     } else {
-      triggerAlert('error')
+      triggerAlert('error-alert')
     }
   }
 
@@ -120,7 +120,7 @@ const BrokerData = ({ idBroker, setIdBroker }: IBrokerData) => {
       triggerAlert('success', 'DELETED')
       setIdBroker(0)
     } else {
-      triggerAlert('error')
+      triggerAlert('error-alert')
     }
     setOpenDelete(false)
   }

@@ -60,6 +60,8 @@ const NewAccount = () => {
         return <PaymentWarranty onStepChange={handleStepChange} />
       case 4:
         return <Sublimits />
+      case 5:
+        return <div>Step 5</div>
       default:
         return <></>
     }

@@ -125,17 +125,17 @@
   right: 5px;
 }
 
-.success {
+.success-alert {
   background-color: #eefbe5;
   color: #72e128;
 }
 
-.error {
+.error-alert {
   background-color: #ffebeb;
   color: #ff4d49;
 }
 
-.warn {
+.warn-alert {
   background-color: #fff7eb;
   color: #ffb446;
 }
