@@ -251,7 +251,8 @@
   width: 100%;
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
+  justify-content: flex-start;
+  gap: 2%;
   align-items: self-start;
 }
 
@@ -260,6 +261,11 @@
   color: rgba(68, 72, 84, 0.87);
   font-weight: 600;
   margin-bottom: 25px;
+}
+
+.information .error {
+  background-color: #ffffff;
+  color: #ff4d49;
 }
 
 .create-contact-btn {
@@ -355,8 +361,18 @@
   gap: 20px;
   display: flex;
 }
+
+
 .form-row .MuiFormGroup-root{
   flex-direction: row;
+}
+
+.form-row .row-title{
+  color: rgba(77, 80, 98, 0.87);
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    font-weight: 500;
 }
 
 .form-col {
