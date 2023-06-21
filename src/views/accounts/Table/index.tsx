@@ -78,10 +78,13 @@ const Table = ({ status }: IAccountTable) => {
   // **Reducers
   const dispatch = useAppDispatch()
   const accountsReducer = useAppSelector(state => state.accounts)
-  console.log({ selectAll })
+
+  // console.log({ selectAll })
+
   const selectAllOption = accountsReducer.accounts.map(account => account.id)
-  console.log({ selectAllOption })
-  console.log(accounts.effectiveDate)
+
+  // console.log({ selectAllOption })
+  // console.log(accounts.effectiveDate)
 
   // ** Custom Hooks
   //const { accounts, getAccounts } = useAccountTable()
@@ -419,6 +422,8 @@ const Table = ({ status }: IAccountTable) => {
     localStorage.setItem('idAccount', String(id))
     router.push(`/accounts/new-account/?&id=${id}`)
   }
+
+
 
   return (
     <>

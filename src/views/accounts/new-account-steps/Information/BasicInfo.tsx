@@ -1,29 +1,42 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { ForwardedRef, ReactNode, forwardRef, useEffect, useState } from 'react' //ReactNode
+import React, { ForwardedRef, ReactNode, forwardRef, useEffect, useState } from 'react'; //ReactNode
 
 // ** MUI Imports
-import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import {
   FormControl,
+  FormControlLabel,
   FormHelperText,
   Grid,
   InputAdornment,
   InputLabel,
   MenuItem,
+  Radio,
+  RadioGroup,
   SxProps,
   TextField,
-  Theme
-} from '@mui/material'
-import Select, { SelectChangeEvent } from '@mui/material/Select' //SelectChangeEvent
+  Theme,
+} from '@mui/material';
+import Select, { SelectChangeEvent } from '@mui/material/Select'; //SelectChangeEvent
 
 //Components
-import { ContactModal } from '@/views/accounts/new-account-steps/Information/ContactModal'
+import { ContactModal } from '@/views/accounts/new-account-steps/Information/ContactModal';
 
 //hooks para base info y  modal contac
-import { useGetAllCountries as useCountyGetAll } from 'src/hooks/catalogs/country'
+import { useGetAllCountries as useCountyGetAll } from 'src/hooks/catalogs/country';
 
 // ** Third Party Imports
-import DatePicker from 'react-datepicker'
+import DatePickerWrapper from '@/@core/styles/libs/react-datepicker';
+import { ROLES } from '@/configs/api';
+import DatePicker from 'react-datepicker';
+import { useGetAll as useBrokerGetAll } from 'src/hooks/catalogs/broker';
+import { useGetAllByIdBroker } from 'src/hooks/catalogs/broker-contact/';
+import { useGetAll as useCedantGetAll } from 'src/hooks/catalogs/cedant';
+import { useGetAllByCedant } from 'src/hooks/catalogs/cedant-contact';
+import { useGetAllLineOfBussines } from 'src/hooks/catalogs/lineOfBussines';
+import { useGetAllRiskActivities } from 'src/hooks/catalogs/riskActivity';
+import { useGetByIdRole } from 'src/hooks/catalogs/users/';
+
 
 interface PickerProps {
   label?: string
@@ -97,15 +110,7 @@ const CustomInput = forwardRef(({ ...props }: PickerProps, ref: ForwardedRef<HTM
   )
 })
 
-import DatePickerWrapper from '@/@core/styles/libs/react-datepicker'
-import { ROLES } from '@/configs/api'
-import { useGetAll as useBrokerGetAll } from 'src/hooks/catalogs/broker'
-import { useGetAllByIdBroker } from 'src/hooks/catalogs/broker-contact/'
-import { useGetAll as useCedantGetAll } from 'src/hooks/catalogs/cedant'
-import { useGetAllByCedant } from 'src/hooks/catalogs/cedant-contact'
-import { useGetAllLineOfBussines } from 'src/hooks/catalogs/lineOfBussines'
-import { useGetAllRiskActivities } from 'src/hooks/catalogs/riskActivity'
-import { useGetByIdRole } from 'src/hooks/catalogs/users/'
+type CheckboxValue = 'new' | 'renewal';
 
 const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeValidations, onValidationComplete }) => {
   //cargamos la informacion de los catalogos de base de datos
@@ -120,7 +125,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
   const { users: underwriters } = useGetByIdRole(ROLES.UNDERWRITER)
   const { users: leadUnderwriters } = useGetByIdRole(ROLES.LEAD_UNDERWRITER)
   const { users: technicalAssistants } = useGetByIdRole(ROLES.TECHNICAL_ASSISTANT)
-
+  const [checkboxValue, setCheckboxValue] = useState<CheckboxValue>('new');
   const [bussinesFields, setBussinesFields] = useState(true)
 
   // const [valid, setValid]= useState(false)
@@ -209,6 +214,10 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
     setBasicInfo({ ...basicInfo, expirationDate: date })
     !validateForm && validations({ ...basicInfo, expirationDate: date })
   }
+
+  const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setCheckboxValue(event.target.value as CheckboxValue);
+  };
 
   const validations = (basicInfoParama: BasicInputType | null = null) => {
     const basicInfoTemp = basicInfoParama ? basicInfoParama : basicInfo
@@ -314,6 +323,20 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
     <>
       <div className='title'>Basic info</div>
       <div className='form-wrapper'>
+        <div className='form-row'>
+        <FormControl component="fieldset">
+      <RadioGroup
+        aria-label="checkboxGroup"
+        name="checkboxGroup"
+        value={checkboxValue}
+        onChange={handleCheckboxChange}
+      >
+        <FormControlLabel value="new" control={<Radio />} label="New" />
+        <FormControlLabel value="renewal" control={<Radio />} label="Renewal" />
+      </RadioGroup>
+    </FormControl>
+
+        </div>
         <div className='form-col'>
           <div className='title'>Insured</div>
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
