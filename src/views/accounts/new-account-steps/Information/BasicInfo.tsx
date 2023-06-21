@@ -77,7 +77,7 @@ type BasicInputType = {
   underwriter: number | string | null
   leadUnderwriter: number | string | null
   technicalAssistant: number | string | null
-  industryCode: number | string
+  industryCode: number | string | null | undefined
   riskActivity: string
   riskClass: number
   receptionDate: Date | null
