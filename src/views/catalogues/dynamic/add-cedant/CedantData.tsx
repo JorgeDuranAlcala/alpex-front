@@ -62,15 +62,15 @@ const CedantData = ({ idCedant, setIdCedant }: ICedantData) => {
     setAlertType(type)
 
     switch (type) {
-      case 'success':
+      case 'success-alert':
         setAlertText(text || 'NEW BROKER ADDED')
         setAlertIcon('mdi:check-circle-outline')
         break
-      case 'error':
+      case 'error-alert':
         setAlertText('UNKNOWN ERROR, TRY AGAIN')
         setAlertIcon('mdi:alert-circle-outline')
         break
-      case 'warn':
+      case 'warn-alert':
         setAlertText('NO INTERNET CONNECTION')
         setAlertIcon('mdi:alert-outline')
         break
@@ -90,12 +90,12 @@ const CedantData = ({ idCedant, setIdCedant }: ICedantData) => {
     const result = await saveCedant({ name: newCedant.name })
     if (result) {
       setNewCedant({ id: result.id, name: result.name })
-      triggerAlert('success')
+      triggerAlert('success-alert')
       setIdCedant(result.id)
       setNameDisabled(true)
       setIsCedantSaved(true)
     } else {
-      triggerAlert('error')
+      triggerAlert('error-alert')
     }
   }
 
@@ -113,7 +113,7 @@ const CedantData = ({ idCedant, setIdCedant }: ICedantData) => {
       setIsEditing(false)
       triggerAlert('success', 'CHANGES SAVED')
     } else {
-      triggerAlert('error')
+      triggerAlert('error-alert')
     }
   }
 
@@ -123,7 +123,7 @@ const CedantData = ({ idCedant, setIdCedant }: ICedantData) => {
       triggerAlert('success', 'DELETED')
       setIdCedant(0)
     } else {
-      triggerAlert('error')
+      triggerAlert('error-alert')
     }
     setOpenDelete(false)
   }

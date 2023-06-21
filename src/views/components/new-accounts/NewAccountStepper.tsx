@@ -106,6 +106,10 @@ const NewAccountStepper = ({ changeStep = 1, onStepChange }: StepperProps) => {
           setModalText("Doing this will cause the information entered in form #4, deleted. Would you like to continue?")
           break
         }
+        case 5: {
+          setModalText("Doing this will cause the information entered in form #5, deleted. Would you like to continue?")
+          break
+        }
       }
 
       setOpenModal(true)
@@ -156,6 +160,13 @@ const NewAccountStepper = ({ changeStep = 1, onStepChange }: StepperProps) => {
           >
             <div className="step-number">4</div>
             <div className="step-name">Sublimits</div>
+          </div>
+          <div
+            className={activeStep == 5 ? "step active" : "step"}
+            onClick={() => handleStepClick(5)}
+          >
+            <div className="step-number">5</div>
+            <div className="step-name">SOV</div>
           </div>
         </div>
         <StepModal text={modalText} openModal={openModal} onCloseModal={()=>{setOpenModal(false)}} onStepBack={stepBack}/>
