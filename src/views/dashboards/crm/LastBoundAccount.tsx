@@ -64,7 +64,11 @@ const LastBoundAccount = () => {
         {rows?.map((item, index) => (
           <Row sx={{ backgroundColor: item.backgroundColor }} key={index}>
             <ColumnLabel>{item.label}</ColumnLabel>
-            <ColumnData>{item.data}</ColumnData>
+            {index === 1 ? (
+              <ColumnData sx={{ fontSize: '14px' }}>{item.data}</ColumnData>
+            ) : (
+              <ColumnData>{item.data}</ColumnData>
+            )}
           </Row>
         ))}
 
