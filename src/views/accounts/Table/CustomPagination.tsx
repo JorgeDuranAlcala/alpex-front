@@ -10,7 +10,10 @@ const CustomPagination = () => {
 
   const handleDispatch = (e: any, value: number) => {
     accountsReducer
-    dispatch(fetchAccounts({ ...accountsReducer, info: { ...accountsReducer.info, page: value } }))
+
+    //dispatch(fetchAccounts({ ...accountsReducer, info: { ...accountsReducer.info, page: value } }))
+
+    dispatch(fetchAccounts(value))
   }
 
   const page = parseInt(accountsReducer.info.page.toString())
