@@ -477,12 +477,15 @@ const AddUser = ({ selectUser, title, subTitle, handleView }: IAddUser) => {
     const reducersCompany = usersReducer?.current?.idCompany?.id
     const companySelect = company?.find(c => c.id === reducersCompany)
     setIdCompany(companySelect?.id.toString())
-    if (companySelect?.id) {
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [company, setIdCompany, selectUser])
 
-      setValue('company', companySelect?.id.toString(), { shouldValidate: true })
+  useEffect(() => {
+    if (idCompany && selectUser) {
+      setValue('company', idCompany, { shouldValidate: true })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [company, setIdCompany])
+  }, [selectUser, idCompany])
 
   // useEffect(() => {
   //   if (selectUser) {
