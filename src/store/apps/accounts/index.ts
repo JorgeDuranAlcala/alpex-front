@@ -1,4 +1,5 @@
 // ** Redux Imports
+import { RootState } from '@/store'
 import { setDateFilterQuery } from '@/utils/formatDates'
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 
@@ -23,36 +24,38 @@ const initialState: IAccountsState = {
   temporalFilters: []
 }
 
-export const fetchAccounts = createAsyncThunk(
-  'appAccounts/fetchAccounts',
-  async (state: IAccountsState = initialState) => {
-    const formatedFilters = []
-    const rawFilters = state.filters
+export const fetchAccounts = createAsyncThunk('appAccounts/fetchAccounts', async (page: number, { getState }) => {
+  const state = (getState() as RootState).accounts
+  const formatedFilters = []
+  const rawFilters = state.filters
 
-    if (rawFilters && rawFilters.length > 0) {
-      for (const rawFilter of rawFilters) {
-        if (rawFilter.type === 'status') {
-          formatedFilters.push({
-            ...rawFilter,
-            value: String(rawFilter.text)
-          })
+  if (rawFilters && rawFilters.length > 0) {
+    for (const rawFilter of rawFilters) {
+      if (rawFilter.type === 'status') {
+        formatedFilters.push({
+          ...rawFilter,
+          value: String(rawFilter.text)
+        })
+      } else {
+        if (rawFilter.type === 'effectiveDate') {
+          setDateFilterQuery(rawFilter, formatedFilters, 'effectiveDate')
+        } else if (rawFilter.type === 'expirationDate') {
+          setDateFilterQuery(rawFilter, formatedFilters, 'expirationDate')
         } else {
-          if (rawFilter.type === 'effectiveDate') {
-            setDateFilterQuery(rawFilter, formatedFilters, 'effectiveDate')
-          } else if (rawFilter.type === 'expirationDate') {
-            setDateFilterQuery(rawFilter, formatedFilters, 'expirationDate')
-          } else {
-            formatedFilters.push(rawFilter)
-          }
+          formatedFilters.push(rawFilter)
         }
       }
     }
-
-    const data = await accountsService.getAccounts({ ...state, filters: formatedFilters })
-
-    return data
   }
-)
+
+  const data = await accountsService.getAccounts({
+    ...state,
+    filters: formatedFilters,
+    info: { ...state.info, page }
+  })
+
+  return data
+})
 
 export const appAccountsSlice = createSlice({
   name: 'appAccounts',
@@ -60,7 +63,7 @@ export const appAccountsSlice = createSlice({
   reducers: {
     handleAccountFilter: (state, { payload }) => {
       if (!state.filters.find(item => item.type === payload.type)) {
-        state.filters.push({ ...payload })
+        state.filters = [...state.filters, { ...payload }]
         state.info.page = 1
       } else {
         state.filters = state.filters.map(item => {
@@ -73,10 +76,26 @@ export const appAccountsSlice = createSlice({
       }
     },
     deleteAccountFilter: (state, { payload }) => {
-      state.filters = state.filters.filter(item => item.type !== payload)
+      ;(state.filters = state.filters.filter(item => item.type !== payload)),
+        (state.info = {
+          count: 0,
+          page: 1,
+          take: 10,
+          pages: 0,
+          next: '',
+          prev: ''
+        })
     },
     resetAccountFilter: state => {
-      state.filters = []
+      ;(state.filters = []),
+        (state.info = {
+          count: 0,
+          page: 1,
+          take: 10,
+          pages: 0,
+          next: '',
+          prev: ''
+        })
     },
 
     updateFormsData: (state, { payload }) => {
@@ -103,6 +122,7 @@ export const appAccountsSlice = createSlice({
       // })
       // state.accounts = account
       // state.info = action.payload.info
+
       state.loading = false
       state.accounts = action.payload.results
       state.info = action.payload.info
@@ -111,8 +131,9 @@ export const appAccountsSlice = createSlice({
       state.accounts = []
       state.loading = true
     })
-    builder.addCase(appAccountsSlice.actions.handleAccountFilter, state => {
-      state.accounts = []
+    builder.addCase(appAccountsSlice.actions.handleAccountFilter, (state, action) => {
+      state.filters = [...state.filters, { ...action.payload }]
+      state.info.page = 1
     })
   }
 })
