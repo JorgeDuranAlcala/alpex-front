@@ -128,15 +128,15 @@ const CedantContacts = ({ idCedant }: ICedantContacts) => {
     setAlertType(type)
 
     switch (type) {
-      case 'success':
+      case 'success-alert':
         setAlertText(text || 'NEW CONTACT ADDED')
         setAlertIcon('mdi:check-circle-outline')
         break
-      case 'error':
+      case 'error-alert':
         setAlertText('UNKNOWN ERROR, TRY AGAIN')
         setAlertIcon('mdi:alert-circle-outline')
         break
-      case 'warn':
+      case 'warn-alert':
         setAlertText('NO INTERNET CONNECTION')
         setAlertIcon('mdi:alert-outline')
         break
@@ -354,12 +354,12 @@ const CedantContacts = ({ idCedant }: ICedantContacts) => {
       idCCountry: contactData.idCCountry.id
     })
     if (result) {
-      triggerAlert('success')
+      triggerAlert('success-alert')
       setContactData(initialNewContact)
       getCedantContactsByIdCedant(cedantContactsPagination)
     }
     setOpenNewContact(false)
-    triggerAlert('success')
+    triggerAlert('success-alert')
   }
 
   const editContact = async () => {

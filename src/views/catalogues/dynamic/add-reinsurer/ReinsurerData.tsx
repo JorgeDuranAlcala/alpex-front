@@ -85,15 +85,15 @@ const ReinsurerData = ({ idReinsuranceCompany, setIdReinsuranceCompany }: IReins
     setAlertType(type)
 
     switch (type) {
-      case 'success':
+      case 'success-alert':
         setAlertText(text || 'NEW REINSURER ADDED')
         setAlertIcon('mdi:check-circle-outline')
         break
-      case 'error':
+      case 'error-alert':
         setAlertText('UNKNOWN ERROR, TRY AGAIN')
         setAlertIcon('mdi:alert-circle-outline')
         break
-      case 'warn':
+      case 'warn-alert':
         setAlertText('NO INTERNET CONNECTION')
         setAlertIcon('mdi:alert-outline')
         break
@@ -123,15 +123,15 @@ const ReinsurerData = ({ idReinsuranceCompany, setIdReinsuranceCompany }: IReins
           name: result.name,
           idSubscriptionType: result.idSubscriptionType || 0
         })
-        triggerAlert('success')
+        triggerAlert('success-alert')
         setIdReinsuranceCompany(result.id)
         setNameDisabled(true)
         setIsReinsuranceCompanySaved(true)
       } else {
-        triggerAlert('error')
+        triggerAlert('error-alert')
       }
     } catch (error) {
-      triggerAlert('error')
+      triggerAlert('error-alert')
     }
   }
 
@@ -157,10 +157,10 @@ const ReinsurerData = ({ idReinsuranceCompany, setIdReinsuranceCompany }: IReins
         setIsEditing(false)
         triggerAlert('success', 'CHANGES SAVED')
       } else {
-        triggerAlert('error')
+        triggerAlert('error-alert')
       }
     } catch (error) {
-      triggerAlert('error')
+      triggerAlert('error-alert')
     }
   }
 
@@ -170,7 +170,7 @@ const ReinsurerData = ({ idReinsuranceCompany, setIdReinsuranceCompany }: IReins
       triggerAlert('success', 'DELETED')
       setIdReinsuranceCompany(0)
     } else {
-      triggerAlert('error')
+      triggerAlert('error-alert')
     }
     setOpenDelete(false)
   }
