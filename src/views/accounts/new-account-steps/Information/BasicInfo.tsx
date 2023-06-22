@@ -61,6 +61,23 @@ interface BasicInfoErrors {
   effectiveDateError: boolean
   expirationDateError: boolean
 }
+interface BasicInfoSaveErrors {
+  insuredError: boolean
+  countryError: boolean
+  brokerError: boolean
+  cedantError: boolean
+  lineOfBusinessError: boolean
+
+  // underwriterError: boolean
+  // leadUnderwriterError: boolean
+  // technicalAssistantError: boolean
+  industryCodeError: boolean
+  riskActivityError: boolean
+  riskClassError: boolean
+  receptionDateError: boolean
+  effectiveDateError: boolean
+  expirationDateError: boolean
+}
 type BasicInfoType = {
   insured: string
   country: number | string
@@ -89,7 +106,8 @@ type BasicInfoProps = {
   basicInfo: BasicInfoType
   setBasicInfo: React.Dispatch<React.SetStateAction<BasicInfoType>>
   makeValidations: boolean
-  onValidationComplete: (valid: boolean) => void
+  makeSaveValidations: boolean
+  onValidationComplete: (valid: boolean, formName: string) => void
 }
 
 /* eslint-disable */
@@ -113,7 +131,7 @@ const CustomInput = forwardRef(({ ...props }: PickerProps, ref: ForwardedRef<HTM
 
 type CheckboxValue = 'new' | 'renewal';
 
-const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeValidations, onValidationComplete }) => {
+const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeValidations,makeSaveValidations, onValidationComplete}) => {
   //cargamos la informacion de los catalogos de base de datos
   const { countries } = useCountyGetAll()
   const { brokers } = useBrokerGetAll()
@@ -244,7 +262,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
       // underwriterError: basicInfoTemp.underwriter === '',
       // leadUnderwriterError: basicInfoTemp.leadUnderwriter === '',
       // technicalAssistantError: basicInfoTemp.technicalAssistant === '',
-      industryCodeError: basicInfoTemp.industryCode === '',
+      industryCodeError: basicInfoTemp.industryCode === ''|| basicInfoTemp.industryCode === null,
       riskActivityError: basicInfoTemp.riskActivity === '',
       riskClassError: basicInfoTemp.riskClass === 0,
       receptionDateError: basicInfoTemp.receptionDate === null,
@@ -261,13 +279,14 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
     setErrors(newErrors)
 
     if (Object.values(newErrors).every(error => !error)) {
-      onValidationComplete(true)
+      onValidationComplete(true, "basicInfo")
       setValidateForm(true)
     } else {
-      onValidationComplete(false)
+      onValidationComplete(false, "basicInfo")
       setValidateForm(false)
     }
   }
+
 
   const getErrorMessage = (name: keyof BasicInfoErrors) => {
     let errorMsj= 'This field is required'
@@ -367,11 +386,11 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
   // }, [basicInfo.industryCode, riskActivities])
 
   useEffect(() => {
-    if (makeValidations) {
+    if (makeValidations || makeSaveValidations) {
       validations()
       setValidateForm(false)
     }
-  }, [makeValidations])
+  }, [makeValidations, makeSaveValidations])
 
   React.useEffect(() => {
     console.log('basic info cambio')
@@ -705,8 +724,8 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
               )}
             </Select>}
             {errors.industryCodeError && (
-              <FormHelperText sx={{ color: 'error.main' }} id='industryCode-error'>
-                {getErrorMessage('industryCodeError')}
+              <FormHelperText sx={{ color: 'error.main' }} id='business-error'>
+                {getErrorMessage('lineOfBusinessError')}
               </FormHelperText>
             )}
           </FormControl>

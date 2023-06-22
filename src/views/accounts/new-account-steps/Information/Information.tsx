@@ -84,6 +84,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
   const inter = userThemeConfig.typography?.fontFamilyInter
   const [makeValidations, setMakeValidations] = useState(false)
+  const [makeSaveValidations, setMakeSaveValidations] = useState(false)
   const [disableSave, setDisableSave] = useState(false)
   const [changeTitle, setChangeTitle] = useState(false)
 
@@ -204,8 +205,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
       taxes: placementStructure.taxes,
       taxesTotal: placementStructure.taxesP,
       totalValues: placementStructure.total,
-      idTypeOfLimit: Number(placementStructure.typeOfLimit),
-      idAccountType: 1
+      idTypeOfLimit: Number(placementStructure.typeOfLimit)
     })
 
     await delayMs(1000)
@@ -270,7 +270,6 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
       idLeadUnderwriter: Number(basicInfo.leadUnderwriter) === 0 ? null : Number(basicInfo.leadUnderwriter),
       idTechnicalAssistant: Number(basicInfo.technicalAssistant) === 0 ? null : Number(basicInfo.technicalAssistant),
       idUnderwriter: Number(basicInfo.underwriter) === 0 ? null : Number(basicInfo.underwriter),
-      idAccountType: 1,
       riskClass: basicInfo.riskClass,
       currency: placementStructure.currency,
       exchangeRate: placementStructure.exchangeRate,
@@ -527,10 +526,17 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
     handleCloseModal()
   }
 
-  const handleValidationComplete = (valid: boolean) => {
+  const handleValidationComplete = (valid: boolean, formName: string) => {
     setValidationCount(prevCount => prevCount + 1)
     if (valid) {
+      if(nextClicked)
       setValidatedForms(prevCount => prevCount + 1)
+
+      if(formName=='basicInfo' && saveClicked){ // If Basic info is validated and save button was clicked then save information
+        setDisableSave(true)
+        handleSaveInformation()
+        setSaveClicked(false)
+      }
     }
   }
 
@@ -540,15 +546,16 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
     switch (action) {
       case 'save':
         setSaveClicked(true)
+        setMakeSaveValidations(true)
         break
       case 'next':
         setNextClicked(true)
+        setMakeValidations(true)
         break
       default:
         break
     }
 
-    setMakeValidations(true)
   }
 
   const handleCloseModal = () => {
@@ -647,17 +654,18 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   useEffect(() => {
     console.log(validationCount)
     console.log(validatedForms)
-    if (validationCount === 1 && validatedForms === 1) {
+    if (validationCount === 2 && validatedForms === 2) {
       setAllValidated(true)
       if (nextClicked) {
         setOpen(true)
         setNextClicked(false)
       }
-      if (saveClicked) {
-        setDisableSave(true)
-        handleSaveInformation()
-        setSaveClicked(false)
-      }
+
+      // if (saveClicked) {
+      //   setDisableSave(true)
+      //   handleSaveInformation()
+      //   setSaveClicked(false)
+      // }
     } else {
       setAllValidated(false)
       if (nextClicked) {
@@ -681,6 +689,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
               basicInfo={basicInfo}
               setBasicInfo={setBasicInfo}
               makeValidations={makeValidations}
+              makeSaveValidations={makeSaveValidations}
               onValidationComplete={handleValidationComplete}
             />
           </div>
