@@ -5,8 +5,9 @@ import { useEffect, useState } from 'react'
 import Status from 'src/views/accounts/Table/Status'
 
 interface StatusSelect {
-  setSelectedStatus: React.Dispatch<React.SetStateAction<any>>,
+  setSelectedStatus: React.Dispatch<React.SetStateAction<any>>
   initialStatus: string
+  margin?: number
 }
 
 const statusArray = [
@@ -42,7 +43,7 @@ const statusArray = [
   }
 ]
 
-export default function StatusSelect({ setSelectedStatus, initialStatus }: StatusSelect) {
+export default function StatusSelect({ setSelectedStatus, initialStatus, margin = 1 }: StatusSelect) {
   //eslint-disable-next-line
   const [value, setValue] = useState<string | null>(null)
   const [status, setStatus] = useState(initialStatus)
@@ -67,12 +68,12 @@ export default function StatusSelect({ setSelectedStatus, initialStatus }: Statu
 
   return (
     <div className='status-select'>
-      <FormControl sx={{ m: 1, width: '100%' }} size='small'>
+      <FormControl sx={{ m: margin, width: '100%' }} size='small'>
         <Select
-         className='status-select-input'
+          className='status-select-input'
           labelId='demo-select-small-label'
           id='demo-select-small'
-          sx={{ background: "#E6EDFD", borderRadius: "20px" }}
+          sx={{ background: '#E6EDFD', borderRadius: '20px', border: '0px solid' }}
           value={status}
           onChange={handleChange}
         >
