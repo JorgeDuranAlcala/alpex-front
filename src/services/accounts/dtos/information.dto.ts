@@ -39,6 +39,7 @@ export interface InformationDto {
   idLeadUnderwriter: number | null | string
   idUnderwriter: number | null | string
   idTechnicalAssistant: number | null | string
+  idAccountType: number
 }
 
 interface IDataBroker {

@@ -1,5 +1,5 @@
 // ** React Imports
-import { useEffect, useState } from 'react'
+import { useRef } from 'react'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -13,28 +13,34 @@ import { deleteAccountFilter, handleAccountFilter } from 'src/store/apps/account
 import fonts from '../../font'
 
 const FilterMenuAccountId = () => {
-  const [query, setQuery] = useState('')
-  const dispatch = useAppDispatch()
+  const dispatch = useAppDispatch();
+  const searchTimeOutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  useEffect(() => {
-    if (query === '') dispatch(deleteAccountFilter('ID'))
-    else
-      dispatch(
-        handleAccountFilter({
-          type: 'idAccount',
-          value: `${query}`,
-          text: `${query}`
-        })
-      )
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [query])
+
+
+  const handleOnChangeSearch = (value: string) => {
+    if (searchTimeOutRef.current) {
+
+      clearTimeout(searchTimeOutRef.current);
+    }
+    searchTimeOutRef.current = setTimeout(() => {
+      if (value === '') dispatch(deleteAccountFilter('idAccount'))
+      else
+        dispatch(
+          handleAccountFilter({
+            type: 'idAccount',
+            value: `${value}`,
+            text: `${value}`
+          })
+        )
+    }, 500);
+  }
 
   return (
     <Box component={'li'} sx={{ padding: '3px 30px', display: 'flex', alignItems: 'center', width: '100%' }}>
       <Input
-        value={query}
         placeholder='Search by ID'
-        onChange={e => setQuery(e.target.value)}
+        onChange={e => handleOnChangeSearch(e.target.value)}
         sx={{
           fontFamily: fonts.inter,
           fontSize: fonts.size.px16,
