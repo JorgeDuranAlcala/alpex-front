@@ -22,15 +22,16 @@ export const useGetLastAccountByIdBroker = () => {
   }
 
   useEffect(() => {
-    if (brokerId) {
-      AccountServices.getLastAccountByIdBroker(brokerId)
-        .then(accounts => {
-          setAccount(accounts)
-        })
-        .catch((error: Error) => {
-          console.log(error)
-        })
-    }
+    // if (brokerId) {
+    AccountServices.getLastAccountByIdBroker(brokerId)
+      .then(accounts => {
+        setAccount(accounts)
+      })
+      .catch((error: Error) => {
+        console.log(error)
+      })
+
+    // }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [brokerId])
 

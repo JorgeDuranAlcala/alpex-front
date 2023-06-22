@@ -1,7 +1,7 @@
 export interface InformationDto {
   id: number
   insured: string
-  effectiveDate: Date | null
+  effectiveDate: Date | string | number
   expirationDate: Date | null
   receptionDate: Date | null
   createdAt?: Date | null
@@ -19,11 +19,11 @@ export interface InformationDto {
   step?: number
   currency: string
   exchangeRate: number
-  netPremium: number
+  netPremium: number | string
   grossPremium: number
   idAccount: number
   idCountry: number
-  idBroker: number
+  idBroker: IDataBroker
   idBrokerContact: number | null
   brokerContactEmail: string
   brokerContactPhone: string
@@ -41,6 +41,12 @@ export interface InformationDto {
   idTechnicalAssistant: number | null | string
 }
 
+interface IDataBroker {
+  active: boolean
+  alias: string
+  id: number
+  name: string
+}
 export interface DoctoDto {
   type: string
   name: string
