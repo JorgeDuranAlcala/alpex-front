@@ -98,12 +98,15 @@ const Table = ({ status }: IAccountTable) => {
   }
 
   useEffect(() => {
-    dispatch(fetchAccounts(accountsReducer))
+    const page = 1
+    dispatch(fetchAccounts(page))
+
     //eslint-disable-next-line
   }, [accountsReducer.filters])
 
   useEffect(() => {
     dispatch(resetAccountFilter())
+
     if (status === undefined) dispatch(deleteAccountFilter('status'))
     else {
       const index: string = Object.keys(EStatus)[Object.values(EStatus).indexOf(status as any)]
@@ -422,8 +425,6 @@ const Table = ({ status }: IAccountTable) => {
     localStorage.setItem('idAccount', String(id))
     router.push(`/accounts/new-account/?&id=${id}`)
   }
-
-
 
   return (
     <>
