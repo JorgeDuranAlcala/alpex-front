@@ -90,7 +90,9 @@ export type FormSecurity = {
 export type errorsSecurity = {
   netPremiumAt100: string
   share: string
+  shareAmount: string
   premiumPerShareAmount: string
+  grossPremiumPerShareAmount: string
   reinsuranceBrokerage: string
   brokerAgeAmount: string
   dynamicCommission: string
