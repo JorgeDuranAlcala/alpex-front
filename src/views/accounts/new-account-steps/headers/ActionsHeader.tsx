@@ -1,12 +1,11 @@
 import CloseIcon from '@mui/icons-material/Close'
-import { Box, Button, Modal, Typography } from '@mui/material'
+import { Box, Button, Modal, Typography, styled } from '@mui/material'
 import { useEffect, useState } from 'react'
 import Icon from 'src/@core/components/icon'
 import { ButtonClose, HeaderTitleModal } from 'src/styles/Dashboard/ModalReinsurers/modalReinsurers'
 import StatusSelect from 'src/views/custom/select/StatusSelect'
 
 // ** MUI Imports
-import Card from '@mui/material/Card'
 
 interface IActionsHeaderProps {
   accountStatus: string
@@ -31,6 +30,23 @@ const statusHistory: StatusHistory[] = [
     date: '11 / January / 2021'
   }
 ]
+
+const ButtonIcon = styled(Button)({
+  boxShadow: 'none',
+  textTransform: 'none',
+
+  padding: '0px !important',
+
+  // border: '1px solid',
+  maxWidth: '52px !important',
+  '&:hover': {
+    boxShadow: 'none'
+  },
+  '&:active': {
+    boxShadow: 'none'
+  },
+  '&:focus': {}
+})
 
 const ActionsHeader: React.FC<IActionsHeaderProps> = ({ accountStatus, sideHeader }) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -65,48 +81,38 @@ const ActionsHeader: React.FC<IActionsHeaderProps> = ({ accountStatus, sideHeade
 
   return (
     <>
-      <Card className={sideHeader ? 'side-header' : ' '}>
-        <div className='actions-wrapper'>
+      <div className={sideHeader ? 'btnWrapperFth' : ' '}>
+        <div className='btnWrappers'>
           {sideHeader ? '' : <div className='header-text'>Status:</div>}
 
-          <div className='header-row'>
+          <div className='header-rows'>
             {sideHeader ? (
               ''
             ) : (
-              <div className='header-btn'>
+              <div className='header-btns'>
                 <StatusSelect setSelectedStatus={setStatus} initialStatus={accountStatus || 'PENDING'} />
               </div>
             )}
-            <div className='header-btn'>
-              <Button
-                className='edit-button'
+            <div className='header-btns'>
+              <ButtonIcon
                 onClick={() => {
                   setEditInfo(true)
                 }}
-                variant='outlined'
                 disabled={uneditableAccount}
               >
-                <div className='btn-icon'>
-                  <Icon icon='mdi:pencil' />
-                </div>
-                EDIT INFORMATION
-              </Button>
+                <Icon icon='mdi:pencil-outline' />
+              </ButtonIcon>
             </div>
 
-            <div className='header-btn'>
-              <Button
-                className='history-button'
+            <div className='header-btns'>
+              <ButtonIcon
                 onClick={() => {
                   setOpenHistory(true)
                 }}
-                variant='outlined'
                 disabled={uneditableAccount}
               >
-                <div className='btn-icon'>
-                  <Icon icon='mdi:clock' />
-                </div>
-                ACCOUNT HISTORY
-              </Button>
+                <Icon icon='mdi:clock-outline' />
+              </ButtonIcon>
               <Modal
                 className='history-modal'
                 open={openHistory}
@@ -141,21 +147,17 @@ const ActionsHeader: React.FC<IActionsHeaderProps> = ({ accountStatus, sideHeade
               </Modal>
             </div>
 
-            <div className='header-btn'>
-              <div className='print-btn'>
-                <Button
-                  className='print-button'
-                  onClick={() => {
-                    setShowPrintOptions(!showPrintOptions)
-                  }}
-                  variant='outlined'
-                  disabled={uneditableAccount}
-                >
-                  <div className='btn-icon'>
-                    <Icon icon='mdi:printer' />
-                  </div>
-                  PRINT SECTION
-                </Button>
+            <div className='header-btns'>
+              <ButtonIcon
+                className='print-button'
+                onClick={() => {
+                  setShowPrintOptions(!showPrintOptions)
+                }}
+                disabled={uneditableAccount}
+              >
+                <div className='btn-icon'>
+                  <Icon icon='mdi:printer' />
+                </div>
                 {showPrintOptions ? (
                   <div className='print-options'>
                     <div className='title'>Select a language</div>
@@ -169,23 +171,21 @@ const ActionsHeader: React.FC<IActionsHeaderProps> = ({ accountStatus, sideHeade
                 ) : (
                   ''
                 )}
-              </div>
+              </ButtonIcon>
             </div>
 
-            <div className='header-btn'>
-              <Button
+            <div className='header-btns'>
+              <ButtonIcon
                 className='delete-button'
                 onClick={() => {
                   setOpenDelete(true)
                 }}
-                variant='outlined'
                 disabled={uneditableAccount}
               >
                 <div className='btn-icon'>
-                  <Icon icon='mdi:delete' />
+                  <Icon icon='mdi:delete-outline' />
                 </div>
-                DELETE ACCOUNT
-              </Button>
+              </ButtonIcon>
 
               <Modal
                 className='delete-modal'
@@ -222,7 +222,7 @@ const ActionsHeader: React.FC<IActionsHeaderProps> = ({ accountStatus, sideHeade
             </div>
           </div>
         </div>
-      </Card>
+      </div>
     </>
   )
 }
