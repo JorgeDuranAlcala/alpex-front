@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react'
 
-import { InformationDto } from '@/services/accounts/dtos/information.dto'
+import { InformationResponse } from '@/services/accounts/dtos/information.dto'
 import { InstallmentDto } from '@/services/accounts/dtos/installments.dto'
 import AccountServices from 'src/services/accounts/account.service'
 
 export interface ResponseGetAccount {
   id: number
-  informations: InformationDto[]
+  informations: InformationResponse[]
   installments: InstallmentDto[]
   installmentsCount: number
 }
@@ -22,15 +22,16 @@ export const useGetLastAccountByIdBroker = () => {
   }
 
   useEffect(() => {
-    if (brokerId) {
-      AccountServices.getLastAccountByIdBroker(brokerId)
-        .then(accounts => {
-          setAccount(accounts)
-        })
-        .catch((error: Error) => {
-          console.log(error)
-        })
-    }
+    // if (brokerId) {
+    AccountServices.getLastAccountByIdBroker(brokerId)
+      .then(accounts => {
+        setAccount(accounts)
+      })
+      .catch((error: Error) => {
+        console.log(error)
+      })
+
+    // }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [brokerId])
 
