@@ -1070,6 +1070,25 @@
     letter-spacing: 0.4px;
   }
 }
+.form-header-money-data-date {
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 15px;
+  font-family: Inter;
+  letter-spacing: 0.4px;
+  color: #4d506261;
+  align-self: end;
+  margin-right: 14px;
+  @media (max-width: 900px) {
+    align-self: center;
+    margin-right: 0px;
+    max-width: 100%;
+    width: 100%;
+    font-size: 12px;
+    line-height: 15px;
+    letter-spacing: 0.4px;
+  }
+}
 
 .form-secondContainer-first {
   display: flex;
@@ -1109,6 +1128,30 @@
     flex-direction: column;
     justify-content: space-between;
   }
+}
+.form-secondContainer-fourth {
+  display: flex;
+  flex-direction: column;
+  @media (max-width: 900px) {
+    display: none;
+    /* border: 1px solid red; */
+    flex-direction: column;
+    justify-content: space-between;
+  }
+}
+.form-secondContainer-fourths {
+  display: flex;
+  flex-direction: column;
+  @media (max-width: 900px) {
+    display: flex;
+    /* border: 1px solid red; */
+    flex-direction: column;
+    justify-content: space-between;
+  }
+}
+
+.display-none {
+  display: none;
 }
 .form-secondContainer-header-title {
   font-weight: 400;

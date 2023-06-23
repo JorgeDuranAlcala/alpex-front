@@ -185,21 +185,28 @@ const FormHeader = ({ isNewAccount }: any) => {
                 <div className='form-secondContainer-third'>
                   <span className='form-header-money-data-date'>Last Update: 11 / 03 / 2023</span>
                 </div>
-                <div className='form-secondContainer-second'>
-                  <span className='form-secondContainer-header-title'>Line of Business</span>
-                  <span className='form-secondContainer-header-subtitle'>
-                    {information && formatDate(information?.createdAt)}
-                  </span>
-                </div>
+                {!isNewAccount && (
+                  <div className='form-secondContainer-second'>
+                    <span className='form-secondContainer-header-title'>Line of Business</span>
+                    <span className='form-secondContainer-header-subtitle'>
+                      {information && formatDate(information?.createdAt)}
+                    </span>
+                  </div>
+                )}
 
-                <div className='form-secondContainer-second'>
-                  <span className='form-secondContainer-header-title'>Reception Date</span>
-                  <span className='form-secondContainer-header-subtitle'>
-                    {information && formatDate(information?.createdAt)}
-                  </span>
-                </div>
+                {!isNewAccount && (
+                  <div className='form-secondContainer-second'>
+                    <span className='form-secondContainer-header-title'>Reception Date</span>
+                    <span className='form-secondContainer-header-subtitle'>
+                      {information && formatDate(information?.createdAt)}
+                    </span>
+                  </div>
+                )}
               </div>
-              <div className='actions-header'>
+              <div className={!isNewAccount ? 'actions-header' : 'form-secondContainer-fourths'}>
+                <div className={!isNewAccount ? 'display-none' : 'form-secondContainer-fourth'}>
+                  <span className='form-header-money-data-date'>Last Update: 11 / 03 / 2023</span>
+                </div>
                 <ActionsHeader accountStatus='PENDING' sideHeader={true} />
               </div>
             </div>
