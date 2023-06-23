@@ -30,8 +30,10 @@ import { createContext, useEffect, useState } from 'react'
 import Icon from 'src/@core/components/icon'
 import UserThemeOptions from 'src/layouts/UserThemeOptions'
 import { SecurityMapper } from './mappers/SecurityForm.mapper'
-import { ViewMocks } from './mocks/ViewMocks'
-import { formInformationData as formInformationDataMock } from './mocks/form_2_FormInformationData'
+
+// import { ViewMocks } from './mocks/ViewMocks'
+
+// import { formInformationData as formInformationDataMock } from './mocks/form_2_FormInformationData'
 import { CalculateSecurity } from './utils/calculates-securities'
 
 export const SecurityContext = createContext<SecurityContextDto>({} as SecurityContextDto)
@@ -298,17 +300,20 @@ const Security = ({ onStepChange }: SecurityProps) => {
     setAllErrors(() => [...updatedErrors])
   }
 
+  // useEffect(() => {
+  //   // Todo: comentar mock
+  //   setAccountId(1)
+  //   setInformation(formInformationDataMock)
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [accountData.formsData.form1.id])
+
   useEffect(() => {
-    // Todo: descomentar
-    // const idAccountCache = Number(localStorage.getItem('idAccount'))
-    // if (accountData.formsData.form1.id) {
-    //   setAccountId(accountData.formsData.form1.id || idAccountCache)
-    //   const data = accountData.formsData.form1.placementStructure as FormInformation
-    //   setInformation(data)
-    // }
-    // Todo: comentar mock
-    setAccountId(1)
-    setInformation(formInformationDataMock)
+    const idAccountCache = Number(localStorage.getItem('idAccount'))
+    if (accountData.formsData.form1.id) {
+      setAccountId(accountData.formsData.form1.id || idAccountCache)
+      const data = accountData.formsData.form1.placementStructure as FormInformation
+      setInformation(data)
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accountData.formsData.form1.id])
 
@@ -348,7 +353,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
       }}
     >
       <div style={{ fontFamily: inter }}>
-        <ViewMocks />
+        {/* <ViewMocks /> */}
         <CardHeader title={<Title>Security</Title>} />
         <CustomAlert {...badgeData} />
         <form noValidate autoComplete='on'>

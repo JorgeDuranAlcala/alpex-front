@@ -397,7 +397,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
             index={index}
             validateForm={validateForm}
             security={security}
-            isChecked={frontingFeeEnabled}
+            isChecked={isTaxesEnabled}
             setIsTaxesEnabled={setIsTaxesEnabled}
           />
           {isTaxesEnabled && (

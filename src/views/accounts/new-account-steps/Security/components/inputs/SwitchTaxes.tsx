@@ -40,7 +40,7 @@ export const SwitchTaxes = ({ index, validateForm, security, isChecked, setIsTax
 
 
   return (
-    <FormControl fullWidth sx={{ mb: 5 }}>
+    <FormControl fullWidth sx={{ mb: 6 }}>
       <div>
         <span className='switch-text'>Taxes </span>
         <SwitchAlpex checked={isChecked} onClick={handleSwitch} />
