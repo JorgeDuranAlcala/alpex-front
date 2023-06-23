@@ -12,6 +12,7 @@ import FormHelperText from '@mui/material/FormHelperText'
 import InputLabel from '@mui/material/InputLabel'
 import MenuItem from '@mui/material/MenuItem'
 import Select, { SelectChangeEvent } from '@mui/material/Select'
+import Switch from '@mui/material/Switch'
 import TextField from '@mui/material/TextField'
 
 // ** Third Party Imports
@@ -23,11 +24,13 @@ interface PlacementStructureErrors {
   totalError: boolean
   reinsuranceBrokeragePError: boolean
   taxesPError: boolean
+  frontingFeePError: boolean
   exchangeRateError: boolean
   limitError: boolean
   grossPremiumError: boolean
   reinsuranceBrokerageError: boolean
   taxesError: boolean
+  frontingFeeError: boolean
   typeOfLimitError: boolean
 }
 
@@ -90,17 +93,22 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
   const [taxes, setTaxes] = useState<number>()
   const [frontingFee, setFrontingFee] = useState<number>()
 
+  const [taxesChecked, setTaxesChecked] = useState(false);
+  const [frontingChecked, setFrontingChecked] = useState(false);
+
   // const [valid, setValid] = useState(false)
   const [errors, setErrors] = useState<PlacementStructureErrors>({
     currencyError: false,
     totalError: false,
     reinsuranceBrokeragePError: false,
     taxesPError: false,
+    frontingFeePError: false,
     exchangeRateError: false,
     limitError: false,
     grossPremiumError: false,
     reinsuranceBrokerageError: false,
     taxesError: false,
+    frontingFeeError: false,
     typeOfLimitError: false
   })
   const { setPair, exchangeRate, pair } = useExchangePair()
@@ -201,17 +209,27 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
     })
   }
 
+  const handleTaxesChange = () => {
+    setTaxesChecked(!taxesChecked);
+  };
+
+  const handleFrontingChange = () => {
+    setFrontingChecked(!frontingChecked);
+  };
+
   const validations = () => {
     const newErrors: PlacementStructureErrors = {
       currencyError: placementStructure.currency === '',
       totalError: placementStructure.total === 0,
       reinsuranceBrokeragePError: placementStructure.reinsuranceBrokerageP === 0,
-      taxesPError: placementStructure.taxesP === 0,
+      taxesPError:  (taxesChecked && placementStructure.taxesP === 0 ),
+      frontingFeePError:(frontingChecked && placementStructure.frontingFeeP === 0 ),
       exchangeRateError: placementStructure.exchangeRate === 0,
       limitError: placementStructure.limit === 0,
       grossPremiumError: placementStructure.grossPremium === 0,
       reinsuranceBrokerageError: placementStructure.reinsuranceBrokerage === 0,
-      taxesError: placementStructure.taxes === undefined,
+      taxesError: (taxesChecked && (placementStructure.taxes === undefined || placementStructure.taxes === 0) ),
+      frontingFeeError: (frontingChecked && (placementStructure.frontingFee === undefined || placementStructure.frontingFee === 0) ),
       typeOfLimitError: placementStructure.typeOfLimit === ''
     }
     setErrors(newErrors)
@@ -246,6 +264,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
     setNetPremium(placementStructure.netPremium)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [placementStructure.grossPremium])
+
   useEffect(() => {
     if (exchangeRate) {
       setPlacementStructure({
@@ -257,11 +276,39 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [exchangeRate])
 
+  useEffect(() => {
+    if (!taxesChecked) {
+      setTaxesP(0)
+      setTaxes(0)
+      setPlacementStructure({
+        ...placementStructure,
+        taxes: 0,
+        taxesP: 0
+      })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [taxesChecked])
+
+  useEffect(() => {
+    if (!frontingChecked) {
+      setFrontingFeeP(0)
+      setFrontingFee(0)
+
+      setPlacementStructure({
+        ...placementStructure,
+        frontingFee: 0,
+        frontingFeeP: 0
+      })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [frontingChecked])
+
+
   React.useEffect(() => {
     if (makeValidations) {
       validations();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [makeValidations]);
 
 
@@ -269,6 +316,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
     <>
       <div className='title'>Placement Structure</div>
       <div className='form-wrapper'>
+
         <div className='form-col'>
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }} error={errors.currencyError}>
             <InputLabel>Currency</InputLabel>
@@ -378,60 +426,6 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               }}
               error={errors.reinsuranceBrokeragePError}
               helperText={getErrorMessage('reinsuranceBrokeragePError')}
-            />
-          </FormControl>
-          <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
-            <NumericFormat
-              name='taxesP'
-              value={taxesP}
-              allowLeadingZeros
-              thousandSeparator=','
-              customInput={TextField}
-              id='taxes-p'
-              label='Taxes %'
-              multiline
-              suffix={'%'}
-              decimalScale={2}
-              variant='outlined'
-              onBlur={() => calculate('taxesP')}
-              isAllowed={values => {
-                const { floatValue } = values
-
-                return (floatValue! >= 0 && floatValue! <= 100) || floatValue === undefined
-              }}
-              onValueChange={value => {
-                setTaxesP(value.floatValue)
-                handleNumericInputChange(value.floatValue, 'taxesP')
-              }}
-              error={errors.taxesPError}
-              helperText={getErrorMessage('taxesPError')}
-            />
-          </FormControl>
-
-          <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
-            <NumericFormat
-              name='frontingFeeP'
-              value={frontingFeeP}
-              allowLeadingZeros
-              thousandSeparator=','
-              customInput={TextField}
-              id='fronting-fee-p'
-              label='Fronting fee %'
-              multiline
-              suffix={'%'}
-              maxRows={4}
-              decimalScale={2}
-              variant='outlined'
-              onBlur={() => calculate('frontingFeeP')}
-              isAllowed={values => {
-                const { floatValue } = values
-
-                return (floatValue! >= 0 && floatValue! <= 100) || floatValue === undefined
-              }}
-              onValueChange={value => {
-                setFrontingFeeP(value.floatValue)
-                handleNumericInputChange(value.floatValue, 'frontingFeeP')
-              }}
             />
           </FormControl>
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
@@ -550,61 +544,8 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
             {false && <FormHelperText sx={{ color: 'error.main' }}>Required Field</FormHelperText>}
           </FormControl>
 
-          <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
-            <NumericFormat
-              name='taxes'
-              value={taxes}
-              allowLeadingZeros
-              thousandSeparator=','
-              customInput={TextField}
-              id='taxes'
-              label='Taxes'
-              multiline
-              prefix='$'
-              variant='outlined'
-              decimalScale={2}
-              onBlur={() => calculate('taxes')}
-              isAllowed={values => {
-                const { floatValue } = values
-                const upLimit = grossPremium || 0
-
-                return (floatValue! >= 0 && floatValue! <= upLimit) || floatValue === undefined
-              }}
-              onValueChange={value => {
-                setTaxes(value.floatValue)
-                handleNumericInputChange(value.floatValue, 'taxes')
-              }}
-              error={errors.taxesError}
-              helperText={getErrorMessage('taxesError')}
-            />
-          </FormControl>
-          <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
-            <NumericFormat
-              name='frontingFee'
-              value={frontingFee}
-              allowLeadingZeros
-              thousandSeparator=','
-              customInput={TextField}
-              id='fornting-fee'
-              label='Fronting fee'
-              prefix='$'
-              multiline
-              variant='outlined'
-              decimalScale={2}
-              onBlur={() => calculate('frontingFee')}
-              isAllowed={values => {
-                const { floatValue } = values
-                const upLimit = grossPremium || 0
-
-                return (floatValue! >= 0 && floatValue! <= upLimit) || floatValue === undefined
-              }}
-              onValueChange={value => {
-                setFrontingFee(value.floatValue)
-                handleNumericInputChange(value.floatValue, 'frontingFee')
-              }}
-            />
-          </FormControl>
         </div>
+
         <div className='form-col'>
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <NumericFormat
@@ -654,6 +595,158 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
             )}
           </FormControl>
         </div>
+
+      </div>
+
+      <div className='form-wrapper'>
+
+        <div className='form-col'>
+          <div className='form-row'>
+            <div className='row-title'>
+              Taxes
+            </div>
+            <div className='switch-btn-container'>
+              <Switch
+                checked={taxesChecked}
+                onChange={handleTaxesChange}
+                color="primary"
+              />
+            </div>
+          </div>
+          <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
+            <NumericFormat
+              name='taxesP'
+              value={taxesP}
+              allowLeadingZeros
+              thousandSeparator=','
+              customInput={TextField}
+              id='taxes-p'
+              label='Taxes %'
+              multiline
+              suffix={'%'}
+              decimalScale={2}
+              variant='outlined'
+              disabled={taxesChecked ? false : true}
+              onBlur={() => calculate('taxesP')}
+              isAllowed={values => {
+                const { floatValue } = values
+
+                return (floatValue! >= 0 && floatValue! <= 100) || floatValue === undefined
+              }}
+              onValueChange={value => {
+                setTaxesP(value.floatValue)
+                handleNumericInputChange(value.floatValue, 'taxesP')
+              }}
+              error={taxesChecked && errors.taxesPError}
+              helperText={ taxesChecked && errors.taxesPError ? "This field must be greater than 0" : ''}
+            />
+          </FormControl>
+          <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
+            <NumericFormat
+              name='taxes'
+              value={taxes}
+              allowLeadingZeros
+              thousandSeparator=','
+              customInput={TextField}
+              id='taxes'
+              label='Taxes'
+              multiline
+              prefix='$'
+              variant='outlined'
+              disabled={taxesChecked ? false : true}
+              decimalScale={2}
+              onBlur={() => calculate('taxes')}
+              isAllowed={values => {
+                const { floatValue } = values
+                const upLimit = grossPremium || 0
+
+                return (floatValue! >= 0 && floatValue! <= upLimit) || floatValue === undefined
+              }}
+              onValueChange={value => {
+                setTaxes(value.floatValue)
+                handleNumericInputChange(value.floatValue, 'taxes')
+              }}
+              error={taxesChecked && errors.taxesError}
+              helperText={taxesChecked && errors.taxesError ? "This field must be greater than 0" : ''}
+            />
+          </FormControl>
+
+
+        </div>
+
+        <div className='form-col'>
+          <div className='form-row'>
+            <div className='row-title'>
+              Fronting fee
+            </div>
+            <div className='switch-btn-container'>
+              <Switch
+                checked={frontingChecked}
+                onChange={handleFrontingChange}
+                color="primary"
+              />
+            </div>
+          </div>
+          <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
+            <NumericFormat
+              name='frontingFeeP'
+              value={frontingFeeP}
+              allowLeadingZeros
+              thousandSeparator=','
+              customInput={TextField}
+              id='fronting-fee-p'
+              label='Fronting fee %'
+              multiline
+              suffix={'%'}
+              maxRows={4}
+              decimalScale={2}
+              variant='outlined'
+              disabled={frontingChecked ? false : true}
+              onBlur={() => calculate('frontingFeeP')}
+              isAllowed={values => {
+                const { floatValue } = values
+
+                return (floatValue! >= 0 && floatValue! <= 100) || floatValue === undefined
+              }}
+              onValueChange={value => {
+                setFrontingFeeP(value.floatValue)
+                handleNumericInputChange(value.floatValue, 'frontingFeeP')
+              }}
+              error={frontingChecked && errors.frontingFeePError}
+              helperText={frontingChecked && errors.frontingFeePError ? "This field must be greater than 0" : ''}
+            />
+          </FormControl>
+          <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
+            <NumericFormat
+              name='frontingFee'
+              value={frontingFee}
+              allowLeadingZeros
+              thousandSeparator=','
+              customInput={TextField}
+              id='fornting-fee'
+              label='Fronting fee'
+              prefix='$'
+              multiline
+              variant='outlined'
+              disabled={frontingChecked ? false : true}
+              decimalScale={2}
+              onBlur={() => calculate('frontingFee')}
+              isAllowed={values => {
+                const { floatValue } = values
+                const upLimit = grossPremium || 0
+
+                return (floatValue! >= 0 && floatValue! <= upLimit) || floatValue === undefined
+              }}
+              onValueChange={value => {
+                setFrontingFee(value.floatValue)
+                handleNumericInputChange(value.floatValue, 'frontingFee')
+              }}
+              error={frontingChecked && errors.frontingFeeError}
+              helperText={frontingChecked && errors.frontingFeeError ? "This field must be greater than 0" : ''}
+            />
+          </FormControl>
+        </div>
+
       </div>
     </>
   )
