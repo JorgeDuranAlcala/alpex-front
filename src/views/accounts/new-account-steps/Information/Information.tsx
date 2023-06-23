@@ -249,6 +249,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   }
 
   const saveInformation = async () => {
+
     const dataToSave = {
       insured: basicInfo.insured,
       idCountry: Number(basicInfo.country),
@@ -286,7 +287,6 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
       taxesTotal: placementStructure.taxesP,
       totalValues: placementStructure.total,
       idTypeOfLimit: Number(placementStructure.typeOfLimit),
-      step: 1
     }
 
     const res = await addInformation(dataToSave)
@@ -703,7 +703,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
             />
           </div>
 
-          <div className='section'>
+          <div className='section' style={{display: 'none'}}>
             <div className='title'>{changeTitle ? 'Submited files' : 'File submit'}</div>
             <FileSubmit
               userFile={userFile}
