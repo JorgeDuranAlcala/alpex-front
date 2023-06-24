@@ -114,7 +114,7 @@ const ModalUploadImage = () => {
   )
 }
 
-const FormHeader = () => {
+const FormHeader = ({ isNewAccount }: any) => {
   const [status, setStatus] = useState({})
 
   const account = useAppSelector(state => state.accounts?.formsData?.form1)
@@ -152,23 +152,25 @@ const FormHeader = () => {
         <div className='form-header-data'>
           <div className='form-container-all-data'>
             {/* Container first */}
-            <div className='form-header-sections'>
-              <div className='form-header-info-profile-container'>
-                <ModalUploadImage />
-                <div className='form-header-info-profile-txt-container'>
-                  <span className='form-header-info-profile-txt-title'>{account?.basicInfo?.insured}</span>
-                  <span className='form-header-info-profile-num'>#{account?.id}</span>
+            {!isNewAccount && (
+              <div className='form-header-sections'>
+                <div className='form-header-info-profile-container'>
+                  <ModalUploadImage />
+                  <div className='form-header-info-profile-txt-container'>
+                    <span className='form-header-info-profile-txt-title'>{account?.basicInfo?.insured}</span>
+                    <span className='form-header-info-profile-num'>#{account?.id}</span>
+                  </div>
+                </div>
+                <div className='form-header-money-data'>
+                  <span className='form-header-money-data-txt'>Net premium</span>
+                  <span className='form-header-money-data-num'>
+                    ${account && formaterAmount(account?.placementStructure?.netPremium)}{' '}
+                    {account?.placementStructure?.currency}
+                  </span>
+                  <span className='form-header-money-data-date'>Last Update: 11 / 03 / 2023</span>
                 </div>
               </div>
-              <div className='form-header-money-data'>
-                <span className='form-header-money-data-txt'>Net premium</span>
-                <span className='form-header-money-data-num'>
-                  ${account && formaterAmount(account?.placementStructure?.netPremium)}{' '}
-                  {account?.placementStructure?.currency}
-                </span>
-                <span className='form-header-money-data-date'>Last Update: 11 / 03 / 2023</span>
-              </div>
-            </div>
+            )}
             {/* Container first */}
 
             {/* Container second */}
@@ -183,21 +185,28 @@ const FormHeader = () => {
                 <div className='form-secondContainer-third'>
                   <span className='form-header-money-data-date'>Last Update: 11 / 03 / 2023</span>
                 </div>
-                <div className='form-secondContainer-second'>
-                  <span className='form-secondContainer-header-title'>Line of Business</span>
-                  <span className='form-secondContainer-header-subtitle'>
-                    {information && formatDate(information?.createdAt)}
-                  </span>
-                </div>
+                {!isNewAccount && (
+                  <div className='form-secondContainer-second'>
+                    <span className='form-secondContainer-header-title'>Line of Business</span>
+                    <span className='form-secondContainer-header-subtitle'>
+                      {information && formatDate(information?.createdAt)}
+                    </span>
+                  </div>
+                )}
 
-                <div className='form-secondContainer-second'>
-                  <span className='form-secondContainer-header-title'>Reception Date</span>
-                  <span className='form-secondContainer-header-subtitle'>
-                    {information && formatDate(information?.createdAt)}
-                  </span>
-                </div>
+                {!isNewAccount && (
+                  <div className='form-secondContainer-second'>
+                    <span className='form-secondContainer-header-title'>Reception Date</span>
+                    <span className='form-secondContainer-header-subtitle'>
+                      {information && formatDate(information?.createdAt)}
+                    </span>
+                  </div>
+                )}
               </div>
-              <div className='actions-header'>
+              <div className={!isNewAccount ? 'actions-header' : 'form-secondContainer-fourths'}>
+                <div className={!isNewAccount ? 'display-none' : 'form-secondContainer-fourth'}>
+                  <span className='form-header-money-data-date'>Last Update: 11 / 03 / 2023</span>
+                </div>
                 <ActionsHeader accountStatus='PENDING' sideHeader={true} />
               </div>
             </div>
