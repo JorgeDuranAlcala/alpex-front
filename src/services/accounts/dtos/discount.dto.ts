@@ -1,6 +1,6 @@
 export interface DiscountDto {
   id: number
-  porcentaje: number
+  percentage: number
   amount: number
   idAccount: number
 }
