@@ -114,7 +114,7 @@ const ModalUploadImage = () => {
   )
 }
 
-const FormHeader = () => {
+const FormHeader = ({ isNewAccount }: any) => {
   const [status, setStatus] = useState({})
 
   const account = useAppSelector(state => state.accounts?.formsData?.form1)
@@ -147,47 +147,74 @@ const FormHeader = () => {
   }, [account])
 
   return (
-    <div className='form-header-grid'>
-      <Card className='info-header' style={{ marginBottom: "0px" }} >
+    <>
+      <Card className='info-header' style={{ marginBottom: '16px' }}>
         <div className='form-header-data'>
-          <div className='form-header'>
-            <div className='form-header-section'>
-              <ModalUploadImage />
-              <div className='double-gap'>
-                <span className='form-header-title2'>{account?.basicInfo?.insured}</span>
-                <span className='block blue-subtitle'>#{account?.id}</span>
+          <div className='form-container-all-data'>
+            {/* Container first */}
+            {!isNewAccount && (
+              <div className='form-header-sections'>
+                <div className='form-header-info-profile-container'>
+                  <ModalUploadImage />
+                  <div className='form-header-info-profile-txt-container'>
+                    <span className='form-header-info-profile-txt-title'>{account?.basicInfo?.insured}</span>
+                    <span className='form-header-info-profile-num'>#{account?.id}</span>
+                  </div>
+                </div>
+                <div className='form-header-money-data'>
+                  <span className='form-header-money-data-txt'>Net premium</span>
+                  <span className='form-header-money-data-num'>
+                    ${account && formaterAmount(account?.placementStructure?.netPremium)}{' '}
+                    {account?.placementStructure?.currency}
+                  </span>
+                  <span className='form-header-money-data-date'>Last Update: 11 / 03 / 2023</span>
+                </div>
+              </div>
+            )}
+            {/* Container first */}
+
+            {/* Container second */}
+
+            <div className='form-secondContainer-wrapper'>
+              <div className='form-secondContainer-wrapper-first-side'>
+                <div className='form-secondContainer-first' style={{ marginRight: '20px' }}>
+                  <span className='form-secondContainer-header-title'>Status</span>
+                  <StatusSelect margin={0} initialStatus='PENDING' setSelectedStatus={setStatus} />
+                </div>
+
+                <div className='form-secondContainer-third'>
+                  <span className='form-header-money-data-date'>Last Update: 11 / 03 / 2023</span>
+                </div>
+                {!isNewAccount && (
+                  <div className='form-secondContainer-second'>
+                    <span className='form-secondContainer-header-title'>Line of Business</span>
+                    <span className='form-secondContainer-header-subtitle'>
+                      {information && formatDate(information?.createdAt)}
+                    </span>
+                  </div>
+                )}
+
+                {!isNewAccount && (
+                  <div className='form-secondContainer-second'>
+                    <span className='form-secondContainer-header-title'>Reception Date</span>
+                    <span className='form-secondContainer-header-subtitle'>
+                      {information && formatDate(information?.createdAt)}
+                    </span>
+                  </div>
+                )}
+              </div>
+              <div className={!isNewAccount ? 'actions-header' : 'form-secondContainer-fourths'}>
+                <div className={!isNewAccount ? 'display-none' : 'form-secondContainer-fourth'}>
+                  <span className='form-header-money-data-date'>Last Update: 11 / 03 / 2023</span>
+                </div>
+                <ActionsHeader accountStatus='PENDING' sideHeader={true} />
               </div>
             </div>
-            <div className='form-header-section'>
-              <span className='form-header-title'>Status: </span>
-              <span className='form-header-subtitle'>
-                <StatusSelect initialStatus='PENDING' setSelectedStatus={setStatus} />
-              </span>
-            </div>
-            <div className='form-header-section'>
-              <span className='form-header-title'>Net premium:</span>
-              <span className='form-header-subtitle'>
-                ${account && formaterAmount(account?.placementStructure?.netPremium)}{' '}
-                {account?.placementStructure?.currency}
-              </span>
-            </div>
-            <div className='form-header-section'>
-              <span className='form-header-title'>Registration date:</span>
-              <span className='form-header-subtitle'>{information && formatDate(information?.createdAt)}</span>
-            </div>
+            {/* Container second */}
           </div>
         </div>
-        <div className='form-header2'>
-          <span className=''>Created 2 hours ago</span>
-        </div>
       </Card>
-      <div className={'actions-header'}>
-        <ActionsHeader accountStatus='PENDING' sideHeader={true} />
-      </div>
-      <div className={'actions-header-mobile'}>
-        <ActionsHeader accountStatus='PENDING' sideHeader={false} />
-      </div>
-    </div>
+    </>
   )
 }
 

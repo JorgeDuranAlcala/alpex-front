@@ -37,7 +37,7 @@ const useAccountTable = () => {
   const deleteAccounts = async (selectedRows: GridRowId[]) => {
     try {
       const response = await accountsService.deleteAccounts(selectedRows as number[])
-      dispatchRedux(fetchAccounts(accountsReducer))
+      dispatchRedux(fetchAccounts(accountsReducer.info.page))
 
       return response
     } catch (error) {
@@ -48,7 +48,7 @@ const useAccountTable = () => {
   const duplicateAccounts = async (selectedRows: GridRowId[]) => {
     try {
       const response = await accountsService.duplicateAccounts(selectedRows as number[])
-      dispatchRedux(fetchAccounts(accountsReducer))
+      dispatchRedux(fetchAccounts(accountsReducer.info.page))
 
       return response
     } catch (error) {
@@ -59,7 +59,7 @@ const useAccountTable = () => {
   const changeStatusAccounts = async (updateStatus: UpdateStatusArrayDto) => {
     try {
       const response = await accountsService.updateAccountsStatus(updateStatus)
-      dispatchRedux(fetchAccounts(accountsReducer))
+      dispatchRedux(fetchAccounts(accountsReducer.info.page))
 
       return response
     } catch (error) {

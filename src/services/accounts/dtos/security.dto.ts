@@ -1,17 +1,22 @@
+import { ReinsuranceCompanyBinderDto } from '@/services/catalogs/dtos/ReinsuranceCompanyBinder.dto'
 import { ReinsuranceCompanyDto } from '@/services/catalogs/dtos/ReinsuranceCompanyDto'
 import { RetroCedantDto } from '@/services/catalogs/dtos/RetroCedantDto'
 import { RetroCedantContactDto } from '@/services/catalogs/dtos/retroCedantContact.dto'
+import { SecurityDiscountDto } from './securityDiscount.dto'
 
 export interface SecurityDto {
   id: number
   netPremiumAt100: number
   share: number
+  premiumPerShare: number
   premiumPerShareAmount: number
   frontingFeeActive: boolean
+  taxesActive: boolean | null
   dynamicCommission: number
   dynamicCommissionAmount: number
   frontingFee: number
   frontingFeeAmount: number
+  grossPremiumPerShare: number
   netReinsurancePremium: number
   taxes: number
   taxesAmount: number
@@ -21,7 +26,11 @@ export interface SecurityDto {
   distributedNetPremium: number
   difference: number
   active: boolean
+  consecutive: number | null
+  view: number
+  discounts: SecurityDiscountDto[] | []
   idCReinsuranceCompany: ReinsuranceCompanyDto
+  idCReinsuranceCompanyBinder: ReinsuranceCompanyBinderDto
   idCRetroCedant: RetroCedantDto
   idCRetroCedantContact: RetroCedantContactDto
   idEndorsement: number
@@ -81,7 +90,9 @@ export type FormSecurity = {
 export type errorsSecurity = {
   netPremiumAt100: string
   share: string
+  shareAmount: string
   premiumPerShareAmount: string
+  grossPremiumPerShareAmount: string
   reinsuranceBrokerage: string
   brokerAgeAmount: string
   dynamicCommission: string

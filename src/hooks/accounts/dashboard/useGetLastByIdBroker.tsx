@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react'
 
-import { InformationDto } from '@/services/accounts/dtos/information.dto'
+import { InformationResponse } from '@/services/accounts/dtos/information.dto'
 import { InstallmentDto } from '@/services/accounts/dtos/installments.dto'
 import AccountServices from 'src/services/accounts/account.service'
 
 export interface ResponseGetAccount {
   id: number
-  informations: InformationDto[]
+  informations: InformationResponse[]
   installments: InstallmentDto[]
   installmentsCount: number
 }
