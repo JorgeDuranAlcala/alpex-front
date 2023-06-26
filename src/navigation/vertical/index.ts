@@ -52,7 +52,8 @@ const navigation = (): VerticalNavItemsType => {
       icon: 'ic:baseline-payments',
       children: [
         {
-          title: 'List'
+          title: 'List',
+          path: '/menuForm'
         },
         {
           title: 'Preview'
