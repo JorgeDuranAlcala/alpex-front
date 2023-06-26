@@ -32,6 +32,10 @@ import { ButtonClose, HeaderTitleModal } from '@/styles/modal/modal.styled'
 import { delayMs, formatUTC } from '@/utils/formatDates'
 import { formatInformationDoctos, getFileFromUrl } from '@/utils/formatDoctos'
 
+// Dtos
+import { DiscountDto } from '@/services/accounts/dtos/discount.dto'
+
+
 type InformationProps = {
   onStepChange: (step: number) => void
   onIsNewAccountChange: (status: boolean) => void
@@ -165,6 +169,8 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
     attachmentPoint: 0.0,
     typeOfLimit: ''
   })
+
+  const [discounts, setDiscounts] = useState<DiscountDto[]>([])
 
   const updateInformation = async () => {
     const res = await updateInformationByIdAccount(idAccount, {
@@ -517,6 +523,10 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
     }
   }
 
+  const handleDiscountsChange = (newDiscounts: DiscountDto[]) => {
+    setDiscounts(newDiscounts);
+  };
+
   //Evento que controla el evento de continuar
   const handleNextStep = async () => {
     if (allValidated) {
@@ -652,6 +662,12 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   }, [idAccount])
 
   useEffect(() => {
+  console.log('se recibieron discounts')
+  console.log(discounts)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [discounts, setDiscounts])
+
+  useEffect(() => {
     console.log(validationCount)
     console.log(validatedForms)
     if (validationCount === 2 && validatedForms === 2) {
@@ -698,6 +714,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
             <PlacementStructure
               placementStructure={placementStructure}
               setPlacementStructure={setPlacementStructure}
+              onDiscountsChange={handleDiscountsChange}
               makeValidations={makeValidations}
               onValidationComplete={handleValidationComplete}
             />
