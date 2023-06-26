@@ -202,10 +202,10 @@ export const ContactModal = ({ id, service, updateContacts, setIdCreated,  disab
         className='create-contact-btn'
         disabled={disabledBtn}
         onClick={() => setOpen(true)}>
+        CREATE NEW CONTACT
         <div className='btn-icon'>
           <Icon icon='mdi:plus-circle-outline' />
         </div>
-        CREATE NEW CONTACT
       </Button>
       <Modal
         className='create-contact-modal'
