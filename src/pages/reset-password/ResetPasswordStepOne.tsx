@@ -2,7 +2,7 @@
 import { useRouter } from 'next/router'
 
 // import queryString from 'query-string'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 // ** MUI Components
 
@@ -43,17 +43,14 @@ const ResetPasswordStepOne = ({ handleVariant }: InitialStep) => {
     resolver: yupResolver(schema)
   })
 
-  const { setToken, setUpdatePassword } = useUpdatePassword()
+  const { setToken, setUpdatePassword, response } = useUpdatePassword()
   const [showPassword, setShowPassword] = useState<boolean>(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false)
 
   const onSubmit: SubmitHandler<FormData> = data => {
-    console.log(data?.password)
-    console.log(data?.passwordConfirm)
     if (data.password === data.passwordConfirm) {
       setUpdatePassword({ password: data?.password, passwordConfirm: data?.passwordConfirm })
       setToken(router.query.token)
-      handleVariant('succesResetPass', 1)
     } else {
       setError('passwordConfirm', {
         type: 'manual',
@@ -61,6 +58,12 @@ const ResetPasswordStepOne = ({ handleVariant }: InitialStep) => {
       })
     }
   }
+
+  useEffect(() => {
+    if (response?.statusCode === 200) {
+      handleVariant('succesResetPass', 1)
+    }
+  }, [handleVariant, response?.statusCode])
 
   return (
     <div className='container'>
