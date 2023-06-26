@@ -6,3 +6,8 @@ export interface PasswordPutDto {
   password: string
   passwordConfirm: string
 }
+
+export interface IRespondePassword {
+  statusCode: number
+  message: string
+}
