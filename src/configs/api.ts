@@ -29,6 +29,11 @@ export enum ACCOUNT_COMMENTS {
   GET_ALL = 'account/comments'
 }
 
+//Account History Log
+export enum ACCOUNT_HISTORY_LOG_ROUTES {
+  GET_BY_ID_ACCOUNT = 'accountHistoryLog'
+}
+
 //Discounts
 export enum ACCOUNT_DISCOUNT_ROUTERS {
   ADD = 'account/discount/add',
