@@ -129,7 +129,7 @@ const CustomInput = forwardRef(({ ...props }: PickerProps, ref: ForwardedRef<HTM
   )
 })
 
-type CheckboxValue = 'new' | 'renewal';
+type CheckboxValue = 1 | 2;
 
 const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeValidations,makeSaveValidations, onValidationComplete}) => {
   //cargamos la informacion de los catalogos de base de datos
@@ -144,7 +144,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
   const { users: underwriters } = useGetByIdRole(ROLES.UNDERWRITER)
   const { users: leadUnderwriters } = useGetByIdRole(ROLES.LEAD_UNDERWRITER)
   const { users: technicalAssistants } = useGetByIdRole(ROLES.TECHNICAL_ASSISTANT)
-  const [checkboxValue, setCheckboxValue] = useState<CheckboxValue>('new');
+  const [checkboxValue, setCheckboxValue] = useState<CheckboxValue>(1);
   const [bussinesFields, setBussinesFields] = useState(true)
 
 
@@ -246,7 +246,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
   }
 
   const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setCheckboxValue(event.target.value as CheckboxValue);
+    setCheckboxValue(Number(event.target.value) as CheckboxValue);
   };
 
   const validations = (basicInfoParama: BasicInfoType | null = null) => {
@@ -409,8 +409,8 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
               value={checkboxValue}
               onChange={handleCheckboxChange}
             >
-              <FormControlLabel value="new" control={<Radio />} label="New" />
-              <FormControlLabel value="renewal" control={<Radio />} label="Renewal" />
+              <FormControlLabel value= {1} control={<Radio />} label="New" />
+              <FormControlLabel value= {2} control={<Radio />} label="Renewal" />
             </RadioGroup>
           </FormControl>
 
