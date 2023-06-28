@@ -196,7 +196,7 @@ const RetroCedantsTable = () => {
     const result = await deleteRetroCedant({ idDeleteList: selectedRows })
     if (result) {
       getRetroCedantsPagination({ ...retroCedantPagination })
-      triggerAlert('success', 'DELETED')
+      triggerAlert('success-alert', 'DELETED')
     }
     setOpenDeleteRows(false)
   }
@@ -210,7 +210,7 @@ const RetroCedantsTable = () => {
     const result = await deleteRetroCedant({ idDeleteList: [retroCedantToDelete] })
     if (result) {
       getRetroCedantsPagination({ ...retroCedantPagination })
-      triggerAlert('success', 'DELETED')
+      triggerAlert('success-alert', 'DELETED')
     }
     setOpenDelete(false)
   }

@@ -190,7 +190,7 @@ const CedantsTable = () => {
     const result = await deleteCedant({ idDeleteList: selectedRows })
     if (result) {
       getCedantsPagination({ ...cedantPagination })
-      triggerAlert('success', 'DELETED')
+      triggerAlert('success-alert', 'DELETED')
     }
     setOpenDeleteRows(false)
   }
@@ -204,7 +204,7 @@ const CedantsTable = () => {
     const result = await deleteCedant({ idDeleteList: [cedantToDelete] })
     if (result) {
       getCedantsPagination({ ...cedantPagination })
-      triggerAlert('success', 'DELETED')
+      triggerAlert('success-alert', 'DELETED')
     }
     setOpenDelete(false)
   }

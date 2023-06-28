@@ -115,7 +115,7 @@ const RetroCedantData = ({ idRetroCedant, setIdRetroCedant }: IRetroCedantData) 
       setIsRetroCedantSaved(true)
       setNameDisabled(true)
       setIsEditing(false)
-      triggerAlert('success', 'CHANGES SAVED')
+      triggerAlert('success-alert', 'CHANGES SAVED')
     } else {
       triggerAlert('error-alert')
     }
@@ -124,7 +124,7 @@ const RetroCedantData = ({ idRetroCedant, setIdRetroCedant }: IRetroCedantData) 
   const deleteRetroCedant = async () => {
     const result = await deleteRetroCedants({ idDeleteList: [newRetroCedant.id] })
     if (result) {
-      triggerAlert('success', 'DELETED')
+      triggerAlert('success-alert', 'DELETED')
       setIdRetroCedant(0)
     } else {
       triggerAlert('error-alert')
