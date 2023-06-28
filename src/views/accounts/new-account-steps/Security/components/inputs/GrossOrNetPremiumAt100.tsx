@@ -16,7 +16,7 @@ interface GrossOrNetPremiumAt100Props extends ISecurityInputProps {
 
 }
 
-export const GrossOrNetPremiumAt100 = ({ index, isGross, value, isError, validateForm }: GrossOrNetPremiumAt100Props) => {
+export const GrossOrNetPremiumAt100 = ({ index, isGross, value, errorMessage, validateForm }: GrossOrNetPremiumAt100Props) => {
 
   const {
     activeErros,
@@ -51,7 +51,7 @@ export const GrossOrNetPremiumAt100 = ({ index, isGross, value, isError, validat
       />
 
       <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
-        {activeErros && isError}
+        {activeErros && errorMessage}
       </FormHelperText>
     </FormControl>
   )

@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { ForwardedRef, ReactNode, forwardRef, useEffect, useState } from 'react'; //ReactNode
+import React, { ForwardedRef, ReactNode, forwardRef, useEffect, useState } from 'react' //ReactNode
 
 // ** MUI Imports
-import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
 import {
   Autocomplete,
   FormControl,
@@ -17,27 +17,26 @@ import {
   SxProps,
   TextField,
   Theme
-} from '@mui/material';
-import Select, { SelectChangeEvent } from '@mui/material/Select'; //SelectChangeEvent
+} from '@mui/material'
+import Select, { SelectChangeEvent } from '@mui/material/Select' //SelectChangeEvent
 
 //Components
-import { ContactModal } from '@/views/accounts/new-account-steps/Information/ContactModal';
+import { ContactModal } from '@/views/accounts/new-account-steps/Information/ContactModal'
 
 //hooks para base info y  modal contac
-import { useGetAllCountries as useCountyGetAll } from 'src/hooks/catalogs/country';
+import { useGetAllCountries as useCountyGetAll } from 'src/hooks/catalogs/country'
 
 // ** Third Party Imports
-import DatePickerWrapper from '@/@core/styles/libs/react-datepicker';
-import { ROLES } from '@/configs/api';
-import DatePicker from 'react-datepicker';
-import { useGetAll as useBrokerGetAll } from 'src/hooks/catalogs/broker';
-import { useGetAllByIdBroker } from 'src/hooks/catalogs/broker-contact/';
-import { useGetAll as useCedantGetAll } from 'src/hooks/catalogs/cedant';
-import { useGetAllByCedant } from 'src/hooks/catalogs/cedant-contact';
-import { useGetAllLineOfBussines } from 'src/hooks/catalogs/lineOfBussines';
-import { useGetAllRiskActivities } from 'src/hooks/catalogs/riskActivity';
-import { useGetByIdRole } from 'src/hooks/catalogs/users/';
-
+import DatePickerWrapper from '@/@core/styles/libs/react-datepicker'
+import { ROLES } from '@/configs/api'
+import DatePicker from 'react-datepicker'
+import { useGetAll as useBrokerGetAll } from 'src/hooks/catalogs/broker'
+import { useGetAllByIdBroker } from 'src/hooks/catalogs/broker-contact/'
+import { useGetAll as useCedantGetAll } from 'src/hooks/catalogs/cedant'
+import { useGetAllByCedant } from 'src/hooks/catalogs/cedant-contact'
+import { useGetAllLineOfBussines } from 'src/hooks/catalogs/lineOfBussines'
+import { useGetAllRiskActivities } from 'src/hooks/catalogs/riskActivity'
+import { useGetByIdRole } from 'src/hooks/catalogs/users/'
 
 interface PickerProps {
   label?: string
@@ -129,9 +128,15 @@ const CustomInput = forwardRef(({ ...props }: PickerProps, ref: ForwardedRef<HTM
   )
 })
 
-type CheckboxValue = 1 | 2;
+type CheckboxValue = 1 | 2
 
-const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeValidations,makeSaveValidations, onValidationComplete}) => {
+const BasicInfo: React.FC<BasicInfoProps> = ({
+  basicInfo,
+  setBasicInfo,
+  makeValidations,
+  makeSaveValidations,
+  onValidationComplete
+}) => {
   //cargamos la informacion de los catalogos de base de datos
   const { countries } = useCountyGetAll()
   const { brokers } = useBrokerGetAll()
@@ -144,17 +149,17 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
   const { users: underwriters } = useGetByIdRole(ROLES.UNDERWRITER)
   const { users: leadUnderwriters } = useGetByIdRole(ROLES.LEAD_UNDERWRITER)
   const { users: technicalAssistants } = useGetByIdRole(ROLES.TECHNICAL_ASSISTANT)
-  const [checkboxValue, setCheckboxValue] = useState<CheckboxValue>(1);
+  const [checkboxValue, setCheckboxValue] = useState<CheckboxValue>(1)
   const [bussinesFields, setBussinesFields] = useState(true)
-
-
 
   //Industry code managing
   const [industryCodeValue, setIndustryCodeValue] = useState<string | number | null | undefined>(null)
   const [inputValue, setInputValue] = useState<string | undefined>('')
-  const industryCodeOptions = [...riskActivities.map(activities => `${activities.industryCode} / ${activities.riskActivity}`)]
+  const industryCodeOptions = [
+    ...riskActivities.map(activities => `${activities.industryCode} / ${activities.riskActivity}`)
+  ]
 
-//Error control
+  //Error control
   const [wrongDateError, setWrongDateError] = useState(false)
   // const [valid, setValid]= useState(false)
   const [errors, setErrors] = useState<BasicInfoErrors>({
@@ -228,8 +233,6 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
     setBasicInfo(basicInfoTem)
   }
 
-
-
   const handleReceptionDateChange = (date: Date) => {
     setBasicInfo({ ...basicInfo, receptionDate: date })
     !validateForm && validations({ ...basicInfo, receptionDate: date })
@@ -246,12 +249,12 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
   }
 
   const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setCheckboxValue(Number(event.target.value) as CheckboxValue);
-  };
+    setCheckboxValue(Number(event.target.value) as CheckboxValue)
+  }
 
   const validations = (basicInfoParama: BasicInfoType | null = null) => {
     const basicInfoTemp = basicInfoParama ? basicInfoParama : basicInfo
-    console.log("validation industry code")
+    console.log('validation industry code')
     console.log(basicInfoTemp.industryCode)
     const newErrors: BasicInfoErrors = {
       insuredError: basicInfoTemp.insured === '',
@@ -262,45 +265,53 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
       // underwriterError: basicInfoTemp.underwriter === '',
       // leadUnderwriterError: basicInfoTemp.leadUnderwriter === '',
       // technicalAssistantError: basicInfoTemp.technicalAssistant === '',
-      industryCodeError: basicInfoTemp.industryCode === ''|| basicInfoTemp.industryCode === null,
+      industryCodeError: basicInfoTemp.industryCode === '' || basicInfoTemp.industryCode === null,
       riskActivityError: basicInfoTemp.riskActivity === '',
       riskClassError: basicInfoTemp.riskClass === 0,
       receptionDateError: basicInfoTemp.receptionDate === null,
-      effectiveDateError: basicInfoTemp.effectiveDate === null || ((basicInfoTemp.expirationDate !== null && basicInfoTemp.effectiveDate !== null) && (basicInfoTemp.effectiveDate > basicInfoTemp.expirationDate)),
-      expirationDateError: basicInfoTemp.expirationDate === null || ((basicInfoTemp.expirationDate !== null && basicInfoTemp.effectiveDate !== null) && (basicInfoTemp.effectiveDate > basicInfoTemp.expirationDate)),
+      effectiveDateError:
+        basicInfoTemp.effectiveDate === null ||
+        (basicInfoTemp.expirationDate !== null &&
+          basicInfoTemp.effectiveDate !== null &&
+          basicInfoTemp.effectiveDate > basicInfoTemp.expirationDate),
+      expirationDateError:
+        basicInfoTemp.expirationDate === null ||
+        (basicInfoTemp.expirationDate !== null &&
+          basicInfoTemp.effectiveDate !== null &&
+          basicInfoTemp.effectiveDate > basicInfoTemp.expirationDate)
     }
 
-
-    if((basicInfoTemp.expirationDate !== null && basicInfoTemp.effectiveDate !== null)
-        && (basicInfoTemp.effectiveDate > basicInfoTemp.expirationDate)){
-          setWrongDateError(true)
-     }
+    if (
+      basicInfoTemp.expirationDate !== null &&
+      basicInfoTemp.effectiveDate !== null &&
+      basicInfoTemp.effectiveDate > basicInfoTemp.expirationDate
+    ) {
+      setWrongDateError(true)
+    }
 
     setErrors(newErrors)
 
     if (Object.values(newErrors).every(error => !error)) {
-      onValidationComplete(true, "basicInfo")
+      onValidationComplete(true, 'basicInfo')
       setValidateForm(true)
     } else {
-      onValidationComplete(false, "basicInfo")
+      onValidationComplete(false, 'basicInfo')
       setValidateForm(false)
     }
   }
 
-
   const getErrorMessage = (name: keyof BasicInfoErrors) => {
-    let errorMsj= 'This field is required'
+    let errorMsj = 'This field is required'
 
-    if(name == 'effectiveDateError' && wrongDateError){
+    if (name == 'effectiveDateError' && wrongDateError) {
       errorMsj = 'Effective date cannot be greater than expiration date'
     }
 
-    if(name == 'expirationDateError' && wrongDateError){
+    if (name == 'expirationDateError' && wrongDateError) {
       errorMsj = 'Expiration date cannot be less than effective date'
     }
 
     return errors[name] ? errorMsj : ''
-
   }
 
   useEffect(() => {
@@ -337,26 +348,26 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
     }, 0)
   }, [basicInfo.cedantContact, cedantContacts])
 
-  useEffect(() => { // useEffect to handle industry code changes.
+  useEffect(() => {
+    // useEffect to handle industry code changes.
     let value = industryCodeValue
     let basicInfoTem = { ...basicInfo }
 
     if (value == null) value = ''
 
-    const riskActivity = riskActivities.find(r =>  String(value).includes(r.riskActivity))
+    const riskActivity = riskActivities.find(r => String(value).includes(r.riskActivity))
 
     basicInfoTem.riskActivity = riskActivity?.riskActivity || ''
     basicInfoTem.riskClass = riskActivity?.class || 0
 
     basicInfoTem = {
       ...basicInfoTem,
-      ['industryCode']: riskActivity?.industryCode || null
+      ['industryCode']: riskActivity?.id || null
     }
     !validateForm && validations(basicInfoTem)
     setBasicInfo(basicInfoTem)
 
-    if(riskActivity){
-
+    if (riskActivity) {
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -402,18 +413,17 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
       <div className='title'>Basic info</div>
       <div className='form-wrapper'>
         <div className='form-row'>
-          <FormControl component="fieldset">
+          <FormControl component='fieldset'>
             <RadioGroup
-              aria-label="checkboxGroup"
-              name="checkboxGroup"
+              aria-label='checkboxGroup'
+              name='checkboxGroup'
               value={checkboxValue}
               onChange={handleCheckboxChange}
             >
-              <FormControlLabel value= {1} control={<Radio />} label="New" />
-              <FormControlLabel value= {2} control={<Radio />} label="Renewal" />
+              <FormControlLabel value={1} control={<Radio />} label='New' />
+              <FormControlLabel value={2} control={<Radio />} label='Renewal' />
             </RadioGroup>
           </FormControl>
-
         </div>
         <div className='form-col'>
           <div className='title'>Insured</div>
@@ -684,13 +694,10 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
             )}
           </FormControl>
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
-
-
             <Autocomplete
               value={industryCodeValue}
               onChange={(event: any, newValue: string | number | null | undefined) => {
-                 setIndustryCodeValue(newValue)
-
+                setIndustryCodeValue(newValue)
               }}
               inputValue={inputValue}
               onInputChange={(event, newInputValue) => {
@@ -699,30 +706,32 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
               id='controllable-states-demo'
               options={industryCodeOptions}
               sx={{ width: '100%' }}
-              className={errors.industryCodeError ? 'error': ''}
+              className={errors.industryCodeError ? 'error' : ''}
               renderInput={params => <TextField {...params} label={'Industry Code'} />}
             />
-            {false && <Select
-              name='industryCode'
-              label='Industry Code'
-              value={String(basicInfo.industryCode)}
-              onChange={handleSelectChange}
-              labelId='industryCode'
-            >
-              {riskActivities.length > 0 ? (
-                riskActivities.map(riskActivities => {
-                  return (
-                    <MenuItem key={riskActivities.id} value={riskActivities.id}>
-                      {riskActivities.industryCode} / {riskActivities.riskActivity}
-                    </MenuItem>
-                  )
-                })
-              ) : (
-                <MenuItem key={null} value={''}>
-                  No options available
-                </MenuItem>
-              )}
-            </Select>}
+            {false && (
+              <Select
+                name='industryCode'
+                label='Industry Code'
+                value={String(basicInfo.industryCode)}
+                onChange={handleSelectChange}
+                labelId='industryCode'
+              >
+                {riskActivities.length > 0 ? (
+                  riskActivities.map(riskActivities => {
+                    return (
+                      <MenuItem key={riskActivities.id} value={riskActivities.id}>
+                        {riskActivities.industryCode} / {riskActivities.riskActivity}
+                      </MenuItem>
+                    )
+                  })
+                ) : (
+                  <MenuItem key={null} value={''}>
+                    No options available
+                  </MenuItem>
+                )}
+              </Select>
+            )}
             {errors.industryCodeError && (
               <FormHelperText sx={{ color: 'error.main' }} id='business-error'>
                 {getErrorMessage('lineOfBusinessError')}
@@ -738,7 +747,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
               value={basicInfo.riskActivity}
               disabled={true}
               onChange={handleInputChange}
-              className={errors.riskActivityError ? 'error':''}
+              className={errors.riskActivityError ? 'error' : ''}
               error={!!errors.riskActivityError}
               helperText={getErrorMessage('riskActivityError')}
             />
@@ -751,7 +760,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
               value={basicInfo.riskClass}
               disabled={basicInfo.industryCode == null}
               onChange={handleInputChange}
-              className={errors.riskClassError ? 'error':''}
+              className={errors.riskClassError ? 'error' : ''}
               error={!!errors.riskClassError}
               helperText={getErrorMessage('riskClassError')}
             />
@@ -889,8 +898,9 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
                 leadUnderwriters.map(leadUnderwriter => {
                   return (
                     <MenuItem key={leadUnderwriter.id} value={leadUnderwriter.id}>
-                      {`${leadUnderwriter.name} ${leadUnderwriter.surname || ''} ${leadUnderwriter.secondSurname || ''
-                        }`}
+                      {`${leadUnderwriter.name} ${leadUnderwriter.surname || ''} ${
+                        leadUnderwriter.secondSurname || ''
+                      }`}
                     </MenuItem>
                   )
                 })
@@ -916,8 +926,9 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
                 technicalAssistants.map(technicalAssistant => {
                   return (
                     <MenuItem key={technicalAssistant.id} value={technicalAssistant.id}>
-                      {`${technicalAssistant.name} ${technicalAssistant.surname || ''} ${technicalAssistant.secondSurname || ''
-                        }`}
+                      {`${technicalAssistant.name} ${technicalAssistant.surname || ''} ${
+                        technicalAssistant.secondSurname || ''
+                      }`}
                     </MenuItem>
                   )
                 })
