@@ -229,6 +229,9 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
     setNetPremiumWithoutDiscounts(grossPremiumc - reinsuranceBrokerageTotalFinal)
     setNetPremiumWithTaxes(grossPremiumc - reinsuranceBrokerageTotalFinal  - frontingFeeTotalFinal - discountsAmount)
     setNetPremium(grossPremiumc - reinsuranceBrokerageTotalFinal - taxesFinal - frontingFeeTotalFinal - discountsAmount)
+    if (discounts.length > 0) {
+      setTotalDiscountsError(discountValidation)
+    }
     setPlacementStructure({
       ...placementStructure,
       reinsuranceBrokerageP: reinsuranceBrokerageP ?? 0,
@@ -362,6 +365,8 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
     if (Object.values(newErrors).every(error => !error)) {
       // enviar formulario si no hay errores
       onValidationComplete(true, 'placementStructure');
+      console.log('validacion en placement')
+      console.log(errors)
 
       // isValidForm(true)
     } else {
@@ -398,7 +403,17 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
   useEffect(() => {
     calculate()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [reinsuranceBrokerageP, taxesP, frontingFeeP, netPremium, grossPremium, reinsuranceBrokerage, taxes, frontingFee])
+  }, [reinsuranceBrokerageP,
+     taxesP,
+     frontingFeeP,
+      netPremium,
+      grossPremium,
+      reinsuranceBrokerage,
+      taxes,
+      frontingFee,
+      discount,
+      setDiscount
+    ])
 
 
   useEffect(() => {
@@ -455,14 +470,6 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
     onDiscountsChange(discounts);
     calculate()
   }, [discounts, setDiscounts]);
-
-  React.useEffect(() => {
-
-    if (discounts.length > 0) {
-      setTotalDiscountsError(discountValidation)
-      calculate()
-    }
-  }, [discount, setDiscount]);
 
 
   React.useEffect(() => {

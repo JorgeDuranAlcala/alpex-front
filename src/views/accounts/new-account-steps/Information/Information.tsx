@@ -492,6 +492,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   }
 
   const handleSaveInformation = async () => {
+    console.log("handle Save info")
     if (idAccount) {
       setBadgeData({
         message: `UPDATING INFORMATION`,
@@ -546,12 +547,16 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   }
 
   const handleValidationComplete = (valid: boolean, formName: string) => {
+    console.log('validacion completa')
+    console.log(formName)
+    console.log(valid)
     setValidationCount(prevCount => prevCount + 1)
     if (valid) {
       if (nextClicked) setValidatedForms(prevCount => prevCount + 1)
 
       if (formName == 'basicInfo' && saveClicked) {
         // If Basic info is validated and save button was clicked then save information
+        setMakeSaveValidations(false)
         setDisableSave(true)
         handleSaveInformation()
         setSaveClicked(false)
@@ -560,6 +565,8 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   }
 
   const handleAction = (action: string) => {
+    console.log("handle action")
+    console.log(action)
     setValidationCount(0)
     setValidatedForms(0)
     switch (action) {
@@ -676,9 +683,11 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   }, [discounts, setDiscounts])
 
   useEffect(() => {
+    console.log("validation count")
     console.log(validationCount)
     console.log(validatedForms)
     if (validationCount === 2 && validatedForms === 2) {
+      console.log("se setea all validated true")
       setAllValidated(true)
       if (nextClicked) {
         setOpen(true)
@@ -691,6 +700,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
       //   setSaveClicked(false)
       // }
     } else {
+      console.log("se setea all validated FALSE")
       setAllValidated(false)
       if (nextClicked) {
         setOpen(true)
