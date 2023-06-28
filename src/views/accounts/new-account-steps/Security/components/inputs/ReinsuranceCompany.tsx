@@ -11,30 +11,33 @@ import { Dispatch, SetStateAction, useContext } from 'react';
 // import * as yup from 'yup';
 
 import { SecurityDto } from '@/services/accounts/dtos/security.dto';
+import { ReinsuranceCompanyBinderDto } from '@/services/catalogs/dtos/ReinsuranceCompanyBinder.dto';
 import { ReinsuranceCompanyDto } from '@/services/catalogs/dtos/ReinsuranceCompanyDto';
+import ReinsuranceCompanyBinderService from 'src/services/catalogs/reinsuranceCompanyBinder.service';
 import { SecurityContext } from '../../SecurityView';
 import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interface';
-
 
 interface ReinsuranceCompanyProps extends ISecurityInputProps {
   avaliableReinsurers: ReinsuranceCompanyDto[];
   companiesSelect: number[];
   security: SecurityDto | undefined;
   setIsGross: Dispatch<SetStateAction<boolean>>;
-  setFrontingFeeEnabled: Dispatch<SetStateAction<boolean>>
+  setFrontingFeeEnabled: Dispatch<SetStateAction<boolean>>;
+  setBinders: Dispatch<SetStateAction<ReinsuranceCompanyBinderDto[]>>;
 }
 
 
 export const ReinsuranceCompany = ({
   index,
   value,
-  isError,
+  errorMessage,
   security,
   avaliableReinsurers,
   companiesSelect,
   validateForm,
   setIsGross,
-  setFrontingFeeEnabled
+  setFrontingFeeEnabled,
+  setBinders
 }: ReinsuranceCompanyProps) => {
 
   const {
@@ -43,8 +46,12 @@ export const ReinsuranceCompany = ({
     securities,
     calculateSecurities,
   } = useContext(SecurityContext);
+  console.log(avaliableReinsurers)
 
-
+  const updateBindersAsync = async (idCReinsuranceCompany: number) => {
+    const binders = await ReinsuranceCompanyBinderService.findByIdReinsuranceCompany(idCReinsuranceCompany);
+    setBinders(binders)
+  }
 
   const handleChangeCompany = (e: SelectChangeEvent<string>): void => {
     const avaliableCompanies = avaliableReinsurers
@@ -65,6 +72,7 @@ export const ReinsuranceCompany = ({
       setFrontingFeeEnabled(() => false)
       calculateSecurities(tempSecurities)
       validateForm(tempSecurities[index])
+      updateBindersAsync(avaliableCompanies.id)
     }
   }
 
@@ -91,7 +99,7 @@ export const ReinsuranceCompany = ({
           ))}
       </Select>
       <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
-        {activeErros && isError}
+        {activeErros && errorMessage}
       </FormHelperText>
     </FormControl>
   )

@@ -194,7 +194,7 @@ const ReinsurersTable = () => {
     const result = await deleteReinsuranceCompanys({ idDeleteList: selectedRows })
     if (result) {
       getReinsuranceCompanysPagination({ ...reinsuranceCompanyPagination })
-      triggerAlert('success', 'DELETED')
+      triggerAlert('success-alert', 'DELETED')
     }
     setOpenDeleteRows(false)
   }
@@ -208,7 +208,7 @@ const ReinsurersTable = () => {
     const result = await deleteReinsuranceCompanys({ idDeleteList: [reinsuranceCompanyToDelete] })
     if (result) {
       getReinsuranceCompanysPagination({ ...reinsuranceCompanyPagination })
-      triggerAlert('success', 'DELETED')
+      triggerAlert('success-alert', 'DELETED')
     }
     setOpenDelete(false)
   }

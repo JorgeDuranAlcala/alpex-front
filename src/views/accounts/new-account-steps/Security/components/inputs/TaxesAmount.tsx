@@ -17,7 +17,7 @@ interface TaxesAmountProps extends ISecurityInputProps {
   operationSecurity: CalculateSecurity
 }
 
-export const TaxesAmount = ({ index, value, isError, validateForm, operationSecurity }: TaxesAmountProps) => {
+export const TaxesAmount = ({ index, value, errorMessage, validateForm, operationSecurity }: TaxesAmountProps) => {
 
   const {
     activeErros,
@@ -50,7 +50,7 @@ export const TaxesAmount = ({ index, value, isError, validateForm, operationSecu
         thousandSeparator=','
       />
       <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
-        {activeErros && isError}
+        {activeErros && errorMessage}
       </FormHelperText>
     </FormControl>
   )

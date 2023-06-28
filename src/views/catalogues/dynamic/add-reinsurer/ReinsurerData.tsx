@@ -155,7 +155,7 @@ const ReinsurerData = ({ idReinsuranceCompany, setIdReinsuranceCompany }: IReins
         setIsReinsuranceCompanySaved(true)
         setNameDisabled(true)
         setIsEditing(false)
-        triggerAlert('success', 'CHANGES SAVED')
+        triggerAlert('success-alert', 'CHANGES SAVED')
       } else {
         triggerAlert('error-alert')
       }
@@ -167,7 +167,7 @@ const ReinsurerData = ({ idReinsuranceCompany, setIdReinsuranceCompany }: IReins
   const deleteReinsurer = async () => {
     const result = await deleteReinsuranceCompanys({ idDeleteList: [newReinsuranceCompany.id] })
     if (result) {
-      triggerAlert('success', 'DELETED')
+      triggerAlert('success-alert', 'DELETED')
       setIdReinsuranceCompany(0)
     } else {
       triggerAlert('error-alert')

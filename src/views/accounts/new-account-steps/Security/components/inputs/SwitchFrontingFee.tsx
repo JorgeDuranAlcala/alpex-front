@@ -7,7 +7,7 @@ import { SetStateAction, useContext } from 'react';
 import { SecurityContext } from '../../SecurityView';
 import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interface';
 
-interface SwitchFrontingFeeProps extends Omit<ISecurityInputProps, 'value' | 'isError'> {
+interface SwitchFrontingFeeProps extends Omit<ISecurityInputProps, 'value' | 'errorMessage'> {
   isChecked: boolean;
   security: SecurityDto;
   setFrontingFeeEnabled: (value: SetStateAction<boolean>) => void;
