@@ -18,7 +18,7 @@ import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interf
 
 type TaxesPercentProps = ISecurityInputProps;
 
-export const TaxesPercent = ({ index, value, isError, validateForm }: TaxesPercentProps) => {
+export const TaxesPercent = ({ index, value, errorMessage, validateForm }: TaxesPercentProps) => {
 
   const {
     activeErros,
@@ -55,7 +55,7 @@ export const TaxesPercent = ({ index, value, isError, validateForm }: TaxesPerce
       />
 
       <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
-        {activeErros && isError}
+        {activeErros && errorMessage}
       </FormHelperText>
     </FormControl>
   )

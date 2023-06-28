@@ -16,7 +16,7 @@ interface GrossPremiumPerShareAmountProps extends ISecurityInputProps {
 }
 
 
-export const GrossPremiumPerShareAmount = ({ index, value, isError, validateForm, operationSecurity }: GrossPremiumPerShareAmountProps) => {
+export const GrossPremiumPerShareAmount = ({ index, value, errorMessage, validateForm, operationSecurity }: GrossPremiumPerShareAmountProps) => {
 
   const {
     activeErros,
@@ -53,7 +53,7 @@ export const GrossPremiumPerShareAmount = ({ index, value, isError, validateForm
         thousandSeparator=','
       />
       <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
-        {activeErros && isError}
+        {activeErros && errorMessage}
       </FormHelperText>
     </FormControl>
   )

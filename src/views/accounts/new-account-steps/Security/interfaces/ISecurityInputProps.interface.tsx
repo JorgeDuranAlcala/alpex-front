@@ -4,7 +4,7 @@ export interface ISecurityInputProps {
 
   index: number;
   value: number | string;
-  isError: boolean;
+  errorMessage: string;
   isDisabled?: boolean;
   validateForm: (securityParam: SecurityDto) => void;
 }

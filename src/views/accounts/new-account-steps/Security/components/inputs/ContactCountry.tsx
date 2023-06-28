@@ -9,7 +9,7 @@ import {
 import { CountryDto } from '@/services/catalogs/dtos/country.dto';
 import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interface';
 
-interface ContactCountryProps extends Omit<ISecurityInputProps, 'index' | 'isError' | 'validateForm'> {
+interface ContactCountryProps extends Omit<ISecurityInputProps, 'index' | 'errorMessage' | 'validateForm'> {
   countries: CountryDto[] | undefined
 }
 

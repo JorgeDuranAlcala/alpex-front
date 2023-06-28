@@ -16,7 +16,7 @@ interface FrontingFeeAmountProps extends ISecurityInputProps {
 }
 
 
-export const FrontingFeeAmount = ({ index, value, isError, validateForm, operationSecurity }: FrontingFeeAmountProps) => {
+export const FrontingFeeAmount = ({ index, value, errorMessage, validateForm, operationSecurity }: FrontingFeeAmountProps) => {
 
   const {
     activeErros,
@@ -52,7 +52,7 @@ export const FrontingFeeAmount = ({ index, value, isError, validateForm, operati
       />
 
       <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
-        {activeErros && isError}
+        {activeErros && errorMessage}
       </FormHelperText>
     </FormControl>
   )

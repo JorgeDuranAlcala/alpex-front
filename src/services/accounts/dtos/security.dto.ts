@@ -8,6 +8,7 @@ export interface SecurityDto {
   id: number
   netPremiumAt100: number
   share: number
+  shareAmount: number
   premiumPerShare: number
   premiumPerShareAmount: number
   frontingFeeActive: boolean
@@ -37,13 +38,33 @@ export interface SecurityDto {
   idAccount: number
   isGross: boolean
   recievedNetPremium: number
+  totalAmountOfDiscounts: number;
 }
 
 export interface FormInformation {
   frontingFee: number
   netPremium: number
   grossPremium: number
+  limit: number
 }
+
+// export interface FormInformationPlacementStructure {
+//   currency: string,
+//   typeOfLimit: string,
+//   exchangeRate: number,
+//   attachmentPoint: number,
+//   frontingFee: number,
+//   grossPremium: number,
+//   limit: number,
+//   netPremium: number,
+//   reinsuranceBrokerage: number,
+//   sir: number,
+//   taxes: number,
+//   total: number,
+//   reinsuranceBrokerageP: number,
+//   taxesP: number,
+//   frontingFeeP: number
+// }
 
 export interface FormSectionProps {
   index: number
