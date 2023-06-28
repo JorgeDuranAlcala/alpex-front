@@ -18,7 +18,7 @@ import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interf
 
 type ReinsuranceBrokeragePercentProps = ISecurityInputProps;
 
-export const ReinsuranceBrokeragePercent = ({ index, value, isError, validateForm }: ReinsuranceBrokeragePercentProps) => {
+export const ReinsuranceBrokeragePercent = ({ index, value, errorMessage, validateForm }: ReinsuranceBrokeragePercentProps) => {
 
   const {
     activeErros,
@@ -54,7 +54,7 @@ export const ReinsuranceBrokeragePercent = ({ index, value, isError, validateFor
       />
 
       <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
-        {activeErros && isError}
+        {activeErros && errorMessage}
       </FormHelperText>
     </FormControl>
   )

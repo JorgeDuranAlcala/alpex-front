@@ -16,7 +16,7 @@ interface PremiumPerShareAmountProps extends ISecurityInputProps {
 }
 
 
-export const PremiumPerShareAmount = ({ index, value, isError, validateForm, operationSecurity }: PremiumPerShareAmountProps) => {
+export const PremiumPerShareAmount = ({ index, value, errorMessage, validateForm, operationSecurity }: PremiumPerShareAmountProps) => {
 
   const {
     activeErros,
@@ -40,8 +40,8 @@ export const PremiumPerShareAmount = ({ index, value, isError, validateForm, ope
         autoFocus
         label='Premium per share'
         value={value}
-        onValueChange={value => {
-          handleChangePremiumPerShareAmount(Number(value.floatValue))
+        onChange={e => {
+          handleChangePremiumPerShareAmount(Number(e.target.value))
         }}
         prefix={'$'}
         customInput={TextField}
@@ -49,7 +49,7 @@ export const PremiumPerShareAmount = ({ index, value, isError, validateForm, ope
         thousandSeparator=','
       />
       <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
-        {activeErros && isError}
+        {activeErros && errorMessage}
       </FormHelperText>
     </FormControl>
   )

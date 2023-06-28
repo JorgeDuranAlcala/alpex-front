@@ -1,7 +1,7 @@
 import { Box, styled } from '@mui/material';
 import { formInformationData } from './form_2_FormInformationData';
 
-// import { accountData } from './form_2_ResponseGetAccount';
+import { accountData } from './form_2_ResponseGetAccount';
 
 const Container = styled(Box)(() => ({
   width: '100%',
@@ -40,7 +40,7 @@ export const ViewMocks = () => {
       <MockContainer>
         <h4>Response Get Account</h4>
         <BoxMock>
-          {/* <pre>{formatJson(accountData)}</pre> */}
+          <pre>{formatJson(accountData)}</pre>
         </BoxMock>
       </MockContainer>
 

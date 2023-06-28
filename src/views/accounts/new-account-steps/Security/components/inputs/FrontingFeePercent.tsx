@@ -17,7 +17,7 @@ import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interf
 
 type FrontingFeePercentProps = ISecurityInputProps;
 
-export const FrontingFeePercent = ({ index, value, isError, validateForm }: FrontingFeePercentProps) => {
+export const FrontingFeePercent = ({ index, value, errorMessage, validateForm }: FrontingFeePercentProps) => {
 
   const {
     activeErros,
@@ -53,7 +53,7 @@ export const FrontingFeePercent = ({ index, value, isError, validateForm }: Fron
       />
 
       <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
-        {activeErros && isError}
+        {activeErros && errorMessage}
       </FormHelperText>
     </FormControl>
   )

@@ -1,19 +1,42 @@
 import {
+  Box,
   FormControl,
   InputLabel,
   MenuItem,
-  Select
+  Select,
+  styled
 } from '@mui/material';
 
 
-import { BinderDto } from '@/services/catalogs/dtos/binder.dto';
+import { ReinsuranceCompanyBinderDto } from '@/services/catalogs/dtos/ReinsuranceCompanyBinder.dto';
 import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interface';
 
-interface BinderProps extends Omit<ISecurityInputProps, 'index' | 'isError' | 'validateForm'> {
-  binders: BinderDto[] | undefined
+const NoBindersContainer = styled(Box)(({ theme }) => ({
+  // backgroundColor: 'lightblue',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  minHeight: '56px',
+  padding: '16.5px 0px',
+  marginBottom: '24px',
+  [theme.breakpoints.down('sm')]: {
+    display: 'none',
+  }
+}))
+
+interface BinderProps extends Omit<ISecurityInputProps, 'index' | 'errorMessage' | 'validateForm'> {
+  binders: ReinsuranceCompanyBinderDto[]
 }
 
 export const Binder = ({ value, binders }: BinderProps) => {
+
+  if (binders.length === 0) {
+    return (
+      <NoBindersContainer>
+        No Binders
+      </NoBindersContainer>
+    )
+  }
 
 
   return (
@@ -26,7 +49,7 @@ export const Binder = ({ value, binders }: BinderProps) => {
       >
         {binders?.map(binder => (
           <MenuItem key={binder.id} value={binder.id}>
-            {binder.description}
+            {binder.referenceNumber}
           </MenuItem>
         ))}
       </Select>

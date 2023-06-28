@@ -19,7 +19,7 @@ interface SelectRetroCedantContactProps extends ISecurityInputProps {
 }
 
 
-export const SelectRetroCedantContact = ({ index, value, isError, isDisabled, retroCedantContacts, validateForm,
+export const SelectRetroCedantContact = ({ index, value, errorMessage, isDisabled, retroCedantContacts, validateForm,
 }: SelectRetroCedantContactProps) => {
 
   const {
@@ -62,7 +62,7 @@ export const SelectRetroCedantContact = ({ index, value, isError, isDisabled, re
         ))}
       </Select>
       <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
-        {activeErros && isError}
+        {activeErros && errorMessage}
       </FormHelperText>
     </FormControl>
   )

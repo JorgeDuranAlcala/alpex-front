@@ -11,7 +11,7 @@ import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interf
 //
 // }
 
-type ContactPhoneProps = Omit<ISecurityInputProps, 'index' | 'isError' | 'validateForm'>;
+type ContactPhoneProps = Omit<ISecurityInputProps, 'index' | 'errorMessage' | 'validateForm'>;
 
 export const ContactPhone = ({ value }: ContactPhoneProps) => {
 

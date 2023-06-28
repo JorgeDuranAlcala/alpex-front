@@ -40,6 +40,7 @@ export interface InformationDto {
   idUnderwriter: number | null | string
   idTechnicalAssistant: number | null | string
   updatedAt: number | null | string | any
+  idAccountType: number
 }
 
 export interface InformationResponse {

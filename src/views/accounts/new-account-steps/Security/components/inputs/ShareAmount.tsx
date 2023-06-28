@@ -17,7 +17,7 @@ import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interf
 
 type ShareAmountProps = ISecurityInputProps;
 
-export const ShareAmount = ({ index, value, isError, validateForm }: ShareAmountProps) => {
+export const ShareAmount = ({ index, value, errorMessage, validateForm }: ShareAmountProps) => {
 
   const {
     activeErros,
@@ -47,16 +47,13 @@ export const ShareAmount = ({ index, value, isError, validateForm }: ShareAmount
         onValueChange={value => {
           handleChangeShareAmount(Number(value.floatValue))
         }}
-        suffix={'%'}
         customInput={TextField}
         decimalScale={2}
-        isAllowed={values => {
-          return (values.floatValue! >= 0 && values.floatValue! <= 100) || values.floatValue === undefined
-        }}
+        thousandSeparator=','
       />
 
       <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
-        {activeErros && isError}
+        {activeErros && errorMessage}
       </FormHelperText>
     </FormControl>
   )

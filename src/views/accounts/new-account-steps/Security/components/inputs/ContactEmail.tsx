@@ -11,7 +11,7 @@ import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interf
 //
 // }
 
-type ContactEmailProps = Omit<ISecurityInputProps, 'index' | 'isError' | 'validateForm'>;
+type ContactEmailProps = Omit<ISecurityInputProps, 'index' | 'errorMessage' | 'validateForm'>;
 
 export const ContactEmail = ({ value }: ContactEmailProps) => {
 
