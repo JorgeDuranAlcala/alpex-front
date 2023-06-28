@@ -72,6 +72,8 @@ export interface PlacementStructure {
   taxesP: number
   frontingFeeP: number
   netPremium: number
+  netPremiumWithTaxes: number
+  netPremiumWithoutDiscounts: number
   exchangeRate: number
   limit: number
   grossPremium: number
@@ -158,6 +160,8 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
     taxesP: 0.0,
     frontingFeeP: 0.0,
     netPremium: 0.0,
+    netPremiumWithTaxes: 0.0,
+    netPremiumWithoutDiscounts: 0.0,
     exchangeRate: 0.0,
     limit: 0.0,
     grossPremium: 0.0,
@@ -203,6 +207,9 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
       grossPremium: placementStructure.grossPremium,
       limit: placementStructure.limit,
       netPremium: placementStructure.netPremium,
+
+      // netPremiumWithTaxes: placementStructure.netPremiumWithTaxes, // Hay que cambiar los servicios para el netPremiumWithTaxes
+      // netPremiumWithoutDiscounts: placementStructure.netPremiumWithoutDiscounts, // Hay que cambiar el servicio para el netPremiumWithoutDiscounts
       reinsuranceBrokerage: placementStructure.reinsuranceBrokerage,
       reinsuranceBrokerageTotal: placementStructure.reinsuranceBrokerageP,
       sir: placementStructure.sir,
@@ -284,6 +291,8 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
       grossPremium: placementStructure.grossPremium,
       limit: placementStructure.limit,
       netPremium: placementStructure.netPremium,
+      netPremiumWithTaxes: placementStructure.netPremiumWithTaxes, // Cambiar por netPremiumWithTaxes y
+      netPremiumWithoutDiscounts: placementStructure.netPremiumWithoutDiscounts, //Cambiar por netPremiumWithoutDiscounts
       reinsuranceBrokerage: placementStructure.reinsuranceBrokerage,
       reinsuranceBrokerageTotal: placementStructure.reinsuranceBrokerageP,
       sir: placementStructure.sir,
@@ -376,6 +385,8 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
         grossPremium: Number(information.grossPremium) || 0.0,
         limit: Number(information.limit) || 0.0,
         netPremium: Number(information.netPremium) || 0.0,
+        netPremiumWithTaxes: Number(information.netPremium) || 0.0, // Cambiar por netPremiumWithTaxes y
+        netPremiumWithoutDiscounts: Number(information.netPremium) || 0.0, //Cambiar por netPremiumWithoutDiscounts
         reinsuranceBrokerage: Number(information.reinsuranceBrokerage) || 0.0,
         sir: Number(information.sir) || 0.0,
         taxes: Number(information.taxes) || 0.0,
@@ -481,6 +492,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   }
 
   const handleSaveInformation = async () => {
+    console.log("handle Save info")
     if (idAccount) {
       setBadgeData({
         message: `UPDATING INFORMATION`,
@@ -535,12 +547,16 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   }
 
   const handleValidationComplete = (valid: boolean, formName: string) => {
+    console.log('validacion completa')
+    console.log(formName)
+    console.log(valid)
     setValidationCount(prevCount => prevCount + 1)
     if (valid) {
       if (nextClicked) setValidatedForms(prevCount => prevCount + 1)
 
       if (formName == 'basicInfo' && saveClicked) {
         // If Basic info is validated and save button was clicked then save information
+        setMakeSaveValidations(false)
         setDisableSave(true)
         handleSaveInformation()
         setSaveClicked(false)
@@ -549,6 +565,8 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   }
 
   const handleAction = (action: string) => {
+    console.log("handle action")
+    console.log(action)
     setValidationCount(0)
     setValidatedForms(0)
     switch (action) {
@@ -665,9 +683,11 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   }, [discounts, setDiscounts])
 
   useEffect(() => {
+    console.log("validation count")
     console.log(validationCount)
     console.log(validatedForms)
     if (validationCount === 2 && validatedForms === 2) {
+      console.log("se setea all validated true")
       setAllValidated(true)
       if (nextClicked) {
         setOpen(true)
@@ -680,6 +700,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
       //   setSaveClicked(false)
       // }
     } else {
+      console.log("se setea all validated FALSE")
       setAllValidated(false)
       if (nextClicked) {
         setOpen(true)
