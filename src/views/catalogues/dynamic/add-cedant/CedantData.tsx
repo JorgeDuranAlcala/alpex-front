@@ -63,7 +63,7 @@ const CedantData = ({ idCedant, setIdCedant }: ICedantData) => {
 
     switch (type) {
       case 'success-alert':
-        setAlertText(text || 'NEW BROKER ADDED')
+        setAlertText(text || 'NEW CEDANT ADDED')
         setAlertIcon('mdi:check-circle-outline')
         break
       case 'error-alert':

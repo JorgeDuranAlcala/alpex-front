@@ -67,7 +67,7 @@ const RetroCedantData = ({ idRetroCedant, setIdRetroCedant }: IRetroCedantData) 
 
     switch (type) {
       case 'success-alert':
-        setAlertText(text || 'NEW CEDANT ADDED')
+        setAlertText(text || 'NEW RETRO CEDANT ADDED')
         setAlertIcon('mdi:check-circle-outline')
         break
       case 'error-alert':
