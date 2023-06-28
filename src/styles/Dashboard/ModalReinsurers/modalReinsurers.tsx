@@ -12,7 +12,6 @@ const HeaderTitleModal = styled('div')({
   marginBottom: '26px'
 })
 
-
 const Container = styled('div')({
   display: 'flex',
   flexDirection: 'column',
@@ -82,5 +81,75 @@ const ButtonClose = styled('div')({
   height: '36px',
   cursor: 'pointer'
 })
+const ContentEndorsmentContainer = styled('div')({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'flex-start',
+  justifyContent: 'flex-start',
+  fontFamily: 'Inter',
+  '.title': {
+    fontWeight: '500',
+    fontSize: '20px',
+    lineHeight: '32px',
+    letterSpacing: '.15px',
+    color: '#4D5062DE',
+    marginBottom: '8px'
+  },
+  '.subtitle': {
+    fontWeight: '400',
+    fontSize: '14px',
+    lineHeight: '20px',
+    letterSpacing: '.15px',
+    color: '#4D5062AD',
+    marginBottom: '16px'
+  }
+})
+const ContentEndorsmentContainerCancel = styled('div')({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'flex-start',
+  justifyContent: 'flex-start',
+  fontFamily: 'Inter',
+  '.title': {
+    fontWeight: '500',
+    fontSize: '20px',
+    lineHeight: '32px',
+    letterSpacing: '.15px',
+    color: '#4D5062DE',
+    marginBottom: '8px'
+  },
+  '.subtitle': {
+    fontWeight: '400',
+    fontSize: '14px',
+    lineHeight: '20px',
+    letterSpacing: '.15px',
+    color: '#4D5062AD',
+    marginBottom: '16px'
+  }
+})
 
-export { HeaderTitleModal, Container, ContainerData, HeaderColumns, Column, Row, ColumnLabel, ColumnData, ButtonClose }
+const FormContainer = styled('div')({
+  '.MuiFormControlLabel-label': {
+    fontWeight: '400',
+    fontSize: '16px',
+    lineHeight: '24px',
+    letterSpacing: '.15px',
+    color: '#4D5062DE',
+    marginLeft: '6px'
+  }
+})
+
+export {
+  ButtonClose,
+  Column,
+  ColumnData,
+  ColumnLabel,
+  Container,
+  ContainerData,
+  ContentEndorsmentContainer,
+  ContentEndorsmentContainerCancel,
+  FormContainer,
+  HeaderColumns,
+  HeaderTitleModal,
+  Row
+}
