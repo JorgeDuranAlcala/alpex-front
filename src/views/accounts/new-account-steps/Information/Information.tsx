@@ -15,7 +15,6 @@ import {
 import FileSubmit from './FileSubmit'
 import PlacementStructure from './PlacementStructure'
 
-
 // ** MUI Imports
 import CloseIcon from '@mui/icons-material/Close'
 import { Box, Button, CircularProgress, Modal } from '@mui/material'
@@ -31,6 +30,9 @@ import { updateFormsData } from 'src/store/apps/accounts'
 import { ButtonClose, HeaderTitleModal } from '@/styles/modal/modal.styled'
 import { delayMs, formatUTC } from '@/utils/formatDates'
 import { formatInformationDoctos, getFileFromUrl } from '@/utils/formatDoctos'
+
+// Dtos
+import { DiscountDto } from '@/services/accounts/dtos/discount.dto'
 
 type InformationProps = {
   onStepChange: (step: number) => void
@@ -84,6 +86,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
   const inter = userThemeConfig.typography?.fontFamilyInter
   const [makeValidations, setMakeValidations] = useState(false)
+  const [makeSaveValidations, setMakeSaveValidations] = useState(false)
   const [disableSave, setDisableSave] = useState(false)
   const [changeTitle, setChangeTitle] = useState(false)
 
@@ -164,6 +167,8 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
     attachmentPoint: 0.0,
     typeOfLimit: ''
   })
+
+  const [discounts, setDiscounts] = useState<DiscountDto[]>([])
 
   const updateInformation = async () => {
     const res = await updateInformationByIdAccount(idAccount, {
@@ -270,7 +275,6 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
       idLeadUnderwriter: Number(basicInfo.leadUnderwriter) === 0 ? null : Number(basicInfo.leadUnderwriter),
       idTechnicalAssistant: Number(basicInfo.technicalAssistant) === 0 ? null : Number(basicInfo.technicalAssistant),
       idUnderwriter: Number(basicInfo.underwriter) === 0 ? null : Number(basicInfo.underwriter),
-      idAccountType: 1,
       riskClass: basicInfo.riskClass,
       currency: placementStructure.currency,
       exchangeRate: placementStructure.exchangeRate,
@@ -287,7 +291,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
       taxesTotal: placementStructure.taxesP,
       totalValues: placementStructure.total,
       idTypeOfLimit: Number(placementStructure.typeOfLimit),
-      step: 1
+      idAccountType: 1
     }
 
     const res = await addInformation(dataToSave)
@@ -378,14 +382,13 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
         total: Number(information.totalValues) || 0.0,
         reinsuranceBrokerageP: Number(information.reinsuranceBrokerageTotal) || 0.0,
         taxesP: Number(information.taxesTotal) || 0.0,
-        frontingFeeP: Number(information.frontingFeeTotal) || 0.0,
+        frontingFeeP: Number(information.frontingFeeTotal) || 0.0
 
         // frontingFeeTotal: 2,
         // reinsuranceBrokerageTotal: 10,
         // taxesTotal: Number(information.idT),
         // totalValues: 3500000,
         // idTypeOfLimit: '2',
-
       }
 
       setBasicInfo(obBasicInfo)
@@ -518,6 +521,10 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
     }
   }
 
+  const handleDiscountsChange = (newDiscounts: DiscountDto[]) => {
+    setDiscounts(newDiscounts)
+  }
+
   //Evento que controla el evento de continuar
   const handleNextStep = async () => {
     if (allValidated) {
@@ -527,10 +534,17 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
     handleCloseModal()
   }
 
-  const handleValidationComplete = (valid: boolean) => {
+  const handleValidationComplete = (valid: boolean, formName: string) => {
     setValidationCount(prevCount => prevCount + 1)
     if (valid) {
-      setValidatedForms(prevCount => prevCount + 1)
+      if (nextClicked) setValidatedForms(prevCount => prevCount + 1)
+
+      if (formName == 'basicInfo' && saveClicked) {
+        // If Basic info is validated and save button was clicked then save information
+        setDisableSave(true)
+        handleSaveInformation()
+        setSaveClicked(false)
+      }
     }
   }
 
@@ -540,15 +554,15 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
     switch (action) {
       case 'save':
         setSaveClicked(true)
+        setMakeSaveValidations(true)
         break
       case 'next':
         setNextClicked(true)
+        setMakeValidations(true)
         break
       default:
         break
     }
-
-    setMakeValidations(true)
   }
 
   const handleCloseModal = () => {
@@ -645,19 +659,26 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   }, [idAccount])
 
   useEffect(() => {
+    console.log('se recibieron discounts')
+    console.log(discounts)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [discounts, setDiscounts])
+
+  useEffect(() => {
     console.log(validationCount)
     console.log(validatedForms)
-    if (validationCount === 1 && validatedForms === 1) {
+    if (validationCount === 2 && validatedForms === 2) {
       setAllValidated(true)
       if (nextClicked) {
         setOpen(true)
         setNextClicked(false)
       }
-      if (saveClicked) {
-        setDisableSave(true)
-        handleSaveInformation()
-        setSaveClicked(false)
-      }
+
+      // if (saveClicked) {
+      //   setDisableSave(true)
+      //   handleSaveInformation()
+      //   setSaveClicked(false)
+      // }
     } else {
       setAllValidated(false)
       if (nextClicked) {
@@ -681,6 +702,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
               basicInfo={basicInfo}
               setBasicInfo={setBasicInfo}
               makeValidations={makeValidations}
+              makeSaveValidations={makeSaveValidations}
               onValidationComplete={handleValidationComplete}
             />
           </div>
@@ -689,12 +711,13 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
             <PlacementStructure
               placementStructure={placementStructure}
               setPlacementStructure={setPlacementStructure}
+              onDiscountsChange={handleDiscountsChange}
               makeValidations={makeValidations}
               onValidationComplete={handleValidationComplete}
             />
           </div>
 
-          <div className='section'>
+          <div className='section' style={{ display: 'none' }}>
             <div className='title'>{changeTitle ? 'Submited files' : 'File submit'}</div>
             <FileSubmit
               userFile={userFile}
