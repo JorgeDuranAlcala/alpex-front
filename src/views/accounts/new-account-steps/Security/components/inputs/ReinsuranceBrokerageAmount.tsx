@@ -18,7 +18,7 @@ interface ReinsuranceBrokerageAmountProps extends ISecurityInputProps {
 }
 
 
-export const ReinsuranceBrokerageAmount = ({ index, value, isError, operationSecurity, validateForm }: ReinsuranceBrokerageAmountProps) => {
+export const ReinsuranceBrokerageAmount = ({ index, value, errorMessage, operationSecurity, validateForm }: ReinsuranceBrokerageAmountProps) => {
 
   const {
     activeErros,
@@ -61,7 +61,7 @@ export const ReinsuranceBrokerageAmount = ({ index, value, isError, operationSec
       />
 
       <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
-        {activeErros && isError}
+        {activeErros && errorMessage}
       </FormHelperText>
     </FormControl>
   )

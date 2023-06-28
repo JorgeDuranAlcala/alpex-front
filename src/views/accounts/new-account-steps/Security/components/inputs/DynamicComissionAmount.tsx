@@ -18,7 +18,7 @@ interface DynamicComissionAmountProps extends ISecurityInputProps {
 }
 
 
-export const DynamicComissionAmount = ({ index, value, isError, validateForm, operationSecurity }: DynamicComissionAmountProps) => {
+export const DynamicComissionAmount = ({ index, value, errorMessage, validateForm, operationSecurity }: DynamicComissionAmountProps) => {
 
   const {
     activeErros,
@@ -54,7 +54,7 @@ export const DynamicComissionAmount = ({ index, value, isError, validateForm, op
       />
 
       <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
-        {activeErros && isError}
+        {activeErros && errorMessage}
       </FormHelperText>
     </FormControl>
   )

@@ -8,7 +8,9 @@ import {
   SecurityDto,
   SecurityProps
 } from '@/services/accounts/dtos/security.dto'
-import { useAppSelector } from '@/store'
+
+// import { useAppSelector } from '@/store'
+
 import { Title } from '@/styled-components/accounts/Security.styled'
 import { ButtonClose, HeaderTitleModal } from '@/styles/modal/modal.styled'
 import { FormSection } from '@/views/accounts/new-account-steps/Security/components/SecurityForm'
@@ -32,8 +34,9 @@ import UserThemeOptions from 'src/layouts/UserThemeOptions'
 import { SecurityMapper } from './mappers/SecurityForm.mapper'
 
 // import { ViewMocks } from './mocks/ViewMocks'
+// import { mockAccountsState } from './mocks/form_1_data'
 
-// import { formInformationData as formInformationDataMock } from './mocks/form_2_FormInformationData'
+import { useAppSelector } from '@/store'
 import { CalculateSecurity } from './utils/calculates-securities'
 
 export const SecurityContext = createContext<SecurityContextDto>({} as SecurityContextDto)
@@ -56,7 +59,8 @@ const Security = ({ onStepChange }: SecurityProps) => {
   const [information, setInformation] = useState<FormInformation>({
     frontingFee: 0,
     netPremium: 0,
-    grossPremium: 0
+    grossPremium: 0,
+    limit: 0,
   })
   const [companiesSelect] = useState<number[]>([])
   const { account, setAccountId, getAccountById, accountId } = useGetAccountById()
@@ -64,7 +68,9 @@ const Security = ({ onStepChange }: SecurityProps) => {
   const { updateSecurityTotal } = useUpdateSecurityTotalById()
   const { updateSecurities } = useUpdateSecurities()
   const { saveSecurities } = useAddSecurities()
+
   const accountData = useAppSelector(state => state.accounts)
+
   const inter = userThemeConfig.typography?.fontFamilyInter
   const [badgeData, setBadgeData] = useState<IAlert>({
     message: '',
@@ -87,10 +93,12 @@ const Security = ({ onStepChange }: SecurityProps) => {
         if (security?.idCReinsuranceCompany?.id) companiesSelect.push(security.idCReinsuranceCompany.id)
 
         security.premiumPerShareAmount = operationSecurity.getPremierPerShare() || 0
+        security.grossPremiumPerShare = operationSecurity.getGrossPremierPerShare() || 0
         security.brokerAgeAmount = operationSecurity.getBrokerAge() || 0
         security.dynamicCommissionAmount = operationSecurity.getDynamicComissionAmount() || 0
         security.frontingFeeAmount = operationSecurity.getFrontingFeeAmount() || 0
         security.taxesAmount = operationSecurity.getTaxesAmount() || 0
+        security.shareAmount = operationSecurity.getShareAmount() || 0
         security.netReinsurancePremium = operationSecurity.getNetReinsurancePremium() || 0
         tempSecurities.push({
           ...security,
@@ -153,7 +161,8 @@ const Security = ({ onStepChange }: SecurityProps) => {
     const save: Partial<SecurityDto>[] = []
 
     for (const security of securities) {
-      const mapper = SecurityMapper.securityToSecurityForm(security, accountData)
+      // Todo quitar el as any
+      const mapper = SecurityMapper.securityToSecurityForm(security, accountData as any)
 
       if (security.id) {
         update.push({
@@ -300,13 +309,6 @@ const Security = ({ onStepChange }: SecurityProps) => {
     setAllErrors(() => [...updatedErrors])
   }
 
-  // useEffect(() => {
-  //   // Todo: comentar mock
-  //   setAccountId(1)
-  //   setInformation(formInformationDataMock)
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [accountData.formsData.form1.id])
-
   useEffect(() => {
     const idAccountCache = Number(localStorage.getItem('idAccount'))
     if (accountData.formsData.form1.id) {
@@ -353,7 +355,6 @@ const Security = ({ onStepChange }: SecurityProps) => {
       }}
     >
       <div style={{ fontFamily: inter }}>
-        {/* <ViewMocks /> */}
         <CardHeader title={<Title>Security</Title>} />
         <CustomAlert {...badgeData} />
         <form noValidate autoComplete='on'>
