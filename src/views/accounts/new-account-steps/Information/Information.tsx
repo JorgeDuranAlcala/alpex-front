@@ -11,6 +11,8 @@ import {
   useUploadInformationDocument
 } from 'src/hooks/accounts/information'
 
+import { useAddDiscounts, useUpdateDiscounts } from '@/hooks/accounts/discount'
+
 //Components
 import FileSubmit from './FileSubmit'
 import PlacementStructure from './PlacementStructure'
@@ -62,6 +64,7 @@ export interface BasicInfoInterface {
   receptionDate: Date | null
   effectiveDate: Date | null
   expirationDate: Date | null
+  idAccountType: number
 }
 
 export interface PlacementStructure {
@@ -89,6 +92,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   const [makeSaveValidations, setMakeSaveValidations] = useState(false)
   const [disableSave, setDisableSave] = useState(false)
   const [changeTitle, setChangeTitle] = useState(false)
+  const [discounts, setDiscounts] = useState<DiscountDto[]>([])
 
   //Validaciones
   const [allValidated, setAllValidated] = useState(false)
@@ -122,6 +126,8 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   const { uploadInformationDocument } = useUploadInformationDocument()
   const { getInfoDoctosByIdAccount } = useGetInfoDoctosByIdAccount()
   const { deleteInformationDocument } = useDeleteInformationDocument()
+  const { addDiscounts } = useAddDiscounts()
+  const { UpdateDiscounts } = useUpdateDiscounts()
 
   const dispatch = useAppDispatch()
 
@@ -147,7 +153,8 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
     riskClass: 0,
     receptionDate: null,
     effectiveDate: null,
-    expirationDate: null
+    expirationDate: null,
+    idAccountType: 1
   })
 
   const [placementStructure, setPlacementStructure] = useState<PlacementStructure>({
@@ -167,8 +174,6 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
     attachmentPoint: 0.0,
     typeOfLimit: ''
   })
-
-  const [discounts, setDiscounts] = useState<DiscountDto[]>([])
 
   const updateInformation = async () => {
     const res = await updateInformationByIdAccount(idAccount, {
@@ -210,7 +215,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
       taxesTotal: placementStructure.taxesP,
       totalValues: placementStructure.total,
       idTypeOfLimit: Number(placementStructure.typeOfLimit),
-      idAccountType: 1
+      idAccountType: Number(basicInfo.idAccountType)
     })
 
     await delayMs(1000)
@@ -291,7 +296,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
       taxesTotal: placementStructure.taxesP,
       totalValues: placementStructure.total,
       idTypeOfLimit: Number(placementStructure.typeOfLimit),
-      idAccountType: 1
+      idAccountType: Number(basicInfo.idAccountType)
     }
 
     const res = await addInformation(dataToSave)
@@ -364,7 +369,8 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
         riskClass: information.riskClass,
         receptionDate: information.receptionDate ? new Date(information.receptionDate) : null,
         effectiveDate: information.effectiveDate ? new Date(information.effectiveDate) : null,
-        expirationDate: information.expirationDate ? new Date(information.expirationDate) : null
+        expirationDate: information.expirationDate ? new Date(information.expirationDate) : null,
+        idAccountType: information.idAccountType
       }
 
       const obPlacementStructure = {
@@ -480,6 +486,23 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
     })
   }
 
+  const updateDiscount = async () => {
+    const discountSave: Partial<DiscountDto[]> = []
+    const discountUpdate: DiscountDto[] = []
+
+    for await (const discount of discounts) {
+      if (discount.id !== 0) {
+        discountUpdate.push(discount)
+      } else {
+        discountSave.push(discount)
+      }
+    }
+
+    if (discountSave.length > 0) await addDiscounts(discountSave)
+
+    if (discountUpdate.length > 0) await UpdateDiscounts(discountUpdate)
+  }
+
   const handleSaveInformation = async () => {
     if (idAccount) {
       setBadgeData({
@@ -493,8 +516,8 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
       })
 
       await updateInformation()
-
       await uploadDoctos(idAccount)
+      await updateDiscount()
       dispatch(updateFormsData({ form1: { basicInfo, placementStructure, userFile, id: idAccount } }))
       setDisableSave(false)
     } else {
@@ -511,7 +534,12 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
       const res = await saveInformation()
       setDisableSave(false)
       if (res) {
+        const discountTemp = discounts.map(discount => ({
+          ...discount,
+          idAccount: res.account.id
+        }))
         localStorage.setItem('idAccount', String(res.account.id))
+        if (discountTemp.length > 0) addDiscounts(discountTemp)
       }
 
       await uploadDoctos(res.account.id)
@@ -522,7 +550,11 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   }
 
   const handleDiscountsChange = (newDiscounts: DiscountDto[]) => {
-    setDiscounts(newDiscounts)
+    const discountsTemp = newDiscounts.map(discount => ({
+      ...discount,
+      idAccount: idAccount || 0
+    }))
+    setDiscounts(discountsTemp)
   }
 
   //Evento que controla el evento de continuar

@@ -37,9 +37,9 @@ export enum ACCOUNT_HISTORY_LOG_ROUTES {
 //Discounts
 export enum ACCOUNT_DISCOUNT_ROUTERS {
   ADD = 'account/discount/add',
-  GET_ALL = 'account/discount/',
-  UPDATE = 'account/discount/',
-  DELETE = 'account/discount/'
+  GET_ALL = 'account/discount',
+  UPDATE = 'account/discount',
+  DELETE = 'account/discount'
 }
 
 export enum ACCOUNT_INFORMATION_ROUTES {

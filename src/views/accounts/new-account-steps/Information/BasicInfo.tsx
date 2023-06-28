@@ -100,6 +100,7 @@ type BasicInfoType = {
   receptionDate: Date | null
   effectiveDate: Date | null
   expirationDate: Date | null
+  idAccountType: number
 }
 type BasicInfoProps = {
   basicInfo: BasicInfoType
@@ -153,7 +154,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
   const [bussinesFields, setBussinesFields] = useState(true)
 
   //Industry code managing
-  const [industryCodeValue, setIndustryCodeValue] = useState<string | number | null | undefined>(null)
+  const [industryCodeValue, setIndustryCodeValue] = useState<string | number | null | undefined>(basicInfo.industryCode)
   const [inputValue, setInputValue] = useState<string | undefined>('')
   const industryCodeOptions = [
     ...riskActivities.map(activities => `${activities.industryCode} / ${activities.riskActivity}`)
@@ -190,6 +191,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     setBasicInfo({ ...basicInfo, [name]: value })
+    console.log('un input')
 
     !validateForm && validations({ ...basicInfo, [name]: value })
   }
@@ -356,14 +358,18 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
     if (value == null) value = ''
 
     const riskActivity = riskActivities.find(r => String(value).includes(r.riskActivity))
+    console.log({ riskActivity })
 
-    basicInfoTem.riskActivity = riskActivity?.riskActivity || ''
-    basicInfoTem.riskClass = riskActivity?.class || 0
+    if (!riskActivity) return
+
+    basicInfoTem.riskActivity = riskActivity.riskActivity
+    basicInfoTem.riskClass = riskActivity.class
 
     basicInfoTem = {
       ...basicInfoTem,
-      ['industryCode']: riskActivity?.id || null
+      ['industryCode']: riskActivity.id
     }
+
     !validateForm && validations(basicInfoTem)
     setBasicInfo(basicInfoTem)
 
@@ -372,6 +378,15 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [industryCodeValue])
+
+  useEffect(() => {
+    if (!basicInfo.riskActivity && basicInfo.industryCode) {
+      const riskActivity = riskActivities.find(r => r.id === basicInfo.industryCode)
+      if (!riskActivity) return
+      const autocomplete = `${riskActivity?.industryCode} / ${riskActivity?.riskActivity}`
+      setIndustryCodeValue(autocomplete)
+    }
+  }, [basicInfo.industryCode])
 
   //** ESTA SECCIÓN SE COMENTÓ POR QUE AUN DEBEMOS
   // ** PROBAR LA INTEGRACIÓN CON BACK ANTES DE BORRARLA POR COMPLET0 !!!!!
@@ -416,9 +431,9 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
           <FormControl component='fieldset'>
             <RadioGroup
               aria-label='checkboxGroup'
-              name='checkboxGroup'
-              value={checkboxValue}
-              onChange={handleCheckboxChange}
+              name='idAccountType'
+              value={basicInfo.idAccountType}
+              onChange={handleInputChange}
             >
               <FormControlLabel value={1} control={<Radio />} label='New' />
               <FormControlLabel value={2} control={<Radio />} label='Renewal' />
@@ -746,7 +761,6 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               label='Risk activity'
               value={basicInfo.riskActivity}
               disabled={true}
-              onChange={handleInputChange}
               className={errors.riskActivityError ? 'error' : ''}
               error={!!errors.riskActivityError}
               helperText={getErrorMessage('riskActivityError')}
