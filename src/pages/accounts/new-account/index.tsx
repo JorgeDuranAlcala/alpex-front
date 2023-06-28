@@ -36,7 +36,7 @@ const NewAccount = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [disableComments, setDisableComments] = useState(false)
   const [isNewAccount, setIsNewAccount] = useState<boolean>(true)
-  const [activeStep, setActiveStep] = useState(2)
+  const [activeStep, setActiveStep] = useState(1)
 
   // console.log({ account })
 

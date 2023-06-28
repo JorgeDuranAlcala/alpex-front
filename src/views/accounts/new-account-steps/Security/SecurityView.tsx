@@ -33,9 +33,10 @@ import Icon from 'src/@core/components/icon'
 import UserThemeOptions from 'src/layouts/UserThemeOptions'
 import { SecurityMapper } from './mappers/SecurityForm.mapper'
 
-import { ViewMocks } from './mocks/ViewMocks'
+// import { ViewMocks } from './mocks/ViewMocks'
+// import { mockAccountsState } from './mocks/form_1_data'
 
-import { mockAccountsState } from './mocks/form_1_data'
+import { useAppSelector } from '@/store'
 import { CalculateSecurity } from './utils/calculates-securities'
 
 export const SecurityContext = createContext<SecurityContextDto>({} as SecurityContextDto)
@@ -68,9 +69,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
   const { updateSecurities } = useUpdateSecurities()
   const { saveSecurities } = useAddSecurities()
 
-  // const accountData = useAppSelector(state => state.accounts)
-  // Todo regresar el account data con el useAppSelector
-  const accountData = mockAccountsState;
+  const accountData = useAppSelector(state => state.accounts)
 
   const inter = userThemeConfig.typography?.fontFamilyInter
   const [badgeData, setBadgeData] = useState<IAlert>({
@@ -310,27 +309,15 @@ const Security = ({ onStepChange }: SecurityProps) => {
     setAllErrors(() => [...updatedErrors])
   }
 
-  // Todo comentar aqui
   useEffect(() => {
-    // Todo: comentar mock
+    const idAccountCache = Number(localStorage.getItem('idAccount'))
     if (accountData.formsData.form1.id) {
-      setAccountId(accountData.formsData.form1.id)
+      setAccountId(accountData.formsData.form1.id || idAccountCache)
       const data = accountData.formsData.form1.placementStructure as FormInformation
       setInformation(data)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accountData.formsData.form1.id])
-
-  // Todo descomentar aqui
-  // useEffect(() => {
-  //   const idAccountCache = Number(localStorage.getItem('idAccount'))
-  //   if (accountData.formsData.form1.id) {
-  //     setAccountId(accountData.formsData.form1.id || idAccountCache)
-  //     const data = accountData.formsData.form1.placementStructure as FormInformation
-  //     setInformation(data)
-  //   }
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [accountData.formsData.form1.id])
 
   useEffect(() => {
     if (account && information) {
@@ -368,7 +355,6 @@ const Security = ({ onStepChange }: SecurityProps) => {
       }}
     >
       <div style={{ fontFamily: inter }}>
-        <ViewMocks />
         <CardHeader title={<Title>Security</Title>} />
         <CustomAlert {...badgeData} />
         <form noValidate autoComplete='on'>
