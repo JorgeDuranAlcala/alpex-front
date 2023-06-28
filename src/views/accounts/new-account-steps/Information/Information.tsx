@@ -74,6 +74,8 @@ export interface PlacementStructure {
   taxesP: number
   frontingFeeP: number
   netPremium: number
+  netPremiumWithTaxes: number
+  netPremiumWithoutDiscounts: number
   exchangeRate: number
   limit: number
   grossPremium: number
@@ -160,6 +162,8 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
     taxesP: 0.0,
     frontingFeeP: 0.0,
     netPremium: 0.0,
+    netPremiumWithTaxes: 0.0,
+    netPremiumWithoutDiscounts: 0.0,
     exchangeRate: 0.0,
     limit: 0.0,
     grossPremium: 0.0,
@@ -205,6 +209,9 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
       grossPremium: placementStructure.grossPremium,
       limit: placementStructure.limit,
       netPremium: placementStructure.netPremium,
+
+      // netPremiumWithTaxes: placementStructure.netPremiumWithTaxes, // Hay que cambiar los servicios para el netPremiumWithTaxes
+      // netPremiumWithoutDiscounts: placementStructure.netPremiumWithoutDiscounts, // Hay que cambiar el servicio para el netPremiumWithoutDiscounts
       reinsuranceBrokerage: placementStructure.reinsuranceBrokerage,
       reinsuranceBrokerageTotal: placementStructure.reinsuranceBrokerageP,
       sir: placementStructure.sir,
@@ -286,6 +293,8 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
       grossPremium: placementStructure.grossPremium,
       limit: placementStructure.limit,
       netPremium: placementStructure.netPremium,
+      netPremiumWithTaxes: placementStructure.netPremiumWithTaxes, // Cambiar por netPremiumWithTaxes y
+      netPremiumWithoutDiscounts: placementStructure.netPremiumWithoutDiscounts, //Cambiar por netPremiumWithoutDiscounts
       reinsuranceBrokerage: placementStructure.reinsuranceBrokerage,
       reinsuranceBrokerageTotal: placementStructure.reinsuranceBrokerageP,
       sir: placementStructure.sir,
@@ -377,6 +386,8 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
         grossPremium: Number(information.grossPremium) || 0.0,
         limit: Number(information.limit) || 0.0,
         netPremium: Number(information.netPremium) || 0.0,
+        netPremiumWithTaxes: Number(information.netPremium) || 0.0, // Cambiar por netPremiumWithTaxes y
+        netPremiumWithoutDiscounts: Number(information.netPremium) || 0.0, //Cambiar por netPremiumWithoutDiscounts
         reinsuranceBrokerage: Number(information.reinsuranceBrokerage) || 0.0,
         sir: Number(information.sir) || 0.0,
         taxes: Number(information.taxes) || 0.0,
