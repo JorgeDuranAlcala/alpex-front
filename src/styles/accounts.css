@@ -76,7 +76,7 @@
   width: 100%;
   display: flex;
   flex-direction: row;
-  border: 1px solid blue;
+  /* border: 1px solid blue; */
   padding: 0px;
   /* flex-wrap: wrap; */
 }
@@ -352,7 +352,7 @@
   margin-left: auto !important;
 }
 
-.discount-btn{
+.discount-btn {
   width: 100%;
 }
 
@@ -382,7 +382,6 @@
   min-height: 38px;
 }
 
-
 .form-col {
   width: 32%;
   display: flex;
@@ -397,7 +396,7 @@
   margin-bottom: 10px;
 }
 
-.delete-discount{
+.delete-discount {
   display: flex;
   align-items: center;
   cursor: pointer;

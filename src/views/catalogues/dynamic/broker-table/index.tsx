@@ -189,7 +189,7 @@ const Table = () => {
     const result = await deleteBrokers({ idDeleteList: selectedRows })
     if (result) {
       getBrokersPagination({ ...brokerPagination })
-      triggerAlert('success', 'DELETED')
+      triggerAlert('success-alert', 'DELETED')
     }
     setOpenDeleteRows(false)
   }
@@ -203,7 +203,7 @@ const Table = () => {
     const result = await deleteBrokers({ idDeleteList: [brokerToDelete] })
     if (result) {
       getBrokersPagination({ ...brokerPagination })
-      triggerAlert('success', 'DELETED')
+      triggerAlert('success-alert', 'DELETED')
     }
     setOpenDelete(false)
   }
