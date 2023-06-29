@@ -20,6 +20,7 @@ import NewAccountStepper from 'src/views/components/new-accounts/NewAccountStepp
 
 // import { useGetAccountById } from '@/hooks/accounts/forms'
 import { updateFormsData } from '@/store/apps/accounts'
+import FormAddress from '@/views/accounts/new-account-steps/FormAddress'
 import Sublimits from 'src/views/accounts/new-account-steps/Sublimits'
 import FormHeader from 'src/views/accounts/new-account-steps/headers/formHeader'
 
@@ -60,7 +61,7 @@ const NewAccount = () => {
       case 4:
         return <Sublimits />
       case 5:
-        return <div>Step 5</div>
+        return <FormAddress />
       default:
         return <></>
     }
@@ -143,7 +144,7 @@ const NewAccount = () => {
 
       <Card>
         <NewAccountStepper changeStep={activeStep} onStepChange={handleStepChange} />
-        <StepForm step={activeStep} />
+        <StepForm step={1} />
         {/* <TabAccount /> */}
 
         {/* <UserList /> */}
