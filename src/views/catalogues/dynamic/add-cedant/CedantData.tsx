@@ -63,7 +63,7 @@ const CedantData = ({ idCedant, setIdCedant }: ICedantData) => {
 
     switch (type) {
       case 'success-alert':
-        setAlertText(text || 'NEW BROKER ADDED')
+        setAlertText(text || 'NEW CEDANT ADDED')
         setAlertIcon('mdi:check-circle-outline')
         break
       case 'error-alert':
@@ -111,7 +111,7 @@ const CedantData = ({ idCedant, setIdCedant }: ICedantData) => {
       setIsCedantSaved(true)
       setNameDisabled(true)
       setIsEditing(false)
-      triggerAlert('success', 'CHANGES SAVED')
+      triggerAlert('success-alert', 'CHANGES SAVED')
     } else {
       triggerAlert('error-alert')
     }
@@ -120,7 +120,7 @@ const CedantData = ({ idCedant, setIdCedant }: ICedantData) => {
   const deleteCedant = async () => {
     const result = await deleteCedants({ idDeleteList: [newCedant.id] })
     if (result) {
-      triggerAlert('success', 'DELETED')
+      triggerAlert('success-alert', 'DELETED')
       setIdCedant(0)
     } else {
       triggerAlert('error-alert')

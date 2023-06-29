@@ -108,7 +108,7 @@ const BrokerData = ({ idBroker, setIdBroker }: IBrokerData) => {
       setIsBrokerSaved(true)
       setNameDisabled(true)
       setIsEditing(false)
-      triggerAlert('success', 'CHANGES SAVED')
+      triggerAlert('success-alert', 'CHANGES SAVED')
     } else {
       triggerAlert('error-alert')
     }
@@ -117,7 +117,7 @@ const BrokerData = ({ idBroker, setIdBroker }: IBrokerData) => {
   const deleteBroker = async () => {
     const result = await deleteBrokers({ idDeleteList: [newBroker.id] })
     if (result) {
-      triggerAlert('success', 'DELETED')
+      triggerAlert('success-alert', 'DELETED')
       setIdBroker(0)
     } else {
       triggerAlert('error-alert')

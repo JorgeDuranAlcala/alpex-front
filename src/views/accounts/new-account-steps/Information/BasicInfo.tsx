@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { ForwardedRef, ReactNode, forwardRef, useEffect, useState } from 'react' //ReactNode
+import React, { ForwardedRef, ReactNode, forwardRef, useEffect, useState } from 'react'; //ReactNode
 
 // ** MUI Imports
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
@@ -18,7 +18,7 @@ import {
   TextField,
   Theme
 } from '@mui/material'
-import Select, { SelectChangeEvent } from '@mui/material/Select' //SelectChangeEvent
+import Select, { SelectChangeEvent } from '@mui/material/Select'; //SelectChangeEvent
 
 //Components
 import { ContactModal } from '@/views/accounts/new-account-steps/Information/ContactModal'
@@ -256,8 +256,6 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
 
   const validations = (basicInfoParama: BasicInfoType | null = null) => {
     const basicInfoTemp = basicInfoParama ? basicInfoParama : basicInfo
-    console.log('validation industry code')
-    console.log(basicInfoTemp.industryCode)
     const newErrors: BasicInfoErrors = {
       insuredError: basicInfoTemp.insured === '',
       countryError: basicInfoTemp.country === '',
@@ -419,8 +417,6 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
   }, [makeValidations, makeSaveValidations])
 
   React.useEffect(() => {
-    console.log('basic info cambio')
-    console.log(basicInfo)
   }, [basicInfo])
 
   return (

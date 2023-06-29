@@ -18,7 +18,7 @@ import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interf
 
 type DynamicComissionPercentProps = ISecurityInputProps;
 
-export const DynamicComissionPercent = ({ index, value, isError, validateForm }: DynamicComissionPercentProps) => {
+export const DynamicComissionPercent = ({ index, value, errorMessage, validateForm }: DynamicComissionPercentProps) => {
 
   const {
     activeErros,
@@ -54,7 +54,7 @@ export const DynamicComissionPercent = ({ index, value, isError, validateForm }:
       />
 
       <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
-        {activeErros && isError}
+        {activeErros && errorMessage}
       </FormHelperText>
     </FormControl>
   )

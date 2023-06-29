@@ -7,7 +7,7 @@ import { SetStateAction, useContext } from 'react';
 import { SecurityContext } from '../../SecurityView';
 import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interface';
 
-interface SwitchTaxesProps extends Omit<ISecurityInputProps, 'value' | 'isError'> {
+interface SwitchTaxesProps extends Omit<ISecurityInputProps, 'value' | 'errorMessage'> {
   isChecked: boolean;
   security: SecurityDto;
   setIsTaxesEnabled: (value: SetStateAction<boolean>) => void;

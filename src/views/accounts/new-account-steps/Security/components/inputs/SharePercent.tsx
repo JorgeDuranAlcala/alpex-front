@@ -17,7 +17,7 @@ import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interf
 
 type SharePercentProps = ISecurityInputProps;
 
-export const SharePercent = ({ index, value, isError, validateForm }: SharePercentProps) => {
+export const SharePercent = ({ index, value, errorMessage, validateForm }: SharePercentProps) => {
 
   const {
     activeErros,
@@ -53,7 +53,7 @@ export const SharePercent = ({ index, value, isError, validateForm }: SharePerce
       />
 
       <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
-        {activeErros && isError}
+        {activeErros && errorMessage}
       </FormHelperText>
     </FormControl>
   )
