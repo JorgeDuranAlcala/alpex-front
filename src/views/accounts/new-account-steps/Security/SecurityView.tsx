@@ -96,8 +96,11 @@ const Security = ({ onStepChange }: SecurityProps) => {
         security.grossPremiumPerShare = operationSecurity.getGrossPremierPerShare() || 0
         security.brokerAgeAmount = operationSecurity.getBrokerAge() || 0
         security.dynamicCommissionAmount = operationSecurity.getDynamicComissionAmount() || 0
-        security.frontingFeeAmount = operationSecurity.getFrontingFeeAmount() || 0
-        security.taxesAmount = operationSecurity.getTaxesAmount() || 0
+
+        // security.frontingFeeAmount = operationSecurity.getFrontingFeeAmount() || 0
+
+        // security.taxesAmount = operationSecurity.getTaxesAmount() || 0
+
         security.shareAmount = operationSecurity.getShareAmount() || 0
         security.netReinsurancePremium = operationSecurity.getNetReinsurancePremium() || 0
         tempSecurities.push({
@@ -110,7 +113,9 @@ const Security = ({ onStepChange }: SecurityProps) => {
           receivedNetPremium: Number(security.receivedNetPremium) || 0,
           reinsuranceBrokerage: Number(security.reinsuranceBrokerage) || 0,
           share: Number(security.share) || 0,
-          taxes: Number(security.taxes) || 0
+
+          // taxes: Number(security.taxes) || 0
+
         })
       }
       let dataForm: FormSecurity = {

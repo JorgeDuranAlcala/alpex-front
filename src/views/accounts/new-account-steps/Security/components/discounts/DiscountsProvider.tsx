@@ -24,7 +24,6 @@ export const DiscountsProvider = ({ children }: { children: ReactNode }) => {
   }
 
   const updateDiscountByIndex = ({ index, discountPercent, discountAmount }: IUpdateDiscountByIndex) => {
-    console.log({ index, discountPercent, discountAmount })
     setDiscountsList((prev) => {
       const newDiscounts = [...prev];
       newDiscounts[index] = {
