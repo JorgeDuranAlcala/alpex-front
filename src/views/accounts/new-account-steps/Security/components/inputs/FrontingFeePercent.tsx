@@ -9,15 +9,16 @@ import * as yup from 'yup';
 
 import { SecurityContext } from '../../SecurityView';
 import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interface';
+import { CalculateSecurity } from '../../utils/calculates-securities';
 
 // ! only if we want specific props
-// interface FrontingFeePercentProps extends ISecurityInputProps {
-//
-// }
+interface FrontingFeePercentProps extends ISecurityInputProps {
+  operationSecurity: CalculateSecurity
+}
 
-type FrontingFeePercentProps = ISecurityInputProps;
+// type FrontingFeePercentProps = ISecurityInputProps;
 
-export const FrontingFeePercent = ({ index, value, errorMessage, validateForm }: FrontingFeePercentProps) => {
+export const FrontingFeePercent = ({ index, value, errorMessage, validateForm, operationSecurity }: FrontingFeePercentProps) => {
 
   const {
     activeErros,
@@ -29,7 +30,8 @@ export const FrontingFeePercent = ({ index, value, errorMessage, validateForm }:
     const tempSecurities = [...securities]
     tempSecurities[index] = {
       ...tempSecurities[index],
-      frontingFee: value
+      frontingFee: value,
+      frontingFeeAmount: operationSecurity.getFrontingFeeAmount(value)
     }
     validateForm(tempSecurities[index])
     calculateSecurities(tempSecurities)
@@ -41,8 +43,8 @@ export const FrontingFeePercent = ({ index, value, errorMessage, validateForm }:
         autoFocus
         label='Fronting fee %'
         value={value}
-        onValueChange={value => {
-          handleChangeFrontingFeePercent(Number(value.floatValue))
+        onChange={e => {
+          handleChangeFrontingFeePercent(Number(e.target.value))
         }}
         suffix={'%'}
         customInput={TextField}

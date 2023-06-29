@@ -9,16 +9,16 @@ import * as yup from 'yup';
 
 import { SecurityContext } from '../../SecurityView';
 import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interface';
+import { CalculateSecurity } from '../../utils/calculates-securities';
 
 
 // ! only if we want specific props
-// interface TaxesPercentProps extends ISecurityInputProps {
+interface TaxesPercentProps extends ISecurityInputProps {
+  operationSecurity: CalculateSecurity
+}
 
-// }
 
-type TaxesPercentProps = ISecurityInputProps;
-
-export const TaxesPercent = ({ index, value, errorMessage, validateForm }: TaxesPercentProps) => {
+export const TaxesPercent = ({ index, value, errorMessage, validateForm, operationSecurity }: TaxesPercentProps) => {
 
   const {
     activeErros,
@@ -27,11 +27,14 @@ export const TaxesPercent = ({ index, value, errorMessage, validateForm }: Taxes
   } = useContext(SecurityContext);
 
   const handleChangeTaxesPercent = (value: number) => {
+    console.log(value);
+
     // Código a ejecutar cuando se deja de escribir
     const tempSecurities = [...securities]
     tempSecurities[index] = {
       ...tempSecurities[index],
-      taxes: value
+      taxes: value,
+      taxesAmount: operationSecurity.getTaxesAmount(value)
     }
     validateForm(tempSecurities[index])
     calculateSecurities(tempSecurities)
