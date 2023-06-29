@@ -39,7 +39,10 @@ export interface InformationDto {
   idLeadUnderwriter: number | null | string
   idUnderwriter: number | null | string
   idTechnicalAssistant: number | null | string
+  updatedAt?: number | null | string | any
   idAccountType: number
+  premiumWithTaxes: number
+  premiumWithOutDiscounts: number
 }
 
 export interface InformationResponse {

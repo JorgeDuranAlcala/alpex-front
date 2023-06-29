@@ -37,9 +37,9 @@ export enum ACCOUNT_HISTORY_LOG_ROUTES {
 //Discounts
 export enum ACCOUNT_DISCOUNT_ROUTERS {
   ADD = 'account/discount/add',
-  GET_ALL = 'account/discount/',
-  UPDATE = 'account/discount/',
-  DELETE = 'account/discount/'
+  GET_ALL = 'account/discount',
+  UPDATE = 'account/discount',
+  DELETE = 'account/discount'
 }
 
 export enum ACCOUNT_INFORMATION_ROUTES {
@@ -235,6 +235,10 @@ export enum ACCOUNT_STATUS_ROUTERS {
   GET_BY_ID = 'account/account-status/'
 }
 
+export enum ENDORSEMENT_TYPE_ROUTES {
+  GET_ALL = 'catalogs/endorsementType/all'
+}
+
 // ==== USER
 export enum USERS_ROUTES {
   GET = 'user',
@@ -256,4 +260,10 @@ export enum EXCHANGE_RATE {
 
 export enum CHAT_BOT {
   CHAT = 'ai/chat'
+}
+
+// ==== ENDORSEMENT
+export enum ENDORSEMENT_ROUTES {
+  GET_BY_ID_ACCOUNT = 'endorsement/history',
+  GET_BY_ID = 'endorsement'
 }

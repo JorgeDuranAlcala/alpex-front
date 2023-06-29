@@ -11,7 +11,7 @@ import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interf
 //
 // }
 
-type ConsecutiveProps = Omit<ISecurityInputProps, 'index' | 'isError' | 'validateForm'>;
+type ConsecutiveProps = Omit<ISecurityInputProps, 'index' | 'errorMessage' | 'validateForm'>;
 
 export const Consecutive = ({ value }: ConsecutiveProps) => {
 

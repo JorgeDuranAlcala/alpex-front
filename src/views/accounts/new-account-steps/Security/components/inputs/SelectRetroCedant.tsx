@@ -21,7 +21,7 @@ interface SelectRetroCedantProps extends ISecurityInputProps {
 }
 
 
-export const SelectRetroCedant = ({ index, value, isError, retroCedants, validateForm, setIdRetroCedant
+export const SelectRetroCedant = ({ index, value, errorMessage, retroCedants, validateForm, setIdRetroCedant
 }: SelectRetroCedantProps) => {
 
   const {
@@ -63,7 +63,7 @@ export const SelectRetroCedant = ({ index, value, isError, retroCedants, validat
         ))}
       </Select>
       <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
-        {activeErros && isError}
+        {activeErros && errorMessage}
       </FormHelperText>
     </FormControl>
   )
@@ -82,5 +82,6 @@ export const selectRetroCedant_validations = ({ frontingFeeEnabled }: { fronting
       }
 
       return true
-    }),
+    })
+    .required('This field is required'),
 });

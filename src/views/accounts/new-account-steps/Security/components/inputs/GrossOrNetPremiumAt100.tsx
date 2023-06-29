@@ -3,20 +3,25 @@ import {
   FormHelperText,
   TextField
 } from '@mui/material';
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import { NumericFormat } from 'react-number-format';
 import * as yup from 'yup';
 
 import { SecurityContext } from '../../SecurityView';
 import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interface';
+import { CalculateSecurity } from '../../utils/calculates-securities';
+import { DiscountsContext } from '../discounts/DiscountsContext';
 
 
 interface GrossOrNetPremiumAt100Props extends ISecurityInputProps {
   isGross: boolean;
+  operationSecurity: CalculateSecurity
 
 }
 
-export const GrossOrNetPremiumAt100 = ({ index, isGross, value, isError, validateForm }: GrossOrNetPremiumAt100Props) => {
+export const GrossOrNetPremiumAt100 = ({ index, isGross, value, errorMessage, validateForm, operationSecurity }: GrossOrNetPremiumAt100Props) => {
+
+  const { discountsList, updateAllDiscounts } = useContext(DiscountsContext);
 
   const {
     activeErros,
@@ -31,8 +36,24 @@ export const GrossOrNetPremiumAt100 = ({ index, isGross, value, isError, validat
       netPremiumAt100: value
     }
     validateForm(tempSecurities[index])
-    calculateSecurities(tempSecurities)
+    calculateSecurities(tempSecurities);
+
+
+
   }
+
+  useEffect(() => {
+    const newDiscountsList = discountsList.map(discount => ({
+      discountPercent: discount.discountPercent,
+      discountAmount: operationSecurity.getDiscountAmount(discount.discountPercent),
+    }));
+
+    updateAllDiscounts(newDiscountsList);
+
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value])
+
 
   return (
     <FormControl fullWidth sx={{ mb: 2 }}>
@@ -51,7 +72,7 @@ export const GrossOrNetPremiumAt100 = ({ index, isGross, value, isError, validat
       />
 
       <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
-        {activeErros && isError}
+        {activeErros && errorMessage}
       </FormHelperText>
     </FormControl>
   )

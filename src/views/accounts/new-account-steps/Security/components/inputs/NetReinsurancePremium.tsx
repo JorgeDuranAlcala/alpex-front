@@ -17,7 +17,7 @@ import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interf
 
 type NetReinsurancePremiumProps = Omit<ISecurityInputProps, 'index' | 'validateForm'>;
 
-export const NetReinsurancePremium = ({ value, isError }: NetReinsurancePremiumProps) => {
+export const NetReinsurancePremium = ({ value, errorMessage }: NetReinsurancePremiumProps) => {
 
   const {
     activeErros,
@@ -40,7 +40,7 @@ export const NetReinsurancePremium = ({ value, isError }: NetReinsurancePremiumP
       />
 
       <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
-        {activeErros && isError}
+        {activeErros && errorMessage}
       </FormHelperText>
     </FormControl>
   )

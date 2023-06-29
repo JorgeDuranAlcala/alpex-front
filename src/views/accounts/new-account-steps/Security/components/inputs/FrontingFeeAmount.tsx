@@ -16,7 +16,7 @@ interface FrontingFeeAmountProps extends ISecurityInputProps {
 }
 
 
-export const FrontingFeeAmount = ({ index, value, isError, validateForm, operationSecurity }: FrontingFeeAmountProps) => {
+export const FrontingFeeAmount = ({ index, value, errorMessage, validateForm, operationSecurity }: FrontingFeeAmountProps) => {
 
   const {
     activeErros,
@@ -28,31 +28,30 @@ export const FrontingFeeAmount = ({ index, value, isError, validateForm, operati
     const tempSecurities = [...securities]
     tempSecurities[index] = {
       ...tempSecurities[index],
-      frontingFee: operationSecurity.getFrontingFeePercent(value)
+      frontingFee: operationSecurity.getFrontingFeePercent(value),
+      frontingFeeAmount: value,
     }
     validateForm(tempSecurities[index])
     calculateSecurities(tempSecurities)
   }
 
   return (
+
     <FormControl fullWidth sx={{ mb: 2 }}>
       <NumericFormat
         autoFocus
-        label='Fronting fee %'
+        label='Taxes'
         value={value}
-        onValueChange={value => {
-          handleChangeFrontingFeeAmount(Number(value.floatValue))
+        onChange={e => {
+          handleChangeFrontingFeeAmount(Number(e.target.value.replace('$', '').replaceAll(',', '')))
         }}
-        suffix={'%'}
+        prefix={'$'}
         customInput={TextField}
         decimalScale={2}
-        isAllowed={values => {
-          return (values.floatValue! >= 0 && values.floatValue! <= 100) || values.floatValue === undefined
-        }}
+        thousandSeparator=','
       />
-
       <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
-        {activeErros && isError}
+        {activeErros && errorMessage}
       </FormHelperText>
     </FormControl>
   )

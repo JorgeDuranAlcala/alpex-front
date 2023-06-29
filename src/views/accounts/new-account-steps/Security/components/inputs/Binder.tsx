@@ -2,18 +2,51 @@ import {
   FormControl,
   InputLabel,
   MenuItem,
-  Select
+  Select,
 } from '@mui/material';
 
 
-import { BinderDto } from '@/services/catalogs/dtos/binder.dto';
+import { ReinsuranceCompanyBinderDto } from '@/services/catalogs/dtos/ReinsuranceCompanyBinder.dto';
+import { useEffect, useState } from 'react';
 import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interface';
 
-interface BinderProps extends Omit<ISecurityInputProps, 'index' | 'isError' | 'validateForm'> {
-  binders: BinderDto[] | undefined
+// const NoBindersContainer = styled(Box)(({ theme }) => ({
+//   // backgroundColor: 'lightblue',
+//   display: 'flex',
+//   justifyContent: 'center',
+//   alignItems: 'center',
+//   minHeight: '56px',
+//   padding: '16.5px 0px',
+//   marginBottom: '24px',
+//   [theme.breakpoints.down('sm')]: {
+//     display: 'none',
+//   }
+// }))
+
+interface BinderProps extends Omit<ISecurityInputProps, 'index' | 'errorMessage' | 'validateForm'> {
+  binders: ReinsuranceCompanyBinderDto[]
 }
 
 export const Binder = ({ value, binders }: BinderProps) => {
+
+  const [selectedBinder, setSelectedBinder] = useState<ReinsuranceCompanyBinderDto | null>(null)
+
+  // if (binders.length === 0) {
+  //   return (
+  //     <NoBindersContainer>
+  //       No Binders
+  //     </NoBindersContainer>
+  //   )
+  // }
+
+  const handleOnChangeBinder = (value: number) => {
+    setSelectedBinder(binders.filter(b => b.id === value)[0])
+  }
+
+  useEffect(() => {
+    setSelectedBinder(null)
+  }, [binders])
+
 
 
   return (
@@ -21,12 +54,14 @@ export const Binder = ({ value, binders }: BinderProps) => {
       <InputLabel id='Binder'>Binder</InputLabel>
       <Select
         label='Binder'
-        value={value.toString()}
+        value={selectedBinder && binders.length > 0 ? selectedBinder.id : value.toString()}
         labelId='binder'
+        disabled={binders.length === 0}
+        onChange={(e) => handleOnChangeBinder(Number(e.target.value))}
       >
         {binders?.map(binder => (
           <MenuItem key={binder.id} value={binder.id}>
-            {binder.description}
+            {binder.referenceNumber}
           </MenuItem>
         ))}
       </Select>

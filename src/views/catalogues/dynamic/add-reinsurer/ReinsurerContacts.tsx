@@ -375,7 +375,7 @@ const ReinsurerContacts = ({ idReinsuranceCompany }: IReinsuranceCompanyContacts
       idCCountry: currentContact.idCCountry.id
     })
     if (result) {
-      triggerAlert('success', 'CHANGES SAVED')
+      triggerAlert('success-alert', 'CHANGES SAVED')
       getReinsuranceCompanyContactsByIdReinsuranceCompany(reinsuranceCompanyContactsPagination)
     }
     setOpenEdit(false)
@@ -385,7 +385,7 @@ const ReinsurerContacts = ({ idReinsuranceCompany }: IReinsuranceCompanyContacts
     const result = await deleteReinsuranceCompanyContact({ idDeleteList: [contactToDelete] })
     if (result) {
       getReinsuranceCompanyContactsByIdReinsuranceCompany(reinsuranceCompanyContactsPagination)
-      triggerAlert('success', 'DELETED')
+      triggerAlert('success-alert', 'DELETED')
     }
     setOpenDelete(false)
   }
@@ -394,7 +394,7 @@ const ReinsurerContacts = ({ idReinsuranceCompany }: IReinsuranceCompanyContacts
     const result = await deleteReinsuranceCompanyContact({ idDeleteList: selectedRows })
     if (result) {
       getReinsuranceCompanyContactsByIdReinsuranceCompany(reinsuranceCompanyContactsPagination)
-      triggerAlert('success', 'DELETED')
+      triggerAlert('success-alert', 'DELETED')
     }
     setOpenDeleteRows(false)
   }

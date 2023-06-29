@@ -17,7 +17,7 @@ interface TaxesAmountProps extends ISecurityInputProps {
   operationSecurity: CalculateSecurity
 }
 
-export const TaxesAmount = ({ index, value, isError, validateForm, operationSecurity }: TaxesAmountProps) => {
+export const TaxesAmount = ({ index, value, errorMessage, validateForm, operationSecurity }: TaxesAmountProps) => {
 
   const {
     activeErros,
@@ -26,6 +26,7 @@ export const TaxesAmount = ({ index, value, isError, validateForm, operationSecu
   } = useContext(SecurityContext);
 
   const handleChangeTaxesAmount = (value: number) => {
+    console.log(value)
     const tempSecurities = [...securities]
     tempSecurities[index] = {
       ...tempSecurities[index],
@@ -41,8 +42,8 @@ export const TaxesAmount = ({ index, value, isError, validateForm, operationSecu
         autoFocus
         label='Taxes'
         value={value}
-        onValueChange={value => {
-          handleChangeTaxesAmount(Number(value.floatValue))
+        onChange={e => {
+          handleChangeTaxesAmount(Number(e.target.value.replace('$', '').replaceAll(',', '')))
         }}
         prefix={'$'}
         customInput={TextField}
@@ -50,7 +51,7 @@ export const TaxesAmount = ({ index, value, isError, validateForm, operationSecu
         thousandSeparator=','
       />
       <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
-        {activeErros && isError}
+        {activeErros && errorMessage}
       </FormHelperText>
     </FormControl>
   )

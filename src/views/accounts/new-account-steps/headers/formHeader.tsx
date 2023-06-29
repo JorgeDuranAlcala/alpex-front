@@ -1,10 +1,13 @@
 import { useFindInformationByIdAccount } from '@/hooks/accounts/information'
+import { ContainerMobileBound } from '@/styled-components/accounts/Security.styled'
+import { formatStatus } from '@/utils/formatStatus'
 import { Box, Button, Card, ListItemIcon, ListItemText, Menu, MenuItem, Modal, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
 import Icon from 'src/@core/components/icon'
 import { useAppSelector } from 'src/store'
 import StatusSelect from 'src/views/custom/select/StatusSelect'
 import ActionsHeader from './ActionsHeader'
+import ActionsHeaderBound from './ActionsHeaderBound'
 
 // import StatusSelect from 'src/views/custom/select/StatusSelect'
 
@@ -115,11 +118,14 @@ const ModalUploadImage = () => {
 }
 
 const FormHeader = ({ isNewAccount }: any) => {
-  const [status, setStatus] = useState({})
+  const [status, setStatus] = useState('')
+  const [accounts, setAccounts] = useState<any>([])
 
   const account = useAppSelector(state => state.accounts?.formsData?.form1)
 
   const { setIdAccount, information } = useFindInformationByIdAccount()
+  const accountsReducer = useAppSelector(state => state.accounts)
+
   const formaterAmount = (amount: number) => {
     if (amount) {
       return amount.toLocaleString('en-US', {
@@ -142,15 +148,68 @@ const FormHeader = ({ isNewAccount }: any) => {
     }
     return ''
   }
+
+  const convertirFecha = (fecha: string) => {
+    const fechaObjeto = new Date(fecha)
+
+    const dia = fechaObjeto.getUTCDate()
+    const mes = fechaObjeto.getUTCMonth() + 1
+    const anio = fechaObjeto.getUTCFullYear()
+
+    return `${dia}/${mes < 10 ? '0' + mes : mes}/${anio}`
+  }
+
+  useEffect(() => {
+    const formatedRows = []
+    const rawRows = accountsReducer.accounts
+
+    if (rawRows && rawRows.length > 0) {
+      for (const rawRow of rawRows) {
+        formatedRows.push({
+          id: rawRow?.id,
+          status: formatStatus(rawRow?.idAccountStatus?.status),
+          insured: rawRow?.informations[0]?.insured,
+          lob: rawRow?.informations[0]?.idLineOfBussines?.lineOfBussines
+        })
+      }
+    }
+
+    setAccounts(formatedRows || [])
+    const data = accounts?.find((item: any) => item.id === account?.id)
+    console.log('datoss', data)
+
+    setStatus(data?.status)
+  }, [accountsReducer])
+
   useEffect(() => {
     account && setIdAccount(account.id)
   }, [account])
+
+  console.log('información', information, account, accounts, accountsReducer)
+
+  console.log('objeto', status)
 
   return (
     <>
       <Card className='info-header' style={{ marginBottom: '16px' }}>
         <div className='form-header-data'>
           <div className='form-container-all-data'>
+            {/* Contenedor mobile bound */}
+            <ContainerMobileBound>
+              <div className='title'>{account?.basicInfo?.insured} </div>
+              <div className='idNumber'>#{account?.id}</div>
+
+              <span className='subtitle'>Net premium</span>
+              <span className='moneySubtitle'>
+                ${account && account?.placementStructure?.netPremium}
+                {account?.placementStructure?.currency}
+                {account?.placementStructure?.currency}
+              </span>
+              <span className='subtitle'>Reception Date</span>
+              <span className='reception'>{account && convertirFecha(account?.basicInfo?.receptionDate)}</span>
+            </ContainerMobileBound>
+
+            {/* Contenedor mobile bound */}
             {/* Container first */}
             {!isNewAccount && (
               <div className='form-header-sections'>
@@ -164,27 +223,30 @@ const FormHeader = ({ isNewAccount }: any) => {
                 <div className='form-header-money-data'>
                   <span className='form-header-money-data-txt'>Net premium</span>
                   <span className='form-header-money-data-num'>
-                    ${account && formaterAmount(account?.placementStructure?.netPremium)}{' '}
+                    ${account && account?.placementStructure?.netPremium}
                     {account?.placementStructure?.currency}
                   </span>
-                  <span className='form-header-money-data-date'>Last Update: 11 / 03 / 2023</span>
+                  <span className='form-header-money-data-date'>
+                    Last Update: {account && convertirFecha(information?.updatedAt)}
+                  </span>
                 </div>
               </div>
             )}
             {/* Container first */}
-
             {/* Container second */}
-
             <div className='form-secondContainer-wrapper'>
               <div className='form-secondContainer-wrapper-first-side'>
                 <div className='form-secondContainer-first' style={{ marginRight: '20px' }}>
                   <span className='form-secondContainer-header-title'>Status</span>
-                  <StatusSelect margin={0} initialStatus='PENDING' setSelectedStatus={setStatus} />
+                  {status !== '' && <StatusSelect margin={0} initialStatus='PENDING' setSelectedStatus={setStatus} />}
                 </div>
 
                 <div className='form-secondContainer-third'>
-                  <span className='form-header-money-data-date'>Last Update: 11 / 03 / 2023</span>
+                  <span className='form-header-money-data-date'>
+                    Last update: {account && convertirFecha(information?.updatedAt)}
+                  </span>
                 </div>
+
                 {!isNewAccount && (
                   <div className='form-secondContainer-second'>
                     <span className='form-secondContainer-header-title'>Line of Business</span>
@@ -205,9 +267,15 @@ const FormHeader = ({ isNewAccount }: any) => {
               </div>
               <div className={!isNewAccount ? 'actions-header' : 'form-secondContainer-fourths'}>
                 <div className={!isNewAccount ? 'display-none' : 'form-secondContainer-fourth'}>
-                  <span className='form-header-money-data-date'>Last Update: 11 / 03 / 2023</span>
+                  <span className='form-header-money-data-date'>
+                    Last Update: {account && convertirFecha(information?.updatedAt)}
+                  </span>
                 </div>
-                <ActionsHeader accountStatus='PENDING' sideHeader={true} />
+                {status !== 'bound' ? (
+                  <ActionsHeader accountStatus='PENDING' sideHeader={true} />
+                ) : (
+                  <ActionsHeaderBound accountStatus='BOUND' sideHeader={true} />
+                )}
               </div>
             </div>
             {/* Container second */}
