@@ -60,6 +60,7 @@ const NewAccount = () => {
         return <PaymentWarranty onStepChange={handleStepChange} />
       case 4:
         return <Sublimits />
+
       case 5:
         return <FormAddress />
       default:
@@ -144,7 +145,7 @@ const NewAccount = () => {
 
       <Card>
         <NewAccountStepper changeStep={activeStep} onStepChange={handleStepChange} />
-        <StepForm step={1} />
+        <StepForm step={activeStep} />
         {/* <TabAccount /> */}
 
         {/* <UserList /> */}
