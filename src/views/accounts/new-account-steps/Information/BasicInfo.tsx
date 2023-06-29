@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { ForwardedRef, ReactNode, forwardRef, useEffect, useState } from 'react' //ReactNode
+import React, { ForwardedRef, ReactNode, forwardRef, useEffect, useState } from 'react'; //ReactNode
 
 // ** MUI Imports
-import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import {
   Autocomplete,
   FormControl,
@@ -17,26 +17,26 @@ import {
   SxProps,
   TextField,
   Theme
-} from '@mui/material'
-import Select, { SelectChangeEvent } from '@mui/material/Select' //SelectChangeEvent
+} from '@mui/material';
+import Select, { SelectChangeEvent } from '@mui/material/Select'; //SelectChangeEvent
 
 //Components
-import { ContactModal } from '@/views/accounts/new-account-steps/Information/ContactModal'
+import { ContactModal } from '@/views/accounts/new-account-steps/Information/ContactModal';
 
 //hooks para base info y  modal contac
-import { useGetAllCountries as useCountyGetAll } from 'src/hooks/catalogs/country'
+import { useGetAllCountries as useCountryGetAll } from 'src/hooks/catalogs/country';
 
 // ** Third Party Imports
-import DatePickerWrapper from '@/@core/styles/libs/react-datepicker'
-import { ROLES } from '@/configs/api'
-import DatePicker from 'react-datepicker'
-import { useGetAll as useBrokerGetAll } from 'src/hooks/catalogs/broker'
-import { useGetAllByIdBroker } from 'src/hooks/catalogs/broker-contact/'
-import { useGetAll as useCedantGetAll } from 'src/hooks/catalogs/cedant'
-import { useGetAllByCedant } from 'src/hooks/catalogs/cedant-contact'
-import { useGetAllLineOfBussines } from 'src/hooks/catalogs/lineOfBussines'
-import { useGetAllRiskActivities } from 'src/hooks/catalogs/riskActivity'
-import { useGetByIdRole } from 'src/hooks/catalogs/users/'
+import DatePickerWrapper from '@/@core/styles/libs/react-datepicker';
+import { ROLES } from '@/configs/api';
+import DatePicker from 'react-datepicker';
+import { useGetAll as useBrokerGetAll } from 'src/hooks/catalogs/broker';
+import { useGetAllByIdBroker } from 'src/hooks/catalogs/broker-contact/';
+import { useGetAll as useCedantGetAll } from 'src/hooks/catalogs/cedant';
+import { useGetAllByCedant } from 'src/hooks/catalogs/cedant-contact';
+import { useGetAllLineOfBussines } from 'src/hooks/catalogs/lineOfBussines';
+import { useGetAllRiskActivities } from 'src/hooks/catalogs/riskActivity';
+import { useGetByIdRole } from 'src/hooks/catalogs/users/';
 
 interface PickerProps {
   label?: string
@@ -46,6 +46,7 @@ interface PickerProps {
 interface BasicInfoErrors {
   insuredError: boolean
   countryError: boolean
+  economicSectorError: boolean
   brokerError: boolean
   cedantError: boolean
   lineOfBusinessError: boolean
@@ -80,6 +81,7 @@ interface BasicInfoSaveErrors {
 type BasicInfoType = {
   insured: string
   country: number | string
+  economicSector: number | string
   broker: number | string
   brokerContact: number | null | string
   brokerContactEmail: string
@@ -139,7 +141,10 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
   onValidationComplete
 }) => {
   //cargamos la informacion de los catalogos de base de datos
-  const { countries } = useCountyGetAll()
+  const { countries } = useCountryGetAll()
+  const economicSector= countries
+
+  // const { economicSector } = useGetSectors()
   const { brokers } = useBrokerGetAll()
   const { cedant } = useCedantGetAll()
   const [validateForm, setValidateForm] = useState<boolean>(true)
@@ -166,6 +171,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
   const [errors, setErrors] = useState<BasicInfoErrors>({
     insuredError: false,
     countryError: false,
+    economicSectorError: false,
     brokerError: false,
     cedantError: false,
     lineOfBusinessError: false,
@@ -258,6 +264,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
     const newErrors: BasicInfoErrors = {
       insuredError: basicInfoTemp.insured === '',
       countryError: basicInfoTemp.country === '',
+      economicSectorError: false, //makeValidations && basicInfoTemp.economicSector === '',
       brokerError: basicInfoTemp.broker === '',
       cedantError: basicInfoTemp.cedant === '',
       lineOfBusinessError: basicInfoTemp.lineOfBusiness === '',
@@ -477,6 +484,38 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
                 {getErrorMessage('countryError')}
               </FormHelperText>
             )}
+          </FormControl>
+          <FormControl fullWidth sx={{ mb: 2, mt: 2 }} error={errors.countryError}>
+            <InputLabel>Economic Sector</InputLabel>
+
+            <Select
+              name='economic-sector'
+              label='Economic Sector'
+              defaultValue={''}
+              value={String(basicInfo.economicSector)}
+              onChange={handleSelectChange}
+              labelId='economic-sector'
+            >
+              {economicSector.length > 0 ? (
+                economicSector.map(sector => {
+                  return (
+                    <MenuItem key={sector.id} value={sector.id}>
+                      {sector.name}
+                    </MenuItem>
+                  )
+                })
+              ) : (
+                <MenuItem key={null} value={''}>
+                  No options available
+                </MenuItem>
+              )}
+            </Select>
+
+            {/* {errors.economicSectorError && (
+              <FormHelperText sx={{ color: 'error.main' }} id='invoice-country-error'>
+                {getErrorMessage('countryError')}
+              </FormHelperText>
+            )} */}
           </FormControl>
         </div>
 
