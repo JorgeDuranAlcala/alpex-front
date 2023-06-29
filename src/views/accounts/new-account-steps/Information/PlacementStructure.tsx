@@ -235,6 +235,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
     const taxesFinal = taxes ? taxes : 0
     const frontingFeeTotalFinal = frontingFee ? frontingFee : 0
     const discountsAmount = discounts.reduce((sum, discount) => sum + discount.amount, 0) ?? 0
+
     setNetPremiumWithoutDiscounts(grossPremiumc - reinsuranceBrokerageTotalFinal)
     setNetPremiumWithTaxes(grossPremiumc - reinsuranceBrokerageTotalFinal - frontingFeeTotalFinal - discountsAmount)
     setNetPremium(grossPremiumc - reinsuranceBrokerageTotalFinal - taxesFinal - frontingFeeTotalFinal - discountsAmount)
@@ -277,10 +278,29 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
   }
 
   const handleTaxesChange = () => {
+    if (!taxesChecked === false) {
+      setTaxesP(0)
+      setTaxes(0)
+      setPlacementStructure({
+        ...placementStructure,
+        taxes: 0,
+        taxesP: 0
+      })
+    }
     setTaxesChecked(!taxesChecked)
   }
 
   const handleFrontingChange = () => {
+    if (!frontingChecked === false) {
+      setFrontingFeeP(0)
+      setFrontingFee(0)
+
+      setPlacementStructure({
+        ...placementStructure,
+        frontingFee: 0,
+        frontingFeeP: 0
+      })
+    }
     setFrontingChecked(!frontingChecked)
   }
 
@@ -377,8 +397,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
     if (Object.values(newErrors).every(error => !error)) {
       // enviar formulario si no hay errores
       onValidationComplete(true, 'placementStructure')
-      console.log('validacion en placement')
-      console.log(errors)
+      console.error(errors)
 
       // isValidForm(true)
     } else {
@@ -392,7 +411,6 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
 
     const totalPercentages = discountPercentages + placementStructure.taxesP + placementStructure.frontingFeeP
     const totalAmount = discountAmount + placementStructure.taxes + placementStructure.frontingFee
-    console.log({ totalPercentages, totalAmount, grossPremium })
 
     if (totalPercentages > 100 || totalAmount > grossPremium) return true
     else return false
@@ -452,33 +470,6 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [exchangeRate])
 
-  useEffect(() => {
-    if (!taxesChecked) {
-      setTaxesP(0)
-      setTaxes(0)
-      setPlacementStructure({
-        ...placementStructure,
-        taxes: 0,
-        taxesP: 0
-      })
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [taxesChecked])
-
-  useEffect(() => {
-    if (!frontingChecked) {
-      setFrontingFeeP(0)
-      setFrontingFee(0)
-
-      setPlacementStructure({
-        ...placementStructure,
-        frontingFee: 0,
-        frontingFeeP: 0
-      })
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [frontingChecked])
-
   React.useEffect(() => {
     onDiscountsChange(discounts)
     calculate()
@@ -499,6 +490,18 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  //Controla la carga inicial de los checkBox
+  React.useEffect(() => {
+    if (placementStructure.typeOfLimit !== 0) {
+      const taxesCheck = placementStructure.taxesP === 0 ? false : true
+      const frontingFeeCheck = placementStructure.frontingFeeP === 0 ? false : true
+
+      setTaxesChecked(taxesCheck)
+      setFrontingChecked(frontingFeeCheck)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [placementStructure.typeOfLimit])
 
   return (
     <>

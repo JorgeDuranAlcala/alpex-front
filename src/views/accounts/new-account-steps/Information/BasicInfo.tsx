@@ -191,7 +191,6 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     setBasicInfo({ ...basicInfo, [name]: value })
-    console.log('un input')
 
     !validateForm && validations({ ...basicInfo, [name]: value })
   }

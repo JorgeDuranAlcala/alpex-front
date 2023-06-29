@@ -410,12 +410,6 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
         frontingFeeP: Number(information.frontingFeeTotal) || 0.0,
         netPremiumWithTaxes: Number(information.premiumWithTaxes) || 0.0,
         netPremiumWithoutDiscounts: Number(information.premiumWithOutDiscounts) || 0.0
-
-        // frontingFeeTotal: 2,
-        // reinsuranceBrokerageTotal: 10,
-        // taxesTotal: Number(information.idT),
-        // totalValues: 3500000,
-        // idTypeOfLimit: '2',
       }
 
       setBasicInfo(obBasicInfo)
