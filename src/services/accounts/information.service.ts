@@ -121,6 +121,25 @@ class AccountServices {
       console.log(message)
     }
   }
+
+  /**
+   * brings all files associated for a especifico idAccount and idDocumentType
+   * @param idAccount
+   * @param idDocumentType
+   * @returns
+   */
+  async getDocumentsByIdAccountAndIdDocumentType(idAccount: number, idDocumentType: number) {
+    try {
+      const { data } = await AppAlpexApiGateWay.get(
+        `${ACCOUNT_INFORMATION_ROUTES.GET_FILES_BY_TYPE}/${idAccount}/${idDocumentType}`
+      )
+
+      return data
+    } catch (error) {
+      const message = String(error)
+      throw new Error(message)
+    }
+  }
 }
 
 export default new AccountServices()
