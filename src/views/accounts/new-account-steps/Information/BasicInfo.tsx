@@ -489,7 +489,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
             <InputLabel>Economic Sector</InputLabel>
 
             <Select
-              name='economic-sector'
+              name='economicSector'
               label='Economic Sector'
               defaultValue={''}
               value={String(basicInfo.economicSector)}
