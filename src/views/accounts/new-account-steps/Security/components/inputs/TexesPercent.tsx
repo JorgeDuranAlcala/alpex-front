@@ -46,8 +46,8 @@ export const TaxesPercent = ({ index, value, errorMessage, validateForm, operati
         autoFocus
         label='Taxes %'
         value={value}
-        onValueChange={value => {
-          handleChangeTaxesPercent(Number(value.floatValue))
+        onChange={e => {
+          handleChangeTaxesPercent(Number(e.target.value.replace('%', '')))
         }}
         suffix={'%'}
         customInput={TextField}
