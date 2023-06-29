@@ -397,7 +397,6 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
     if (Object.values(newErrors).every(error => !error)) {
       // enviar formulario si no hay errores
       onValidationComplete(true, 'placementStructure')
-      console.error(errors)
 
       // isValidForm(true)
     } else {
@@ -788,15 +787,23 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               decimalScale={2}
               variant='outlined'
               disabled={taxesChecked ? false : true}
-              onBlur={() => calculate('taxesP')}
               isAllowed={values => {
                 const { floatValue } = values
 
                 return (floatValue! >= 0 && floatValue! <= 100) || floatValue === undefined
               }}
+              onBlur={()=> calculate('taxesP')}
               onValueChange={value => {
-                setTaxesP(value.floatValue)
+
+                if (value.floatValue) {
+                  setTaxesP(value.floatValue)
                 handleNumericInputChange(value.floatValue, 'taxesP')
+                }else{
+                  setTaxesP(0)
+                handleNumericInputChange(0, 'taxesP')
+                }
+
+                // calculate('taxesP')
               }}
               error={taxesChecked && (errors.taxesPError || errors.totalDiscountsError)}
               helperText={
@@ -822,13 +829,13 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               variant='outlined'
               disabled={taxesChecked ? false : true}
               decimalScale={2}
-              onBlur={() => calculate('taxes')}
               isAllowed={values => {
                 const { floatValue } = values
                 const upLimit = grossPremium || 0
 
                 return (floatValue! >= 0 && floatValue! <= upLimit) || floatValue === undefined
               }}
+              onBlur={()=> calculate('taxesP')}
               onValueChange={value => {
                 setTaxes(value.floatValue)
                 handleNumericInputChange(value.floatValue, 'taxes')
