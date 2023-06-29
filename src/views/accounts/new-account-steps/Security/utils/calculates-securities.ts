@@ -114,10 +114,10 @@ export class CalculateSecurity {
       return (
         this.security.premiumPerShareAmount -
         this.security.dynamicCommissionAmount -
-        this.security.frontingFeeAmount -
+        (this.security.frontingFeeActive ? this.security.frontingFeeAmount : 0) -
         this.security.brokerAgeAmount -
-        this.security.taxesAmount -
-        this.security.frontingFeeAmount
+        (this.security.taxesActive ? this.security.taxesAmount : 0)
+
       )
 
     } else {
@@ -126,7 +126,7 @@ export class CalculateSecurity {
       return (
         this.security.premiumPerShareAmount -
         this.security.dynamicCommissionAmount -
-        this.security.frontingFeeAmount
+        (this.security.frontingFeeActive ? this.security.frontingFeeAmount : 0)
 
         // this.security.brokerAgeAmount -
         // this.security.taxesAmount -
@@ -159,14 +159,23 @@ export class CalculateSecurity {
     if (this.security.isGross) {
       // * is Gross Premium
       let result = this.security.grossPremiumPerShare - this.security.reinsuranceBrokerage;
-      result = (result * (value || this.security.taxes)) / 100;
+      if ((this.security.taxes || value) && this.security.taxesActive) {
+
+        result = (result * (value || this.security.taxes)) / 100;
+      } else {
+        result = 0;
+      }
 
       return result;
     } else {
       // * is Net Premium
       const base = (this.security.netPremiumAt100 * this.security.share) / 100;
+      if ((this.security.taxes || value) && this.security.taxesActive) {
 
-      return (base * (value || this.security.taxes)) / 100;
+        return (base * (value || this.security.taxes)) / 100;
+      } else {
+        return 0;
+      }
 
     }
   }
@@ -212,7 +221,7 @@ export class CalculateSecurity {
       premiumPerShareAmount += security.isGross ? security.premiumPerShareAmount : 0
       shareAmount += security.isGross ? 0 : security.premiumPerShareAmount
       distributedNetPremium +=
-        security.frontingFeeAmount +
+        (security.frontingFeeActive ? security.frontingFeeAmount : 0) +
         security.taxesAmount +
         security.dynamicCommissionAmount +
         security.brokerAgeAmount +

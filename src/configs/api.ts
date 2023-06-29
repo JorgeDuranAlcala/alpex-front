@@ -239,6 +239,10 @@ export enum ENDORSEMENT_TYPE_ROUTES {
   GET_ALL = 'catalogs/endorsementType/all'
 }
 
+export enum ECONOMIC_SECTOR_ROUTES {
+  GET_ALL = 'catalogs/economic-sector/all'
+}
+
 // ==== USER
 export enum USERS_ROUTES {
   GET = 'user',

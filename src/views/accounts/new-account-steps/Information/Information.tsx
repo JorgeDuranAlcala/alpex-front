@@ -193,16 +193,8 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
       idCountry: Number(basicInfo.country),
       idBroker: Number(basicInfo.broker),
       idBrokerContact: Number(basicInfo.brokerContact),
-
-      // brokerContactEmail: basicInfo.brokerContactEmail,
-      // brokerContactPhone: basicInfo.brokerContactPhone,
-      // brokerContactCountry: basicInfo.brokerContactCountry,
       idCedant: Number(basicInfo.cedant),
       idCedantContact: Number(basicInfo.cedantContact),
-
-      // cedantContactEmail: basicInfo.cedantContactEmail,
-      // cedantContactPhone: basicInfo.cedantContactPhone,
-      // cedantContactCountry: basicInfo.cedantContactCountry,
       idLineOfBussines: Number(basicInfo.lineOfBusiness),
       idRiskActivity: Number(basicInfo.industryCode),
       effectiveDate: basicInfo.effectiveDate,
@@ -220,9 +212,6 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
       grossPremium: placementStructure.grossPremium,
       limit: placementStructure.limit,
       netPremium: placementStructure.netPremium,
-
-      // netPremiumWithTaxes: placementStructure.netPremiumWithTaxes, // Hay que cambiar los servicios para el netPremiumWithTaxes
-      // netPremiumWithoutDiscounts: placementStructure.netPremiumWithoutDiscounts, // Hay que cambiar el servicio para el netPremiumWithoutDiscounts
       reinsuranceBrokerage: placementStructure.reinsuranceBrokerage,
       reinsuranceBrokerageTotal: placementStructure.reinsuranceBrokerageP,
       sir: placementStructure.sir,
@@ -315,7 +304,8 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
       taxesTotal: placementStructure.taxesP,
       totalValues: placementStructure.total,
       idTypeOfLimit: Number(placementStructure.typeOfLimit),
-      idAccountType: Number(basicInfo.idAccountType)
+      idAccountType: Number(basicInfo.idAccountType),
+      step: 1
     }
 
     const res = await addInformation(dataToSave)
