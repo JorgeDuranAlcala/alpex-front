@@ -3,7 +3,7 @@ import DiscountService from 'src/services/accounts/discount.service'
 
 export const useUpdateDiscounts = () => {
   const UpdateDiscounts = async (data: DiscountDto[]) => {
-    await DiscountService.updateMany(data)
+    return await DiscountService.updateMany(data)
   }
 
   return {
