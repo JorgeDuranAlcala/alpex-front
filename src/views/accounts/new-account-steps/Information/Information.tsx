@@ -47,6 +47,7 @@ type InformationProps = {
 export interface BasicInfoInterface {
   insured: string
   country: number | string
+  economicSector: number | string
   broker: number | string
   brokerContact: number | null | string
   brokerContactEmail: string
@@ -140,6 +141,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   const [basicInfo, setBasicInfo] = useState<BasicInfoInterface>({
     insured: '',
     country: '',
+    economicSector: '',
     broker: '',
     brokerContact: '',
     brokerContactEmail: '',
@@ -330,7 +332,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
       })
     } else {
       setBadgeData({
-        message: `SAVED SUCCESSFULLY`,
+        message: `THE INFORMATION HAS BEEN SAVED`,
         status: 'success',
         theme: 'success',
         open: true,
@@ -359,6 +361,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
       const obBasicInfo = {
         insured: information.insured || '',
         country: information.idCountry || '',
+        economicSector: '', // Cambiar a information.economicSector || '',
         broker: information.idBroker || '',
         brokerContact: information.idBrokerContact || '',
         brokerContactEmail: information.brokerContactEmail || '',
