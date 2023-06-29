@@ -42,8 +42,8 @@ export const TaxesAmount = ({ index, value, errorMessage, validateForm, operatio
         autoFocus
         label='Taxes'
         value={value}
-        onValueChange={value => {
-          handleChangeTaxesAmount(Number(value.floatValue))
+        onChange={e => {
+          handleChangeTaxesAmount(Number(e.target.value.replace('$', '').replaceAll(',', '')))
         }}
         prefix={'$'}
         customInput={TextField}

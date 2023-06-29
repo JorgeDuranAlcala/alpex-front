@@ -43,7 +43,7 @@ export const FrontingFeeAmount = ({ index, value, errorMessage, validateForm, op
         label='Taxes'
         value={value}
         onChange={e => {
-          handleChangeFrontingFeeAmount(Number(e.target.value))
+          handleChangeFrontingFeeAmount(Number(e.target.value.replace('$', '').replaceAll(',', '')))
         }}
         prefix={'$'}
         customInput={TextField}

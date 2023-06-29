@@ -44,7 +44,7 @@ export const FrontingFeePercent = ({ index, value, errorMessage, validateForm, o
         label='Fronting fee %'
         value={value}
         onChange={e => {
-          handleChangeFrontingFeePercent(Number(e.target.value))
+          handleChangeFrontingFeePercent(Number(e.target.value.replace('%', '')))
         }}
         suffix={'%'}
         customInput={TextField}
