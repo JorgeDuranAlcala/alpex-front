@@ -26,6 +26,7 @@ export const TaxesAmount = ({ index, value, errorMessage, validateForm, operatio
   } = useContext(SecurityContext);
 
   const handleChangeTaxesAmount = (value: number) => {
+    console.log(value)
     const tempSecurities = [...securities]
     tempSecurities[index] = {
       ...tempSecurities[index],

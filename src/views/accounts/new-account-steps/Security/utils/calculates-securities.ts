@@ -64,11 +64,31 @@ export class CalculateSecurity {
   getDynamicComissionPercent(dynamicCommission: number): number {
     return (dynamicCommission * 100) / this.security.premiumPerShareAmount
   }
-  getFrontingFeeAmount(): number {
-    return (this.security.frontingFee * this.security.premiumPerShareAmount) / 100
+  getFrontingFeeAmount(valuePercent: number): number {
+    // return (this.security.frontingFee * this.security.premiumPerShareAmount) / 100
+    if (this.security.isGross) {
+      // * is Gross Premium
+      return 0;
+    } else {
+      // * is Net Premium
+      const base = (this.security.netPremiumAt100 * this.security.share) / 100;
+
+      return (base * valuePercent) / 100;
+    }
   }
-  getFrontingFeePercent(frontingFee: number): number {
-    return (frontingFee / this.security.premiumPerShareAmount) * 100
+  getFrontingFeePercent(valueAmount: number): number {
+    // return (frontingFee / this.security.premiumPerShareAmount) * 100
+    if (this.security.isGross) {
+      // * is Gross Premium
+      return 0;
+    } else {
+      // * is Net Premium
+
+      const base = (this.security.netPremiumAt100 * this.security.share) / 100;
+
+      return (valueAmount / base) * 100;
+
+    }
   }
   getShareAmount(): number {
     return (this.information.limit * this.security.share) / 100;
@@ -100,7 +120,7 @@ export class CalculateSecurity {
 
     }
   }
-  getTaxesAmount(): number {
+  getTaxesAmount(value?: number): number {
 
     // return (this.security.taxes * this.security.premiumPerShareAmount) / 100
     if (this.security.isGross) {
@@ -110,7 +130,7 @@ export class CalculateSecurity {
       // * is Net Premium
       const base = (this.security.netPremiumAt100 * this.security.share) / 100;
 
-      return (base * this.security.taxes) / 100;
+      return (base * (value || this.security.taxes)) / 100;
 
     }
   }
