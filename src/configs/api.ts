@@ -48,7 +48,8 @@ export enum ACCOUNT_INFORMATION_ROUTES {
   UPDATE = 'account/information',
   UPLOAD_FILE = 'account/information/upload-file',
   DELETE_FILE = 'account/information/delete-file',
-  GET_FILES = 'account/information/all-doctos'
+  GET_FILES = 'account/information/all-doctos',
+  GET_FILES_BY_TYPE = 'account/information/doctosByType'
 }
 
 export enum ACCOUNT_SECURITY_ROUTES {
