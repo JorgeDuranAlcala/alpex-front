@@ -27,8 +27,9 @@ export const SwitchFrontingFee = ({ index, validateForm, security, isChecked, se
       ...tempSecurities[index],
       idCRetroCedant: {} as RetroCedantDto,
       idCRetroCedantContact: {} as RetroCedantContactDto,
-      frontingFee: Number(null),
-      frontingFeeAmount: Number(null),
+
+      // frontingFee: Number(null),
+      // frontingFeeAmount: Number(null),
       frontingFeeActive: !security.frontingFeeActive
     }
     setFrontingFeeEnabled(() => !security.frontingFeeActive)
