@@ -11,6 +11,8 @@ import {
   useUploadInformationDocument
 } from 'src/hooks/accounts/information'
 
+import { useAddDiscounts, useUpdateDiscounts } from '@/hooks/accounts/discount'
+
 //Components
 import FileSubmit from './FileSubmit'
 import PlacementStructure from './PlacementStructure'
@@ -19,6 +21,9 @@ import PlacementStructure from './PlacementStructure'
 import CloseIcon from '@mui/icons-material/Close'
 import { Box, Button, CircularProgress, Modal } from '@mui/material'
 import BasicInfo from './BasicInfo'
+
+//Rxjs
+import { Subject } from 'rxjs'
 
 // ** Icon Imports
 import CustomAlert, { IAlert } from '@/views/custom/alerts'
@@ -62,6 +67,7 @@ export interface BasicInfoInterface {
   receptionDate: Date | null
   effectiveDate: Date | null
   expirationDate: Date | null
+  idAccountType: number
 }
 
 export interface PlacementStructure {
@@ -86,11 +92,13 @@ export interface PlacementStructure {
 
 const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountChange }) => {
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
+  const [subjectState] = useState<Subject<void>>(new Subject())
   const inter = userThemeConfig.typography?.fontFamilyInter
   const [makeValidations, setMakeValidations] = useState(false)
   const [makeSaveValidations, setMakeSaveValidations] = useState(false)
   const [disableSave, setDisableSave] = useState(false)
   const [changeTitle, setChangeTitle] = useState(false)
+  const [discounts, setDiscounts] = useState<DiscountDto[]>([])
 
   //Validaciones
   const [allValidated, setAllValidated] = useState(false)
@@ -124,6 +132,8 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   const { uploadInformationDocument } = useUploadInformationDocument()
   const { getInfoDoctosByIdAccount } = useGetInfoDoctosByIdAccount()
   const { deleteInformationDocument } = useDeleteInformationDocument()
+  const { addDiscounts } = useAddDiscounts()
+  const { UpdateDiscounts } = useUpdateDiscounts()
 
   const dispatch = useAppDispatch()
 
@@ -149,7 +159,8 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
     riskClass: 0,
     receptionDate: null,
     effectiveDate: null,
-    expirationDate: null
+    expirationDate: null,
+    idAccountType: 1
   })
 
   const [placementStructure, setPlacementStructure] = useState<PlacementStructure>({
@@ -172,7 +183,9 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
     typeOfLimit: ''
   })
 
-  const [discounts, setDiscounts] = useState<DiscountDto[]>([])
+  const triggerFunction = () => {
+    subjectState.next()
+  }
 
   const updateInformation = async () => {
     const res = await updateInformationByIdAccount(idAccount, {
@@ -217,7 +230,9 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
       taxesTotal: placementStructure.taxesP,
       totalValues: placementStructure.total,
       idTypeOfLimit: Number(placementStructure.typeOfLimit),
-      idAccountType: 1
+      idAccountType: Number(basicInfo.idAccountType),
+      premiumWithTaxes: placementStructure.netPremiumWithTaxes,
+      premiumWithOutDiscounts: placementStructure.netPremiumWithoutDiscounts
     })
 
     await delayMs(1000)
@@ -291,8 +306,8 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
       grossPremium: placementStructure.grossPremium,
       limit: placementStructure.limit,
       netPremium: placementStructure.netPremium,
-      netPremiumWithTaxes: placementStructure.netPremiumWithTaxes, // Cambiar por netPremiumWithTaxes y
-      netPremiumWithoutDiscounts: placementStructure.netPremiumWithoutDiscounts, //Cambiar por netPremiumWithoutDiscounts
+      premiumWithTaxes: placementStructure.netPremiumWithTaxes,
+      premiumWithOutDiscounts: placementStructure.netPremiumWithoutDiscounts,
       reinsuranceBrokerage: placementStructure.reinsuranceBrokerage,
       reinsuranceBrokerageTotal: placementStructure.reinsuranceBrokerageP,
       sir: placementStructure.sir,
@@ -300,7 +315,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
       taxesTotal: placementStructure.taxesP,
       totalValues: placementStructure.total,
       idTypeOfLimit: Number(placementStructure.typeOfLimit),
-      idAccountType: 1
+      idAccountType: Number(basicInfo.idAccountType)
     }
 
     const res = await addInformation(dataToSave)
@@ -373,7 +388,8 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
         riskClass: information.riskClass,
         receptionDate: information.receptionDate ? new Date(information.receptionDate) : null,
         effectiveDate: information.effectiveDate ? new Date(information.effectiveDate) : null,
-        expirationDate: information.expirationDate ? new Date(information.expirationDate) : null
+        expirationDate: information.expirationDate ? new Date(information.expirationDate) : null,
+        idAccountType: information.idAccountType
       }
 
       const obPlacementStructure = {
@@ -385,21 +401,15 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
         grossPremium: Number(information.grossPremium) || 0.0,
         limit: Number(information.limit) || 0.0,
         netPremium: Number(information.netPremium) || 0.0,
-        netPremiumWithTaxes: Number(information.netPremium) || 0.0, // Cambiar por netPremiumWithTaxes y
-        netPremiumWithoutDiscounts: Number(information.netPremium) || 0.0, //Cambiar por netPremiumWithoutDiscounts
         reinsuranceBrokerage: Number(information.reinsuranceBrokerage) || 0.0,
         sir: Number(information.sir) || 0.0,
         taxes: Number(information.taxes) || 0.0,
         total: Number(information.totalValues) || 0.0,
         reinsuranceBrokerageP: Number(information.reinsuranceBrokerageTotal) || 0.0,
         taxesP: Number(information.taxesTotal) || 0.0,
-        frontingFeeP: Number(information.frontingFeeTotal) || 0.0
-
-        // frontingFeeTotal: 2,
-        // reinsuranceBrokerageTotal: 10,
-        // taxesTotal: Number(information.idT),
-        // totalValues: 3500000,
-        // idTypeOfLimit: '2',
+        frontingFeeP: Number(information.frontingFeeTotal) || 0.0,
+        netPremiumWithTaxes: Number(information.premiumWithTaxes) || 0.0,
+        netPremiumWithoutDiscounts: Number(information.premiumWithOutDiscounts) || 0.0
       }
 
       setBasicInfo(obBasicInfo)
@@ -491,8 +501,29 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
     })
   }
 
+  const updateDiscount = async () => {
+    const discountSave: Partial<DiscountDto[]> = []
+    const discountUpdate: DiscountDto[] = []
+
+    for await (const discount of discounts) {
+      if (discount.id !== 0) {
+        discountUpdate.push(discount)
+      } else {
+        discountSave.push(discount)
+      }
+    }
+    if (discountUpdate.length > 0) {
+      await UpdateDiscounts(discountUpdate)
+    }
+
+    if (discountSave.length > 0) {
+      await addDiscounts(discountSave)
+    }
+
+    triggerFunction()
+  }
+
   const handleSaveInformation = async () => {
-    console.log("handle Save info")
     if (idAccount) {
       setBadgeData({
         message: `UPDATING INFORMATION`,
@@ -505,8 +536,8 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
       })
 
       await updateInformation()
-
       await uploadDoctos(idAccount)
+      await updateDiscount()
       dispatch(updateFormsData({ form1: { basicInfo, placementStructure, userFile, id: idAccount } }))
       setDisableSave(false)
     } else {
@@ -523,7 +554,15 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
       const res = await saveInformation()
       setDisableSave(false)
       if (res) {
-        localStorage.setItem('idAccount', String(res.account.id))
+        const discountTemp = discounts.map(discount => ({
+          ...discount,
+          idAccount: res.account.id
+        }))
+        await localStorage.setItem('idAccount', String(res.account.id))
+        if (discountTemp.length > 0) {
+          await addDiscounts(discountTemp)
+          triggerFunction()
+        }
       }
 
       await uploadDoctos(res.account.id)
@@ -534,7 +573,11 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   }
 
   const handleDiscountsChange = (newDiscounts: DiscountDto[]) => {
-    setDiscounts(newDiscounts)
+    const discountsTemp = newDiscounts.map(discount => ({
+      ...discount,
+      idAccount: idAccount || 0
+    }))
+    setDiscounts(discountsTemp)
   }
 
   //Evento que controla el evento de continuar
@@ -547,9 +590,6 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   }
 
   const handleValidationComplete = (valid: boolean, formName: string) => {
-    console.log('validacion completa')
-    console.log(formName)
-    console.log(valid)
     setValidationCount(prevCount => prevCount + 1)
     if (valid) {
       if (nextClicked) setValidatedForms(prevCount => prevCount + 1)
@@ -565,8 +605,6 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   }
 
   const handleAction = (action: string) => {
-    console.log("handle action")
-    console.log(action)
     setValidationCount(0)
     setValidatedForms(0)
     switch (action) {
@@ -677,17 +715,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   }, [idAccount])
 
   useEffect(() => {
-    console.log('se recibieron discounts')
-    console.log(discounts)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [discounts, setDiscounts])
-
-  useEffect(() => {
-    console.log("validation count")
-    console.log(validationCount)
-    console.log(validatedForms)
     if (validationCount === 2 && validatedForms === 2) {
-      console.log("se setea all validated true")
       setAllValidated(true)
       if (nextClicked) {
         setOpen(true)
@@ -700,7 +728,6 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
       //   setSaveClicked(false)
       // }
     } else {
-      console.log("se setea all validated FALSE")
       setAllValidated(false)
       if (nextClicked) {
         setOpen(true)
@@ -735,6 +762,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
               onDiscountsChange={handleDiscountsChange}
               makeValidations={makeValidations}
               onValidationComplete={handleValidationComplete}
+              triggerSubject={subjectState}
             />
           </div>
 

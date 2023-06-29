@@ -16,6 +16,7 @@ interface DiscountContextProps {
   addDiscount: () => void;
   removeDiscountByIndex: (index: number) => void;
   updateDiscountByIndex: ({ index, discountPercent, discountAmount }: IUpdateDiscountByIndex) => void;
+  updateAllDiscounts: (allDiscounts: IDiscountInputs[]) => void;
 }
 
 

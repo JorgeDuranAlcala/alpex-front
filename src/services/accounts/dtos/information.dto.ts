@@ -41,6 +41,8 @@ export interface InformationDto {
   idTechnicalAssistant: number | null | string
   updatedAt?: number | null | string | any
   idAccountType: number
+  premiumWithTaxes: number
+  premiumWithOutDiscounts: number
 }
 
 export interface InformationResponse {

@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react'
 
 //Hooks
+import { useDeleteDiscountsById, useGetDiscountByIdAccount } from '@/hooks/accounts/discount'
 import { useGetAllCurrencies } from 'src/hooks/catalogs/currency'
 import { useGetAllTypeOfLimit } from 'src/hooks/catalogs/typeOfLimit'
 
@@ -24,8 +25,9 @@ import { useExchangePair } from '@/hooks/exchange-rate/useExchangePair'
 import { NumericFormat } from 'react-number-format'
 
 // dtos
-import { DiscountDto } from '@/services/accounts/dtos/discount.dto'
 
+import { DiscountDto } from '@/services/accounts/dtos/discount.dto'
+import { Subject } from 'rxjs'
 
 interface PlacementStructureErrors {
   currencyError: boolean
@@ -87,9 +89,9 @@ export type PlacementStructureProps = {
   >
   makeValidations: boolean
   onValidationComplete: (valid: boolean, formName: string) => void
-  onDiscountsChange: (discounts: DiscountDto[]) => void;
+  onDiscountsChange: (discounts: DiscountDto[]) => void
+  triggerSubject: Subject<void>
 }
-
 
 const PlacementStructure: React.FC<PlacementStructureProps> = ({
   placementStructure,
@@ -97,6 +99,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
   makeValidations,
   onValidationComplete,
   onDiscountsChange,
+  triggerSubject
 }) => {
   const { currencies } = useGetAllCurrencies()
   const { typesOfLimits } = useGetAllTypeOfLimit()
@@ -113,20 +116,22 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
   const [reinsuranceBrokerage, setReinsuranceBrokerage] = useState<number>()
   const [taxes, setTaxes] = useState<number>()
   const [frontingFee, setFrontingFee] = useState<number>()
-  const [taxesChecked, setTaxesChecked] = useState(false);
-  const [frontingChecked, setFrontingChecked] = useState(false);
+  const [taxesChecked, setTaxesChecked] = useState(false)
+  const [frontingChecked, setFrontingChecked] = useState(false)
 
   //handle discounts
   const [discountCounter, setDiscountCounter] = useState(1)
-  const [discounts, setDiscounts] = useState<DiscountDto[]>([]);
   const [totalDiscountsError, setTotalDiscountsError] = useState(false)
-  const [discountsErrorsIndex, setDiscountsErrorsIndex] = useState<number[]>([]);
+  const [discountsErrorsIndex, setDiscountsErrorsIndex] = useState<number[]>([])
   const [discount, setDiscount] = useState<DiscountDto>({
     id: 0,
     percentage: 0,
     amount: 0,
-    idAccount: 0,
-  });
+    idAccount: 0
+  })
+
+  const { discounts, getDiscounts, setDiscounts } = useGetDiscountByIdAccount()
+  const { deleteDiscountsById } = useDeleteDiscountsById()
 
   // const [valid, setValid] = useState(false)
   const [errors, setErrors] = useState<PlacementStructureErrors>({
@@ -143,9 +148,15 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
     frontingFeeError: false,
     typeOfLimitError: false,
     totalDiscountsError: false,
-    discountsErrors: false,
+    discountsErrors: false
   })
   const { setPair, exchangeRate, pair } = useExchangePair()
+
+  const setDiscountsData = async () => {
+    const idAccountCache = Number(localStorage.getItem('idAccount'))
+    const discountRes = await getDiscounts(idAccountCache)
+    setDiscounts(discountRes)
+  }
 
   const calculate = async (type = 'any') => {
     const grossPremiumc: number = grossPremium || 0
@@ -206,16 +217,14 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
         setFrontingFee(isFinite(resultFronting) ? resultFronting : 0)
 
         if (discounts.length > 0) {
-          const updatedDiscounts = discounts.map((discount) => {
-            const newAmount = (discount.percentage / 100) * grossPremium;
+          const updatedDiscounts = discounts.map(discount => {
+            const newAmount = (discount.percentage / 100) * grossPremium
 
-            return { ...discount, amount: newAmount };
-          });
+            return { ...discount, amount: newAmount }
+          })
 
-          setDiscounts(updatedDiscounts);
+          setDiscounts(updatedDiscounts)
         }
-
-
 
         break
       }
@@ -226,8 +235,9 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
     const taxesFinal = taxes ? taxes : 0
     const frontingFeeTotalFinal = frontingFee ? frontingFee : 0
     const discountsAmount = discounts.reduce((sum, discount) => sum + discount.amount, 0) ?? 0
+
     setNetPremiumWithoutDiscounts(grossPremiumc - reinsuranceBrokerageTotalFinal)
-    setNetPremiumWithTaxes(grossPremiumc - reinsuranceBrokerageTotalFinal  - frontingFeeTotalFinal - discountsAmount)
+    setNetPremiumWithTaxes(grossPremiumc - reinsuranceBrokerageTotalFinal - frontingFeeTotalFinal - discountsAmount)
     setNetPremium(grossPremiumc - reinsuranceBrokerageTotalFinal - taxesFinal - frontingFeeTotalFinal - discountsAmount)
     if (discounts.length > 0) {
       setTotalDiscountsError(discountValidation)
@@ -268,132 +278,142 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
   }
 
   const handleTaxesChange = () => {
-    setTaxesChecked(!taxesChecked);
-  };
+    if (!taxesChecked === false) {
+      setTaxesP(0)
+      setTaxes(0)
+      setPlacementStructure({
+        ...placementStructure,
+        taxes: 0,
+        taxesP: 0
+      })
+    }
+    setTaxesChecked(!taxesChecked)
+  }
 
   const handleFrontingChange = () => {
-    setFrontingChecked(!frontingChecked);
-  };
+    if (!frontingChecked === false) {
+      setFrontingFeeP(0)
+      setFrontingFee(0)
+
+      setPlacementStructure({
+        ...placementStructure,
+        frontingFee: 0,
+        frontingFeeP: 0
+      })
+    }
+    setFrontingChecked(!frontingChecked)
+  }
 
   const addDiscount = () => {
-    const newDiscount = { id: discountCounter, percentage: 0, amount: 0, idAccount: 0 };
-    const newDiscounts = [...discounts, newDiscount];
-    setDiscounts(newDiscounts);
-    setDiscountCounter(discountCounter + 1);
+    const newDiscount = { id: 0, percentage: 0, amount: 0, idAccount: 0 }
+    const newDiscounts = [...discounts, newDiscount]
+    setDiscounts(newDiscounts)
+    setDiscountCounter(discountCounter + 1)
+  }
 
-  };
+  const deleteDiscount = async (index: number) => {
+    const discountToDelete = discounts[index].id
+    const newDiscounts = [...discounts]
+    newDiscounts.splice(index, 1)
+    setDiscounts(newDiscounts)
 
+    const updatedDiscounts = newDiscounts.map(discount => {
+      const updatedDiscount = { ...discount }
 
-  const deleteDiscount = (index: number) => {
-    const newDiscounts = [...discounts];
-    newDiscounts.splice(index, 1);
-    setDiscounts(newDiscounts);
+      return updatedDiscount
+    })
 
-    const updatedDiscounts = newDiscounts.map((discount, idx) => {
-      const updatedDiscount = { ...discount, id: idx + 1 };
-
-      return updatedDiscount;
-    });
-
-    setDiscounts(updatedDiscounts);
-    setDiscountCounter(updatedDiscounts.length + 1);
-
+    setDiscounts(updatedDiscounts)
+    setDiscountCounter(updatedDiscounts.length + 1)
 
     if (index === discounts.length - 1) {
       // Si se eliminó el último descuento, actualizamos el estado "discount" para mostrar el último descuento en el formulario
-      setDiscount(updatedDiscounts[index - 1] || { id: 0, percentage: 0, amount: 0, idAccount: 0 });
+      setDiscount(updatedDiscounts[index - 1] || { id: 0, percentage: 0, amount: 0, idAccount: 0 })
     }
-  };
 
-  const updateDiscountInArray = (updatedDiscount: DiscountDto) => {
-    const updatedDiscounts = discounts.map((discount) =>
-      discount.id === updatedDiscount.id ? updatedDiscount : discount
-    );
-    setDiscounts(updatedDiscounts);
-  };
+    if (discountToDelete) {
+      await deleteDiscountsById(discountToDelete)
+    }
+  }
 
+  const updateDiscountInArray = (updatedDiscount: DiscountDto, index: number) => {
+    setDiscounts(state => {
+      const newState = [...state]
+      newState[index] = updatedDiscount
 
-  const calculateDiscountP = () => {
-    const total = grossPremium;
-    const percentage = (discount.amount / total) * 100;
-    const updatedDiscount = { ...discount, percentage };
-    setDiscount(updatedDiscount);
-    updateDiscountInArray(updatedDiscount);
-  };
+      return newState
+    })
+  }
 
-  const calculateDiscount = () => {
-    const total = grossPremium;
-    const amount = (discount.percentage / 100) * total;
-    const updatedDiscount = { ...discount, amount };
-    setDiscount(updatedDiscount);
-    updateDiscountInArray(updatedDiscount);
-  };
+  const calculateDiscountP = (index: number) => {
+    const total = grossPremium
+    const percentage = (discount.amount / total) * 100
+    const updatedDiscount = { ...discount, percentage }
+    setDiscount(updatedDiscount)
+    updateDiscountInArray(updatedDiscount, index)
+  }
 
-
+  const calculateDiscount = (index: number) => {
+    const total = grossPremium
+    const amount = (discount.percentage / 100) * total
+    const updatedDiscount = { ...discount, amount }
+    setDiscount(updatedDiscount)
+    updateDiscountInArray(updatedDiscount, index)
+  }
 
   const validations = () => {
     const newErrors: PlacementStructureErrors = {
       currencyError: placementStructure.currency === '',
       totalError: placementStructure.total === 0,
       reinsuranceBrokeragePError: placementStructure.reinsuranceBrokerageP === 0,
-      taxesPError: (taxesChecked && placementStructure.taxesP === 0),
-      frontingFeePError: (frontingChecked && placementStructure.frontingFeeP === 0),
+      taxesPError: taxesChecked && placementStructure.taxesP === 0,
+      frontingFeePError: frontingChecked && placementStructure.frontingFeeP === 0,
       exchangeRateError: placementStructure.exchangeRate === 0,
       limitError: placementStructure.limit === 0,
       grossPremiumError: placementStructure.grossPremium === 0,
       reinsuranceBrokerageError: placementStructure.reinsuranceBrokerage === 0,
-      taxesError: (taxesChecked && (placementStructure.taxes === undefined || placementStructure.taxes === 0)),
-      frontingFeeError: (frontingChecked && (placementStructure.frontingFee === undefined || placementStructure.frontingFee === 0)),
+      taxesError: taxesChecked && (placementStructure.taxes === undefined || placementStructure.taxes === 0),
+      frontingFeeError:
+        frontingChecked && (placementStructure.frontingFee === undefined || placementStructure.frontingFee === 0),
       typeOfLimitError: placementStructure.typeOfLimit === '',
       totalDiscountsError: discountValidation(),
-      discountsErrors: (discounts.length > 0) && discounts.some((discount) => discount.percentage === 0 || discount.amount === 0),
+      discountsErrors:
+        discounts.length > 0 && discounts.some(discount => discount.percentage === 0 || discount.amount === 0)
     }
 
     if (discounts.length > 0) {
-      const newDiscountErrors: number[] = [];
+      const newDiscountErrors: number[] = []
 
       discounts.forEach((discount, index) => {
         if (discount.percentage === 0 || discount.amount === 0) {
-          newDiscountErrors.push(index);
+          newDiscountErrors.push(index)
         }
       })
-      setDiscountsErrorsIndex(newDiscountErrors); // setea un arreglo de los discounts con error
+      setDiscountsErrorsIndex(newDiscountErrors) // setea un arreglo de los discounts con error
     }
 
     setErrors(newErrors)
 
     if (Object.values(newErrors).every(error => !error)) {
       // enviar formulario si no hay errores
-      onValidationComplete(true, 'placementStructure');
-      console.log('validacion en placement')
-      console.log(errors)
+      onValidationComplete(true, 'placementStructure')
+      console.error(errors)
 
       // isValidForm(true)
     } else {
-      onValidationComplete(false, 'placementStrcture');
+      onValidationComplete(false, 'placementStrcture')
     }
   }
 
   const discountValidation = () => {
-
     const discountPercentages = discounts.reduce((sum, discount) => sum + discount.percentage, 0) ?? 0
     const discountAmount = discounts.reduce((sum, discount) => sum + discount.amount, 0) ?? 0
 
-    const totalPercentages = (
-      discountPercentages
-      + placementStructure.taxesP
-      + placementStructure.frontingFeeP
-    );
-    const totalAmount = (
-      discountAmount
-      + placementStructure.taxes
-      + placementStructure.frontingFee
-    );
+    const totalPercentages = discountPercentages + placementStructure.taxesP + placementStructure.frontingFeeP
+    const totalAmount = discountAmount + placementStructure.taxes + placementStructure.frontingFee
 
-    if (totalPercentages > 100 || totalAmount > grossPremium)
-      return true
-    else
-      return false
+    if (totalPercentages > 100 || totalAmount > grossPremium) return true
+    else return false
   }
 
   const getErrorMessage = (name: keyof PlacementStructureErrors) => {
@@ -401,20 +421,31 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
   }
 
   useEffect(() => {
+    const subscription = triggerSubject.subscribe(() => {
+      setDiscountsData()
+    })
+
+    return () => {
+      subscription.unsubscribe()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [triggerSubject])
+
+  useEffect(() => {
     calculate()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [reinsuranceBrokerageP,
-     taxesP,
-     frontingFeeP,
-      netPremium,
-      grossPremium,
-      reinsuranceBrokerage,
-      taxes,
-      frontingFee,
-      discount,
-      setDiscount
-    ])
-
+  }, [
+    reinsuranceBrokerageP,
+    taxesP,
+    frontingFeeP,
+    netPremium,
+    grossPremium,
+    reinsuranceBrokerage,
+    taxes,
+    frontingFee,
+    discount,
+    setDiscount
+  ])
 
   useEffect(() => {
     setGrossPremium(placementStructure.grossPremium)
@@ -439,52 +470,43 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [exchangeRate])
 
-  useEffect(() => {
-    if (!taxesChecked) {
-      setTaxesP(0)
-      setTaxes(0)
-      setPlacementStructure({
-        ...placementStructure,
-        taxes: 0,
-        taxesP: 0
-      })
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [taxesChecked])
-
-  useEffect(() => {
-    if (!frontingChecked) {
-      setFrontingFeeP(0)
-      setFrontingFee(0)
-
-      setPlacementStructure({
-        ...placementStructure,
-        frontingFee: 0,
-        frontingFeeP: 0
-      })
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [frontingChecked])
-
   React.useEffect(() => {
-    onDiscountsChange(discounts);
+    onDiscountsChange(discounts)
     calculate()
-  }, [discounts, setDiscounts]);
-
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [discounts, setDiscounts])
 
   React.useEffect(() => {
     if (makeValidations) {
-      validations();
+      validations()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [makeValidations]);
+  }, [makeValidations])
 
+  React.useEffect(() => {
+    const idAccountCache = Number(localStorage.getItem('idAccount'))
+    if (idAccountCache) {
+      setDiscountsData()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  //Controla la carga inicial de los checkBox
+  React.useEffect(() => {
+    if (placementStructure.typeOfLimit !== 0) {
+      const taxesCheck = placementStructure.taxesP === 0 ? false : true
+      const frontingFeeCheck = placementStructure.frontingFeeP === 0 ? false : true
+
+      setTaxesChecked(taxesCheck)
+      setFrontingChecked(frontingFeeCheck)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [placementStructure.typeOfLimit])
 
   return (
     <>
       <div className='title'>Placement Structure</div>
       <div className='form-wrapper'>
-
         <div className='form-col'>
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }} error={errors.currencyError}>
             <InputLabel>Currency</InputLabel>
@@ -596,7 +618,6 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               helperText={getErrorMessage('reinsuranceBrokeragePError')}
             />
           </FormControl>
-
         </div>
 
         <div className='form-col'>
@@ -692,7 +713,6 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
             />
             {false && <FormHelperText sx={{ color: 'error.main' }}>Required Field</FormHelperText>}
           </FormControl>
-
         </div>
 
         <div className='form-col'>
@@ -744,22 +764,14 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
             )}
           </FormControl>
         </div>
-
       </div>
 
       <div className='form-wrapper'>
-
         <div className='form-col'>
           <div className='form-row'>
-            <div className='row-title'>
-              Taxes
-            </div>
+            <div className='row-title'>Taxes</div>
             <div className='switch-btn-container'>
-              <Switch
-                checked={taxesChecked}
-                onChange={handleTaxesChange}
-                color="primary"
-              />
+              <Switch checked={taxesChecked} onChange={handleTaxesChange} color='primary' />
             </div>
           </div>
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
@@ -787,9 +799,13 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
                 handleNumericInputChange(value.floatValue, 'taxesP')
               }}
               error={taxesChecked && (errors.taxesPError || errors.totalDiscountsError)}
-              helperText={taxesChecked && errors.taxesPError ? "This field must be greater than 0" :
-              taxesChecked && errors.totalDiscountsError ? 'The total discounts percentage should be less than 100%'
-              : ''}
+              helperText={
+                taxesChecked && errors.taxesPError
+                  ? 'This field must be greater than 0'
+                  : taxesChecked && errors.totalDiscountsError
+                  ? 'The total discounts percentage should be less than 100%'
+                  : ''
+              }
             />
           </FormControl>
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
@@ -818,25 +834,22 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
                 handleNumericInputChange(value.floatValue, 'taxes')
               }}
               error={taxesChecked && (errors.taxesError || errors.totalDiscountsError)}
-              helperText={taxesChecked && errors.taxesError ? "This field must be greater than 0" :
-              taxesChecked && errors.totalDiscountsError ? 'The total amount of discounts should be less than Gross Premium'  : ''}
+              helperText={
+                taxesChecked && errors.taxesError
+                  ? 'This field must be greater than 0'
+                  : taxesChecked && errors.totalDiscountsError
+                  ? 'The total amount of discounts should be less than Gross Premium'
+                  : ''
+              }
             />
           </FormControl>
-
-
         </div>
 
         <div className='form-col'>
           <div className='form-row'>
-            <div className='row-title'>
-              Fronting fee
-            </div>
+            <div className='row-title'>Fronting fee</div>
             <div className='switch-btn-container'>
-              <Switch
-                checked={frontingChecked}
-                onChange={handleFrontingChange}
-                color="primary"
-              />
+              <Switch checked={frontingChecked} onChange={handleFrontingChange} color='primary' />
             </div>
           </div>
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
@@ -865,8 +878,13 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
                 handleNumericInputChange(value.floatValue, 'frontingFeeP')
               }}
               error={frontingChecked && (errors.frontingFeePError || errors.totalDiscountsError)}
-              helperText={frontingChecked && errors.frontingFeePError ? "This field must be greater than 0" :
-                 frontingChecked && errors.totalDiscountsError ? 'The total discounts percentage should be less than 100%' : ''}
+              helperText={
+                frontingChecked && errors.frontingFeePError
+                  ? 'This field must be greater than 0'
+                  : frontingChecked && errors.totalDiscountsError
+                  ? 'The total discounts percentage should be less than 100%'
+                  : ''
+              }
             />
           </FormControl>
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
@@ -895,18 +913,20 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
                 handleNumericInputChange(value.floatValue, 'frontingFee')
               }}
               error={frontingChecked && (errors.frontingFeeError || errors.totalDiscountsError)}
-              helperText={frontingChecked && errors.frontingFeeError ? "This field must be greater than 0" :
-              frontingChecked && errors.totalDiscountsError ? 'The total amount of discounts should be less than Gross Premium'
-                : ''}
+              helperText={
+                frontingChecked && errors.frontingFeeError
+                  ? 'This field must be greater than 0'
+                  : frontingChecked && errors.totalDiscountsError
+                  ? 'The total amount of discounts should be less than Gross Premium'
+                  : ''
+              }
             />
           </FormControl>
         </div>
         {discounts.map((discount, index) => (
           <div className='form-col' key={index}>
             <div className='form-row'>
-            <div className='row-title'>
-            Other Discount
-            </div>
+              <div className='row-title'>Other Discount</div>
 
               <div
                 className='delete-discount'
@@ -930,25 +950,27 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
                 maxRows={4}
                 decimalScale={2}
                 variant='outlined'
-                onBlur={calculateDiscount}
+                onBlur={() => calculateDiscount(index)}
                 isAllowed={values => {
                   const { floatValue } = values
 
                   return (floatValue! >= 0 && floatValue! <= 100) || floatValue === undefined
                 }}
-                onValueChange={(value) => {
+                onValueChange={value => {
                   if (value.floatValue) {
-                    const updatedDiscount = { ...discount, percentage: value.floatValue };
+                    const updatedDiscount = { ...discount, percentage: value.floatValue }
                     setDiscount(updatedDiscount)
-                    updateDiscountInArray(updatedDiscount)
+                    updateDiscountInArray(updatedDiscount, index)
                   }
                 }}
                 error={totalDiscountsError || discountsErrorsIndex.includes(index)}
-                helperText={totalDiscountsError ?
-                   'The total discounts percentage should be less than 100%'
-                   : (discountsErrorsIndex.includes(index) ? 'This field must be greater than 0'
-                   : ''
-                )}
+                helperText={
+                  totalDiscountsError
+                    ? 'The total discounts percentage should be less than 100%'
+                    : discountsErrorsIndex.includes(index)
+                    ? 'This field must be greater than 0'
+                    : ''
+                }
               />
             </FormControl>
             <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
@@ -964,38 +986,35 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
                 multiline
                 variant='outlined'
                 decimalScale={2}
-                onBlur={calculateDiscountP}
+                onBlur={() => calculateDiscountP(index)}
                 isAllowed={values => {
                   const { floatValue } = values
                   const upLimit = grossPremium || 0
 
                   return (floatValue! >= 0 && floatValue! <= upLimit) || floatValue === undefined
                 }}
-                onValueChange={(value) => {
+                onValueChange={value => {
                   if (value.floatValue) {
-                    const updatedDiscount = { ...discount, amount: value.floatValue };
+                    const updatedDiscount = { ...discount, amount: value.floatValue }
                     setDiscount(updatedDiscount)
-                    updateDiscountInArray(updatedDiscount)
+                    updateDiscountInArray(updatedDiscount, index)
                   }
                 }}
                 error={totalDiscountsError || discountsErrorsIndex.includes(index)}
-                helperText={totalDiscountsError ?
-                   'The total amount of discounts should be less than Gross Premium'
-                   : (discountsErrorsIndex.includes(index) ? 'This field must be greater than 0'
-                   : ''
-                )}
+                helperText={
+                  totalDiscountsError
+                    ? 'The total amount of discounts should be less than Gross Premium'
+                    : discountsErrorsIndex.includes(index)
+                    ? 'This field must be greater than 0'
+                    : ''
+                }
               />
             </FormControl>
           </div>
-
         ))}
 
-
         <div className='discount-btn'>
-          <Button
-            className='create-contact-btn'
-            onClick={addDiscount}
-          >
+          <Button className='create-contact-btn' onClick={addDiscount}>
             ADD DISCOUNT
             <div className='btn-icon'>
               <Icon icon='mdi:plus-circle-outline' />
@@ -1005,14 +1024,11 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
       </div>
 
       <div className='form-wrapper'>
-      <div className='form-row'>
-            <div className='row-title'>
-              Results
-            </div>
-      </div>
+        <div className='form-row'>
+          <div className='row-title'>Results</div>
+        </div>
         <div className='form-col'>
-
-        <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
+          <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <NumericFormat
               name='premiumDiscounts'
               value={netPremiumWithoutDiscounts}
@@ -1026,13 +1042,12 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               multiline
               variant='outlined'
               decimalScale={2}
-
             />
           </FormControl>
         </div>
 
         <div className='form-col'>
-        <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
+          <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <NumericFormat
               name='premiumTaxes'
               value={netPremiumWithTaxes}
@@ -1046,13 +1061,12 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               multiline
               variant='outlined'
               decimalScale={2}
-
             />
           </FormControl>
         </div>
 
         <div className='form-col'>
-        <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
+          <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <NumericFormat
               name='netPremium'
               value={netPremium}
@@ -1073,7 +1087,6 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
             />
           </FormControl>
         </div>
-
       </div>
     </>
   )
