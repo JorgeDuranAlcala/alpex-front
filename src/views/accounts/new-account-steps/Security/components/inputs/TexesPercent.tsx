@@ -14,11 +14,12 @@ import { CalculateSecurity } from '../../utils/calculates-securities';
 
 // ! only if we want specific props
 interface TaxesPercentProps extends ISecurityInputProps {
-  operationSecurity: CalculateSecurity
+  operationSecurity: CalculateSecurity;
+  isDisabled: boolean;
 }
 
 
-export const TaxesPercent = ({ index, value, errorMessage, validateForm, operationSecurity }: TaxesPercentProps) => {
+export const TaxesPercent = ({ index, value, isDisabled, errorMessage, validateForm, operationSecurity }: TaxesPercentProps) => {
 
   const {
     activeErros,
@@ -55,6 +56,7 @@ export const TaxesPercent = ({ index, value, errorMessage, validateForm, operati
         isAllowed={values => {
           return (values.floatValue! >= 0 && values.floatValue! <= 100) || values.floatValue === undefined
         }}
+        disabled={isDisabled}
       />
 
       <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>

@@ -345,18 +345,18 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
     })
   }
 
-  const calculateDiscountP = (index: number) => {
+  const calculateDiscountP = (index: number, disount: DiscountDto) => {
     const total = grossPremium
-    const percentage = (discount.amount / total) * 100
-    const updatedDiscount = { ...discount, percentage }
+    const percentage = (disount.amount / total) * 100
+    const updatedDiscount = { ...disount, percentage }
     setDiscount(updatedDiscount)
     updateDiscountInArray(updatedDiscount, index)
   }
 
-  const calculateDiscount = (index: number) => {
+  const calculateDiscount = (index: number, disount: DiscountDto) => {
     const total = grossPremium
-    const amount = (discount.percentage / 100) * total
-    const updatedDiscount = { ...discount, amount }
+    const amount = (disount.percentage / 100) * total
+    const updatedDiscount = { ...disount, amount }
     setDiscount(updatedDiscount)
     updateDiscountInArray(updatedDiscount, index)
   }
@@ -957,7 +957,6 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
                 maxRows={4}
                 decimalScale={2}
                 variant='outlined'
-                onBlur={() => calculateDiscount(index)}
                 isAllowed={values => {
                   const { floatValue } = values
 
@@ -966,8 +965,9 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
                 onValueChange={value => {
                   if (value.floatValue) {
                     const updatedDiscount = { ...discount, percentage: value.floatValue }
-                    setDiscount(updatedDiscount)
-                    updateDiscountInArray(updatedDiscount, index)
+                    calculateDiscount(index, updatedDiscount)
+                  } else {
+                    calculateDiscount(index, { ...discount, percentage: 0 })
                   }
                 }}
                 error={totalDiscountsError || discountsErrorsIndex.includes(index)}
@@ -993,7 +993,6 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
                 multiline
                 variant='outlined'
                 decimalScale={2}
-                onBlur={() => calculateDiscountP(index)}
                 isAllowed={values => {
                   const { floatValue } = values
                   const upLimit = grossPremium || 0
@@ -1003,8 +1002,9 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
                 onValueChange={value => {
                   if (value.floatValue) {
                     const updatedDiscount = { ...discount, amount: value.floatValue }
-                    setDiscount(updatedDiscount)
-                    updateDiscountInArray(updatedDiscount, index)
+                    calculateDiscountP(index, updatedDiscount)
+                  } else {
+                    calculateDiscountP(index, { ...discount, amount: 0 })
                   }
                 }}
                 error={totalDiscountsError || discountsErrorsIndex.includes(index)}
