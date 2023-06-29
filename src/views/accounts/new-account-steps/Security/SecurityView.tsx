@@ -9,7 +9,7 @@ import {
   SecurityProps
 } from '@/services/accounts/dtos/security.dto'
 
-// import { useAppSelector } from '@/store'
+import { useAppSelector } from '@/store'
 
 import { Title } from '@/styled-components/accounts/Security.styled'
 import { ButtonClose, HeaderTitleModal } from '@/styles/modal/modal.styled'
@@ -33,10 +33,7 @@ import Icon from 'src/@core/components/icon'
 import UserThemeOptions from 'src/layouts/UserThemeOptions'
 import { SecurityMapper } from './mappers/SecurityForm.mapper'
 
-// import { ViewMocks } from './mocks/ViewMocks'
-// import { mockAccountsState } from './mocks/form_1_data'
 
-import { useAppSelector } from '@/store'
 import { CalculateSecurity } from './utils/calculates-securities'
 
 export const SecurityContext = createContext<SecurityContextDto>({} as SecurityContextDto)
