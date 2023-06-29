@@ -46,7 +46,8 @@ export const ReinsuranceCompany = ({
     securities,
     calculateSecurities,
   } = useContext(SecurityContext);
-  console.log(avaliableReinsurers)
+
+  // console.log(avaliableReinsurers)
 
   const updateBindersAsync = async (idCReinsuranceCompany: number) => {
     const binders = await ReinsuranceCompanyBinderService.findByIdReinsuranceCompany(idCReinsuranceCompany);
