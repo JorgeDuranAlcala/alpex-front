@@ -14,10 +14,11 @@ import { CalculateSecurity } from '../../utils/calculates-securities';
 
 // ! only if we want specific props
 interface TaxesAmountProps extends ISecurityInputProps {
-  operationSecurity: CalculateSecurity
+  operationSecurity: CalculateSecurity;
+  isDisabled: boolean;
 }
 
-export const TaxesAmount = ({ index, value, errorMessage, validateForm, operationSecurity }: TaxesAmountProps) => {
+export const TaxesAmount = ({ index, value, isDisabled, errorMessage, validateForm, operationSecurity }: TaxesAmountProps) => {
 
   const {
     activeErros,
@@ -49,6 +50,7 @@ export const TaxesAmount = ({ index, value, errorMessage, validateForm, operatio
         customInput={TextField}
         decimalScale={2}
         thousandSeparator=','
+        disabled={isDisabled}
       />
       <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
         {activeErros && errorMessage}

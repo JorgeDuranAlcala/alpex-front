@@ -213,7 +213,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
 
   useEffect(() => {
     const informationForm1 = information as any;
-
+    console.log('efect toggles')
     if (informationForm1.frontingFee > 0 && security.isGross || informationForm1.taxes > 0 && isGross) {
       const tempSecurities = [...securities]
 
@@ -252,12 +252,12 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
       if (informationForm1.frontingFee === 0) {
 
         setIsShowToggleFrontingFee(true);
-        setFrontingFeeEnabled(true);
+        setFrontingFeeEnabled(false);
         setIsShowRetroCedant(true);
       }
       if (informationForm1.taxes === 0) {
         setIsShowToggleTaxes(true);
-        setIsTaxesEnabled(true);
+        setIsTaxesEnabled(false);
 
       }
 
@@ -295,7 +295,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isGross])
+  }, [isGross, security.idCReinsuranceCompany?.id])
 
   return (
     <DiscountsProvider>
@@ -343,6 +343,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
               errorMessage={errorsSecurity.share}
               index={index}
               validateForm={validateForm}
+              operationSecurity={operationSecurity}
             />
 
             <GrossPremiumPerShareAmount
@@ -504,26 +505,24 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
                 isChecked={isTaxesEnabled}
                 setIsTaxesEnabled={setIsTaxesEnabled}
               />
-              {isTaxesEnabled && (
-                <>
-                  <TaxesPercent
-                    value={security.taxes}
-                    errorMessage={errorsSecurity.taxes}
-                    index={index}
-                    validateForm={validateForm}
-                    operationSecurity={operationSecurity}
-                  />
 
-                  <TaxesAmount
-                    value={security.taxesAmount}
-                    errorMessage={errorsSecurity.taxesAmount}
-                    index={index}
-                    validateForm={validateForm}
-                    operationSecurity={operationSecurity}
-                  />
-                </>
+              <TaxesPercent
+                value={security.taxes}
+                errorMessage={errorsSecurity.taxes}
+                index={index}
+                validateForm={validateForm}
+                operationSecurity={operationSecurity}
+                isDisabled={!isTaxesEnabled}
+              />
 
-              )}
+              <TaxesAmount
+                value={security.taxesAmount}
+                errorMessage={errorsSecurity.taxesAmount}
+                index={index}
+                validateForm={validateForm}
+                operationSecurity={operationSecurity}
+                isDisabled={!isTaxesEnabled}
+              />
             </Grid>
             : null}
 
@@ -537,26 +536,24 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
                 setFrontingFeeEnabled={setFrontingFeeEnabled}
               />
 
-              {frontingFeeEnabled && (
-                <>
-                  <FrontingFeePercent
-                    value={security.frontingFee}
-                    errorMessage={errorsSecurity.frontingFee}
-                    index={index}
-                    validateForm={validateForm}
-                    operationSecurity={operationSecurity}
-                  />
 
-                  <FrontingFeeAmount
-                    value={security.frontingFeeAmount}
-                    errorMessage={errorsSecurity.frontingFeeAmount}
-                    index={index}
-                    validateForm={validateForm}
-                    operationSecurity={operationSecurity}
-                  />
-                </>
+              <FrontingFeePercent
+                value={security.frontingFee}
+                errorMessage={errorsSecurity.frontingFee}
+                index={index}
+                validateForm={validateForm}
+                operationSecurity={operationSecurity}
+                isDisabled={!frontingFeeEnabled}
+              />
 
-              )}
+              <FrontingFeeAmount
+                value={security.frontingFeeAmount}
+                errorMessage={errorsSecurity.frontingFeeAmount}
+                index={index}
+                validateForm={validateForm}
+                operationSecurity={operationSecurity}
+                isDisabled={!frontingFeeEnabled}
+              />
             </Grid>
             : null}
 

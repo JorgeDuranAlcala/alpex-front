@@ -28,6 +28,7 @@ export const SwitchTaxes = ({ index, validateForm, security, isChecked, setIsTax
       ...tempSecurities[index],
       idCRetroCedant: {} as RetroCedantDto,
       idCRetroCedantContact: {} as RetroCedantContactDto,
+      taxesActive: !isChecked
 
       // frontingFee: Number(null),
       // frontingFeeAmount: Number(null),
