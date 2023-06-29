@@ -158,13 +158,15 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
     setDiscounts(discountRes)
   }
 
-  const calculate = async (type = 'any') => {
+  const calculate = async (type = 'any', value = 0) => {
     const grossPremiumc: number = grossPremium || 0
     const reinsuranceBrokeragePc: number = reinsuranceBrokerageP || 0
     const reinsuranceBrokeragec: number = reinsuranceBrokerage || 0
     const taxesPc: number = taxesP || 0
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const taxesc: number = taxes || 0
     const frontingFeePc: number = frontingFeeP || 0
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const frontingFeec: number = frontingFee || 0
 
     switch (type) {
@@ -181,26 +183,34 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
         break
       }
       case 'taxes': {
-        const result = (taxesc * 100) / grossPremiumc
+        const result = (value * 100) / grossPremiumc
         setTaxesP(isFinite(result) ? result : 0)
+        setTaxes(value)
+        handleNumericInputChange(value, 'taxes')
         setTotalDiscountsError(discountValidation)
         break
       }
       case 'taxesP': {
-        const result = grossPremiumc * (taxesPc / 100)
+        const result = grossPremiumc * (value / 100)
         setTaxes(isFinite(result) ? result : 0)
+        setTaxesP(value)
+        handleNumericInputChange(value, 'taxesP')
         setTotalDiscountsError(discountValidation)
         break
       }
       case 'frontingFeeP': {
-        const result = grossPremiumc * (frontingFeePc / 100)
+        const result = grossPremiumc * (value / 100)
         setFrontingFee(isFinite(result) ? result : 0)
+        setFrontingFeeP(value)
+        handleNumericInputChange(value, 'frontingFeeP')
         setTotalDiscountsError(discountValidation)
         break
       }
       case 'frontingFee': {
-        const result = (frontingFeec * 100) / grossPremiumc
+        const result = (value * 100) / grossPremiumc
         setFrontingFeeP(isFinite(result) ? result : 0)
+        setFrontingFee(value)
+        handleNumericInputChange(value, 'frontingFee')
         setTotalDiscountsError(discountValidation)
         break
       }
@@ -437,7 +447,6 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
     reinsuranceBrokerageP,
     taxesP,
     frontingFeeP,
-    netPremium,
     grossPremium,
     reinsuranceBrokerage,
     taxes,
@@ -454,7 +463,8 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
     setFrontingFeeP(placementStructure.frontingFeeP)
     setReinsuranceBrokerageP(placementStructure.reinsuranceBrokerageP)
     setReinsuranceBrokerage(placementStructure.reinsuranceBrokerage)
-    setNetPremium(placementStructure.netPremium)
+
+    // setNetPremium(placementStructure.netPremium)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [placementStructure.grossPremium])
 
@@ -792,15 +802,14 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
 
                 return (floatValue! >= 0 && floatValue! <= 100) || floatValue === undefined
               }}
-              onBlur={()=> calculate('taxesP')}
+
               onValueChange={value => {
 
                 if (value.floatValue) {
-                  setTaxesP(value.floatValue)
-                handleNumericInputChange(value.floatValue, 'taxesP')
+                  calculate('taxesP',value.floatValue)
+
                 }else{
-                  setTaxesP(0)
-                handleNumericInputChange(0, 'taxesP')
+                  calculate('taxesP',0)
                 }
 
                 // calculate('taxesP')
@@ -835,11 +844,16 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
 
                 return (floatValue! >= 0 && floatValue! <= upLimit) || floatValue === undefined
               }}
-              onBlur={()=> calculate('taxesP')}
+
               onValueChange={value => {
-                setTaxes(value.floatValue)
-                handleNumericInputChange(value.floatValue, 'taxes')
+                if (value.floatValue) {
+                  calculate('taxes',value.floatValue)
+
+                }else{
+                  calculate('taxes',0)
+                }
               }}
+
               error={taxesChecked && (errors.taxesError || errors.totalDiscountsError)}
               helperText={
                 taxesChecked && errors.taxesError
@@ -874,16 +888,21 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               decimalScale={2}
               variant='outlined'
               disabled={frontingChecked ? false : true}
-              onBlur={() => calculate('frontingFeeP')}
+
               isAllowed={values => {
                 const { floatValue } = values
 
                 return (floatValue! >= 0 && floatValue! <= 100) || floatValue === undefined
               }}
               onValueChange={value => {
-                setFrontingFeeP(value.floatValue)
-                handleNumericInputChange(value.floatValue, 'frontingFeeP')
+                if (value.floatValue) {
+                  calculate('frontingFeeP',value.floatValue)
+
+                }else{
+                  calculate('frontingFeeP',0)
+                }
               }}
+
               error={frontingChecked && (errors.frontingFeePError || errors.totalDiscountsError)}
               helperText={
                 frontingChecked && errors.frontingFeePError
@@ -908,7 +927,6 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               variant='outlined'
               disabled={frontingChecked ? false : true}
               decimalScale={2}
-              onBlur={() => calculate('frontingFee')}
               isAllowed={values => {
                 const { floatValue } = values
                 const upLimit = grossPremium || 0
@@ -916,9 +934,14 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
                 return (floatValue! >= 0 && floatValue! <= upLimit) || floatValue === undefined
               }}
               onValueChange={value => {
-                setFrontingFee(value.floatValue)
-                handleNumericInputChange(value.floatValue, 'frontingFee')
+                if (value.floatValue) {
+                  calculate('frontingFee',value.floatValue)
+
+                }else{
+                  calculate('frontingFee',0)
+                }
               }}
+
               error={frontingChecked && (errors.frontingFeeError || errors.totalDiscountsError)}
               helperText={
                 frontingChecked && errors.frontingFeeError
