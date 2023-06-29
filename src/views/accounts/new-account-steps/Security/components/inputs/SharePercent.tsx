@@ -9,15 +9,16 @@ import * as yup from 'yup';
 
 import { SecurityContext } from '../../SecurityView';
 import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interface';
+import { CalculateSecurity } from '../../utils/calculates-securities';
 
 // ! only if we want specific props
-// interface SharePercentProps extends ISecurityInputProps {
-//
-// }
+interface SharePercentProps extends ISecurityInputProps {
 
-type SharePercentProps = ISecurityInputProps;
+  operationSecurity: CalculateSecurity;
+}
 
-export const SharePercent = ({ index, value, errorMessage, validateForm }: SharePercentProps) => {
+
+export const SharePercent = ({ index, value, errorMessage, validateForm, operationSecurity }: SharePercentProps) => {
 
   const {
     activeErros,
@@ -29,7 +30,8 @@ export const SharePercent = ({ index, value, errorMessage, validateForm }: Share
     const tempSecurities = [...securities]
     tempSecurities[index] = {
       ...tempSecurities[index],
-      share: value
+      share: value,
+      premiumPerShare: operationSecurity.getPremierPerShare(),
     }
     validateForm(tempSecurities[index])
     calculateSecurities(tempSecurities)

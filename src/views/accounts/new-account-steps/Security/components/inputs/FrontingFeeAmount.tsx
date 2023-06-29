@@ -12,11 +12,12 @@ import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interf
 import { CalculateSecurity } from '../../utils/calculates-securities';
 
 interface FrontingFeeAmountProps extends ISecurityInputProps {
-  operationSecurity: CalculateSecurity
+  operationSecurity: CalculateSecurity;
+  isDisabled: boolean;
 }
 
 
-export const FrontingFeeAmount = ({ index, value, errorMessage, validateForm, operationSecurity }: FrontingFeeAmountProps) => {
+export const FrontingFeeAmount = ({ index, value, isDisabled, errorMessage, validateForm, operationSecurity }: FrontingFeeAmountProps) => {
 
   const {
     activeErros,
@@ -49,6 +50,7 @@ export const FrontingFeeAmount = ({ index, value, errorMessage, validateForm, op
         customInput={TextField}
         decimalScale={2}
         thousandSeparator=','
+        disabled={isDisabled}
       />
       <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
         {activeErros && errorMessage}

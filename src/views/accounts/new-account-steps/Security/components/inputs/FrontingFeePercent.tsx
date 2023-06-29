@@ -13,12 +13,13 @@ import { CalculateSecurity } from '../../utils/calculates-securities';
 
 // ! only if we want specific props
 interface FrontingFeePercentProps extends ISecurityInputProps {
-  operationSecurity: CalculateSecurity
+  operationSecurity: CalculateSecurity;
+  isDisabled: boolean;
 }
 
 // type FrontingFeePercentProps = ISecurityInputProps;
 
-export const FrontingFeePercent = ({ index, value, errorMessage, validateForm, operationSecurity }: FrontingFeePercentProps) => {
+export const FrontingFeePercent = ({ index, value, isDisabled, errorMessage, validateForm, operationSecurity }: FrontingFeePercentProps) => {
 
   const {
     activeErros,
@@ -52,6 +53,8 @@ export const FrontingFeePercent = ({ index, value, errorMessage, validateForm, o
         isAllowed={values => {
           return (values.floatValue! >= 0 && values.floatValue! <= 100) || values.floatValue === undefined
         }}
+
+        disabled={isDisabled}
       />
 
       <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
