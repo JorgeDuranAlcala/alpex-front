@@ -143,7 +143,7 @@ export const EditMap = () => {
 }
 
 export const Mapa = () => {
-  const { isLoaded } = useLoadScript({ googleMapsApiKey: 'AIzaSyDOVCLFJ1wFy6su9LLHkLR6mJapikcBW8E' })
+  const { isLoaded } = useLoadScript({ googleMapsApiKey: '' })
 
   if (!isLoaded) return <div>Loading...</div>
 
