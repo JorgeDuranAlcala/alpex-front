@@ -28,7 +28,8 @@ export const DiscountPercent = ({ discountIndex, value, operationSecurity }: Dis
   const { updateDiscountByIndex } = useContext(DiscountsContext);
 
   const handleChangeDiscountPercent = (value: number) => {
-    console.log('number')
+
+
     updateDiscountByIndex({
       index: discountIndex,
       discountPercent: value,

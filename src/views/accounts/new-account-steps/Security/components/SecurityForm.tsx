@@ -251,11 +251,14 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
     else if (informationForm1.frontingFee === 0 || informationForm1.taxes === 0) {
       if (informationForm1.frontingFee === 0) {
 
+        setIsShowToggleFrontingFee(true);
         setFrontingFeeEnabled(true);
         setIsShowRetroCedant(true);
       }
       if (informationForm1.taxes === 0) {
         setIsShowToggleTaxes(true);
+        setIsTaxesEnabled(true);
+
       }
 
     } else if (informationForm1.frontingFee > 0 && !security.isGross || informationForm1.taxes > 0! && isGross) {
@@ -332,6 +335,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
               isGross={isGross}
               index={index}
               validateForm={validateForm}
+              operationSecurity={operationSecurity}
             />
 
             <SharePercent
