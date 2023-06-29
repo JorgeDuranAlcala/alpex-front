@@ -240,7 +240,7 @@ const RetroCedantsTable = () => {
           }}
           deleteBtn={selectedRows.length > 0 ? true : false}
           onSearch={searchRetroCedant}
-          textBtn='ADD NEW CEDANT'
+          textBtn='ADD NEW RETRO CEDANT'
           onClickBtn={() => router.push('/catalogues/dynamic/add-retrocedants')}
         />
         <div className='cedant-list'>
