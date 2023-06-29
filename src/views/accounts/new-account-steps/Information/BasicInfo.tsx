@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { ForwardedRef, ReactNode, forwardRef, useEffect, useState } from 'react'; //ReactNode
+import React, { ForwardedRef, ReactNode, forwardRef, useEffect, useState } from 'react' //ReactNode
 
 // ** MUI Imports
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
@@ -18,7 +18,7 @@ import {
   TextField,
   Theme
 } from '@mui/material'
-import Select, { SelectChangeEvent } from '@mui/material/Select'; //SelectChangeEvent
+import Select, { SelectChangeEvent } from '@mui/material/Select' //SelectChangeEvent
 
 //Components
 import { ContactModal } from '@/views/accounts/new-account-steps/Information/ContactModal'
@@ -356,7 +356,6 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
     if (value == null) value = ''
 
     const riskActivity = riskActivities.find(r => String(value).includes(r.riskActivity))
-    console.log({ riskActivity })
 
     if (!riskActivity) return
 
@@ -375,7 +374,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [industryCodeValue])
+  }, [industryCodeValue, basicInfo.riskActivity])
 
   useEffect(() => {
     if (!basicInfo.riskActivity && basicInfo.industryCode) {
@@ -415,9 +414,6 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
       setValidateForm(false)
     }
   }, [makeValidations, makeSaveValidations])
-
-  React.useEffect(() => {
-  }, [basicInfo])
 
   return (
     <>
