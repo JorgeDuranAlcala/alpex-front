@@ -96,8 +96,6 @@ export const ContactModal = ({ id, service, updateContacts, setIdCreated, disabl
           idCBroker: id
         })
           .then(contactBroker => {
-            console.log('se guardo el contacto')
-            console.log(contactBroker)
             setIdCreated(state => ({
               ...state,
               brokerContact: contactBroker.id
@@ -105,7 +103,7 @@ export const ContactModal = ({ id, service, updateContacts, setIdCreated, disabl
             setStartValidations(false)
           })
           .catch(err => {
-            console.log('ERROR-SERVICE [saveBrokerContact]', err)
+            console.error('ERROR-SERVICE [saveBrokerContact]', err)
           })
 
         break
@@ -126,7 +124,7 @@ export const ContactModal = ({ id, service, updateContacts, setIdCreated, disabl
             setStartValidations(false)
           })
           .catch(err => {
-            console.log('ERROR-SERVICE [saveCedantContact]', err)
+            console.error('ERROR-SERVICE [saveCedantContact]', err)
           })
 
         break
