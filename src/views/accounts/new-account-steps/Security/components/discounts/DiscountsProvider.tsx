@@ -24,7 +24,6 @@ export const DiscountsProvider = ({ children }: { children: ReactNode }) => {
   }
 
   const updateDiscountByIndex = ({ index, discountPercent, discountAmount }: IUpdateDiscountByIndex) => {
-    console.log({ index, discountPercent, discountAmount })
     setDiscountsList((prev) => {
       const newDiscounts = [...prev];
       newDiscounts[index] = {
@@ -35,13 +34,18 @@ export const DiscountsProvider = ({ children }: { children: ReactNode }) => {
     })
   }
 
+  const updateAllDiscounts = (allDiscounts: IDiscountInputs[]) => {
+    setDiscountsList(allDiscounts)
+  }
+
   return (
 
     <DiscountsContext.Provider value={{
       discountsList,
       addDiscount,
       updateDiscountByIndex,
-      removeDiscountByIndex
+      removeDiscountByIndex,
+      updateAllDiscounts
     }
     }>
       {children}

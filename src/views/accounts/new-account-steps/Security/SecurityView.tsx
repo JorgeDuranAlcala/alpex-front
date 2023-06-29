@@ -9,7 +9,7 @@ import {
   SecurityProps
 } from '@/services/accounts/dtos/security.dto'
 
-// import { useAppSelector } from '@/store'
+import { useAppSelector } from '@/store'
 
 import { Title } from '@/styled-components/accounts/Security.styled'
 import { ButtonClose, HeaderTitleModal } from '@/styles/modal/modal.styled'
@@ -33,10 +33,7 @@ import Icon from 'src/@core/components/icon'
 import UserThemeOptions from 'src/layouts/UserThemeOptions'
 import { SecurityMapper } from './mappers/SecurityForm.mapper'
 
-// import { ViewMocks } from './mocks/ViewMocks'
-// import { mockAccountsState } from './mocks/form_1_data'
 
-import { useAppSelector } from '@/store'
 import { CalculateSecurity } from './utils/calculates-securities'
 
 export const SecurityContext = createContext<SecurityContextDto>({} as SecurityContextDto)
@@ -96,8 +93,11 @@ const Security = ({ onStepChange }: SecurityProps) => {
         security.grossPremiumPerShare = operationSecurity.getGrossPremierPerShare() || 0
         security.brokerAgeAmount = operationSecurity.getBrokerAge() || 0
         security.dynamicCommissionAmount = operationSecurity.getDynamicComissionAmount() || 0
-        security.frontingFeeAmount = operationSecurity.getFrontingFeeAmount() || 0
-        security.taxesAmount = operationSecurity.getTaxesAmount() || 0
+
+        // security.frontingFeeAmount = operationSecurity.getFrontingFeeAmount() || 0
+
+        // security.taxesAmount = operationSecurity.getTaxesAmount() || 0
+
         security.shareAmount = operationSecurity.getShareAmount() || 0
         security.netReinsurancePremium = operationSecurity.getNetReinsurancePremium() || 0
         tempSecurities.push({
@@ -110,7 +110,9 @@ const Security = ({ onStepChange }: SecurityProps) => {
           receivedNetPremium: Number(security.receivedNetPremium) || 0,
           reinsuranceBrokerage: Number(security.reinsuranceBrokerage) || 0,
           share: Number(security.share) || 0,
-          taxes: Number(security.taxes) || 0
+
+          // taxes: Number(security.taxes) || 0
+
         })
       }
       let dataForm: FormSecurity = {

@@ -96,7 +96,6 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
   const [binders, setBinders] = useState<ReinsuranceCompanyBinderDto[]>([]);
 
 
-  console.log(errorsSecurity)
 
 
   const [avaliableReinsurers, setAvaliableReinsurers] = useState<ReinsuranceCompanyDto[]>([])
@@ -106,6 +105,8 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
     setAllErrors,
     information,
     companiesSelect,
+    securities,
+    calculateSecurities
   } = useContext(SecurityContext)
 
   const { reinsuranceCompany } = useGetAllReinsuranceCompanies()
@@ -167,13 +168,11 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
           }
         }
         errorsTemp[index] = true
-        console.log({ data, index })
         setErrorsSecurity(data)
 
         //setEnableNextStep(false)
       })
       .finally(() => {
-        console.log({ errorsTemp, index })
         setAllErrors(() => [...errorsTemp])
       })
   }
@@ -195,8 +194,8 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
       setIdRetroCedant(security.idCRetroCedant?.id)
     }
 
-    setFrontingFeeEnabled(() => security.frontingFeeActive)
-    setIsGross(() => security.isGross)
+    // setFrontingFeeEnabled(() => security.frontingFeeActive)
+    // setIsGross(() => security.isGross)
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [security])
@@ -212,66 +211,91 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
   // }, [])
 
 
-  // ? USE EFFECT AL INICIAR EL FORMULARIO ---> PARA TAXES
   useEffect(() => {
-    // ? Si formulario 1 tiene taxes y utiliza netpremium como base:
-    // ? entonces no mostrar campos taxes ni botón toggleTaxes
-    // ? por default el botton toggleTaxes esta en false (no se muestra)
+    const informationForm1 = information as any;
 
-    // ? else
-    // ? Si formulario 1 tiene taxes y utiliza grosspremium como base:
-    // ? entonces:
-    // ?  1. - mostrar campos taxes y botón toggleTaxes con estado activado
-    // ?  2. - copiar el valor de taxes que se colocó en el formulario 1
-    if (security.taxesActive && security.isGross) {
-      setIsShowToggleTaxes(true);
-      setIsTaxesEnabled(true);
+    if (informationForm1.frontingFee > 0 && security.isGross || informationForm1.taxes > 0 && isGross) {
+      const tempSecurities = [...securities]
+
+      if (informationForm1.frontingFee > 0) {
+
+        setIsShowToggleFrontingFee(true);
+        setFrontingFeeEnabled(true);
+        setIsShowRetroCedant(true);
+
+        tempSecurities[index] = {
+          ...tempSecurities[index],
+          frontingFee: informationForm1.frontingFeeP,
+          frontingFeeAmount: informationForm1.frontingFee,
+        }
+      }
+
+      if (informationForm1.taxes > 0) {
+        setIsShowToggleTaxes(true);
+        setIsTaxesEnabled(true);
+
+        tempSecurities[index] = {
+          ...tempSecurities[index],
+          taxes: informationForm1.taxesP,
+          taxesAmount: informationForm1.taxes
+        }
+
+
+      }
+
+      validateForm(tempSecurities[index])
+      calculateSecurities(tempSecurities)
+
     }
 
-    // ? else
-    // ? Si formulario 1 NO tiene taxes:
-    // ? entonces:
-    // ?  1. - mostrar campos taxes y botón toggleTaxes
-    else if (!security.taxesActive) {
-      setIsShowToggleTaxes(true);
+    else if (informationForm1.frontingFee === 0 || informationForm1.taxes === 0) {
+      if (informationForm1.frontingFee === 0) {
+
+        setIsShowToggleFrontingFee(true);
+        setFrontingFeeEnabled(true);
+        setIsShowRetroCedant(true);
+      }
+      if (informationForm1.taxes === 0) {
+        setIsShowToggleTaxes(true);
+        setIsTaxesEnabled(true);
+
+      }
+
+    } else if (informationForm1.frontingFee > 0 && !security.isGross || informationForm1.taxes > 0! && isGross) {
+      const tempSecurities = [...securities]
+
+      if (informationForm1.frontingFee > 0) {
+
+        setIsShowToggleFrontingFee(false);
+        setFrontingFeeEnabled(false);
+        setIsShowRetroCedant(false);
+
+        tempSecurities[index] = {
+          ...tempSecurities[index],
+          frontingFee: 0,
+          frontingFeeAmount: 0,
+        }
+      }
+
+      if (informationForm1.taxes > 0) {
+        setIsShowToggleTaxes(false);
+        setIsTaxesEnabled(false);
+
+        tempSecurities[index] = {
+          ...tempSecurities[index],
+          taxes: 0,
+          taxesAmount: 0
+        }
+
+
+      }
+
+      validateForm(tempSecurities[index])
+      calculateSecurities(tempSecurities)
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // ? USE EFFECT AL INICIAR EL FORMULARIO ---> PARA FRONTING FEE
-  useEffect(() => {
-    // ? Si formulario 1 tiene fronting y utiliza netpremium como base:
-    // ? entonces:
-    // ?  1. - no mostrar campos frontingFee ni botón toggleFrontingFee
-    // ?  2. - no mostrar campos Retro cedant
-    // ? por default el botón toggleFrontingFee esta en false (no se muestra)
-    // ? por default el estado showRetroCedant esta en false (no se muestra)
-
-    // ? else
-    // ? Si formulario 1 tiene fronting y utiliza grosspremium como base:
-    // ? entonces:
-    // ?  1. - mostrar campos frontingFee y botón toggleFrontingFee con estado activado
-    // ?  2. - copiar el valor de frontingFee que se colocó en el formulario 1
-    // !  3. - mostrar los campos de retro cedant
-    if (security.frontingFeeActive && security.isGross) {
-      setIsShowToggleFrontingFee(true);
-      setFrontingFeeEnabled(true);
-      setIsShowRetroCedant(true);
-    }
-
-    // ? else
-    // ? Si formulario 1 NO tiene frontingFee:
-    // ? entonces:
-    // ?  1. - mostrar campos frontingFee y botón toggleFrontingFee
-    // !  2. - mostrar los campos de retro cedant
-    else if (!security.frontingFeeActive) {
-      setFrontingFeeEnabled(true);
-      setIsShowRetroCedant(true);
-    }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [isGross])
 
   return (
     <DiscountsProvider>
@@ -311,6 +335,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
               isGross={isGross}
               index={index}
               validateForm={validateForm}
+              operationSecurity={operationSecurity}
             />
 
             <SharePercent
@@ -413,7 +438,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
             />
 
             <Consecutive
-              value={1}
+              value={0}
             />
 
             <NetReinsurancePremium
@@ -486,6 +511,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
                     errorMessage={errorsSecurity.taxes}
                     index={index}
                     validateForm={validateForm}
+                    operationSecurity={operationSecurity}
                   />
 
                   <TaxesAmount
@@ -518,6 +544,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
                     errorMessage={errorsSecurity.frontingFee}
                     index={index}
                     validateForm={validateForm}
+                    operationSecurity={operationSecurity}
                   />
 
                   <FrontingFeeAmount
