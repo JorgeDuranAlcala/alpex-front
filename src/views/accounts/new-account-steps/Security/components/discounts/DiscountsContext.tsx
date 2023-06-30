@@ -1,21 +1,21 @@
 import { createContext } from "react";
 
 export interface IDiscountInputs {
-  discountPercent: number;
-  discountAmount: number;
+  percentage: number;
+  amount: number;
 }
 
 export interface IUpdateDiscountByIndex {
   index: number;
-  discountPercent: number;
-  discountAmount: number;
+  percentage: number;
+  amount: number;
 }
 
 interface DiscountContextProps {
   discountsList: IDiscountInputs[];
   addDiscount: () => void;
   removeDiscountByIndex: (index: number) => void;
-  updateDiscountByIndex: ({ index, discountPercent, discountAmount }: IUpdateDiscountByIndex) => void;
+  updateDiscountByIndex: ({ index, percentage, amount }: IUpdateDiscountByIndex) => void;
   updateAllDiscounts: (allDiscounts: IDiscountInputs[]) => void;
 }
 
