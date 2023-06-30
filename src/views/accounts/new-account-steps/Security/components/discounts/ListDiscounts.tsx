@@ -71,7 +71,6 @@ export const ListDiscounts = ({ formIndex, operationSecurity, validateForm }: Li
             operationSecurity={operationSecurity}
           />
           <DiscountAmount
-            discountsList={discountsList}
             index={formIndex}
             discountIndex={index}
             value={discountItem.discountAmount}
