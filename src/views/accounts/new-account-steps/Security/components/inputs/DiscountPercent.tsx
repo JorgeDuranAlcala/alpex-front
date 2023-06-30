@@ -36,6 +36,7 @@ export const DiscountPercent = ({ discountIndex, value, operationSecurity, disco
     }, 0)
 
     totalPercentOfDiscounts > 100 ? setMessageError('Discount must be less than 100%') : setMessageError('')
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [discountsList[discountIndex]])
 
   return (
