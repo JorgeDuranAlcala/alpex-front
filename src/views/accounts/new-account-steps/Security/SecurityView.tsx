@@ -175,12 +175,15 @@ const Security = ({ onStepChange }: SecurityProps) => {
     }
 
     if (!allFormData.id) {
-      await saveSecurityTotal({
-        receivedNetPremium: +allFormData.recievedNetPremium,
-        distributedNetPremium: +allFormData.distribuitedNetPremium,
-        difference: +allFormData.diference,
-        idAccount: +accountData.formsData.form1.id
-      })
+      await saveSecurityTotal([
+        {
+          receivedNetPremium: +allFormData.recievedNetPremium,
+          distributedNetPremium: +allFormData.distribuitedNetPremium,
+          difference: +allFormData.diference,
+          idAccount: +accountData.formsData.form1.id,
+          view: 1
+        }
+      ])
         .then(response => {
           console.log('saveSecurityTotal', { response })
         })
@@ -188,12 +191,16 @@ const Security = ({ onStepChange }: SecurityProps) => {
           console.log('saveSecurityTotal', e)
         })
     } else {
-      await updateSecurityTotal(allFormData?.id, {
-        receivedNetPremium: +allFormData.recievedNetPremium,
-        distributedNetPremium: +allFormData.distribuitedNetPremium,
-        difference: +allFormData.diference,
-        idAccount: +accountData.formsData.form1.id
-      })
+      await updateSecurityTotal([
+        {
+          id: +allFormData.id,
+          receivedNetPremium: +allFormData.recievedNetPremium,
+          distributedNetPremium: +allFormData.distribuitedNetPremium,
+          difference: +allFormData.diference,
+          idAccount: +accountData.formsData.form1.id,
+          view: 1
+        }
+      ])
         .then(response => {
           console.log('updateSecurityTotal', { response })
         })
