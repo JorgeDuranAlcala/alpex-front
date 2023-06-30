@@ -13,7 +13,6 @@ import Information from 'src/views/accounts/new-account-steps/Information/Inform
 
 import PaymentWarranty from 'src/views/accounts/new-account-steps/PaymentWarranty'
 import Security from 'src/views/accounts/new-account-steps/Security/SecurityView'
-import ActionsHeader from 'src/views/accounts/new-account-steps/headers/ActionsHeader'
 import CommentSection from 'src/views/components/new-accounts/CommentSection'
 import NewAccountStepper from 'src/views/components/new-accounts/NewAccountStepper'
 
@@ -21,6 +20,7 @@ import NewAccountStepper from 'src/views/components/new-accounts/NewAccountStepp
 
 // import { useGetAccountById } from '@/hooks/accounts/forms'
 import { updateFormsData } from '@/store/apps/accounts'
+import FormAddress from '@/views/accounts/new-account-steps/FormAddress'
 import Sublimits from 'src/views/accounts/new-account-steps/Sublimits'
 import FormHeader from 'src/views/accounts/new-account-steps/headers/formHeader'
 
@@ -60,6 +60,9 @@ const NewAccount = () => {
         return <PaymentWarranty onStepChange={handleStepChange} />
       case 4:
         return <Sublimits />
+
+      case 5:
+        return <FormAddress />
       default:
         return <></>
     }
@@ -137,7 +140,8 @@ const NewAccount = () => {
       {/* "ActionsHeader" component receives the initial status of the
       account and in order to use it as a "side header" (forms 2 to 4),
       it is necessary to send the boolean variable "sideHeader = true". */}
-      {activeStep == 1 && isNewAccount ? <ActionsHeader accountStatus='PENDING' sideHeader={false} /> : <FormHeader />}
+      {/* {activeStep == 1 && isNewAccount ? <ActionsHeader accountStatus='PENDING' sideHeader={false} /> : <FormHeader />} */}
+      {activeStep == 1 && isNewAccount ? <FormHeader isNewAccount /> : <FormHeader />}
 
       <Card>
         <NewAccountStepper changeStep={activeStep} onStepChange={handleStepChange} />

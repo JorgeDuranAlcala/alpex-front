@@ -130,15 +130,15 @@ const RetroCedantContacts = ({ idRetroCedant }: IRetroCedantContacts) => {
     setAlertType(type)
 
     switch (type) {
-      case 'success':
+      case 'success-alert':
         setAlertText(text || 'NEW CONTACT ADDED')
         setAlertIcon('mdi:check-circle-outline')
         break
-      case 'error':
+      case 'error-alert':
         setAlertText('UNKNOWN ERROR, TRY AGAIN')
         setAlertIcon('mdi:alert-circle-outline')
         break
-      case 'warn':
+      case 'warn-alert':
         setAlertText('NO INTERNET CONNECTION')
         setAlertIcon('mdi:alert-outline')
         break
@@ -355,12 +355,12 @@ const RetroCedantContacts = ({ idRetroCedant }: IRetroCedantContacts) => {
       idCCountry: contactData.idCCountry.id
     })
     if (result) {
-      triggerAlert('success')
+      triggerAlert('success-alert')
       setContactData(initialNewContact)
       getRetroCedantContactsByIdRetroCedant(retroCedantContactsPagination)
     }
     setOpenNewContact(false)
-    triggerAlert('success')
+    triggerAlert('success-alert')
   }
 
   const editContact = async () => {
@@ -370,7 +370,7 @@ const RetroCedantContacts = ({ idRetroCedant }: IRetroCedantContacts) => {
       idCCountry: currentContact.idCCountry.id
     })
     if (result) {
-      triggerAlert('success', 'CHANGES SAVED')
+      triggerAlert('success-alert', 'CHANGES SAVED')
       getRetroCedantContactsByIdRetroCedant(retroCedantContactsPagination)
     }
     setOpenEdit(false)
@@ -380,7 +380,7 @@ const RetroCedantContacts = ({ idRetroCedant }: IRetroCedantContacts) => {
     const result = await deleteRetroCedantContact({ idDeleteList: [contactToDelete] })
     if (result) {
       getRetroCedantContactsByIdRetroCedant(retroCedantContactsPagination)
-      triggerAlert('success', 'DELETED')
+      triggerAlert('success-alert', 'DELETED')
     }
     setOpenDelete(false)
   }
@@ -389,7 +389,7 @@ const RetroCedantContacts = ({ idRetroCedant }: IRetroCedantContacts) => {
     const result = await deleteRetroCedantContact({ idDeleteList: selectedRows })
     if (result) {
       getRetroCedantContactsByIdRetroCedant(retroCedantContactsPagination)
-      triggerAlert('success', 'DELETED')
+      triggerAlert('success-alert', 'DELETED')
     }
     setOpenDeleteRows(false)
   }

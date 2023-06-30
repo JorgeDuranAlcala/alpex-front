@@ -2,29 +2,62 @@ import { useGetAllCountries } from '@/hooks/catalogs/country'
 import { useGetAllReinsuranceCompanies } from '@/hooks/catalogs/reinsuranceCompany'
 import { useGetAllRetroCedants } from '@/hooks/catalogs/retroCedant'
 import { useGetAllByIdRetroCedant } from '@/hooks/catalogs/retroCedantContact'
-import { FormSectionProps, SecurityDto, errorsSecurity } from '@/services/accounts/dtos/security.dto'
-import { ReinsuranceCompanyDto } from '@/services/catalogs/dtos/ReinsuranceCompanyDto'
-import { RetroCedantDto } from '@/services/catalogs/dtos/RetroCedantDto'
-import { RetroCedantContactDto } from '@/services/catalogs/dtos/retroCedantContact.dto'
-import SwitchAlpex from '@/views/custom/switchs'
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
-import {
-  FormControl,
-  FormHelperText,
-  Grid,
-  Icon,
-  InputLabel,
-  MenuItem,
-  Select,
-  SelectChangeEvent,
-  TextField
-} from '@mui/material'
 
-import { useContext, useEffect, useRef, useState } from 'react'
-import { NumericFormat } from 'react-number-format'
+import { ReinsuranceCompanyDto } from '@/services/catalogs/dtos/ReinsuranceCompanyDto'
+
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
+import { Grid, Icon } from '@mui/material'
+
+import { FormSectionProps, SecurityDto, errorsSecurity } from '@/services/accounts/dtos/security.dto'
+import { ReinsuranceCompanyBinderDto } from '@/services/catalogs/dtos/ReinsuranceCompanyBinder.dto'
+import { useContext, useEffect, useState } from 'react'
 import * as yup from 'yup'
 import { SecurityContext } from '../SecurityView'
 import { CalculateSecurity } from '../utils/calculates-securities'
+import { ButtonAddDiscount } from './discounts/ButtonAddDiscount'
+import { DiscountsProvider } from './discounts/DiscountsProvider'
+import { ListDiscounts } from './discounts/ListDiscounts'
+import {
+  Binder,
+  Consecutive,
+  ContactCountry,
+  ContactEmail,
+  ContactPhone,
+  DynamicComissionAmount,
+  DynamicComissionPercent,
+  FrontingFeeAmount,
+  FrontingFeePercent,
+  GrossOrNetPremiumAt100,
+  GrossPremiumPerShareAmount,
+  NetReinsurancePremium,
+  PremiumPerShareAmount,
+  ReinsuranceBrokerageAmount,
+  ReinsuranceBrokeragePercent,
+  ReinsuranceCompany,
+  SelectRetroCedant,
+  SelectRetroCedantContact,
+  ShareAmount,
+  SharePercent,
+  TaxesAmount,
+  TaxesPercent,
+  dynamicComissionAmount_validations,
+  dynamicComissionPercent_validations,
+  frontingFeeAmount_validations,
+  frontingFeePercent_validations,
+  grossOrNetPremiumAt100_validations,
+  netReinsurancePremium_validations,
+  premiumPerShareAmount_validations,
+  reinsuranceBrokerageAmount_validations,
+  reinsuranceBrokeragePercent_validations,
+  selectRetroCedantContact_validations,
+  selectRetroCedant_validations,
+  shareAmount_validations,
+  sharePercent_validations,
+  taxesAmount_validations,
+  taxesPercent_validations
+} from './inputs'
+import { SwitchFrontingFee } from './inputs/SwitchFrontingFee'
+import { SwitchTaxes } from './inputs/SwitchTaxes'
 
 // type Timer = ReturnType<typeof setInterval>
 // let typingTimer: Timer
@@ -32,7 +65,9 @@ import { CalculateSecurity } from '../utils/calculates-securities'
 const initialErrorValues: errorsSecurity = {
   netPremiumAt100: '',
   share: '',
+  shareAmount: '',
   premiumPerShareAmount: '',
+  grossPremiumPerShareAmount: '',
   reinsuranceBrokerage: '',
   brokerAgeAmount: '',
   dynamicCommission: '',
@@ -48,368 +83,46 @@ const initialErrorValues: errorsSecurity = {
 }
 export const FormSection = ({ index, security, onDeleteItemList }: FormSectionProps) => {
   const [isGross, setIsGross] = useState<boolean>(security.isGross)
-
   const [errorsSecurity, setErrorsSecurity] = useState<errorsSecurity>(initialErrorValues)
-
   const [frontingFeeEnabled, setFrontingFeeEnabled] = useState(security.frontingFeeActive || false)
+  const [isShowToggleFrontingFee, setIsShowToggleFrontingFee] = useState(false)
+  const [isTaxesEnabled, setIsTaxesEnabled] = useState(false)
+  const [isShowToggleTaxes, setIsShowToggleTaxes] = useState(false)
+  const [isShowRetroCedant, setIsShowRetroCedant] = useState(false)
+  const [binders, setBinders] = useState<ReinsuranceCompanyBinderDto[]>([])
 
   const [avaliableReinsurers, setAvaliableReinsurers] = useState<ReinsuranceCompanyDto[]>([])
-  const switchAlpex = useRef(null)
-  const {
-    securities,
-    activeErros,
-    setSecurities,
-    allErrors,
-    setAllErrors,
-    information,
-    companiesSelect,
-    calculateSecurities
-  } = useContext(SecurityContext)
+
+  const { allErrors, setAllErrors, information, companiesSelect, securities, calculateSecurities } =
+    useContext(SecurityContext)
+
   const { reinsuranceCompany } = useGetAllReinsuranceCompanies()
   const { retroCedants } = useGetAllRetroCedants()
   const { retroCedantContacts, setIdRetroCedant } = useGetAllByIdRetroCedant()
   const { countries } = useGetAllCountries()
+
   const operationSecurity: CalculateSecurity = new CalculateSecurity().setInformation(information).setSecurity(security)
 
   const schemaRetrocedant = yup.object().shape({
-    idCRetroCedant: yup
-      .object()
-      .shape({
-        id: yup.number().nullable().notRequired(),
-        name: yup.string().nullable().notRequired()
-      })
-      .test('', 'This field is required', value => {
-        if (frontingFeeEnabled && value && typeof value === 'object') {
-          return value.hasOwnProperty('id')
-        }
-
-        return true
-      }),
-
-    idCRetroCedantContact: yup
-      .object()
-      .shape({
-        id: yup.number().nullable().notRequired(),
-        name: yup.string().nullable().notRequired()
-      })
-      .test('', 'This field is required', value => {
-        if (frontingFeeEnabled && value && typeof value === 'object') {
-          return value.hasOwnProperty('id')
-        }
-
-        return true
-      }),
-
-    frontingFee: yup
-      .number()
-      .transform((_, val) => (val === Number(val) ? val : null))
-      .test('', 'This field is required', value => {
-        const val = value || 0
-        if (frontingFeeEnabled) return +val > 0
-
-        return true
-      })
-      .required('This field is required')
-
-      .max(100),
-
-    frontingFeeAmount: yup
-      .number()
-      .transform((_, val) => (val === Number(val) ? val : null))
-      .test('', 'This field is required', value => {
-        const val = value || 0
-        if (frontingFeeEnabled) return +val > 0
-
-        return true
-      })
-      .required('This field is required')
+    ...selectRetroCedant_validations({ frontingFeeEnabled, isGross }).fields,
+    ...selectRetroCedantContact_validations({ frontingFeeEnabled }).fields,
+    ...frontingFeePercent_validations({ frontingFeeEnabled }).fields,
+    ...frontingFeeAmount_validations({ frontingFeeEnabled }).fields
   })
 
   const schema = yup.object().shape({
-    netPremiumAt100: yup
-      .number()
-      .transform((_, val) => (val === Number(val) ? val : null))
-      .test('', 'This field is required', value => {
-        const val = value || 0
-
-        return +val > 0
-      })
-      .required('This field is required'),
-    share: yup
-      .number()
-      .transform((_, val) => (val === Number(val) ? val : null))
-      .test('', 'This field is required', value => {
-        const val = value || 0
-
-        return +val > 0
-      })
-      .min(1)
-      .max(100)
-      .required('This field is required'),
-    premiumPerShareAmount: yup
-      .number()
-      .transform((_, val) => (val === Number(val) ? val : null))
-      .test('', 'This field is required', value => {
-        const val = value || 0
-
-        return +val > 0
-      })
-      .required('This field is required'),
-    reinsuranceBrokerage: yup
-      .number()
-      .transform((_, val) => (val === Number(val) ? val : null))
-      .test('', 'This field is required', value => {
-        const val = value || 0
-        if (isGross) return +val > 0
-
-        return true
-      })
-      .max(100),
-    brokerAgeAmount: yup
-      .number()
-      .transform((_, val) => (val === Number(val) ? val : null))
-      .test('', 'This field is required', value => {
-        const val = value || 0
-        if (isGross) return +val > 0
-
-        return true
-      }),
-    dynamicCommission: yup
-      .number()
-      .transform((_, val) => (val === Number(val) ? val : null))
-      .required('This field is required')
-      .test('', 'This field is required', value => {
-        const val = value || 0
-
-        return +val > 0
-      })
-
-      .max(100),
-    dynamicCommissionAmount: yup
-      .number()
-      .transform((_, val) => (val === Number(val) ? val : null))
-      .test('', 'This field is required', value => {
-        const val = value || 0
-
-        return +val > 0
-      })
-      .required('This field is required'),
-    taxesAmount: yup
-      .number()
-      .transform((_, val) => (val === Number(val) ? val : null))
-      .test('', 'This field is required', value => {
-        const val = value || 0
-        if (isGross) return +val > 0
-
-        return true
-      })
-      .required('This field is required'),
-    taxes: yup
-      .number()
-      .transform((_, val) => (val === Number(val) ? val : null))
-      .test('', 'This field is required', value => {
-        const val = value || 0
-
-        if (isGross) return +val > 0
-
-        return true
-      })
-      .max(100),
-    netReinsurancePremium: yup
-      .number()
-      .transform((_, val) => (val === Number(val) ? val : null))
-      .required('This field is required')
-      .min(1, 'The number must be greater than 0!')
+    ...grossOrNetPremiumAt100_validations().fields,
+    ...sharePercent_validations().fields,
+    ...shareAmount_validations().fields,
+    ...premiumPerShareAmount_validations().fields,
+    ...reinsuranceBrokeragePercent_validations({ isGross }).fields,
+    ...reinsuranceBrokerageAmount_validations({ isGross }).fields,
+    ...dynamicComissionPercent_validations().fields,
+    ...dynamicComissionAmount_validations().fields,
+    ...taxesAmount_validations({ isGross, isTaxesEnabled }).fields,
+    ...taxesPercent_validations({ isGross, isTaxesEnabled }).fields,
+    ...netReinsurancePremium_validations().fields
   })
-
-  const handleSwitch = () => {
-    const tempSecurities = [...securities]
-    tempSecurities[index] = {
-      ...tempSecurities[index],
-      idCRetroCedant: {} as RetroCedantDto,
-      idCRetroCedantContact: {} as RetroCedantContactDto,
-      frontingFee: Number(null),
-      frontingFeeAmount: Number(null),
-      frontingFeeActive: !security.frontingFeeActive
-    }
-    setFrontingFeeEnabled(() => !security.frontingFeeActive)
-
-    validateForm(tempSecurities[index])
-    calculateSecurities(tempSecurities)
-  }
-
-  const handleChangeRetroCedant = (e: SelectChangeEvent<string>) => {
-    const selectedRetroCendantId = e.target.value
-    const retroCedant = retroCedants?.find(retroCedant => retroCedant.id === Number(selectedRetroCendantId))
-    const tempSecurities = [...securities]
-    if (retroCedant) {
-      tempSecurities[index] = {
-        ...tempSecurities[index],
-        idCRetroCedant: retroCedant,
-        idCRetroCedantContact: {} as RetroCedantContactDto
-      }
-      validateForm(tempSecurities[index])
-      setSecurities(tempSecurities)
-      setIdRetroCedant(retroCedant.id)
-    }
-  }
-
-  const handleChangeRetroCedantContact = (e: SelectChangeEvent<string>) => {
-    const selectedRetroCendantContactId = e.target.value
-    const retroCedantContact = retroCedantContacts?.find(
-      retroCedantContact => retroCedantContact.id === Number(selectedRetroCendantContactId)
-    )
-    const tempSecurities = [...securities]
-
-    tempSecurities[index] = {
-      ...tempSecurities[index],
-      idCRetroCedantContact: retroCedantContact ? retroCedantContact : ({} as RetroCedantContactDto)
-    }
-    validateForm(tempSecurities[index])
-    setSecurities(tempSecurities)
-  }
-
-  const handleChangeBaseAmount = (value: number) => {
-    const tempSecurities = [...securities]
-    tempSecurities[index] = {
-      ...tempSecurities[index],
-      netPremiumAt100: value
-    }
-    validateForm(tempSecurities[index])
-    calculateSecurities(tempSecurities)
-  }
-
-  const handleChangeSharePercent = (value: number) => {
-    const tempSecurities = [...securities]
-    tempSecurities[index] = {
-      ...tempSecurities[index],
-      share: value
-    }
-    validateForm(tempSecurities[index])
-    calculateSecurities(tempSecurities)
-  }
-
-  const handleChangeBrokerRagePercent = (value: number) => {
-    const tempSecurities = [...securities]
-    tempSecurities[index] = {
-      ...tempSecurities[index],
-      reinsuranceBrokerage: value
-    }
-    validateForm(tempSecurities[index])
-    calculateSecurities(tempSecurities)
-  }
-
-  const handleChangeDynamicComissionPercent = (value: number) => {
-    const tempSecurities = [...securities]
-    tempSecurities[index] = {
-      ...tempSecurities[index],
-      dynamicCommission: value
-    }
-    validateForm(tempSecurities[index])
-    calculateSecurities(tempSecurities)
-  }
-
-  const handleChangeTaxesPercent = (value: number) => {
-    // Código a ejecutar cuando se deja de escribir
-    const tempSecurities = [...securities]
-    tempSecurities[index] = {
-      ...tempSecurities[index],
-      taxes: value
-    }
-    validateForm(tempSecurities[index])
-    calculateSecurities(tempSecurities)
-  }
-
-  const handleChangeFrontingFeePercent = (value: number) => {
-    const tempSecurities = [...securities]
-    tempSecurities[index] = {
-      ...tempSecurities[index],
-      frontingFee: value
-    }
-    validateForm(tempSecurities[index])
-    calculateSecurities(tempSecurities)
-  }
-
-  const handleChangePremiumPerShareAmount = (value: number) => {
-    const tempSecurities = [...securities]
-    tempSecurities[index] = {
-      ...tempSecurities[index],
-      share: operationSecurity.getsharePercent(value)
-    }
-    validateForm(tempSecurities[index])
-    calculateSecurities(tempSecurities)
-  }
-
-  const handleChangeBrokerAgeAmount = (value: number) => {
-    // clearInterval(typingTimer)
-
-    // // Iniciar un nuevo intervalo
-    // typingTimer = setInterval(() => {
-    //   // Código a ejecutar cuando se deja de escribir
-    const tempSecurities = [...securities]
-    tempSecurities[index] = {
-      ...tempSecurities[index],
-      reinsuranceBrokerage: operationSecurity.getBrokerAgePercent(value)
-    }
-    validateForm(tempSecurities[index])
-    calculateSecurities(tempSecurities)
-
-    //   // Limpiar el intervalo
-    //   clearInterval(typingTimer)
-    // }, doneTypingInterval)
-  }
-
-  const handleChangeDynamicComissionAmount = (value: number) => {
-    const tempSecurities = [...securities]
-    tempSecurities[index] = {
-      ...tempSecurities[index],
-      dynamicCommission: operationSecurity.getDynamicComissionPercent(value)
-    }
-    validateForm(tempSecurities[index])
-    calculateSecurities(tempSecurities)
-  }
-
-  const handleChangeTaxesAmount = (value: number) => {
-    const tempSecurities = [...securities]
-    tempSecurities[index] = {
-      ...tempSecurities[index],
-      taxes: operationSecurity.getTaxesPercent(value)
-    }
-    validateForm(tempSecurities[index])
-    calculateSecurities(tempSecurities)
-  }
-
-  const handleChangeFrontingFeeAmount = (value: number) => {
-    const tempSecurities = [...securities]
-    tempSecurities[index] = {
-      ...tempSecurities[index],
-      frontingFee: operationSecurity.getFrontingFeePercent(value)
-    }
-    validateForm(tempSecurities[index])
-    calculateSecurities(tempSecurities)
-  }
-
-  const handleChangeCompany = (e: SelectChangeEvent<string>): void => {
-    const avaliableCompanies = avaliableReinsurers
-      .filter(reinsure => !companiesSelect.includes(reinsure.id) || security?.idCReinsuranceCompany?.id === reinsure.id)
-      .find(reinsurer => reinsurer.id === Number(e.target.value))
-
-    const tempSecurities = [...securities]
-    if (avaliableCompanies) {
-      tempSecurities[index] = {
-        ...tempSecurities[index],
-        idCReinsuranceCompany: avaliableCompanies,
-        frontingFeeActive: false,
-        isGross: avaliableCompanies.special,
-        netPremiumAt100: avaliableCompanies.special ? information.grossPremium : information.netPremium
-      }
-
-      setIsGross(() => avaliableCompanies.special)
-      setFrontingFeeEnabled(() => false)
-      calculateSecurities(tempSecurities)
-      validateForm(tempSecurities[index])
-    }
-  }
 
   const validateForm = (securityParam: SecurityDto) => {
     let data = { ...initialErrorValues }
@@ -420,13 +133,10 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
       ...schema.fields
     })
 
-    // Combinar los esquemas
-    if (securityParam.frontingFeeActive && (securityParam.share || securityParam.premiumPerShareAmount)) {
-      combinedSchema = yup.object().shape({
-        ...schema.fields,
-        ...schemaRetrocedant.fields
-      })
-    }
+    combinedSchema = yup.object().shape({
+      ...schema.fields,
+      ...schemaRetrocedant.fields
+    })
 
     errorsTemp[index] = false
     combinedSchema
@@ -443,13 +153,11 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
           }
         }
         errorsTemp[index] = true
-        console.log({ data, index })
         setErrorsSecurity(data)
 
         //setEnableNextStep(false)
       })
       .finally(() => {
-        console.log({ errorsTemp, index })
         setAllErrors(() => [...errorsTemp])
       })
   }
@@ -471,9 +179,6 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
       setIdRetroCedant(security.idCRetroCedant?.id)
     }
 
-    setFrontingFeeEnabled(() => security.frontingFeeActive)
-    setIsGross(() => security.isGross)
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [security])
 
@@ -483,409 +188,322 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
   }, [isGross, frontingFeeEnabled])
 
   useEffect(() => {
-    validateForm(security)
+    const informationForm1 = information as any
+    console.log('efect toggles')
+    const tempSecurities = [...securities]
+
+    //validacion taxes
+
+    if (informationForm1.taxes === 0 || isGross) {
+      setIsShowToggleTaxes(true)
+      setIsTaxesEnabled(informationForm1.taxes > 0)
+
+      tempSecurities[index] = {
+        ...tempSecurities[index],
+        taxes: informationForm1.taxes === 0 ? 0 : informationForm1.taxesP,
+        taxesAmount: 0
+      }
+    } else {
+      setIsShowToggleTaxes(false)
+      setIsTaxesEnabled(false)
+      tempSecurities[index] = {
+        ...tempSecurities[index],
+        taxes: 0,
+        taxesAmount: 0
+      }
+    }
+
+    if (informationForm1.frontingFee === 0 || isGross) {
+      setIsShowToggleFrontingFee(true)
+      setFrontingFeeEnabled(informationForm1.frontingFee > 0)
+      setIsShowRetroCedant(true)
+
+      tempSecurities[index] = {
+        ...tempSecurities[index],
+        frontingFee: informationForm1.frontingFee === 0 ? 0 : informationForm1.frontingFeeP,
+        frontingFeeAmount: 0
+      }
+    } else {
+      setIsShowToggleFrontingFee(false)
+      setFrontingFeeEnabled(false)
+      setIsShowRetroCedant(false)
+
+      tempSecurities[index] = {
+        ...tempSecurities[index],
+        frontingFee: 0,
+        frontingFeeAmount: 0
+      }
+    }
+    validateForm(tempSecurities[index])
+    calculateSecurities(tempSecurities)
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [isGross, security.idCReinsuranceCompany?.id])
+  useEffect(() => {
+    const tempSecurities = [...securities]
+
+    if (!frontingFeeEnabled) {
+      tempSecurities[index] = {
+        ...tempSecurities[index],
+        frontingFee: 0,
+        frontingFeeAmount: 0
+      }
+      validateForm(tempSecurities[index])
+      calculateSecurities(tempSecurities)
+    }
+    if (!isTaxesEnabled) {
+      tempSecurities[index] = {
+        ...tempSecurities[index],
+        taxes: 0,
+        taxesAmount: 0
+      }
+      validateForm(tempSecurities[index])
+      calculateSecurities(tempSecurities)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [frontingFeeEnabled, isTaxesEnabled])
 
   return (
-    <div>
-      {index > 0 && <hr style={{ margin: '40px 0px', backgroundColor: 'lightgray' }} />}
-      <Grid container item xs={12} sm={12}>
-        <Grid item xs={6} sm={6}>
-          {information?.frontingFee <= 0 || isGross ? (
-            <FormControl fullWidth sx={{ mb: 5 }}>
-              <div>
-                <span className='switch-text'>Fronting fee </span>
-                <SwitchAlpex innerRef={switchAlpex} checked={frontingFeeEnabled} onClick={handleSwitch} />
+    <DiscountsProvider>
+      <div>
+        {index > 0 && <hr style={{ margin: '40px 0px', backgroundColor: 'lightgray' }} />}
+        <Grid container item xs={12} sm={12}>
+          <Grid item xs={12} sm={12}>
+            {!security.id && index > 0 && (
+              <div
+                className='section action-buttons'
+                style={{ float: 'right', marginRight: 'auto', marginBottom: '20px' }}
+              >
+                <Icon
+                  component={DeleteOutlineIcon}
+                  amplitude={10}
+                  style={{
+                    fontSize: '34px',
+                    cursor: 'pointer',
+                    zIndex: '1000'
+                  }}
+                  onClick={() => onDeleteItemList(index)}
+                />
               </div>
-            </FormControl>
-          ) : (
-            <></>
-          )}
+            )}
+          </Grid>
         </Grid>
-        <Grid item xs={6} sm={6}>
-          {!security.id && index > 0 && (
-            <div
-              className='section action-buttons'
-              style={{ float: 'right', marginRight: 'auto', marginBottom: '20px' }}
-            >
-              <Icon
-                component={DeleteOutlineIcon}
-                amplitude={10}
-                style={{
-                  fontSize: '34px',
-                  cursor: 'pointer',
-                  zIndex: '1000'
-                }}
-                onClick={() => onDeleteItemList(index)}
-              />
-            </div>
-          )}
-        </Grid>
-      </Grid>
 
-      <Grid container spacing={5}>
-        {/* Col-1 */}
-        <Grid item xs={12} sm={4}>
-          <FormControl fullWidth sx={{ mb: 2 }}>
-            <NumericFormat
-              fullWidth
-              autoFocus
-              label={isGross ? 'Gross premium at %100' : 'Net premium at %100'}
+        <Grid container spacing={5}>
+          {/* Col-1 */}
+          <Grid item xs={12} sm={4}>
+            <GrossOrNetPremiumAt100
               value={security.netPremiumAt100}
-              onValueChange={value => {
-                handleChangeBaseAmount(Number(value.floatValue))
-              }}
-              prefix={'$'}
-              customInput={TextField}
-              decimalScale={2}
-              thousandSeparator=','
+              errorMessage={errorsSecurity.netPremiumAt100}
+              isGross={isGross}
+              index={index}
+              validateForm={validateForm}
+              operationSecurity={operationSecurity}
             />
 
-            <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
-              {activeErros && errorsSecurity.netPremiumAt100}
-            </FormHelperText>
-          </FormControl>
-          <FormControl fullWidth sx={{ mb: 2 }}>
-            <NumericFormat
-              autoFocus
-              label='Share %'
+            <SharePercent
               value={security.share}
-              onValueChange={value => {
-                handleChangeSharePercent(Number(value.floatValue))
-              }}
-              suffix={'%'}
-              customInput={TextField}
-              decimalScale={2}
-              isAllowed={values => {
-                return (values.floatValue! >= 0 && values.floatValue! <= 100) || values.floatValue === undefined
-              }}
+              errorMessage={errorsSecurity.share}
+              index={index}
+              validateForm={validateForm}
+              operationSecurity={operationSecurity}
             />
 
-            <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
-              {activeErros && errorsSecurity.share}
-            </FormHelperText>
-          </FormControl>
-          {isGross && (
-            <FormControl fullWidth sx={{ mb: 2 }}>
-              <NumericFormat
-                autoFocus
-                label='Reinsurance brokerage %'
+            <GrossPremiumPerShareAmount
+              value={security.grossPremiumPerShare}
+              errorMessage={errorsSecurity.premiumPerShareAmount}
+              validateForm={validateForm}
+              index={index}
+              operationSecurity={operationSecurity}
+            />
+
+            {isGross && (
+              <ReinsuranceBrokeragePercent
                 value={security.reinsuranceBrokerage}
-                onValueChange={value => {
-                  handleChangeBrokerRagePercent(Number(value.floatValue))
-                }}
-                suffix={'%'}
-                customInput={TextField}
-                decimalScale={2}
-                isAllowed={values => {
-                  return (values.floatValue! >= 0 && values.floatValue! <= 100) || values.floatValue === undefined
-                }}
+                errorMessage={errorsSecurity.reinsuranceBrokerage}
+                index={index}
+                validateForm={validateForm}
               />
+            )}
 
-              <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
-                {activeErros && errorsSecurity.reinsuranceBrokerage}
-              </FormHelperText>
-            </FormControl>
-          )}
-          <FormControl fullWidth sx={{ mb: 2 }}>
-            <NumericFormat
-              autoFocus
-              label='Dynamic comission %'
+            <DynamicComissionPercent
               value={security.dynamicCommission}
-              onValueChange={value => {
-                handleChangeDynamicComissionPercent(Number(value.floatValue))
-              }}
-              suffix={'%'}
-              customInput={TextField}
-              decimalScale={2}
-              isAllowed={values => {
-                return (values.floatValue! >= 0 && values.floatValue! <= 100) || values.floatValue === undefined
-              }}
+              errorMessage={errorsSecurity.dynamicCommission}
+              index={index}
+              validateForm={validateForm}
+            />
+          </Grid>
+          {/* Col-2 */}
+          <Grid item xs={12} sm={4}>
+            <ReinsuranceCompany
+              value={security.idCReinsuranceCompany?.id ? String(security.idCReinsuranceCompany?.id) : ''}
+              errorMessage={errorsSecurity.idCReinsuranceCompany}
+              index={index}
+              validateForm={validateForm}
+              avaliableReinsurers={avaliableReinsurers}
+              companiesSelect={companiesSelect}
+              security={security}
+              setIsGross={setIsGross}
+              setFrontingFeeEnabled={setFrontingFeeEnabled}
+              setBinders={setBinders}
             />
 
-            <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
-              {activeErros && errorsSecurity.dynamicCommission}
-            </FormHelperText>
-          </FormControl>
-          {isGross && (
-            <FormControl fullWidth sx={{ mb: 2 }}>
-              <NumericFormat
-                autoFocus
-                label='Taxes %'
-                value={security.taxes}
-                onValueChange={value => {
-                  handleChangeTaxesPercent(Number(value.floatValue))
-                }}
-                suffix={'%'}
-                customInput={TextField}
-                decimalScale={2}
-                isAllowed={values => {
-                  return (values.floatValue! >= 0 && values.floatValue! <= 100) || values.floatValue === undefined
-                }}
-              />
+            {/* // Todo - New Component */}
+            <ShareAmount
+              value={security.shareAmount}
+              errorMessage={errorsSecurity.shareAmount}
+              index={index}
+              validateForm={validateForm}
+            />
 
-              <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
-                {activeErros && errorsSecurity.taxes}
-              </FormHelperText>
-            </FormControl>
-          )}
-          {frontingFeeEnabled && (
-            <FormControl fullWidth sx={{ mb: 2 }}>
-              <NumericFormat
-                autoFocus
-                label='Fronting fee %'
-                value={security.frontingFee}
-                onValueChange={value => {
-                  handleChangeFrontingFeePercent(Number(value.floatValue))
-                }}
-                suffix={'%'}
-                customInput={TextField}
-                decimalScale={2}
-                isAllowed={values => {
-                  return (values.floatValue! >= 0 && values.floatValue! <= 100) || values.floatValue === undefined
-                }}
-              />
-
-              <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
-                {activeErros && errorsSecurity.frontingFee}
-              </FormHelperText>
-            </FormControl>
-          )}
-        </Grid>
-        {/* Col-2 */}
-        <Grid item xs={12} sm={4}>
-          <FormControl fullWidth sx={{ mb: 2 }}>
-            <InputLabel id='ReinsuranceCompany'>Reinsurance companies</InputLabel>
-            <Select
-              id='outlined-Name'
-              value={String(security.idCReinsuranceCompany?.id)}
-              onChange={handleChangeCompany}
-              labelId='ReinsuranceCompany'
-              label='Reinsurance companies'
-            >
-              {avaliableReinsurers
-                .filter(
-                  reinsure =>
-                    !companiesSelect.includes(reinsure.id) || security?.idCReinsuranceCompany?.id === reinsure.id
-                )
-                .map(reinsurer => (
-                  <MenuItem key={reinsurer.id} value={reinsurer.id}>
-                    {reinsurer.name}
-                  </MenuItem>
-                ))}
-            </Select>
-            <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
-              {activeErros && errorsSecurity.idCReinsuranceCompany}
-            </FormHelperText>
-          </FormControl>
-          <FormControl fullWidth sx={{ mb: 2 }}>
-            <NumericFormat
-              autoFocus
-              label='Premium per share'
+            <PremiumPerShareAmount
               value={security.premiumPerShareAmount}
-              onValueChange={value => {
-                handleChangePremiumPerShareAmount(Number(value.floatValue))
-              }}
-              prefix={'$'}
-              customInput={TextField}
-              decimalScale={2}
-              thousandSeparator=','
+              errorMessage={errorsSecurity.premiumPerShareAmount}
+              index={index}
+              validateForm={validateForm}
+              operationSecurity={operationSecurity}
             />
-            <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
-              {activeErros && errorsSecurity.premiumPerShareAmount}
-            </FormHelperText>
-          </FormControl>
-          {isGross && (
-            <FormControl fullWidth sx={{ mb: 2 }}>
-              <NumericFormat
-                autoFocus
-                label='Reinsurance brokerage'
+
+            {isGross && (
+              <ReinsuranceBrokerageAmount
                 value={security.brokerAgeAmount}
-                onValueChange={value => {
-                  handleChangeBrokerAgeAmount(Number(value.floatValue))
-                }}
-                prefix={'$'}
-                customInput={TextField}
-                decimalScale={2}
-                thousandSeparator=','
+                errorMessage={errorsSecurity.brokerAgeAmount}
+                index={index}
+                validateForm={validateForm}
+                operationSecurity={operationSecurity}
               />
+            )}
 
-              <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
-                {activeErros && errorsSecurity.brokerAgeAmount}
-              </FormHelperText>
-            </FormControl>
-          )}
-          <FormControl fullWidth sx={{ mb: 2 }}>
-            <NumericFormat
-              autoFocus
-              label='Dynamic comission'
+            <DynamicComissionAmount
               value={security.dynamicCommissionAmount}
-              onValueChange={value => {
-                handleChangeDynamicComissionAmount(Number(value.floatValue))
-              }}
-              prefix={'$'}
-              customInput={TextField}
-              decimalScale={2}
-              thousandSeparator=','
+              errorMessage={errorsSecurity.dynamicCommissionAmount}
+              index={index}
+              validateForm={validateForm}
+              operationSecurity={operationSecurity}
             />
+          </Grid>
+          {/* Col-3 */}
+          <Grid item xs={12} sm={4}>
+            <Binder value={''} binders={binders} />
 
-            <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
-              {activeErros && errorsSecurity.dynamicCommissionAmount}
-            </FormHelperText>
-          </FormControl>
-          {isGross && (
-            <FormControl fullWidth sx={{ mb: 2 }}>
-              <NumericFormat
-                autoFocus
-                label='Taxes'
-                value={security.taxesAmount}
-                onValueChange={value => {
-                  handleChangeTaxesAmount(Number(value.floatValue))
-                }}
-                prefix={'$'}
-                customInput={TextField}
-                decimalScale={2}
-                thousandSeparator=','
-              />
-              <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
-                {activeErros && errorsSecurity.taxesAmount}
-              </FormHelperText>
-            </FormControl>
-          )}
-          {frontingFeeEnabled && (
-            <FormControl fullWidth sx={{ mb: 2 }}>
-              <NumericFormat
-                autoFocus
-                label='Fronting fee'
-                value={security.frontingFeeAmount}
-                onValueChange={value => {
-                  handleChangeFrontingFeeAmount(Number(value.floatValue))
-                }}
-                prefix={'$'}
-                customInput={TextField}
-                decimalScale={2}
-                thousandSeparator=','
-              />
+            <Consecutive value={0} />
 
-              <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
-                {activeErros && errorsSecurity.frontingFeeAmount}
-              </FormHelperText>
-            </FormControl>
-          )}
-        </Grid>
-        {/* Col-3 */}
-        <Grid item xs={12} sm={4}>
-          <FormControl fullWidth sx={{ mb: 2 }}>
-            <NumericFormat
-              autoFocus
-              fullWidth
-              label='Net reinsurance premium'
+            <NetReinsurancePremium
               value={security.netReinsurancePremium}
-              prefix={'$'}
-              customInput={TextField}
-              decimalScale={2}
-              thousandSeparator=','
-              disabled={true}
+              errorMessage={errorsSecurity.netReinsurancePremium}
             />
 
-            <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
-              {activeErros && errorsSecurity.netReinsurancePremium}
-            </FormHelperText>
-          </FormControl>
-          {frontingFeeEnabled && (security.share || security.premiumPerShareAmount) ? (
-            <FormControl fullWidth sx={{ mb: 2 }}>
-              <InputLabel>Select Retro cedant</InputLabel>
-              <Select
-                label='Select Retro cedant'
-                value={String(security.idCRetroCedant?.id) || ''}
-                onChange={handleChangeRetroCedant}
-                labelId='Retrocedant'
-              >
-                {retroCedants?.map(cedant => (
-                  <MenuItem key={cedant.name} value={cedant.id}>
-                    {cedant.name}
-                  </MenuItem>
-                ))}
-              </Select>
-              <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
-                {activeErros && errorsSecurity.idCRetroCedant}
-              </FormHelperText>
-            </FormControl>
-          ) : (
-            <></>
-          )}
-          {frontingFeeEnabled && (security.share || security.premiumPerShareAmount) ? (
-            <FormControl fullWidth sx={{ mb: 2 }}>
-              <InputLabel>Select Retro Cedant contact</InputLabel>
-              <Select
-                label='Select Retro Cedant contact '
-                value={String(security.idCRetroCedantContact?.id) || ''}
-                onChange={handleChangeRetroCedantContact}
-                labelId='RetroCedantcontact'
-                disabled={security.idCRetroCedant?.id === null}
-              >
-                {retroCedantContacts?.map(contact => (
-                  <MenuItem key={contact.name} value={contact.id}>
-                    {contact.name}
-                  </MenuItem>
-                ))}
-              </Select>
-              <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
-                {activeErros && errorsSecurity.idCRetroCedantContact}
-              </FormHelperText>
-            </FormControl>
-          ) : (
-            <></>
-          )}
+            {isShowRetroCedant ? (
+              <>
+                <SelectRetroCedant
+                  value={security.idCRetroCedant?.id ? String(security.idCRetroCedant.id) : ''}
+                  errorMessage={errorsSecurity.idCRetroCedant}
+                  index={index}
+                  validateForm={validateForm}
+                  retroCedants={retroCedants}
+                  setIdRetroCedant={setIdRetroCedant}
+                />
+                <SelectRetroCedantContact
+                  value={security.idCRetroCedantContact?.id ? String(security.idCRetroCedantContact?.id) : ''}
+                  errorMessage={errorsSecurity.idCRetroCedantContact}
+                  index={index}
+                  validateForm={validateForm}
+                  retroCedantContacts={retroCedantContacts}
+                />
+              </>
+            ) : null}
 
-          {frontingFeeEnabled && security.idCRetroCedantContact?.id && (
-            <>
-              <FormControl fullWidth sx={{ mb: 4 }}>
-                <TextField
-                  autoFocus
-                  disabled
-                  fullWidth
-                  label='Contact email'
-                  size='small'
-                  value={security.idCRetroCedantContact?.email ?? ''}
-                />
-              </FormControl>
-              <FormControl fullWidth sx={{ mb: 4 }}>
-                <TextField
-                  autoFocus
-                  fullWidth
-                  disabled
-                  size='small'
-                  label='Contact phone'
-                  value={security.idCRetroCedantContact?.phone ?? ''}
-                />
-              </FormControl>
-              <FormControl fullWidth sx={{ mb: 4 }}>
-                <InputLabel id='Contactcountry'>Contact country</InputLabel>
-                <Select
-                  id='outlined-Name'
-                  label='Contact country'
+            {frontingFeeEnabled && security.idCRetroCedantContact?.id && (
+              <>
+                <ContactEmail value={security.idCRetroCedantContact?.email} />
+
+                <ContactPhone value={security.idCRetroCedantContact?.phone} />
+
+                <ContactCountry
                   value={
                     security.idCRetroCedantContact.__idCCountry__
                       ? security.idCRetroCedantContact?.__idCCountry__.id
                       : security.idCRetroCedantContact.idCCountry ?? ''
                   }
-                  labelId='Contactcountry'
-                  size='small'
-                  disabled
-                >
-                  {countries?.map(country => (
-                    <MenuItem key={country.name} value={country.id}>
-                      {country.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </>
-          )}
+                  countries={countries}
+                />
+              </>
+            )}
+          </Grid>
         </Grid>
-      </Grid>
-    </div>
+
+        <Grid
+          container
+          spacing={5}
+          sx={{
+            ...(!isShowRetroCedant ? { mt: 8 } : null)
+          }}
+        >
+          {isShowToggleTaxes ? (
+            <Grid item xs={12} sm={4}>
+              <SwitchTaxes
+                index={index}
+                validateForm={validateForm}
+                security={security}
+                isChecked={isTaxesEnabled}
+                setIsTaxesEnabled={setIsTaxesEnabled}
+              />
+
+              <TaxesPercent
+                value={security.taxes}
+                errorMessage={errorsSecurity.taxes}
+                index={index}
+                validateForm={validateForm}
+                operationSecurity={operationSecurity}
+                isDisabled={!isTaxesEnabled}
+              />
+
+              <TaxesAmount
+                value={security.taxesAmount}
+                errorMessage={errorsSecurity.taxesAmount}
+                index={index}
+                validateForm={validateForm}
+                operationSecurity={operationSecurity}
+                isDisabled={!isTaxesEnabled}
+              />
+            </Grid>
+          ) : null}
+
+          {isShowToggleFrontingFee ? (
+            <Grid item xs={12} sm={4}>
+              <SwitchFrontingFee
+                index={index}
+                validateForm={validateForm}
+                security={security}
+                isChecked={frontingFeeEnabled}
+                setFrontingFeeEnabled={setFrontingFeeEnabled}
+              />
+
+              <FrontingFeePercent
+                value={security.frontingFee}
+                errorMessage={errorsSecurity.frontingFee}
+                index={index}
+                validateForm={validateForm}
+                operationSecurity={operationSecurity}
+                isDisabled={!frontingFeeEnabled}
+              />
+
+              <FrontingFeeAmount
+                value={security.frontingFeeAmount}
+                errorMessage={errorsSecurity.frontingFeeAmount}
+                index={index}
+                validateForm={validateForm}
+                operationSecurity={operationSecurity}
+                isDisabled={!frontingFeeEnabled}
+              />
+            </Grid>
+          ) : null}
+
+          <ListDiscounts formIndex={index} operationSecurity={operationSecurity} validateForm={validateForm} />
+        </Grid>
+
+        <ButtonAddDiscount />
+      </div>
+    </DiscountsProvider>
   )
 }

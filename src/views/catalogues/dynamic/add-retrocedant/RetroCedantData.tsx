@@ -66,15 +66,15 @@ const RetroCedantData = ({ idRetroCedant, setIdRetroCedant }: IRetroCedantData) 
     setAlertType(type)
 
     switch (type) {
-      case 'success':
-        setAlertText(text || 'NEW CEDANT ADDED')
+      case 'success-alert':
+        setAlertText(text || 'NEW RETRO CEDANT ADDED')
         setAlertIcon('mdi:check-circle-outline')
         break
-      case 'error':
+      case 'error-alert':
         setAlertText('UNKNOWN ERROR, TRY AGAIN')
         setAlertIcon('mdi:alert-circle-outline')
         break
-      case 'warn':
+      case 'warn-alert':
         setAlertText('NO INTERNET CONNECTION')
         setAlertIcon('mdi:alert-outline')
         break
@@ -94,12 +94,12 @@ const RetroCedantData = ({ idRetroCedant, setIdRetroCedant }: IRetroCedantData) 
     const result = await saveRetroCedant({ name: newRetroCedant.name })
     if (result) {
       setNewRetroCedant({ id: result.id, name: result.name })
-      triggerAlert('success')
+      triggerAlert('success-alert')
       setIdRetroCedant(result.id)
       setNameDisabled(true)
       setIsRetroCedantSaved(true)
     } else {
-      triggerAlert('error')
+      triggerAlert('error-alert')
     }
   }
 
@@ -115,19 +115,19 @@ const RetroCedantData = ({ idRetroCedant, setIdRetroCedant }: IRetroCedantData) 
       setIsRetroCedantSaved(true)
       setNameDisabled(true)
       setIsEditing(false)
-      triggerAlert('success', 'CHANGES SAVED')
+      triggerAlert('success-alert', 'CHANGES SAVED')
     } else {
-      triggerAlert('error')
+      triggerAlert('error-alert')
     }
   }
 
   const deleteRetroCedant = async () => {
     const result = await deleteRetroCedants({ idDeleteList: [newRetroCedant.id] })
     if (result) {
-      triggerAlert('success', 'DELETED')
+      triggerAlert('success-alert', 'DELETED')
       setIdRetroCedant(0)
     } else {
-      triggerAlert('error')
+      triggerAlert('error-alert')
     }
     setOpenDelete(false)
   }

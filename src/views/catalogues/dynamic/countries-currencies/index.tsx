@@ -64,15 +64,15 @@ const CountriesCurrencies = () => {
     setAlertType(type)
 
     switch (type) {
-      case 'success':
+      case 'success-alert':
         setAlertText(text)
         setAlertIcon('mdi:check-circle-outline')
         break
-      case 'error':
+      case 'error-alert':
         setAlertText('UNKNOWN ERROR, TRY AGAIN')
         setAlertIcon('mdi:alert-circle-outline')
         break
-      case 'warn':
+      case 'warn-alert':
         setAlertText('NO INTERNET CONNECTION')
         setAlertIcon('mdi:alert-outline')
         break
@@ -119,7 +119,7 @@ const CountriesCurrencies = () => {
       name: value
     })
     if (result) {
-      triggerAlert('success', 'NEW COUNTRY ADDED')
+      triggerAlert('success-alert', 'NEW COUNTRY ADDED')
       getAllCountries()
     }
     setOpenAddCountry(false)
@@ -131,7 +131,7 @@ const CountriesCurrencies = () => {
         name: value
       })
       if (result) {
-        triggerAlert('success', 'CHANGES SAVED')
+        triggerAlert('success-alert', 'CHANGES SAVED')
         getAllCountries()
       }
     }
@@ -141,7 +141,7 @@ const CountriesCurrencies = () => {
   const deleteCountry = async () => {
     const result = await deleteCountryById(countryToDelete)
     if (result) {
-      triggerAlert('success', 'DELETED')
+      triggerAlert('success-alert', 'DELETED')
       getAllCountries()
     }
     setOpenDeleteCountry(false)
@@ -152,7 +152,7 @@ const CountriesCurrencies = () => {
       code: value
     })
     if (result) {
-      triggerAlert('success', 'NEW CURRENCY ADDED')
+      triggerAlert('success-alert', 'NEW CURRENCY ADDED')
       getAllCurrencies()
     }
     setOpenAddCurrency(false)
@@ -164,7 +164,7 @@ const CountriesCurrencies = () => {
         code: value
       })
       if (result) {
-        triggerAlert('success', 'CHANGES SAVED')
+        triggerAlert('success-alert', 'CHANGES SAVED')
         getAllCurrencies()
       }
     }
@@ -174,7 +174,7 @@ const CountriesCurrencies = () => {
   const deleteCurrency = async () => {
     const result = await deleteCurrencyById(currencyToDelete)
     if (result) {
-      triggerAlert('success', 'DELETED')
+      triggerAlert('success-alert', 'DELETED')
       getAllCurrencies()
     }
     setOpenDeleteCurrency(false)

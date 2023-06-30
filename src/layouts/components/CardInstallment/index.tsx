@@ -1,4 +1,4 @@
-import { FormControl, Grid, InputAdornment, SxProps, TextField, Theme, Typography } from '@mui/material'
+import { FormControl, FormHelperText, Grid, InputAdornment, SxProps, TextField, Theme, Typography } from '@mui/material'
 
 // import { useState } from 'react'
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
@@ -25,6 +25,7 @@ interface ICardInstallment {
   globalInfo: GlobalInfo
   count?: number
   daysFirst?: number
+  error100Percent: boolean
 }
 
 interface PickerProps {
@@ -51,7 +52,7 @@ const CustomInput = forwardRef(({ ...props }: PickerProps, ref: ForwardedRef<HTM
   )
 })
 
-const CardInstallment = ({ index, installment, onChangeList }: ICardInstallment) => {
+const CardInstallment = ({ index, installment, onChangeList, error100Percent }: ICardInstallment) => {
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
   const textColor = userThemeConfig.palette?.text.subTitle
 
@@ -114,7 +115,9 @@ const CardInstallment = ({ index, installment, onChangeList }: ICardInstallment)
                 value={installment.paymentPercentage}
                 onValueChange={value => handleNumericInputChange(value.floatValue, 'paymentPercentage')}
               />
-              {/* {error. && <FormHelperText sx={{ color: 'error.main' }}>Required Field</FormHelperText>} */}
+              {error100Percent && (
+                <FormHelperText sx={{ color: 'error.main' }}>The sum of payment % must be equal to 100.</FormHelperText>
+              )}
             </FormControl>
             <FormControl fullWidth>
               <NumericFormat
@@ -139,7 +142,7 @@ const CardInstallment = ({ index, installment, onChangeList }: ICardInstallment)
                 id='reception-date'
                 showTimeSelect
                 timeIntervals={15}
-                customInput={<CustomInput label='Settlement due date' sx={{ mb: 2, mt: 2, width: '100%' }} />}
+                customInput={<CustomInput label='Settlement due date' sx={{ width: '100%' }} />}
                 disabled={true}
                 onChange={() => {
                   return

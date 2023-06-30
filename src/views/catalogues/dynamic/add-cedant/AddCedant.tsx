@@ -52,15 +52,15 @@ const AddCedant = () => {
     setAlertType(type)
 
     switch (type) {
-      case 'success':
+      case 'success-alert':
         setAlertText('NEW CEDANT ADDED')
         setAlertIcon('mdi:check-circle-outline')
         break
-      case 'error':
+      case 'error-alert':
         setAlertText('UNKNOWN ERROR, TRY AGAIN')
         setAlertIcon('mdi:alert-circle-outline')
         break
-      case 'warn':
+      case 'warn-alert':
         setAlertText('NO INTERNET CONNECTION')
         setAlertIcon('mdi:alert-outline')
         break
@@ -83,7 +83,7 @@ const AddCedant = () => {
     const result = await saveCedant({ name: newCedant.name })
     if (result) {
       setNewCedant({ id: result.id, name: result.name })
-      triggerAlert('success')
+      triggerAlert('success-alert')
       setIdCedant(result.id)
       setNameDisabled(true)
       setIsCedantSaved(true)
@@ -97,16 +97,16 @@ const AddCedant = () => {
     // dispatch(fetchCedants(cedantReducer))
 
     setIsCedantSaved(true)
-    triggerAlert('success')
+    triggerAlert('success-alert')
 
     // } else {
-    // triggerAlert('error')
+    // triggerAlert('error-alert')
   }
 
   const deleteCedant = async () => {
     // const result = await deleteCedants({ idDeleteList: [newCedant.id] })
     // if (result) {
-    triggerAlert('success')
+    triggerAlert('success-alert')
 
     // dispatch(fetchCedants(cedantReducer))
     // }

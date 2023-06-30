@@ -4,14 +4,26 @@ import UserThemeOptions from 'src/layouts/UserThemeOptions'
 // ** Custom Hooks
 import {
   useAddInformation,
+  useDeleteInformationDocument,
   useFindInformationByIdAccount,
-  useUpdateInformationByIdAccount
+  useGetInfoDoctosByIdAccount,
+  useUpdateInformationByIdAccount,
+  useUploadInformationDocument
 } from 'src/hooks/accounts/information'
+
+import { useAddDiscounts, useUpdateDiscounts } from '@/hooks/accounts/discount'
+
+//Components
+import FileSubmit from './FileSubmit'
+import PlacementStructure from './PlacementStructure'
 
 // ** MUI Imports
 import CloseIcon from '@mui/icons-material/Close'
 import { Box, Button, CircularProgress, Modal } from '@mui/material'
 import BasicInfo from './BasicInfo'
+
+//Rxjs
+import { Subject } from 'rxjs'
 
 // ** Icon Imports
 import CustomAlert, { IAlert } from '@/views/custom/alerts'
@@ -22,6 +34,10 @@ import { updateFormsData } from 'src/store/apps/accounts'
 // ** Utils
 import { ButtonClose, HeaderTitleModal } from '@/styles/modal/modal.styled'
 import { delayMs, formatUTC } from '@/utils/formatDates'
+import { formatInformationDoctos, getFileFromUrl } from '@/utils/formatDoctos'
+
+// Dtos
+import { DiscountDto } from '@/services/accounts/dtos/discount.dto'
 
 type InformationProps = {
   onStepChange: (step: number) => void
@@ -31,6 +47,7 @@ type InformationProps = {
 export interface BasicInfoInterface {
   insured: string
   country: number | string
+  economicSector: number | string
   broker: number | string
   brokerContact: number | null | string
   brokerContactEmail: string
@@ -45,12 +62,13 @@ export interface BasicInfoInterface {
   underwriter: number | string | null
   leadUnderwriter: number | string | null
   technicalAssistant: number | string | null
-  industryCode: number | string
+  industryCode: number | string | null | undefined
   riskActivity: string
   riskClass: number
   receptionDate: Date | null
   effectiveDate: Date | null
   expirationDate: Date | null
+  idAccountType: number
 }
 
 export interface PlacementStructure {
@@ -61,6 +79,8 @@ export interface PlacementStructure {
   taxesP: number
   frontingFeeP: number
   netPremium: number
+  netPremiumWithTaxes: number
+  netPremiumWithoutDiscounts: number
   exchangeRate: number
   limit: number
   grossPremium: number
@@ -73,11 +93,13 @@ export interface PlacementStructure {
 
 const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountChange }) => {
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
+  const [subjectState] = useState<Subject<void>>(new Subject())
   const inter = userThemeConfig.typography?.fontFamilyInter
   const [makeValidations, setMakeValidations] = useState(false)
+  const [makeSaveValidations, setMakeSaveValidations] = useState(false)
   const [disableSave, setDisableSave] = useState(false)
-
-  // const [changeTitle, setChangeTitle] = useState(false)
+  const [changeTitle, setChangeTitle] = useState(false)
+  const [discounts, setDiscounts] = useState<DiscountDto[]>([])
 
   //Validaciones
   const [allValidated, setAllValidated] = useState(false)
@@ -95,32 +117,31 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   })
 
   // Save id doctos by file name
-  // const [doctoIdByName, setDoctoIdByName] = useState({})
-  const [userFile] = useState<File[]>([])
-
-  // const [userFileToDelete, setUserFileToDelete] = useState<File>()
+  const [doctoIdByName, setDoctoIdByName] = useState({})
+  const [userFile, setUserFile] = useState<File[]>([])
+  const [userFileToDelete, setUserFileToDelete] = useState<File>()
 
   //store
   const idAccount = useAppSelector(state => state.accounts?.formsData?.form1?.id)
   const lastForm1Information = useAppSelector(state => state.accounts?.formsData?.form1)
-
-  // const [fileUrls, setFileUrls] = useState<string[]>([])
+  const [fileUrls, setFileUrls] = useState<string[]>([])
 
   // ** Custom Hooks
   const { getInformaByIdAccount } = useFindInformationByIdAccount()
   const { addInformation } = useAddInformation()
   const { updateInformationByIdAccount } = useUpdateInformationByIdAccount()
-
-  // const { uploadInformationDocument } = useUploadInformationDocument()
-  // const { getInfoDoctosByIdAccount } = useGetInfoDoctosByIdAccount()
-
-  // const { deleteInformationDocument } = useDeleteInformationDocument()
+  const { uploadInformationDocument } = useUploadInformationDocument()
+  const { getInfoDoctosByIdAccount } = useGetInfoDoctosByIdAccount()
+  const { deleteInformationDocument } = useDeleteInformationDocument()
+  const { addDiscounts } = useAddDiscounts()
+  const { UpdateDiscounts } = useUpdateDiscounts()
 
   const dispatch = useAppDispatch()
 
   const [basicInfo, setBasicInfo] = useState<BasicInfoInterface>({
     insured: '',
     country: '',
+    economicSector: '',
     broker: '',
     brokerContact: '',
     brokerContactEmail: '',
@@ -140,7 +161,8 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
     riskClass: 0,
     receptionDate: null,
     effectiveDate: null,
-    expirationDate: null
+    expirationDate: null,
+    idAccountType: 1
   })
 
   const [placementStructure, setPlacementStructure] = useState<PlacementStructure>({
@@ -151,6 +173,8 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
     taxesP: 0.0,
     frontingFeeP: 0.0,
     netPremium: 0.0,
+    netPremiumWithTaxes: 0.0,
+    netPremiumWithoutDiscounts: 0.0,
     exchangeRate: 0.0,
     limit: 0.0,
     grossPremium: 0.0,
@@ -161,22 +185,18 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
     typeOfLimit: ''
   })
 
+  const triggerFunction = () => {
+    subjectState.next()
+  }
+
   const updateInformation = async () => {
     const res = await updateInformationByIdAccount(idAccount, {
       insured: basicInfo.insured,
       idCountry: Number(basicInfo.country),
       idBroker: Number(basicInfo.broker),
       idBrokerContact: Number(basicInfo.brokerContact),
-
-      // brokerContactEmail: basicInfo.brokerContactEmail,
-      // brokerContactPhone: basicInfo.brokerContactPhone,
-      // brokerContactCountry: basicInfo.brokerContactCountry,
       idCedant: Number(basicInfo.cedant),
       idCedantContact: Number(basicInfo.cedantContact),
-
-      // cedantContactEmail: basicInfo.cedantContactEmail,
-      // cedantContactPhone: basicInfo.cedantContactPhone,
-      // cedantContactCountry: basicInfo.cedantContactCountry,
       idLineOfBussines: Number(basicInfo.lineOfBusiness),
       idRiskActivity: Number(basicInfo.industryCode),
       effectiveDate: basicInfo.effectiveDate,
@@ -200,7 +220,11 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
       taxes: placementStructure.taxes,
       taxesTotal: placementStructure.taxesP,
       totalValues: placementStructure.total,
-      idTypeOfLimit: Number(placementStructure.typeOfLimit)
+      idTypeOfLimit: Number(placementStructure.typeOfLimit),
+      idAccountType: Number(basicInfo.idAccountType),
+      premiumWithTaxes: placementStructure.netPremiumWithTaxes,
+      premiumWithOutDiscounts: placementStructure.netPremiumWithoutDiscounts,
+      idEconomicSector: Number(basicInfo.economicSector) || null
     })
 
     await delayMs(1000)
@@ -266,23 +290,26 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
       idTechnicalAssistant: Number(basicInfo.technicalAssistant) === 0 ? null : Number(basicInfo.technicalAssistant),
       idUnderwriter: Number(basicInfo.underwriter) === 0 ? null : Number(basicInfo.underwriter),
       riskClass: basicInfo.riskClass,
-
-      currency: 'USD',
-      exchangeRate: 1,
-      attachmentPoint: 0,
-      frontingFee: 4400,
-      frontingFeeTotal: 2,
-      grossPremium: 220000,
-      limit: 3000000,
-      netPremium: 180400,
-      reinsuranceBrokerage: 22000,
-      reinsuranceBrokerageTotal: 10,
-      sir: 0,
-      taxes: 13.2,
-      taxesTotal: 6,
-      totalValues: 3500000,
-      idTypeOfLimit: 2,
-      step: 1
+      currency: placementStructure.currency,
+      exchangeRate: placementStructure.exchangeRate,
+      attachmentPoint: placementStructure.attachmentPoint,
+      frontingFee: placementStructure.frontingFee,
+      frontingFeeTotal: placementStructure.frontingFeeP,
+      grossPremium: placementStructure.grossPremium,
+      limit: placementStructure.limit,
+      netPremium: placementStructure.netPremium,
+      premiumWithTaxes: placementStructure.netPremiumWithTaxes,
+      premiumWithOutDiscounts: placementStructure.netPremiumWithoutDiscounts,
+      reinsuranceBrokerage: placementStructure.reinsuranceBrokerage,
+      reinsuranceBrokerageTotal: placementStructure.reinsuranceBrokerageP,
+      sir: placementStructure.sir,
+      taxes: placementStructure.taxes,
+      taxesTotal: placementStructure.taxesP,
+      totalValues: placementStructure.total,
+      idTypeOfLimit: Number(placementStructure.typeOfLimit),
+      idAccountType: Number(basicInfo.idAccountType),
+      step: 1,
+      idEconomicSector: Number(basicInfo.economicSector) || null
     }
 
     const res = await addInformation(dataToSave)
@@ -307,7 +334,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
       })
     } else {
       setBadgeData({
-        message: `SAVED SUCCESSFULLY`,
+        message: `THE INFORMATION HAS BEEN SAVED`,
         status: 'success',
         theme: 'success',
         open: true,
@@ -315,7 +342,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
         disableAutoHide: true
       })
     }
-
+    setDisableSave(false)
     await delayMs(1000)
     setBadgeData({
       message: '',
@@ -336,6 +363,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
       const obBasicInfo = {
         insured: information.insured || '',
         country: information.idCountry || '',
+        economicSector: information.idEconomicSector || '',
         broker: information.idBroker || '',
         brokerContact: information.idBrokerContact || '',
         brokerContactEmail: information.brokerContactEmail || '',
@@ -355,30 +383,28 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
         riskClass: information.riskClass,
         receptionDate: information.receptionDate ? new Date(information.receptionDate) : null,
         effectiveDate: information.effectiveDate ? new Date(information.effectiveDate) : null,
-        expirationDate: information.expirationDate ? new Date(information.expirationDate) : null
+        expirationDate: information.expirationDate ? new Date(information.expirationDate) : null,
+        idAccountType: information.idAccountType
       }
 
       const obPlacementStructure = {
-        currency: 'USD',
-        typeOfLimit: '',
-        exchangeRate: 1,
-        attachmentPoint: 0,
-        frontingFee: 4400,
-        frontingFeeTotal: 2,
-        grossPremium: 220000,
-        limit: 3000000,
-        netPremium: 180400,
-        reinsuranceBrokerage: 22000,
-        reinsuranceBrokerageTotal: 10,
-        sir: 0,
-        taxes: 13.2,
-        taxesTotal: 6,
-        totalValues: 3500000,
-        idTypeOfLimit: '2',
-        total: 234,
-        reinsuranceBrokerageP: 0.0,
-        taxesP: 0.0,
-        frontingFeeP: 0.0
+        currency: information.currency || '',
+        typeOfLimit: information.idTypeOfLimit || '',
+        exchangeRate: Number(information.exchangeRate) || 0.0,
+        attachmentPoint: Number(information.attachmentPoint) || 0.0,
+        frontingFee: Number(information.frontingFee) || 0.0,
+        grossPremium: Number(information.grossPremium) || 0.0,
+        limit: Number(information.limit) || 0.0,
+        netPremium: Number(information.netPremium) || 0.0,
+        reinsuranceBrokerage: Number(information.reinsuranceBrokerage) || 0.0,
+        sir: Number(information.sir) || 0.0,
+        taxes: Number(information.taxes) || 0.0,
+        total: Number(information.totalValues) || 0.0,
+        reinsuranceBrokerageP: Number(information.reinsuranceBrokerageTotal) || 0.0,
+        taxesP: Number(information.taxesTotal) || 0.0,
+        frontingFeeP: Number(information.frontingFeeTotal) || 0.0,
+        netPremiumWithTaxes: Number(information.premiumWithTaxes) || 0.0,
+        netPremiumWithoutDiscounts: Number(information.premiumWithOutDiscounts) || 0.0
       }
 
       setBasicInfo(obBasicInfo)
@@ -393,82 +419,104 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
     onIsNewAccountChange(false)
   }
 
-  // const uploadDoctos = async (idAccount: number) => {
-  //   const formatedDoctos = await formatInformationDoctos(userFile, idAccount, 1, doctoIdByName)
-  //   const newDoctoIdByName: any = {}
+  const uploadDoctos = async (idAccount: number) => {
+    const formatedDoctos = await formatInformationDoctos(userFile, idAccount, 1, doctoIdByName)
+    const newDoctoIdByName: any = {}
 
-  //   await delayMs(1000)
-  //   if (formatedDoctos.length === 0) {
-  //     setBadgeData({
-  //       message: '',
-  //       status: undefined,
-  //       icon: undefined,
-  //       open: false
-  //     })
+    await delayMs(1000)
+    if (formatedDoctos.length === 0) {
+      setBadgeData({
+        message: '',
+        status: undefined,
+        icon: undefined,
+        open: false
+      })
 
-  //     return
-  //   }
+      return
+    }
 
-  //   setBadgeData({
-  //     message: `UPDATING DOCUMENTS`,
-  //     status: 'secondary',
-  //     open: true,
-  //     icon: <CircularProgress size={20} color='primary' />,
-  //     backgroundColor: '#828597',
-  //     theme: 'info',
-  //     disableAutoHide: true
-  //   })
+    setBadgeData({
+      message: `UPDATING DOCUMENTS`,
+      status: 'secondary',
+      open: true,
+      icon: <CircularProgress size={20} color='primary' />,
+      backgroundColor: '#828597',
+      theme: 'info',
+      disableAutoHide: true
+    })
 
-  //   for (const docto of formatedDoctos) {
-  //     const res = await uploadInformationDocument(docto)
-  //     const createdDoctoData = res?.createdDoctoDB
-  //     if (createdDoctoData) {
-  //       newDoctoIdByName[createdDoctoData.name] = createdDoctoData.id
-  //     }
+    for (const docto of formatedDoctos) {
+      const res = await uploadInformationDocument(docto)
+      const createdDoctoData = res?.createdDoctoDB
+      if (createdDoctoData) {
+        newDoctoIdByName[createdDoctoData.name] = createdDoctoData.id
+      }
 
-  //     if (!res) {
-  //       setBadgeData({
-  //         message: `ERROR UPDATING DOCUMENT: ${docto.name}`,
-  //         theme: 'error',
-  //         open: true,
-  //         status: 'error',
-  //         icon: (
-  //           <Icon
-  //             style={{
-  //               color: '#FF4D49',
-  //               marginTop: '-1px'
-  //             }}
-  //             icon='jam:alert'
-  //           />
-  //         ),
-  //         disableAutoHide: true
-  //       })
-  //     } else {
-  //       setBadgeData({
-  //         message: `DOC: "${docto.name.toUpperCase()}", SAVED SUCCESSFULLY`,
-  //         status: 'success',
-  //         open: true,
-  //         icon: <Icon icon='ic:baseline-check-circle' />,
-  //         theme: 'success',
-  //         disableAutoHide: true
-  //       })
-  //     }
+      if (!res) {
+        setBadgeData({
+          message: `ERROR UPDATING DOCUMENT: ${docto.name}`,
+          theme: 'error',
+          open: true,
+          status: 'error',
+          icon: (
+            <Icon
+              style={{
+                color: '#FF4D49',
+                marginTop: '-1px'
+              }}
+              icon='jam:alert'
+            />
+          ),
+          disableAutoHide: true
+        })
+      } else {
+        setBadgeData({
+          message: `DOC: "${docto.name.toUpperCase()}", SAVED SUCCESSFULLY`,
+          status: 'success',
+          open: true,
+          icon: <Icon icon='ic:baseline-check-circle' />,
+          theme: 'success',
+          disableAutoHide: true
+        })
+      }
 
-  //     await delayMs(800)
-  //   }
+      await delayMs(800)
+    }
 
-  //   setBadgeData({
-  //     message: '',
-  //     status: undefined,
-  //     icon: undefined,
-  //     open: false
-  //   })
+    setBadgeData({
+      message: '',
+      status: undefined,
+      icon: undefined,
+      open: false
+    })
 
-  //   setDoctoIdByName({
-  //     ...doctoIdByName,
-  //     ...newDoctoIdByName
-  //   })
-  // }
+    setDoctoIdByName({
+      ...doctoIdByName,
+      ...newDoctoIdByName
+    })
+  }
+
+  const updateDiscount = async () => {
+    const discountSave: Partial<DiscountDto[]> = []
+    const discountUpdate: DiscountDto[] = []
+
+    for await (const discount of discounts) {
+      if (discount.id !== 0) {
+        discountUpdate.push(discount)
+      } else {
+        discountSave.push(discount)
+      }
+    }
+    if (discountUpdate.length > 0) {
+      await UpdateDiscounts(discountUpdate)
+    }
+
+    if (discountSave.length > 0) {
+      await addDiscounts(discountSave)
+    }
+
+    triggerFunction()
+  }
 
   const handleSaveInformation = async () => {
     if (idAccount) {
@@ -483,8 +531,8 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
       })
 
       await updateInformation()
-
-      // await uploadDoctos(idAccount)
+      await uploadDoctos(idAccount)
+      await updateDiscount()
       dispatch(updateFormsData({ form1: { basicInfo, placementStructure, userFile, id: idAccount } }))
       setDisableSave(false)
     } else {
@@ -501,14 +549,30 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
       const res = await saveInformation()
       setDisableSave(false)
       if (res) {
-        localStorage.setItem('idAccount', String(res.account.id))
+        const discountTemp = discounts.map(discount => ({
+          ...discount,
+          idAccount: res.account.id
+        }))
+        await localStorage.setItem('idAccount', String(res.account.id))
+        if (discountTemp.length > 0) {
+          await addDiscounts(discountTemp)
+          triggerFunction()
+        }
       }
 
-      // await uploadDoctos(res.account.id)
+      await uploadDoctos(res.account.id)
       dispatch(updateFormsData({ form1: { basicInfo, placementStructure, userFile, id: res?.account?.id } }))
 
       onIsNewAccountChange(false)
     }
+  }
+
+  const handleDiscountsChange = (newDiscounts: DiscountDto[]) => {
+    const discountsTemp = newDiscounts.map(discount => ({
+      ...discount,
+      idAccount: idAccount || 0
+    }))
+    setDiscounts(discountsTemp)
   }
 
   //Evento que controla el evento de continuar
@@ -520,10 +584,19 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
     handleCloseModal()
   }
 
-  const handleValidationComplete = (valid: boolean) => {
+  const handleValidationComplete = (valid: boolean, formName: string) => {
     setValidationCount(prevCount => prevCount + 1)
     if (valid) {
-      setValidatedForms(prevCount => prevCount + 1)
+      if (nextClicked) setValidatedForms(prevCount => prevCount + 1)
+
+      if (formName == 'basicInfo' && saveClicked) {
+        // If Basic info is validated and save button was clicked then save information
+        setMakeSaveValidations(false)
+        setDisableSave(true)
+        handleSaveInformation()
+
+        setSaveClicked(false)
+      }
     }
   }
 
@@ -533,15 +606,15 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
     switch (action) {
       case 'save':
         setSaveClicked(true)
+        setMakeSaveValidations(true)
         break
       case 'next':
         setNextClicked(true)
+        setMakeValidations(true)
         break
       default:
         break
     }
-
-    setMakeValidations(true)
   }
 
   const handleCloseModal = () => {
@@ -552,9 +625,9 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
     setMakeValidations(false)
   }
 
-  // const onSubmittedFiles = (change: boolean) => {
-  //   setChangeTitle(change)
-  // }
+  const onSubmittedFiles = (change: boolean) => {
+    setChangeTitle(change)
+  }
 
   useEffect(() => {
     const idAccountCache = Number(localStorage.getItem('idAccount'))
@@ -570,64 +643,64 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [basicInfo, setBasicInfo])
 
-  // useEffect(() => {
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [fileUrls])
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fileUrls])
 
-  // useEffect(() => {
-  //   const getFiles = async () => {
-  //     const idAccountCache = Number(localStorage.getItem('idAccount'))
-  //     if (idAccountCache) {
-  //       const res = await getInfoDoctosByIdAccount(idAccountCache)
-  //       const newDoctoIdByName: any = {}
-  //       const newUserFiles: File[] = []
+  useEffect(() => {
+    const getFiles = async () => {
+      const idAccountCache = Number(localStorage.getItem('idAccount'))
+      if (idAccountCache) {
+        const res = await getInfoDoctosByIdAccount(idAccountCache)
+        const newDoctoIdByName: any = {}
+        const newUserFiles: File[] = []
 
-  //       if (res.length > 0) {
-  //         const urls: string[] = []
-  //         for (const docto of res) {
-  //           newDoctoIdByName[docto.name] = docto.id
-  //           urls.push(docto.url)
-  //           const newFile = await getFileFromUrl(docto.url, docto.name)
-  //           if (newFile) {
-  //             newUserFiles.push(newFile)
-  //           }
-  //         }
+        if (res.length > 0) {
+          const urls: string[] = []
+          for (const docto of res) {
+            newDoctoIdByName[docto.name] = docto.id
+            urls.push(docto.url)
+            const newFile = await getFileFromUrl(docto.url, docto.name)
+            if (newFile) {
+              newUserFiles.push(newFile)
+            }
+          }
 
-  //         setFileUrls(urls)
-  //         setUserFile(newUserFiles)
+          setFileUrls(urls)
+          setUserFile(newUserFiles)
 
-  //         setDoctoIdByName({
-  //           ...doctoIdByName,
-  //           ...newDoctoIdByName
-  //         })
-  //       }
-  //     }
-  //   }
-  //   getFiles()
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [])
+          setDoctoIdByName({
+            ...doctoIdByName,
+            ...newDoctoIdByName
+          })
+        }
+      }
+    }
+    getFiles()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
-  // useEffect(() => {
-  //   const deleteFile = async (userFileToDelete: File) => {
-  //     const fileName = String(userFileToDelete.name)
-  //     const idDocto = doctoIdByName[fileName as keyof typeof doctoIdByName]
+  useEffect(() => {
+    const deleteFile = async (userFileToDelete: File) => {
+      const fileName = String(userFileToDelete.name)
+      const idDocto = doctoIdByName[fileName as keyof typeof doctoIdByName]
 
-  //     if (idDocto) {
-  //       const bodyToDelete = {
-  //         idAccount: idAccount,
-  //         idDocto,
-  //         fileName: fileName
-  //       }
-  //       await deleteInformationDocument(bodyToDelete)
-  //       delete doctoIdByName[fileName as keyof typeof doctoIdByName]
-  //     }
-  //   }
+      if (idDocto) {
+        const bodyToDelete = {
+          idAccount: idAccount,
+          idDocto,
+          fileName: fileName
+        }
+        await deleteInformationDocument(bodyToDelete)
+        delete doctoIdByName[fileName as keyof typeof doctoIdByName]
+      }
+    }
 
-  //   if (userFileToDelete && idAccount) {
-  //     deleteFile(userFileToDelete)
-  //   }
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [userFileToDelete])
+    if (userFileToDelete && idAccount) {
+      deleteFile(userFileToDelete)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userFileToDelete])
 
   useEffect(() => {
     if (idAccount) {
@@ -638,19 +711,18 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   }, [idAccount])
 
   useEffect(() => {
-    console.log(validationCount)
-    console.log(validatedForms)
-    if (validationCount === 1 && validatedForms === 1) {
+    if (validationCount === 2 && validatedForms === 2) {
       setAllValidated(true)
       if (nextClicked) {
         setOpen(true)
         setNextClicked(false)
       }
-      if (saveClicked) {
-        setDisableSave(true)
-        handleSaveInformation()
-        setSaveClicked(false)
-      }
+
+      // if (saveClicked) {
+      //   setDisableSave(true)
+      //   handleSaveInformation()
+      //   setSaveClicked(false)
+      // }
     } else {
       setAllValidated(false)
       if (nextClicked) {
@@ -674,20 +746,23 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
               basicInfo={basicInfo}
               setBasicInfo={setBasicInfo}
               makeValidations={makeValidations}
-              onValidationComplete={handleValidationComplete}
-            />
-          </div>
-
-          {/* <div className='section'>
-            <PlacementStructure
-              placementStructure={placementStructure}
-              setPlacementStructure={setPlacementStructure}
-              makeValidations={makeValidations}
+              makeSaveValidations={makeSaveValidations}
               onValidationComplete={handleValidationComplete}
             />
           </div>
 
           <div className='section'>
+            <PlacementStructure
+              placementStructure={placementStructure}
+              setPlacementStructure={setPlacementStructure}
+              onDiscountsChange={handleDiscountsChange}
+              makeValidations={makeValidations}
+              onValidationComplete={handleValidationComplete}
+              triggerSubject={subjectState}
+            />
+          </div>
+
+          <div className='section' style={{ display: 'none' }}>
             <div className='title'>{changeTitle ? 'Submited files' : 'File submit'}</div>
             <FileSubmit
               userFile={userFile}
@@ -696,7 +771,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
               setUserFileToDelete={setUserFileToDelete}
               changeTitle={onSubmittedFiles}
             />
-          </div> */}
+          </div>
           <div className='section action-buttons'>
             <Button
               className='btn-save'
@@ -709,7 +784,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
               </div>
               SAVE CHANGES
             </Button>
-            {/* <Button
+            <Button
               className='btn-next'
               onClick={() => {
                 handleAction('next')
@@ -719,7 +794,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
               <div className='btn-icon'>
                 <Icon icon='material-symbols:arrow-right-alt' />
               </div>
-            </Button> */}
+            </Button>
 
             <Modal className='next-step-modal' open={open} onClose={handleCloseModal}>
               <Box

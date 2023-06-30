@@ -134,15 +134,15 @@ const ReinsurerContacts = ({ idReinsuranceCompany }: IReinsuranceCompanyContacts
     setAlertType(type)
 
     switch (type) {
-      case 'success':
+      case 'success-alert':
         setAlertText(text || 'NEW CONTACT ADDED')
         setAlertIcon('mdi:check-circle-outline')
         break
-      case 'error':
+      case 'error-alert':
         setAlertText('UNKNOWN ERROR, TRY AGAIN')
         setAlertIcon('mdi:alert-circle-outline')
         break
-      case 'warn':
+      case 'warn-alert':
         setAlertText('NO INTERNET CONNECTION')
         setAlertIcon('mdi:alert-outline')
         break
@@ -360,12 +360,12 @@ const ReinsurerContacts = ({ idReinsuranceCompany }: IReinsuranceCompanyContacts
       idCCountry: newContactData.idCCountry.id
     })
     if (result) {
-      triggerAlert('success')
+      triggerAlert('success-alert')
       setNewContactData(initialNewContact)
       getReinsuranceCompanyContactsByIdReinsuranceCompany(reinsuranceCompanyContactsPagination)
     }
     setOpenNewContact(false)
-    triggerAlert('success')
+    triggerAlert('success-alert')
   }
 
   const editContact = async () => {
@@ -375,7 +375,7 @@ const ReinsurerContacts = ({ idReinsuranceCompany }: IReinsuranceCompanyContacts
       idCCountry: currentContact.idCCountry.id
     })
     if (result) {
-      triggerAlert('success', 'CHANGES SAVED')
+      triggerAlert('success-alert', 'CHANGES SAVED')
       getReinsuranceCompanyContactsByIdReinsuranceCompany(reinsuranceCompanyContactsPagination)
     }
     setOpenEdit(false)
@@ -385,7 +385,7 @@ const ReinsurerContacts = ({ idReinsuranceCompany }: IReinsuranceCompanyContacts
     const result = await deleteReinsuranceCompanyContact({ idDeleteList: [contactToDelete] })
     if (result) {
       getReinsuranceCompanyContactsByIdReinsuranceCompany(reinsuranceCompanyContactsPagination)
-      triggerAlert('success', 'DELETED')
+      triggerAlert('success-alert', 'DELETED')
     }
     setOpenDelete(false)
   }
@@ -394,7 +394,7 @@ const ReinsurerContacts = ({ idReinsuranceCompany }: IReinsuranceCompanyContacts
     const result = await deleteReinsuranceCompanyContact({ idDeleteList: selectedRows })
     if (result) {
       getReinsuranceCompanyContactsByIdReinsuranceCompany(reinsuranceCompanyContactsPagination)
-      triggerAlert('success', 'DELETED')
+      triggerAlert('success-alert', 'DELETED')
     }
     setOpenDeleteRows(false)
   }

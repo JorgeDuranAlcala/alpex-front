@@ -1,4 +1,5 @@
 // ** MUI Imports
+import { useGetAll } from '@/hooks/catalogs/broker/useGetAll'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import { Box, MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
@@ -22,19 +23,25 @@ import {
   ContainerTitle,
   ContainerTotal,
   ContentTextAccounts,
-  HeaderTitle,
+  HeaderTitle
 } from 'src/styles/Dashboard/Brokers/brokerBalanceStatus'
 
 const BrokersBalanceStatus = () => {
   const [broker, setBroker] = useState('')
-  const brokers = [
-    { name: 'All brokers', value: '' },
-    { name: 'broker1', value: 1 },
-    { name: 'broker2', value: 2 },
-    { name: 'broker3', value: 3 },
-    { name: 'broker4', value: 4 },
-    { name: 'broker5', value: 5 }
-  ]
+
+  // const [allBrokers] = useState(0)
+
+  // const brokers = [
+  //   { name: 'All brokers', value: '' },
+  //   { name: 'broker1', value: 1 },
+  //   { name: 'broker2', value: 2 },
+  //   { name: 'broker3', value: 3 },
+  //   { name: 'broker4', value: 4 },
+  //   { name: 'broker5', value: 5 }
+  // ]
+
+  const { brokers } = useGetAll()
+
   const handleOnchange = (e: SelectChangeEvent) => {
     setBroker(e.target.value)
   }
@@ -95,12 +102,12 @@ const BrokersBalanceStatus = () => {
             Overview
           </Typography>
         </ContainerTitle>
-        {/* <CustomModal width={'41%'} height={'66.5%'} bgColor={'background.paper'} top={'50%'} left={'50%'}>
-          <ModalReinsurers />
-        </CustomModal> */}
       </HeaderTitle>
       <div style={{ padding: '20px 20px 15px 20px' }}>
         <Select
+          MenuProps={{
+            disableScrollLock: true
+          }}
           sx={{ width: '100%', height: '48px', outline: 'none' }}
           value={broker}
           displayEmpty
@@ -109,9 +116,11 @@ const BrokersBalanceStatus = () => {
             console.log(e.target.value)
           }}
           IconComponent={KeyboardArrowDownIcon}
+
+          // renderValue={selected => (allBrokers === 0 ? 'All brokers' : selected)}
         >
           {brokers?.map((item, index) => (
-            <MenuItem key={index} value={item.value}>
+            <MenuItem key={index} value={item.id}>
               {item.name}
             </MenuItem>
           ))}
@@ -124,23 +133,17 @@ const BrokersBalanceStatus = () => {
               <Box sx={{ width: '24px', height: '24px', backgroundColor: '#72E128', borderRadius: '4px' }} />
               <AccountsDescription>Paid accounts:</AccountsDescription>
             </ContentTextAccounts>
-            <AccountsNumber>
-              29
-            </AccountsNumber>
+            <AccountsNumber>29</AccountsNumber>
           </ContainerAccounts>
           <ContainerAccounts>
             <ContentTextAccounts>
               <Box sx={{ width: '24px', height: '24px', backgroundColor: '#C4F6B3', borderRadius: '4px' }} />
               <AccountsDescription>Unpaid accounts:</AccountsDescription>
             </ContentTextAccounts>
-            <AccountsNumber>
-              21
-            </AccountsNumber>
+            <AccountsNumber>21</AccountsNumber>
           </ContainerAccounts>
-
         </ContainerPayments>
         <ContainerRightFrame>
-
           <ContainerCircularProgress>
             <Typography
               sx={{
@@ -160,7 +163,6 @@ const BrokersBalanceStatus = () => {
         </ContainerRightFrame>
       </ContainerFrame>
       <ContainerFrame sx={{ paddingBottom: '25px' }}>
-
         <ContainerTotal>
           <Typography sx={{ fontSize: '14px', fontWeight: '700', color: '#444444', fontFamily: lato }}>
             Total debt:

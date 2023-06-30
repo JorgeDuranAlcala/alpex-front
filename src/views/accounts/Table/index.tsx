@@ -78,10 +78,13 @@ const Table = ({ status }: IAccountTable) => {
   // **Reducers
   const dispatch = useAppDispatch()
   const accountsReducer = useAppSelector(state => state.accounts)
-  console.log({ selectAll })
+
+  // console.log({ selectAll })
+
   const selectAllOption = accountsReducer.accounts.map(account => account.id)
-  console.log({ selectAllOption })
-  console.log(accounts.effectiveDate)
+
+  // console.log({ selectAllOption })
+  // console.log(accounts.effectiveDate)
 
   // ** Custom Hooks
   //const { accounts, getAccounts } = useAccountTable()
@@ -95,12 +98,15 @@ const Table = ({ status }: IAccountTable) => {
   }
 
   useEffect(() => {
-    dispatch(fetchAccounts(accountsReducer))
+    const page = 1
+    dispatch(fetchAccounts(page))
+
     //eslint-disable-next-line
   }, [accountsReducer.filters])
 
   useEffect(() => {
     dispatch(resetAccountFilter())
+
     if (status === undefined) dispatch(deleteAccountFilter('status'))
     else {
       const index: string = Object.keys(EStatus)[Object.values(EStatus).indexOf(status as any)]

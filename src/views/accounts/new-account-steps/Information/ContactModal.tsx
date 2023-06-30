@@ -56,7 +56,7 @@ const expresions = {
   phone: /^\d{10}$/ // 7 a 10 numeros.
 }
 
-export const ContactModal = ({ id, service, updateContacts, setIdCreated,  disabledBtn }: Props) => {
+export const ContactModal = ({ id, service, updateContacts, setIdCreated, disabledBtn }: Props) => {
   const [contactData, setContactData] = useState<ContactData>(initialContactData)
   const [open, setOpen] = useState<boolean>(false)
 
@@ -86,7 +86,6 @@ export const ContactModal = ({ id, service, updateContacts, setIdCreated,  disab
   }
 
   const saveContact = async () => {
-    console.log('save contact')
     switch (service) {
       case 'broker':
         saveBrokerContact({
@@ -97,8 +96,6 @@ export const ContactModal = ({ id, service, updateContacts, setIdCreated,  disab
           idCBroker: id
         })
           .then(contactBroker => {
-            console.log("se guardo el contacto")
-            console.log(contactBroker)
             setIdCreated(state => ({
               ...state,
               brokerContact: contactBroker.id
@@ -106,7 +103,7 @@ export const ContactModal = ({ id, service, updateContacts, setIdCreated,  disab
             setStartValidations(false)
           })
           .catch(err => {
-            console.log('ERROR-SERVICE [saveBrokerContact]', err)
+            console.error('ERROR-SERVICE [saveBrokerContact]', err)
           })
 
         break
@@ -120,7 +117,6 @@ export const ContactModal = ({ id, service, updateContacts, setIdCreated,  disab
           idCCedant: id
         })
           .then(contactCedant => {
-
             setIdCreated(state => ({
               ...state,
               cedantContact: contactCedant.id
@@ -128,7 +124,7 @@ export const ContactModal = ({ id, service, updateContacts, setIdCreated,  disab
             setStartValidations(false)
           })
           .catch(err => {
-            console.log('ERROR-SERVICE [saveCedantContact]', err)
+            console.error('ERROR-SERVICE [saveCedantContact]', err)
           })
 
         break
@@ -161,7 +157,6 @@ export const ContactModal = ({ id, service, updateContacts, setIdCreated,  disab
   }
 
   const validateForm = () => {
-    console.log("en validaciones")
     const nameErrorTemp = !expresions.name.test(contactData.name)
     const phoneErrorTemp = !expresions.phone.test(contactData.phone)
     const countryErrorTemp = contactData.country === undefined || contactData.country === ''
@@ -169,43 +164,32 @@ export const ContactModal = ({ id, service, updateContacts, setIdCreated,  disab
 
     const errorTemp = nameErrorTemp || emailErrorTemp || phoneErrorTemp || countryErrorTemp
 
-    console.log("error temp")
-    console.log(errorTemp)
     setError(errorTemp)
     setEmptyForm(errorTemp)
     setNameError(nameErrorTemp)
     setEmailError(emailErrorTemp)
     setPhoneError(phoneErrorTemp)
     setCountryError(countryErrorTemp)
-
   }
 
   useEffect(() => {
     startValidations && validateForm()
-    console.log("start validation")
-    console.log(startValidations)
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [startValidations, setStartValidations])
 
-
   useEffect(() => {
     !error && saveContact()
-    console.log("error")
-    console.log(error)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [error])
 
   return (
     <>
-      <Button
-        className='create-contact-btn'
-        disabled={disabledBtn}
-        onClick={() => setOpen(true)}>
+      <Button className='create-contact-btn' disabled={disabledBtn} onClick={() => setOpen(true)}>
+        CREATE NEW CONTACT
         <div className='btn-icon'>
           <Icon icon='mdi:plus-circle-outline' />
         </div>
-        CREATE NEW CONTACT
       </Button>
       <Modal
         className='create-contact-modal'
@@ -240,9 +224,13 @@ export const ContactModal = ({ id, service, updateContacts, setIdCreated,  disab
                 onChange={e => handleChange('email', e.target.value)}
               />
 
-              {emailError && <FormHelperText sx={{ color: 'error.main' }}>
-                {(contactData.email == "" || contactData.email == undefined) ? "This field is required" : "Enter a valid email, example name@email.com" }
-                </FormHelperText>}
+              {emailError && (
+                <FormHelperText sx={{ color: 'error.main' }}>
+                  {contactData.email == '' || contactData.email == undefined
+                    ? 'This field is required'
+                    : 'Enter a valid email, example name@email.com'}
+                </FormHelperText>
+              )}
             </FormControl>
             <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
               <TextField
@@ -252,9 +240,13 @@ export const ContactModal = ({ id, service, updateContacts, setIdCreated,  disab
                 onChange={e => handleChange('phone', e.target.value)}
               />
 
-              {phoneError && <FormHelperText sx={{ color: 'error.main' }}>
-              {(contactData.phone == "" || contactData.phone == undefined) ? "This field is required" : "Enter a valid phone" }
-               </FormHelperText>}
+              {phoneError && (
+                <FormHelperText sx={{ color: 'error.main' }}>
+                  {contactData.phone == '' || contactData.phone == undefined
+                    ? 'This field is required'
+                    : 'Enter a valid phone'}
+                </FormHelperText>
+              )}
             </FormControl>
             <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
               <InputLabel>Select country</InputLabel>
