@@ -28,8 +28,8 @@ export const DiscountAmount = ({ discountIndex, value, operationSecurity }: Disc
 
     updateDiscountByIndex({
       index: discountIndex,
-      discountPercent: operationSecurity.getDiscountPercent(value),
-      discountAmount: value
+      percentage: operationSecurity.getDiscountPercent(value),
+      amount: value
     })
 
     // const tempSecurities = [...securities]
