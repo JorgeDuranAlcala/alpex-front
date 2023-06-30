@@ -24,13 +24,13 @@ export const DiscountPercent = ({ discountIndex, value, operationSecurity, disco
   const handleChangeDiscountPercent = (value: number) => {
     updateDiscountByIndex({
       index: discountIndex,
-      discountPercent: value,
-      discountAmount: operationSecurity.getDiscountAmount(value)
+      percentage: value,
+      amount: operationSecurity.getDiscountAmount(value)
     })
   }
   useEffect(() => {
     const totalPercentOfDiscounts = discountsList.reduce((value, current) => {
-      value += current.discountPercent
+      value += current.percentage
 
       return value
     }, 0)
