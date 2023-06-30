@@ -41,6 +41,7 @@ export const ListDiscounts = ({ formIndex, operationSecurity, validateForm }: Li
 
     tempSecurities[formIndex] = {
       ...tempSecurities[formIndex],
+      discounts: discountsList,
       totalAmountOfDiscounts
     }
 

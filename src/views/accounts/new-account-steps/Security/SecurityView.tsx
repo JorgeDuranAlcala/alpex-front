@@ -116,7 +116,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
       let dataForm: FormSecurity = {
         ...allFormData,
         formData: tempSecurities,
-        ...CalculateSecurity.getData(tempSecurities, information)
+        ...CalculateSecurity.getData(tempSecurities)
       }
       if (account && account.securityTotal) {
         dataForm = {

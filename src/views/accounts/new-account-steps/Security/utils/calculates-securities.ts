@@ -78,9 +78,7 @@ export class CalculateSecurity {
       return base
     } else {
       // * is Net Premium
-      const base = (this.security.premiumPerShareAmount * this.security.share) / 100
-
-      return (base * valuePercent) / 100
+      return (this.security.premiumPerShareAmount * valuePercent) / 100
     }
   }
   getFrontingFeePercent(valueAmount: number): number {
@@ -93,9 +91,7 @@ export class CalculateSecurity {
     } else {
       // * is Net Premium
 
-      const base = (this.security.premiumPerShareAmount * this.security.share) / 100
-
-      return (valueAmount / base) * 100
+      return (this.security.premiumPerShareAmount / valueAmount) * 100
     }
   }
   getShareAmount(): number {
@@ -108,9 +104,10 @@ export class CalculateSecurity {
       return (
         this.security.premiumPerShareAmount -
         this.security.dynamicCommissionAmount -
-        (this.security.frontingFeeActive ? this.security.frontingFeeAmount : 0) -
+        (this.security.frontingFeeAmount ? this.security.frontingFeeAmount : 0) -
         this.security.brokerAgeAmount -
-        (this.security.taxesActive ? this.security.taxesAmount : 0)
+        (this.security.taxesAmount ? this.security.taxesAmount : 0) -
+        (this.security.totalAmountOfDiscounts ? this.security.totalAmountOfDiscounts : 0)
       )
     } else {
       // * is Net Premium
@@ -197,7 +194,7 @@ export class CalculateSecurity {
     }
   }
 
-  static getData(securities: SecurityDto[], information: FormInformation) {
+  static getData(securities: SecurityDto[]) {
     // let sharePercent = 0
     let premiumPerShareAmountNet = 0
     let premiumPerShareAmountGros = 0
