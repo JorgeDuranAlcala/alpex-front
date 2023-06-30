@@ -6,20 +6,22 @@ import { SublimitDto } from '@/services/accounts/dtos/sublimit.dto'
 
 export interface EndorsementDto {
   id: number
+  reason: string
   createdAt: Date
   updatedAt: Date
   active: boolean
   informations: InformationDto[]
   installments: InstallmentDto[]
   sublimits: SublimitDto[]
-  boundSecurities: SecurityDto[]
-  boundSecurityTotal: SecurityTotalDto[]
+  securities: SecurityDto[]
+  securitiesTotal: SecurityTotalDto[]
   idAccount: number
   idEndorsementType: number
 }
 
 export interface EndorsementHistoryDto {
   id: number
+  reason: string
   createdAt: Date
   updatedAt: Date
   idAccount: number
