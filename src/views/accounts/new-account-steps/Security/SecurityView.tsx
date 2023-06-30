@@ -116,7 +116,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
       let dataForm: FormSecurity = {
         ...allFormData,
         formData: tempSecurities,
-        ...CalculateSecurity.getData(tempSecurities, information)
+        ...CalculateSecurity.getData(tempSecurities)
       }
       if (account && account.securityTotal) {
         dataForm = {
@@ -167,10 +167,11 @@ const Security = ({ onStepChange }: SecurityProps) => {
       if (security.id) {
         update.push({
           ...mapper,
-          id: security.id
+          id: security.id,
+          view: 1
         })
       } else {
-        save.push({ ...mapper })
+        save.push({ ...mapper, view: 1 })
       }
     }
 

@@ -26,6 +26,19 @@ class EndorsementService {
       throw new Error(message)
     }
   }
+
+  async create(newEndorsement: EndorsementDto): Promise<EndorsementDto> {
+    try {
+      const { data } = await AppAlpexApiGateWay.post<Promise<EndorsementDto>>(ENDORSEMENT_ROUTES.ADD, {
+        ...newEndorsement
+      })
+
+      return data
+    } catch (error) {
+      const message = String(error)
+      throw new Error(message)
+    }
+  }
 }
 
 export default new EndorsementService()
