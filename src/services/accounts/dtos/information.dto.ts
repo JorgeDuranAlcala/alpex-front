@@ -35,6 +35,7 @@ export interface InformationDto {
   cedantContactCountry: string
   idLineOfBussines: number
   idTypeOfLimit: number | null
+  idEconomicSector: number | null
   idRiskActivity: number
   idLeadUnderwriter: number | null | string
   idUnderwriter: number | null | string

@@ -25,7 +25,6 @@ export const ButtonAddDiscount = () => {
           variant='text'
           color='primary'
           size='large'
-          fullWidth
           sx={{ justifyContent: 'start' }}
         >
           <CoreIcon icon='material-symbols:add-circle-outline' fontSize={20} className='icon-btn' /> ADD DISCOUNT
