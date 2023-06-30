@@ -27,6 +27,7 @@ import CustomAlert, { IAlert } from 'src/views/custom/alerts'
 
 //Google Analytics
 import Analytics from '@/utils/analytics'
+import ModalBordereaux from './modalBordereaux'
 
 const AddAccountButton = styled(Button)(({ theme }) => ({
   display: 'flex',
@@ -45,6 +46,7 @@ const AddAccountButton = styled(Button)(({ theme }) => ({
 enum EActions {
   SELECT_ALL = 'Select all',
   CHANGE_STATUS = 'Change status',
+  DOWNLOAD_BORDEREAUX = 'Download Bordereaux',
   DELETE_ALL = 'Delete accounts',
   UNSELECT_ALL = 'Unselect all'
 }
@@ -78,6 +80,7 @@ const TableHeader: React.FC<ITableHeader> = ({
   // ** State
   const [actionMenu, setActionMenu] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [showBordereauxModal, setShowBordereauxModal] = useState(false)
   const [textDeleteModal, setTextDeleteModal] = useState('')
   const [anchorEl, setAnchorEl] = useState<any>(null)
   const openStatusChangeMenu = Boolean(anchorEl)
@@ -123,6 +126,11 @@ const TableHeader: React.FC<ITableHeader> = ({
         handleTextDeleteModal(selectedRows)
         setShowDeleteModal(true)
         handleActionMenuClose()
+        break
+      case EActions.DOWNLOAD_BORDEREAUX:
+        setShowBordereauxModal(true)
+        handleActionMenuClose()
+        console.log('open Modal')
         break
       case EActions.CHANGE_STATUS:
         const el = document.querySelector('#statusChangeActionMenu')
@@ -252,7 +260,6 @@ const TableHeader: React.FC<ITableHeader> = ({
             onChange={handleSelectedAction}
             value={value}
             sx={{ mr: 4, mb: 2, width: '100%', height: '42px' }}
-            disabled={selectedRows && selectedRows.length === 0}
             renderValue={selected => (selected.length === 0 ? 'Action' : selected)}
           >
             <MenuItem sx={{ minWidth: '172px', display: 'flex', gap: '5%' }} value={EActions.SELECT_ALL}>
@@ -263,6 +270,7 @@ const TableHeader: React.FC<ITableHeader> = ({
               id='statusChangeActionMenu'
               value={EActions.CHANGE_STATUS}
               sx={{ minWidth: '172px', display: 'flex', gap: '5%' }}
+              disabled={selectedRows.length === 0 ? true : false}
             >
               <Icon icon='ic:outline-replay' fontSize={24} color={'rgba(87, 90, 111, 0.54)'} />
               {EActions.CHANGE_STATUS}
@@ -291,12 +299,24 @@ const TableHeader: React.FC<ITableHeader> = ({
                 <MenuItem onClick={() => HandleChangeStatus(EStatus.BOUND)}>{EStatusString.BOUND}</MenuItem>
               </Menu>
             </MenuItem>
-            <MenuItem value={EActions.UNSELECT_ALL} sx={{ minWidth: '172px', display: 'flex', gap: '5%' }}>
+            <MenuItem value={EActions.DOWNLOAD_BORDEREAUX} sx={{ minWidth: '172px', display: 'flex', gap: '5%' }}>
+              <Icon icon='ic:baseline-download' fontSize={34} color={'rgba(87, 90, 111, 0.54)'} />
+              {EActions.DOWNLOAD_BORDEREAUX}
+            </MenuItem>
+            <MenuItem
+              value={EActions.UNSELECT_ALL}
+              sx={{ minWidth: '172px', display: 'flex', gap: '5%' }}
+              disabled={selectedRows.length === 0 ? true : false}
+            >
               <Icon icon='carbon:close-filled' fontSize={23} color={'rgba(87, 90, 111, 0.54)'} />
               {EActions.UNSELECT_ALL}
             </MenuItem>
-            <MenuItem value={EActions.DELETE_ALL} sx={{ minWidth: '172px', display: 'flex', gap: '5%' }}>
-              <Icon icon='ic:outline-delete' fontSize={30} color={'rgba(87, 90, 111, 0.54)'} />
+            <MenuItem
+              value={EActions.DELETE_ALL}
+              sx={{ minWidth: '172px', display: 'flex', gap: '4%' }}
+              disabled={selectedRows.length === 0 ? true : false}
+            >
+              <Icon icon='ic:outline-delete' fontSize={24} color={'rgba(87, 90, 111, 0.54)'} />
               {EActions.DELETE_ALL}
             </MenuItem>
           </Select>
@@ -321,6 +341,15 @@ const TableHeader: React.FC<ITableHeader> = ({
             setShow={showChangeStatusModal}
             onClose={() => {
               setShowChangeStatusModal(false)
+            }}
+          />
+          <ModalBordereaux
+            renderButton={() => <span> </span>}
+            headingText={'BDX Subscribed Premium'}
+            text='Select the Reinsurer and Binder to download Bordereaux.'
+            setShow={showBordereauxModal}
+            onClose={() => {
+              setShowBordereauxModal(false)
             }}
           />
         </Grid>
