@@ -223,7 +223,8 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
       idTypeOfLimit: Number(placementStructure.typeOfLimit),
       idAccountType: Number(basicInfo.idAccountType),
       premiumWithTaxes: placementStructure.netPremiumWithTaxes,
-      premiumWithOutDiscounts: placementStructure.netPremiumWithoutDiscounts
+      premiumWithOutDiscounts: placementStructure.netPremiumWithoutDiscounts,
+      idEconomicSector: Number(basicInfo.economicSector) || null
     })
 
     await delayMs(1000)
@@ -307,7 +308,8 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
       totalValues: placementStructure.total,
       idTypeOfLimit: Number(placementStructure.typeOfLimit),
       idAccountType: Number(basicInfo.idAccountType),
-      step: 1
+      step: 1,
+      idEconomicSector: Number(basicInfo.economicSector) || null
     }
 
     const res = await addInformation(dataToSave)
@@ -361,7 +363,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
       const obBasicInfo = {
         insured: information.insured || '',
         country: information.idCountry || '',
-        economicSector: '', // Cambiar a information.economicSector || '',
+        economicSector: information.idEconomicSector || '',
         broker: information.idBroker || '',
         brokerContact: information.idBrokerContact || '',
         brokerContactEmail: information.brokerContactEmail || '',
