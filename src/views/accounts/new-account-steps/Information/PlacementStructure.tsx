@@ -288,7 +288,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
     setFrontingFeeP(frontingFeePc)
     setTaxesP(taxesPc)
     setTaxes(taxesc)
-
+    setGrossPremium(grossPremiumc)
     setDiscounts(updatedDiscounts)
     setReinsuranceBrokerage(reinsuranceBrokeragec)
     setReinsuranceBrokerageP(reinsuranceBrokeragePc)
@@ -543,7 +543,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
   React.useEffect(() => {
     setTotalDiscountsError(discountValidation)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [taxesP, taxes, frontingFee, frontingFeeP])
+  }, [taxesP, taxes, frontingFee, frontingFeeP, grossPremium])
 
 
 
