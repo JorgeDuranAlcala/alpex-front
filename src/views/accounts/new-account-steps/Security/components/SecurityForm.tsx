@@ -119,8 +119,8 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
     ...reinsuranceBrokerageAmount_validations({ isGross }).fields,
     ...dynamicComissionPercent_validations().fields,
     ...dynamicComissionAmount_validations().fields,
-    ...taxesAmount_validations({ isGross }).fields,
-    ...taxesPercent_validations({ isGross }).fields,
+    ...taxesAmount_validations({ isGross, isTaxesEnabled }).fields,
+    ...taxesPercent_validations({ isGross, isTaxesEnabled }).fields,
     ...netReinsurancePremium_validations().fields
   })
 

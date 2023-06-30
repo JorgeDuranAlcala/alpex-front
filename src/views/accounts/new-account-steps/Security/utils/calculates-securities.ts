@@ -78,9 +78,7 @@ export class CalculateSecurity {
       return base
     } else {
       // * is Net Premium
-      const base = (this.security.premiumPerShareAmount * this.security.share) / 100
-
-      return (base * valuePercent) / 100
+      return (this.security.premiumPerShareAmount * valuePercent) / 100
     }
   }
   getFrontingFeePercent(valueAmount: number): number {
@@ -93,9 +91,7 @@ export class CalculateSecurity {
     } else {
       // * is Net Premium
 
-      const base = (this.security.premiumPerShareAmount * this.security.share) / 100
-
-      return (valueAmount / base) * 100
+      return (this.security.premiumPerShareAmount / valueAmount) * 100
     }
   }
   getShareAmount(): number {

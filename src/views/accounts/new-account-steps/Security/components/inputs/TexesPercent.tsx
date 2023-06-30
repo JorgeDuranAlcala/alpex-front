@@ -1,34 +1,30 @@
-import {
-  FormControl,
-  FormHelperText,
-  TextField
-} from '@mui/material';
-import { useContext } from 'react';
-import { NumericFormat } from 'react-number-format';
-import * as yup from 'yup';
+import { FormControl, FormHelperText, TextField } from '@mui/material'
+import { useContext } from 'react'
+import { NumericFormat } from 'react-number-format'
+import * as yup from 'yup'
 
-import { SecurityContext } from '../../SecurityView';
-import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interface';
-import { CalculateSecurity } from '../../utils/calculates-securities';
-
+import { SecurityContext } from '../../SecurityView'
+import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interface'
+import { CalculateSecurity } from '../../utils/calculates-securities'
 
 // ! only if we want specific props
 interface TaxesPercentProps extends ISecurityInputProps {
-  operationSecurity: CalculateSecurity;
-  isDisabled: boolean;
+  operationSecurity: CalculateSecurity
+  isDisabled: boolean
 }
 
-
-export const TaxesPercent = ({ index, value, isDisabled, errorMessage, validateForm, operationSecurity }: TaxesPercentProps) => {
-
-  const {
-    activeErros,
-    securities,
-    calculateSecurities
-  } = useContext(SecurityContext);
+export const TaxesPercent = ({
+  index,
+  value,
+  isDisabled,
+  errorMessage,
+  validateForm,
+  operationSecurity
+}: TaxesPercentProps) => {
+  const { activeErros, securities, calculateSecurities } = useContext(SecurityContext)
 
   const handleChangeTaxesPercent = (value: number) => {
-    console.log(value);
+    console.log(value)
 
     // Código a ejecutar cuando se deja de escribir
     const tempSecurities = [...securities]
@@ -59,23 +55,22 @@ export const TaxesPercent = ({ index, value, isDisabled, errorMessage, validateF
         disabled={isDisabled}
       />
 
-      <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
-        {activeErros && errorMessage}
-      </FormHelperText>
+      <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>{activeErros && errorMessage}</FormHelperText>
     </FormControl>
   )
 }
 
-export const taxesPercent_validations = ({ isGross }: { isGross: boolean }) => yup.object().shape({
-  taxes: yup
-    .number()
-    .transform((_, val) => (val === Number(val) ? val : null))
-    .test('', 'This field is required', value => {
-      const val = value || 0
+export const taxesPercent_validations = ({ isGross, isTaxesEnabled }: { isGross: boolean; isTaxesEnabled: boolean }) =>
+  yup.object().shape({
+    taxes: yup
+      .number()
+      .transform((_, val) => (val === Number(val) ? val : null))
+      .test('', 'This field is required', value => {
+        const val = value || 0
 
-      if (isGross) return +val > 0
+        if (isGross && isTaxesEnabled) return +val > 0
 
-      return true
-    })
-    .max(100),
-});
+        return true
+      })
+      .max(100)
+  })
