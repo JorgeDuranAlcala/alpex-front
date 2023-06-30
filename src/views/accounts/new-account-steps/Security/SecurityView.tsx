@@ -33,7 +33,6 @@ import Icon from 'src/@core/components/icon'
 import UserThemeOptions from 'src/layouts/UserThemeOptions'
 import { SecurityMapper } from './mappers/SecurityForm.mapper'
 
-
 import { CalculateSecurity } from './utils/calculates-securities'
 
 export const SecurityContext = createContext<SecurityContextDto>({} as SecurityContextDto)
@@ -57,7 +56,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
     frontingFee: 0,
     netPremium: 0,
     grossPremium: 0,
-    limit: 0,
+    limit: 0
   })
   const [companiesSelect] = useState<number[]>([])
   const { account, setAccountId, getAccountById, accountId } = useGetAccountById()
@@ -94,9 +93,9 @@ const Security = ({ onStepChange }: SecurityProps) => {
         security.brokerAgeAmount = operationSecurity.getBrokerAge() || 0
         security.dynamicCommissionAmount = operationSecurity.getDynamicComissionAmount() || 0
 
-        // security.frontingFeeAmount = operationSecurity.getFrontingFeeAmount() || 0
+        security.frontingFeeAmount = operationSecurity.getFrontingFeeAmount(security.frontingFee) || 0
 
-        // security.taxesAmount = operationSecurity.getTaxesAmount() || 0
+        security.taxesAmount = operationSecurity.getTaxesAmount(security.taxes) || 0
 
         security.shareAmount = operationSecurity.getShareAmount() || 0
         security.netReinsurancePremium = operationSecurity.getNetReinsurancePremium() || 0
@@ -109,10 +108,9 @@ const Security = ({ onStepChange }: SecurityProps) => {
           netPremiumAt100: Number(security.netPremiumAt100) || 0,
           receivedNetPremium: Number(security.receivedNetPremium) || 0,
           reinsuranceBrokerage: Number(security.reinsuranceBrokerage) || 0,
-          share: Number(security.share) || 0,
+          share: Number(security.share) || 0
 
           // taxes: Number(security.taxes) || 0
-
         })
       }
       let dataForm: FormSecurity = {
