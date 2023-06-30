@@ -5,7 +5,9 @@ import { SecurityDto } from './dtos/security.dto'
 class SecurityService {
   async addSecurity(securitiesIn: Partial<SecurityDto>[]): Promise<SecurityDto[] | string> {
     try {
-      const { data } = await AppAlpexApiGateWay.post<Promise<SecurityDto[]>>(ACCOUNT_SECURITY_ROUTES.ADD, securitiesIn)
+      const { data } = await AppAlpexApiGateWay.post<Promise<SecurityDto[]>>(ACCOUNT_SECURITY_ROUTES.ADD, {
+        securities: securitiesIn
+      })
 
       return data
     } catch (error) {
@@ -28,7 +30,9 @@ class SecurityService {
 
   async update(update: Partial<SecurityDto>[]): Promise<SecurityDto[]> {
     try {
-      const { data } = await AppAlpexApiGateWay.put<Promise<SecurityDto[]>>(ACCOUNT_SECURITY_ROUTES.UPDATE, update)
+      const { data } = await AppAlpexApiGateWay.put<Promise<SecurityDto[]>>(ACCOUNT_SECURITY_ROUTES.UPDATE, {
+        securities: update
+      })
 
       return data
     } catch (error) {
