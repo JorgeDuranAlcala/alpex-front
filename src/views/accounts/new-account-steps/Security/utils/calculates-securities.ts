@@ -149,7 +149,7 @@ export class CalculateSecurity {
     if (this.security.isGross) {
       // * is Gross Premium
 
-      let result = this.security.grossPremiumPerShare - this.security.reinsuranceBrokerage
+      let result = this.security.grossPremiumPerShare - this.security.brokerAgeAmount
 
       if (this.security.taxes || value) {
         result = (result * (value ?? this.security.taxes)) / 100
@@ -198,27 +198,30 @@ export class CalculateSecurity {
   }
 
   static getData(securities: SecurityDto[], information: FormInformation) {
-    let sharePercent = 0
-    let shareAmount = 0
-    let premiumPerShareAmount = 0
+    // let sharePercent = 0
+    let premiumPerShareAmountNet = 0
+    let premiumPerShareAmountGros = 0
     let distributedNetPremium = 0
+    let taxesGros = 0
+    let brokerageReinsuranceGross = 0
 
     for (const security of securities) {
-      sharePercent += security.isGross ? 0 : security.share
-      premiumPerShareAmount += security.isGross ? security.premiumPerShareAmount : 0
-      shareAmount += security.isGross ? 0 : security.premiumPerShareAmount
+      // sharePercent += security.isGross ? 0 : security.share
+      premiumPerShareAmountNet += security.isGross ? 0 : security.premiumPerShareAmount
+      premiumPerShareAmountGros += security.isGross ? security.premiumPerShareAmount : 0
+      taxesGros += security.isGross ? security.taxesAmount : 0
+      brokerageReinsuranceGross += security.isGross ? security.brokerAgeAmount : 0
       distributedNetPremium +=
-        (security.frontingFeeActive ? security.frontingFeeAmount : 0) +
-        security.taxesAmount +
-        security.dynamicCommissionAmount +
-        security.brokerAgeAmount +
-        security.netReinsurancePremium
+        security.netReinsurancePremium + security.dynamicCommissionAmount + security.frontingFeeAmount ?? 0
     }
+    const recievedNetPremium =
+      premiumPerShareAmountNet + (premiumPerShareAmountGros - taxesGros - brokerageReinsuranceGross)
+    const diference = recievedNetPremium - distributedNetPremium
 
     return {
-      recievedNetPremium: (information.netPremium * sharePercent) / 100 + premiumPerShareAmount,
+      recievedNetPremium,
       distribuitedNetPremium: distributedNetPremium,
-      diference: (information.netPremium * sharePercent) / 100 - shareAmount
+      diference
     }
   }
 }
