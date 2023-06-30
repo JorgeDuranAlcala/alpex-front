@@ -586,16 +586,44 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
 
   const handleValidationComplete = (valid: boolean, formName: string) => {
     setValidationCount(prevCount => prevCount + 1)
-    if (valid) {
-      if (nextClicked) setValidatedForms(prevCount => prevCount + 1)
 
-      if (formName == 'basicInfo' && saveClicked) {
-        // If Basic info is validated and save button was clicked then save information
+    //controller to update and save when the save button is clicked
+    if (saveClicked) {
+      console.log('save or update')
+
+      if (valid && makeSaveValidations) {
+        if (nextClicked) setValidatedForms(prevCount => prevCount + 1)
+
+        if (formName == 'basicInfo' && saveClicked) {
+          // If Basic info is validated and save button was clicked then save information
+          setMakeSaveValidations(false)
+          setDisableSave(true)
+          handleSaveInformation()
+
+          setSaveClicked(false)
+        }
+      } else {
         setMakeSaveValidations(false)
-        setDisableSave(true)
-        handleSaveInformation()
-
         setSaveClicked(false)
+      }
+    }
+
+    //controller to update and save when the next button is clicked
+    if (nextClicked) {
+      if (valid && makeValidations) {
+        if (nextClicked) setValidatedForms(prevCount => prevCount + 1)
+
+        if (formName == 'basicInfo' && saveClicked) {
+          // If Basic info is validated and save button was clicked then save information
+          setMakeSaveValidations(false)
+          setDisableSave(true)
+          handleSaveInformation()
+
+          setSaveClicked(false)
+        }
+      } else {
+        setMakeValidations(false)
+        setNextClicked(false)
       }
     }
   }
