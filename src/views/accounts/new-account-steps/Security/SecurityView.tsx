@@ -33,7 +33,6 @@ import Icon from 'src/@core/components/icon'
 import UserThemeOptions from 'src/layouts/UserThemeOptions'
 import { SecurityMapper } from './mappers/SecurityForm.mapper'
 
-
 import { CalculateSecurity } from './utils/calculates-securities'
 
 export const SecurityContext = createContext<SecurityContextDto>({} as SecurityContextDto)
@@ -57,7 +56,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
     frontingFee: 0,
     netPremium: 0,
     grossPremium: 0,
-    limit: 0,
+    limit: 0
   })
   const [companiesSelect] = useState<number[]>([])
   const { account, setAccountId, getAccountById, accountId } = useGetAccountById()
@@ -89,14 +88,22 @@ const Security = ({ onStepChange }: SecurityProps) => {
           .setSecurity(security)
         if (security?.idCReinsuranceCompany?.id) companiesSelect.push(security.idCReinsuranceCompany.id)
 
+        //TODO:@ISRRA - obtener los discounts guardados desde la base de datos
+        const tempDiscountList = []
+        if (security?.discounts)
+          for (const discount of security?.discounts) {
+            discount.discountAmount = operationSecurity.getDiscountAmount(discount.discountPercent)
+            tempDiscountList.push(discount)
+          }
+        security.discounts = tempDiscountList
         security.premiumPerShareAmount = operationSecurity.getPremierPerShare() || 0
         security.grossPremiumPerShare = operationSecurity.getGrossPremierPerShare() || 0
         security.brokerAgeAmount = operationSecurity.getBrokerAge() || 0
         security.dynamicCommissionAmount = operationSecurity.getDynamicComissionAmount() || 0
 
-        // security.frontingFeeAmount = operationSecurity.getFrontingFeeAmount() || 0
+        security.frontingFeeAmount = operationSecurity.getFrontingFeeAmount(security.frontingFee) || 0
 
-        // security.taxesAmount = operationSecurity.getTaxesAmount() || 0
+        security.taxesAmount = operationSecurity.getTaxesAmount(security.taxes) || 0
 
         security.shareAmount = operationSecurity.getShareAmount() || 0
         security.netReinsurancePremium = operationSecurity.getNetReinsurancePremium() || 0
@@ -109,16 +116,15 @@ const Security = ({ onStepChange }: SecurityProps) => {
           netPremiumAt100: Number(security.netPremiumAt100) || 0,
           receivedNetPremium: Number(security.receivedNetPremium) || 0,
           reinsuranceBrokerage: Number(security.reinsuranceBrokerage) || 0,
-          share: Number(security.share) || 0,
+          share: Number(security.share) || 0
 
           // taxes: Number(security.taxes) || 0
-
         })
       }
       let dataForm: FormSecurity = {
         ...allFormData,
         formData: tempSecurities,
-        ...CalculateSecurity.getData(tempSecurities, information)
+        ...CalculateSecurity.getData(tempSecurities)
       }
       if (account && account.securityTotal) {
         dataForm = {
@@ -169,20 +175,24 @@ const Security = ({ onStepChange }: SecurityProps) => {
       if (security.id) {
         update.push({
           ...mapper,
-          id: security.id
+          id: security.id,
+          view: 1
         })
       } else {
-        save.push({ ...mapper })
+        save.push({ ...mapper, view: 1 })
       }
     }
 
     if (!allFormData.id) {
-      await saveSecurityTotal({
-        receivedNetPremium: +allFormData.recievedNetPremium,
-        distributedNetPremium: +allFormData.distribuitedNetPremium,
-        difference: +allFormData.diference,
-        idAccount: +accountData.formsData.form1.id
-      })
+      await saveSecurityTotal([
+        {
+          receivedNetPremium: +allFormData.recievedNetPremium,
+          distributedNetPremium: +allFormData.distribuitedNetPremium,
+          difference: +allFormData.diference,
+          idAccount: +accountData.formsData.form1.id,
+          view: 1
+        }
+      ])
         .then(response => {
           console.log('saveSecurityTotal', { response })
         })
@@ -190,12 +200,16 @@ const Security = ({ onStepChange }: SecurityProps) => {
           console.log('saveSecurityTotal', e)
         })
     } else {
-      await updateSecurityTotal(allFormData?.id, {
-        receivedNetPremium: +allFormData.recievedNetPremium,
-        distributedNetPremium: +allFormData.distribuitedNetPremium,
-        difference: +allFormData.diference,
-        idAccount: +accountData.formsData.form1.id
-      })
+      await updateSecurityTotal([
+        {
+          id: +allFormData.id,
+          receivedNetPremium: +allFormData.recievedNetPremium,
+          distributedNetPremium: +allFormData.distribuitedNetPremium,
+          difference: +allFormData.diference,
+          idAccount: +accountData.formsData.form1.id,
+          view: 1
+        }
+      ])
         .then(response => {
           console.log('updateSecurityTotal', { response })
         })

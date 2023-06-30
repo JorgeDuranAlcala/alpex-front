@@ -1,9 +1,9 @@
 export interface SecurityTotalDto {
-  id: number
+  id?: number
   receivedNetPremium: number
   distributedNetPremium: number
   difference: number
   view: number
-  idEndorsement: number
+  idEndorsement?: number
   idAccount: number
 }

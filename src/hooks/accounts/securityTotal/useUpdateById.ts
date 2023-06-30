@@ -3,10 +3,10 @@ import { SecurityTotalDto } from 'src/services/accounts/dtos/securityTotal.dto'
 import SecurityTotalService from 'src/services/accounts/securityTotal.service'
 
 export const useUpdateSecurityTotalById = () => {
-  const [securityTotal, setSecurityTotal] = useState<SecurityTotalDto>()
+  const [securityTotal, setSecurityTotal] = useState<SecurityTotalDto[]>()
 
-  const updateSecurityTotal = async (id: number, securityTotal: Partial<SecurityTotalDto>) => {
-    const response = await SecurityTotalService.updateById(id, securityTotal)
+  const updateSecurityTotal = async (securityTotal: Partial<SecurityTotalDto>[]) => {
+    const response = await SecurityTotalService.updateById(securityTotal)
     setSecurityTotal(response)
 
     return response

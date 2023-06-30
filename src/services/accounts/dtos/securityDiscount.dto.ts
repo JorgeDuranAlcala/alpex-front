@@ -1,6 +1,6 @@
 export interface SecurityDiscountDto {
   id?: number
-  porcentaje: number
-  amount: number
+  discountPercent: number
+  discountAmount: number
   idSecurity?: number
 }

@@ -47,6 +47,8 @@ export const ShareAmount = ({ index, value, errorMessage, validateForm }: ShareA
         onValueChange={value => {
           handleChangeShareAmount(Number(value.floatValue))
         }}
+
+        prefix={'$'}
         customInput={TextField}
         decimalScale={2}
         thousandSeparator=','

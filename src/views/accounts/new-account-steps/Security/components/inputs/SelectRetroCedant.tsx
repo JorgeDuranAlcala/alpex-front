@@ -1,35 +1,26 @@
-import {
-  FormControl,
-  FormHelperText,
-  InputLabel,
-  MenuItem,
-  Select,
-  SelectChangeEvent,
-} from '@mui/material';
-import { Dispatch, SetStateAction, useContext } from 'react';
-import * as yup from 'yup';
+import { FormControl, FormHelperText, InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material'
+import { Dispatch, SetStateAction, useContext } from 'react'
+import * as yup from 'yup'
 
-import { RetroCedantDto } from '@/services/catalogs/dtos/RetroCedantDto';
-import { RetroCedantContactDto } from '@/services/catalogs/dtos/retroCedantContact.dto';
-import { SecurityContext } from '../../SecurityView';
-import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interface';
-
+import { RetroCedantDto } from '@/services/catalogs/dtos/RetroCedantDto'
+import { RetroCedantContactDto } from '@/services/catalogs/dtos/retroCedantContact.dto'
+import { SecurityContext } from '../../SecurityView'
+import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interface'
 
 interface SelectRetroCedantProps extends ISecurityInputProps {
-  retroCedants: RetroCedantDto[] | undefined;
-  setIdRetroCedant: Dispatch<SetStateAction<number | null>>;
+  retroCedants: RetroCedantDto[] | undefined
+  setIdRetroCedant: Dispatch<SetStateAction<number | null>>
 }
 
-
-export const SelectRetroCedant = ({ index, value, errorMessage, retroCedants, validateForm, setIdRetroCedant
+export const SelectRetroCedant = ({
+  index,
+  value,
+  errorMessage,
+  retroCedants,
+  validateForm,
+  setIdRetroCedant
 }: SelectRetroCedantProps) => {
-
-  const {
-    activeErros,
-    securities,
-    setSecurities,
-  } = useContext(SecurityContext);
-
+  const { activeErros, securities, setSecurities } = useContext(SecurityContext)
 
   const handleChangeRetroCedant = (e: SelectChangeEvent<string>) => {
     const selectedRetroCendantId = e.target.value
@@ -62,26 +53,31 @@ export const SelectRetroCedant = ({ index, value, errorMessage, retroCedants, va
           </MenuItem>
         ))}
       </Select>
-      <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
-        {activeErros && errorMessage}
-      </FormHelperText>
+      <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>{activeErros && errorMessage}</FormHelperText>
     </FormControl>
   )
 }
 
-export const selectRetroCedant_validations = ({ frontingFeeEnabled }: { frontingFeeEnabled: boolean }) => yup.object().shape({
-  idCRetroCedant: yup
-    .object()
-    .shape({
-      id: yup.number().nullable().notRequired(),
-      name: yup.string().nullable().notRequired()
-    })
-    .test('', 'This field is required', value => {
-      if (frontingFeeEnabled && value && typeof value === 'object') {
-        return value.hasOwnProperty('id')
-      }
+export const selectRetroCedant_validations = ({
+  frontingFeeEnabled,
+  isGross
+}: {
+  frontingFeeEnabled: boolean
+  isGross: boolean
+}) =>
+  yup.object().shape({
+    idCRetroCedant: yup
+      .object()
+      .shape({
+        id: yup.number().nullable().notRequired(),
+        name: yup.string().nullable().notRequired()
+      })
+      .test('', 'This field is required', value => {
+        if (!isGross && frontingFeeEnabled && value && typeof value === 'object') {
+          return value.hasOwnProperty('id')
+        }
 
-      return true
-    })
-    .required('This field is required'),
-});
+        return true
+      })
+      .required('This field is required')
+  })

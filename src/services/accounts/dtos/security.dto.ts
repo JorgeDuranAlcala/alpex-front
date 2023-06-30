@@ -38,7 +38,7 @@ export interface SecurityDto {
   idAccount: number
   isGross: boolean
   recievedNetPremium: number
-  totalAmountOfDiscounts: number;
+  totalAmountOfDiscounts: number
 }
 
 export interface FormInformation {
