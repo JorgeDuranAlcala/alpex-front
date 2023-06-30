@@ -342,7 +342,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
         disableAutoHide: true
       })
     }
-
+    setDisableSave(false)
     await delayMs(1000)
     setBadgeData({
       message: '',
@@ -594,6 +594,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
         setMakeSaveValidations(false)
         setDisableSave(true)
         handleSaveInformation()
+
         setSaveClicked(false)
       }
     }
