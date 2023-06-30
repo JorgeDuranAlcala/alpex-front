@@ -1,49 +1,43 @@
-import {
-  FormControl,
-  TextField
-} from '@mui/material';
-import { useContext } from 'react';
-import { NumericFormat } from 'react-number-format';
+import { FormControl, FormHelperText, TextField } from '@mui/material'
+import { useContext, useEffect, useState } from 'react'
+import { NumericFormat } from 'react-number-format'
 
-import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interface';
-import { CalculateSecurity } from '../../utils/calculates-securities';
-import { DiscountsContext } from '../discounts/DiscountsContext';
-
+import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interface'
+import { CalculateSecurity } from '../../utils/calculates-securities'
+import { DiscountsContext, IDiscountInputs } from '../discounts/DiscountsContext'
 
 // ! only if we want specific props
 interface DiscountPercentProps extends Omit<ISecurityInputProps, 'errorMessage'> {
-  discountIndex: number;
-  operationSecurity: CalculateSecurity;
+  discountIndex: number
+  operationSecurity: CalculateSecurity
+  discountsList: IDiscountInputs[]
 }
 
-
-
-export const DiscountPercent = ({ discountIndex, value, operationSecurity }: DiscountPercentProps) => {
-
+export const DiscountPercent = ({ discountIndex, value, operationSecurity, discountsList }: DiscountPercentProps) => {
   // const {
   //   // securities,
   //   // calculateSecurities
   // } = useContext(SecurityContext);
 
-  const { updateDiscountByIndex } = useContext(DiscountsContext);
-
+  const { updateDiscountByIndex } = useContext(DiscountsContext)
+  const [messageError, setMessageError] = useState('')
   const handleChangeDiscountPercent = (value: number) => {
-
-
     updateDiscountByIndex({
       index: discountIndex,
       discountPercent: value,
-      discountAmount: operationSecurity.getDiscountAmount(value),
-    });
-
-    // const tempSecurities = [...securities]
-    // tempSecurities[index] = {
-    //   ...tempSecurities[index],
-    //   share: value
-    // }
-    // validateForm(tempSecurities[index])
-    // calculateSecurities(tempSecurities)
+      discountAmount: operationSecurity.getDiscountAmount(value)
+    })
   }
+  useEffect(() => {
+    const totalPercentOfDiscounts = discountsList.reduce((value, current) => {
+      value += current.discountPercent
+
+      return value
+    }, 0)
+
+    totalPercentOfDiscounts > 100 ? setMessageError('Discount must be less than 100%') : setMessageError('')
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [discountsList[discountIndex]])
 
   return (
     <FormControl fullWidth sx={{ mb: 6.5 }}>
@@ -61,7 +55,7 @@ export const DiscountPercent = ({ discountIndex, value, operationSecurity }: Dis
           return (values.floatValue! >= 0 && values.floatValue! <= 100) || values.floatValue === undefined
         }}
       />
+      <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>{messageError}</FormHelperText>
     </FormControl>
   )
 }
-
