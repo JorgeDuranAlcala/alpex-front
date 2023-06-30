@@ -214,11 +214,12 @@ export class CalculateSecurity {
         security.brokerAgeAmount +
         security.netReinsurancePremium
     }
+    const recievedNetPremium = (information.netPremium * sharePercent) / 100 + premiumPerShareAmount
 
     return {
-      recievedNetPremium: (information.netPremium * sharePercent) / 100 + premiumPerShareAmount,
+      recievedNetPremium,
       distribuitedNetPremium: distributedNetPremium,
-      diference: (information.netPremium * sharePercent) / 100 - shareAmount
+      diference: recievedNetPremium - distributedNetPremium
     }
   }
 }
