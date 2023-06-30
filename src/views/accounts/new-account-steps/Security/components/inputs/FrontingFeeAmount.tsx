@@ -37,7 +37,7 @@ export const FrontingFeeAmount = ({
     <FormControl fullWidth sx={{ mb: 2 }}>
       <NumericFormat
         autoFocus
-        label='Fronting Fee'
+        label='Fronting fee'
         value={value}
         onChange={e => {
           handleChangeFrontingFeeAmount(Number(e.target.value.replace('$', '').replaceAll(',', '')))
