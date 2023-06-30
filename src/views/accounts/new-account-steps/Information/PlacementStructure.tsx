@@ -210,8 +210,6 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
         break
       }
       case 'taxesP': {
-        console.log('taxesP calculo')
-
         if(typeof value == 'number' ){
           taxesPc = value
           const result = (grossPremiumc * taxesPc) / 100
@@ -231,6 +229,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
         frontingFeec = isFinite(result) ? result : 0
 
         handleNumericInputChange(value, 'frontingFeeP')
+
       }else{
         frontingFeec = 0
       }
@@ -242,7 +241,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
         frontingFeePc = isFinite(result) ? result : 0
         frontingFeec = value
         handleNumericInputChange(value, 'frontingFee')
-        setTotalDiscountsError(discountValidation)
+
         }else{
           frontingFeePc = 0
         }
@@ -289,16 +288,17 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
     setFrontingFeeP(frontingFeePc)
     setTaxesP(taxesPc)
     setTaxes(taxesc)
-    setTotalDiscountsError(discountValidation)
+    setGrossPremium(grossPremiumc)
     setDiscounts(updatedDiscounts)
     setReinsuranceBrokerage(reinsuranceBrokeragec)
     setReinsuranceBrokerageP(reinsuranceBrokeragePc)
     setNetPremiumWithoutDiscounts(netPremiumWithoutDiscountsc)
     setNetPremiumWithTaxes(netPremiumWithTaxesc)
     setNetPremium(netPremiumc)
-    if (discounts.length > 0) {
-      setTotalDiscountsError(discountValidation)
-    }
+
+    // if (discounts.length > 0) {
+    //   setTotalDiscountsError(discountValidation)
+    // }
 
     setPlacementStructure({
       ...placementStructure,
@@ -535,10 +535,17 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [discounts])
   React.useEffect(() => {
-
+    setTotalDiscountsError(discountValidation)
     calculate()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [discount])
+
+  React.useEffect(() => {
+    setTotalDiscountsError(discountValidation)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [taxesP, taxes, frontingFee, frontingFeeP, grossPremium])
+
+
 
   React.useEffect(() => {
     if (makeValidations) {
@@ -875,11 +882,13 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
                   calculate('taxesP','')
                 }
               }}
-              error={taxesChecked && (errors.taxesPError || errors.totalDiscountsError)}
+              error={taxesChecked && (errors.taxesPError || errors.totalDiscountsError || totalDiscountsError)}
               helperText={
                 taxesChecked && errors.taxesPError
                   ? 'This field must be greater than 0'
                   : taxesChecked && errors.totalDiscountsError
+                  ? 'The total discounts percentage should be less than 100%'
+                  : taxesChecked && totalDiscountsError
                   ? 'The total discounts percentage should be less than 100%'
                   : ''
               }
@@ -913,13 +922,15 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
                   calculate('taxes','')
                 }
               }}
-              error={taxesChecked && (errors.taxesError || errors.totalDiscountsError)}
+              error={taxesChecked && (errors.taxesError || errors.totalDiscountsError || totalDiscountsError)}
               helperText={
                 taxesChecked && errors.taxesError
                   ? 'This field must be greater than 0'
                   : taxesChecked && errors.totalDiscountsError
                   ? 'The total amount of discounts should be less than Gross Premium'
-                  : ''
+                  : taxesChecked && totalDiscountsError
+                  ? 'The total amount of discounts should be less than Gross Premium'
+                  :''
               }
             />
           </FormControl>
@@ -962,11 +973,13 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
                 }
               }}
 
-              error={frontingChecked && (errors.frontingFeePError || errors.totalDiscountsError)}
+              error={frontingChecked && (errors.frontingFeePError || errors.totalDiscountsError || totalDiscountsError)}
               helperText={
                 frontingChecked && errors.frontingFeePError
                   ? 'This field must be greater than 0'
                   : frontingChecked && errors.totalDiscountsError
+                  ? 'The total discounts percentage should be less than 100%'
+                  : frontingChecked && totalDiscountsError
                   ? 'The total discounts percentage should be less than 100%'
                   : ''
               }
@@ -1001,11 +1014,13 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
                 }
               }}
 
-              error={frontingChecked && (errors.frontingFeeError || errors.totalDiscountsError)}
+              error={frontingChecked && (errors.frontingFeeError || errors.totalDiscountsError || totalDiscountsError)}
               helperText={
                 frontingChecked && errors.frontingFeeError
                   ? 'This field must be greater than 0'
                   : frontingChecked && errors.totalDiscountsError
+                  ? 'The total amount of discounts should be less than Gross Premium'
+                  :frontingChecked && totalDiscountsError
                   ? 'The total amount of discounts should be less than Gross Premium'
                   : ''
               }
