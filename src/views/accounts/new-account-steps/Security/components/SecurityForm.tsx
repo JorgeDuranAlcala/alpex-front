@@ -104,7 +104,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
   const operationSecurity: CalculateSecurity = new CalculateSecurity().setInformation(information).setSecurity(security)
 
   const schemaRetrocedant = yup.object().shape({
-    ...selectRetroCedant_validations({ frontingFeeEnabled }).fields,
+    ...selectRetroCedant_validations({ frontingFeeEnabled, isGross }).fields,
     ...selectRetroCedantContact_validations({ frontingFeeEnabled }).fields,
     ...frontingFeePercent_validations({ frontingFeeEnabled }).fields,
     ...frontingFeeAmount_validations({ frontingFeeEnabled }).fields
