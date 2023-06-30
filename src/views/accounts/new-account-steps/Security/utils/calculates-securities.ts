@@ -110,7 +110,8 @@ export class CalculateSecurity {
         this.security.dynamicCommissionAmount -
         (this.security.frontingFeeAmount ? this.security.frontingFeeAmount : 0) -
         this.security.brokerAgeAmount -
-        (this.security.taxesAmount ? this.security.taxesAmount : 0)
+        (this.security.taxesAmount ? this.security.taxesAmount : 0) -
+        (this.security.totalAmountOfDiscounts ? this.security.totalAmountOfDiscounts : 0)
       )
     } else {
       // * is Net Premium
