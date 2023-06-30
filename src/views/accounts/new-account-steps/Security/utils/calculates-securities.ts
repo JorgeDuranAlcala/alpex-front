@@ -33,7 +33,7 @@ export class CalculateSecurity {
     if (this.security.isGross) {
       // * is Gross Premium
 
-      return (this.information.grossPremium * this.security.share) / 100
+      return (this.security.netPremiumAt100 * this.security.share) / 100
     } else {
       // * is Net Premium
       let result = (this.security.netPremiumAt100 * this.security.share) / 100
@@ -132,6 +132,7 @@ export class CalculateSecurity {
     if (this.security.isGross) {
       // * is Gross Premium
       let result = this.security.grossPremiumPerShare - this.security.reinsuranceBrokerage
+
       result = (result / taxes) * 100
 
       return result
@@ -147,10 +148,11 @@ export class CalculateSecurity {
     // return (this.security.taxes * this.security.premiumPerShareAmount) / 100
     if (this.security.isGross) {
       // * is Gross Premium
+
       let result = this.security.grossPremiumPerShare - this.security.reinsuranceBrokerage
 
       if (this.security.taxes || value) {
-        result = (result * (value || this.security.taxes)) / 100
+        result = (result * (value ?? this.security.taxes)) / 100
       } else {
         result = 0
       }
