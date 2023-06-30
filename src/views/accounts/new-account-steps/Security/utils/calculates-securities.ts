@@ -197,7 +197,7 @@ export class CalculateSecurity {
     }
   }
 
-  static getData(securities: SecurityDto[], information: FormInformation) {
+  static getData(securities: SecurityDto[]) {
     // let sharePercent = 0
     let premiumPerShareAmountNet = 0
     let premiumPerShareAmountGros = 0
