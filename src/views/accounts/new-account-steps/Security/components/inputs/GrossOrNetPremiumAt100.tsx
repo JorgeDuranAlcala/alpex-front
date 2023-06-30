@@ -44,8 +44,8 @@ export const GrossOrNetPremiumAt100 = ({ index, isGross, value, errorMessage, va
 
   useEffect(() => {
     const newDiscountsList = discountsList.map(discount => ({
-      discountPercent: discount.discountPercent,
-      discountAmount: operationSecurity.getDiscountAmount(discount.discountPercent),
+      percentage: discount.percentage,
+      amount: operationSecurity.getDiscountAmount(discount.amount),
     }));
 
     updateAllDiscounts(newDiscountsList);
