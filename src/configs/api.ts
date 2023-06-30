@@ -61,7 +61,7 @@ export enum ACCOUNT_SECURITY_ROUTES {
 export enum ACCOUNT_SECURITY_TOTAL_ROUTES {
   ADD = 'account/securityTotal/add',
   GET_BY_ID_ACCOUNT = 'account/securityTotal',
-  UPDATE = 'account/securityTotal'
+  UPDATE = 'account/securityTotal/update'
 }
 
 export enum ACCOUNT_SUBLIMIT_ROUTES {
@@ -270,5 +270,6 @@ export enum CHAT_BOT {
 // ==== ENDORSEMENT
 export enum ENDORSEMENT_ROUTES {
   GET_BY_ID_ACCOUNT = 'endorsement/history',
-  GET_BY_ID = 'endorsement'
+  GET_BY_ID = 'endorsement',
+  ADD = 'endorsement/add'
 }
