@@ -183,18 +183,14 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
         break
       }
       case 'taxes': {
-        const result = (value * 100) / grossPremiumc
+        const result = (taxesc * 100) / grossPremiumc
         setTaxesP(isFinite(result) ? result : 0)
-        setTaxes(value)
-        handleNumericInputChange(value, 'taxes')
         setTotalDiscountsError(discountValidation)
         break
       }
       case 'taxesP': {
-        const result = grossPremiumc * (value / 100)
+        const result = grossPremiumc * (taxesPc / 100)
         setTaxes(isFinite(result) ? result : 0)
-        setTaxesP(value)
-        handleNumericInputChange(value, 'taxesP')
         setTotalDiscountsError(discountValidation)
         break
       }
@@ -802,17 +798,10 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
 
                 return (floatValue! >= 0 && floatValue! <= 100) || floatValue === undefined
               }}
-
+              onBlur={() => calculate('taxesP')}
               onValueChange={value => {
-
-                if (value.floatValue) {
-                  calculate('taxesP',value.floatValue)
-
-                }else{
-                  calculate('taxesP',0)
-                }
-
-                // calculate('taxesP')
+                setTaxesP(value.floatValue)
+                handleNumericInputChange(value.floatValue, 'taxesP')
               }}
               error={taxesChecked && (errors.taxesPError || errors.totalDiscountsError)}
               helperText={
@@ -844,16 +833,11 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
 
                 return (floatValue! >= 0 && floatValue! <= upLimit) || floatValue === undefined
               }}
-
+              onBlur={() => calculate('taxes')}
               onValueChange={value => {
-                if (value.floatValue) {
-                  calculate('taxes',value.floatValue)
-
-                }else{
-                  calculate('taxes',0)
-                }
+                setTaxes(value.floatValue)
+                handleNumericInputChange(value.floatValue, 'taxes')
               }}
-
               error={taxesChecked && (errors.taxesError || errors.totalDiscountsError)}
               helperText={
                 taxesChecked && errors.taxesError
