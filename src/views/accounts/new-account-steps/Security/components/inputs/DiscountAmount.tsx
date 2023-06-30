@@ -1,25 +1,20 @@
-import {
-  FormControl,
-  TextField
-} from '@mui/material';
-import { useContext } from 'react';
-import { NumericFormat } from 'react-number-format';
+import { FormControl, TextField } from '@mui/material'
+import { useContext } from 'react'
+import { NumericFormat } from 'react-number-format'
 
 // import { SecurityContext } from '../../SecurityView';
-import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interface';
-import { CalculateSecurity } from '../../utils/calculates-securities';
-import { DiscountsContext } from '../discounts/DiscountsContext';
+import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interface'
+import { CalculateSecurity } from '../../utils/calculates-securities'
+import { DiscountsContext, IDiscountInputs } from '../discounts/DiscountsContext'
 
 // ! only if we want specific props
 interface DiscountAmountProps extends Omit<ISecurityInputProps, 'errorMessage'> {
-  discountIndex: number;
-  operationSecurity: CalculateSecurity;
+  discountIndex: number
+  operationSecurity: CalculateSecurity
+  discountsList: IDiscountInputs[]
 }
 
-
-
-export const DiscountAmount = ({ discountIndex, value, operationSecurity }: DiscountAmountProps) => {
-
+export const DiscountAmount = ({ discountIndex, value, operationSecurity, discountsList }: DiscountAmountProps) => {
   // const {
 
   //   securities,
@@ -27,15 +22,16 @@ export const DiscountAmount = ({ discountIndex, value, operationSecurity }: Disc
   //   // calculateSecurities
   // } = useContext(SecurityContext);
 
-  const { updateDiscountByIndex } = useContext(DiscountsContext);
+  const { updateDiscountByIndex } = useContext(DiscountsContext)
 
   const handleChangeDiscountAmount = (value: number) => {
     // console.log('OnChange DiscountAmount value: ', { value, index, discountIndex });
+
     updateDiscountByIndex({
       index: discountIndex,
       discountPercent: operationSecurity.getDiscountPercent(value),
-      discountAmount: value,
-    });
+      discountAmount: value
+    })
 
     // const tempSecurities = [...securities]
     // tempSecurities[index] = {
@@ -63,4 +59,3 @@ export const DiscountAmount = ({ discountIndex, value, operationSecurity }: Disc
     </FormControl>
   )
 }
-

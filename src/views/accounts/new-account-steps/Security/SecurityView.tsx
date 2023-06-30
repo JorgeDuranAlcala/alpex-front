@@ -88,6 +88,14 @@ const Security = ({ onStepChange }: SecurityProps) => {
           .setSecurity(security)
         if (security?.idCReinsuranceCompany?.id) companiesSelect.push(security.idCReinsuranceCompany.id)
 
+        //TODO:@ISRRA - obtener los discounts guardados desde la base de datos
+        const tempDiscountList = []
+        if (security?.discounts)
+          for (const discount of security?.discounts) {
+            discount.discountAmount = operationSecurity.getDiscountAmount(discount.discountPercent)
+            tempDiscountList.push(discount)
+          }
+        security.discounts = tempDiscountList
         security.premiumPerShareAmount = operationSecurity.getPremierPerShare() || 0
         security.grossPremiumPerShare = operationSecurity.getGrossPremierPerShare() || 0
         security.brokerAgeAmount = operationSecurity.getBrokerAge() || 0
