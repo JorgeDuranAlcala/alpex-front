@@ -3,7 +3,7 @@ import { SecurityTotalDto } from 'src/services/accounts/dtos/securityTotal.dto'
 import SecurityTotalService from 'src/services/accounts/securityTotal.service'
 
 export const useFindSecurityTotalByAccountId = (id: number) => {
-  const [securityTotal, setSecurityTotal] = useState<SecurityTotalDto>()
+  const [securityTotal, setSecurityTotal] = useState<SecurityTotalDto[]>()
 
   useEffect(() => {
     SecurityTotalService.getByIdAccount(id)

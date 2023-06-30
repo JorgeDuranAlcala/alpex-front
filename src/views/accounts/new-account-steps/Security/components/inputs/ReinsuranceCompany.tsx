@@ -55,7 +55,7 @@ export const ReinsuranceCompany = ({
   }
 
   const handleChangeCompany = (e: SelectChangeEvent<string>): void => {
-    const avaliableCompanies = avaliableReinsurers
+    const avaliableCompanies: ReinsuranceCompanyDto | undefined = avaliableReinsurers
       .filter(reinsure => !companiesSelect.includes(reinsure.id) || security?.idCReinsuranceCompany?.id === reinsure.id)
       .find(reinsurer => reinsurer.id === Number(e.target.value))
 
@@ -64,7 +64,9 @@ export const ReinsuranceCompany = ({
       tempSecurities[index] = {
         ...tempSecurities[index],
         idCReinsuranceCompany: avaliableCompanies,
-        frontingFeeActive: false,
+
+        // frontingFeeActive: false,
+
         isGross: avaliableCompanies.special,
         netPremiumAt100: avaliableCompanies.special ? information.grossPremium : information.netPremium
       }

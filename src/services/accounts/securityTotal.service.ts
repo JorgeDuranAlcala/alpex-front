@@ -3,10 +3,10 @@ import { AppAlpexApiGateWay } from '../app.alpex.api-getway'
 import { SecurityTotalDto } from './dtos/securityTotal.dto'
 
 class SecurityTotalService {
-  async addSecurityTotal(securityTotalIn: Partial<SecurityTotalDto>): Promise<SecurityTotalDto | string> {
+  async addSecurityTotal(securityTotalIn: Partial<SecurityTotalDto>[]): Promise<SecurityTotalDto[] | string> {
     try {
-      const { data } = await AppAlpexApiGateWay.post<Promise<SecurityTotalDto>>(ACCOUNT_SECURITY_TOTAL_ROUTES.ADD, {
-        ...securityTotalIn
+      const { data } = await AppAlpexApiGateWay.post<Promise<SecurityTotalDto[]>>(ACCOUNT_SECURITY_TOTAL_ROUTES.ADD, {
+        securitiesTotal: securityTotalIn
       })
 
       return data
@@ -15,9 +15,9 @@ class SecurityTotalService {
     }
   }
 
-  async getByIdAccount(idAccount: number): Promise<SecurityTotalDto> {
+  async getByIdAccount(idAccount: number): Promise<SecurityTotalDto[]> {
     try {
-      const { data } = await AppAlpexApiGateWay.get<Promise<SecurityTotalDto>>(
+      const { data } = await AppAlpexApiGateWay.get<Promise<SecurityTotalDto[]>>(
         `${ACCOUNT_SECURITY_TOTAL_ROUTES.GET_BY_ID_ACCOUNT}/${idAccount}`
       )
 
@@ -28,12 +28,12 @@ class SecurityTotalService {
     }
   }
 
-  async updateById(id: number, update: Partial<SecurityTotalDto>): Promise<SecurityTotalDto> {
+  async updateById(update: Partial<SecurityTotalDto>[]): Promise<SecurityTotalDto[]> {
     try {
-      const { data } = await AppAlpexApiGateWay.put<Promise<SecurityTotalDto>>(
-        `${ACCOUNT_SECURITY_TOTAL_ROUTES.UPDATE}/${id}`,
+      const { data } = await AppAlpexApiGateWay.put<Promise<SecurityTotalDto[]>>(
+        `${ACCOUNT_SECURITY_TOTAL_ROUTES.UPDATE}`,
         {
-          ...update
+          securitiesTotal: update
         }
       )
 
