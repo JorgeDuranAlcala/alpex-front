@@ -62,8 +62,7 @@ const schema = yup.object().shape({
         limit = context.options?.context.informations[0]?.limit
       }
 
-     return +val <= +limit
-
+      return +val <= +limit
     })
     .required()
     .min(1, 'Field is required'),
@@ -148,7 +147,7 @@ const schema = yup.object().shape({
       is: (typeBi: string) => {
         return typeBi === 'money'
       },
-      then: yup.number().required('Field is required').min(1, "Value must be greater than 0")
+      then: yup.number().required('Field is required').min(1, 'Value must be greater than 0')
     }),
   idCDeductiblePer: yup
     .mixed()

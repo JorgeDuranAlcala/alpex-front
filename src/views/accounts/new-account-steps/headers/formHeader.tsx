@@ -185,9 +185,9 @@ const FormHeader = ({ isNewAccount }: any) => {
     account && setIdAccount(account.id)
   }, [account])
 
-  console.log('información', information, account, accounts, accountsReducer)
+  // console.log('información', information, account, accounts, accountsReducer)
 
-  console.log('objeto', status)
+  // console.log('objeto', status)
 
   return (
     <>

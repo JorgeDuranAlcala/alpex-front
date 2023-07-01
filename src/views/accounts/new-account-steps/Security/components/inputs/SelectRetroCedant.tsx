@@ -1,5 +1,5 @@
 import { FormControl, FormHelperText, InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material'
-import { Dispatch, SetStateAction, useContext } from 'react'
+import { Dispatch, SetStateAction, useContext, useEffect } from 'react'
 import * as yup from 'yup'
 
 import { RetroCedantDto } from '@/services/catalogs/dtos/RetroCedantDto'
@@ -26,6 +26,7 @@ export const SelectRetroCedant = ({
     const selectedRetroCendantId = e.target.value
     const retroCedant = retroCedants?.find(retroCedant => retroCedant.id === Number(selectedRetroCendantId))
     const tempSecurities = [...securities]
+
     if (retroCedant) {
       tempSecurities[index] = {
         ...tempSecurities[index],
@@ -37,6 +38,23 @@ export const SelectRetroCedant = ({
       setIdRetroCedant(retroCedant.id)
     }
   }
+
+  useEffect(() => {
+    const selectedRetroCendantId = value.toString()
+    const retroCedant = retroCedants?.find(retroCedant => retroCedant.id === Number(selectedRetroCendantId))
+    const tempSecurities = [...securities]
+
+    if (retroCedant) {
+      tempSecurities[index] = {
+        ...tempSecurities[index],
+        idCRetroCedant: retroCedant,
+        idCRetroCedantContact: {} as RetroCedantContactDto
+      }
+      validateForm(tempSecurities[index])
+      setSecurities(tempSecurities)
+      setIdRetroCedant(retroCedant.id)
+    }
+  }, [])
 
   return (
     <FormControl fullWidth sx={{ mb: 2 }}>
