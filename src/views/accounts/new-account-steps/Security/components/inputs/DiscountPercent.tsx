@@ -1,10 +1,13 @@
 import { FormControl, FormHelperText, TextField } from '@mui/material'
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect } from 'react'
 import { NumericFormat } from 'react-number-format'
 
 import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interface'
 import { CalculateSecurity } from '../../utils/calculates-securities'
 import { DiscountsContext, IDiscountInputs } from '../discounts/DiscountsContext'
+
+// import { SecurityContext } from '../../SecurityView'
+import { usePercentageAchieved } from '../../hooks/usePercentageAchieved'
 
 // ! only if we want specific props
 interface DiscountPercentProps extends Omit<ISecurityInputProps, 'errorMessage'> {
@@ -13,14 +16,16 @@ interface DiscountPercentProps extends Omit<ISecurityInputProps, 'errorMessage'>
   discountsList: IDiscountInputs[]
 }
 
-export const DiscountPercent = ({ discountIndex, value, operationSecurity, discountsList }: DiscountPercentProps) => {
+export const DiscountPercent = ({ index, discountIndex, value, operationSecurity, discountsList }: DiscountPercentProps) => {
   // const {
-  //   // securities,
+  //   securities,
+
   //   // calculateSecurities
   // } = useContext(SecurityContext);
 
+  const { achievedMessageError, checkIsPercentageAchieved } = usePercentageAchieved();
+
   const { updateDiscountByIndex } = useContext(DiscountsContext)
-  const [messageError, setMessageError] = useState('')
   const handleChangeDiscountPercent = (value: number) => {
     updateDiscountByIndex({
       index: discountIndex,
@@ -28,16 +33,14 @@ export const DiscountPercent = ({ discountIndex, value, operationSecurity, disco
       amount: operationSecurity.getDiscountAmount(value)
     })
   }
+
   useEffect(() => {
-    const totalPercentOfDiscounts = discountsList.reduce((value, current) => {
-      value += current.percentage
 
-      return value
-    }, 0)
+    checkIsPercentageAchieved({ formIndex: index });
 
-    totalPercentOfDiscounts > 100 ? setMessageError('Discount must be less than 100%') : setMessageError('')
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [discountsList[discountIndex]])
+  }, [discountsList[discountIndex]]);
+
 
   return (
     <FormControl fullWidth sx={{ mb: 6.5 }}>
@@ -55,7 +58,7 @@ export const DiscountPercent = ({ discountIndex, value, operationSecurity, disco
           return (values.floatValue! >= 0 && values.floatValue! <= 100) || values.floatValue === undefined
         }}
       />
-      <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>{messageError}</FormHelperText>
+      <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>{achievedMessageError}</FormHelperText>
     </FormControl>
   )
 }
