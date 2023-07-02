@@ -28,11 +28,12 @@ import {
   Modal,
   TextField
 } from '@mui/material'
-import { createContext, useEffect, useState } from 'react'
+import { createContext, useEffect, useRef, useState } from 'react'
 import Icon from 'src/@core/components/icon'
 import UserThemeOptions from 'src/layouts/UserThemeOptions'
 import { SecurityMapper } from './mappers/SecurityForm.mapper'
 
+import { IForField } from './hooks/useDataFirstTime'
 import { CalculateSecurity } from './utils/calculates-securities'
 
 export const SecurityContext = createContext<SecurityContextDto>({} as SecurityContextDto)
@@ -60,6 +61,10 @@ const Security = ({ onStepChange }: SecurityProps) => {
     limit: 0
   })
   const [companiesSelect] = useState<number[]>([])
+
+  const firstTimeTaxesFieldsRef = useRef<IForField[]>([]);
+  const firstTimeFrontingFeeFieldsRef = useRef<IForField[]>([]);
+
   const { account, setAccountId, getAccountById, accountId } = useGetAccountById()
   const { saveSecurityTotal } = useAddSecurityTotal()
   const { updateSecurityTotal } = useUpdateSecurityTotalById()
@@ -123,7 +128,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
           taxes: Number(security.taxes) || 0,
           frontingFee: Number(security.frontingFee) || 0
         })
-        console.log(Number(security.taxes), Number(security.frontingFee))
+
       }
       let dataForm: FormSecurity = {
         ...allFormData,
@@ -176,6 +181,8 @@ const Security = ({ onStepChange }: SecurityProps) => {
       // Todo quitar el as any
       const mapper = SecurityMapper.securityToSecurityForm(security, accountData as any)
 
+      // console.log(mapper);
+      // debugger;
       if (security.id) {
         update.push({
           ...mapper,
@@ -361,6 +368,14 @@ const Security = ({ onStepChange }: SecurityProps) => {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isNextStep])
+
+  // useEffect(() => {
+  //   if (firstTimeSecurities.length > 0) {
+  //     firstTimeSecurities.forEach((_, index) => {
+  //       firstTimeTaxesFieldsRef.current.push()
+  //     }
+  //   }
+  // }, [firstTimeSecurities]);
 
   return (
     <SecurityContext.Provider

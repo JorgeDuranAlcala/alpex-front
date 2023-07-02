@@ -1,18 +1,19 @@
 import { FormControl, FormHelperText, TextField } from '@mui/material'
-import { useContext, useEffect } from 'react'
+import { MutableRefObject, useContext, useEffect } from 'react'
 import { NumericFormat } from 'react-number-format'
 import * as yup from 'yup'
 
 import { SecurityContext } from '../../SecurityView'
-import { useDataFirstTime } from '../../hooks/useDataFirstTime'
+import { IForField } from '../../hooks/useDataFirstTime'
 import { usePercentageAchieved } from '../../hooks/usePercentageAchieved'
 import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interface'
 import { CalculateSecurity } from '../../utils/calculates-securities'
 
 // ! only if we want specific props
 interface TaxesPercentProps extends ISecurityInputProps {
-  operationSecurity: CalculateSecurity
-  isDisabled: boolean
+  operationSecurity: CalculateSecurity;
+  isDisabled: boolean;
+  fieldRef: MutableRefObject<IForField>;
 }
 
 export const TaxesPercent = ({
@@ -21,17 +22,18 @@ export const TaxesPercent = ({
   isDisabled,
   errorMessage,
   validateForm,
-  operationSecurity
+  operationSecurity,
+  fieldRef
 }: TaxesPercentProps) => {
   const { activeErros, securities, calculateSecurities } = useContext(SecurityContext)
 
   const { achievedMessageError, checkIsPercentageAchieved } = usePercentageAchieved();
-  const { forTaxes } = useDataFirstTime({ formIndex: index, operationSecurity })
 
   const handleChangeTaxesPercent = (value: number) => {
-    console.log(value)
-    forTaxes.current.isTouched = true;
 
+    if (fieldRef) {
+      fieldRef.current.isTouched = true;
+    }
     const tempSecurities = [...securities]
     tempSecurities[index] = {
       ...tempSecurities[index],
@@ -60,14 +62,14 @@ export const TaxesPercent = ({
   }, [securities[index]]);
 
 
-
+  // console.log({ isTacesTouxhes: forTaxes.current.isTouched, value })
 
   return (
     <FormControl fullWidth sx={{ mb: 6.5 }}>
       <NumericFormat
         autoFocus
         label='Taxes %'
-        value={forTaxes.current.isTouched ? value : forTaxes.current.percent}
+        value={value}
         onChange={e => {
           handleChangeTaxesPercent(Number(e.target.value.replace('%', '')))
         }}

@@ -128,7 +128,11 @@ export type errorsSecurity = {
   idCRetroCedantContact: string
 }
 export type SecurityContextDto = {
-  firstTimeSecurities: SecurityDto[]
+  firstTimeSecurities: SecurityDto[];
+
+  // firstTimeTaxesFieldRef: MutableRefObject<IForField[]>;
+  // firstTimeFrontingFeeFieldRef: MutableRefObject<IForField[]>;
+
   securities: SecurityDto[]
   allErrors: boolean[]
   activeErros: boolean

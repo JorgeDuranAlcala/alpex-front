@@ -5,7 +5,7 @@ import { CalculateSecurity } from "../utils/calculates-securities";
 
 type TVariant = 'taxes' | 'frontingFee';
 
-interface IForField {
+export interface IForField {
   isTouched: boolean;
   percent: number;
 }
@@ -43,7 +43,8 @@ export const useDataFirstTime = ({ formIndex, operationSecurity }: UseDataFirstT
     if (!validateRecalculate(variant)) return;
 
     const tempSecurities = [...securities];
-    console.log('tempSecurities', tempSecurities);
+
+    // console.log('tempSecurities', tempSecurities);
 
     if (variant === 'taxes') {
       tempSecurities[formIndex].taxes = forTaxes.current.percent;
@@ -68,6 +69,7 @@ export const useDataFirstTime = ({ formIndex, operationSecurity }: UseDataFirstT
       if (forFrontingFee.current.isTouched === true) return false;
       if (forFrontingFee.current.percent === firstTimeSecurities[formIndex].frontingFee) return false;
     }
+    console.log('return true recalucluate', forTaxes.current.isTouched, variant, forTaxes.current.percent, forFrontingFee.current.percent)
 
     return true;
   }

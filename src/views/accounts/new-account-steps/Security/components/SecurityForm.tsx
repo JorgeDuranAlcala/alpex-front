@@ -265,9 +265,12 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
   }, [frontingFeeEnabled, isTaxesEnabled])
 
 
-  const { checkValues } = useDataFirstTime({ formIndex: index, operationSecurity });
+  const { forTaxes, forFrontingFee, checkValues } = useDataFirstTime({ formIndex: index, operationSecurity });
+
 
   useEffect(() => {
+
+    // debugger;
     checkValues({
       taxes: securities[index].taxes,
       frontingFee: securities[index].taxes
@@ -477,6 +480,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
                 validateForm={validateForm}
                 operationSecurity={operationSecurity}
                 isDisabled={!isTaxesEnabled}
+                fieldRef={forTaxes}
               />
 
               <TaxesAmount
@@ -507,6 +511,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
                 validateForm={validateForm}
                 operationSecurity={operationSecurity}
                 isDisabled={!frontingFeeEnabled}
+                fieldRef={forFrontingFee}
               />
 
               <FrontingFeeAmount

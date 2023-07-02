@@ -3,11 +3,12 @@ import {
   FormHelperText,
   TextField
 } from '@mui/material';
-import { useContext, useEffect } from 'react';
+import { MutableRefObject, useContext, useEffect } from 'react';
 import { NumericFormat } from 'react-number-format';
 import * as yup from 'yup';
 
 import { SecurityContext } from '../../SecurityView';
+import { IForField } from '../../hooks/useDataFirstTime';
 import { usePercentageAchieved } from '../../hooks/usePercentageAchieved';
 import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interface';
 import { CalculateSecurity } from '../../utils/calculates-securities';
@@ -16,11 +17,12 @@ import { CalculateSecurity } from '../../utils/calculates-securities';
 interface FrontingFeePercentProps extends ISecurityInputProps {
   operationSecurity: CalculateSecurity;
   isDisabled: boolean;
+  fieldRef: MutableRefObject<IForField>;
 }
 
 // type FrontingFeePercentProps = ISecurityInputProps;
 
-export const FrontingFeePercent = ({ index, value, isDisabled, errorMessage, validateForm }: FrontingFeePercentProps) => {
+export const FrontingFeePercent = ({ index, value, isDisabled, errorMessage, validateForm, fieldRef }: FrontingFeePercentProps) => {
 
   const {
     activeErros,
@@ -33,6 +35,10 @@ export const FrontingFeePercent = ({ index, value, isDisabled, errorMessage, val
   const handleChangeFrontingFeePercent = (value: number) => {
 
     // console.log('frontingFee Percent', value)
+
+    if (fieldRef) {
+      fieldRef.current.isTouched = true;
+    }
 
     const tempSecurities = [...securities]
     tempSecurities[index] = {
