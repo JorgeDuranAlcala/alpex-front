@@ -19,7 +19,7 @@ interface FrontingFeePercentProps extends ISecurityInputProps {
 
 // type FrontingFeePercentProps = ISecurityInputProps;
 
-export const FrontingFeePercent = ({ index, value, isDisabled, errorMessage, validateForm, operationSecurity }: FrontingFeePercentProps) => {
+export const FrontingFeePercent = ({ index, value, isDisabled, errorMessage, validateForm }: FrontingFeePercentProps) => {
 
   const {
     activeErros,
@@ -28,11 +28,15 @@ export const FrontingFeePercent = ({ index, value, isDisabled, errorMessage, val
   } = useContext(SecurityContext);
 
   const handleChangeFrontingFeePercent = (value: number) => {
+
+    // console.log('frontingFee Percent', value)
+
     const tempSecurities = [...securities]
     tempSecurities[index] = {
       ...tempSecurities[index],
       frontingFee: value,
-      frontingFeeAmount: operationSecurity.getFrontingFeeAmount(value)
+
+      // frontingFeeAmount: operationSecurity.getFrontingFeeAmount(value)
     }
     validateForm(tempSecurities[index])
     calculateSecurities(tempSecurities)

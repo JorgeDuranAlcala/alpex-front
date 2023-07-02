@@ -101,7 +101,9 @@ const Security = ({ onStepChange }: SecurityProps) => {
         security.brokerAgeAmount = operationSecurity.getBrokerAge() || 0
         security.dynamicCommissionAmount = operationSecurity.getDynamicComissionAmount() || 0
 
-        security.frontingFeeAmount = operationSecurity.getFrontingFeeAmount(security.frontingFee) || 0
+        security.frontingFeeAmount = operationSecurity.getFrontingFeeAmount(security.frontingFee) || 0;
+
+        // security.frontingFee = operationSecurity.getFrontingFeePercent(security.frontingFeeAmount) || 0;
 
         security.taxesAmount = operationSecurity.getTaxesAmount(security.taxes) || 0
 
@@ -112,7 +114,8 @@ const Security = ({ onStepChange }: SecurityProps) => {
           difference: Number(security.difference) || 0,
           distributedNetPremium: Number(security.distributedNetPremium) || 0,
           dynamicCommission: Number(security.dynamicCommission) || 0,
-          frontingFee: Number(security.frontingFee) || 0,
+
+          // frontingFee: Number(security.frontingFee) || 0,
           netPremiumAt100: Number(security.netPremiumAt100) || 0,
           receivedNetPremium: Number(security.receivedNetPremium) || 0,
           reinsuranceBrokerage: Number(security.reinsuranceBrokerage) || 0,
