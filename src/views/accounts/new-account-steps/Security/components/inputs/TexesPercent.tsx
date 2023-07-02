@@ -1,9 +1,10 @@
 import { FormControl, FormHelperText, TextField } from '@mui/material'
-import { useContext } from 'react'
+import { useContext, useEffect } from 'react'
 import { NumericFormat } from 'react-number-format'
 import * as yup from 'yup'
 
 import { SecurityContext } from '../../SecurityView'
+import { usePercentageAchieved } from '../../hooks/usePercentageAchieved'
 import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interface'
 import { CalculateSecurity } from '../../utils/calculates-securities'
 
@@ -23,6 +24,8 @@ export const TaxesPercent = ({
 }: TaxesPercentProps) => {
   const { activeErros, securities, calculateSecurities } = useContext(SecurityContext)
 
+  const { achievedMessageError, checkIsPercentageAchieved } = usePercentageAchieved();
+
   const handleChangeTaxesPercent = (value: number) => {
     console.log(value)
 
@@ -34,11 +37,28 @@ export const TaxesPercent = ({
       taxesAmount: operationSecurity.getTaxesAmount(value)
     }
     validateForm(tempSecurities[index])
-    calculateSecurities(tempSecurities)
+    calculateSecurities(tempSecurities);
   }
 
+  useEffect(() => {
+    checkIsPercentageAchieved({ formIndex: index });
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [securities[index].taxes]);
+
+  // * Si el campo ya cuenta con un mensaje de error, se ejecuta el chequeo de porcentaje
+  // * alcanzado, esto con el fin de que el mensaje de error se borre para este campo
+  // * en caso de que el porcentaje se disminuya desde otro lugar
+  useEffect(() => {
+
+    if (!achievedMessageError) return;
+    checkIsPercentageAchieved({ formIndex: index });
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [securities[index]]);
+
   return (
-    <FormControl fullWidth sx={{ mb: 2 }}>
+    <FormControl fullWidth sx={{ mb: 6.5 }}>
       <NumericFormat
         autoFocus
         label='Taxes %'
@@ -55,7 +75,9 @@ export const TaxesPercent = ({
         disabled={isDisabled}
       />
 
-      <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>{activeErros && errorMessage}</FormHelperText>
+      <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
+        {activeErros ? errorMessage : achievedMessageError}
+      </FormHelperText>
     </FormControl>
   )
 }
