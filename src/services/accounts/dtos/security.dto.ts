@@ -129,10 +129,6 @@ export type errorsSecurity = {
 }
 export type SecurityContextDto = {
   firstTimeSecurities: SecurityDto[];
-
-  // firstTimeTaxesFieldRef: MutableRefObject<IForField[]>;
-  // firstTimeFrontingFeeFieldRef: MutableRefObject<IForField[]>;
-
   securities: SecurityDto[]
   allErrors: boolean[]
   activeErros: boolean

@@ -265,8 +265,14 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
   }, [frontingFeeEnabled, isTaxesEnabled])
 
 
+  /**
+   * * Las validaciones actuales resetean los porcentages de taxes y frontingFee
+   * * aún cuando ya hay valores desde bdd.
+   * * Para no reestructuras las validaciones actuales,
+   * * se crea este hook que comprueba si existen valores desde bdd
+   * * si es así, los setea en el formulario después de las validaciones actuales.
+   */
   const { forTaxes, forFrontingFee, checkValues } = useDataFirstTime({ formIndex: index, operationSecurity });
-
 
   useEffect(() => {
 

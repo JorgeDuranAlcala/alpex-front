@@ -28,12 +28,11 @@ import {
   Modal,
   TextField
 } from '@mui/material'
-import { createContext, useEffect, useRef, useState } from 'react'
+import { createContext, useEffect, useState } from 'react'
 import Icon from 'src/@core/components/icon'
 import UserThemeOptions from 'src/layouts/UserThemeOptions'
 import { SecurityMapper } from './mappers/SecurityForm.mapper'
 
-import { IForField } from './hooks/useDataFirstTime'
 import { CalculateSecurity } from './utils/calculates-securities'
 
 export const SecurityContext = createContext<SecurityContextDto>({} as SecurityContextDto)
@@ -62,8 +61,6 @@ const Security = ({ onStepChange }: SecurityProps) => {
   })
   const [companiesSelect] = useState<number[]>([])
 
-  const firstTimeTaxesFieldsRef = useRef<IForField[]>([]);
-  const firstTimeFrontingFeeFieldsRef = useRef<IForField[]>([]);
 
   const { account, setAccountId, getAccountById, accountId } = useGetAccountById()
   const { saveSecurityTotal } = useAddSecurityTotal()
@@ -135,6 +132,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
         formData: tempSecurities,
         ...CalculateSecurity.getData(tempSecurities)
       }
+
       if (account && account.securityTotal) {
         dataForm = {
           ...dataForm,
@@ -181,18 +179,25 @@ const Security = ({ onStepChange }: SecurityProps) => {
       // Todo quitar el as any
       const mapper = SecurityMapper.securityToSecurityForm(security, accountData as any)
 
-      // console.log(mapper);
-      // debugger;
+      console.log({ security })
       if (security.id) {
         update.push({
           ...mapper,
           id: security.id,
-          view: 1
+          view: 1,
+          discounts: security.discounts.length > 0 ? security.discounts.map((discount) => ({
+            ...discount,
+            id: security.id
+          })) : undefined
+
         })
+        console.log({ update })
       } else {
         save.push({ ...mapper, view: 1 })
+        console.log({ save })
       }
     }
+
 
     if (!allFormData.id) {
       await saveSecurityTotal([
