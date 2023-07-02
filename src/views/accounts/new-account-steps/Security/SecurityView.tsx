@@ -40,6 +40,7 @@ export const SecurityContext = createContext<SecurityContextDto>({} as SecurityC
 const Security = ({ onStepChange }: SecurityProps) => {
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
   const [securities, setSecurities] = useState<SecurityDto[]>([])
+  const [firstTimeSecurities, setFirstTimeSecurities] = useState<SecurityDto[]>([])
   const [activeErros, setActiveErrors] = useState<boolean>(false)
 
   const [isNextStep, setIsNextStep] = useState<boolean>(false)
@@ -103,7 +104,6 @@ const Security = ({ onStepChange }: SecurityProps) => {
 
         security.frontingFeeAmount = operationSecurity.getFrontingFeeAmount(security.frontingFee) || 0;
 
-        // security.frontingFee = operationSecurity.getFrontingFeePercent(security.frontingFeeAmount) || 0;
 
         security.taxesAmount = operationSecurity.getTaxesAmount(security.taxes) || 0
 
@@ -115,14 +115,15 @@ const Security = ({ onStepChange }: SecurityProps) => {
           distributedNetPremium: Number(security.distributedNetPremium) || 0,
           dynamicCommission: Number(security.dynamicCommission) || 0,
 
-          // frontingFee: Number(security.frontingFee) || 0,
           netPremiumAt100: Number(security.netPremiumAt100) || 0,
           receivedNetPremium: Number(security.receivedNetPremium) || 0,
           reinsuranceBrokerage: Number(security.reinsuranceBrokerage) || 0,
-          share: Number(security.share) || 0
+          share: Number(security.share) || 0,
 
-          // taxes: Number(security.taxes) || 0
+          taxes: Number(security.taxes) || 0,
+          frontingFee: Number(security.frontingFee) || 0
         })
+        console.log(Number(security.taxes), Number(security.frontingFee))
       }
       let dataForm: FormSecurity = {
         ...allFormData,
@@ -341,6 +342,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
   useEffect(() => {
     if (account && information) {
       calculateSecurities(account.securities)
+      setFirstTimeSecurities(account.securities);
       account.securityTotal &&
         setAllFormData({
           ...allFormData,
@@ -363,6 +365,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
   return (
     <SecurityContext.Provider
       value={{
+        firstTimeSecurities,
         securities,
         setSecurities,
         information,

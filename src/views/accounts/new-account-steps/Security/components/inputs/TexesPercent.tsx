@@ -4,6 +4,7 @@ import { NumericFormat } from 'react-number-format'
 import * as yup from 'yup'
 
 import { SecurityContext } from '../../SecurityView'
+import { useDataFirstTime } from '../../hooks/useDataFirstTime'
 import { usePercentageAchieved } from '../../hooks/usePercentageAchieved'
 import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interface'
 import { CalculateSecurity } from '../../utils/calculates-securities'
@@ -25,11 +26,12 @@ export const TaxesPercent = ({
   const { activeErros, securities, calculateSecurities } = useContext(SecurityContext)
 
   const { achievedMessageError, checkIsPercentageAchieved } = usePercentageAchieved();
+  const { forTaxes } = useDataFirstTime({ formIndex: index, operationSecurity })
 
   const handleChangeTaxesPercent = (value: number) => {
     console.log(value)
+    forTaxes.current.isTouched = true;
 
-    // Código a ejecutar cuando se deja de escribir
     const tempSecurities = [...securities]
     tempSecurities[index] = {
       ...tempSecurities[index],
@@ -57,12 +59,15 @@ export const TaxesPercent = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [securities[index]]);
 
+
+
+
   return (
     <FormControl fullWidth sx={{ mb: 6.5 }}>
       <NumericFormat
         autoFocus
         label='Taxes %'
-        value={value}
+        value={forTaxes.current.isTouched ? value : forTaxes.current.percent}
         onChange={e => {
           handleChangeTaxesPercent(Number(e.target.value.replace('%', '')))
         }}

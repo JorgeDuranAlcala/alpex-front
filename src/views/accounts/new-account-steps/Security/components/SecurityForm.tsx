@@ -13,6 +13,7 @@ import { ReinsuranceCompanyBinderDto } from '@/services/catalogs/dtos/Reinsuranc
 import { useContext, useEffect, useState } from 'react'
 import * as yup from 'yup'
 import { SecurityContext } from '../SecurityView'
+import { useDataFirstTime } from '../hooks/useDataFirstTime'
 import { CalculateSecurity } from '../utils/calculates-securities'
 import { ButtonAddDiscount } from './discounts/ButtonAddDiscount'
 import { DiscountsProvider } from './discounts/DiscountsProvider'
@@ -189,7 +190,6 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
 
   useEffect(() => {
     const informationForm1 = information as any
-    console.log('efect toggles')
     const tempSecurities = [...securities]
 
     //validacion taxes
@@ -206,6 +206,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
     } else {
       setIsShowToggleTaxes(false)
       setIsTaxesEnabled(false)
+
       tempSecurities[index] = {
         ...tempSecurities[index],
         taxes: 0,
@@ -262,6 +263,26 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [frontingFeeEnabled, isTaxesEnabled])
+
+
+  const { checkValues } = useDataFirstTime({ formIndex: index, operationSecurity });
+
+  useEffect(() => {
+    checkValues({
+      taxes: securities[index].taxes,
+      frontingFee: securities[index].taxes
+    });
+    if (securities[index].taxes > 0) {
+      setIsTaxesEnabled(true)
+    }
+    if (securities[index].frontingFee > 0) {
+      setFrontingFeeEnabled(true)
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [securities[index].taxes, securities[index].frontingFee]);
+
+
 
   return (
     <DiscountsProvider>

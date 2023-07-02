@@ -128,6 +128,7 @@ export type errorsSecurity = {
   idCRetroCedantContact: string
 }
 export type SecurityContextDto = {
+  firstTimeSecurities: SecurityDto[]
   securities: SecurityDto[]
   allErrors: boolean[]
   activeErros: boolean

@@ -143,6 +143,8 @@ export class CalculateSecurity {
     }
   }
   getTaxesAmount(value?: number): number {
+    console.log('taxesAmount', { value })
+
     // return (this.security.taxes * this.security.premiumPerShareAmount) / 100
     if (this.security.isGross) {
       // * is Gross Premium
@@ -151,6 +153,7 @@ export class CalculateSecurity {
 
       if (this.security.taxes || value) {
         result = (result * (value ?? this.security.taxes)) / 100
+        console.log('result', result)
       } else {
         result = 0
       }
