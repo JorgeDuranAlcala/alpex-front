@@ -144,6 +144,8 @@ const Security = ({ onStepChange }: SecurityProps) => {
       setAllErrors(allErrors.map(error => error))
 
       setSecurities(tempSecurities)
+
+      if (firstTimeSecurities.length === 0) setFirstTimeSecurities(tempSecurities)
     }
   }
 
@@ -185,10 +187,6 @@ const Security = ({ onStepChange }: SecurityProps) => {
           ...mapper,
           id: security.id,
           view: 1,
-          discounts: security.discounts.length > 0 ? security.discounts.map((discount) => ({
-            ...discount,
-            id: security.id
-          })) : undefined
 
         })
         console.log({ update })
@@ -354,7 +352,6 @@ const Security = ({ onStepChange }: SecurityProps) => {
   useEffect(() => {
     if (account && information) {
       calculateSecurities(account.securities)
-      setFirstTimeSecurities(account.securities);
       account.securityTotal &&
         setAllFormData({
           ...allFormData,
