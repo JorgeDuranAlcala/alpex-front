@@ -13,12 +13,14 @@ import Information from 'src/views/accounts/new-account-steps/Information/Inform
 
 import PaymentWarranty from 'src/views/accounts/new-account-steps/PaymentWarranty'
 import Security from 'src/views/accounts/new-account-steps/Security/SecurityView'
-import CommentSection from 'src/views/components/new-accounts/CommentSection'
+
+// import CommentSection from 'src/views/components/new-accounts/CommentSection'
 import NewAccountStepper from 'src/views/components/new-accounts/NewAccountStepper'
 
 // import TabAccount from 'src/views/pages/account-settings/TabAccount'
 
 // import { useGetAccountById } from '@/hooks/accounts/forms'
+import MenuForm from '@/pages/menuForm'
 import { updateFormsData } from '@/store/apps/accounts'
 import FormAddress from '@/views/accounts/new-account-steps/FormAddress'
 import Sublimits from 'src/views/accounts/new-account-steps/Sublimits'
@@ -35,9 +37,15 @@ const NewAccount = () => {
 
   // const { account, setAccountId } = useGetAccountById()
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [disableComments, setDisableComments] = useState(false)
+  // const [disableComments, setDisableComments] = useState(false)
   const [isNewAccount, setIsNewAccount] = useState<boolean>(true)
   const [activeStep, setActiveStep] = useState(1)
+
+  // const [sidebar, setSidebar] = useState<boolean>(false)
+  // const handleSidebarMenu = () => {
+  //   setSidebar(!sidebar)
+  //   console.log('Hola')
+  // }
 
   // console.log({ account })
 
@@ -142,19 +150,23 @@ const NewAccount = () => {
       it is necessary to send the boolean variable "sideHeader = true". */}
       {/* {activeStep == 1 && isNewAccount ? <ActionsHeader accountStatus='PENDING' sideHeader={false} /> : <FormHeader />} */}
       {activeStep == 1 && isNewAccount ? <FormHeader isNewAccount /> : <FormHeader />}
+      <div style={{ display: 'flex', flexDirection: 'row', gap: '16px' }}>
+        <Card>
+          <NewAccountStepper changeStep={activeStep} onStepChange={handleStepChange} />
+          <StepForm step={activeStep} />
+          {/* <TabAccount /> */}
 
-      <Card>
-        <NewAccountStepper changeStep={activeStep} onStepChange={handleStepChange} />
-        <StepForm step={activeStep} />
-        {/* <TabAccount /> */}
+          {/* <UserList /> */}
 
-        {/* <UserList /> */}
-
-        {/* <InvoiceAdd /> */}
-      </Card>
-      <Card>
+          {/* <InvoiceAdd /> */}
+        </Card>
+        <div style={{ display: 'none' }}>
+          <MenuForm />
+        </div>
+      </div>
+      {/* <Card>
         <CommentSection disable={disableComments} step={activeStep} />
-      </Card>
+      </Card> */}
     </Grid>
   )
 }
