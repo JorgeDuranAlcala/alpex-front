@@ -37,7 +37,7 @@ export const FrontingFeeAmount = ({
   }
 
   return (
-    <FormControl fullWidth sx={{ mb: 2 }}>
+    <FormControl fullWidth>
       <NumericFormat
         autoFocus
         label='Fronting fee'

@@ -16,12 +16,13 @@ interface ListDiscountsProps {
 }
 export const ListDiscounts = ({ formIndex, operationSecurity, validateForm }: ListDiscountsProps) => {
   const {
+    firstTimeSecurities,
     securities,
 
     calculateSecurities
   } = useContext(SecurityContext)
 
-  const { discountsList, removeDiscountByIndex } = useContext(DiscountsContext)
+  const { discountsList, removeDiscountByIndex, updateAllDiscounts } = useContext(DiscountsContext)
 
   useEffect(() => {
     const totalAmountOfDiscounts = discountsList.reduce((value, current) => {
@@ -51,10 +52,22 @@ export const ListDiscounts = ({ formIndex, operationSecurity, validateForm }: Li
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [discountsList, formIndex])
 
+  useEffect(() => {
+    if (firstTimeSecurities.length > 0) {
+      if (formIndex > firstTimeSecurities.length - 1) return;
+
+      if (firstTimeSecurities[formIndex].discounts.length > 0) {
+        updateAllDiscounts(firstTimeSecurities[formIndex].discounts)
+      }
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [firstTimeSecurities])
+
   return (
     <>
       {discountsList.map((discountItem, index) => (
-        <Grid key={`discount_${formIndex}_${index}`} item xs={12} sm={4}>
+        <Grid item xs={12} sm={4} key={`discount_${formIndex}_${index}`}>
           <Box sx={{ mb: 2, display: 'flex', alignItems: 'center', gap: '8px' }}>
             <Typography>Discount {index + 1}</Typography>
             <IconButton onClick={() => removeDiscountByIndex(index)}>

@@ -91,11 +91,11 @@ const Security = ({ onStepChange }: SecurityProps) => {
           .setSecurity(security)
         if (security?.idCReinsuranceCompany?.id) companiesSelect.push(security.idCReinsuranceCompany.id)
 
-        //TODO:@ISRRA - obtener los discounts guardados desde la base de datos
         const tempDiscountList = []
         if (security?.discounts)
           for (const discount of security?.discounts) {
-            discount.amount = operationSecurity.getDiscountAmount(discount.percentage)
+            discount.percentage = Number(discount.percentage)
+            discount.amount = operationSecurity.getDiscountAmount(Number(discount.percentage))
             tempDiscountList.push(discount)
           }
         security.discounts = tempDiscountList
@@ -144,6 +144,8 @@ const Security = ({ onStepChange }: SecurityProps) => {
       setAllErrors(allErrors.map(error => error))
 
       setSecurities(tempSecurities)
+
+      if (firstTimeSecurities.length === 0) setFirstTimeSecurities(tempSecurities)
     }
   }
 
@@ -185,10 +187,6 @@ const Security = ({ onStepChange }: SecurityProps) => {
           ...mapper,
           id: security.id,
           view: 1,
-          discounts: security.discounts.length > 0 ? security.discounts.map((discount) => ({
-            ...discount,
-            id: security.id
-          })) : undefined
 
         })
         console.log({ update })
@@ -354,7 +352,6 @@ const Security = ({ onStepChange }: SecurityProps) => {
   useEffect(() => {
     if (account && information) {
       calculateSecurities(account.securities)
-      setFirstTimeSecurities(account.securities);
       account.securityTotal &&
         setAllFormData({
           ...allFormData,
