@@ -1,5 +1,6 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { FormControl, FormHelperText, InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material'
-import { Dispatch, SetStateAction, useContext, useEffect } from 'react'
+import { Dispatch, SetStateAction, useContext, useEffect, useState } from 'react'
 import * as yup from 'yup'
 
 import { RetroCedantDto } from '@/services/catalogs/dtos/RetroCedantDto'
@@ -22,6 +23,7 @@ export const SelectRetroCedant = ({
 }: SelectRetroCedantProps) => {
   const { activeErros, securities, setSecurities } = useContext(SecurityContext)
 
+  const [counter, setCounter] = useState(1)
   const handleChangeRetroCedant = (e: SelectChangeEvent<string>) => {
     const selectedRetroCendantId = e.target.value
     const retroCedant = retroCedants?.find(retroCedant => retroCedant.id === Number(selectedRetroCendantId))
@@ -40,21 +42,26 @@ export const SelectRetroCedant = ({
   }
 
   useEffect(() => {
-    const selectedRetroCendantId = value.toString()
-    const retroCedant = retroCedants?.find(retroCedant => retroCedant.id === Number(selectedRetroCendantId))
-    const tempSecurities = [...securities]
+    if (counter < 2) {
+      const selectedRetroCendantId = value
+      const retroCedant = retroCedants?.find(retroCedant => retroCedant.id === Number(selectedRetroCendantId))
+      const tempSecurities = [...securities]
 
-    if (retroCedant) {
-      tempSecurities[index] = {
-        ...tempSecurities[index],
-        idCRetroCedant: retroCedant,
-        idCRetroCedantContact: {} as RetroCedantContactDto
+      // console.log('se monta', retroCedant, value, retroCedants)
+      if (retroCedant) {
+        // console.log('se monta')
+        tempSecurities[index] = {
+          ...tempSecurities[index],
+          idCRetroCedant: retroCedant,
+          idCRetroCedantContact: {} as RetroCedantContactDto
+        }
+        validateForm(tempSecurities[index])
+        setSecurities(tempSecurities)
+        setIdRetroCedant(retroCedant.id)
+        setCounter(2)
       }
-      validateForm(tempSecurities[index])
-      setSecurities(tempSecurities)
-      setIdRetroCedant(retroCedant.id)
     }
-  }, [])
+  }, [retroCedants])
 
   return (
     <FormControl fullWidth sx={{ mb: 2 }}>
