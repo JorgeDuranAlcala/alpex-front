@@ -2,7 +2,19 @@ import React, { Fragment, useEffect, useRef, useState } from 'react'
 
 // // ** MUI Imports
 import CloseIcon from '@mui/icons-material/Close'
-import { Box, Button, IconButton, Modal, Typography } from '@mui/material'
+import {
+  Box,
+  Button,
+  Collapse,
+  IconButton,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Modal,
+  Typography
+} from '@mui/material'
 import { ButtonClose, HeaderTitleModal } from 'src/styles/Dashboard/ModalReinsurers/modalReinsurers'
 
 import CustomAlert, { IAlert } from '@/views/custom/alerts'
@@ -23,6 +35,7 @@ const FileSubmit: React.FC<UserFileProps> = ({ setUserFile, userFile, urls, setU
   const [selectedFile, setSelectedFile] = useState<File | null>(null) // saves the row wehen user click on actions button
   const [openDelete, setOpenDelete] = useState(false)
   const fileUrls: string[] = urls
+  const [open, setOpen] = useState<boolean>(true)
 
   const [badgeData, setBadgeData] = useState<IAlert>({
     message: '',
@@ -30,6 +43,10 @@ const FileSubmit: React.FC<UserFileProps> = ({ setUserFile, userFile, urls, setU
     open: false,
     status: 'error'
   })
+
+  const handleClick = () => {
+    setOpen(!open)
+  }
 
   // const [openMenu, setOpenMenu] = useState(false)
   const onFileChange = function (e: any) {
@@ -141,6 +158,7 @@ const FileSubmit: React.FC<UserFileProps> = ({ setUserFile, userFile, urls, setU
           className='input-file-upload'
           id='input-file-upload'
           onChange={onFileChange}
+          style={{ display: 'none' }}
         />
 
         {file.length > 0 && (
@@ -220,14 +238,49 @@ const FileSubmit: React.FC<UserFileProps> = ({ setUserFile, userFile, urls, setU
           </div>
         )}
 
-        <label id='label-file-upload' htmlFor='input-file-upload'>
+        {/* <label id='label-file-upload' htmlFor='input-file-upload'>
           <Button className='upload-button' onClick={e => onButtonClick(e)} variant='outlined'>
             <div className='btn-icon'>
               <Icon icon='mdi:upload' />
             </div>
             UPLOAD DOCUMENT
           </Button>
-        </label>
+        </label> */}
+
+        <div style={{ padding: '0px 12px 0px 12px' }}>
+          <List component='nav'>
+            <ListItem disablePadding className='final-slip'>
+              <ListItemButton
+                onClick={handleClick}
+                sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}
+              >
+                <Typography sx={{ color: '#FFF' }}>Final Slip</Typography>
+                <Icon icon={open ? 'mdi:chevron-up' : 'mdi:chevron-down'} color='#FFFFFF' />
+              </ListItemButton>
+            </ListItem>
+            <Collapse in={open} timeout='auto' unmountOnExit>
+              <List component='div' disablePadding>
+                <ListItem disablePadding>
+                  <ListItemButton sx={{ pl: 8 }}>
+                    <ListItemIcon sx={{ mr: 4 }}></ListItemIcon>
+                    <ListItemText primary='Scheduled' />
+                  </ListItemButton>
+                </ListItem>
+              </List>
+            </Collapse>
+          </List>
+        </div>
+        <div className='actions-icons'>
+          <IconButton onClick={e => onButtonClick(e)}>
+            <Icon icon='mdi:upload' color={'#2535A8'} />
+          </IconButton>
+          <IconButton>
+            <Icon icon={'ic:round-create-new-folder'} color={'#2535A8'} />
+          </IconButton>
+          <IconButton>
+            <Icon icon={'ic:outline-delete'} color={'#2535A8'} />
+          </IconButton>
+        </div>
         {/* </form> */}
       </div>
     </Fragment>
