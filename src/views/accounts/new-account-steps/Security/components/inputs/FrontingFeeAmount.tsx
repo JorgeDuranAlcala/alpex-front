@@ -23,9 +23,12 @@ export const FrontingFeeAmount = ({
   const { activeErros, securities, calculateSecurities } = useContext(SecurityContext)
 
   const handleChangeFrontingFeeAmount = (value: number) => {
+    // console.log(value)
+
     const tempSecurities = [...securities]
     tempSecurities[index] = {
       ...tempSecurities[index],
+
       frontingFee: operationSecurity.getFrontingFeePercent(value),
       frontingFeeAmount: value
     }

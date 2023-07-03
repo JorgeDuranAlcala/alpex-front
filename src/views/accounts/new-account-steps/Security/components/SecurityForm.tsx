@@ -13,6 +13,7 @@ import { ReinsuranceCompanyBinderDto } from '@/services/catalogs/dtos/Reinsuranc
 import { useContext, useEffect, useState } from 'react'
 import * as yup from 'yup'
 import { SecurityContext } from '../SecurityView'
+import { useDataFirstTime } from '../hooks/useDataFirstTime'
 import { CalculateSecurity } from '../utils/calculates-securities'
 import { ButtonAddDiscount } from './discounts/ButtonAddDiscount'
 import { DiscountsProvider } from './discounts/DiscountsProvider'
@@ -189,7 +190,6 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
 
   useEffect(() => {
     const informationForm1 = information as any
-    console.log('efect toggles')
     const tempSecurities = [...securities]
 
     //validacion taxes
@@ -206,6 +206,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
     } else {
       setIsShowToggleTaxes(false)
       setIsTaxesEnabled(false)
+
       tempSecurities[index] = {
         ...tempSecurities[index],
         taxes: 0,
@@ -262,6 +263,35 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [frontingFeeEnabled, isTaxesEnabled])
+
+
+  /**
+   * * Las validaciones actuales resetean los porcentages de taxes y frontingFee
+   * * aún cuando ya hay valores desde bdd.
+   * * Para no reestructuras las validaciones actuales,
+   * * se crea este hook que comprueba si existen valores desde bdd
+   * * si es así, los setea en el formulario después de las validaciones actuales.
+   */
+  const { forTaxes, forFrontingFee, checkValues } = useDataFirstTime({ formIndex: index, operationSecurity });
+
+  useEffect(() => {
+
+    // debugger;
+    checkValues({
+      taxes: securities[index].taxes,
+      frontingFee: securities[index].taxes
+    });
+    if (securities[index].taxes > 0) {
+      setIsTaxesEnabled(true)
+    }
+    if (securities[index].frontingFee > 0) {
+      setFrontingFeeEnabled(true)
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [securities[index].taxes, securities[index].frontingFee]);
+
+
 
   return (
     <DiscountsProvider>
@@ -456,6 +486,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
                 validateForm={validateForm}
                 operationSecurity={operationSecurity}
                 isDisabled={!isTaxesEnabled}
+                fieldRef={forTaxes}
               />
 
               <TaxesAmount
@@ -486,6 +517,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
                 validateForm={validateForm}
                 operationSecurity={operationSecurity}
                 isDisabled={!frontingFeeEnabled}
+                fieldRef={forFrontingFee}
               />
 
               <FrontingFeeAmount
