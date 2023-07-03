@@ -40,6 +40,7 @@ export const SecurityContext = createContext<SecurityContextDto>({} as SecurityC
 const Security = ({ onStepChange }: SecurityProps) => {
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
   const [securities, setSecurities] = useState<SecurityDto[]>([])
+  const [firstTimeSecurities, setFirstTimeSecurities] = useState<SecurityDto[]>([])
   const [activeErros, setActiveErrors] = useState<boolean>(false)
 
   const [isNextStep, setIsNextStep] = useState<boolean>(false)
@@ -59,6 +60,8 @@ const Security = ({ onStepChange }: SecurityProps) => {
     limit: 0
   })
   const [companiesSelect] = useState<number[]>([])
+
+
   const { account, setAccountId, getAccountById, accountId } = useGetAccountById()
   const { saveSecurityTotal } = useAddSecurityTotal()
   const { updateSecurityTotal } = useUpdateSecurityTotalById()
@@ -88,11 +91,11 @@ const Security = ({ onStepChange }: SecurityProps) => {
           .setSecurity(security)
         if (security?.idCReinsuranceCompany?.id) companiesSelect.push(security.idCReinsuranceCompany.id)
 
-        //TODO:@ISRRA - obtener los discounts guardados desde la base de datos
         const tempDiscountList = []
         if (security?.discounts)
           for (const discount of security?.discounts) {
-            discount.amount = operationSecurity.getDiscountAmount(discount.percentage)
+            discount.percentage = Number(discount.percentage)
+            discount.amount = operationSecurity.getDiscountAmount(Number(discount.percentage))
             tempDiscountList.push(discount)
           }
         security.discounts = tempDiscountList
@@ -101,7 +104,8 @@ const Security = ({ onStepChange }: SecurityProps) => {
         security.brokerAgeAmount = operationSecurity.getBrokerAge() || 0
         security.dynamicCommissionAmount = operationSecurity.getDynamicComissionAmount() || 0
 
-        security.frontingFeeAmount = operationSecurity.getFrontingFeeAmount(security.frontingFee) || 0
+        security.frontingFeeAmount = operationSecurity.getFrontingFeeAmount(security.frontingFee) || 0;
+
 
         security.taxesAmount = operationSecurity.getTaxesAmount(security.taxes) || 0
 
@@ -112,20 +116,23 @@ const Security = ({ onStepChange }: SecurityProps) => {
           difference: Number(security.difference) || 0,
           distributedNetPremium: Number(security.distributedNetPremium) || 0,
           dynamicCommission: Number(security.dynamicCommission) || 0,
-          frontingFee: Number(security.frontingFee) || 0,
+
           netPremiumAt100: Number(security.netPremiumAt100) || 0,
           receivedNetPremium: Number(security.receivedNetPremium) || 0,
           reinsuranceBrokerage: Number(security.reinsuranceBrokerage) || 0,
-          share: Number(security.share) || 0
+          share: Number(security.share) || 0,
 
-          // taxes: Number(security.taxes) || 0
+          taxes: Number(security.taxes) || 0,
+          frontingFee: Number(security.frontingFee) || 0
         })
+
       }
       let dataForm: FormSecurity = {
         ...allFormData,
         formData: tempSecurities,
         ...CalculateSecurity.getData(tempSecurities)
       }
+
       if (account && account.securityTotal) {
         dataForm = {
           ...dataForm,
@@ -137,6 +144,8 @@ const Security = ({ onStepChange }: SecurityProps) => {
       setAllErrors(allErrors.map(error => error))
 
       setSecurities(tempSecurities)
+
+      if (firstTimeSecurities.length === 0) setFirstTimeSecurities(tempSecurities)
     }
   }
 
@@ -172,16 +181,21 @@ const Security = ({ onStepChange }: SecurityProps) => {
       // Todo quitar el as any
       const mapper = SecurityMapper.securityToSecurityForm(security, accountData as any)
 
+      console.log({ security })
       if (security.id) {
         update.push({
           ...mapper,
           id: security.id,
-          view: 1
+          view: 1,
+
         })
+        console.log({ update })
       } else {
         save.push({ ...mapper, view: 1 })
+        console.log({ save })
       }
     }
+
 
     if (!allFormData.id) {
       await saveSecurityTotal([
@@ -357,9 +371,18 @@ const Security = ({ onStepChange }: SecurityProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isNextStep])
 
+  // useEffect(() => {
+  //   if (firstTimeSecurities.length > 0) {
+  //     firstTimeSecurities.forEach((_, index) => {
+  //       firstTimeTaxesFieldsRef.current.push()
+  //     }
+  //   }
+  // }, [firstTimeSecurities]);
+
   return (
     <SecurityContext.Provider
       value={{
+        firstTimeSecurities,
         securities,
         setSecurities,
         information,

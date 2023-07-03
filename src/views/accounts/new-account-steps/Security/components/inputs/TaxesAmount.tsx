@@ -35,7 +35,7 @@ export const TaxesAmount = ({
   }
 
   return (
-    <FormControl fullWidth sx={{ mb: 2 }}>
+    <FormControl fullWidth>
       <NumericFormat
         autoFocus
         label='Taxes'

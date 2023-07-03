@@ -42,7 +42,7 @@ export const DiscountAmount = ({ discountIndex, value, operationSecurity }: Disc
   }
 
   return (
-    <FormControl fullWidth sx={{ mb: 2 }}>
+    <FormControl fullWidth>
       <NumericFormat
         autoFocus
         label='Discount'
