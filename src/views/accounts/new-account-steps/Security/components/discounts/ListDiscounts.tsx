@@ -54,6 +54,8 @@ export const ListDiscounts = ({ formIndex, operationSecurity, validateForm }: Li
 
   useEffect(() => {
     if (firstTimeSecurities.length > 0) {
+      if (formIndex > firstTimeSecurities.length - 1) return;
+
       if (firstTimeSecurities[formIndex].discounts.length > 0) {
         updateAllDiscounts(firstTimeSecurities[formIndex].discounts)
       }
