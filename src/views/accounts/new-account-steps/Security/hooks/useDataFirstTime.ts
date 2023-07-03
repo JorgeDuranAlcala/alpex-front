@@ -60,16 +60,20 @@ export const useDataFirstTime = ({ formIndex, operationSecurity }: UseDataFirstT
 
   const validateRecalculate = (variant: TVariant) => {
     if (variant === 'taxes') {
+
       if (forTaxes.current.percent === 0) return false;
       if (forTaxes.current.isTouched === true) return false;
-      if (forTaxes.current.percent === firstTimeSecurities[formIndex].taxes) return false;
+
+      // if (forTaxes.current.percent === firstTimeSecurities[formIndex].taxes) return false;
 
     } else if (variant === 'frontingFee') {
       if (forFrontingFee.current.percent === 0) return false;
       if (forFrontingFee.current.isTouched === true) return false;
-      if (forFrontingFee.current.percent === firstTimeSecurities[formIndex].frontingFee) return false;
+
+      // if (forFrontingFee.current.percent === firstTimeSecurities[formIndex].frontingFee) return false;
     }
-    console.log('return true recalucluate', forTaxes.current.isTouched, variant, forTaxes.current.percent, forFrontingFee.current.percent)
+
+    // console.log('return true recalucluate', forTaxes.current.isTouched, variant, forTaxes.current.percent, forFrontingFee.current.percent)
 
     return true;
   }
@@ -84,6 +88,7 @@ export const useDataFirstTime = ({ formIndex, operationSecurity }: UseDataFirstT
     if (formIndex > securities.length - 1) return;
 
     if (taxes === 0) {
+      console.log('back to taxes?')
       backToFirstTimeFor('taxes');
     }
 
