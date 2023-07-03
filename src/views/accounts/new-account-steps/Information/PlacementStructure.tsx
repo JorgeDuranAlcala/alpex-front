@@ -134,6 +134,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
   const { deleteDiscountsById } = useDeleteDiscountsById()
 
   // const [valid, setValid] = useState(false)
+   const [singleValidation, setSingleValidation] = useState(false)
   const [errors, setErrors] = useState<PlacementStructureErrors>({
     currencyError: false,
     totalError: false,
@@ -430,13 +431,13 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
   const validations = () => {
     const newErrors: PlacementStructureErrors = {
       currencyError: placementStructure.currency === '',
-      totalError: placementStructure.total === 0,
+      totalError: placementStructure.total === 0 || placementStructure.total === undefined,
       reinsuranceBrokeragePError: placementStructure.reinsuranceBrokerageP === 0,
       taxesPError: taxesChecked && placementStructure.taxesP === 0,
       frontingFeePError: frontingChecked && placementStructure.frontingFeeP === 0,
-      exchangeRateError: placementStructure.exchangeRate === 0,
-      limitError: placementStructure.limit === 0,
-      grossPremiumError: placementStructure.grossPremium === 0,
+      exchangeRateError: placementStructure.exchangeRate === 0 || placementStructure.exchangeRate === undefined,
+      limitError: placementStructure.limit === 0 || placementStructure.limit === undefined,
+      grossPremiumError: placementStructure.grossPremium === 0 || placementStructure.grossPremium === undefined,
       reinsuranceBrokerageError: placementStructure.reinsuranceBrokerage === 0,
       taxesError: taxesChecked && (placementStructure.taxes === undefined || placementStructure.taxes === 0),
       frontingFeeError:
@@ -463,6 +464,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
     if (Object.values(newErrors).every(error => !error)) {
       // enviar formulario si no hay errores
       onValidationComplete(true, 'placementStructure')
+      setSingleValidation(false)
 
       // isValidForm(true)
     } else {
@@ -496,20 +498,6 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [triggerSubject])
 
-  // useEffect(() => {
-  //   // calculate()
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [
-  //   reinsuranceBrokerageP,
-  //   taxesP,
-  //   frontingFeeP,
-  //   grossPremium,
-  //   reinsuranceBrokerage,
-  //   taxes,
-  //   frontingFee,
-  //   discount,
-  //   setDiscount
-  // ])
 
   useEffect(() => {
     setGrossPremium(placementStructure.grossPremium)
@@ -551,8 +539,17 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
   }, [taxesP, taxes, frontingFee, frontingFeeP, grossPremium])
 
   React.useEffect(() => {
+    if(singleValidation){
+      validations()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [placementStructure, setPlacementStructure])
+
+
+  React.useEffect(() => {
     if (makeValidations) {
       validations()
+      setSingleValidation(true)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [makeValidations])
@@ -878,6 +875,11 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
                   calculate('taxesP', value.floatValue)
                 } else {
                   calculate('taxesP', '')
+                }
+              }}
+              onFocus={e => {
+                if (e.target.value === '0') {
+                  e.target.value = '';
                 }
               }}
               error={taxesChecked && (errors.taxesPError || errors.totalDiscountsError || totalDiscountsError)}
