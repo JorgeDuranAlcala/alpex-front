@@ -91,11 +91,11 @@ const Security = ({ onStepChange }: SecurityProps) => {
           .setSecurity(security)
         if (security?.idCReinsuranceCompany?.id) companiesSelect.push(security.idCReinsuranceCompany.id)
 
-        //TODO:@ISRRA - obtener los discounts guardados desde la base de datos
         const tempDiscountList = []
         if (security?.discounts)
           for (const discount of security?.discounts) {
-            discount.amount = operationSecurity.getDiscountAmount(discount.percentage)
+            discount.percentage = Number(discount.percentage)
+            discount.amount = operationSecurity.getDiscountAmount(Number(discount.percentage))
             tempDiscountList.push(discount)
           }
         security.discounts = tempDiscountList
