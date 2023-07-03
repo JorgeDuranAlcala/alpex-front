@@ -85,13 +85,14 @@ export class CalculateSecurity {
     // return (frontingFee / this.security.premiumPerShareAmount) * 100
     if (this.security.isGross) {
       // * is Gross Premium
-      const base = (this.security.premiumPerShareAmount / valueAmount) * 100
+      const base = (valueAmount / this.security.premiumPerShareAmount) * 100
 
       return base
     } else {
       // * is Net Premium
 
-      return (this.security.premiumPerShareAmount / valueAmount) * 100
+
+      return (valueAmount / this.security.premiumPerShareAmount) * 100
     }
   }
   getShareAmount(): number {
@@ -142,6 +143,9 @@ export class CalculateSecurity {
     }
   }
   getTaxesAmount(value?: number): number {
+
+    // console.log('taxesAmount', { value })
+
     // return (this.security.taxes * this.security.premiumPerShareAmount) / 100
     if (this.security.isGross) {
       // * is Gross Premium

@@ -25,7 +25,7 @@ export const ListDiscounts = ({ formIndex, operationSecurity, validateForm }: Li
 
   useEffect(() => {
     const totalAmountOfDiscounts = discountsList.reduce((value, current) => {
-      value += current.discountAmount
+      value += current.amount
 
       return value
     }, 0)
@@ -63,16 +63,17 @@ export const ListDiscounts = ({ formIndex, operationSecurity, validateForm }: Li
           </Box>
 
           <DiscountPercent
+            discountsList={discountsList}
             index={formIndex}
             discountIndex={index}
-            value={discountItem.discountPercent}
+            value={discountItem.percentage}
             validateForm={() => null}
             operationSecurity={operationSecurity}
           />
           <DiscountAmount
             index={formIndex}
             discountIndex={index}
-            value={discountItem.discountAmount}
+            value={discountItem.amount}
             validateForm={() => null}
             operationSecurity={operationSecurity}
           />

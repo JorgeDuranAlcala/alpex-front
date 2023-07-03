@@ -3,6 +3,7 @@ import { ReinsuranceCompanyDto } from '@/services/catalogs/dtos/ReinsuranceCompa
 import { RetroCedantDto } from '@/services/catalogs/dtos/RetroCedantDto'
 import { RetroCedantContactDto } from '@/services/catalogs/dtos/retroCedantContact.dto'
 import { IAccountsState } from '@/types/apps/accountsTypes'
+import { IDiscountInputs } from '../components/discounts/DiscountsContext'
 
 export interface SecurityModel {
   netPremiumAt100: number
@@ -22,6 +23,7 @@ export interface SecurityModel {
   receivedNetPremium: number
   distributedNetPremium: number
   difference: number
+  discounts: IDiscountInputs[];
 }
 export class SecurityMapper {
   static securityToSecurityForm(security: SecurityDto, accountData: IAccountsState): SecurityModel {
@@ -42,7 +44,8 @@ export class SecurityMapper {
       idAccount: +accountData.formsData.form1.id,
       receivedNetPremium: 0,
       distributedNetPremium: 0,
-      difference: 0
+      difference: 0,
+      discounts: security.discounts
     }
   }
 }
