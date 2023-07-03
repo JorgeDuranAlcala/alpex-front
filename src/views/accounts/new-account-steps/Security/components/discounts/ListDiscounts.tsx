@@ -16,12 +16,13 @@ interface ListDiscountsProps {
 }
 export const ListDiscounts = ({ formIndex, operationSecurity, validateForm }: ListDiscountsProps) => {
   const {
+    firstTimeSecurities,
     securities,
 
     calculateSecurities
   } = useContext(SecurityContext)
 
-  const { discountsList, removeDiscountByIndex } = useContext(DiscountsContext)
+  const { discountsList, removeDiscountByIndex, updateAllDiscounts } = useContext(DiscountsContext)
 
   useEffect(() => {
     const totalAmountOfDiscounts = discountsList.reduce((value, current) => {
@@ -49,7 +50,17 @@ export const ListDiscounts = ({ formIndex, operationSecurity, validateForm }: Li
 
     calculateSecurities(tempSecurities)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [discountsList, formIndex])
+  }, [discountsList, formIndex]);
+
+  useEffect(() => {
+    if (firstTimeSecurities.length > 0) {
+      if (firstTimeSecurities[formIndex].discounts.length > 0) {
+        updateAllDiscounts(firstTimeSecurities[formIndex].discounts)
+      }
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [firstTimeSecurities]);
 
   return (
     <>

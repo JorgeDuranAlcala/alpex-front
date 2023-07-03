@@ -1,14 +1,21 @@
 import { createContext } from "react";
 
 export interface IDiscountInputs {
+  id?: number;
+  idSecurity?: number;
   percentage: number;
   amount: number;
+  active: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+
+
 }
 
 export interface IUpdateDiscountByIndex {
   index: number;
   percentage: number;
-  amount: number;
+  amount?: number;
 }
 
 interface DiscountContextProps {
