@@ -8,6 +8,7 @@ import { DiscountsContext, IDiscountInputs } from '../discounts/DiscountsContext
 
 // import { SecurityContext } from '../../SecurityView'
 import { usePercentageAchieved } from '../../hooks/usePercentageAchieved'
+import { SecurityContext } from '../../SecurityView'
 
 // ! only if we want specific props
 interface DiscountPercentProps extends Omit<ISecurityInputProps, 'errorMessage'> {
@@ -17,12 +18,8 @@ interface DiscountPercentProps extends Omit<ISecurityInputProps, 'errorMessage'>
 }
 
 export const DiscountPercent = ({ index, discountIndex, value, operationSecurity, discountsList }: DiscountPercentProps) => {
-  // const {
-  //   securities,
 
-  //   // calculateSecurities
-  // } = useContext(SecurityContext);
-
+  const { securities } = useContext(SecurityContext);
   const { achievedMessageError, checkIsPercentageAchieved } = usePercentageAchieved();
 
   const { updateDiscountByIndex } = useContext(DiscountsContext)
@@ -40,6 +37,17 @@ export const DiscountPercent = ({ index, discountIndex, value, operationSecurity
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [discountsList[discountIndex]]);
+
+  // * Si el campo ya cuenta con un mensaje de error, se ejecuta el chequeo de porcentaje
+  // * alcanzado, esto con el fin de que el mensaje de error se borre para este campo
+  // * en caso de que el porcentaje se disminuya desde otro lugar
+  useEffect(() => {
+
+    if (!achievedMessageError) return;
+    checkIsPercentageAchieved({ formIndex: index });
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [securities[index]])
 
 
   return (
