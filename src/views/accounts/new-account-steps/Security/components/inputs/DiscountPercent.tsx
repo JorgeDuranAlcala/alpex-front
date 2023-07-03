@@ -8,6 +8,7 @@ import { DiscountsContext, IDiscountInputs } from '../discounts/DiscountsContext
 
 // import { SecurityContext } from '../../SecurityView'
 import { usePercentageAchieved } from '../../hooks/usePercentageAchieved'
+import { SecurityContext } from '../../SecurityView'
 
 // ! only if we want specific props
 interface DiscountPercentProps extends Omit<ISecurityInputProps, 'errorMessage'> {
@@ -16,14 +17,15 @@ interface DiscountPercentProps extends Omit<ISecurityInputProps, 'errorMessage'>
   discountsList: IDiscountInputs[]
 }
 
-export const DiscountPercent = ({ index, discountIndex, value, operationSecurity, discountsList }: DiscountPercentProps) => {
-  // const {
-  //   securities,
-
-  //   // calculateSecurities
-  // } = useContext(SecurityContext);
-
-  const { achievedMessageError, checkIsPercentageAchieved } = usePercentageAchieved();
+export const DiscountPercent = ({
+  index,
+  discountIndex,
+  value,
+  operationSecurity,
+  discountsList
+}: DiscountPercentProps) => {
+  const { securities } = useContext(SecurityContext)
+  const { achievedMessageError, checkIsPercentageAchieved } = usePercentageAchieved()
 
   const { updateDiscountByIndex } = useContext(DiscountsContext)
   const handleChangeDiscountPercent = (value: number) => {
@@ -35,12 +37,20 @@ export const DiscountPercent = ({ index, discountIndex, value, operationSecurity
   }
 
   useEffect(() => {
-
-    checkIsPercentageAchieved({ formIndex: index });
+    checkIsPercentageAchieved({ formIndex: index })
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [discountsList[discountIndex]]);
+  }, [discountsList[discountIndex]])
 
+  // * Si el campo ya cuenta con un mensaje de error, se ejecuta el chequeo de porcentaje
+  // * alcanzado, esto con el fin de que el mensaje de error se borre para este campo
+  // * en caso de que el porcentaje se disminuya desde otro lugar
+  useEffect(() => {
+    if (!achievedMessageError) return
+    checkIsPercentageAchieved({ formIndex: index })
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [securities[index]])
 
   return (
     <FormControl fullWidth sx={{ mb: 6.5 }}>
@@ -58,7 +68,9 @@ export const DiscountPercent = ({ index, discountIndex, value, operationSecurity
           return (values.floatValue! >= 0 && values.floatValue! <= 100) || values.floatValue === undefined
         }}
       />
-      <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>{achievedMessageError}</FormHelperText>
+      {achievedMessageError && (
+        <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>{achievedMessageError}</FormHelperText>
+      )}
     </FormControl>
   )
 }
