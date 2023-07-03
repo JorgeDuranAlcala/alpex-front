@@ -181,6 +181,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
           handleNumericInputChange(value, 'reinsuranceBrokerageP')
         }else{
           reinsuranceBrokeragec = 0
+          reinsuranceBrokeragePc = 0
         }
 
         break
@@ -193,6 +194,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
           handleNumericInputChange(value, 'reinsuranceBrokerageP')
         }else{
           reinsuranceBrokeragePc = 0
+          reinsuranceBrokeragec=0
         }
 
         break
@@ -204,6 +206,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
           taxesPc = isFinite(result) ? result : 0
           handleNumericInputChange(value, 'taxes')
         }else{
+          taxesc=0
           taxesPc = 0
         }
 
@@ -217,6 +220,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
           handleNumericInputChange(value, 'taxesP')
         }else{
           taxesc = 0
+          taxesPc = 0
         }
 
         break
@@ -232,6 +236,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
 
       }else{
         frontingFeec = 0
+        frontingFeePc = 0
       }
         break
       }
@@ -244,6 +249,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
 
         }else{
           frontingFeePc = 0
+          frontingFeec = 0
         }
         break
       }
@@ -265,6 +271,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
         })
 
         }else{
+          grossPremiumc= 0
           reinsuranceBrokeragec = 0
           taxesc =  0
           frontingFeec =  0
@@ -914,12 +921,18 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
 
                 return (floatValue! >= 0 && floatValue! <= upLimit) || floatValue === undefined
               }}
+
               onValueChange={value => {
                 if (value.floatValue) {
                   calculate('taxes',value.floatValue)
 
                 }else{
-                  calculate('taxes','')
+                  calculate('taxes',0)
+                }
+              }}
+              onFocus={e => {
+                if (e.target.value === '0') {
+                  e.target.value = '';
                 }
               }}
               error={taxesChecked && (errors.taxesError || errors.totalDiscountsError || totalDiscountsError)}
