@@ -50,7 +50,7 @@ export const ListDiscounts = ({ formIndex, operationSecurity, validateForm }: Li
 
     calculateSecurities(tempSecurities)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [discountsList, formIndex]);
+  }, [discountsList, formIndex])
 
   useEffect(() => {
     if (firstTimeSecurities.length > 0) {
@@ -60,12 +60,12 @@ export const ListDiscounts = ({ formIndex, operationSecurity, validateForm }: Li
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [firstTimeSecurities]);
+  }, [firstTimeSecurities])
 
   return (
     <>
       {discountsList.map((discountItem, index) => (
-        <Grid key={`discount_${formIndex}_${index}`} item xs={12} sm={4}>
+        <Grid item xs={12} sm={4} key={`discount_${formIndex}_${index}`}>
           <Box sx={{ mb: 2, display: 'flex', alignItems: 'center', gap: '8px' }}>
             <Typography>Discount {index + 1}</Typography>
             <IconButton onClick={() => removeDiscountByIndex(index)}>

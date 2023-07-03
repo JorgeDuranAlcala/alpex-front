@@ -264,7 +264,6 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [frontingFeeEnabled, isTaxesEnabled])
 
-
   /**
    * * Las validaciones actuales resetean los porcentages de taxes y frontingFee
    * * aún cuando ya hay valores desde bdd.
@@ -272,15 +271,14 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
    * * se crea este hook que comprueba si existen valores desde bdd
    * * si es así, los setea en el formulario después de las validaciones actuales.
    */
-  const { forTaxes, forFrontingFee, checkValues } = useDataFirstTime({ formIndex: index, operationSecurity });
+  const { forTaxes, forFrontingFee, checkValues } = useDataFirstTime({ formIndex: index, operationSecurity })
 
   useEffect(() => {
-
     // debugger;
     checkValues({
       taxes: securities[index].taxes,
       frontingFee: securities[index].taxes
-    });
+    })
     if (securities[index].taxes > 0) {
       setIsTaxesEnabled(true)
     }
@@ -289,9 +287,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [securities[index].taxes, securities[index].frontingFee]);
-
-
+  }, [securities[index].taxes, securities[index].frontingFee])
 
   return (
     <DiscountsProvider>
