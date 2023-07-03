@@ -53,7 +53,7 @@ export const DiscountPercent = ({
   }, [securities[index]])
 
   return (
-    <FormControl fullWidth sx={{ mb: 6.5 }}>
+    <FormControl fullWidth>
       <NumericFormat
         autoFocus
         label='Discount %'
@@ -68,9 +68,10 @@ export const DiscountPercent = ({
           return (values.floatValue! >= 0 && values.floatValue! <= 100) || values.floatValue === undefined
         }}
       />
-      {achievedMessageError && (
-        <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>{achievedMessageError}</FormHelperText>
-      )}
+
+      <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
+        {achievedMessageError ? achievedMessageError : ''}
+      </FormHelperText>
     </FormControl>
   )
 }

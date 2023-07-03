@@ -11,9 +11,9 @@ import { CalculateSecurity } from '../../utils/calculates-securities'
 
 // ! only if we want specific props
 interface TaxesPercentProps extends ISecurityInputProps {
-  operationSecurity: CalculateSecurity;
-  isDisabled: boolean;
-  fieldRef: MutableRefObject<IForField>;
+  operationSecurity: CalculateSecurity
+  isDisabled: boolean
+  fieldRef: MutableRefObject<IForField>
 }
 
 export const TaxesPercent = ({
@@ -27,12 +27,11 @@ export const TaxesPercent = ({
 }: TaxesPercentProps) => {
   const { activeErros, securities, calculateSecurities } = useContext(SecurityContext)
 
-  const { achievedMessageError, checkIsPercentageAchieved } = usePercentageAchieved();
+  const { achievedMessageError, checkIsPercentageAchieved } = usePercentageAchieved()
 
   const handleChangeTaxesPercent = (value: number) => {
-
     if (fieldRef) {
-      fieldRef.current.isTouched = true;
+      fieldRef.current.isTouched = true
     }
     const tempSecurities = [...securities]
     tempSecurities[index] = {
@@ -41,31 +40,29 @@ export const TaxesPercent = ({
       taxesAmount: operationSecurity.getTaxesAmount(value)
     }
     validateForm(tempSecurities[index])
-    calculateSecurities(tempSecurities);
+    calculateSecurities(tempSecurities)
   }
 
   useEffect(() => {
-    checkIsPercentageAchieved({ formIndex: index });
+    checkIsPercentageAchieved({ formIndex: index })
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [securities[index].taxes]);
+  }, [securities[index].taxes])
 
   // * Si el campo ya cuenta con un mensaje de error, se ejecuta el chequeo de porcentaje
   // * alcanzado, esto con el fin de que el mensaje de error se borre para este campo
   // * en caso de que el porcentaje se disminuya desde otro lugar
   useEffect(() => {
-
-    if (!achievedMessageError) return;
-    checkIsPercentageAchieved({ formIndex: index });
+    if (!achievedMessageError) return
+    checkIsPercentageAchieved({ formIndex: index })
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [securities[index]]);
-
+  }, [securities[index]])
 
   // console.log({ isTacesTouxhes: forTaxes.current.isTouched, value })
 
   return (
-    <FormControl fullWidth sx={{ mb: 6.5 }}>
+    <FormControl fullWidth>
       <NumericFormat
         autoFocus
         label='Taxes %'
