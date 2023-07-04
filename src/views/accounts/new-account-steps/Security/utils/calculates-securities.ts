@@ -25,11 +25,6 @@ export class CalculateSecurity {
     return this
   }
   getPremierPerShare(): number {
-    // console.log(this.security.totalAmountOfDiscounts);
-
-    // debugger;
-
-    // return (this.baseAmount * this.security.share) / 100;
     if (this.security.isGross) {
       // * is Gross Premium
 
