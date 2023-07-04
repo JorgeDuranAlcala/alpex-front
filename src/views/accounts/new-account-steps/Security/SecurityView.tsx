@@ -101,6 +101,8 @@ const Security = ({ onStepChange }: SecurityProps) => {
           }
         }
         security.discounts = tempDiscountList
+        security.frontingFee = security.frontingFee || 0
+        security.taxes = security.taxes || 0
         operationSecurity.setSecurity(security)
         security.premiumPerShareAmount = operationSecurity.getPremierPerShare() || 0
         security.grossPremiumPerShare = operationSecurity.getGrossPremierPerShare() || 0
@@ -145,7 +147,6 @@ const Security = ({ onStepChange }: SecurityProps) => {
       setSecurities(tempSecurities)
 
       if (isFirstTime) {
-
         setFirstTimeSecurities(tempSecurities)
       }
     }
