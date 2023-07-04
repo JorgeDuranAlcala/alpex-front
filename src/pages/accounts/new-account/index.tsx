@@ -26,7 +26,7 @@ import FormAddress from '@/views/accounts/new-account-steps/FormAddress'
 import Sublimits from 'src/views/accounts/new-account-steps/Sublimits'
 import FormHeader from 'src/views/accounts/new-account-steps/headers/formHeader'
 
-// import UserList from 'src/pages/apps/user/list'
+// import UserList from 'src/pages/apps/user/lis  t'
 
 // import InvoiceAdd from 'src/pages/apps/invoice/add'
 

@@ -13,6 +13,12 @@ interface IActionsHeaderProps {
   sideHeader: boolean
 }
 
+interface StatusHistory {
+  id: number
+  name: string
+  date: string
+}
+
 const ButtonIcon = styled(Button)({
   boxShadow: 'none',
   textTransform: 'none',
@@ -27,15 +33,28 @@ const ButtonIcon = styled(Button)({
   '&:focus': {}
 })
 
+const statusHistory: StatusHistory[] = [
+  {
+    id: 1,
+    name: 'Account creation',
+    date: '11 / December / 2020'
+  },
+  {
+    id: 2,
+    name: 'Bound status',
+    date: '11 / January / 2021'
+  }
+]
+
 const ActionsHeaderBound: React.FC<IActionsHeaderProps> = ({ accountStatus, sideHeader }) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [status, setStatus] = useState({})
   const [uneditableAccount, setUneditableAccount] = useState(false)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [editInfo, setEditInfo] = useState(false)
+  const [openEndorsment, setOpenEndorsment] = useState(false)
   const [openHistory, setOpenHistory] = useState(false)
   const [openDelete, setOpenDelete] = useState(false)
-  const [showPrintOptions, setShowPrintOptions] = useState(false)
   const [cancellEndorsment, setCancellEndorsment] = useState(false)
   const [value, setValue] = useState('')
 
@@ -44,15 +63,15 @@ const ActionsHeaderBound: React.FC<IActionsHeaderProps> = ({ accountStatus, side
     setOpenDelete(false)
   }
 
-  const downloadSpanish = () => {
-    console.log('Spanish Download')
-    setShowPrintOptions(false)
-  }
+  // const downloadSpanish = () => {
+  //   console.log('Spanish Download')
+  //   setShowPrintOptions(false)
+  // }
 
-  const downloadEnglish = () => {
-    console.log('English Download')
-    setShowPrintOptions(false)
-  }
+  // const downloadEnglish = () => {
+  //   console.log('English Download')
+  //   setShowPrintOptions(false)
+  // }
 
   useEffect(() => {
     if (sideHeader) {
@@ -62,14 +81,6 @@ const ActionsHeaderBound: React.FC<IActionsHeaderProps> = ({ accountStatus, side
 
   const handleRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setValue((event.target as HTMLInputElement).value)
-
-    // if (value === 'Informative') {
-
-    // } else if (value === 'Cancellation') {
-
-    // } else {
-
-    // }
   }
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -100,7 +111,7 @@ const ActionsHeaderBound: React.FC<IActionsHeaderProps> = ({ accountStatus, side
                 <Icon icon='material-symbols:post-add' />
               </ButtonIcon>
             </div>
-
+            {/* ESTE ES EL MODAL QUE SE DESPLIEGA CUANDO SE GENERA EL ENDORSEMENT*/}
             <ActionsHeaderBoundModal
               setOpenHistory={setOpenHistory}
               uneditableAccount={uneditableAccount}
@@ -110,7 +121,7 @@ const ActionsHeaderBound: React.FC<IActionsHeaderProps> = ({ accountStatus, side
               handleRadioChange={handleRadioChange}
               setCancellEndorsment={setCancellEndorsment}
             />
-
+            {/* ESTE ES EL MODAL QUE SE DESPLIEGA CUANDO SE VA POR LA RUTA DE CANCELACIÓN */}
             <ActionsHeaderBoundModalCancel
               setOpenHistory={setCancellEndorsment}
               openHistory={cancellEndorsment}
@@ -119,33 +130,48 @@ const ActionsHeaderBound: React.FC<IActionsHeaderProps> = ({ accountStatus, side
               value={value}
               setCancellEndorsment={setCancellEndorsment}
             />
-            {/* )} */}
 
             <div className='header-btns'>
               <ButtonIcon
-                className='print-button'
                 onClick={() => {
-                  setShowPrintOptions(!showPrintOptions)
+                  setOpenEndorsment(true)
                 }}
                 disabled={uneditableAccount}
               >
-                <div className='btn-icon'>
-                  <Icon icon='mdi:clock-outline' />
-                </div>
-                {showPrintOptions ? (
-                  <div className='print-options'>
-                    <div className='title'>Select a language</div>
-                    <div className='language' onClick={downloadEnglish}>
-                      English
-                    </div>
-                    <div className='language' onClick={downloadSpanish}>
-                      Spanish
-                    </div>
-                  </div>
-                ) : (
-                  ''
-                )}
+                <Icon icon='mdi:clock-outline' />
               </ButtonIcon>
+              <Modal
+                className='history-modal'
+                open={openEndorsment}
+                onClose={() => {
+                  setOpenEndorsment(false)
+                }}
+              >
+                <Box className='modal-wrapper'>
+                  <HeaderTitleModal>
+                    <Typography variant='h6'>Account History</Typography>
+                    <ButtonClose
+                      onClick={() => {
+                        setOpenEndorsment(false)
+                      }}
+                    >
+                      <CloseIcon />
+                    </ButtonClose>
+                  </HeaderTitleModal>
+                  <div className='headers'>
+                    <div className='name'>Name</div>
+                    <div className='date'>Date</div>
+                  </div>
+                  {statusHistory.map(status => (
+                    <>
+                      <div className={status.id % 2 == 0 ? 'history-status grey-bg' : 'history-status'} key={status.id}>
+                        <div className='name'>{status.name}</div>
+                        <div className='date'>{status.date}</div>
+                      </div>
+                    </>
+                  ))}
+                </Box>
+              </Modal>
             </div>
 
             <div className='header-btns'>
