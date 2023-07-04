@@ -14,7 +14,7 @@ import Information from 'src/views/accounts/new-account-steps/Information/Inform
 import PaymentWarranty from 'src/views/accounts/new-account-steps/PaymentWarranty'
 import Security from 'src/views/accounts/new-account-steps/Security/SecurityView'
 
-// import CommentSection from 'src/views/components/new-accounts/CommentSection'
+import CommentSection from 'src/views/components/new-accounts/CommentSection'
 import NewAccountStepper from 'src/views/components/new-accounts/NewAccountStepper'
 
 // import TabAccount from 'src/views/pages/account-settings/TabAccount'
@@ -25,6 +25,8 @@ import { updateFormsData } from '@/store/apps/accounts'
 import FormAddress from '@/views/accounts/new-account-steps/FormAddress'
 import Sublimits from 'src/views/accounts/new-account-steps/Sublimits'
 import FormHeader from 'src/views/accounts/new-account-steps/headers/formHeader'
+
+import Icon from 'src/@core/components/icon'
 
 // import UserList from 'src/pages/apps/user/list'
 
@@ -37,7 +39,7 @@ const NewAccount = () => {
 
   // const { account, setAccountId } = useGetAccountById()
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  // const [disableComments, setDisableComments] = useState(false)
+  const [disableComments, setDisableComments] = useState(false)
   const [isNewAccount, setIsNewAccount] = useState<boolean>(true)
   const [activeStep, setActiveStep] = useState(1)
 
@@ -164,9 +166,12 @@ const NewAccount = () => {
           <MenuForm />
         </div>
       </div>
-      {/* <Card>
+      <Card sx={{ '@media (min-width:809px)': { display: 'none' } }}>
+        <div style={{ display: 'flex', height: '50px', padding: '14px', alignItems: 'center' }}>
+          <Icon icon={'material-symbols:chat-bubble-outline'} fontSize={24} color='#4D5062' />
+        </div>
         <CommentSection disable={disableComments} step={activeStep} />
-      </Card> */}
+      </Card>
     </Grid>
   )
 }
