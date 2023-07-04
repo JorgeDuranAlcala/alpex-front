@@ -59,6 +59,7 @@
   margin: 0 0 20px;
   overflow: inherit;
   height: 100%;
+  width: 100%;
 }
 
 /*---- Header----*/
@@ -409,10 +410,11 @@
   flex-wrap: wrap;
   gap: 2%;
   justify-content: flex-start;
+  padding: 0px 12px 0px 12px;
 }
 
 .upload-btn .file-details {
-  width: 32%;
+  width: 100%;
   align-items: center;
   display: flex;
   background-color: rgba(130, 133, 151, 0.05);
@@ -420,6 +422,7 @@
   padding: 5px 10px;
   border-radius: 8px;
   justify-content: space-between;
+  height: 42px;
 }
 
 .upload-btn .file-name {
@@ -429,6 +432,28 @@
   text-overflow: ellipsis;
 }
 
+.title-documents {
+  font-weight: 500;
+  font-size: 20px;
+  letter-spacing: 0.15px;
+  height: 64px;
+  padding: 16px 12px 16px 12px;
+}
+
+.final-slip {
+  background-color: #686b7e;
+  border-radius: 10px;
+  height: 36px;
+  width: 100%;
+}
+.actions-icons {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  height: auto;
+  width: 132px;
+  margin-left: auto;
+}
 .menu-btn {
   position: relative;
   display: flex;

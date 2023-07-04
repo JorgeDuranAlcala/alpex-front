@@ -34,9 +34,6 @@ export const ListDiscounts = ({ formIndex, operationSecurity, validateForm }: Li
     const tempSecurities = [...securities]
 
     if (!tempSecurities[formIndex].totalAmountOfDiscounts && totalAmountOfDiscounts === 0) {
-      // console.log('no actualizar');
-      // debugger;
-
       return
     }
 
@@ -50,22 +47,24 @@ export const ListDiscounts = ({ formIndex, operationSecurity, validateForm }: Li
 
     calculateSecurities(tempSecurities)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [discountsList, formIndex]);
+  }, [discountsList, formIndex])
 
   useEffect(() => {
     if (firstTimeSecurities.length > 0) {
+      if (formIndex > firstTimeSecurities.length - 1) return
+
       if (firstTimeSecurities[formIndex].discounts.length > 0) {
         updateAllDiscounts(firstTimeSecurities[formIndex].discounts)
       }
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [firstTimeSecurities]);
+  }, [firstTimeSecurities, formIndex])
 
   return (
     <>
       {discountsList.map((discountItem, index) => (
-        <Grid key={`discount_${formIndex}_${index}`} item xs={12} sm={4}>
+        <Grid item xs={12} sm={4} key={`discount_${formIndex}_${index}`}>
           <Box sx={{ mb: 2, display: 'flex', alignItems: 'center', gap: '8px' }}>
             <Typography>Discount {index + 1}</Typography>
             <IconButton onClick={() => removeDiscountByIndex(index)}>

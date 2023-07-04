@@ -90,6 +90,11 @@ export interface InformationResponse {
   idAccountType: number
 }
 
+export interface AccountHistory {
+  id: number
+  effectiveDate: any
+}
+
 interface IDataBroker {
   active: boolean
   alias: string

@@ -1,4 +1,4 @@
-import { FormControl, TextField } from '@mui/material'
+import { FormControl, FormHelperText, TextField } from '@mui/material'
 import { useContext } from 'react'
 import { NumericFormat } from 'react-number-format'
 
@@ -42,9 +42,8 @@ export const DiscountAmount = ({ discountIndex, value, operationSecurity }: Disc
   }
 
   return (
-    <FormControl fullWidth sx={{ mb: 2 }}>
+    <FormControl fullWidth>
       <NumericFormat
-        autoFocus
         label='Discount'
         value={value}
         onChange={e => {
@@ -55,6 +54,7 @@ export const DiscountAmount = ({ discountIndex, value, operationSecurity }: Disc
         decimalScale={2}
         thousandSeparator=','
       />
+      <FormHelperText sx={{ color: 'error.main', minHeight: '25px' }}></FormHelperText>
     </FormControl>
   )
 }

@@ -50,7 +50,8 @@ import {
   premiumPerShareAmount_validations,
   reinsuranceBrokerageAmount_validations,
   reinsuranceBrokeragePercent_validations,
-  selectRetroCedantContact_validations,
+
+  // selectRetroCedantContact_validations,
   selectRetroCedant_validations,
   shareAmount_validations,
   sharePercent_validations,
@@ -106,7 +107,8 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
 
   const schemaRetrocedant = yup.object().shape({
     ...selectRetroCedant_validations({ frontingFeeEnabled, isGross }).fields,
-    ...selectRetroCedantContact_validations({ frontingFeeEnabled }).fields,
+
+    // ...selectRetroCedantContact_validations({ frontingFeeEnabled }).fields,
     ...frontingFeePercent_validations({ frontingFeeEnabled }).fields,
     ...frontingFeeAmount_validations({ frontingFeeEnabled }).fields
   })
@@ -155,6 +157,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
         }
         errorsTemp[index] = true
         setErrorsSecurity(data)
+        console.log({ error: data })
 
         //setEnableNextStep(false)
       })
@@ -264,7 +267,6 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [frontingFeeEnabled, isTaxesEnabled])
 
-
   /**
    * * Las validaciones actuales resetean los porcentages de taxes y frontingFee
    * * aún cuando ya hay valores desde bdd.
@@ -272,15 +274,13 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
    * * se crea este hook que comprueba si existen valores desde bdd
    * * si es así, los setea en el formulario después de las validaciones actuales.
    */
-  const { forTaxes, forFrontingFee, checkValues } = useDataFirstTime({ formIndex: index, operationSecurity });
+  const { forTaxes, forFrontingFee, checkValues } = useDataFirstTime({ formIndex: index, operationSecurity })
 
   useEffect(() => {
-
-    // debugger;
     checkValues({
       taxes: securities[index].taxes,
       frontingFee: securities[index].taxes
-    });
+    })
     if (securities[index].taxes > 0) {
       setIsTaxesEnabled(true)
     }
@@ -289,9 +289,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [securities[index].taxes, securities[index].frontingFee]);
-
-
+  }, [securities[index].taxes, securities[index].frontingFee])
 
   return (
     <DiscountsProvider>

@@ -61,7 +61,6 @@ const Security = ({ onStepChange }: SecurityProps) => {
   })
   const [companiesSelect] = useState<number[]>([])
 
-
   const { account, setAccountId, getAccountById, accountId } = useGetAccountById()
   const { saveSecurityTotal } = useAddSecurityTotal()
   const { updateSecurityTotal } = useUpdateSecurityTotalById()
@@ -78,7 +77,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
     status: 'error'
   })
 
-  const calculateSecurities = (securities: SecurityDto[]) => {
+  const calculateSecurities = (securities: SecurityDto[], isFirstTime = false) => {
     if (securities.length > 0 && information) {
       const tempSecurities = []
       companiesSelect.splice(0, companiesSelect.length)
@@ -91,26 +90,32 @@ const Security = ({ onStepChange }: SecurityProps) => {
           .setSecurity(security)
         if (security?.idCReinsuranceCompany?.id) companiesSelect.push(security.idCReinsuranceCompany.id)
 
-        //TODO:@ISRRA - obtener los discounts guardados desde la base de datos
         const tempDiscountList = []
-        if (security?.discounts)
+        if (security?.discounts) {
+          security.totalAmountOfDiscounts = 0
           for (const discount of security?.discounts) {
-            discount.amount = operationSecurity.getDiscountAmount(discount.percentage)
+            discount.percentage = Number(discount.percentage)
+            discount.amount = operationSecurity.getDiscountAmount(Number(discount.percentage))
+            security.totalAmountOfDiscounts += discount.amount
             tempDiscountList.push(discount)
           }
+        }
         security.discounts = tempDiscountList
+        security.frontingFee = security.frontingFee || 0
+        security.taxes = security.taxes || 0
+        operationSecurity.setSecurity(security)
         security.premiumPerShareAmount = operationSecurity.getPremierPerShare() || 0
         security.grossPremiumPerShare = operationSecurity.getGrossPremierPerShare() || 0
         security.brokerAgeAmount = operationSecurity.getBrokerAge() || 0
         security.dynamicCommissionAmount = operationSecurity.getDynamicComissionAmount() || 0
 
-        security.frontingFeeAmount = operationSecurity.getFrontingFeeAmount(security.frontingFee) || 0;
-
+        security.frontingFeeAmount = operationSecurity.getFrontingFeeAmount(security.frontingFee) || 0
 
         security.taxesAmount = operationSecurity.getTaxesAmount(security.taxes) || 0
 
         security.shareAmount = operationSecurity.getShareAmount() || 0
         security.netReinsurancePremium = operationSecurity.getNetReinsurancePremium() || 0
+
         tempSecurities.push({
           ...security,
           difference: Number(security.difference) || 0,
@@ -120,12 +125,8 @@ const Security = ({ onStepChange }: SecurityProps) => {
           netPremiumAt100: Number(security.netPremiumAt100) || 0,
           receivedNetPremium: Number(security.receivedNetPremium) || 0,
           reinsuranceBrokerage: Number(security.reinsuranceBrokerage) || 0,
-          share: Number(security.share) || 0,
-
-          taxes: Number(security.taxes) || 0,
-          frontingFee: Number(security.frontingFee) || 0
+          share: Number(security.share) || 0
         })
-
       }
       let dataForm: FormSecurity = {
         ...allFormData,
@@ -133,10 +134,10 @@ const Security = ({ onStepChange }: SecurityProps) => {
         ...CalculateSecurity.getData(tempSecurities)
       }
 
-      if (account && account.securityTotal) {
+      if (account && account.securitiesTotal[0]) {
         dataForm = {
           ...dataForm,
-          id: account.securityTotal.id
+          id: account.securitiesTotal[0].id
         }
       }
       setAllFormData(dataForm)
@@ -145,7 +146,9 @@ const Security = ({ onStepChange }: SecurityProps) => {
 
       setSecurities(tempSecurities)
 
-      if (firstTimeSecurities.length === 0) setFirstTimeSecurities(tempSecurities)
+      if (isFirstTime) {
+        setFirstTimeSecurities(tempSecurities)
+      }
     }
   }
 
@@ -186,8 +189,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
         update.push({
           ...mapper,
           id: security.id,
-          view: 1,
-
+          view: 1
         })
         console.log({ update })
       } else {
@@ -195,7 +197,6 @@ const Security = ({ onStepChange }: SecurityProps) => {
         console.log({ save })
       }
     }
-
 
     if (!allFormData.id) {
       await saveSecurityTotal([
@@ -288,14 +289,14 @@ const Security = ({ onStepChange }: SecurityProps) => {
           const accountSecurities = accountById?.securities as SecurityDto[]
 
           if (accountSecurities && information) {
-            calculateSecurities(accountSecurities)
-            accountById.securityTotal &&
+            calculateSecurities(accountSecurities, true)
+            accountById.securitiesTotal &&
               setAllFormData({
                 ...allFormData,
-                recievedNetPremium: Number(accountById.securityTotal.receivedNetPremium),
-                distribuitedNetPremium: Number(accountById.securityTotal.distributedNetPremium),
-                diference: Number(accountById.securityTotal.difference),
-                id: Number(accountById.securityTotal.id)
+                recievedNetPremium: Number(accountById.securitiesTotal[0].receivedNetPremium),
+                distribuitedNetPremium: Number(accountById.securitiesTotal[0].distributedNetPremium),
+                diference: Number(accountById.securitiesTotal[0].difference),
+                id: Number(accountById.securitiesTotal[0].id)
               })
           }
 
@@ -351,14 +352,15 @@ const Security = ({ onStepChange }: SecurityProps) => {
 
   useEffect(() => {
     if (account && information) {
-      calculateSecurities(account.securities)
-      account.securityTotal &&
+      calculateSecurities(account.securities, true)
+
+      account.securitiesTotal.length > 0 &&
         setAllFormData({
           ...allFormData,
-          recievedNetPremium: Number(account.securityTotal.receivedNetPremium),
-          distribuitedNetPremium: Number(account.securityTotal.distributedNetPremium),
-          diference: Number(account.securityTotal.difference),
-          id: Number(account.securityTotal.id)
+          recievedNetPremium: Number(account.securitiesTotal[0].receivedNetPremium),
+          distribuitedNetPremium: Number(account.securitiesTotal[0].distributedNetPremium),
+          diference: Number(account.securitiesTotal[0].difference),
+          id: Number(account.securitiesTotal[0].id)
         })
     }
 
