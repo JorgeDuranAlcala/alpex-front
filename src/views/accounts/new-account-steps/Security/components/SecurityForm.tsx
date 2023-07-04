@@ -157,7 +157,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
         }
         errorsTemp[index] = true
         setErrorsSecurity(data)
-        console.log({ error: data })
+        console.log({ error: data, index })
 
         //setEnableNextStep(false)
       })
