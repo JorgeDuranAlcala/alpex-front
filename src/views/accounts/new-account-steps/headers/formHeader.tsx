@@ -1,3 +1,4 @@
+// import { useGetAllEndorsementTypes } from '@/hooks/accounts/endorsementType/getAllEndorsementTypes.tsx'
 import { useFindInformationByIdAccount } from '@/hooks/accounts/information'
 import { ContainerMobileBound } from '@/styled-components/accounts/Security.styled'
 import { formatStatus } from '@/utils/formatStatus'
@@ -136,6 +137,7 @@ const FormHeader = ({ isNewAccount }: any) => {
       })
     }
   }
+
   const formatDate = (date: Date | null | undefined): string => {
     if (date) {
       const options: Intl.DateTimeFormatOptions = {
@@ -176,7 +178,7 @@ const FormHeader = ({ isNewAccount }: any) => {
 
     setAccounts(formatedRows || [])
     const data = accounts?.find((item: any) => item.id === account?.id)
-    console.log('datoss', data)
+    // console.log('datoss', data)
 
     setStatus(data?.status)
   }, [accountsReducer])
@@ -184,10 +186,6 @@ const FormHeader = ({ isNewAccount }: any) => {
   useEffect(() => {
     account && setIdAccount(account.id)
   }, [account])
-
-  // console.log('información', information, account, accounts, accountsReducer)
-
-  // console.log('objeto', status)
 
   return (
     <>
@@ -201,8 +199,7 @@ const FormHeader = ({ isNewAccount }: any) => {
 
               <span className='subtitle'>Net premium</span>
               <span className='moneySubtitle'>
-                ${account && account?.placementStructure?.netPremium}
-                {account?.placementStructure?.currency}
+                ${account && formaterAmount(account?.placementStructure?.netPremium)}{' '}
                 {account?.placementStructure?.currency}
               </span>
               <span className='subtitle'>Reception Date</span>
@@ -223,7 +220,7 @@ const FormHeader = ({ isNewAccount }: any) => {
                 <div className='form-header-money-data'>
                   <span className='form-header-money-data-txt'>Net premium</span>
                   <span className='form-header-money-data-num'>
-                    ${account && account?.placementStructure?.netPremium}
+                    ${account && formaterAmount(account?.placementStructure?.netPremium)}{' '}
                     {account?.placementStructure?.currency}
                   </span>
                   <span className='form-header-money-data-date'>

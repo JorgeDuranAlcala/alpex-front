@@ -25,11 +25,6 @@ export class CalculateSecurity {
     return this
   }
   getPremierPerShare(): number {
-    // console.log(this.security.totalAmountOfDiscounts);
-
-    // debugger;
-
-    // return (this.baseAmount * this.security.share) / 100;
     if (this.security.isGross) {
       // * is Gross Premium
 
@@ -91,7 +86,6 @@ export class CalculateSecurity {
     } else {
       // * is Net Premium
 
-
       return (valueAmount / this.security.premiumPerShareAmount) * 100
     }
   }
@@ -143,7 +137,6 @@ export class CalculateSecurity {
     }
   }
   getTaxesAmount(value?: number): number {
-
     // console.log('taxesAmount', { value })
 
     // return (this.security.taxes * this.security.premiumPerShareAmount) / 100
@@ -180,6 +173,7 @@ export class CalculateSecurity {
       // * is Net Premium
 
       const base = (this.security.netPremiumAt100 * this.security.share) / 100
+      console.log({ base })
 
       return (valueAmount / base) * 100
     }
@@ -204,6 +198,7 @@ export class CalculateSecurity {
     let premiumPerShareAmountGros = 0
     let distributedNetPremium = 0
     let taxesGros = 0
+    let discountAmountGros = 0
     let brokerageReinsuranceGross = 0
 
     for (const security of securities) {
@@ -214,9 +209,11 @@ export class CalculateSecurity {
       brokerageReinsuranceGross += security.isGross ? security.brokerAgeAmount : 0
       distributedNetPremium +=
         security.netReinsurancePremium + security.dynamicCommissionAmount + security.frontingFeeAmount ?? 0
+      discountAmountGros += security.isGross ? security.totalAmountOfDiscounts : 0
     }
     const recievedNetPremium =
-      premiumPerShareAmountNet + (premiumPerShareAmountGros - taxesGros - brokerageReinsuranceGross)
+      premiumPerShareAmountNet +
+      (premiumPerShareAmountGros - taxesGros - brokerageReinsuranceGross - discountAmountGros)
     const diference = recievedNetPremium - distributedNetPremium
 
     return {

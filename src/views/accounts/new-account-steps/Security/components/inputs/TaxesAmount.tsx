@@ -49,7 +49,7 @@ export const TaxesAmount = ({
         thousandSeparator=','
         disabled={isDisabled}
       />
-      <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>{activeErros && errorMessage}</FormHelperText>
+      <FormHelperText sx={{ color: 'error.main', minHeight: '25px' }}>{activeErros && errorMessage}</FormHelperText>
     </FormControl>
   )
 }

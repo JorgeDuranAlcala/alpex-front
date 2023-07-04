@@ -179,11 +179,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
           const result = (grossPremiumc * reinsuranceBrokeragePc) / 100
           reinsuranceBrokeragec = isFinite(result) ? result : 0
           handleNumericInputChange(value, 'reinsuranceBrokerageP')
-        } else {
-          reinsuranceBrokeragec = 0
-          reinsuranceBrokeragePc = 0
         }
-
         break
       }
       case 'reinsuranceBrokerage': {
@@ -192,11 +188,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
           const result = (reinsuranceBrokeragec * 100) / grossPremiumc
           reinsuranceBrokeragePc = isFinite(result) ? result : 0
           handleNumericInputChange(value, 'reinsuranceBrokerageP')
-        } else {
-          reinsuranceBrokeragePc = 0
-          reinsuranceBrokeragec=0
         }
-
         break
       }
       case 'taxes': {
@@ -205,10 +197,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
           const result = (taxesc * 100) / grossPremiumc
           taxesPc = isFinite(result) ? result : 0
           handleNumericInputChange(value, 'taxes')
-        } else {
-          taxesPc = 0
         }
-
         break
       }
       case 'taxesP': {
@@ -217,9 +206,6 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
           const result = (grossPremiumc * taxesPc) / 100
           taxesc = isFinite(result) ? result : 0
           handleNumericInputChange(value, 'taxesP')
-        } else {
-          taxesc = 0
-          taxesPc = 0
         }
 
         break
@@ -230,12 +216,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
         frontingFeePc = value
         const result = (grossPremiumc * frontingFeePc  )/ 100
         frontingFeec = isFinite(result) ? result : 0
-
         handleNumericInputChange(value, 'frontingFeeP')
-
-      }else{
-        frontingFeec = 0
-        frontingFeePc = 0
       }
         break
       }
@@ -245,9 +226,6 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
           frontingFeePc = isFinite(result) ? result : 0
           frontingFeec = value
           handleNumericInputChange(value, 'frontingFee')
-        } else {
-          frontingFeePc = 0
-          frontingFeec = 0
         }
         break
       }
@@ -268,13 +246,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
           return { ...discount, amount: newAmount }
         })
 
-        }else{
-          grossPremiumc= 0
-          reinsuranceBrokeragec = 0
-          taxesc = 0
-          frontingFeec = 0
         }
-
         break
       }
       default:
@@ -684,7 +656,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
                 if (value.floatValue) {
                   calculate('reinsuranceBrokerageP', value.floatValue)
                 } else {
-                  calculate('reinsuranceBrokerageP', '')
+                  calculate('reinsuranceBrokerageP', 0)
                 }
               }}
               error={errors.reinsuranceBrokeragePError}
@@ -750,7 +722,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
                 if (value.floatValue) {
                   calculate('grossPremium', value.floatValue)
                 } else {
-                  calculate('grossPremium', '')
+                  calculate('grossPremium', 0)
                 }
               }}
               error={errors.grossPremiumError}
@@ -782,7 +754,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
                 if (value.floatValue) {
                   calculate('reinsuranceBrokerage', value.floatValue)
                 } else {
-                  calculate('reinsuranceBrokerage', '')
+                  calculate('reinsuranceBrokerage', 0)
                 }
               }}
               error={errors.reinsuranceBrokerageError}
@@ -874,7 +846,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
                 if (value.floatValue) {
                   calculate('taxesP', value.floatValue)
                 } else {
-                  calculate('taxesP', '')
+                  calculate('taxesP', 0)
                 }
               }}
               onFocus={e => {
@@ -973,7 +945,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
                 if (value.floatValue) {
                   calculate('frontingFeeP', value.floatValue)
                 } else {
-                  calculate('frontingFeeP', '')
+                  calculate('frontingFeeP', 0)
                 }
               }}
               error={frontingChecked && (errors.frontingFeePError || errors.totalDiscountsError || totalDiscountsError)}

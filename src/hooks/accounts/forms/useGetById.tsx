@@ -11,7 +11,7 @@ export interface ResponseGetAccount {
   id: number
   informations: InformationDto[]
   securities: SecurityDto[]
-  securityTotal: SecurityTotalDto
+  securitiesTotal: SecurityTotalDto[]
   installments: InstallmentDto[]
   sublimits: SublimitDto[]
 }
