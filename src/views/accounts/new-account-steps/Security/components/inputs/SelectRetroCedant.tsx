@@ -94,15 +94,16 @@ export const selectRetroCedant_validations = ({
     idCRetroCedant: yup
       .object()
       .shape({
-        id: yup.number().nullable().notRequired(),
-        name: yup.string().nullable().notRequired()
+        id: yup.number().nullable(),
+        name: yup.string().nullable()
       })
+
       .test('', 'This field is required', value => {
-        if (!isGross && frontingFeeEnabled && value && typeof value === 'object') {
-          return value.hasOwnProperty('id')
+        if (!isGross && frontingFeeEnabled) {
+          return value && typeof value === 'object' && value.hasOwnProperty('id')
         }
 
         return true
       })
-      .required('This field is required')
+      .nullable()
   })
