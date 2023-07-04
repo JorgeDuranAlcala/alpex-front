@@ -82,7 +82,7 @@ export const FrontingFeePercent = ({
         disabled={isDisabled}
       />
 
-      <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
+      <FormHelperText sx={{ color: 'error.main', minHeight: '25px' }}>
         {activeErros ? errorMessage : achievedMessageError}
       </FormHelperText>
     </FormControl>

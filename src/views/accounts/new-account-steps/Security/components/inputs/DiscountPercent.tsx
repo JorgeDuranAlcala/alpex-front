@@ -69,7 +69,7 @@ export const DiscountPercent = ({
         }}
       />
 
-      <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
+      <FormHelperText sx={{ color: 'error.main', minHeight: '25px' }}>
         {achievedMessageError ? achievedMessageError : ''}
       </FormHelperText>
     </FormControl>
