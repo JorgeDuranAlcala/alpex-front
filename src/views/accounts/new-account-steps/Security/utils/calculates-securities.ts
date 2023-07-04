@@ -35,6 +35,13 @@ export class CalculateSecurity {
 
       return (this.security.netPremiumAt100 * this.security.share) / 100
     } else {
+      const totalAmountOfDiscounts = this.security.discounts.reduce((value, current) => {
+        value += current.amount
+
+        return value
+      }, 0)
+      this.security.totalAmountOfDiscounts = totalAmountOfDiscounts
+
       // * is Net Premium
       let result = (this.security.netPremiumAt100 * this.security.share) / 100
       result = result - this.getTaxesAmount()
@@ -91,7 +98,6 @@ export class CalculateSecurity {
     } else {
       // * is Net Premium
 
-
       return (valueAmount / this.security.premiumPerShareAmount) * 100
     }
   }
@@ -143,7 +149,6 @@ export class CalculateSecurity {
     }
   }
   getTaxesAmount(value?: number): number {
-
     // console.log('taxesAmount', { value })
 
     // return (this.security.taxes * this.security.premiumPerShareAmount) / 100
@@ -180,6 +185,7 @@ export class CalculateSecurity {
       // * is Net Premium
 
       const base = (this.security.netPremiumAt100 * this.security.share) / 100
+      console.log({ base })
 
       return (valueAmount / base) * 100
     }

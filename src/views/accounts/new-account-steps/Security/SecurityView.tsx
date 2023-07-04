@@ -61,7 +61,6 @@ const Security = ({ onStepChange }: SecurityProps) => {
   })
   const [companiesSelect] = useState<number[]>([])
 
-
   const { account, setAccountId, getAccountById, accountId } = useGetAccountById()
   const { saveSecurityTotal } = useAddSecurityTotal()
   const { updateSecurityTotal } = useUpdateSecurityTotalById()
@@ -99,13 +98,13 @@ const Security = ({ onStepChange }: SecurityProps) => {
             tempDiscountList.push(discount)
           }
         security.discounts = tempDiscountList
+        operationSecurity.setSecurity(security)
         security.premiumPerShareAmount = operationSecurity.getPremierPerShare() || 0
         security.grossPremiumPerShare = operationSecurity.getGrossPremierPerShare() || 0
         security.brokerAgeAmount = operationSecurity.getBrokerAge() || 0
         security.dynamicCommissionAmount = operationSecurity.getDynamicComissionAmount() || 0
 
-        security.frontingFeeAmount = operationSecurity.getFrontingFeeAmount(security.frontingFee) || 0;
-
+        security.frontingFeeAmount = operationSecurity.getFrontingFeeAmount(security.frontingFee) || 0
 
         security.taxesAmount = operationSecurity.getTaxesAmount(security.taxes) || 0
 
@@ -125,7 +124,6 @@ const Security = ({ onStepChange }: SecurityProps) => {
           taxes: Number(security.taxes) || 0,
           frontingFee: Number(security.frontingFee) || 0
         })
-
       }
       let dataForm: FormSecurity = {
         ...allFormData,
@@ -186,8 +184,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
         update.push({
           ...mapper,
           id: security.id,
-          view: 1,
-
+          view: 1
         })
         console.log({ update })
       } else {
@@ -195,7 +192,6 @@ const Security = ({ onStepChange }: SecurityProps) => {
         console.log({ save })
       }
     }
-
 
     if (!allFormData.id) {
       await saveSecurityTotal([

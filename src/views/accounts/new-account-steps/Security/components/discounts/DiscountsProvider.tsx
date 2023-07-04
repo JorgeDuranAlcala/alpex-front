@@ -2,8 +2,6 @@ import { ReactNode, useState } from 'react'
 import { DiscountsContext, IDiscountInputs, IUpdateDiscountByIndex } from './DiscountsContext'
 
 export const DiscountsProvider = ({ children }: { children: ReactNode }) => {
-
-
   const [discountsList, setDiscountsList] = useState<IDiscountInputs[]>([])
 
   const addDiscount = () => {
@@ -32,6 +30,7 @@ export const DiscountsProvider = ({ children }: { children: ReactNode }) => {
   }
 
   const updateDiscountByIndex = ({ index, percentage, amount }: IUpdateDiscountByIndex) => {
+    debugger
     setDiscountsList(prev => {
       const newDiscounts = [...prev]
       newDiscounts[index] = {
@@ -47,8 +46,6 @@ export const DiscountsProvider = ({ children }: { children: ReactNode }) => {
   const updateAllDiscounts = (allDiscounts: IDiscountInputs[]) => {
     setDiscountsList(allDiscounts)
   }
-
-
 
   return (
     <DiscountsContext.Provider
