@@ -95,6 +95,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
           for (const discount of security?.discounts) {
             discount.percentage = Number(discount.percentage)
             discount.amount = operationSecurity.getDiscountAmount(Number(discount.percentage))
+            security.totalAmountOfDiscounts += discount.amount
             tempDiscountList.push(discount)
           }
         security.discounts = tempDiscountList
