@@ -101,8 +101,9 @@ const Security = ({ onStepChange }: SecurityProps) => {
           }
         }
         security.discounts = tempDiscountList
-        security.frontingFee = security.frontingFee || 0
-        security.taxes = security.taxes || 0
+        security.frontingFee = Number(security.frontingFee) || 0
+        security.taxes = Number(security.taxes) || 0
+        security.netPremiumAt100 = Number(security.netPremiumAt100) || 0
         operationSecurity.setSecurity(security)
         security.premiumPerShareAmount = operationSecurity.getPremierPerShare() || 0
         security.grossPremiumPerShare = operationSecurity.getGrossPremierPerShare() || 0

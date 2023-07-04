@@ -13,6 +13,7 @@ import {
   ListItemIcon,
   ListItemText,
   Modal,
+  Tooltip,
   Typography
 } from '@mui/material'
 import { ButtonClose, HeaderTitleModal } from 'src/styles/Dashboard/ModalReinsurers/modalReinsurers'
@@ -35,7 +36,7 @@ const FileSubmit: React.FC<UserFileProps> = ({ setUserFile, userFile, urls, setU
   const [selectedFile, setSelectedFile] = useState<File | null>(null) // saves the row wehen user click on actions button
   const [openDelete, setOpenDelete] = useState(false)
   const fileUrls: string[] = urls
-  const [open, setOpen] = useState<boolean>(true)
+  const [open, setOpen] = useState<boolean>(false)
 
   const [badgeData, setBadgeData] = useState<IAlert>({
     message: '',
@@ -185,12 +186,19 @@ const FileSubmit: React.FC<UserFileProps> = ({ setUserFile, userFile, urls, setU
                       <div className='menu-options'>
                         <div className='option' onClick={e => handlePreview(e, index)}>
                           Preview
+                          <Icon icon={'ic:outline-remove-red-eye'} fontSize={24} color='rgba(87, 90, 111, 0.54)' />
+                        </div>
+                        <div className='option'>
+                          Move to Folder
+                          <Icon icon={'ic:baseline-drive-file-move'} fontSize={24} color='rgba(87, 90, 111, 0.54)' />
                         </div>
                         <div className='option' onClick={e => handleDownload(e, index)}>
                           Download
+                          <Icon icon={'mdi:download'} fontSize={24} color='rgba(87, 90, 111, 0.54)' />
                         </div>
                         <div className='option' onClick={() => setOpenDelete(true)}>
                           Delete
+                          <Icon icon={'ic:outline-delete'} fontSize={24} color='rgba(87, 90, 111, 0.54)' />
                         </div>
 
                         <Modal
@@ -247,7 +255,7 @@ const FileSubmit: React.FC<UserFileProps> = ({ setUserFile, userFile, urls, setU
           </Button>
         </label> */}
 
-        <div style={{ padding: '0px 12px 0px 12px' }}>
+        <div>
           <List component='nav'>
             <ListItem disablePadding className='final-slip'>
               <ListItemButton
@@ -271,15 +279,21 @@ const FileSubmit: React.FC<UserFileProps> = ({ setUserFile, userFile, urls, setU
           </List>
         </div>
         <div className='actions-icons'>
-          <IconButton onClick={e => onButtonClick(e)}>
-            <Icon icon='mdi:upload' color={'#2535A8'} />
-          </IconButton>
-          <IconButton>
-            <Icon icon={'ic:round-create-new-folder'} color={'#2535A8'} />
-          </IconButton>
-          <IconButton>
-            <Icon icon={'ic:outline-delete'} color={'#2535A8'} />
-          </IconButton>
+          <Tooltip title='Upload'>
+            <IconButton onClick={e => onButtonClick(e)}>
+              <Icon icon='mdi:upload' color={'#2535A8'} />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title='New folder'>
+            <IconButton>
+              <Icon icon={'ic:round-create-new-folder'} color={'#2535A8'} />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title='Delete'>
+            <IconButton>
+              <Icon icon={'ic:outline-delete'} color={'#2535A8'} />
+            </IconButton>
+          </Tooltip>
         </div>
         {/* </form> */}
       </div>

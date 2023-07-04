@@ -437,9 +437,16 @@
   font-size: 20px;
   letter-spacing: 0.15px;
   height: 64px;
-  padding: 16px 12px 16px 12px;
+  padding: 16px 0px 16px 0px;
 }
-
+.no-documentsText {
+  height: 72px;
+  width: 100%;
+  border-radius: 8px;
+  padding: 8px 16px;
+  background-color: rgba(130, 133, 151, 0.05);
+  margin-bottom: 5px;
+}
 .final-slip {
   background-color: #686b7e;
   border-radius: 10px;
@@ -463,21 +470,25 @@
 
 .menu-options {
   position: absolute;
-  width: 100%;
+  width: 200px;
   max-width: 220px;
   background-color: white;
   min-width: 100px;
   top: 43px;
   right: -12px;
-  padding: 10px 0;
+  padding: 8px 0px 8px 0px;
   border-radius: 8px;
   box-shadow: 0px 4px 6px 1px rgba(0, 0, 0, 0.2);
   z-index: 10;
 }
 
 .menu-options .option {
-  padding: 8px 10px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 8px 8px 8px 16px;
   font-size: 14px;
+  height: 25%;
 }
 
 .menu-options .option:hover {
@@ -560,9 +571,9 @@
 
 .comments .title {
   font-size: 24px;
-  color: rgba(68, 72, 84, 0.87);
-  font-weight: 600;
-  padding: 15px 20px;
+  color: rgba(77, 80, 98, 0.87);
+  font-weight: 500;
+  padding: 15px 17px;
 }
 
 .comments .MuiFormControl-root {
@@ -575,7 +586,7 @@
 }
 
 .comments .comment-view {
-  padding: 10px 8px;
+  padding: 10px 17px;
 }
 
 .comments .user {

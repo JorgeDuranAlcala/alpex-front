@@ -24,7 +24,8 @@ export const FrontingFeePercent = ({
   isDisabled,
   errorMessage,
   validateForm,
-  fieldRef
+  fieldRef,
+  operationSecurity
 }: FrontingFeePercentProps) => {
   const { activeErros, securities, calculateSecurities } = useContext(SecurityContext)
 
@@ -40,12 +41,11 @@ export const FrontingFeePercent = ({
     const tempSecurities = [...securities]
     tempSecurities[index] = {
       ...tempSecurities[index],
-      frontingFee: value
-
-      // frontingFeeAmount: operationSecurity.getFrontingFeeAmount(value)
+      frontingFee: value,
+      frontingFeeAmount: operationSecurity.getFrontingFeeAmount(value)
     }
-    validateForm(tempSecurities[index])
     calculateSecurities(tempSecurities)
+    validateForm(tempSecurities[index])
   }
 
   useEffect(() => {
@@ -100,7 +100,6 @@ export const frontingFeePercent_validations = ({ frontingFeeEnabled }: { frontin
 
         return true
       })
-      .required('This field is required')
 
       .max(100)
   })

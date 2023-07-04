@@ -3,7 +3,7 @@ import { useAppSelector } from '@/store'
 import { getFileFromUrl } from '@/utils/formatDoctos'
 import FileSubmit from '@/views/accounts/new-account-steps/Information/FileSubmit'
 import CommentSection from '@/views/components/new-accounts/CommentSection'
-import { Box, Divider } from '@mui/material'
+import { Box, Divider, Typography } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
 import { useEffect, useState } from 'react'
 import Icon from 'src/@core/components/icon'
@@ -218,10 +218,18 @@ const MenuForm = () => {
         <div
           style={{
             height: 'auto',
-            display: sidebar ? 'none' : 'block'
+            display: sidebar ? 'none' : 'block',
+            padding: '0px 12px'
           }}
         >
           <div className='title-documents'>{changeTitle ? 'Documents' : 'Documents'}</div>
+          {!changeTitle ? (
+            <div className='no-documentsText'>
+              <Typography variant='body1' sx={{ fontSize: '16px' }}>
+                There are no documents in this account yet.
+              </Typography>
+            </div>
+          ) : null}
           <FileSubmit
             userFile={userFile}
             urls={fileUrls}
