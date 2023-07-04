@@ -59,7 +59,7 @@ export const ListDiscounts = ({ formIndex, operationSecurity, validateForm }: Li
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [firstTimeSecurities])
+  }, [firstTimeSecurities, formIndex])
 
   return (
     <>
