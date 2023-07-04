@@ -475,6 +475,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
                 security={security}
                 isChecked={isTaxesEnabled}
                 setIsTaxesEnabled={setIsTaxesEnabled}
+                fieldRef={forTaxes}
               />
 
               <TaxesPercent
@@ -494,6 +495,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
                 validateForm={validateForm}
                 operationSecurity={operationSecurity}
                 isDisabled={!isTaxesEnabled}
+                fieldRef={forTaxes}
               />
             </Grid>
           ) : null}
@@ -506,6 +508,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
                 security={security}
                 isChecked={frontingFeeEnabled}
                 setFrontingFeeEnabled={setFrontingFeeEnabled}
+                fieldRef={forFrontingFee}
               />
 
               <FrontingFeePercent
@@ -525,6 +528,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
                 validateForm={validateForm}
                 operationSecurity={operationSecurity}
                 isDisabled={!frontingFeeEnabled}
+                fieldRef={forFrontingFee}
               />
             </Grid>
           ) : null}
