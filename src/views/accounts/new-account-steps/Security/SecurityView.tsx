@@ -77,7 +77,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
     status: 'error'
   })
 
-  const calculateSecurities = (securities: SecurityDto[]) => {
+  const calculateSecurities = (securities: SecurityDto[], isFirstTime = false) => {
     if (securities.length > 0 && information) {
       const tempSecurities = []
       companiesSelect.splice(0, companiesSelect.length)
@@ -144,7 +144,10 @@ const Security = ({ onStepChange }: SecurityProps) => {
 
       setSecurities(tempSecurities)
 
-      setFirstTimeSecurities(tempSecurities)
+      if (isFirstTime) {
+
+        setFirstTimeSecurities(tempSecurities)
+      }
     }
   }
 
@@ -285,7 +288,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
           const accountSecurities = accountById?.securities as SecurityDto[]
 
           if (accountSecurities && information) {
-            calculateSecurities(accountSecurities)
+            calculateSecurities(accountSecurities, true)
             accountById.securitiesTotal &&
               setAllFormData({
                 ...allFormData,
@@ -348,7 +351,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
 
   useEffect(() => {
     if (account && information) {
-      calculateSecurities(account.securities)
+      calculateSecurities(account.securities, true)
 
       account.securitiesTotal.length > 0 &&
         setAllFormData({
