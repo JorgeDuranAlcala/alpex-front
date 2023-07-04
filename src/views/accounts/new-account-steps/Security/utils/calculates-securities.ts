@@ -203,6 +203,7 @@ export class CalculateSecurity {
     let premiumPerShareAmountGros = 0
     let distributedNetPremium = 0
     let taxesGros = 0
+    let discountAmountGros = 0
     let brokerageReinsuranceGross = 0
 
     for (const security of securities) {
@@ -213,9 +214,11 @@ export class CalculateSecurity {
       brokerageReinsuranceGross += security.isGross ? security.brokerAgeAmount : 0
       distributedNetPremium +=
         security.netReinsurancePremium + security.dynamicCommissionAmount + security.frontingFeeAmount ?? 0
+      discountAmountGros += security.isGross ? security.totalAmountOfDiscounts : 0
     }
     const recievedNetPremium =
-      premiumPerShareAmountNet + (premiumPerShareAmountGros - taxesGros - brokerageReinsuranceGross)
+      premiumPerShareAmountNet +
+      (premiumPerShareAmountGros - taxesGros - brokerageReinsuranceGross - discountAmountGros)
     const diference = recievedNetPremium - distributedNetPremium
 
     return {
