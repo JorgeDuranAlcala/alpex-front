@@ -113,6 +113,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
 
         security.shareAmount = operationSecurity.getShareAmount() || 0
         security.netReinsurancePremium = operationSecurity.getNetReinsurancePremium() || 0
+
         tempSecurities.push({
           ...security,
           difference: Number(security.difference) || 0,
@@ -122,10 +123,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
           netPremiumAt100: Number(security.netPremiumAt100) || 0,
           receivedNetPremium: Number(security.receivedNetPremium) || 0,
           reinsuranceBrokerage: Number(security.reinsuranceBrokerage) || 0,
-          share: Number(security.share) || 0,
-
-          taxes: Number(security.taxes) || 0,
-          frontingFee: Number(security.frontingFee) || 0
+          share: Number(security.share) || 0
         })
       }
       let dataForm: FormSecurity = {
@@ -146,7 +144,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
 
       setSecurities(tempSecurities)
 
-      if (firstTimeSecurities.length === 0) setFirstTimeSecurities(tempSecurities)
+      setFirstTimeSecurities(tempSecurities)
     }
   }
 

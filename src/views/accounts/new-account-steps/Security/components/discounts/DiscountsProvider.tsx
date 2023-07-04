@@ -23,14 +23,10 @@ export const DiscountsProvider = ({ children }: { children: ReactNode }) => {
   const removeDiscountByIndex = (index: number) => {
     const newDiscounts = [...discountsList.slice(0, index).concat(discountsList.slice(index + 1))]
 
-    // console.log({ index, discountsList, newDiscounts })
-    // debugger;
-
     setDiscountsList(newDiscounts)
   }
 
   const updateDiscountByIndex = ({ index, percentage, amount }: IUpdateDiscountByIndex) => {
-    debugger
     setDiscountsList(prev => {
       const newDiscounts = [...prev]
       newDiscounts[index] = {

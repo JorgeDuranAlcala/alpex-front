@@ -23,7 +23,7 @@ export interface SecurityModel {
   receivedNetPremium: number
   distributedNetPremium: number
   difference: number
-  discounts: IDiscountInputs[];
+  discounts: IDiscountInputs[]
 }
 export class SecurityMapper {
   static securityToSecurityForm(security: SecurityDto, accountData: IAccountsState): SecurityModel {
@@ -32,9 +32,9 @@ export class SecurityMapper {
       share: security.share,
       frontingFeeActive: security.frontingFeeActive,
       dynamicCommission: security.dynamicCommission,
-      frontingFee: security.frontingFee,
+      frontingFee: Number(security.frontingFee),
       netReinsurancePremium: security.netReinsurancePremium,
-      taxes: security.taxes,
+      taxes: Number(security.taxes),
       reinsuranceBrokerage: security.reinsuranceBrokerage,
       active: true,
       idCReinsuranceCompany: security.idCReinsuranceCompany,

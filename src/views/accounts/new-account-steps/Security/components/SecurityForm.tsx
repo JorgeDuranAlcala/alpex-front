@@ -277,7 +277,6 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
   const { forTaxes, forFrontingFee, checkValues } = useDataFirstTime({ formIndex: index, operationSecurity })
 
   useEffect(() => {
-    // debugger;
     checkValues({
       taxes: securities[index].taxes,
       frontingFee: securities[index].taxes
