@@ -34,9 +34,6 @@ export const ListDiscounts = ({ formIndex, operationSecurity, validateForm }: Li
     const tempSecurities = [...securities]
 
     if (!tempSecurities[formIndex].totalAmountOfDiscounts && totalAmountOfDiscounts === 0) {
-      // console.log('no actualizar');
-      // debugger;
-
       return
     }
 
@@ -54,7 +51,7 @@ export const ListDiscounts = ({ formIndex, operationSecurity, validateForm }: Li
 
   useEffect(() => {
     if (firstTimeSecurities.length > 0) {
-      if (formIndex > firstTimeSecurities.length - 1) return;
+      if (formIndex > firstTimeSecurities.length - 1) return
 
       if (firstTimeSecurities[formIndex].discounts.length > 0) {
         updateAllDiscounts(firstTimeSecurities[formIndex].discounts)
@@ -62,7 +59,7 @@ export const ListDiscounts = ({ formIndex, operationSecurity, validateForm }: Li
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [firstTimeSecurities])
+  }, [firstTimeSecurities, formIndex])
 
   return (
     <>

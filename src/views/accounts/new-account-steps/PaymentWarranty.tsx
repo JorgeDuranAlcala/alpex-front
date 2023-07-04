@@ -165,7 +165,8 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
   const makeCalculates = (installment: InstallmentDto) => {
     const temp = { ...installment }
     const inceptionDate = account ? new Date(account?.informations[0]?.effectiveDate || '') : null
-    const receivedNetPremium = account ? account?.securityTotal?.receivedNetPremium : 0
+    const receivedNetPremium =
+      account && account.securitiesTotal.length > 0 ? account?.securitiesTotal[0]?.receivedNetPremium : 0
 
     if (inceptionDate) {
       const days = temp.premiumPaymentWarranty * 24 * 60 * 60 * 1000
@@ -351,7 +352,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
   }, [installmentsList])
 
   return (
-    <>
+    <Grid container xs={12} sm={12}>
       <CustomAlert {...badgeData} />
       <GeneralContainer>
         <TitleContainer>
@@ -386,7 +387,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
                   label='Dynamic net premium'
                   multiline
                   variant='outlined'
-                  value={account ? account?.securityTotal?.receivedNetPremium : ' '}
+                  value={account ? account?.securitiesTotal[0]?.receivedNetPremium : ' '}
                   disabled={true}
                 />
               </Grid>
@@ -438,7 +439,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
               daysFirst={installmentsList[0]?.premiumPaymentWarranty || 0}
               onChangeList={handleItemChange}
               globalInfo={{
-                receivedNetPremium: account ? account?.securityTotal?.receivedNetPremium : 0,
+                receivedNetPremium: account ? account?.securitiesTotal[0]?.receivedNetPremium : 0,
                 inceptionDate: account?.informations[0]?.effectiveDate
                   ? new Date(account.informations[0].effectiveDate)
                   : null,
@@ -525,7 +526,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
           </Box>
         </Modal>
       </NextContainer>
-    </>
+    </Grid>
   )
 }
 
