@@ -134,10 +134,10 @@ const Security = ({ onStepChange }: SecurityProps) => {
         ...CalculateSecurity.getData(tempSecurities)
       }
 
-      if (account && account.securityTotal) {
+      if (account && account.securitiesTotal[0]) {
         dataForm = {
           ...dataForm,
-          id: account.securityTotal.id
+          id: account.securitiesTotal[0].id
         }
       }
       setAllFormData(dataForm)
@@ -288,13 +288,13 @@ const Security = ({ onStepChange }: SecurityProps) => {
 
           if (accountSecurities && information) {
             calculateSecurities(accountSecurities)
-            accountById.securityTotal &&
+            accountById.securitiesTotal &&
               setAllFormData({
                 ...allFormData,
-                recievedNetPremium: Number(accountById.securityTotal.receivedNetPremium),
-                distribuitedNetPremium: Number(accountById.securityTotal.distributedNetPremium),
-                diference: Number(accountById.securityTotal.difference),
-                id: Number(accountById.securityTotal.id)
+                recievedNetPremium: Number(accountById.securitiesTotal[0].receivedNetPremium),
+                distribuitedNetPremium: Number(accountById.securitiesTotal[0].distributedNetPremium),
+                diference: Number(accountById.securitiesTotal[0].difference),
+                id: Number(accountById.securitiesTotal[0].id)
               })
           }
 
@@ -351,13 +351,14 @@ const Security = ({ onStepChange }: SecurityProps) => {
   useEffect(() => {
     if (account && information) {
       calculateSecurities(account.securities)
-      account.securityTotal &&
+
+      account.securitiesTotal.length > 0 &&
         setAllFormData({
           ...allFormData,
-          recievedNetPremium: Number(account.securityTotal.receivedNetPremium),
-          distribuitedNetPremium: Number(account.securityTotal.distributedNetPremium),
-          diference: Number(account.securityTotal.difference),
-          id: Number(account.securityTotal.id)
+          recievedNetPremium: Number(account.securitiesTotal[0].receivedNetPremium),
+          distribuitedNetPremium: Number(account.securitiesTotal[0].distributedNetPremium),
+          diference: Number(account.securitiesTotal[0].difference),
+          id: Number(account.securitiesTotal[0].id)
         })
     }
 
