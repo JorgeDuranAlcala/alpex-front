@@ -91,13 +91,15 @@ const Security = ({ onStepChange }: SecurityProps) => {
         if (security?.idCReinsuranceCompany?.id) companiesSelect.push(security.idCReinsuranceCompany.id)
 
         const tempDiscountList = []
-        if (security?.discounts)
+        if (security?.discounts) {
+          security.totalAmountOfDiscounts = 0
           for (const discount of security?.discounts) {
             discount.percentage = Number(discount.percentage)
             discount.amount = operationSecurity.getDiscountAmount(Number(discount.percentage))
             security.totalAmountOfDiscounts += discount.amount
             tempDiscountList.push(discount)
           }
+        }
         security.discounts = tempDiscountList
         operationSecurity.setSecurity(security)
         security.premiumPerShareAmount = operationSecurity.getPremierPerShare() || 0
