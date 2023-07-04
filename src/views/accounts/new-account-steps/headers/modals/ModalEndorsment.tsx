@@ -1,3 +1,4 @@
+import { useGetAllEndorsementTypes } from '@/hooks/catalogs/endorsementType/getAllEndorsementTypes'
 import CloseIcon from '@mui/icons-material/Close'
 import { Box, Button, FormControlLabel, Modal, Radio, RadioGroup, TextField, styled } from '@mui/material'
 import Icon from 'src/@core/components/icon'
@@ -32,6 +33,8 @@ export const ActionsHeaderBoundModal = ({
   handleRadioChange,
   setCancellEndorsment
 }: any) => {
+  const { endorsementTypes } = useGetAllEndorsementTypes()
+
   return (
     <div className='header-btns'>
       <ButtonIcon
@@ -71,16 +74,22 @@ export const ActionsHeaderBoundModal = ({
                 name='radio-buttons-group'
                 value={value}
                 onChange={handleRadioChange}
+                sx={{ display: 'flex', flexDirection: 'column-reverse' }}
               >
-                <FormControlLabel sx={{ height: '54px' }} value='Informative' control={<Radio />} label='Informative' />
-                <FormControlLabel sx={{ height: '54px' }} value='Increase' control={<Radio />} label='Increase' />
-                <FormControlLabel sx={{ height: '54px' }} value='Decrease' control={<Radio />} label='Decrease' />
-                <FormControlLabel
-                  sx={{ height: '54px' }}
-                  value='Cancellation'
-                  control={<Radio />}
-                  label='Cancellation'
-                />
+                {endorsementTypes &&
+                  endorsementTypes?.map(item => {
+                    // console.log(item)
+
+                    return (
+                      <FormControlLabel
+                        sx={{ height: '54px' }}
+                        key={item?.id}
+                        control={<Radio />}
+                        label={item.type}
+                        value={item.type}
+                      />
+                    )
+                  })}
               </RadioGroup>
             </form>
           </FormContainer>
