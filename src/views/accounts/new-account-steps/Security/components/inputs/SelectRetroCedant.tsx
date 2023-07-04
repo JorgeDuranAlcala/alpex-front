@@ -42,23 +42,33 @@ export const SelectRetroCedant = ({
   }
 
   useEffect(() => {
-    if (counter < 2) {
+    if (counter < 2 && retroCedants && retroCedants?.length > 0) {
+      const tempSecurities = [...securities]
       const selectedRetroCendantId = value
       const retroCedant = retroCedants?.find(retroCedant => retroCedant.id === Number(selectedRetroCendantId))
-      const tempSecurities = [...securities]
 
       // console.log('se monta', retroCedant, value, retroCedants)
       if (retroCedant) {
         // console.log('se monta')
+
         tempSecurities[index] = {
           ...tempSecurities[index],
           idCRetroCedant: retroCedant,
           idCRetroCedantContact: {} as RetroCedantContactDto
         }
+
         validateForm(tempSecurities[index])
         setSecurities(tempSecurities)
         setIdRetroCedant(retroCedant.id)
         setCounter(2)
+      } else {
+        tempSecurities[index] = {
+          ...tempSecurities[index],
+          idCRetroCedant: {} as RetroCedantDto,
+          idCRetroCedantContact: {} as RetroCedantContactDto
+        }
+        validateForm(tempSecurities[index])
+        setSecurities(tempSecurities)
       }
     }
   }, [retroCedants])
@@ -94,8 +104,8 @@ export const selectRetroCedant_validations = ({
     idCRetroCedant: yup
       .object()
       .shape({
-        id: yup.number().nullable(),
-        name: yup.string().nullable()
+        id: yup.number().notRequired(),
+        name: yup.string().notRequired()
       })
 
       .test('', 'This field is required', value => {
@@ -105,5 +115,4 @@ export const selectRetroCedant_validations = ({
 
         return true
       })
-      .nullable()
   })
