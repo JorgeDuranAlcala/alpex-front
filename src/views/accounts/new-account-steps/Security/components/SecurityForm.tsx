@@ -412,7 +412,11 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
           </Grid>
           {/* Col-3 */}
           <Grid item xs={12} sm={4}>
-            <Binder value={''} binders={binders} />
+            <Binder
+              value={security.idCReinsuranceCompanyBinder ? String(security.idCReinsuranceCompanyBinder?.id) : ''}
+              binders={binders}
+              index={index}
+            />
 
             <Consecutive value={0} />
 

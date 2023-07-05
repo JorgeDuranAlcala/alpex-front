@@ -185,17 +185,15 @@ const Security = ({ onStepChange }: SecurityProps) => {
       // Todo quitar el as any
       const mapper = SecurityMapper.securityToSecurityForm(security, accountData as any)
 
-      console.log({ security })
+      console.log({ security, mapper })
       if (security.id) {
         update.push({
           ...mapper,
           id: security.id,
           view: 1
         })
-        console.log({ update })
       } else {
         save.push({ ...mapper, view: 1 })
-        console.log({ save })
       }
     }
 
