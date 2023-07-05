@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
 //Hooks
 import { useDeleteDiscountsById, useGetDiscountByIdAccount } from '@/hooks/accounts/discount'
@@ -130,6 +130,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
   const [discountCounter, setDiscountCounter] = useState(1)
   const [totalDiscountsError, setTotalDiscountsError] = useState(false)
   const [discountsErrorsIndex, setDiscountsErrorsIndex] = useState<number[]>([])
+  const discountRef = useRef<HTMLInputElement>(null);
   const [discount, setDiscount] = useState<DiscountInputs>({
     id: 0,
     percentage: 0,
@@ -167,12 +168,13 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
   }
 
   const calculate = async (type = 'any', value?: string | number) => {
+
     let grossPremiumc: number = typeof grossPremium == 'number' ? grossPremium :  0
     let grossPremiumTemp: number | string | undefined= grossPremium
 
     let reinsuranceBrokeragePc: number = typeof reinsuranceBrokerageP == 'number' ? reinsuranceBrokerageP :  0
     let reinsuranceBrokeragePTemp: number | string | undefined= reinsuranceBrokerageP
-    let reinsuranceBrokeragec: number = typeof reinsuranceBrokerageP == 'number' ? reinsuranceBrokerageP :  0
+    let reinsuranceBrokeragec: number = typeof reinsuranceBrokerage == 'number' ? reinsuranceBrokerage :  0
     let reinsuranceBrokerageTemp: number | string | undefined= reinsuranceBrokerage
 
     let taxesPc: number = typeof taxesP == 'number' ? taxesP :  0
@@ -421,6 +423,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
   }
 
   const deleteDiscount = async (index: number) => {
+
     const discountToDelete = discounts[index].id
     const newDiscounts = [...discounts]
     newDiscounts.splice(index, 1)
@@ -438,6 +441,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
     if (index === discounts.length - 1) {
       // Si se eliminó el último descuento, actualizamos el estado "discount" para mostrar el último descuento en el formulario
       setDiscount(updatedDiscounts[index - 1] || { id: 0, percentage: 0, amount: 0, idAccount: 0 })
+
     }
 
     if (discountToDelete) {
@@ -568,13 +572,27 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
 
   React.useEffect(() => {
     onDiscountsChange(discounts)
+
+    const inputElement = discounts.find((discount) => discount.percentage === 0);
+
+      if (inputElement) {
+        if (discountRef.current) {
+          discountRef.current.value = "0"
+          discountRef.current.setSelectionRange(
+            1,
+            discountRef.current.value.length
+          );
+        }
+      }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [discounts])
+
   React.useEffect(() => {
     setTotalDiscountsError(discountValidation)
     calculate()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [discount])
+  }, [discount, discountCounter])
 
   React.useEffect(() => {
     setTotalDiscountsError(discountValidation)
@@ -1093,7 +1111,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
                 allowLeadingZeros
                 thousandSeparator=','
                 customInput={TextField}
-                id='discount-p'
+                id={`discount-${discount.id}`}
                 label='Other discount %'
                 suffix={'%'}
                 maxRows={4}
