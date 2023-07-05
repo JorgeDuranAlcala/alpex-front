@@ -85,6 +85,9 @@ const Security = ({ onStepChange }: SecurityProps) => {
       // allErrors.splice(0, allErrors.length)
 
       for (const security of securities) {
+        if (!security.activeView) {
+          security.activeView = 1
+        }
         const operationSecurity: CalculateSecurity = new CalculateSecurity()
           .setInformation(information)
           .setSecurity(security)
@@ -154,7 +157,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
 
   const addNewForm = () => {
     const securityNew = {} as SecurityDto
-    calculateSecurities([...securities, { ...securityNew, frontingFeeActive: false }])
+    calculateSecurities([...securities, { ...securityNew, frontingFeeActive: false, view: 1 }])
   }
 
   const handleNextStep = () => {
@@ -181,6 +184,10 @@ const Security = ({ onStepChange }: SecurityProps) => {
     const save: Partial<SecurityDto>[] = []
 
     for (const security of securities) {
+
+      // * Con esta validación no se guardarán los datos de la vista 2
+      if (security.view === 2) return;
+
       // Todo quitar el as any
       const mapper = SecurityMapper.securityToSecurityForm(security, accountData as any)
 
@@ -401,6 +408,12 @@ const Security = ({ onStepChange }: SecurityProps) => {
         <form noValidate autoComplete='on'>
           <CardContent>
             {securities.map((security, index) => {
+
+              console.log(index, security.view, security.activeView)
+              if (security.view === 1 && security.activeView === 2) return null;
+              if (security.view === 2 && security.activeView === 1) return null;
+              console.log('se imprime')
+
               return (
                 <FormSection
                   key={`${index}-${security?.id}`}

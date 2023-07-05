@@ -54,7 +54,7 @@ export const FrontingFeeAmount = ({
         customInput={TextField}
         decimalScale={2}
         thousandSeparator=','
-        disabled={isDisabled}
+        disabled={securities[index].view === 2 || isDisabled}
       />
       <FormHelperText sx={{ color: 'error.main', minHeight: '25px' }}>{activeErros && errorMessage}</FormHelperText>
     </FormControl>

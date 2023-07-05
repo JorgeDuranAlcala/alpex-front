@@ -11,6 +11,7 @@ import { SecurityContext } from '../../SecurityView';
 import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interface';
 import { CalculateSecurity } from '../../utils/calculates-securities';
 import { DiscountsContext } from '../discounts/DiscountsContext';
+import { SecondViewContext } from '../secondView/SecondViewContext';
 
 
 interface GrossOrNetPremiumAt100Props extends ISecurityInputProps {
@@ -29,7 +30,20 @@ export const GrossOrNetPremiumAt100 = ({ index, isGross, value, errorMessage, va
     calculateSecurities
   } = useContext(SecurityContext);
 
+  const { openModalSecondView } = useContext(SecondViewContext)
+
+  const handleClick = (e: any) => {
+    if (securities[index].view === 2) return
+    if (securities[index + 1]) {
+      if (securities[index + 1].view === 2) return
+    }
+    (e.target as HTMLDivElement).blur();
+    openModalSecondView();
+
+  }
+
   const handleChangeBaseAmount = (value: number) => {
+    console.log('change gross or net at 100%')
     const tempSecurities = [...securities]
     tempSecurities[index] = {
       ...tempSecurities[index],
@@ -66,10 +80,12 @@ export const GrossOrNetPremiumAt100 = ({ index, isGross, value, errorMessage, va
         onValueChange={value => {
           handleChangeBaseAmount(Number(value.floatValue))
         }}
+        onClick={handleClick}
         prefix={'$'}
         customInput={TextField}
         decimalScale={2}
         thousandSeparator=','
+        disabled={securities[index].view === 2}
       />
 
       <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>

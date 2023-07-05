@@ -28,7 +28,8 @@ export interface SecurityDto {
   difference: number
   active: boolean
   consecutive: number | null
-  view: number
+  view: number;
+  activeView?: number;
   discounts: SecurityDiscountDto[] | []
   idCReinsuranceCompany: ReinsuranceCompanyDto
   idCReinsuranceCompanyBinder: ReinsuranceCompanyBinderDto

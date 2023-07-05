@@ -89,6 +89,7 @@ export const ReinsuranceCompany = ({
         onChange={handleChangeCompany}
         labelId='ReinsuranceCompany'
         label='Reinsurance companies'
+        disabled={securities[index].view === 2}
       >
         {avaliableReinsurers
           .filter(

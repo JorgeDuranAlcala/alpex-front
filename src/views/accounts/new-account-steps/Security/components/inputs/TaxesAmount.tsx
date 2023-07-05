@@ -1,9 +1,10 @@
 import { FormControl, FormHelperText, TextField } from '@mui/material'
-import { useContext } from 'react'
+import { MutableRefObject, useContext } from 'react'
 import { NumericFormat } from 'react-number-format'
 import * as yup from 'yup'
 
 import { SecurityContext } from '../../SecurityView'
+import { IForField } from '../../hooks/useDataFirstTime'
 import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interface'
 import { CalculateSecurity } from '../../utils/calculates-securities'
 
@@ -52,7 +53,7 @@ export const TaxesAmount = ({
         customInput={TextField}
         decimalScale={2}
         thousandSeparator=','
-        disabled={isDisabled}
+        disabled={securities[index].view === 2 || isDisabled}
       />
       <FormHelperText sx={{ color: 'error.main', minHeight: '25px' }}>{activeErros && errorMessage}</FormHelperText>
     </FormControl>
