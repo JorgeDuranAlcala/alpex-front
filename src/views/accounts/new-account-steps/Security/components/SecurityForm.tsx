@@ -179,7 +179,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
   }, [reinsuranceCompany])
 
   useEffect(() => {
-    if (security?.id) {
+    if (security?.id && security?.idCRetroCedant) {
       setIdRetroCedant(security.idCRetroCedant?.id)
     }
 
