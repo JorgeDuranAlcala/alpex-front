@@ -16,8 +16,8 @@ export interface SecurityModel {
   reinsuranceBrokerage: number
   active: boolean
   idCReinsuranceCompany: ReinsuranceCompanyDto
-  idCRetroCedant: RetroCedantDto
-  idCRetroCedantContact: RetroCedantContactDto
+  idCRetroCedant: RetroCedantDto | null
+  idCRetroCedantContact: RetroCedantContactDto | null
   idEndorsement: number | undefined
   idAccount: number
   receivedNetPremium: number
@@ -38,8 +38,12 @@ export class SecurityMapper {
       reinsuranceBrokerage: security.reinsuranceBrokerage,
       active: true,
       idCReinsuranceCompany: security.idCReinsuranceCompany,
-      idCRetroCedant: security.idCRetroCedant,
-      idCRetroCedantContact: security.idCRetroCedantContact,
+      idCRetroCedant:
+        security.idCRetroCedant && security.idCRetroCedant.hasOwnProperty('id') ? security.idCRetroCedant : null,
+      idCRetroCedantContact:
+        security.idCRetroCedantContact && security.idCRetroCedantContact.hasOwnProperty('id')
+          ? security.idCRetroCedantContact
+          : null,
       idEndorsement: undefined,
       idAccount: +accountData.formsData.form1.id,
       receivedNetPremium: 0,
