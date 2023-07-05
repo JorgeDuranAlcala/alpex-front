@@ -31,7 +31,7 @@ export interface SecurityDto {
   view: number
   discounts: SecurityDiscountDto[] | []
   idCReinsuranceCompany: ReinsuranceCompanyDto
-  idCReinsuranceCompanyBinder: ReinsuranceCompanyBinderDto
+  idCReinsuranceCompanyBinder: ReinsuranceCompanyBinderDto | null
   idCRetroCedant: RetroCedantDto | null
   idCRetroCedantContact: RetroCedantContactDto | null
   idEndorsement: number
