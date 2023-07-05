@@ -160,7 +160,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
         }
         errorsTemp[index] = true
         setErrorsSecurity(data)
-        console.log({ error: data })
+        console.log({ error: data, index })
 
         //setEnableNextStep(false)
       })
@@ -182,7 +182,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
   }, [reinsuranceCompany])
 
   useEffect(() => {
-    if (security?.id) {
+    if (security?.id && security?.idCRetroCedant) {
       setIdRetroCedant(security.idCRetroCedant?.id)
     }
 
@@ -416,7 +416,11 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
             </Grid>
             {/* Col-3 */}
             <Grid item xs={12} sm={4}>
-              <Binder value={''} binders={binders} />
+              <Binder
+                value={security.idCReinsuranceCompanyBinder ? String(security.idCReinsuranceCompanyBinder?.id) : ''}
+                binders={binders}
+                index={index}
+              />
 
               <Consecutive value={0} />
 

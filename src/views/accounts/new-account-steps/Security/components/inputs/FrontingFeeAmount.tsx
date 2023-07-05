@@ -72,5 +72,4 @@ export const frontingFeeAmount_validations = ({ frontingFeeEnabled }: { fronting
 
         return true
       })
-      .required('This field is required')
   })

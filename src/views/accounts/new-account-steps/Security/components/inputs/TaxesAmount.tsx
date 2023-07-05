@@ -34,6 +34,7 @@ export const TaxesAmount = ({
     const tempSecurities = [...securities]
     tempSecurities[index] = {
       ...tempSecurities[index],
+      taxesAmount: value,
       taxes: operationSecurity.getTaxesPercent(value)
     }
     validateForm(tempSecurities[index])

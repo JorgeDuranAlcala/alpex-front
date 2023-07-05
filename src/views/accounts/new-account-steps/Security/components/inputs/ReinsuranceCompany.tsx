@@ -1,31 +1,23 @@
-import {
-  FormControl,
-  FormHelperText,
-  InputLabel,
-  MenuItem,
-  Select,
-  SelectChangeEvent,
-} from '@mui/material';
-import { Dispatch, SetStateAction, useContext } from 'react';
+import { FormControl, FormHelperText, InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material'
+import { Dispatch, SetStateAction, useContext, useEffect } from 'react'
 
 // import * as yup from 'yup';
 
-import { SecurityDto } from '@/services/accounts/dtos/security.dto';
-import { ReinsuranceCompanyBinderDto } from '@/services/catalogs/dtos/ReinsuranceCompanyBinder.dto';
-import { ReinsuranceCompanyDto } from '@/services/catalogs/dtos/ReinsuranceCompanyDto';
-import ReinsuranceCompanyBinderService from 'src/services/catalogs/reinsuranceCompanyBinder.service';
-import { SecurityContext } from '../../SecurityView';
-import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interface';
+import { SecurityDto } from '@/services/accounts/dtos/security.dto'
+import { ReinsuranceCompanyBinderDto } from '@/services/catalogs/dtos/ReinsuranceCompanyBinder.dto'
+import { ReinsuranceCompanyDto } from '@/services/catalogs/dtos/ReinsuranceCompanyDto'
+import ReinsuranceCompanyBinderService from 'src/services/catalogs/reinsuranceCompanyBinder.service'
+import { SecurityContext } from '../../SecurityView'
+import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interface'
 
 interface ReinsuranceCompanyProps extends ISecurityInputProps {
-  avaliableReinsurers: ReinsuranceCompanyDto[];
-  companiesSelect: number[];
-  security: SecurityDto | undefined;
-  setIsGross: Dispatch<SetStateAction<boolean>>;
-  setFrontingFeeEnabled: Dispatch<SetStateAction<boolean>>;
-  setBinders: Dispatch<SetStateAction<ReinsuranceCompanyBinderDto[]>>;
+  avaliableReinsurers: ReinsuranceCompanyDto[]
+  companiesSelect: number[]
+  security: SecurityDto | undefined
+  setIsGross: Dispatch<SetStateAction<boolean>>
+  setFrontingFeeEnabled: Dispatch<SetStateAction<boolean>>
+  setBinders: Dispatch<SetStateAction<ReinsuranceCompanyBinderDto[]>>
 }
-
 
 export const ReinsuranceCompany = ({
   index,
@@ -39,18 +31,12 @@ export const ReinsuranceCompany = ({
   setFrontingFeeEnabled,
   setBinders
 }: ReinsuranceCompanyProps) => {
-
-  const {
-    activeErros,
-    information,
-    securities,
-    calculateSecurities,
-  } = useContext(SecurityContext);
+  const { activeErros, information, securities, calculateSecurities } = useContext(SecurityContext)
 
   // console.log(avaliableReinsurers)
 
   const updateBindersAsync = async (idCReinsuranceCompany: number) => {
-    const binders = await ReinsuranceCompanyBinderService.findByIdReinsuranceCompany(idCReinsuranceCompany);
+    const binders = await ReinsuranceCompanyBinderService.findByIdReinsuranceCompany(idCReinsuranceCompany)
     setBinders(binders)
   }
 
@@ -78,7 +64,12 @@ export const ReinsuranceCompany = ({
       updateBindersAsync(avaliableCompanies.id)
     }
   }
-
+  useEffect(() => {
+    if (value) {
+      ReinsuranceCompanyBinderService.findByIdReinsuranceCompany(Number(value)).then(binders => setBinders(binders))
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value])
 
   return (
     <FormControl fullWidth sx={{ mb: 2 }}>
@@ -93,8 +84,7 @@ export const ReinsuranceCompany = ({
       >
         {avaliableReinsurers
           .filter(
-            reinsure =>
-              !companiesSelect.includes(reinsure.id) || security?.idCReinsuranceCompany?.id === reinsure.id
+            reinsure => !companiesSelect.includes(reinsure.id) || security?.idCReinsuranceCompany?.id === reinsure.id
           )
           .map(reinsurer => (
             <MenuItem key={reinsurer.id} value={reinsurer.id}>
@@ -102,9 +92,7 @@ export const ReinsuranceCompany = ({
             </MenuItem>
           ))}
       </Select>
-      <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
-        {activeErros && errorMessage}
-      </FormHelperText>
+      <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>{activeErros && errorMessage}</FormHelperText>
     </FormControl>
   )
 }
