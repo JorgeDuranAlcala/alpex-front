@@ -39,9 +39,9 @@ const DialogCustomAlpex = ({ openDialog, resolve, title, body, reject }: DialogP
 
   return (
     <Fragment>
+      {/* // fullScreen={fullScreen} */}
       <Dialog
         open={open}
-        // fullScreen={fullScreen}
         disableEscapeKeyDown
         aria-labelledby='responsive-dialog-title'
         aria-describedby='alert-dialog-description'
