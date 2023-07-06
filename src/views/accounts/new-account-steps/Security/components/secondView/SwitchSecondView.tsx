@@ -1,4 +1,5 @@
 import { SecurityDto } from '@/services/accounts/dtos/security.dto';
+import { Icon } from '@iconify/react';
 import { Box, Button } from '@mui/material';
 import { useContext } from 'react';
 import { SecondViewContext } from './SecondViewContext';
@@ -41,10 +42,23 @@ export const SwitchSecondView = ({ formIndex, securities, calculateSecurities }:
         position: 'absolute',
         top: formIndex === 0 ? '-50px' : '5px',
         right: '10px',
+
+        zIndex: '2'
       }
     }>
-      <Button variant="contained" onClick={handleSwitchView}>
-        Switch To View {securities[formIndex].view === 1 ? 2 : 1}
+      <Button variant="text" sx={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: '8px',
+        color: securities[formIndex].view === 1 ? '#EF9713' : '#2D67EB',
+        letterSpacing: '0.46px'
+      }}
+        onClick={handleSwitchView}>
+        <span>
+          {securities[formIndex].view === 1 ? 'SEE SECOND VIEW' : 'SEE FIRST VIEW'}
+        </span>
+
+        <Icon icon="material-symbols:wifi-protected-setup" color={securities[formIndex].view === 1 ? '#EF9713' : '#2D67EB'} width="24" height="24" />
       </Button>
     </Box>
   )

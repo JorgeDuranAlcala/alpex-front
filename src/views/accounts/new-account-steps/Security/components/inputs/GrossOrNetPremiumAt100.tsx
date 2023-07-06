@@ -30,15 +30,17 @@ export const GrossOrNetPremiumAt100 = ({ index, isGross, value, errorMessage, va
     calculateSecurities
   } = useContext(SecurityContext);
 
-  const { openModalSecondView } = useContext(SecondViewContext)
+  const { $inputRef, openModalSecondView, isOpenModal, isOpenModalUndo, isFormHasSecondView, isFormDeletedSecondView, } = useContext(SecondViewContext)
+
+
 
   const handleClick = (e: any) => {
     if (securities[index].view === 2) return
     if (securities[index + 1]) {
       if (securities[index + 1].view === 2) return
     }
-    (e.target as HTMLDivElement).blur();
-    openModalSecondView();
+    $inputRef[index] = e.target
+    openModalSecondView(index);
 
   }
 
@@ -69,10 +71,50 @@ export const GrossOrNetPremiumAt100 = ({ index, isGross, value, errorMessage, va
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value])
 
+  useEffect(() => {
+    if (!isOpenModal[index]) {
+      if (!$inputRef[index]) return;
+
+      if (isFormHasSecondView[index]) {
+
+        setTimeout(() => {
+          // console.log(index, 'focus', $inputRef.current || 'null');
+
+          $inputRef[index]?.focus();
+
+          $inputRef[index]?.scrollIntoView({ behavior: "smooth", block: "center", inline: "center" })
+        }, 300);
+
+
+      } else {
+        $inputRef[index]?.blur();
+      }
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpenModal]);
+
+  useEffect(() => {
+    if (!isOpenModalUndo[index + 1]) {
+      if (!$inputRef[index]) return;
+
+      if (isFormDeletedSecondView[index]) {
+        setTimeout(() => {
+          $inputRef[index]?.scrollIntoView({ behavior: "smooth", block: "center", inline: "center" })
+        }, 300);
+      }
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpenModalUndo[index + 1]]);
+
 
   return (
     <FormControl fullWidth sx={{ mb: 2 }}>
       <NumericFormat
+
+        // getInputRef={(el: HTMLInputElement) => $inputRef.current[index] = el
+        // }
         fullWidth
         autoFocus
         label={isGross ? 'Gross premium at %100' : 'Net premium at %100'}

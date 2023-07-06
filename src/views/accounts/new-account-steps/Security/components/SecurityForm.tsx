@@ -61,8 +61,9 @@ import {
 import { SwitchFrontingFee } from './inputs/SwitchFrontingFee'
 import { SwitchTaxes } from './inputs/SwitchTaxes'
 import { ModalActivateSecondView } from './secondView/ModalActivateSecondView'
-import { SecondViewProvider } from './secondView/SecondViewProvider'
+import { ModalUndoSecondView } from './secondView/ModalUndoSecondView'
 import { SwitchSecondView } from './secondView/SwitchSecondView'
+import { UndoSecondView } from './secondView/UndoSecondView'
 
 // type Timer = ReturnType<typeof setInterval>
 // let typingTimer: Timer
@@ -159,8 +160,9 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
           }
         }
         errorsTemp[index] = true
-        setErrorsSecurity(data)
-        console.log({ error: data, index })
+        setErrorsSecurity(data);
+
+        // console.log({ error: data, index });
 
         //setEnableNextStep(false)
       })
@@ -200,7 +202,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
 
     //validacion taxes
 
-    if (informationForm1.taxes === 0 || isGross) {
+    if ((informationForm1.taxes === 0 || isGross) && securities[index].view === 1) {
       setIsShowToggleTaxes(true)
       setIsTaxesEnabled(informationForm1.taxes > 0)
 
@@ -209,7 +211,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
         taxes: informationForm1.taxes === 0 ? 0 : informationForm1.taxesP,
         taxesAmount: 0
       }
-    } else {
+    } else if (securities[index].view === 1) {
       setIsShowToggleTaxes(false)
       setIsTaxesEnabled(false)
 
@@ -220,7 +222,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
       }
     }
 
-    if (informationForm1.frontingFee === 0 || isGross) {
+    if ((informationForm1.frontingFee === 0 || isGross) && securities[index].view === 1) {
       setIsShowToggleFrontingFee(true)
       setFrontingFeeEnabled(informationForm1.frontingFee > 0)
       setIsShowRetroCedant(true)
@@ -230,7 +232,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
         frontingFee: informationForm1.frontingFee === 0 ? 0 : informationForm1.frontingFeeP,
         frontingFeeAmount: 0
       }
-    } else {
+    } else if (securities[index].view === 1) {
       setIsShowToggleFrontingFee(false)
       setFrontingFeeEnabled(false)
       setIsShowRetroCedant(false)
@@ -249,7 +251,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
   useEffect(() => {
     const tempSecurities = [...securities]
 
-    if (!frontingFeeEnabled) {
+    if (!frontingFeeEnabled && securities[index].view === 1) {
       tempSecurities[index] = {
         ...tempSecurities[index],
         frontingFee: 0,
@@ -258,7 +260,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
       validateForm(tempSecurities[index])
       calculateSecurities(tempSecurities)
     }
-    if (!isTaxesEnabled) {
+    if (!isTaxesEnabled && securities[index].view === 1) {
       tempSecurities[index] = {
         ...tempSecurities[index],
         taxes: 0,
@@ -280,287 +282,312 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
   const { forTaxes, forFrontingFee, checkValues } = useDataFirstTime({ formIndex: index, operationSecurity })
 
   useEffect(() => {
-    checkValues({
-      taxes: securities[index].taxes,
-      frontingFee: securities[index].taxes
-    })
+    if (securities[index].view === 1) {
+
+      checkValues({
+        taxes: securities[index].taxes,
+        frontingFee: securities[index].taxes
+      })
+    }
+
     if (securities[index].taxes > 0) {
       setIsTaxesEnabled(true)
+      if (securities[index].view === 2) {
+        setIsShowToggleTaxes(true)
+      }
     }
     if (securities[index].frontingFee > 0) {
       setFrontingFeeEnabled(true)
+      if (securities[index].view === 2) {
+        setIsShowToggleFrontingFee(true)
+      }
+
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [securities[index].taxes, securities[index].frontingFee])
 
   return (
-    <SecondViewProvider>
-      <DiscountsProvider>
-        <div style={{ position: 'relative' }}>
-          {index > 0 && <hr style={{ margin: '40px 0px', backgroundColor: 'lightgray' }} />}
-          <Grid container item xs={12} sm={12}>
-            <Grid item xs={12} sm={12}>
-              {!security.id && index > 0 && (
-                <div
-                  className='section action-buttons'
-                  style={{ float: 'right', marginRight: 'auto', marginBottom: '20px' }}
-                >
-                  <Icon
-                    component={DeleteOutlineIcon}
-                    amplitude={10}
-                    style={{
-                      fontSize: '34px',
-                      cursor: 'pointer',
-                      zIndex: '1000'
-                    }}
-                    onClick={() => onDeleteItemList(index)}
-                  />
-                </div>
-              )}
-            </Grid>
+    <DiscountsProvider>
+      <div style={{ position: 'relative' }}>
+        {index > 0 && <hr style={{ margin: '40px 0px', backgroundColor: 'lightgray' }} />}
+        <Grid container item xs={12} sm={12}>
+          <Grid item xs={12} sm={12}>
+            {!security.id && index > 0 && (
+              <div
+                className='section action-buttons'
+                style={{ float: 'right', marginRight: 'auto', marginBottom: '20px' }}
+              >
+                <Icon
+                  component={DeleteOutlineIcon}
+                  amplitude={10}
+                  style={{
+                    fontSize: '34px',
+                    cursor: 'pointer',
+                    zIndex: '1000'
+                  }}
+                  onClick={() => onDeleteItemList(index)}
+                />
+              </div>
+            )}
           </Grid>
+        </Grid>
 
-          <Grid container spacing={5}>
-            {/* Col-1 */}
-            <Grid item xs={12} sm={4}>
-              <GrossOrNetPremiumAt100
-                value={security.netPremiumAt100}
-                errorMessage={errorsSecurity.netPremiumAt100}
-                isGross={isGross}
+        <Grid container spacing={5}>
+          {/* Col-1 */}
+          <Grid item xs={12} sm={4}>
+            <GrossOrNetPremiumAt100
+              value={security.netPremiumAt100}
+              errorMessage={errorsSecurity.netPremiumAt100}
+              isGross={isGross}
+              index={index}
+              validateForm={validateForm}
+              operationSecurity={operationSecurity}
+            />
+
+            <SharePercent
+              value={security.share}
+              errorMessage={errorsSecurity.share}
+              index={index}
+              validateForm={validateForm}
+              operationSecurity={operationSecurity}
+            />
+
+            <GrossPremiumPerShareAmount
+              value={security.grossPremiumPerShare}
+              errorMessage={errorsSecurity.premiumPerShareAmount}
+              validateForm={validateForm}
+              index={index}
+              operationSecurity={operationSecurity}
+            />
+
+            {isGross && (
+              <ReinsuranceBrokeragePercent
+                value={security.reinsuranceBrokerage}
+                errorMessage={errorsSecurity.reinsuranceBrokerage}
+                index={index}
+                validateForm={validateForm}
+              />
+            )}
+
+            <DynamicComissionPercent
+              value={security.dynamicCommission}
+              errorMessage={errorsSecurity.dynamicCommission}
+              index={index}
+              validateForm={validateForm}
+            />
+          </Grid>
+          {/* Col-2 */}
+          <Grid item xs={12} sm={4}>
+            <ReinsuranceCompany
+              value={security.idCReinsuranceCompany?.id ? String(security.idCReinsuranceCompany?.id) : ''}
+              errorMessage={errorsSecurity.idCReinsuranceCompany}
+              index={index}
+              validateForm={validateForm}
+              avaliableReinsurers={avaliableReinsurers}
+              companiesSelect={companiesSelect}
+              security={security}
+              setIsGross={setIsGross}
+              setFrontingFeeEnabled={setFrontingFeeEnabled}
+              setBinders={setBinders}
+            />
+
+            {/* // Todo - New Component */}
+            <ShareAmount
+              value={security.shareAmount}
+              errorMessage={errorsSecurity.shareAmount}
+              index={index}
+              validateForm={validateForm}
+            />
+
+            <PremiumPerShareAmount
+              value={security.premiumPerShareAmount}
+              errorMessage={errorsSecurity.premiumPerShareAmount}
+              index={index}
+              validateForm={validateForm}
+              operationSecurity={operationSecurity}
+            />
+
+            {isGross && (
+              <ReinsuranceBrokerageAmount
+                value={security.brokerAgeAmount}
+                errorMessage={errorsSecurity.brokerAgeAmount}
                 index={index}
                 validateForm={validateForm}
                 operationSecurity={operationSecurity}
               />
+            )}
 
-              <SharePercent
-                value={security.share}
-                errorMessage={errorsSecurity.share}
-                index={index}
-                validateForm={validateForm}
-                operationSecurity={operationSecurity}
-              />
+            <DynamicComissionAmount
+              value={security.dynamicCommissionAmount}
+              errorMessage={errorsSecurity.dynamicCommissionAmount}
+              index={index}
+              validateForm={validateForm}
+              operationSecurity={operationSecurity}
+            />
+          </Grid>
+          {/* Col-3 */}
+          <Grid item xs={12} sm={4}>
+            <Binder
+              value={security.idCReinsuranceCompanyBinder ? String(security.idCReinsuranceCompanyBinder?.id) : ''}
+              binders={binders}
+              index={index}
+            />
 
-              <GrossPremiumPerShareAmount
-                value={security.grossPremiumPerShare}
-                errorMessage={errorsSecurity.premiumPerShareAmount}
-                validateForm={validateForm}
-                index={index}
-                operationSecurity={operationSecurity}
-              />
+            <Consecutive value={0} />
 
-              {isGross && (
-                <ReinsuranceBrokeragePercent
-                  value={security.reinsuranceBrokerage}
-                  errorMessage={errorsSecurity.reinsuranceBrokerage}
+            <NetReinsurancePremium
+              value={security.netReinsurancePremium}
+              errorMessage={errorsSecurity.netReinsurancePremium}
+            />
+
+            {isShowRetroCedant ? (
+              <>
+                <SelectRetroCedant
+                  value={security.idCRetroCedant?.id ? String(security.idCRetroCedant.id) : ''}
+                  errorMessage={errorsSecurity.idCRetroCedant}
                   index={index}
                   validateForm={validateForm}
+                  retroCedants={retroCedants}
+                  setIdRetroCedant={setIdRetroCedant}
                 />
-              )}
+                <SelectRetroCedantContact
+                  value={security.idCRetroCedantContact?.id ? String(security.idCRetroCedantContact?.id) : ''}
+                  errorMessage={errorsSecurity.idCRetroCedantContact}
+                  index={index}
+                  validateForm={validateForm}
+                  retroCedantContacts={retroCedantContacts}
+                />
+              </>
+            ) : null}
 
-              <DynamicComissionPercent
-                value={security.dynamicCommission}
-                errorMessage={errorsSecurity.dynamicCommission}
-                index={index}
-                validateForm={validateForm}
-              />
-            </Grid>
-            {/* Col-2 */}
+            {frontingFeeEnabled && security.idCRetroCedantContact?.id && (
+              <>
+                <ContactEmail value={security.idCRetroCedantContact?.email} />
+
+                <ContactPhone value={security.idCRetroCedantContact?.phone} />
+
+                <ContactCountry
+                  value={
+                    security.idCRetroCedantContact.__idCCountry__
+                      ? security.idCRetroCedantContact?.__idCCountry__.id
+                      : security.idCRetroCedantContact.idCCountry ?? ''
+                  }
+                  countries={countries}
+                />
+              </>
+            )}
+          </Grid>
+        </Grid>
+
+        <Grid
+          container
+          spacing={5}
+          sx={{
+            ...(!isShowRetroCedant ? { mt: 8 } : null)
+          }}
+        >
+          {isShowToggleTaxes ? (
             <Grid item xs={12} sm={4}>
-              <ReinsuranceCompany
-                value={security.idCReinsuranceCompany?.id ? String(security.idCReinsuranceCompany?.id) : ''}
-                errorMessage={errorsSecurity.idCReinsuranceCompany}
+              <SwitchTaxes
                 index={index}
                 validateForm={validateForm}
-                avaliableReinsurers={avaliableReinsurers}
-                companiesSelect={companiesSelect}
                 security={security}
-                setIsGross={setIsGross}
-                setFrontingFeeEnabled={setFrontingFeeEnabled}
-                setBinders={setBinders}
+                isChecked={isTaxesEnabled}
+                setIsTaxesEnabled={setIsTaxesEnabled}
+                fieldRef={forTaxes}
               />
 
-              {/* // Todo - New Component */}
-              <ShareAmount
-                value={security.shareAmount}
-                errorMessage={errorsSecurity.shareAmount}
-                index={index}
-                validateForm={validateForm}
-              />
-
-              <PremiumPerShareAmount
-                value={security.premiumPerShareAmount}
-                errorMessage={errorsSecurity.premiumPerShareAmount}
+              <TaxesPercent
+                value={security.taxes}
+                errorMessage={errorsSecurity.taxes}
                 index={index}
                 validateForm={validateForm}
                 operationSecurity={operationSecurity}
+                isDisabled={!isTaxesEnabled}
+                fieldRef={forTaxes}
               />
 
-              {isGross && (
-                <ReinsuranceBrokerageAmount
-                  value={security.brokerAgeAmount}
-                  errorMessage={errorsSecurity.brokerAgeAmount}
-                  index={index}
-                  validateForm={validateForm}
-                  operationSecurity={operationSecurity}
-                />
-              )}
-
-              <DynamicComissionAmount
-                value={security.dynamicCommissionAmount}
-                errorMessage={errorsSecurity.dynamicCommissionAmount}
+              <TaxesAmount
+                value={security.taxesAmount}
+                errorMessage={errorsSecurity.taxesAmount}
                 index={index}
                 validateForm={validateForm}
                 operationSecurity={operationSecurity}
+                isDisabled={!isTaxesEnabled}
+                fieldRef={forTaxes}
               />
             </Grid>
-            {/* Col-3 */}
+          ) : null}
+
+          {isShowToggleFrontingFee ? (
             <Grid item xs={12} sm={4}>
-              <Binder
-                value={security.idCReinsuranceCompanyBinder ? String(security.idCReinsuranceCompanyBinder?.id) : ''}
-                binders={binders}
+              <SwitchFrontingFee
                 index={index}
+                validateForm={validateForm}
+                security={security}
+                isChecked={frontingFeeEnabled}
+                setFrontingFeeEnabled={setFrontingFeeEnabled}
+                fieldRef={forFrontingFee}
               />
 
-              <Consecutive value={0} />
-
-              <NetReinsurancePremium
-                value={security.netReinsurancePremium}
-                errorMessage={errorsSecurity.netReinsurancePremium}
+              <FrontingFeePercent
+                value={security.frontingFee}
+                errorMessage={errorsSecurity.frontingFee}
+                index={index}
+                validateForm={validateForm}
+                operationSecurity={operationSecurity}
+                isDisabled={!frontingFeeEnabled}
+                fieldRef={forFrontingFee}
               />
 
-              {isShowRetroCedant ? (
-                <>
-                  <SelectRetroCedant
-                    value={security.idCRetroCedant?.id ? String(security.idCRetroCedant.id) : ''}
-                    errorMessage={errorsSecurity.idCRetroCedant}
-                    index={index}
-                    validateForm={validateForm}
-                    retroCedants={retroCedants}
-                    setIdRetroCedant={setIdRetroCedant}
-                  />
-                  <SelectRetroCedantContact
-                    value={security.idCRetroCedantContact?.id ? String(security.idCRetroCedantContact?.id) : ''}
-                    errorMessage={errorsSecurity.idCRetroCedantContact}
-                    index={index}
-                    validateForm={validateForm}
-                    retroCedantContacts={retroCedantContacts}
-                  />
-                </>
-              ) : null}
-
-              {frontingFeeEnabled && security.idCRetroCedantContact?.id && (
-                <>
-                  <ContactEmail value={security.idCRetroCedantContact?.email} />
-
-                  <ContactPhone value={security.idCRetroCedantContact?.phone} />
-
-                  <ContactCountry
-                    value={
-                      security.idCRetroCedantContact.__idCCountry__
-                        ? security.idCRetroCedantContact?.__idCCountry__.id
-                        : security.idCRetroCedantContact.idCCountry ?? ''
-                    }
-                    countries={countries}
-                  />
-                </>
-              )}
+              <FrontingFeeAmount
+                value={security.frontingFeeAmount}
+                errorMessage={errorsSecurity.frontingFeeAmount}
+                index={index}
+                validateForm={validateForm}
+                operationSecurity={operationSecurity}
+                isDisabled={!frontingFeeEnabled}
+                fieldRef={forFrontingFee}
+              />
             </Grid>
-          </Grid>
+          ) : null}
 
-          <Grid
-            container
-            spacing={5}
-            sx={{
-              ...(!isShowRetroCedant ? { mt: 8 } : null)
-            }}
-          >
-            {isShowToggleTaxes ? (
-              <Grid item xs={12} sm={4}>
-                <SwitchTaxes
-                  index={index}
-                  validateForm={validateForm}
-                  security={security}
-                  isChecked={isTaxesEnabled}
-                  setIsTaxesEnabled={setIsTaxesEnabled}
-                  fieldRef={forTaxes}
-                />
+          <ListDiscounts formIndex={index} operationSecurity={operationSecurity} validateForm={validateForm} />
+        </Grid>
 
-                <TaxesPercent
-                  value={security.taxes}
-                  errorMessage={errorsSecurity.taxes}
-                  index={index}
-                  validateForm={validateForm}
-                  operationSecurity={operationSecurity}
-                  isDisabled={!isTaxesEnabled}
-                  fieldRef={forTaxes}
-                />
+        <ButtonAddDiscount />
 
-                <TaxesAmount
-                  value={security.taxesAmount}
-                  errorMessage={errorsSecurity.taxesAmount}
-                  index={index}
-                  validateForm={validateForm}
-                  operationSecurity={operationSecurity}
-                  isDisabled={!isTaxesEnabled}
-                  fieldRef={forTaxes}
-                />
-              </Grid>
-            ) : null}
-
-            {isShowToggleFrontingFee ? (
-              <Grid item xs={12} sm={4}>
-                <SwitchFrontingFee
-                  index={index}
-                  validateForm={validateForm}
-                  security={security}
-                  isChecked={frontingFeeEnabled}
-                  setFrontingFeeEnabled={setFrontingFeeEnabled}
-                  fieldRef={forFrontingFee}
-                />
-
-                <FrontingFeePercent
-                  value={security.frontingFee}
-                  errorMessage={errorsSecurity.frontingFee}
-                  index={index}
-                  validateForm={validateForm}
-                  operationSecurity={operationSecurity}
-                  isDisabled={!frontingFeeEnabled}
-                  fieldRef={forFrontingFee}
-                />
-
-                <FrontingFeeAmount
-                  value={security.frontingFeeAmount}
-                  errorMessage={errorsSecurity.frontingFeeAmount}
-                  index={index}
-                  validateForm={validateForm}
-                  operationSecurity={operationSecurity}
-                  isDisabled={!frontingFeeEnabled}
-                  fieldRef={forFrontingFee}
-                />
-              </Grid>
-            ) : null}
-
-            <ListDiscounts formIndex={index} operationSecurity={operationSecurity} validateForm={validateForm} />
-          </Grid>
-
-          <ButtonAddDiscount />
-
-          <ModalActivateSecondView
-            formIndex={index}
-            securities={securities}
-            calculateSecurities={calculateSecurities}
-          />
+        <ModalActivateSecondView
+          formIndex={index}
+          securities={securities}
+          calculateSecurities={calculateSecurities}
+        />
 
 
-          <SwitchSecondView
-            formIndex={index}
-            securities={securities}
-            calculateSecurities={calculateSecurities}
-          />
+        <SwitchSecondView
+          formIndex={index}
+          securities={securities}
+          calculateSecurities={calculateSecurities}
+        />
 
-        </div>
-      </DiscountsProvider>
-    </SecondViewProvider>
+        {securities[index].view === 2 ?
+          <>
+            <UndoSecondView
+              formIndex={index}
+              securities={securities}
+              calculateSecurities={calculateSecurities}
+            />
+            <ModalUndoSecondView
+              formIndex={index}
+              securities={securities}
+              calculateSecurities={calculateSecurities}
+            />
+          </>
+
+          : null}
+
+      </div>
+    </DiscountsProvider>
   )
 }
