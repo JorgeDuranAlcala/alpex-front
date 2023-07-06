@@ -1,8 +1,8 @@
 import { AppAlpexApiGateWay } from '../app.alpex.api-getway'
 
 //Routes
-import { PRINT_ACCOUNT_ROUTES } from '@/configs/api'
-import { PrintReportParamsDto } from './dtos/report.dto'
+import { BOURDEROU_ROUTES, PRINT_ACCOUNT_ROUTES } from '@/configs/api'
+import { BourderauBodyDto, PrintReportParamsDto } from './dtos/report.dto'
 
 /**
  *  service responsible of the reports methods
@@ -20,6 +20,23 @@ class ReportServices {
       const { data } = await AppAlpexApiGateWay.get(
         `${PRINT_ACCOUNT_ROUTES.GET_BY_ID_ACCOUNT_LANGUAGE}/${idAccount}/${idLanguage}`
       )
+
+      return data
+    } catch (error) {
+      const message = String(error)
+      throw new Error(message)
+    }
+  }
+
+  /**
+   * brings the bourderou excel by idCReinsuranceCompany and idCReinsuranceCompanyBinder
+   * @param idCReinsuranceCompany
+   * @param idCReinsuranceCompanyBinder
+   * @returns
+   */
+  async downloadBourderou(bourderauBody: BourderauBodyDto): Promise<any> {
+    try {
+      const { data } = await AppAlpexApiGateWay.post(BOURDEROU_ROUTES.DOWNLOAD, bourderauBody)
 
       return data
     } catch (error) {

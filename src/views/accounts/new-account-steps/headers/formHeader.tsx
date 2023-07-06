@@ -192,7 +192,7 @@ const FormHeader = ({ isNewAccount, setActiveEndorsement, setTypeofAccount }: Fo
   }, [account])
 
   useEffect(() => {
-    if (status !== undefined) {
+    if (status !== undefined && setTypeofAccount) {
       setTypeofAccount(status)
     }
   }, [status])
