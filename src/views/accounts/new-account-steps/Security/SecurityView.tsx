@@ -1,5 +1,5 @@
 import { ResponseGetAccount, useGetAccountById } from '@/hooks/accounts/forms'
-import { useAddSecurities, useUpdateSecurities } from '@/hooks/accounts/security'
+import { useAddSecurities } from '@/hooks/accounts/security'
 import { useAddSecurityTotal, useUpdateSecurityTotalById } from '@/hooks/accounts/securityTotal'
 import {
   FormInformation,
@@ -33,6 +33,7 @@ import Icon from 'src/@core/components/icon'
 import UserThemeOptions from 'src/layouts/UserThemeOptions'
 import { SecurityMapper } from './mappers/SecurityForm.mapper'
 
+import { SecondViewProvider } from './components/secondView/SecondViewProvider'
 import { CalculateSecurity } from './utils/calculates-securities'
 
 export const SecurityContext = createContext<SecurityContextDto>({} as SecurityContextDto)
@@ -64,7 +65,8 @@ const Security = ({ onStepChange }: SecurityProps) => {
   const { account, setAccountId, getAccountById, accountId } = useGetAccountById()
   const { saveSecurityTotal } = useAddSecurityTotal()
   const { updateSecurityTotal } = useUpdateSecurityTotalById()
-  const { updateSecurities } = useUpdateSecurities()
+
+  // const { updateSecurities } = useUpdateSecurities()
   const { saveSecurities } = useAddSecurities()
 
   const accountData = useAppSelector(state => state.accounts)
@@ -82,9 +84,10 @@ const Security = ({ onStepChange }: SecurityProps) => {
       const tempSecurities = []
       companiesSelect.splice(0, companiesSelect.length)
 
-      // allErrors.splice(0, allErrors.length)
-
       for (const security of securities) {
+        if (!security.activeView) {
+          security.activeView = 1
+        }
         const operationSecurity: CalculateSecurity = new CalculateSecurity()
           .setInformation(information)
           .setSecurity(security)
@@ -155,7 +158,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
 
   const addNewForm = () => {
     const securityNew = {} as SecurityDto
-    calculateSecurities([...securities, { ...securityNew, frontingFeeActive: false }])
+    calculateSecurities([...securities, { ...securityNew, frontingFeeActive: false, view: 1 }])
   }
 
   const handleNextStep = () => {
@@ -182,19 +185,23 @@ const Security = ({ onStepChange }: SecurityProps) => {
     const save: Partial<SecurityDto>[] = []
 
     for (const security of securities) {
+
+      // * Con esta validación no se guardarán los datos de la vista 2
+      if (security.view === 2) return;
+
       // Todo quitar el as any
       const mapper = SecurityMapper.securityToSecurityForm(security, accountData as any)
 
-      console.log({ security, mapper })
-      if (security.id) {
-        update.push({
-          ...mapper,
-          id: security.id,
-          view: 1
-        })
-      } else {
-        save.push({ ...mapper, view: 1 })
-      }
+      // if (security.id) {
+      //   update.push({
+      //     ...mapper,
+      //     id: security.id,
+      //     view: 1
+      //   })
+      // } else {
+      save.push({ ...mapper, view: 1 })
+
+      // }
     }
 
     if (!allFormData.id) {
@@ -232,40 +239,40 @@ const Security = ({ onStepChange }: SecurityProps) => {
         })
     }
 
-    if (update.length > 0) {
-      await updateSecurities(update)
-        .then(res => {
-          console.log('updateSecurities', { res })
+    // if (update.length > 0) {
+    //   await updateSecurities(update)
+    //     .then(res => {
+    //       console.log('updateSecurities', { res })
 
-          setBadgeData({
-            message: 'THE INFORMATION HAS BEEN SAVED',
-            theme: 'success',
-            open: true,
-            status: 'error'
-          })
-        })
-        .catch(e => {
-          console.log('ERROR updateSecurities', e)
+    //       setBadgeData({
+    //         message: 'THE INFORMATION HAS BEEN SAVED',
+    //         theme: 'success',
+    //         open: true,
+    //         status: 'error'
+    //       })
+    //     })
+    //     .catch(e => {
+    //       console.log('ERROR updateSecurities', e)
 
-          setBadgeData({
-            message: 'Error saving data',
-            theme: 'error',
-            open: true,
-            status: 'error',
-            icon: <Icon style={{ color: '#FF4D49' }} icon='icon-park-outline:error' />
-          })
-        })
+    //       setBadgeData({
+    //         message: 'Error saving data',
+    //         theme: 'error',
+    //         open: true,
+    //         status: 'error',
+    //         icon: <Icon style={{ color: '#FF4D49' }} icon='icon-park-outline:error' />
+    //       })
+    //     })
 
-      setTimeout(() => {
-        setBadgeData({
-          ...badgeData,
-          open: false
-        })
-      }, 2000)
-    }
+    //   setTimeout(() => {
+    //     setBadgeData({
+    //       ...badgeData,
+    //       open: false
+    //     })
+    //   }, 2000)
+    // }
 
     if (save.length > 0) {
-      await saveSecurities(save)
+      await saveSecurities({ idAccount: +accountData.formsData.form1.id, securities: save })
         .then(async res => {
           console.log('saveSecurities', { res })
           const accountById: Partial<ResponseGetAccount> = await getAccountById(Number(accountId))
@@ -372,14 +379,6 @@ const Security = ({ onStepChange }: SecurityProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isNextStep])
 
-  // useEffect(() => {
-  //   if (firstTimeSecurities.length > 0) {
-  //     firstTimeSecurities.forEach((_, index) => {
-  //       firstTimeTaxesFieldsRef.current.push()
-  //     }
-  //   }
-  // }, [firstTimeSecurities]);
-
   return (
     <SecurityContext.Provider
       value={{
@@ -398,115 +397,125 @@ const Security = ({ onStepChange }: SecurityProps) => {
         <CardHeader title={<Title>Security</Title>} />
         <CustomAlert {...badgeData} />
         <form noValidate autoComplete='on'>
-          <CardContent>
-            {securities.map((security, index) => {
-              return (
-                <FormSection
-                  key={`${index}-${security?.id}`}
-                  security={security}
-                  index={index}
-                  onDeleteItemList={DeleteNewForm}
-                />
-              )
-            })}
-            <Grid container spacing={5}>
-              <Grid item xs={12} sm={4}>
-                <FormControl fullWidth>
-                  <TextField
-                    autoFocus
-                    label='Received net premium'
-                    disabled
-                    fullWidth
-                    value={allFormData.recievedNetPremium}
-                    InputProps={{
-                      inputComponent: NumericFormatCustom as any
-                    }}
-                    inputProps={{
-                      suffix: ' '
-                    }}
-                  />
-                </FormControl>
-              </Grid>
-              <Grid item xs={12} sm={4}>
-                <FormControl fullWidth>
-                  <TextField
-                    autoFocus
-                    label='Distributed net premium'
-                    value={allFormData.distribuitedNetPremium}
-                    InputProps={{
-                      inputComponent: NumericFormatCustom as any
-                    }}
-                    inputProps={{
-                      suffix: ' '
-                    }}
-                    disabled
-                  />
-                  {false && <FormHelperText sx={{ color: 'error.main' }}>Invalid field</FormHelperText>}
-                </FormControl>
-              </Grid>
-              <Grid item xs={12} sm={4}>
-                <FormControl fullWidth>
-                  <TextField
-                    autoFocus
-                    label='Difference'
-                    value={allFormData.diference}
-                    InputProps={{
-                      inputComponent: NumericFormatCustom as any
-                    }}
-                    inputProps={{
-                      suffix: ' '
-                    }}
-                    disabled
-                  />
-                  {false && <FormHelperText sx={{ color: 'error.main' }}>Invalid field</FormHelperText>}
-                </FormControl>
-              </Grid>
-            </Grid>
-            <Grid
-              container
-              spacing={5}
-              sx={{
-                marginTop: '20px'
-              }}
-            >
-              {/* ADD REINSURER */}
-              <Grid item xs={12} sm={12}>
-                <div className='add-reinsurer'>
-                  <Button
-                    type='button'
-                    onClick={addNewForm}
-                    variant='text'
-                    color='primary'
-                    size='large'
-                    fullWidth
-                    sx={{ justifyContent: 'start' }}
-                  >
-                    <Icon icon='material-symbols:add-circle-outline' fontSize={20} className='icon-btn' /> ADD REINSURER
-                  </Button>
-                </div>
-              </Grid>
+          <SecondViewProvider>
 
-              <Grid item xs={12} sm={12}>
-                <div
-                  className='section action-buttons'
-                  style={{ float: 'right', marginRight: 'auto', marginBottom: '20px' }}
-                >
-                  <Button className='btn-save' color='success' variant='contained' onClick={SaveData}>
-                    <div className='btn-icon'>
-                      <Icon icon='mdi:content-save' />
-                    </div>
-                    SAVE CHANGES
-                  </Button>
-                  <Button className='btn-next' onClick={handleNextStep}>
-                    Next Step
-                    <div className='btn-icon'>
-                      <Icon icon='material-symbols:arrow-right-alt' />
-                    </div>
-                  </Button>
-                </div>
+            <CardContent>
+              {securities.map((security, index) => {
+
+                // console.log(index, security.view, security.activeView)
+                if (security.view === 1 && security.activeView === 2) return null;
+                if (security.view === 2 && security.activeView === 1) return null;
+
+                // console.log('se imprime')
+
+                return (
+                  <FormSection
+                    key={`${index}-${security?.id}`}
+                    security={security}
+                    index={index}
+                    onDeleteItemList={DeleteNewForm}
+                  />
+                )
+              })}
+              <Grid container spacing={5}>
+                <Grid item xs={12} sm={4}>
+                  <FormControl fullWidth>
+                    <TextField
+                      autoFocus
+                      label='Received net premium'
+                      disabled
+                      fullWidth
+                      value={allFormData.recievedNetPremium}
+                      InputProps={{
+                        inputComponent: NumericFormatCustom as any
+                      }}
+                      inputProps={{
+                        suffix: ' '
+                      }}
+                    />
+                  </FormControl>
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                  <FormControl fullWidth>
+                    <TextField
+                      autoFocus
+                      label='Distributed net premium'
+                      value={allFormData.distribuitedNetPremium}
+                      InputProps={{
+                        inputComponent: NumericFormatCustom as any
+                      }}
+                      inputProps={{
+                        suffix: ' '
+                      }}
+                      disabled
+                    />
+                    {false && <FormHelperText sx={{ color: 'error.main' }}>Invalid field</FormHelperText>}
+                  </FormControl>
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                  <FormControl fullWidth>
+                    <TextField
+                      autoFocus
+                      label='Difference'
+                      value={allFormData.diference}
+                      InputProps={{
+                        inputComponent: NumericFormatCustom as any
+                      }}
+                      inputProps={{
+                        suffix: ' '
+                      }}
+                      disabled
+                    />
+                    {false && <FormHelperText sx={{ color: 'error.main' }}>Invalid field</FormHelperText>}
+                  </FormControl>
+                </Grid>
               </Grid>
-            </Grid>
-          </CardContent>
+              <Grid
+                container
+                spacing={5}
+                sx={{
+                  marginTop: '20px'
+                }}
+              >
+                {/* ADD REINSURER */}
+                <Grid item xs={12} sm={12}>
+                  <div className='add-reinsurer'>
+                    <Button
+                      type='button'
+                      onClick={addNewForm}
+                      variant='text'
+                      color='primary'
+                      size='large'
+                      fullWidth
+                      sx={{ justifyContent: 'start' }}
+                    >
+                      <Icon icon='material-symbols:add-circle-outline' fontSize={20} className='icon-btn' /> ADD REINSURER
+                    </Button>
+                  </div>
+                </Grid>
+
+                <Grid item xs={12} sm={12}>
+                  <div
+                    className='section action-buttons'
+                    style={{ float: 'right', marginRight: 'auto', marginBottom: '20px' }}
+                  >
+                    <Button className='btn-save' color='success' variant='contained' onClick={SaveData}>
+                      <div className='btn-icon'>
+                        <Icon icon='mdi:content-save' />
+                      </div>
+                      SAVE CHANGES
+                    </Button>
+                    <Button className='btn-next' onClick={handleNextStep}>
+                      Next Step
+                      <div className='btn-icon'>
+                        <Icon icon='material-symbols:arrow-right-alt' />
+                      </div>
+                    </Button>
+                  </div>
+                </Grid>
+              </Grid>
+            </CardContent>
+          </SecondViewProvider>
           <Modal className='next-step-modal' open={openNextModal} onClose={handleCloseModal}>
             <Box
               sx={{

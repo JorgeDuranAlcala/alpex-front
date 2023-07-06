@@ -47,7 +47,8 @@ export const SwitchFrontingFee = ({
     <FormControl fullWidth sx={{ mb: 6 }}>
       <div>
         <span className='switch-text'>Fronting fee </span>
-        <SwitchAlpex checked={isChecked} onClick={handleSwitch} />
+        <SwitchAlpex checked={isChecked} onClick={handleSwitch}
+          disabled={securities[index].view === 2} />
       </div>
     </FormControl>
   )
