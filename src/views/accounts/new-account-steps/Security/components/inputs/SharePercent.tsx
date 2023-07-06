@@ -52,6 +52,7 @@ export const SharePercent = ({ index, value, errorMessage, validateForm, operati
         isAllowed={values => {
           return (values.floatValue! >= 0 && values.floatValue! <= 100) || values.floatValue === undefined
         }}
+        disabled={securities[index].view === 2}
       />
 
       <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>

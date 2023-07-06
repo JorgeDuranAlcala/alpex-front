@@ -20,8 +20,8 @@ export const GrossPremiumPerShareAmount = ({ index, value, errorMessage, validat
 
   const {
     activeErros,
+    securities,
 
-    // securities,
     // calculateSecurities
   } = useContext(SecurityContext);
 
@@ -51,6 +51,7 @@ export const GrossPremiumPerShareAmount = ({ index, value, errorMessage, validat
         customInput={TextField}
         decimalScale={2}
         thousandSeparator=','
+        disabled={securities[index].view === 2}
       />
       <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
         {activeErros && errorMessage}
