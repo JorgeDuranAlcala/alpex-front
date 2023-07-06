@@ -289,7 +289,7 @@ const ReinsurerBinders = ({ idReinsuranceCompany }: IReinsuranceCompanyBinders) 
     }
 
     if (startValidations) {
-      if (binderData.referenceNumber.length < 14) {
+      if (binderData.referenceNumber.length < 1) {
         setError(true)
       } else {
         setError(false)
