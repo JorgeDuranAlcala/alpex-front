@@ -39,3 +39,7 @@ export interface ReinsuranceCompanyBindersPaginationDto {
   filters: ReinsuranceCompanyBinderFiltersDto[]
   info: ReinsuranceCompanyBindersInfoDto
 }
+
+export interface ReinsCompBindByIdCompParams {
+  idCReinsuranceCompany: number
+}
