@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 //Hooks
 import { useDeleteDiscountsById, useGetDiscountByIdAccount } from '@/hooks/accounts/discount'
@@ -130,7 +130,6 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
   const [discountCounter, setDiscountCounter] = useState(1)
   const [totalDiscountsError, setTotalDiscountsError] = useState(false)
   const [discountsErrorsIndex, setDiscountsErrorsIndex] = useState<number[]>([])
-  const discountRef = useRef<HTMLInputElement>(null);
   const [discount, setDiscount] = useState<DiscountInputs>({
     id: 0,
     percentage: 0,
@@ -139,6 +138,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
   })
 
   const { discounts, getDiscounts, setDiscounts } = useGetDiscountByIdAccount()
+  const [discountInputs, setDiscountInputs] = useState<DiscountInputs[]>([])
   const { deleteDiscountsById } = useDeleteDiscountsById()
 
   // const [valid, setValid] = useState(false)
@@ -165,10 +165,10 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
     const idAccountCache = Number(localStorage.getItem('idAccount'))
     const discountRes = await getDiscounts(idAccountCache)
     setDiscounts(discountRes)
+    setDiscountInputs(discountRes)
   }
 
   const calculate = async (type = 'any', value?: string | number) => {
-
     let grossPremiumc: number = typeof grossPremium == 'number' ? grossPremium :  0
     let grossPremiumTemp: number | string | undefined= grossPremium
 
@@ -187,11 +187,23 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
     let frontingFeec: number = typeof frontingFee == 'number' ? frontingFee :  0
     let frontingFeeTemp: number | string | undefined= frontingFee
 
-    let updatedDiscounts = discounts.map(discount => {
-      const newAmount = (discount.percentage / 100) * grossPremiumc
+    let updatedDiscounts = discounts.map(discountItem => {
+      const newAmount = (discountItem.percentage / 100) * grossPremiumc
 
-      return { ...discount, amount: newAmount }
+      return { ...discountItem, amount: newAmount }
     })
+
+    let updatedDiscountInputs = discountInputs.map(discountItem => {
+      if(typeof discountItem.percentage == 'number'){
+         const newAmount = (discountItem.percentage / 100) * grossPremiumc
+
+        return { ...discountItem, amount: newAmount }
+      }else{
+        return { ...discountItem, amount: 0 }
+      }
+
+    })
+
     switch (type) {
       case 'reinsuranceBrokerageP': {
         if (typeof value == 'number') {
@@ -201,7 +213,6 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
           reinsuranceBrokeragec = isFinite(result) ? result : 0
           reinsuranceBrokerageTemp = isFinite(result) ? result : 0
 
-          //handleNumericInputChange(value, 'reinsuranceBrokerageP')
         }else{
           reinsuranceBrokeragePTemp = ''
           reinsuranceBrokerageTemp = 0
@@ -216,7 +227,6 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
           reinsuranceBrokeragePc = isFinite(result) ? result : 0
           reinsuranceBrokeragePTemp = isFinite(result) ? result : 0
 
-          // handleNumericInputChange(value, 'reinsuranceBrokerageP')
         }else{
 
           reinsuranceBrokerageTemp = ''
@@ -231,14 +241,10 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
           taxesPc = isFinite(result) ? result : 0
           taxesPTemp = isFinite(result) ? result : 0
           taxesTemp= value
-
-          // handleNumericInputChange(value, 'taxes')
         }else{
           taxesPTemp = 0
           taxesTemp = ''
           taxesPc = 0
-
-          // handleNumericInputChange(0, 'taxes')
         }
         break
       }
@@ -267,8 +273,6 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
         const result = (grossPremiumc * frontingFeePc  )/ 100
         frontingFeec = isFinite(result) ? result : 0
         frontingFeeTemp = isFinite(result) ? result : 0
-
-        // handleNumericInputChange(value, 'frontingFeeP')
       }else{
         frontingFeePTemp = ''
         frontingFeeTemp =  0
@@ -282,8 +286,6 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
           frontingFeePTemp = isFinite(result) ? result : 0
           frontingFeec = value
           frontingFeeTemp = value
-
-          // handleNumericInputChange(value, 'frontingFee')
         }
         else{
           frontingFeePTemp = 0
@@ -304,12 +306,21 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
         taxesTemp = isFinite(resultTaxes) ? resultTaxes : 0
         frontingFeec = isFinite(resultFronting) ? resultFronting : 0
 
-        updatedDiscounts = discounts.map(discount => {
-          const newAmount = (discount.percentage / 100) * grossPremiumc
+        updatedDiscounts = discounts.map(discountItem => {
+          const newAmount = (discountItem.percentage / 100) * grossPremiumc
 
-          return { ...discount, amount: newAmount }
+          return { ...discountItem, amount: newAmount }
         })
+        updatedDiscountInputs = discounts.map(discountItem => {
+          if(typeof discountItem.percentage == 'number'){
+            const newAmount = (discountItem.percentage / 100) * value
 
+           return { ...discountItem, amount: newAmount }
+         }else{
+           return { ...discountItem, amount: 0 }
+         }
+
+        })
         }else{
           grossPremiumTemp = ''
           reinsuranceBrokeragec =  0
@@ -318,6 +329,12 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
           taxesTemp =  0
           frontingFeec =  0
           frontingFeeTemp =  0
+          updatedDiscounts = discounts.map(discountItem => {
+            return { ...discountItem, amount: 0 }
+          })
+          updatedDiscountInputs = discounts.map(discountItem => {
+              return { ...discountItem, amount: 0}
+          })
         }
         break
       }
@@ -328,7 +345,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
     const reinsuranceBrokerageTotalFinal = reinsuranceBrokeragec ? reinsuranceBrokeragec : 0
     const taxesFinal = taxesc ? taxesc : 0
     const frontingFeeTotalFinal = frontingFeec ? frontingFeec : 0
-    const discountsAmount = updatedDiscounts.reduce((sum, discount) => sum + discount.amount, 0) ?? 0
+    const discountsAmount = updatedDiscounts.reduce((sum, discountItem) => sum + discountItem.amount, 0) ?? 0
     const netPremiumc =
       grossPremiumc - reinsuranceBrokerageTotalFinal - taxesFinal - frontingFeeTotalFinal - discountsAmount
     const netPremiumWithTaxesc =
@@ -340,6 +357,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
     setTaxes(taxesTemp)
     setGrossPremium(grossPremiumTemp)
     setDiscounts(updatedDiscounts)
+    setDiscountInputs(updatedDiscountInputs)
     setReinsuranceBrokerage(reinsuranceBrokerageTemp)
     setReinsuranceBrokerageP(reinsuranceBrokeragePTemp)
     setNetPremiumWithoutDiscounts(netPremiumWithoutDiscountsc)
@@ -418,30 +436,40 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
   const addDiscount = () => {
     const newDiscount = { id: 0, percentage: 0, amount: 0, idAccount: 0 }
     const newDiscounts = [...discounts, newDiscount]
+    const newDiscountInput  = [...discountInputs, newDiscount]
     setDiscounts(newDiscounts)
+    setDiscountInputs(newDiscountInput)
     setDiscountCounter(discountCounter + 1)
   }
 
   const deleteDiscount = async (index: number) => {
-
     const discountToDelete = discounts[index].id
     const newDiscounts = [...discounts]
+    const newDiscountInput = [...discountInputs]
     newDiscounts.splice(index, 1)
+    newDiscountInput.splice(index, 1)
     setDiscounts(newDiscounts)
+    setDiscountInputs(newDiscountInput)
 
-    const updatedDiscounts = newDiscounts.map(discount => {
-      const updatedDiscount = { ...discount }
+    const updatedDiscounts = newDiscounts.map(discountItem => {
+      const updatedDiscount = { ...discountItem }
+
+      return updatedDiscount
+    })
+
+    const updatedDiscountInputs = newDiscountInput.map(discountItem => {
+      const updatedDiscount = { ...discountItem }
 
       return updatedDiscount
     })
 
     setDiscounts(updatedDiscounts)
+    setDiscountInputs(updatedDiscountInputs)
     setDiscountCounter(updatedDiscounts.length + 1)
 
     if (index === discounts.length - 1) {
       // Si se eliminó el último descuento, actualizamos el estado "discount" para mostrar el último descuento en el formulario
-      setDiscount(updatedDiscounts[index - 1] || { id: 0, percentage: 0, amount: 0, idAccount: 0 })
-
+      setDiscount(updatedDiscountInputs[index - 1] || { id: 0, percentage: 0, amount: 0, idAccount: 0 })
     }
 
     if (discountToDelete) {
@@ -449,30 +477,87 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
     }
   }
 
-  const updateDiscountInArray = (updatedDiscount: DiscountDto, index: number) => {
+
+  const calculateDiscountP = (index: number, newDiscount: DiscountInputs) => {
+    const total = typeof grossPremium == 'number'? grossPremium : 0
+    let updatedDiscountInput: DiscountInputs = newDiscount
+    let updatedDiscount: DiscountDto = {
+      id: newDiscount.id,
+      amount: typeof newDiscount.amount == 'number' ? newDiscount.amount : 0,
+      percentage: typeof newDiscount.percentage == 'number' ? newDiscount.percentage : 0,
+      idAccount: newDiscount.idAccount
+    }
+    if(typeof newDiscount.amount == 'number'){
+      const percentage = ( newDiscount.amount / total) * 100
+    updatedDiscountInput = { ... newDiscount, percentage }
+    updatedDiscount =  { ... updatedDiscount, percentage }
+    }else{
+
+     updatedDiscountInput = { ... newDiscount, percentage: 0 }
+     updatedDiscount =  { ... updatedDiscount, percentage: 0 }
+    }
+    setDiscount(updatedDiscountInput)
+
     setDiscounts(state => {
       const newState = [...state]
       newState[index] = updatedDiscount
 
       return newState
     })
+
+    setDiscountInputs(state => {
+      const newState = [...state]
+      newState[index] = updatedDiscountInput
+
+      return newState
+    })
+
+
   }
 
-  const calculateDiscountP = (index: number, disount: DiscountDto) => {
-    const total = typeof grossPremium == 'number'? grossPremium : 0
-    const percentage = (disount.amount / total) * 100
-    const updatedDiscount = { ...disount, percentage }
-    setDiscount(updatedDiscount)
-    updateDiscountInArray(updatedDiscount, index)
-  }
 
-
-  const calculateDiscount = (index: number, disount: DiscountDto) => {
+  const calculateDiscount = (index: number, newDiscount: DiscountInputs) => {
+    console.log(newDiscount)
     const total = typeof grossPremium == 'number' ? grossPremium : 0
-    const amount = (disount.percentage / 100) * total
-    const updatedDiscount = { ...disount, amount }
-    setDiscount(updatedDiscount)
-    updateDiscountInArray(updatedDiscount, index)
+    let updatedDiscountInput: DiscountInputs = newDiscount
+    let updatedDiscount: DiscountDto = {
+      id: newDiscount.id,
+      amount: typeof newDiscount.amount == 'number' ? newDiscount.amount : 0,
+      percentage: typeof newDiscount.percentage == 'number' ? newDiscount.percentage : 0,
+      idAccount: newDiscount.idAccount
+    }
+
+    if(typeof newDiscount.percentage == 'number'){
+      console.log('number')
+      const amount = (newDiscount.percentage / 100) * total
+      updatedDiscountInput = { ... newDiscount, amount }
+      updatedDiscount =  { ... updatedDiscount, amount }
+
+    }else{
+      console.log("vacio")
+      updatedDiscountInput = { ... newDiscount, amount: 0 }
+      updatedDiscount =  { ... updatedDiscount, amount: 0 }
+     }
+     console.log(updatedDiscountInput)
+     setDiscount(updatedDiscountInput)
+
+    setDiscounts(state => {
+      const newState = [...state]
+      newState[index] = updatedDiscount
+
+      return newState
+    })
+
+    setDiscountInputs(state => {
+      const newState = [...state]
+      newState[index] = updatedDiscountInput
+
+      return newState
+    })
+
+
+
+
   }
 
   const validations = () => {
@@ -492,14 +577,14 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
       typeOfLimitError: placementStructure.typeOfLimit === '',
       totalDiscountsError: discountValidation(),
       discountsErrors:
-        discounts.length > 0 && discounts.some(discount => discount.percentage === 0 || discount.amount === 0)
+        discounts.length > 0 && discounts.some(discountItem => discountItem.percentage === 0 || discountItem.amount === 0)
     }
 
     if (discounts.length > 0) {
       const newDiscountErrors: number[] = []
 
-      discounts.forEach((discount, index) => {
-        if (discount.percentage === 0 || discount.amount === 0) {
+      discounts.forEach((discountItem, index) => {
+        if (discountItem.percentage === 0 || discountItem.amount === 0) {
           newDiscountErrors.push(index)
         }
       })
@@ -520,8 +605,8 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
   }
 
   const discountValidation = () => {
-    const discountPercentages = discounts.reduce((sum, discount) => sum + discount.percentage, 0) ?? 0
-    const discountAmount = discounts.reduce((sum, discount) => sum + discount.amount, 0) ?? 0
+    const discountPercentages = discounts.reduce((sum, discountItem) => sum + discountItem.percentage, 0) ?? 0
+    const discountAmount = discounts.reduce((sum, discountItem) => sum + discountItem.amount, 0) ?? 0
 
     const totalPercentages = discountPercentages + placementStructure.taxesP + placementStructure.frontingFeeP
     const totalAmount = discountAmount + placementStructure.taxes + placementStructure.frontingFee
@@ -572,27 +657,19 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
 
   React.useEffect(() => {
     onDiscountsChange(discounts)
-
-    const inputElement = discounts.find((discount) => discount.percentage === 0);
-
-      if (inputElement) {
-        if (discountRef.current) {
-          discountRef.current.value = "0"
-          discountRef.current.setSelectionRange(
-            1,
-            discountRef.current.value.length
-          );
-        }
-      }
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [discounts])
-
   React.useEffect(() => {
     setTotalDiscountsError(discountValidation)
     calculate()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [discount, discountCounter])
+
+  React.useEffect(() => {
+    console.log("discount Inputs cambio")
+    console.log(discountInputs)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [discountInputs])
 
   React.useEffect(() => {
     setTotalDiscountsError(discountValidation)
@@ -1090,7 +1167,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
           </FormControl>
         </div>
 
-        {discounts.map((discount, index) => (
+        {discountInputs.map((discountItem, index) => (
           <div className='form-col' key={index}>
             <div className='form-row'>
               <div className='row-title'>Other Discount</div>
@@ -1107,11 +1184,11 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
             <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
               <NumericFormat
                 name='discountP'
-                value={discount.percentage}
+                value={discountItem.percentage}
                 allowLeadingZeros
                 thousandSeparator=','
                 customInput={TextField}
-                id={`discount-${discount.id}`}
+                id='discount-p'
                 label='Other discount %'
                 suffix={'%'}
                 maxRows={4}
@@ -1124,10 +1201,10 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
                 }}
                 onValueChange={value => {
                   if (value.floatValue) {
-                    const updatedDiscount = { ...discount, percentage: value.floatValue }
+                    const updatedDiscount = { ...discountItem, percentage: value.floatValue }
                     calculateDiscount(index, updatedDiscount)
                   } else {
-                    calculateDiscount(index, { ...discount, percentage: 0 })
+                    calculateDiscount(index, { ...discountItem, percentage: '' })
                   }
                 }}
                 error={totalDiscountsError || discountsErrorsIndex.includes(index)}
@@ -1143,7 +1220,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
             <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
               <NumericFormat
                 name='discount'
-                value={discount.amount}
+                value={discountItem.amount}
                 allowLeadingZeros
                 thousandSeparator=','
                 customInput={TextField}
@@ -1161,10 +1238,10 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
                 }}
                 onValueChange={value => {
                   if (value.floatValue) {
-                    const updatedDiscount = { ...discount, amount: value.floatValue }
+                    const updatedDiscount = { ...discountItem, amount: value.floatValue }
                     calculateDiscountP(index, updatedDiscount)
                   } else {
-                    calculateDiscountP(index, { ...discount, amount: 0 })
+                    calculateDiscountP(index, { ...discountItem, amount: '' })
                   }
                 }}
                 error={totalDiscountsError || discountsErrorsIndex.includes(index)}
