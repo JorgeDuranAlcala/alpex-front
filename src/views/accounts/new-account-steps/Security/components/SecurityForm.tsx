@@ -297,7 +297,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
         {index > 0 && <hr style={{ margin: '40px 0px', backgroundColor: 'lightgray' }} />}
         <Grid container item xs={12} sm={12}>
           <Grid item xs={12} sm={12}>
-            {!security.id && index > 0 && (
+            {security.id && index > 0 && (
               <div
                 className='section action-buttons'
                 style={{ float: 'right', marginRight: 'auto', marginBottom: '20px' }}
