@@ -43,7 +43,7 @@ export const SelectRetroCedantContact = ({
         value={value.toString()}
         onChange={handleChangeRetroCedantContact}
         labelId='RetroCedantcontact'
-        disabled={isDisabled}
+        disabled={securities[index].view === 2 || isDisabled}
       >
         {retroCedantContacts?.map(contact => (
           <MenuItem key={contact.name} value={contact.id}>

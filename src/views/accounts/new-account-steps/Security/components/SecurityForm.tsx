@@ -61,6 +61,10 @@ import {
 } from './inputs'
 import { SwitchFrontingFee } from './inputs/SwitchFrontingFee'
 import { SwitchTaxes } from './inputs/SwitchTaxes'
+import { ModalActivateSecondView } from './secondView/ModalActivateSecondView'
+import { ModalUndoSecondView } from './secondView/ModalUndoSecondView'
+import { SwitchSecondView } from './secondView/SwitchSecondView'
+import { UndoSecondView } from './secondView/UndoSecondView'
 
 // type Timer = ReturnType<typeof setInterval>
 // let typingTimer: Timer
@@ -158,8 +162,9 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
           }
         }
         errorsTemp[index] = true
-        setErrorsSecurity(data)
-        console.log({ error: data, index })
+        setErrorsSecurity(data);
+
+        // console.log({ error: data, index });
 
         //setEnableNextStep(false)
       })
@@ -199,7 +204,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
 
     //validacion taxes
 
-    if (informationForm1.taxes === 0 || isGross) {
+    if ((informationForm1.taxes === 0 || isGross) && securities[index].view === 1) {
       setIsShowToggleTaxes(true)
       setIsTaxesEnabled(informationForm1.taxes > 0)
 
@@ -208,7 +213,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
         taxes: informationForm1.taxes === 0 ? 0 : informationForm1.taxesP,
         taxesAmount: 0
       }
-    } else {
+    } else if (securities[index].view === 1) {
       setIsShowToggleTaxes(false)
       setIsTaxesEnabled(false)
 
@@ -219,7 +224,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
       }
     }
 
-    if (informationForm1.frontingFee === 0 || isGross) {
+    if ((informationForm1.frontingFee === 0 || isGross) && securities[index].view === 1) {
       setIsShowToggleFrontingFee(true)
       setFrontingFeeEnabled(informationForm1.frontingFee > 0)
       setIsShowRetroCedant(true)
@@ -229,7 +234,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
         frontingFee: informationForm1.frontingFee === 0 ? 0 : informationForm1.frontingFeeP,
         frontingFeeAmount: 0
       }
-    } else {
+    } else if (securities[index].view === 1) {
       setIsShowToggleFrontingFee(false)
       setFrontingFeeEnabled(false)
       setIsShowRetroCedant(false)
@@ -248,7 +253,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
   useEffect(() => {
     const tempSecurities = [...securities]
 
-    if (!frontingFeeEnabled) {
+    if (!frontingFeeEnabled && securities[index].view === 1) {
       tempSecurities[index] = {
         ...tempSecurities[index],
         frontingFee: 0,
@@ -257,7 +262,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
       validateForm(tempSecurities[index])
       calculateSecurities(tempSecurities)
     }
-    if (!isTaxesEnabled) {
+    if (!isTaxesEnabled && securities[index].view === 1) {
       tempSecurities[index] = {
         ...tempSecurities[index],
         taxes: 0,
@@ -279,15 +284,26 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
   const { forTaxes, forFrontingFee, checkValues } = useDataFirstTime({ formIndex: index, operationSecurity })
 
   useEffect(() => {
-    checkValues({
-      taxes: securities[index].taxes,
-      frontingFee: securities[index].taxes
-    })
+    if (securities[index].view === 1) {
+
+      checkValues({
+        taxes: securities[index].taxes,
+        frontingFee: securities[index].taxes
+      })
+    }
+
     if (securities[index].taxes > 0) {
       setIsTaxesEnabled(true)
+      if (securities[index].view === 2) {
+        setIsShowToggleTaxes(true)
+      }
     }
     if (securities[index].frontingFee > 0) {
       setFrontingFeeEnabled(true)
+      if (securities[index].view === 2) {
+        setIsShowToggleFrontingFee(true)
+      }
+
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -295,7 +311,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
 
   return (
     <DiscountsProvider>
-      <div>
+      <div style={{ position: 'relative' }}>
         {index > 0 && <hr style={{ margin: '40px 0px', backgroundColor: 'lightgray' }} />}
         <Grid container item xs={12} sm={12}>
           <Grid item xs={12} sm={12}>
@@ -543,6 +559,36 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
         </Grid>
 
         <ButtonAddDiscount />
+
+        <ModalActivateSecondView
+          formIndex={index}
+          securities={securities}
+          calculateSecurities={calculateSecurities}
+        />
+
+
+        <SwitchSecondView
+          formIndex={index}
+          securities={securities}
+          calculateSecurities={calculateSecurities}
+        />
+
+        {securities[index].view === 2 ?
+          <>
+            <UndoSecondView
+              formIndex={index}
+              securities={securities}
+              calculateSecurities={calculateSecurities}
+            />
+            <ModalUndoSecondView
+              formIndex={index}
+              securities={securities}
+              calculateSecurities={calculateSecurities}
+            />
+          </>
+
+          : null}
+
       </div>
       <DialogCustomAlpex
         openDialog={openDialog}
