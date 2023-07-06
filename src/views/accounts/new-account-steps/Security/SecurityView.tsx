@@ -1,5 +1,5 @@
 import { ResponseGetAccount, useGetAccountById } from '@/hooks/accounts/forms'
-import { useAddSecurities, useUpdateSecurities } from '@/hooks/accounts/security'
+import { useAddSecurities } from '@/hooks/accounts/security'
 import { useAddSecurityTotal, useUpdateSecurityTotalById } from '@/hooks/accounts/securityTotal'
 import {
   FormInformation,
@@ -64,7 +64,8 @@ const Security = ({ onStepChange }: SecurityProps) => {
   const { account, setAccountId, getAccountById, accountId } = useGetAccountById()
   const { saveSecurityTotal } = useAddSecurityTotal()
   const { updateSecurityTotal } = useUpdateSecurityTotalById()
-  const { updateSecurities } = useUpdateSecurities()
+
+  // const { updateSecurities } = useUpdateSecurities()
   const { saveSecurities } = useAddSecurities()
 
   const accountData = useAppSelector(state => state.accounts)
@@ -81,8 +82,6 @@ const Security = ({ onStepChange }: SecurityProps) => {
     if (securities.length > 0 && information) {
       const tempSecurities = []
       companiesSelect.splice(0, companiesSelect.length)
-
-      // allErrors.splice(0, allErrors.length)
 
       for (const security of securities) {
         const operationSecurity: CalculateSecurity = new CalculateSecurity()
@@ -185,16 +184,16 @@ const Security = ({ onStepChange }: SecurityProps) => {
       // Todo quitar el as any
       const mapper = SecurityMapper.securityToSecurityForm(security, accountData as any)
 
-      console.log({ security, mapper })
-      if (security.id) {
-        update.push({
-          ...mapper,
-          id: security.id,
-          view: 1
-        })
-      } else {
-        save.push({ ...mapper, view: 1 })
-      }
+      // if (security.id) {
+      //   update.push({
+      //     ...mapper,
+      //     id: security.id,
+      //     view: 1
+      //   })
+      // } else {
+      save.push({ ...mapper, view: 1 })
+
+      // }
     }
 
     if (!allFormData.id) {
@@ -232,40 +231,40 @@ const Security = ({ onStepChange }: SecurityProps) => {
         })
     }
 
-    if (update.length > 0) {
-      await updateSecurities(update)
-        .then(res => {
-          console.log('updateSecurities', { res })
+    // if (update.length > 0) {
+    //   await updateSecurities(update)
+    //     .then(res => {
+    //       console.log('updateSecurities', { res })
 
-          setBadgeData({
-            message: 'THE INFORMATION HAS BEEN SAVED',
-            theme: 'success',
-            open: true,
-            status: 'error'
-          })
-        })
-        .catch(e => {
-          console.log('ERROR updateSecurities', e)
+    //       setBadgeData({
+    //         message: 'THE INFORMATION HAS BEEN SAVED',
+    //         theme: 'success',
+    //         open: true,
+    //         status: 'error'
+    //       })
+    //     })
+    //     .catch(e => {
+    //       console.log('ERROR updateSecurities', e)
 
-          setBadgeData({
-            message: 'Error saving data',
-            theme: 'error',
-            open: true,
-            status: 'error',
-            icon: <Icon style={{ color: '#FF4D49' }} icon='icon-park-outline:error' />
-          })
-        })
+    //       setBadgeData({
+    //         message: 'Error saving data',
+    //         theme: 'error',
+    //         open: true,
+    //         status: 'error',
+    //         icon: <Icon style={{ color: '#FF4D49' }} icon='icon-park-outline:error' />
+    //       })
+    //     })
 
-      setTimeout(() => {
-        setBadgeData({
-          ...badgeData,
-          open: false
-        })
-      }, 2000)
-    }
+    //   setTimeout(() => {
+    //     setBadgeData({
+    //       ...badgeData,
+    //       open: false
+    //     })
+    //   }, 2000)
+    // }
 
     if (save.length > 0) {
-      await saveSecurities(save)
+      await saveSecurities({ idAccount: +accountData.formsData.form1.id, securities: save })
         .then(async res => {
           console.log('saveSecurities', { res })
           const accountById: Partial<ResponseGetAccount> = await getAccountById(Number(accountId))
@@ -371,14 +370,6 @@ const Security = ({ onStepChange }: SecurityProps) => {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isNextStep])
-
-  // useEffect(() => {
-  //   if (firstTimeSecurities.length > 0) {
-  //     firstTimeSecurities.forEach((_, index) => {
-  //       firstTimeTaxesFieldsRef.current.push()
-  //     }
-  //   }
-  // }, [firstTimeSecurities]);
 
   return (
     <SecurityContext.Provider
