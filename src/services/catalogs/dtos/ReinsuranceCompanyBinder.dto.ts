@@ -1,5 +1,5 @@
 export interface ReinsuranceCompanyBinderDto {
-  id: number
+  id?: number
   referenceNumber: string
   idCReinsuranceCompany: number
 }
