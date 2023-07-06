@@ -11,6 +11,7 @@ import { ActionsHeaderBoundModal, ActionsHeaderBoundModalCancel } from './modals
 interface IActionsHeaderProps {
   accountStatus: string
   sideHeader: boolean
+  setActiveEndorsement?: any
 }
 
 interface StatusHistory {
@@ -46,7 +47,7 @@ const statusHistory: StatusHistory[] = [
   }
 ]
 
-const ActionsHeaderBound: React.FC<IActionsHeaderProps> = ({ accountStatus, sideHeader }) => {
+const ActionsHeaderBound: React.FC<IActionsHeaderProps> = ({ accountStatus, sideHeader, setActiveEndorsement }) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [status, setStatus] = useState({})
   const [uneditableAccount, setUneditableAccount] = useState(false)
@@ -120,6 +121,7 @@ const ActionsHeaderBound: React.FC<IActionsHeaderProps> = ({ accountStatus, side
               value={value}
               handleRadioChange={handleRadioChange}
               setCancellEndorsment={setCancellEndorsment}
+              setActiveEndorsement={setActiveEndorsement}
             />
             {/* ESTE ES EL MODAL QUE SE DESPLIEGA CUANDO SE VA POR LA RUTA DE CANCELACIÓN */}
             <ActionsHeaderBoundModalCancel
