@@ -317,30 +317,28 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
   }, [securities[index].taxes, securities[index].frontingFee])
 
   useEffect(() => {
-    const tempSecurities = [...securities]
-
-    const grossNet = isGross
-      ? information.grossPremium !== tempSecurities[index].netPremiumAt100
-        ? information.grossPremium
-        : tempSecurities[index].netPremiumAt100
-      : information.netPremium !== tempSecurities[index].netPremiumAt100
-      ? information.netPremium
-      : tempSecurities[index].netPremiumAt100
-
-    if (activeView === 0 && securitesOriginal.length < tempSecurities.length) {
-      createSecuritiesOriginal({ ...tempSecurities[index], netPremiumAt100: grossNet })
-    }
-
-    if (activeView === 0 && securities.length - 1 === index) {
-      if (securitesOriginal.length === tempSecurities.length) {
-        if (!areArraysEqual(securitesOriginal, tempSecurities)) {
-          createSecondView({
-            securities,
-            calculateSecurities
-          })
-        }
-      }
-    }
+    // const tempSecurities = [...securities]
+    // const grossNet = isGross
+    //   ? information.grossPremium !== tempSecurities[index].netPremiumAt100
+    //     ? information.grossPremium
+    //     : tempSecurities[index].netPremiumAt100
+    //   : information.netPremium !== tempSecurities[index].netPremiumAt100
+    //   ? information.netPremium
+    //   : tempSecurities[index].netPremiumAt100
+    // if (activeView === 0 && securitesOriginal.length < tempSecurities.length) {
+    //   createSecuritiesOriginal({ ...tempSecurities[index], netPremiumAt100: grossNet })
+    // }
+    // if (activeView === 0 && securities.length - 1 === index) {
+    //   if (securitesOriginal.length === tempSecurities.length) {
+    //     if (!areArraysEqual(securitesOriginal, tempSecurities)) {
+    //       createSecondView({
+    //         securities,
+    //         calculateSecurities
+    //       })
+    //     }
+    //   }
+    // }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (

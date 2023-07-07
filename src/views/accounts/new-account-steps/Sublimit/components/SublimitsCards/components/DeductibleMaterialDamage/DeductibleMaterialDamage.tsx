@@ -1,4 +1,5 @@
 import UserThemeOptions from '@/layouts/UserThemeOptions'
+import { SublimitDto } from '@/services/accounts/dtos/sublimit.dto'
 import { InputForm, SubContainer } from '@/styles/Forms/Sublimits'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import {
@@ -14,22 +15,34 @@ import {
   TextField,
   Typography
 } from '@mui/material'
-import React, { ChangeEvent, useState } from 'react'
+import React from 'react'
 import { NumericFormat } from 'react-number-format'
 
 export type DeductibleMaterialDamageProps = {
-  onClickRadioDeductible: (deductibleDamage: string) => void
+  onHandleChangeDeductibleDamage: (deductibleDamage: SublimitDto) => void
+  subLimit: SublimitDto
 }
 
-const DeductibleMaterialDamage: React.FC<DeductibleMaterialDamageProps> = ({ onClickRadioDeductible }) => {
-  const [radioDeductbleDamage, setRadioDeductbleDamage] = useState<string>('')
-
+const DeductibleMaterialDamage: React.FC<DeductibleMaterialDamageProps> = ({
+  subLimit,
+  onHandleChangeDeductibleDamage
+}) => {
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
   const size = userThemeConfig.typography?.size.px16
   const textColor = userThemeConfig.palette?.text.subTitle
-  const handleChangeRadio = (event: ChangeEvent<HTMLInputElement>) => {
-    onClickRadioDeductible(event.target.value)
-    setRadioDeductbleDamage(event.target.value)
+  const handleChangeItem = (event: any, name: string) => {
+    const reset = {
+      deductible: null,
+      min: null,
+      idCDeductiblePer: null,
+      amount: null
+    }
+    const subLimitTemp = { ...subLimit, [name]: event.target.value }
+    if (name === 'typeDeductible') {
+      onHandleChangeDeductibleDamage({ ...subLimitTemp, ...reset })
+    } else {
+      onHandleChangeDeductibleDamage(subLimitTemp)
+    }
   }
   const options = [
     { name: 'Loss', id: 1 },
@@ -43,7 +56,7 @@ const DeductibleMaterialDamage: React.FC<DeductibleMaterialDamageProps> = ({ onC
         Deductible material damage
       </Typography>
       <RadioGroup
-        value={radioDeductbleDamage}
+        value={subLimit.typeDeductible}
         aria-labelledby='material-radio-buttons-group-label'
         defaultValue='none'
         name='radio-buttons-group'
@@ -58,7 +71,16 @@ const DeductibleMaterialDamage: React.FC<DeductibleMaterialDamageProps> = ({ onC
             height: '58px'
           }}
           value='none'
-          control={<Radio sx={{ mr: 2 }} value='none' defaultChecked onChange={handleChangeRadio} />}
+          control={
+            <Radio
+              sx={{ mr: 2 }}
+              value='none'
+              defaultChecked
+              onChange={e => {
+                handleChangeItem(e, 'typeDeductible')
+              }}
+            />
+          }
           label='None'
         />
         <InputForm>
@@ -68,8 +90,8 @@ const DeductibleMaterialDamage: React.FC<DeductibleMaterialDamageProps> = ({ onC
               <Radio
                 sx={{ mr: -1 }}
                 value={'per'}
-                onChange={() => {
-                  console.log('radio')
+                onChange={e => {
+                  handleChangeItem(e, 'typeDeductible')
                 }}
               />
             }
@@ -78,9 +100,9 @@ const DeductibleMaterialDamage: React.FC<DeductibleMaterialDamageProps> = ({ onC
           <NumericFormat
             placeholder='0%'
             name='per'
-            disabled={false}
+            disabled={!(subLimit.typeDeductible === 'per')}
             allowLeadingZeros
-            value={''}
+            value={String(subLimit.deductible || '')}
             thousandSeparator=','
             customInput={Input}
             suffix={'%'}
@@ -96,62 +118,61 @@ const DeductibleMaterialDamage: React.FC<DeductibleMaterialDamageProps> = ({ onC
               return (floatValue! >= 0 && floatValue! <= 100) || floatValue === undefined
             }}
             onValueChange={value => {
-              console.log(value)
-
-              // onChangeItem(value.floatValue, 'deductible')
+              handleChangeItem({ target: { value: value.floatValue } }, 'deductible')
             }}
           />
         </InputForm>
         <FormHelperText sx={{ color: 'error.main', marginTop: '-3px' }}></FormHelperText>
+        {subLimit.typeDeductible === 'per' ? (
+          <>
+            <FormControl fullWidth>
+              <NumericFormat
+                name='min'
+                value={String(subLimit.min)}
+                allowLeadingZeros
+                thousandSeparator=','
+                customInput={TextField}
+                id='filled-multiline-flexible'
+                label='Minimum'
+                multiline
+                prefix={'$'}
+                decimalScale={2}
+                variant='outlined'
+                onValueChange={value => {
+                  console.log(value)
+                  handleChangeItem({ target: { value: value.floatValue } }, 'min')
+                }}
+                isAllowed={values => {
+                  const { floatValue } = values
 
-        <FormControl fullWidth>
-          <NumericFormat
-            name='min'
-            value={''}
-            allowLeadingZeros
-            thousandSeparator=','
-            customInput={TextField}
-            id='filled-multiline-flexible'
-            label='Minimum'
-            multiline
-            prefix={'$'}
-            decimalScale={2}
-            variant='outlined'
-            onValueChange={value => {
-              console.log(value)
-
-              // onChangeItem(value.floatValue, 'min')
-            }}
-            isAllowed={values => {
-              const { floatValue } = values
-
-              return floatValue! >= 0 || floatValue === undefined
-            }}
-          />
-          <FormHelperText sx={{ color: 'error.main' }}></FormHelperText>
-        </FormControl>
-        <FormControl fullWidth>
-          <InputLabel id='controlled-select-label'>Aplicable over</InputLabel>
-          <Select
-            sx={{ height: '56px' }}
-            label='Aplicable over'
-            labelId='controlled-select-label'
-            value={''}
-            onChange={() => {
-              // onChangeItem(e.target.value, 'idCDeductiblePer')
-            }}
-            IconComponent={KeyboardArrowDownIcon}
-          >
-            {options.length > 0 &&
-              options?.map((item, index) => (
-                <MenuItem key={index} value={item.id}>
-                  {item.name}
-                </MenuItem>
-              ))}
-          </Select>
-          <FormHelperText sx={{ color: 'error.main' }}></FormHelperText>
-        </FormControl>
-
+                  return floatValue! >= 0 || floatValue === undefined
+                }}
+              />
+              <FormHelperText sx={{ color: 'error.main' }}></FormHelperText>
+            </FormControl>
+            <FormControl fullWidth>
+              <InputLabel id='controlled-select-label'>Aplicable over</InputLabel>
+              <Select
+                sx={{ height: '56px' }}
+                label='Aplicable over'
+                labelId='controlled-select-label'
+                value={subLimit.idCDeductiblePer}
+                onChange={e => {
+                  handleChangeItem(e, 'idCDeductiblePer')
+                }}
+                IconComponent={KeyboardArrowDownIcon}
+              >
+                {options.length > 0 &&
+                  options?.map((item, index) => (
+                    <MenuItem key={index} value={item.id}>
+                      {item.name}
+                    </MenuItem>
+                  ))}
+              </Select>
+              <FormHelperText sx={{ color: 'error.main' }}></FormHelperText>
+            </FormControl>
+          </>
+        ) : null}
         <InputForm>
           <FormControlLabel
             sx={{ ml: 0.3 }}
@@ -160,8 +181,8 @@ const DeductibleMaterialDamage: React.FC<DeductibleMaterialDamageProps> = ({ onC
               <Radio
                 sx={{ mr: -1 }}
                 value='amount'
-                onChange={() => {
-                  // handleChangeRadio
+                onChange={e => {
+                  handleChangeItem(e, 'typeDeductible')
                 }}
               />
             }
@@ -171,8 +192,8 @@ const DeductibleMaterialDamage: React.FC<DeductibleMaterialDamageProps> = ({ onC
             placeholder='$0.00'
             name='amount'
             allowLeadingZeros
-            value={''}
-            disabled={false}
+            value={String(subLimit.amount)}
+            disabled={!(subLimit?.typeDeductible === 'amount')}
             thousandSeparator=','
             customInput={Input}
             prefix={'$'}
@@ -185,7 +206,7 @@ const DeductibleMaterialDamage: React.FC<DeductibleMaterialDamageProps> = ({ onC
             onValueChange={value => {
               console.log(value)
 
-              // onChangeItem(value.floatValue, 'amount')
+              handleChangeItem({ target: { value: value.floatValue } }, 'amount')
             }}
             isAllowed={values => {
               const { floatValue } = values

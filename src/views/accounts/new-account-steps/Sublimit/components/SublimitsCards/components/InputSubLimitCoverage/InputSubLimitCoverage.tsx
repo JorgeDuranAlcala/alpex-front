@@ -1,3 +1,4 @@
+import { SublimitDto } from '@/services/accounts/dtos/sublimit.dto'
 import {
   Box,
   Checkbox,
@@ -16,6 +17,7 @@ import { NumericFormat } from 'react-number-format'
 export type InputSubLimitCoverageProps = {
   limit: number
   isNotYesLuc: boolean
+  subLimit: SublimitDto
   onChangeInput: (subLimitAmount: number) => void
   onChangeYesOrLuc: (subLimitAmount: string) => void
 }
@@ -24,9 +26,10 @@ const InputSubLimitCoverage: React.FC<InputSubLimitCoverageProps> = ({
   limit,
   onChangeInput,
   isNotYesLuc,
-  onChangeYesOrLuc
+  onChangeYesOrLuc,
+  subLimit
 }) => {
-  const [limitAmount, setLimitAmount] = useState<number>(0)
+  const [limitAmount, setLimitAmount] = useState<number>(subLimit.sublimit)
   const [isCheckAt100, setIsCheckAt100] = useState<boolean>(false)
   const [yesOrLuc, setYesOrLuc] = useState<string>('')
 

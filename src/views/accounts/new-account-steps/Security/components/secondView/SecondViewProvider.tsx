@@ -44,7 +44,6 @@ export const SecondViewProvider = ({ children }: { children: ReactNode }) => {
     setActiveView(0)
     setSecuritiesOriginal([])
     calculateSecurities(tempSecurities, [])
-    console.log('end delete')
   }
 
   const switchView = ({ securities, calculateSecurities, view }: SwitchViewProps) => {
@@ -75,7 +74,7 @@ export const SecondViewProvider = ({ children }: { children: ReactNode }) => {
     setActiveView(view === 1 ? 2 : 1)
     calculateSecurities(
       view === 1 ? securitesOriginal : securitesV1.length === 0 ? securities : securitesV1,
-      securitesV1.length === 0 ? securities : securitesV1
+      view === 2 ? (securitesV1.length === 0 ? securities : securitesV1) : []
     )
   }
 
