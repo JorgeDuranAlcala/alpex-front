@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { ForwardedRef, ReactNode, forwardRef, useEffect, useState } from 'react' //ReactNode
+import React, { ForwardedRef, ReactNode, forwardRef, useEffect, useState } from 'react'; //ReactNode
 
 // ** MUI Imports
-import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import {
   Autocomplete,
   FormControl,
@@ -17,27 +17,27 @@ import {
   SxProps,
   TextField,
   Theme
-} from '@mui/material'
-import Select, { SelectChangeEvent } from '@mui/material/Select' //SelectChangeEvent
+} from '@mui/material';
+import Select, { SelectChangeEvent } from '@mui/material/Select'; //SelectChangeEvent
 
 //Components
-import { ContactModal } from '@/views/accounts/new-account-steps/Information/ContactModal'
+import { ContactModal } from '@/views/accounts/new-account-steps/Information/ContactModal';
 
 //hooks para base info y  modal contac
-import { useGetAllCountries as useCountryGetAll } from 'src/hooks/catalogs/country'
+import { useGetAllCountries as useCountryGetAll } from 'src/hooks/catalogs/country';
 
 // ** Third Party Imports
-import DatePickerWrapper from '@/@core/styles/libs/react-datepicker'
-import { ROLES } from '@/configs/api'
-import { useGetAllEconomicSectors } from '@/hooks/catalogs/economic-sector'
-import DatePicker from 'react-datepicker'
-import { useGetAll as useBrokerGetAll } from 'src/hooks/catalogs/broker'
-import { useGetAllByIdBroker } from 'src/hooks/catalogs/broker-contact/'
-import { useGetAll as useCedantGetAll } from 'src/hooks/catalogs/cedant'
-import { useGetAllByCedant } from 'src/hooks/catalogs/cedant-contact'
-import { useGetAllLineOfBussines } from 'src/hooks/catalogs/lineOfBussines'
-import { useGetAllRiskActivities } from 'src/hooks/catalogs/riskActivity'
-import { useGetByIdRole } from 'src/hooks/catalogs/users/'
+import DatePickerWrapper from '@/@core/styles/libs/react-datepicker';
+import { ROLES } from '@/configs/api';
+import { useGetAllEconomicSectors } from '@/hooks/catalogs/economic-sector';
+import DatePicker from 'react-datepicker';
+import { useGetAll as useBrokerGetAll } from 'src/hooks/catalogs/broker';
+import { useGetAllByIdBroker } from 'src/hooks/catalogs/broker-contact/';
+import { useGetAll as useCedantGetAll } from 'src/hooks/catalogs/cedant';
+import { useGetAllByCedant } from 'src/hooks/catalogs/cedant-contact';
+import { useGetAllLineOfBussines } from 'src/hooks/catalogs/lineOfBussines';
+import { useGetAllRiskActivities } from 'src/hooks/catalogs/riskActivity';
+import { useGetByIdRole } from 'src/hooks/catalogs/users/';
 
 interface PickerProps {
   label?: string
@@ -323,6 +323,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
     //get broker contact info
     const idBrokerContact = basicInfo.brokerContact ? parseInt(basicInfo.brokerContact.toString()) : 0
     const brokerContactInfo = brokerContacts.find(brokerContact => brokerContact.id === idBrokerContact)
+
     setBasicInfo(prevBasicInfo => ({
       ...prevBasicInfo,
       brokerContactEmail: brokerContactInfo?.email || 'test',
