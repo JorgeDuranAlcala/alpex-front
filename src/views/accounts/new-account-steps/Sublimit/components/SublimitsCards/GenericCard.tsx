@@ -23,7 +23,7 @@ const DONT_SHOW_DEDUCTIBLE_MATERIAL_DAMAGE = ['Business  Interruption  Machinery
 const GenericCard: React.FC<RenderFormGeneric> = ({
   subLimit,
   handleOnDeleteForm,
-  handleOnChangeByInputForm,
+
   limit,
   index = 0,
   formErrors,
@@ -31,13 +31,13 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
   subLimits
 }: RenderFormGeneric) => {
   const [subLimitCard, setSublimitCard] = useState<SublimitDto>(subLimit)
-
   const [errors] = useState<FormErrors>({
     minError: false,
     coinsuranceError: false,
     daysError: false,
     priceInterruptionError: false
   })
+  console.log(formErrors, errors)
 
   const handleChangeSubLimit = (subLimitAmount: number) => {
     const subLimitsTemp = [...subLimits]
@@ -66,27 +66,22 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
     setSubLimits(subLimitsTemp)
   }
 
-  const handleChangeRadioBI = (value: string) => {
-    value === 'days'
-      ? handleOnChangeByInputForm(index, { name: 'typeBi', value: 'days' })
-      : handleOnChangeByInputForm(index, { name: 'typeBi', value: 'money' })
-  }
+  // const handleChangeRadioBI = (value: string) => {
+  //   value === 'days'
+  //     ? handleOnChangeByInputForm(index, { name: 'typeBi', value: 'days' })
+  //     : handleOnChangeByInputForm(index, { name: 'typeBi', value: 'money' })
+  // }
 
-  const handleRadio = () => {
-    if (subLimit?.yes) return 'yes'
-    if (subLimit?.luc) return 'luc'
-    if (!subLimit?.yes && !subLimit?.luc) return ''
-  }
+  // const handleRadio = () => {
+  //   if (subLimit?.yes) return 'yes'
+  //   if (subLimit?.luc) return 'luc'
+  //   if (!subLimit?.yes && !subLimit?.luc) return ''
+  // }
 
   const onDeleteItem = async () => {
     await handleOnDeleteForm(index)
   }
 
-  const options = [
-    { name: 'Loss', id: 1 },
-    { name: "TIV's", id: 2 },
-    { name: 'Affected item', id: 3 }
-  ]
   useEffect(() => {
     subLimit && setSublimitCard(subLimit)
   }, [subLimit])

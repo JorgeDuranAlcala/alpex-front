@@ -7,6 +7,7 @@ import {
   FormHelperText,
   Input,
   InputLabel,
+  MenuItem,
   Radio,
   RadioGroup,
   Select,
@@ -30,6 +31,11 @@ const DeductibleMaterialDamage: React.FC<DeductibleMaterialDamageProps> = ({ onC
     onClickRadioDeductible(event.target.value)
     setRadioDeductbleDamage(event.target.value)
   }
+  const options = [
+    { name: 'Loss', id: 1 },
+    { name: "TIV's", id: 2 },
+    { name: 'Affected item', id: 3 }
+  ]
 
   return (
     <SubContainer sx={{ height: 'auto' }}>
@@ -58,7 +64,15 @@ const DeductibleMaterialDamage: React.FC<DeductibleMaterialDamageProps> = ({ onC
         <InputForm>
           <FormControlLabel
             sx={{ ml: 0.3 }}
-            control={<Radio sx={{ mr: -1 }} value={'per'} onChange={() => {}} />}
+            control={
+              <Radio
+                sx={{ mr: -1 }}
+                value={'per'}
+                onChange={() => {
+                  console.log('radio')
+                }}
+              />
+            }
             label=''
           />
           <NumericFormat
@@ -82,6 +96,8 @@ const DeductibleMaterialDamage: React.FC<DeductibleMaterialDamageProps> = ({ onC
               return (floatValue! >= 0 && floatValue! <= 100) || floatValue === undefined
             }}
             onValueChange={value => {
+              console.log(value)
+
               // onChangeItem(value.floatValue, 'deductible')
             }}
           />
@@ -102,6 +118,8 @@ const DeductibleMaterialDamage: React.FC<DeductibleMaterialDamageProps> = ({ onC
             decimalScale={2}
             variant='outlined'
             onValueChange={value => {
+              console.log(value)
+
               // onChangeItem(value.floatValue, 'min')
             }}
             isAllowed={values => {
@@ -119,17 +137,17 @@ const DeductibleMaterialDamage: React.FC<DeductibleMaterialDamageProps> = ({ onC
             label='Aplicable over'
             labelId='controlled-select-label'
             value={''}
-            onChange={e => {
+            onChange={() => {
               // onChangeItem(e.target.value, 'idCDeductiblePer')
             }}
             IconComponent={KeyboardArrowDownIcon}
           >
-            {/* {options.length > 0 &&
-                  options?.map((item, index) => (
-                    <MenuItem key={index} value={item.id}>
-                      {item.name}
-                    </MenuItem>
-                  ))} */}
+            {options.length > 0 &&
+              options?.map((item, index) => (
+                <MenuItem key={index} value={item.id}>
+                  {item.name}
+                </MenuItem>
+              ))}
           </Select>
           <FormHelperText sx={{ color: 'error.main' }}></FormHelperText>
         </FormControl>
@@ -165,6 +183,8 @@ const DeductibleMaterialDamage: React.FC<DeductibleMaterialDamageProps> = ({ onC
               '&:before, &:after': { display: 'none' }
             }}
             onValueChange={value => {
+              console.log(value)
+
               // onChangeItem(value.floatValue, 'amount')
             }}
             isAllowed={values => {

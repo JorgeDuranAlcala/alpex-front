@@ -25,7 +25,7 @@ export interface RenderFormGeneric {
   state?: any
   setState?: (data: any) => {}
   handleOnDeleteForm: (index: number) => void
-  handleOnChangeByInputForm: (index: number, { name, value }: { name: keyof SublimitDto; value: any }) => void
+
   index?: number
   limit: number
   formErrors: FormErrors
