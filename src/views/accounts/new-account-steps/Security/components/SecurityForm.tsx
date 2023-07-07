@@ -89,25 +89,26 @@ const initialErrorValues: errorsSecurity = {
   idCRetroCedantContact: '',
   idCRetroCedant: ''
 }
-function areArraysEqual(arr1: SecurityDto[], arr2: SecurityDto[]): boolean {
-  if (arr1.length !== arr2.length) {
-    return false
-  }
 
-  for (let i = 0; i < arr1.length; i++) {
-    if (!compareObjects(arr1[i], arr2[i])) {
-      return false
-    }
-  }
+// function areArraysEqual(arr1: SecurityDto[], arr2: SecurityDto[]): boolean {
+//   if (arr1.length !== arr2.length) {
+//     return false
+//   }
 
-  return true
-}
+//   for (let i = 0; i < arr1.length; i++) {
+//     if (!compareObjects(arr1[i], arr2[i])) {
+//       return false
+//     }
+//   }
 
-function compareObjects(obj1: SecurityDto, obj2: SecurityDto): boolean {
-  // Comparar las propiedades relevantes para la igualdad de los objetos
+//   return true
+// }
 
-  return obj1.netPremiumAt100 === obj2.netPremiumAt100
-}
+// function compareObjects(obj1: SecurityDto, obj2: SecurityDto): boolean {
+//   // Comparar las propiedades relevantes para la igualdad de los objetos
+
+//   return obj1.netPremiumAt100 === obj2.netPremiumAt100
+// }
 
 export const FormSection = ({ index, security, onDeleteItemList }: FormSectionProps) => {
   const [isGross, setIsGross] = useState<boolean>(security.isGross)
@@ -124,7 +125,9 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
 
   const { allErrors, setAllErrors, information, companiesSelect, securities, calculateSecurities } =
     useContext(SecurityContext)
-  const { activeView, createSecondView, createSecuritiesOriginal, securitesOriginal } = useContext(SecondViewContext)
+
+  //createSecondView, createSecuritiesOriginal, securitesOriginal
+  const { activeView } = useContext(SecondViewContext)
 
   const { reinsuranceCompany } = useGetAllReinsuranceCompanies()
   const { retroCedants } = useGetAllRetroCedants()
