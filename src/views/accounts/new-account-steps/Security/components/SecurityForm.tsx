@@ -306,7 +306,6 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
       taxes: securities[index].taxes,
       frontingFee: securities[index].taxes
     })
-
     if (securities[index].taxes > 0) {
       setIsTaxesEnabled(true)
     }
@@ -316,6 +315,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [securities[index].taxes, securities[index].frontingFee])
+
   useEffect(() => {
     const tempSecurities = [...securities]
 

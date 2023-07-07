@@ -36,14 +36,14 @@ export const SecondViewProvider = ({ children }: { children: ReactNode }) => {
 
     console.log('end create')
 
-    calculateSecurities(securities)
+    calculateSecurities(securities, securitesOriginal)
   }
 
   const deleteSecondView = ({ calculateSecurities }: DeleteSecondViewProps) => {
     const tempSecurities = securitesOriginal.map(security => ({ ...security, view: 1 }))
     setActiveView(0)
     setSecuritiesOriginal([])
-    calculateSecurities(tempSecurities)
+    calculateSecurities(tempSecurities, [])
     console.log('end delete')
   }
 
@@ -73,7 +73,10 @@ export const SecondViewProvider = ({ children }: { children: ReactNode }) => {
     }
 
     setActiveView(view === 1 ? 2 : 1)
-    calculateSecurities(view === 1 ? securitesOriginal : securitesV1.length === 0 ? securities : securitesV1)
+    calculateSecurities(
+      view === 1 ? securitesOriginal : securitesV1.length === 0 ? securities : securitesV1,
+      securitesV1.length === 0 ? securities : securitesV1
+    )
   }
 
   return (

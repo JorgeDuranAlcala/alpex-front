@@ -34,7 +34,7 @@ import UserThemeOptions from 'src/layouts/UserThemeOptions'
 import { SecurityMapper } from './mappers/SecurityForm.mapper'
 
 import { SecondViewProvider } from './components/secondView/SecondViewProvider'
-import { CalculateSecurity } from './utils/calculates-securities'
+import { CalculateSecurity, ResultSecurities, defaultValue } from './utils/calculates-securities'
 
 export const SecurityContext = createContext<SecurityContextDto>({} as SecurityContextDto)
 
@@ -43,6 +43,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
   const [securities, setSecurities] = useState<SecurityDto[]>([])
   const [firstTimeSecurities, setFirstTimeSecurities] = useState<SecurityDto[]>([])
   const [activeErros, setActiveErrors] = useState<boolean>(false)
+  const [distributedNetPremiumV2, setDistributedNetPremiumV2] = useState<ResultSecurities>(defaultValue)
 
   const [isNextStep, setIsNextStep] = useState<boolean>(false)
   const [allFormData, setAllFormData] = useState<FormSecurity>({
@@ -78,60 +79,73 @@ const Security = ({ onStepChange }: SecurityProps) => {
     open: false,
     status: 'error'
   })
+  const getSecuritiesCalculate = (securities: SecurityDto[]): SecurityDto[] => {
+    const tempSecurities: SecurityDto[] = []
 
-  const calculateSecurities = (securities: SecurityDto[], isFirstTime = false) => {
-    if (securities.length > 0 && information) {
-      const tempSecurities = []
+    for (const security of securities) {
+      const operationSecurity: CalculateSecurity = new CalculateSecurity()
+        .setInformation(information)
+        .setSecurity(security)
+      if (security?.idCReinsuranceCompany?.id) companiesSelect.push(security.idCReinsuranceCompany.id)
+
+      const tempDiscountList = []
+      if (security?.discounts) {
+        security.totalAmountOfDiscounts = 0
+        for (const discount of security?.discounts) {
+          discount.percentage = Number(discount.percentage)
+          discount.amount = operationSecurity.getDiscountAmount(Number(discount.percentage))
+          security.totalAmountOfDiscounts += discount.amount
+          tempDiscountList.push(discount)
+        }
+      }
+      security.discounts = tempDiscountList
+      security.frontingFee = Number(security.frontingFee) || 0
+      security.taxes = Number(security.taxes) || 0
+      security.netPremiumAt100 = Number(security.netPremiumAt100) || 0
+      operationSecurity.setSecurity(security)
+      security.premiumPerShareAmount = operationSecurity.getPremierPerShare() || 0
+      security.grossPremiumPerShare = operationSecurity.getGrossPremierPerShare() || 0
+      security.brokerAgeAmount = operationSecurity.getBrokerAge() || 0
+      security.dynamicCommissionAmount = operationSecurity.getDynamicComissionAmount() || 0
+
+      security.frontingFeeAmount = operationSecurity.getFrontingFeeAmount(security.frontingFee) || 0
+
+      security.taxesAmount = operationSecurity.getTaxesAmount(security.taxes) || 0
+
+      security.shareAmount = operationSecurity.getShareAmount() || 0
+      security.netReinsurancePremium = operationSecurity.getNetReinsurancePremium() || 0
+
+      tempSecurities.push({
+        ...security,
+        difference: Number(security.difference) || 0,
+        distributedNetPremium: Number(security.distributedNetPremium) || 0,
+        dynamicCommission: Number(security.dynamicCommission) || 0,
+
+        netPremiumAt100: Number(security.netPremiumAt100) || 0,
+        receivedNetPremium: Number(security.receivedNetPremium) || 0,
+        reinsuranceBrokerage: Number(security.reinsuranceBrokerage) || 0,
+        share: Number(security.share) || 0
+      })
+    }
+
+    return tempSecurities
+  }
+  const calculateSecurities = (
+    securitiesParam: SecurityDto[],
+    securitiesOriginal: SecurityDto[] = [],
+    isFirstTime = false
+  ) => {
+    if (securitiesParam.length > 0 && information) {
       companiesSelect.splice(0, companiesSelect.length)
 
-      for (const security of securities) {
-        if (!security.activeView) {
-          security.activeView = 1
-        }
-        const operationSecurity: CalculateSecurity = new CalculateSecurity()
-          .setInformation(information)
-          .setSecurity(security)
-        if (security?.idCReinsuranceCompany?.id) companiesSelect.push(security.idCReinsuranceCompany.id)
+      const tempSecurities = getSecuritiesCalculate(securitiesParam)
 
-        const tempDiscountList = []
-        if (security?.discounts) {
-          security.totalAmountOfDiscounts = 0
-          for (const discount of security?.discounts) {
-            discount.percentage = Number(discount.percentage)
-            discount.amount = operationSecurity.getDiscountAmount(Number(discount.percentage))
-            security.totalAmountOfDiscounts += discount.amount
-            tempDiscountList.push(discount)
-          }
-        }
-        security.discounts = tempDiscountList
-        security.frontingFee = Number(security.frontingFee) || 0
-        security.taxes = Number(security.taxes) || 0
-        security.netPremiumAt100 = Number(security.netPremiumAt100) || 0
-        operationSecurity.setSecurity(security)
-        security.premiumPerShareAmount = operationSecurity.getPremierPerShare() || 0
-        security.grossPremiumPerShare = operationSecurity.getGrossPremierPerShare() || 0
-        security.brokerAgeAmount = operationSecurity.getBrokerAge() || 0
-        security.dynamicCommissionAmount = operationSecurity.getDynamicComissionAmount() || 0
-
-        security.frontingFeeAmount = operationSecurity.getFrontingFeeAmount(security.frontingFee) || 0
-
-        security.taxesAmount = operationSecurity.getTaxesAmount(security.taxes) || 0
-
-        security.shareAmount = operationSecurity.getShareAmount() || 0
-        security.netReinsurancePremium = operationSecurity.getNetReinsurancePremium() || 0
-
-        tempSecurities.push({
-          ...security,
-          difference: Number(security.difference) || 0,
-          distributedNetPremium: Number(security.distributedNetPremium) || 0,
-          dynamicCommission: Number(security.dynamicCommission) || 0,
-
-          netPremiumAt100: Number(security.netPremiumAt100) || 0,
-          receivedNetPremium: Number(security.receivedNetPremium) || 0,
-          reinsuranceBrokerage: Number(security.reinsuranceBrokerage) || 0,
-          share: Number(security.share) || 0
-        })
+      if (securitiesOriginal.length > 0 && distributedNetPremiumV2.distribuitedNetPremium === 0) {
+        const tempSecuritiesOrinal = getSecuritiesCalculate(securitiesOriginal)
+        const resultSecurities = CalculateSecurity.getData(tempSecuritiesOrinal)
+        setDistributedNetPremiumV2(resultSecurities)
       }
+
       let dataForm: FormSecurity = {
         ...allFormData,
         formData: tempSecurities,
@@ -253,7 +267,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
           const accountSecurities = accountById?.securities as SecurityDto[]
 
           if (accountSecurities && information) {
-            calculateSecurities(accountSecurities, true)
+            calculateSecurities(accountSecurities, [], true)
             accountById.securitiesTotal &&
               setAllFormData({
                 ...allFormData,
@@ -316,7 +330,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
 
   useEffect(() => {
     if (account && information) {
-      calculateSecurities(account.securities, true)
+      calculateSecurities(account.securities, [], true)
 
       account.securitiesTotal.length > 0 &&
         setAllFormData({
