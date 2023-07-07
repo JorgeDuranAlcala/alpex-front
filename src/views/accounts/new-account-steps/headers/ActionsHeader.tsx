@@ -1,3 +1,4 @@
+import usePrintReport from '@/hooks/reports/usePrintReport'
 import CloseIcon from '@mui/icons-material/Close'
 import { Box, Button, Modal, Typography, styled } from '@mui/material'
 import { useEffect, useState } from 'react'
@@ -8,6 +9,7 @@ import StatusSelect from 'src/views/custom/select/StatusSelect'
 // ** MUI Imports
 
 interface IActionsHeaderProps {
+  accountId: number
   accountStatus: string
   sideHeader: boolean
 }
@@ -48,7 +50,7 @@ const ButtonIcon = styled(Button)({
   '&:focus': {}
 })
 
-const ActionsHeader: React.FC<IActionsHeaderProps> = ({ accountStatus, sideHeader }) => {
+const ActionsHeader: React.FC<IActionsHeaderProps> = ({ accountId, accountStatus, sideHeader }) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [status, setStatus] = useState({})
   const [uneditableAccount, setUneditableAccount] = useState(false)
@@ -58,6 +60,9 @@ const ActionsHeader: React.FC<IActionsHeaderProps> = ({ accountStatus, sideHeade
   const [openDelete, setOpenDelete] = useState(false)
   const [showPrintOptions, setShowPrintOptions] = useState(false)
 
+  //hooks
+  const { buffer, setPrintReportParams } = usePrintReport()
+
   const deleteAccount = () => {
     console.log('Deleted')
     setOpenDelete(false)
@@ -65,11 +70,19 @@ const ActionsHeader: React.FC<IActionsHeaderProps> = ({ accountStatus, sideHeade
 
   const downloadSpanish = () => {
     console.log('Spanish Download')
+    setPrintReportParams({
+      idAccount: accountId,
+      idLanguage: 2
+    })
     setShowPrintOptions(false)
   }
 
   const downloadEnglish = () => {
     console.log('English Download')
+    setPrintReportParams({
+      idAccount: accountId,
+      idLanguage: 1
+    })
     setShowPrintOptions(false)
   }
 
@@ -78,6 +91,18 @@ const ActionsHeader: React.FC<IActionsHeaderProps> = ({ accountStatus, sideHeade
       setUneditableAccount(false)
     }
   }, [sideHeader])
+
+  useEffect(() => {
+    if (buffer) {
+      const fileToDownload = new File([buffer], 'Account.docx')
+      const downloadUrl = URL.createObjectURL(fileToDownload)
+      const link = document.createElement('a')
+      link.href = downloadUrl
+      link.download = fileToDownload.name
+      link.click()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [buffer])
 
   return (
     <>
