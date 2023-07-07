@@ -49,10 +49,22 @@ export const SecondViewProvider = ({ children }: { children: ReactNode }) => {
 
     if (view === 1 && securitesV1.length === 0) {
       tempSecurities = securities.map(security => ({ ...security, view: 1 }))
+      setSecuritiesOriginal(
+        securities.map((security, index) => ({
+          ...security,
+          netPremiumAt100: securitesOriginal[index].netPremiumAt100
+        }))
+      )
       setSecuritiesV1(tempSecurities)
     } else if (view === 1) {
       tempSecurities = securities.map(security => ({ ...security, view: 1 }))
       setSecuritiesV1(tempSecurities)
+      setSecuritiesOriginal(
+        securities.map((security, index) => ({
+          ...security,
+          netPremiumAt100: securitesOriginal[index].netPremiumAt100
+        }))
+      )
     }
 
     setActiveView(view === 1 ? 2 : 1)
