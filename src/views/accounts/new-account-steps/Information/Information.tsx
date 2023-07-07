@@ -810,19 +810,7 @@ const Information: React.FC<InformationProps> = ({
             />
           </div>
           <div className='section action-buttons'>
-            {typeofAccount && typeofAccount !== 'bound' ? (
-              <Button
-                className='btn-save'
-                onClick={() => handleAction('save')}
-                variant='contained'
-                disabled={disableSave}
-              >
-                <div className='btn-icon' style={{ marginRight: '8px' }}>
-                  <Icon icon='mdi:content-save' />
-                </div>
-                SAVE CHANGES
-              </Button>
-            ) : (
+            {typeofAccount && typeofAccount === 'bound' ? (
               <Button
                 className='btn-save'
                 onClick={() => handleAction('save')}
@@ -833,6 +821,18 @@ const Information: React.FC<InformationProps> = ({
                   <Icon icon='mdi:content-save' />
                 </div>
                 ENDORSEMENT
+              </Button>
+            ) : (
+              <Button
+                className='btn-save'
+                onClick={() => handleAction('save')}
+                variant='contained'
+                disabled={disableSave}
+              >
+                <div className='btn-icon' style={{ marginRight: '8px' }}>
+                  <Icon icon='mdi:content-save' />
+                </div>
+                SAVE CHANGES
               </Button>
             )}
             <Button
