@@ -65,16 +65,16 @@ export const initialErrorValues: FormErrors = {
 }
 
 const Sublimits = () => {
-  const [badgeData, setBadgeData] = useState<IAlert>({
+  const [badgeData] = useState<IAlert>({
     message: '',
     theme: 'success',
     open: false,
     status: 'error'
   })
   const [formErrors, setFormErrors] = useState<FormErrors[]>([])
-  const [formInformationData, setFormInformationData] = useState<any>({})
+  const [, setFormInformationData] = useState<any>({})
   const [subLimits, setSubLimits] = useState<SublimitDto[]>([])
-  const { account, setAccountId, getAccountById } = useGetAccountById()
+  const { account, setAccountId } = useGetAccountById()
   const [coverageSelected, setCoverageSelected] = useState<CoverageDto[]>([])
   const { deleteSublimits } = useDeleteSublimits()
 
@@ -132,7 +132,10 @@ const Sublimits = () => {
       setCoverageSelected([...coverageDelete])
     }
   }
-  const handleOnChangeByInputForm = (index: number, { name, value }: { name: keyof SublimitDto; value: any }) => {}
+
+  // const handleOnChangeByInputForm = (index: number, { name, value }: { name: keyof SublimitDto; value: any }) => {
+  //   console.log(index, { name, value })
+  // }
   useEffect(() => {
     if (accountData.formsData.form1?.id) {
       setAccountId(accountData.formsData.form1.id)
@@ -165,7 +168,6 @@ const Sublimits = () => {
                   setSubLimits={setSubLimits}
                   subLimits={subLimits}
                   index={index}
-                  handleOnChangeByInputForm={handleOnChangeByInputForm}
                   limit={account.informations[0].limit}
                   formErrors={formErrors[index]}
                   handleOnDeleteForm={handleDeleteSublimit}

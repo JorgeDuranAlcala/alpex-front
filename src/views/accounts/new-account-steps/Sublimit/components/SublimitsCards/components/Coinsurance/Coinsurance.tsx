@@ -33,6 +33,8 @@ const Coinsurance: React.FC<CoinsuranceProps> = ({}) => {
           '&:before, &:after': { display: 'none' }
         }}
         onValueChange={value => {
+          console.log(value)
+
           // onChangeItem(value.floatValue, 'coinsurance')
         }}
         isAllowed={values => {

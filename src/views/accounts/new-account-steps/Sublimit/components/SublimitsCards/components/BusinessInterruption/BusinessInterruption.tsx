@@ -21,6 +21,8 @@ const BusinessInterruption: React.FC<BusinessInterruptionProps> = ({}) => {
         name='radio-buttons-group'
         sx={{ height: '100%', gap: '10px', mt: 1 }}
         onChange={(_, val) => {
+          console.log(val)
+
           // handleChangeRadioBI(val)
         }}
       >
@@ -42,6 +44,8 @@ const BusinessInterruption: React.FC<BusinessInterruptionProps> = ({}) => {
               '&:before, &:after': { display: 'none' }
             }}
             onValueChange={value => {
+              console.log(value)
+
               // onChangeItem(value.floatValue, 'daysBi')
             }}
             isAllowed={values => {
@@ -70,6 +74,8 @@ const BusinessInterruption: React.FC<BusinessInterruptionProps> = ({}) => {
               '&:before, &:after': { display: 'none' }
             }}
             onValueChange={value => {
+              console.log(value)
+
               // onChangeItem(value.floatValue, 'amountBi')
             }}
           />
