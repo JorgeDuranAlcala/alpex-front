@@ -57,26 +57,15 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
     setSubLimits(subLimitsTemp)
   }
 
-  const handleChangeDeductibleDamage = (typeDeductible: string) => {
+  const handleChangeDeductibleDamage = (subLimitParam: SublimitDto) => {
     const subLimitsTemp = [...subLimits]
     subLimitsTemp[index] = {
       ...subLimitCard,
-      typeDeductible
+      ...subLimitParam
     }
+
     setSubLimits(subLimitsTemp)
   }
-
-  // const handleChangeRadioBI = (value: string) => {
-  //   value === 'days'
-  //     ? handleOnChangeByInputForm(index, { name: 'typeBi', value: 'days' })
-  //     : handleOnChangeByInputForm(index, { name: 'typeBi', value: 'money' })
-  // }
-
-  // const handleRadio = () => {
-  //   if (subLimit?.yes) return 'yes'
-  //   if (subLimit?.luc) return 'luc'
-  //   if (!subLimit?.yes && !subLimit?.luc) return ''
-  // }
 
   const onDeleteItem = async () => {
     await handleOnDeleteForm(index)
@@ -113,16 +102,20 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
       <ContentCard>
         <InputSubLimitCoverage
           limit={limit}
+          subLimit={subLimitCard}
           onChangeInput={handleChangeSubLimit}
           onChangeYesOrLuc={handleChangeYesLuc}
           isNotYesLuc={DONT_SHOW_YES_LUC.includes(subLimitCard.title)}
         />
         {!DONT_SHOW_DEDUCTIBLE_MATERIAL_DAMAGE.includes(subLimitCard.title) && (
-          <DeductibleMaterialDamage onClickRadioDeductible={handleChangeDeductibleDamage} />
+          <DeductibleMaterialDamage
+            subLimit={subLimitCard}
+            onHandleChangeDeductibleDamage={handleChangeDeductibleDamage}
+          />
         )}
-        <Loss />
-        <BusinessInterruption />
-        <Coinsurance />
+        <Loss subLimit={subLimitCard} onHandleChangeDeductibleDamage={handleChangeDeductibleDamage} />
+        <BusinessInterruption subLimit={subLimitCard} onHandleChangeDeductibleDamage={handleChangeDeductibleDamage} />
+        <Coinsurance subLimit={subLimitCard} onHandleChangeDeductibleDamage={handleChangeDeductibleDamage} />
       </ContentCard>
     </ContainerCard>
   )

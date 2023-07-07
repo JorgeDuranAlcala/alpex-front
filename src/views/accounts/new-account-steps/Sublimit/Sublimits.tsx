@@ -155,7 +155,7 @@ const Sublimits = () => {
             <CustomAlert {...badgeData} />
           </div>
         </Grid>
-        {/* campos header */}|
+        {/* campos header */}
         <InputLimit account={account} />
         <SelectCoverage
           onChangeSelected={handleSelectedCoverage}

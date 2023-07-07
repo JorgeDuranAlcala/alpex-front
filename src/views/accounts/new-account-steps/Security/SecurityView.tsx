@@ -141,8 +141,8 @@ const Security = ({ onStepChange }: SecurityProps) => {
       const tempSecurities = getSecuritiesCalculate(securitiesParam)
 
       if (securitiesOriginal.length > 0 && distributedNetPremiumV2.distribuitedNetPremium === 0) {
+        console.log({ securitiesOriginal })
         const tempSecuritiesOrinal = getSecuritiesCalculate(securitiesOriginal)
-
         const resultSecurities = CalculateSecurity.getData(tempSecuritiesOrinal)
         setDistributedNetPremiumV2(state => ({ ...state, ...resultSecurities }))
       }
