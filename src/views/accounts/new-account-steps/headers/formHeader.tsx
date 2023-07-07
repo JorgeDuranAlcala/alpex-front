@@ -278,7 +278,7 @@ const FormHeader = ({ isNewAccount, setActiveEndorsement, setTypeofAccount }: Fo
                   </span>
                 </div>
                 {status !== 'bound' ? (
-                  <ActionsHeader accountStatus='PENDING' sideHeader={true} />
+                  <ActionsHeader accountId={account.id} accountStatus='PENDING' sideHeader={true} />
                 ) : (
                   <ActionsHeaderBound
                     setActiveEndorsement={setActiveEndorsement}
