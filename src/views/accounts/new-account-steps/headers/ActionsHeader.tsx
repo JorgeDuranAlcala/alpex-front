@@ -12,6 +12,7 @@ interface IActionsHeaderProps {
   accountId: number
   accountStatus: string
   sideHeader: boolean
+  setEditInfo?: any
 }
 
 interface StatusHistory {
@@ -50,12 +51,13 @@ const ButtonIcon = styled(Button)({
   '&:focus': {}
 })
 
-const ActionsHeader: React.FC<IActionsHeaderProps> = ({ accountId, accountStatus, sideHeader }) => {
+// const ActionsHeader: React.FC<IActionsHeaderProps> = ({ accountStatus, sideHeader, setEditInfo }) => {
+const ActionsHeader: React.FC<IActionsHeaderProps> = ({ accountId, accountStatus, sideHeader, setEditInfo }) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [status, setStatus] = useState({})
   const [uneditableAccount, setUneditableAccount] = useState(false)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [editInfo, setEditInfo] = useState(false)
+  // const [editInfo, setEditInfo] = useState(false)
   const [openHistory, setOpenHistory] = useState(false)
   const [openDelete, setOpenDelete] = useState(false)
   const [showPrintOptions, setShowPrintOptions] = useState(false)
