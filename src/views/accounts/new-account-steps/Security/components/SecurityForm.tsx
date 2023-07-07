@@ -63,6 +63,7 @@ import { SwitchFrontingFee } from './inputs/SwitchFrontingFee'
 import { SwitchTaxes } from './inputs/SwitchTaxes'
 import { ModalActivateSecondView } from './secondView/ModalActivateSecondView'
 import { ModalUndoSecondView } from './secondView/ModalUndoSecondView'
+import { SecondViewContext } from './secondView/SecondViewContext'
 import { SwitchSecondView } from './secondView/SwitchSecondView'
 import { UndoSecondView } from './secondView/UndoSecondView'
 
@@ -103,6 +104,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
 
   const { allErrors, setAllErrors, information, companiesSelect, securities, calculateSecurities } =
     useContext(SecurityContext)
+  const { activeView } = useContext(SecondViewContext)
 
   const { reinsuranceCompany } = useGetAllReinsuranceCompanies()
   const { retroCedants } = useGetAllRetroCedants()
@@ -162,7 +164,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
           }
         }
         errorsTemp[index] = true
-        setErrorsSecurity(data);
+        setErrorsSecurity(data)
 
         // console.log({ error: data, index });
 
@@ -204,7 +206,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
 
     //validacion taxes
 
-    if ((informationForm1.taxes === 0 || isGross) && securities[index].view === 1) {
+    if (informationForm1.taxes === 0 || isGross) {
       setIsShowToggleTaxes(true)
       setIsTaxesEnabled(informationForm1.taxes > 0)
 
@@ -213,7 +215,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
         taxes: informationForm1.taxes === 0 ? 0 : informationForm1.taxesP,
         taxesAmount: 0
       }
-    } else if (securities[index].view === 1) {
+    } else {
       setIsShowToggleTaxes(false)
       setIsTaxesEnabled(false)
 
@@ -224,7 +226,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
       }
     }
 
-    if ((informationForm1.frontingFee === 0 || isGross) && securities[index].view === 1) {
+    if (informationForm1.frontingFee === 0 || isGross) {
       setIsShowToggleFrontingFee(true)
       setFrontingFeeEnabled(informationForm1.frontingFee > 0)
       setIsShowRetroCedant(true)
@@ -234,7 +236,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
         frontingFee: informationForm1.frontingFee === 0 ? 0 : informationForm1.frontingFeeP,
         frontingFeeAmount: 0
       }
-    } else if (securities[index].view === 1) {
+    } else {
       setIsShowToggleFrontingFee(false)
       setFrontingFeeEnabled(false)
       setIsShowRetroCedant(false)
@@ -253,7 +255,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
   useEffect(() => {
     const tempSecurities = [...securities]
 
-    if (!frontingFeeEnabled && securities[index].view === 1) {
+    if (!frontingFeeEnabled) {
       tempSecurities[index] = {
         ...tempSecurities[index],
         frontingFee: 0,
@@ -262,7 +264,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
       validateForm(tempSecurities[index])
       calculateSecurities(tempSecurities)
     }
-    if (!isTaxesEnabled && securities[index].view === 1) {
+    if (!isTaxesEnabled) {
       tempSecurities[index] = {
         ...tempSecurities[index],
         taxes: 0,
@@ -284,26 +286,16 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
   const { forTaxes, forFrontingFee, checkValues } = useDataFirstTime({ formIndex: index, operationSecurity })
 
   useEffect(() => {
-    if (securities[index].view === 1) {
-
-      checkValues({
-        taxes: securities[index].taxes,
-        frontingFee: securities[index].taxes
-      })
-    }
+    checkValues({
+      taxes: securities[index].taxes,
+      frontingFee: securities[index].taxes
+    })
 
     if (securities[index].taxes > 0) {
       setIsTaxesEnabled(true)
-      if (securities[index].view === 2) {
-        setIsShowToggleTaxes(true)
-      }
     }
     if (securities[index].frontingFee > 0) {
       setFrontingFeeEnabled(true)
-      if (securities[index].view === 2) {
-        setIsShowToggleFrontingFee(true)
-      }
-
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -311,11 +303,23 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
 
   return (
     <DiscountsProvider>
+      <ModalActivateSecondView securities={securities} calculateSecurities={calculateSecurities} />
+
+      <ModalUndoSecondView securities={securities} calculateSecurities={calculateSecurities} />
+
       <div style={{ position: 'relative' }}>
         {index > 0 && <hr style={{ margin: '40px 0px', backgroundColor: 'lightgray' }} />}
         <Grid container item xs={12} sm={12}>
           <Grid item xs={12} sm={12}>
-            {index > 0 && (
+            {index === 0 && activeView !== 0 ? (
+              <>
+                {activeView === 2 && (
+                  <UndoSecondView securities={securities} calculateSecurities={calculateSecurities} />
+                )}
+                <SwitchSecondView view={activeView} securities={securities} calculateSecurities={calculateSecurities} />
+              </>
+            ) : null}
+            {index > 0 && activeView === 1 && (
               <div
                 className='section action-buttons'
                 style={{ float: 'right', marginRight: 'auto', marginBottom: '20px' }}
@@ -558,37 +562,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
           <ListDiscounts formIndex={index} operationSecurity={operationSecurity} validateForm={validateForm} />
         </Grid>
 
-        <ButtonAddDiscount />
-
-        <ModalActivateSecondView
-          formIndex={index}
-          securities={securities}
-          calculateSecurities={calculateSecurities}
-        />
-
-
-        <SwitchSecondView
-          formIndex={index}
-          securities={securities}
-          calculateSecurities={calculateSecurities}
-        />
-
-        {securities[index].view === 2 ?
-          <>
-            <UndoSecondView
-              formIndex={index}
-              securities={securities}
-              calculateSecurities={calculateSecurities}
-            />
-            <ModalUndoSecondView
-              formIndex={index}
-              securities={securities}
-              calculateSecurities={calculateSecurities}
-            />
-          </>
-
-          : null}
-
+        <ButtonAddDiscount formIndex={index} />
       </div>
       <DialogCustomAlpex
         openDialog={openDialog}
