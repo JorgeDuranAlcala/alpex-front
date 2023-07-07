@@ -15,11 +15,11 @@ const Loss: React.FC<LossProps> = ({ subLimit, onHandleChangeDeductibleDamage })
   const size = userThemeConfig.typography?.size.px16
   const textColor = userThemeConfig.palette?.text.subTitle
 
-  // const handleChangeItem = (event: any, name: string) => {
-  //   const subLimitTemp = { ...subLimit, [name]: event.target.value }
+  const handleChangeItem = (event: any, name: string) => {
+    const subLimitTemp = { ...subLimit, [name]: event.target.value }
 
-  //   onHandleChangeDeductibleDamage(subLimitTemp)
-  // }
+    onHandleChangeDeductibleDamage(subLimitTemp)
+  }
 
   return (
     <SubContainer sx={{ height: 'auto' }}>
@@ -30,6 +30,7 @@ const Loss: React.FC<LossProps> = ({ subLimit, onHandleChangeDeductibleDamage })
         sx={{ width: '100%', height: '48px', outline: 'none' }}
         displayEmpty
         IconComponent={KeyboardArrowDownIcon}
+        onChange={handleChangeItem}
       >
         <MenuItem key={0} value={0}>
           {'No options available'}
