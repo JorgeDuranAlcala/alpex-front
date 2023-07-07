@@ -36,7 +36,6 @@ export const useDataFirstTime = ({ formIndex, operationSecurity }: UseDataFirstT
   }
 
   const backToFirstTimeFor = (variant: TVariant) => {
-    if (!getFromSecondView(variant)) return
     if (!validateRecalculate(variant)) return
 
     const tempSecurities = [...securities]
@@ -53,57 +52,14 @@ export const useDataFirstTime = ({ formIndex, operationSecurity }: UseDataFirstT
     calculateSecurities(tempSecurities)
   }
 
-  const getFromSecondView = (variant: TVariant) => {
-    const tempSecurities = [...securities]
-
-    // console.log('tempSecurities', tempSecurities);
-
-    if (variant === 'taxes') {
-      if (tempSecurities[formIndex + 1]) {
-        if (tempSecurities[formIndex + 1].view === 2) {
-          tempSecurities[formIndex].taxes = tempSecurities[formIndex + 1].taxes
-          tempSecurities[formIndex].taxesAmount = tempSecurities[formIndex + 1].taxesAmount
-
-          calculateSecurities(tempSecurities)
-
-          return false;
-        }
-      }
-    } else if (variant === 'frontingFee') {
-      if (tempSecurities[formIndex + 1]) {
-        if (tempSecurities[formIndex + 1].view === 2) {
-          tempSecurities[formIndex].frontingFee = tempSecurities[formIndex + 1].frontingFee
-          tempSecurities[formIndex].frontingFeeAmount = tempSecurities[formIndex + 1].frontingFeeAmount
-
-          calculateSecurities(tempSecurities)
-
-          return false;
-        }
-      }
-    }
-
-    return true;
-
-
-
-  }
-
-
-
   const validateRecalculate = (variant: TVariant) => {
     if (variant === 'taxes') {
       if (forTaxes.current.percent === 0) return false
       if (forTaxes.current.isTouched === true) return false
-
-      // if (forTaxes.current.percent === firstTimeSecurities[formIndex].taxes) return false;
     } else if (variant === 'frontingFee') {
       if (forFrontingFee.current.percent === 0) return false
       if (forFrontingFee.current.isTouched === true) return false
-
-      // if (forFrontingFee.current.percent === firstTimeSecurities[formIndex].frontingFee) return false;
     }
-
-    // console.log('return true recalucluate', forTaxes.current.isTouched, variant, forTaxes.current.percent, forFrontingFee.current.percent)
 
     return true
   }
