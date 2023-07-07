@@ -282,7 +282,7 @@ const FormHeader = ({ isNewAccount, setActiveEndorsement, setTypeofAccount, setE
                 </div>
                 {status !== 'bound' ? (
                   <ActionsHeader
-                    accountId={account.id}
+                    accountId={account?.id}
                     setEditInfo={setEditInfo}
                     accountStatus='PENDING'
                     sideHeader={true}

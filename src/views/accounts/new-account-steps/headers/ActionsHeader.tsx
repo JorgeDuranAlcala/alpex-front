@@ -9,7 +9,7 @@ import StatusSelect from 'src/views/custom/select/StatusSelect'
 // ** MUI Imports
 
 interface IActionsHeaderProps {
-  accountId: number
+  accountId?: number
   accountStatus: string
   sideHeader: boolean
   setEditInfo?: any
@@ -72,19 +72,23 @@ const ActionsHeader: React.FC<IActionsHeaderProps> = ({ accountId, accountStatus
 
   const downloadSpanish = () => {
     console.log('Spanish Download')
-    setPrintReportParams({
-      idAccount: accountId,
-      idLanguage: 2
-    })
+    if (accountId) {
+      setPrintReportParams({
+        idAccount: accountId,
+        idLanguage: 2
+      })
+    }
     setShowPrintOptions(false)
   }
 
   const downloadEnglish = () => {
     console.log('English Download')
-    setPrintReportParams({
-      idAccount: accountId,
-      idLanguage: 1
-    })
+    if (accountId) {
+      setPrintReportParams({
+        idAccount: accountId,
+        idLanguage: 1
+      })
+    }
     setShowPrintOptions(false)
   }
 
