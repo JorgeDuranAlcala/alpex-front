@@ -101,6 +101,8 @@ export const ContactModal = ({ id, service, updateContacts, setIdCreated, disabl
               brokerContact: contactBroker.id
             }))
             setStartValidations(false)
+            setError(true)
+            updateContacts(id)
           })
           .catch(err => {
             console.error('ERROR-SERVICE [saveBrokerContact]', err)
@@ -122,6 +124,8 @@ export const ContactModal = ({ id, service, updateContacts, setIdCreated, disabl
               cedantContact: contactCedant.id
             }))
             setStartValidations(false)
+            setError(true)
+            updateContacts(id)
           })
           .catch(err => {
             console.error('ERROR-SERVICE [saveCedantContact]', err)
@@ -129,8 +133,6 @@ export const ContactModal = ({ id, service, updateContacts, setIdCreated, disabl
 
         break
     }
-
-    await updateContacts(id)
     closeModal()
   }
 
@@ -164,12 +166,14 @@ export const ContactModal = ({ id, service, updateContacts, setIdCreated, disabl
 
     const errorTemp = nameErrorTemp || emailErrorTemp || phoneErrorTemp || countryErrorTemp
 
+
     setError(errorTemp)
     setEmptyForm(errorTemp)
     setNameError(nameErrorTemp)
     setEmailError(emailErrorTemp)
     setPhoneError(phoneErrorTemp)
     setCountryError(countryErrorTemp)
+    setStartValidations(false)
   }
 
   useEffect(() => {
@@ -181,7 +185,7 @@ export const ContactModal = ({ id, service, updateContacts, setIdCreated, disabl
   useEffect(() => {
     !error && saveContact()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [error])
+  }, [error, setError])
 
   return (
     <>
