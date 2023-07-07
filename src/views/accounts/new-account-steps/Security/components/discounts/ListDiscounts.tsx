@@ -24,42 +24,12 @@ export const ListDiscounts = ({ formIndex, operationSecurity, validateForm }: Li
 
   const { discountsList, removeDiscountByIndex, updateAllDiscounts } = useContext(DiscountsContext)
 
-  const getFromSecondView = () => {
-    const tempSecurities = [...securities]
-
-    // console.log('tempSecurities', tempSecurities);
-
-    if (tempSecurities[formIndex + 1]) {
-      if (tempSecurities[formIndex + 1].view === 2) {
-        if (tempSecurities[formIndex + 1].discounts.length > 0) {
-          updateAllDiscounts(tempSecurities[formIndex + 1].discounts);
-        }
-
-
-        return false;
-      }
-    }
-
-    return true;
-
-
-
-  }
-
   useEffect(() => {
-    // console.log({
-    //   formIndex,
-    //   discountsList,
-    //   discountsSecurities: securities[formIndex].discounts
-    // })
-
     if (discountsList.length === 0 && securities[formIndex].discounts.length > 0) {
       updateAllDiscounts(securities[formIndex].discounts)
 
-      return;
+      return
     }
-
-    // debugger;
 
     const totalAmountOfDiscounts = discountsList.reduce((value, current) => {
       value += current.amount
@@ -86,13 +56,12 @@ export const ListDiscounts = ({ formIndex, operationSecurity, validateForm }: Li
   }, [discountsList, formIndex])
 
   useEffect(() => {
-    if (!getFromSecondView()) return;
-    if (firstTimeSecurities.length > 0 && discountsList.length === 0) {
+    if (firstTimeSecurities.length > 0) {
       if (formIndex > firstTimeSecurities.length - 1) return
       if (securities[formIndex].discounts.length > firstTimeSecurities[formIndex].discounts.length) {
-        updateAllDiscounts(securities[formIndex].discounts);
+        updateAllDiscounts(securities[formIndex].discounts)
 
-        return;
+        return
       }
 
       if (firstTimeSecurities[formIndex].discounts.length > 0) {
@@ -109,7 +78,7 @@ export const ListDiscounts = ({ formIndex, operationSecurity, validateForm }: Li
         <Grid item xs={12} sm={4} key={`discount_${formIndex}_${index}`}>
           <Box sx={{ mb: 2, display: 'flex', alignItems: 'center', gap: '8px' }}>
             <Typography>Discount {index + 1}</Typography>
-            <IconButton onClick={() => removeDiscountByIndex(index)}>
+            <IconButton disabled={securities[formIndex].view === 2} onClick={() => removeDiscountByIndex(index)}>
               <Icon icon='clarity:remove-line' />
             </IconButton>
           </Box>

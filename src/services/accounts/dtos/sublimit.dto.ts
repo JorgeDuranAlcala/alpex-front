@@ -1,5 +1,5 @@
 export interface SublimitDto {
-  id: number
+  id: number | undefined
   sublimit: number
   at100: boolean
   yes: boolean

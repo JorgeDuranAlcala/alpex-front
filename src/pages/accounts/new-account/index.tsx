@@ -23,7 +23,7 @@ import NewAccountStepper from 'src/views/components/new-accounts/NewAccountStepp
 import MenuForm from '@/pages/menuForm'
 import { updateFormsData } from '@/store/apps/accounts'
 import FormAddress from '@/views/accounts/new-account-steps/FormAddress'
-import Sublimits from 'src/views/accounts/new-account-steps/Sublimits'
+import Sublimits from '@/views/accounts/new-account-steps/Sublimit/Sublimits'
 import FormHeader from 'src/views/accounts/new-account-steps/headers/formHeader'
 
 import Icon from 'src/@core/components/icon'
