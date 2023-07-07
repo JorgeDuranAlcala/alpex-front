@@ -110,6 +110,12 @@ const ModalBordereaux: React.FC<IModalBordereaux> = ({
 
   useEffect(() => {
     if (buffer) {
+      const fileToDownload = new File([buffer], 'REINSURANCE BDX DYNAMIC.xlsx')
+      const downloadUrl = URL.createObjectURL(fileToDownload)
+      const link = document.createElement('a')
+      link.href = downloadUrl
+      link.download = fileToDownload.name
+      link.click()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [buffer])

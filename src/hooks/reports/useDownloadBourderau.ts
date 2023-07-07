@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 
 const useDownloadBourderau = () => {
   const [downloadBourderauParams, setDownloadBourderauParams] = useState<BourderauBodyDto>()
-  const [buffer, setBuffer] = useState<any>()
+  const [buffer, setBuffer] = useState<ArrayBuffer>()
 
   const getReport = async (reportParams: BourderauBodyDto) => {
     const data = await reportService.downloadBourderou({ ...reportParams })
