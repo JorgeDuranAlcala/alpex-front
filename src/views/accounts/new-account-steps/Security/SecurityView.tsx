@@ -185,23 +185,13 @@ const Security = ({ onStepChange }: SecurityProps) => {
     const save: Partial<SecurityDto>[] = []
 
     for (const security of securities) {
-
       // * Con esta validación no se guardarán los datos de la vista 2
-      if (security.view === 2) return;
+      if (security.view === 2) return
 
       // Todo quitar el as any
       const mapper = SecurityMapper.securityToSecurityForm(security, accountData as any)
 
-      // if (security.id) {
-      //   update.push({
-      //     ...mapper,
-      //     id: security.id,
-      //     view: 1
-      //   })
-      // } else {
       save.push({ ...mapper, view: 1 })
-
-      // }
     }
 
     if (!allFormData.id) {
@@ -238,38 +228,6 @@ const Security = ({ onStepChange }: SecurityProps) => {
           console.log('updateSecurityTotal', e)
         })
     }
-
-    // if (update.length > 0) {
-    //   await updateSecurities(update)
-    //     .then(res => {
-    //       console.log('updateSecurities', { res })
-
-    //       setBadgeData({
-    //         message: 'THE INFORMATION HAS BEEN SAVED',
-    //         theme: 'success',
-    //         open: true,
-    //         status: 'error'
-    //       })
-    //     })
-    //     .catch(e => {
-    //       console.log('ERROR updateSecurities', e)
-
-    //       setBadgeData({
-    //         message: 'Error saving data',
-    //         theme: 'error',
-    //         open: true,
-    //         status: 'error',
-    //         icon: <Icon style={{ color: '#FF4D49' }} icon='icon-park-outline:error' />
-    //       })
-    //     })
-
-    //   setTimeout(() => {
-    //     setBadgeData({
-    //       ...badgeData,
-    //       open: false
-    //     })
-    //   }, 2000)
-    // }
 
     if (save.length > 0) {
       await saveSecurities({ idAccount: +accountData.formsData.form1.id, securities: save })
@@ -398,14 +356,8 @@ const Security = ({ onStepChange }: SecurityProps) => {
         <CustomAlert {...badgeData} />
         <form noValidate autoComplete='on'>
           <SecondViewProvider>
-
             <CardContent>
               {securities.map((security, index) => {
-
-                // console.log(index, security.view, security.activeView)
-                if (security.view === 1 && security.activeView === 2) return null;
-                if (security.view === 2 && security.activeView === 1) return null;
-
                 // console.log('se imprime')
 
                 return (
@@ -489,7 +441,8 @@ const Security = ({ onStepChange }: SecurityProps) => {
                       fullWidth
                       sx={{ justifyContent: 'start' }}
                     >
-                      <Icon icon='material-symbols:add-circle-outline' fontSize={20} className='icon-btn' /> ADD REINSURER
+                      <Icon icon='material-symbols:add-circle-outline' fontSize={20} className='icon-btn' /> ADD
+                      REINSURER
                     </Button>
                   </div>
                 </Grid>

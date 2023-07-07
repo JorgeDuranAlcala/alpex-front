@@ -1,13 +1,13 @@
-import { Button, Grid } from '@mui/material';
-import { useContext } from 'react';
+import { Button, Grid } from '@mui/material'
+import { useContext } from 'react'
 
-import CoreIcon from 'src/@core/components/icon';
-import { DiscountsContext } from './DiscountsContext';
+import CoreIcon from 'src/@core/components/icon'
+import { SecurityContext } from '../../SecurityView'
+import { DiscountsContext } from './DiscountsContext'
 
-export const ButtonAddDiscount = () => {
-
-  const { addDiscount } = useContext(DiscountsContext);
-
+export const ButtonAddDiscount = ({ formIndex }: { formIndex: number }) => {
+  const { addDiscount } = useContext(DiscountsContext)
+  const { securities } = useContext(SecurityContext)
 
   return (
     <Grid
@@ -26,6 +26,7 @@ export const ButtonAddDiscount = () => {
           color='primary'
           size='large'
           sx={{ justifyContent: 'start' }}
+          disabled={securities[formIndex].view === 2}
         >
           <CoreIcon icon='material-symbols:add-circle-outline' fontSize={20} className='icon-btn' /> ADD DISCOUNT
         </Button>
