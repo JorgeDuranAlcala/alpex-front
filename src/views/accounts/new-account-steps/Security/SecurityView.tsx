@@ -146,7 +146,6 @@ const Security = ({ onStepChange }: SecurityProps) => {
         const resultSecurities = CalculateSecurity.getData(tempSecuritiesOrinal)
         setDistributedNetPremiumV2(state => ({ ...state, ...resultSecurities }))
       }
-      console.log('entroo', distributedNetPremiumV2)
 
       let dataForm: FormSecurity = {
         ...allFormData,
