@@ -43,6 +43,7 @@ export const ActionsHeaderBoundModal = ({
 
   useEffect(() => {
     setIdAccount(account?.id)
+    /* eslint-disable react-hooks/exhaustive-deps */
   }, [])
 
   console.log('Este es el historial de endorsements: ', endorsements)
