@@ -1,14 +1,24 @@
 import UserThemeOptions from '@/layouts/UserThemeOptions'
+import { SublimitDto } from '@/services/accounts/dtos/sublimit.dto'
 import { FormControlLabel, FormHelperText, Input, Radio, RadioGroup, Typography } from '@mui/material'
 import { NumericFormat } from 'react-number-format'
 import { InputForm, SubContainer } from 'src/styles/Forms/Sublimits'
 
-export type BusinessInterruptionProps = {}
+export type BusinessInterruptionProps = {
+  onHandleChangeDeductibleDamage: (deductibleDamage: SublimitDto) => void
+  subLimit: SublimitDto
+}
 
-const BusinessInterruption: React.FC<BusinessInterruptionProps> = ({}) => {
+const BusinessInterruption: React.FC<BusinessInterruptionProps> = ({ subLimit, onHandleChangeDeductibleDamage }) => {
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
   const size = userThemeConfig.typography?.size.px16
   const textColor = userThemeConfig.palette?.text.subTitle
+
+  const handleChangeItem = (event: any, name: string) => {
+    const subLimitTemp = { ...subLimit, [name]: event.target.value }
+
+    onHandleChangeDeductibleDamage(subLimitTemp)
+  }
 
   return (
     <SubContainer sx={{ height: 'auto' }}>
@@ -17,13 +27,11 @@ const BusinessInterruption: React.FC<BusinessInterruptionProps> = ({}) => {
       </Typography>
       <RadioGroup
         aria-labelledby='demo-radio-buttons-group-label'
-        value={''}
+        value={subLimit.typeBi}
         name='radio-buttons-group'
         sx={{ height: '100%', gap: '10px', mt: 1 }}
         onChange={(_, val) => {
-          console.log(val)
-
-          // handleChangeRadioBI(val)
+          handleChangeItem({ target: { value: val } }, 'typeBi')
         }}
       >
         <InputForm>
@@ -33,10 +41,10 @@ const BusinessInterruption: React.FC<BusinessInterruptionProps> = ({}) => {
             placeholder='0 days'
             name='days'
             allowLeadingZeros
-            value={''}
+            value={String(subLimit.daysBi)}
             thousandSeparator=','
             customInput={Input}
-            disabled={false}
+            disabled={!(subLimit?.typeBi === 'days')}
             decimalScale={2}
             sx={{
               width: '100%',
@@ -44,9 +52,7 @@ const BusinessInterruption: React.FC<BusinessInterruptionProps> = ({}) => {
               '&:before, &:after': { display: 'none' }
             }}
             onValueChange={value => {
-              console.log(value)
-
-              // onChangeItem(value.floatValue, 'daysBi')
+              handleChangeItem({ target: { value: value.floatValue } }, 'daysBi')
             }}
             isAllowed={values => {
               const { floatValue } = values
@@ -61,10 +67,10 @@ const BusinessInterruption: React.FC<BusinessInterruptionProps> = ({}) => {
           <NumericFormat
             placeholder='$0.00'
             name='amountBi'
-            value={''}
+            value={String(subLimit.amountBi)}
             allowLeadingZeros
             thousandSeparator=','
-            disabled={false}
+            disabled={!(subLimit?.typeBi === 'money')}
             customInput={Input}
             prefix={'$'}
             decimalScale={2}
@@ -74,9 +80,7 @@ const BusinessInterruption: React.FC<BusinessInterruptionProps> = ({}) => {
               '&:before, &:after': { display: 'none' }
             }}
             onValueChange={value => {
-              console.log(value)
-
-              // onChangeItem(value.floatValue, 'amountBi')
+              handleChangeItem({ target: { value: value.floatValue } }, 'amountBi')
             }}
           />
         </InputForm>
