@@ -30,7 +30,9 @@ const Loss: React.FC<LossProps> = ({ subLimit, onHandleChangeDeductibleDamage })
         sx={{ width: '100%', height: '48px', outline: 'none' }}
         displayEmpty
         IconComponent={KeyboardArrowDownIcon}
-        onChange={handleChangeItem}
+        onChange={e => {
+          handleChangeItem(e, 'test')
+        }}
       >
         <MenuItem key={0} value={0}>
           {'No options available'}
