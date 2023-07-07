@@ -1,14 +1,9 @@
-import {
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-} from '@mui/material';
+import { FormControl, InputLabel, MenuItem, Select } from '@mui/material'
 
-
-import { ReinsuranceCompanyBinderDto } from '@/services/catalogs/dtos/ReinsuranceCompanyBinder.dto';
-import { useEffect, useState } from 'react';
-import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interface';
+import { ReinsuranceCompanyBinderDto } from '@/services/catalogs/dtos/ReinsuranceCompanyBinder.dto'
+import { useContext, useEffect, useState } from 'react'
+import { SecurityContext } from '../../SecurityView'
+import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interface'
 
 // const NoBindersContainer = styled(Box)(({ theme }) => ({
 //   // backgroundColor: 'lightblue',
@@ -25,29 +20,37 @@ import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interf
 
 interface BinderProps extends Omit<ISecurityInputProps, 'index' | 'errorMessage' | 'validateForm'> {
   binders: ReinsuranceCompanyBinderDto[]
+  index: number
 }
 
-export const Binder = ({ value, binders }: BinderProps) => {
-
+export const Binder = ({ value, binders, index }: BinderProps) => {
+  const { securities, setSecurities } = useContext(SecurityContext)
   const [selectedBinder, setSelectedBinder] = useState<ReinsuranceCompanyBinderDto | null>(null)
 
-  // if (binders.length === 0) {
-  //   return (
-  //     <NoBindersContainer>
-  //       No Binders
-  //     </NoBindersContainer>
-  //   )
-  // }
-
   const handleOnChangeBinder = (value: number) => {
-    setSelectedBinder(binders.filter(b => b.id === value)[0])
+    const binderSelect = binders.find(b => b.id === value)
+    const tempSecurities = [...securities]
+
+    // console.log('se monta', retroCedant, value, retroCedants)
+    if (binderSelect) {
+      // console.log('se monta')
+
+      tempSecurities[index] = {
+        ...tempSecurities[index],
+        idCReinsuranceCompanyBinder: binderSelect
+      }
+
+      setSelectedBinder(binderSelect)
+      setSecurities(tempSecurities)
+    }
   }
 
   useEffect(() => {
-    setSelectedBinder(null)
-  }, [binders])
-
-
+    if (binders && binders.length > 0 && value) {
+      const binderSelect = binders.find(b => b.id === value)
+      binderSelect && setSelectedBinder(binderSelect)
+    }
+  }, [binders, value])
 
   return (
     <FormControl fullWidth sx={{ mb: 6.5 }}>
@@ -56,8 +59,8 @@ export const Binder = ({ value, binders }: BinderProps) => {
         label='Binder'
         value={selectedBinder && binders.length > 0 ? selectedBinder.id : value.toString()}
         labelId='binder'
-        disabled={binders.length === 0}
-        onChange={(e) => handleOnChangeBinder(Number(e.target.value))}
+        disabled={binders.length === 0 || securities[index].view === 2}
+        onChange={e => handleOnChangeBinder(Number(e.target.value))}
       >
         {binders?.map(binder => (
           <MenuItem key={binder.id} value={binder.id}>
@@ -68,5 +71,3 @@ export const Binder = ({ value, binders }: BinderProps) => {
     </FormControl>
   )
 }
-
-

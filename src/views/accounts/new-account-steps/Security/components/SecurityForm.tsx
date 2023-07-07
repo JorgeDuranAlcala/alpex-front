@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useGetAllCountries } from '@/hooks/catalogs/country'
 import { useGetAllReinsuranceCompanies } from '@/hooks/catalogs/reinsuranceCompany'
 import { useGetAllRetroCedants } from '@/hooks/catalogs/retroCedant'
@@ -5,14 +6,15 @@ import { useGetAllByIdRetroCedant } from '@/hooks/catalogs/retroCedantContact'
 
 import { ReinsuranceCompanyDto } from '@/services/catalogs/dtos/ReinsuranceCompanyDto'
 
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
-import { Grid, Icon } from '@mui/material'
-
 import { FormSectionProps, SecurityDto, errorsSecurity } from '@/services/accounts/dtos/security.dto'
 import { ReinsuranceCompanyBinderDto } from '@/services/catalogs/dtos/ReinsuranceCompanyBinder.dto'
+import DialogCustomAlpex from '@/views/components/dialogs/DialogCustomAlpex'
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
+import { Grid, Icon } from '@mui/material'
 import { useContext, useEffect, useState } from 'react'
 import * as yup from 'yup'
 import { SecurityContext } from '../SecurityView'
+import { useDataFirstTime } from '../hooks/useDataFirstTime'
 import { CalculateSecurity } from '../utils/calculates-securities'
 import { ButtonAddDiscount } from './discounts/ButtonAddDiscount'
 import { DiscountsProvider } from './discounts/DiscountsProvider'
@@ -49,7 +51,8 @@ import {
   premiumPerShareAmount_validations,
   reinsuranceBrokerageAmount_validations,
   reinsuranceBrokeragePercent_validations,
-  selectRetroCedantContact_validations,
+
+  // selectRetroCedantContact_validations,
   selectRetroCedant_validations,
   shareAmount_validations,
   sharePercent_validations,
@@ -58,6 +61,11 @@ import {
 } from './inputs'
 import { SwitchFrontingFee } from './inputs/SwitchFrontingFee'
 import { SwitchTaxes } from './inputs/SwitchTaxes'
+import { ModalActivateSecondView } from './secondView/ModalActivateSecondView'
+import { ModalUndoSecondView } from './secondView/ModalUndoSecondView'
+import { SecondViewContext } from './secondView/SecondViewContext'
+import { SwitchSecondView } from './secondView/SwitchSecondView'
+import { UndoSecondView } from './secondView/UndoSecondView'
 
 // type Timer = ReturnType<typeof setInterval>
 // let typingTimer: Timer
@@ -81,6 +89,26 @@ const initialErrorValues: errorsSecurity = {
   idCRetroCedantContact: '',
   idCRetroCedant: ''
 }
+function areArraysEqual(arr1: SecurityDto[], arr2: SecurityDto[]): boolean {
+  if (arr1.length !== arr2.length) {
+    return false
+  }
+
+  for (let i = 0; i < arr1.length; i++) {
+    if (!compareObjects(arr1[i], arr2[i])) {
+      return false
+    }
+  }
+
+  return true
+}
+
+function compareObjects(obj1: SecurityDto, obj2: SecurityDto): boolean {
+  // Comparar las propiedades relevantes para la igualdad de los objetos
+
+  return obj1.netPremiumAt100 === obj2.netPremiumAt100
+}
+
 export const FormSection = ({ index, security, onDeleteItemList }: FormSectionProps) => {
   const [isGross, setIsGross] = useState<boolean>(security.isGross)
   const [errorsSecurity, setErrorsSecurity] = useState<errorsSecurity>(initialErrorValues)
@@ -90,11 +118,13 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
   const [isShowToggleTaxes, setIsShowToggleTaxes] = useState(false)
   const [isShowRetroCedant, setIsShowRetroCedant] = useState(false)
   const [binders, setBinders] = useState<ReinsuranceCompanyBinderDto[]>([])
+  const [openDialog, setOpenDialog] = useState(false)
 
   const [avaliableReinsurers, setAvaliableReinsurers] = useState<ReinsuranceCompanyDto[]>([])
 
   const { allErrors, setAllErrors, information, companiesSelect, securities, calculateSecurities } =
     useContext(SecurityContext)
+  const { activeView, createSecondView, createSecuritiesOriginal, securitesOriginal } = useContext(SecondViewContext)
 
   const { reinsuranceCompany } = useGetAllReinsuranceCompanies()
   const { retroCedants } = useGetAllRetroCedants()
@@ -105,7 +135,8 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
 
   const schemaRetrocedant = yup.object().shape({
     ...selectRetroCedant_validations({ frontingFeeEnabled, isGross }).fields,
-    ...selectRetroCedantContact_validations({ frontingFeeEnabled }).fields,
+
+    // ...selectRetroCedantContact_validations({ frontingFeeEnabled }).fields,
     ...frontingFeePercent_validations({ frontingFeeEnabled }).fields,
     ...frontingFeeAmount_validations({ frontingFeeEnabled }).fields
   })
@@ -154,8 +185,6 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
         }
         errorsTemp[index] = true
         setErrorsSecurity(data)
-
-        //setEnableNextStep(false)
       })
       .finally(() => {
         setAllErrors(() => [...errorsTemp])
@@ -175,7 +204,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
   }, [reinsuranceCompany])
 
   useEffect(() => {
-    if (security?.id) {
+    if (security?.id && security?.idCRetroCedant) {
       setIdRetroCedant(security.idCRetroCedant?.id)
     }
 
@@ -189,7 +218,6 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
 
   useEffect(() => {
     const informationForm1 = information as any
-    console.log('efect toggles')
     const tempSecurities = [...securities]
 
     //validacion taxes
@@ -206,6 +234,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
     } else {
       setIsShowToggleTaxes(false)
       setIsTaxesEnabled(false)
+
       tempSecurities[index] = {
         ...tempSecurities[index],
         taxes: 0,
@@ -263,13 +292,76 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [frontingFeeEnabled, isTaxesEnabled])
 
+  /**
+   * * Las validaciones actuales resetean los porcentages de taxes y frontingFee
+   * * aún cuando ya hay valores desde bdd.
+   * * Para no reestructuras las validaciones actuales,
+   * * se crea este hook que comprueba si existen valores desde bdd
+   * * si es así, los setea en el formulario después de las validaciones actuales.
+   */
+  const { forTaxes, forFrontingFee, checkValues } = useDataFirstTime({ formIndex: index, operationSecurity })
+
+  useEffect(() => {
+    checkValues({
+      taxes: securities[index].taxes,
+      frontingFee: securities[index].taxes
+    })
+    if (securities[index].taxes > 0) {
+      setIsTaxesEnabled(true)
+    }
+    if (securities[index].frontingFee > 0) {
+      setFrontingFeeEnabled(true)
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [securities[index].taxes, securities[index].frontingFee])
+
+  useEffect(() => {
+    const tempSecurities = [...securities]
+
+    const grossNet = isGross
+      ? information.grossPremium !== tempSecurities[index].netPremiumAt100
+        ? information.grossPremium
+        : tempSecurities[index].netPremiumAt100
+      : information.netPremium !== tempSecurities[index].netPremiumAt100
+      ? information.netPremium
+      : tempSecurities[index].netPremiumAt100
+
+    if (activeView === 0 && securitesOriginal.length < tempSecurities.length) {
+      createSecuritiesOriginal({ ...tempSecurities[index], netPremiumAt100: grossNet })
+    }
+
+    if (activeView === 0 && securities.length - 1 === index) {
+      if (securitesOriginal.length === tempSecurities.length) {
+        if (!areArraysEqual(securitesOriginal, tempSecurities)) {
+          createSecondView({
+            securities,
+            calculateSecurities
+          })
+        }
+      }
+    }
+  }, [])
+
   return (
     <DiscountsProvider>
-      <div>
+      <ModalActivateSecondView securities={securities} calculateSecurities={calculateSecurities} />
+
+      <ModalUndoSecondView securities={securities} calculateSecurities={calculateSecurities} />
+
+      <div style={{ position: 'relative' }}>
         {index > 0 && <hr style={{ margin: '40px 0px', backgroundColor: 'lightgray' }} />}
         <Grid container item xs={12} sm={12}>
           <Grid item xs={12} sm={12}>
-            {!security.id && index > 0 && (
+            {index === 0 && activeView !== 0 ? (
+              <>
+                {activeView === 2 && (
+                  <UndoSecondView securities={securities} calculateSecurities={calculateSecurities} />
+                )}
+                <SwitchSecondView view={activeView} securities={securities} calculateSecurities={calculateSecurities} />
+              </>
+            ) : null}
+            {index > 0 && activeView === 1 && (
               <div
                 className='section action-buttons'
                 style={{ float: 'right', marginRight: 'auto', marginBottom: '20px' }}
@@ -282,7 +374,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
                     cursor: 'pointer',
                     zIndex: '1000'
                   }}
-                  onClick={() => onDeleteItemList(index)}
+                  onClick={() => setOpenDialog(true)}
                 />
               </div>
             )}
@@ -384,7 +476,11 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
           </Grid>
           {/* Col-3 */}
           <Grid item xs={12} sm={4}>
-            <Binder value={''} binders={binders} />
+            <Binder
+              value={security.idCReinsuranceCompanyBinder ? String(security.idCReinsuranceCompanyBinder?.id) : ''}
+              binders={binders}
+              index={index}
+            />
 
             <Consecutive value={0} />
 
@@ -447,6 +543,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
                 security={security}
                 isChecked={isTaxesEnabled}
                 setIsTaxesEnabled={setIsTaxesEnabled}
+                fieldRef={forTaxes}
               />
 
               <TaxesPercent
@@ -456,6 +553,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
                 validateForm={validateForm}
                 operationSecurity={operationSecurity}
                 isDisabled={!isTaxesEnabled}
+                fieldRef={forTaxes}
               />
 
               <TaxesAmount
@@ -465,6 +563,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
                 validateForm={validateForm}
                 operationSecurity={operationSecurity}
                 isDisabled={!isTaxesEnabled}
+                fieldRef={forTaxes}
               />
             </Grid>
           ) : null}
@@ -477,6 +576,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
                 security={security}
                 isChecked={frontingFeeEnabled}
                 setFrontingFeeEnabled={setFrontingFeeEnabled}
+                fieldRef={forFrontingFee}
               />
 
               <FrontingFeePercent
@@ -486,6 +586,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
                 validateForm={validateForm}
                 operationSecurity={operationSecurity}
                 isDisabled={!frontingFeeEnabled}
+                fieldRef={forFrontingFee}
               />
 
               <FrontingFeeAmount
@@ -495,6 +596,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
                 validateForm={validateForm}
                 operationSecurity={operationSecurity}
                 isDisabled={!frontingFeeEnabled}
+                fieldRef={forFrontingFee}
               />
             </Grid>
           ) : null}
@@ -502,8 +604,16 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
           <ListDiscounts formIndex={index} operationSecurity={operationSecurity} validateForm={validateForm} />
         </Grid>
 
-        <ButtonAddDiscount />
+        <ButtonAddDiscount formIndex={index} />
       </div>
+      <DialogCustomAlpex
+        openDialog={openDialog}
+        body={`This action will not delete the Reinsurer from Catalogs,
+only for this section.`}
+        title={'Remove Reinsurer from this account'}
+        resolve={() => onDeleteItemList(index)}
+        reject={() => setOpenDialog(false)}
+      ></DialogCustomAlpex>
     </DiscountsProvider>
   )
 }

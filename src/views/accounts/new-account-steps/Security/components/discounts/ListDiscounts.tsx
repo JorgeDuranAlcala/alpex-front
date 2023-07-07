@@ -16,16 +16,23 @@ interface ListDiscountsProps {
 }
 export const ListDiscounts = ({ formIndex, operationSecurity, validateForm }: ListDiscountsProps) => {
   const {
+    firstTimeSecurities,
     securities,
 
     calculateSecurities
   } = useContext(SecurityContext)
 
-  const { discountsList, removeDiscountByIndex } = useContext(DiscountsContext)
+  const { discountsList, removeDiscountByIndex, updateAllDiscounts } = useContext(DiscountsContext)
 
   useEffect(() => {
+    if (discountsList.length === 0 && securities[formIndex].discounts.length > 0) {
+      updateAllDiscounts(securities[formIndex].discounts)
+
+      return
+    }
+
     const totalAmountOfDiscounts = discountsList.reduce((value, current) => {
-      value += current.discountAmount
+      value += current.amount
 
       return value
     }, 0)
@@ -33,9 +40,6 @@ export const ListDiscounts = ({ formIndex, operationSecurity, validateForm }: Li
     const tempSecurities = [...securities]
 
     if (!tempSecurities[formIndex].totalAmountOfDiscounts && totalAmountOfDiscounts === 0) {
-      // console.log('no actualizar');
-      // debugger;
-
       return
     }
 
@@ -51,13 +55,30 @@ export const ListDiscounts = ({ formIndex, operationSecurity, validateForm }: Li
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [discountsList, formIndex])
 
+  useEffect(() => {
+    if (firstTimeSecurities.length > 0) {
+      if (formIndex > firstTimeSecurities.length - 1) return
+      if (securities[formIndex].discounts.length > firstTimeSecurities[formIndex].discounts.length) {
+        updateAllDiscounts(securities[formIndex].discounts)
+
+        return
+      }
+
+      if (firstTimeSecurities[formIndex].discounts.length > 0) {
+        updateAllDiscounts(firstTimeSecurities[formIndex].discounts)
+      }
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [firstTimeSecurities, formIndex])
+
   return (
     <>
       {discountsList.map((discountItem, index) => (
-        <Grid key={`discount_${formIndex}_${index}`} item xs={12} sm={4}>
+        <Grid item xs={12} sm={4} key={`discount_${formIndex}_${index}`}>
           <Box sx={{ mb: 2, display: 'flex', alignItems: 'center', gap: '8px' }}>
             <Typography>Discount {index + 1}</Typography>
-            <IconButton onClick={() => removeDiscountByIndex(index)}>
+            <IconButton disabled={securities[formIndex].view === 2} onClick={() => removeDiscountByIndex(index)}>
               <Icon icon='clarity:remove-line' />
             </IconButton>
           </Box>
@@ -66,14 +87,14 @@ export const ListDiscounts = ({ formIndex, operationSecurity, validateForm }: Li
             discountsList={discountsList}
             index={formIndex}
             discountIndex={index}
-            value={discountItem.discountPercent}
+            value={discountItem.percentage}
             validateForm={() => null}
             operationSecurity={operationSecurity}
           />
           <DiscountAmount
             index={formIndex}
             discountIndex={index}
-            value={discountItem.discountAmount}
+            value={discountItem.amount}
             validateForm={() => null}
             operationSecurity={operationSecurity}
           />

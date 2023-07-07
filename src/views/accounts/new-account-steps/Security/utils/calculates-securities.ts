@@ -1,5 +1,15 @@
 import { FormInformation, SecurityDto } from '@/services/accounts/dtos/security.dto'
 
+export type ResultSecurities = {
+  recievedNetPremium: number
+  distribuitedNetPremium: number
+  diference: number
+}
+export const defaultValue = {
+  recievedNetPremium: 0,
+  distribuitedNetPremium: 0,
+  diference: 0
+}
 export class CalculateSecurity {
   private baseAmount = 0
   private security: SecurityDto = {} as SecurityDto
@@ -25,11 +35,6 @@ export class CalculateSecurity {
     return this
   }
   getPremierPerShare(): number {
-    // console.log(this.security.totalAmountOfDiscounts);
-
-    // debugger;
-
-    // return (this.baseAmount * this.security.share) / 100;
     if (this.security.isGross) {
       // * is Gross Premium
 
@@ -85,13 +90,13 @@ export class CalculateSecurity {
     // return (frontingFee / this.security.premiumPerShareAmount) * 100
     if (this.security.isGross) {
       // * is Gross Premium
-      const base = (this.security.premiumPerShareAmount / valueAmount) * 100
+      const base = (valueAmount / this.security.premiumPerShareAmount) * 100
 
       return base
     } else {
       // * is Net Premium
 
-      return (this.security.premiumPerShareAmount / valueAmount) * 100
+      return (valueAmount / this.security.premiumPerShareAmount) * 100
     }
   }
   getShareAmount(): number {
@@ -142,6 +147,8 @@ export class CalculateSecurity {
     }
   }
   getTaxesAmount(value?: number): number {
+    // console.log('taxesAmount', { value })
+
     // return (this.security.taxes * this.security.premiumPerShareAmount) / 100
     if (this.security.isGross) {
       // * is Gross Premium
@@ -176,6 +183,7 @@ export class CalculateSecurity {
       // * is Net Premium
 
       const base = (this.security.netPremiumAt100 * this.security.share) / 100
+      console.log({ base })
 
       return (valueAmount / base) * 100
     }
@@ -194,12 +202,16 @@ export class CalculateSecurity {
     }
   }
 
-  static getData(securities: SecurityDto[]) {
+  static getData(
+    securities: SecurityDto[],
+    resultSecuritiesOriginal: ResultSecurities = defaultValue
+  ): ResultSecurities {
     // let sharePercent = 0
     let premiumPerShareAmountNet = 0
     let premiumPerShareAmountGros = 0
     let distributedNetPremium = 0
     let taxesGros = 0
+    let discountAmountGros = 0
     let brokerageReinsuranceGross = 0
 
     for (const security of securities) {
@@ -210,9 +222,15 @@ export class CalculateSecurity {
       brokerageReinsuranceGross += security.isGross ? security.brokerAgeAmount : 0
       distributedNetPremium +=
         security.netReinsurancePremium + security.dynamicCommissionAmount + security.frontingFeeAmount ?? 0
+      discountAmountGros += security.isGross ? security.totalAmountOfDiscounts : 0
     }
+    if (resultSecuritiesOriginal.distribuitedNetPremium > 0) {
+      distributedNetPremium = resultSecuritiesOriginal.distribuitedNetPremium
+    }
+
     const recievedNetPremium =
-      premiumPerShareAmountNet + (premiumPerShareAmountGros - taxesGros - brokerageReinsuranceGross)
+      premiumPerShareAmountNet +
+      (premiumPerShareAmountGros - taxesGros - brokerageReinsuranceGross - discountAmountGros)
     const diference = recievedNetPremium - distributedNetPremium
 
     return {

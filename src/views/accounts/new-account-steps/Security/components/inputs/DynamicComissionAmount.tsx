@@ -51,6 +51,7 @@ export const DynamicComissionAmount = ({ index, value, errorMessage, validateFor
         customInput={TextField}
         decimalScale={2}
         thousandSeparator=','
+        disabled={securities[index].view === 2}
       />
 
       <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>

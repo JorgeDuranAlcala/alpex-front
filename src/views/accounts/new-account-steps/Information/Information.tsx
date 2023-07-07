@@ -42,6 +42,8 @@ import { DiscountDto } from '@/services/accounts/dtos/discount.dto'
 type InformationProps = {
   onStepChange: (step: number) => void
   onIsNewAccountChange: (status: boolean) => void
+  typeofAccount?: string
+  activeEndorsement?: boolean
 }
 
 export interface BasicInfoInterface {
@@ -91,7 +93,12 @@ export interface PlacementStructure {
   typeOfLimit: string | number | null
 }
 
-const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountChange }) => {
+const Information: React.FC<InformationProps> = ({
+  onStepChange,
+  onIsNewAccountChange,
+  typeofAccount,
+  activeEndorsement
+}) => {
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
   const [subjectState] = useState<Subject<void>>(new Subject())
   const inter = userThemeConfig.typography?.fontFamilyInter
@@ -586,16 +593,44 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
 
   const handleValidationComplete = (valid: boolean, formName: string) => {
     setValidationCount(prevCount => prevCount + 1)
-    if (valid) {
-      if (nextClicked) setValidatedForms(prevCount => prevCount + 1)
 
-      if (formName == 'basicInfo' && saveClicked) {
-        // If Basic info is validated and save button was clicked then save information
+    //controller to update and save when the save button is clicked
+    if (saveClicked) {
+      console.log('save or update')
+
+      if (valid && makeSaveValidations) {
+        if (nextClicked) setValidatedForms(prevCount => prevCount + 1)
+
+        if (formName == 'basicInfo' && saveClicked) {
+          // If Basic info is validated and save button was clicked then save information
+          setMakeSaveValidations(false)
+          setDisableSave(true)
+          handleSaveInformation()
+
+          setSaveClicked(false)
+        }
+      } else {
         setMakeSaveValidations(false)
-        setDisableSave(true)
-        handleSaveInformation()
-
         setSaveClicked(false)
+      }
+    }
+
+    //controller to update and save when the next button is clicked
+    if (nextClicked) {
+      if (valid && makeValidations) {
+        if (nextClicked) setValidatedForms(prevCount => prevCount + 1)
+
+        if (formName == 'basicInfo' && saveClicked) {
+          // If Basic info is validated and save button was clicked then save information
+          setMakeSaveValidations(false)
+          setDisableSave(true)
+          handleSaveInformation()
+
+          setSaveClicked(false)
+        }
+      } else {
+        setMakeValidations(false)
+        setNextClicked(false)
       }
     }
   }
@@ -734,6 +769,8 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [validationCount, validatedForms])
 
+  console.log('Esta cuenta es de tipo: ', typeofAccount)
+
   return (
     <>
       <div className='information' style={{ fontFamily: inter }}>
@@ -773,17 +810,31 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
             />
           </div>
           <div className='section action-buttons'>
-            <Button
-              className='btn-save'
-              onClick={() => handleAction('save')}
-              variant='contained'
-              disabled={disableSave}
-            >
-              <div className='btn-icon'>
-                <Icon icon='mdi:content-save' />
-              </div>
-              SAVE CHANGES
-            </Button>
+            {typeofAccount && typeofAccount === 'bound' ? (
+              <Button
+                className='btn-save'
+                onClick={() => handleAction('save')}
+                variant='contained'
+                disabled={!activeEndorsement}
+              >
+                <div className='btn-icon' style={{ marginRight: '8px' }}>
+                  <Icon icon='mdi:content-save' />
+                </div>
+                ENDORSEMENT
+              </Button>
+            ) : (
+              <Button
+                className='btn-save'
+                onClick={() => handleAction('save')}
+                variant='contained'
+                disabled={disableSave}
+              >
+                <div className='btn-icon' style={{ marginRight: '8px' }}>
+                  <Icon icon='mdi:content-save' />
+                </div>
+                SAVE CHANGES
+              </Button>
+            )}
             <Button
               className='btn-next'
               onClick={() => {

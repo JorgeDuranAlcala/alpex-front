@@ -43,7 +43,7 @@ export const SelectRetroCedantContact = ({
         value={value.toString()}
         onChange={handleChangeRetroCedantContact}
         labelId='RetroCedantcontact'
-        disabled={isDisabled}
+        disabled={securities[index].view === 2 || isDisabled}
       >
         {retroCedantContacts?.map(contact => (
           <MenuItem key={contact.name} value={contact.id}>
@@ -61,8 +61,8 @@ export const selectRetroCedantContact_validations = ({ frontingFeeEnabled }: { f
     idCRetroCedantContact: yup
       .object()
       .shape({
-        id: yup.number().nullable().notRequired(),
-        name: yup.string().nullable().notRequired()
+        id: yup.number().nullable(),
+        name: yup.string().nullable()
       })
       .test('', 'This field is required', value => {
         console.log({ frontingFeeEnabled, value }, 'este no es obligatorio en ningun momento')

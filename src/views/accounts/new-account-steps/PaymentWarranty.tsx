@@ -12,7 +12,7 @@ import {
   Theme,
   Typography
 } from '@mui/material'
-import { FocusEvent, ForwardedRef, forwardRef, useEffect, useState } from 'react'
+import { ForwardedRef, forwardRef, useEffect, useState } from 'react'
 import DatePicker from 'react-datepicker'
 
 // import Icon from 'src/@core/components/icon'
@@ -83,7 +83,9 @@ const CustomInput = forwardRef(({ ...props }: PickerProps, ref: ForwardedRef<HTM
     />
   )
 })
-
+type Timer = ReturnType<typeof setInterval>
+let typingTimer: Timer
+const doneTypingInterval = 1000 // Tiempo en milisegundos para considerar que se dejó de escribir
 const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
 
@@ -120,52 +122,63 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
   })
 
   const handleNumericInputChange = (count: number | undefined) => {
-    if (!count) {
-      setInstallmentList([])
-      setCount(undefined)
+    clearInterval(typingTimer)
+
+    // Iniciar un nuevo intervalo
+    typingTimer = setInterval(() => {
+      // Código a ejecutar cuando se deja de escribir
+      setCount(count)
+      if (!count || count === 0 || count > 12) {
+        setInstallmentList([])
+
+        setIsChange(true)
+
+        setError({
+          ...error,
+          erorrRangeInstallments: count ? count > 12 : count === 0,
+          errorFieldRequired: !count
+        })
+
+        return
+      }
+      const installmentsTemp = []
+
+      //Change the paymentPercentage of each installment when the count changes to be equal to 100/count
+      const paymentPercentage = 100 / count
+      const defaultObject: InstallmentDto = {
+        balanceDue: 0,
+        paymentPercentage: paymentPercentage,
+        premiumPaymentWarranty: 0,
+        settlementDueDate: account ? new Date(account?.informations[0]?.effectiveDate || '') : new Date(),
+        idAccount: account ? idAccount : Number(localStorage.getItem('idAccount')),
+        id: 0
+      }
+      for (let i = 0; i < count; i++) {
+        const temp = { ...defaultObject, premiumPaymentWarranty: 30 * (i + 1) }
+
+        installmentsTemp[i] = makeCalculates({ ...temp })
+      }
+
+      setInstallmentList(installmentsTemp)
+
       setIsChange(true)
-
-      return
-    }
-
-    const installmentsTemp = []
-
-    if (count === 0 || count > 12) {
       setError({
         ...error,
-        erorrRangeInstallments: true
-      })
-    } else {
-      setError({
-        ...error,
-        erorrRangeInstallments: false
+        erorrRangeInstallments: false,
+        errorFieldRequired: false
       })
       setBtnNext(true)
-    }
 
-    //Change the paymentPercentage of each installment when the count changes to be equal to 100/count
-    const paymentPercentage = 100 / count
-    const defaultObject: InstallmentDto = {
-      balanceDue: 0,
-      paymentPercentage: paymentPercentage,
-      premiumPaymentWarranty: 0,
-      settlementDueDate: account ? new Date(account?.informations[0]?.effectiveDate || '') : new Date(),
-      idAccount: account ? idAccount : Number(localStorage.getItem('idAccount')),
-      id: 0
-    }
-    for (let i = 0; i < count; i++) {
-      const temp = { ...defaultObject, premiumPaymentWarranty: 30 * (i + 1) }
-      installmentsTemp[i] = makeCalculates({ ...temp })
-    }
-    setInstallmentList(installmentsTemp)
-    setCount(count)
-    setIsChange(true)
+      // Limpiar el intervalo
+      clearInterval(typingTimer)
+    }, doneTypingInterval)
   }
 
   const makeCalculates = (installment: InstallmentDto) => {
     const temp = { ...installment }
     const inceptionDate = account ? new Date(account?.informations[0]?.effectiveDate || '') : null
-    const receivedNetPremium = account ? account?.securityTotal?.receivedNetPremium : 0
+    const receivedNetPremium =
+      account && account.securitiesTotal.length > 0 ? account?.securitiesTotal[0]?.receivedNetPremium : 0
 
     if (inceptionDate) {
       const days = temp.premiumPaymentWarranty * 24 * 60 * 60 * 1000
@@ -181,31 +194,14 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
 
   const handleItemChange = (index: number, { name, value }: { name: keyof InstallmentDto; value: any }) => {
     const temp = { ...installmentsList[index], [name]: value }
+    const installmentsLisTemp = [...installmentsList]
 
-    const newInstalment = makeCalculates(temp)
+    const newInstallment = makeCalculates(temp)
+    installmentsLisTemp[index] = newInstallment
+    setInstallmentList(installmentsLisTemp)
+    setDaysFirst(installmentsLisTemp[0].premiumPaymentWarranty)
 
-    setInstallmentList(state => {
-      const lastState = [...state]
-      lastState[index] = newInstalment
-      setDaysFirst(lastState[0]?.premiumPaymentWarranty)
-
-      return lastState
-    })
     setIsChange(true)
-  }
-
-  const handleBlur = (event: FocusEvent<HTMLInputElement>) => {
-    if (event.target.value === '') {
-      setError({
-        ...error,
-        errorFieldRequired: true
-      })
-    } else {
-      setError({
-        ...error,
-        errorFieldRequired: false
-      })
-    }
   }
 
   const getTwoDecimals = (num: number) => {
@@ -305,8 +301,6 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
     const base = daysFirst ? daysFirst : 1
 
     if (daysFirst && daysFirst != 0) {
-      console.log(daysFirst)
-
       for (const [index, installment] of installmentsList.entries()) {
         let temp = { ...installment }
         const paymentWarrantyResult = base * (index + 1)
@@ -329,29 +323,28 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
   }, [idAccount, setAccountId])
 
   useEffect(() => {
-    if (account) {
+    if (account && account.installments.length > 0) {
       setCount(account.installments.length)
+      const installments = [...account.installments]
+      for (const item of installments) {
+        item.settlementDueDate = new Date(item.settlementDueDate + 'T00:00:00.678Z')
+        item.idAccount = account ? idAccount : Number(localStorage.getItem('idAccount'))
+      }
 
-      //change settlementDueDate
-      setTimeout(() => {
-        account.installments.forEach((item: any) => {
-          item.settlementDueDate = new Date(item.settlementDueDate + 'T00:00:00.678Z')
-          item.idAccount = account ? idAccount : Number(localStorage.getItem('idAccount'))
-        })
-        setInstallmentList([...account.installments])
-        setInitialInstallmentList([...account.installments])
-      }, 10)
+      setInstallmentList([...installments])
+      setInitialInstallmentList([...installments])
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [account])
 
+  //todo probar en un momento
   useEffect(() => {
-    validations()
+    installmentsList.length > 0 && validations()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [installmentsList])
 
   return (
-    <>
+    <Grid container xs={12} sm={12}>
       <CustomAlert {...badgeData} />
       <GeneralContainer>
         <TitleContainer>
@@ -386,7 +379,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
                   label='Dynamic net premium'
                   multiline
                   variant='outlined'
-                  value={account ? account?.securityTotal?.receivedNetPremium : ' '}
+                  value={account ? account?.securitiesTotal[0]?.receivedNetPremium : ' '}
                   disabled={true}
                 />
               </Grid>
@@ -400,22 +393,18 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
                   label='Installments'
                   decimalScale={0}
                   variant='outlined'
-                  isAllowed={values => {
-                    const { floatValue } = values
-
-                    return (floatValue! > 0 && floatValue! <= 12) || floatValue === undefined
-                  }}
                   value={count}
                   onValueChange={value => {
                     handleNumericInputChange(value.floatValue)
                   }}
-                  onBlur={handleBlur}
                 />
                 {error.errorFieldRequired && (
                   <FormHelperText sx={{ color: 'error.main' }}>This field is required</FormHelperText>
                 )}
                 {error.erorrRangeInstallments && (
-                  <FormHelperText sx={{ color: 'error.main' }}>This field cannot be 0</FormHelperText>
+                  <FormHelperText sx={{ color: 'error.main' }}>
+                    {count && count > 12 ? 'This field cannot be greater than 12' : 'This field cannot be 0'}
+                  </FormHelperText>
                 )}
                 {error.errorOnlyNumbers && <FormHelperText sx={{ color: 'error.main' }}>Only numbers</FormHelperText>}
               </Grid>
@@ -424,21 +413,14 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
         </TitleContainer>
 
         <Grid container spacing={2}>
-          {Array.from({ length: Number(count) || 0 }, (_, index) => (
+          {installmentsList.map((installment, index) => (
             <CardInstallment
               index={index}
-              installment={
-                installmentsList[index] || {
-                  balanceDue: 0,
-                  percentagePayment: 0,
-                  premiumPayment: 0,
-                  settlementDueDate: undefined
-                }
-              }
-              daysFirst={installmentsList[0]?.premiumPaymentWarranty || 0}
+              installment={installment}
+              daysFirst={installment.premiumPaymentWarranty || 0}
               onChangeList={handleItemChange}
               globalInfo={{
-                receivedNetPremium: account ? account?.securityTotal?.receivedNetPremium : 0,
+                receivedNetPremium: account ? account?.securitiesTotal[0]?.receivedNetPremium : 0,
                 inceptionDate: account?.informations[0]?.effectiveDate
                   ? new Date(account.informations[0].effectiveDate)
                   : null,
@@ -469,6 +451,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
             color: texButtonColor
           }}
           onClick={openModal}
+          disabled
         >
           Next step &nbsp;
           <ArrowForwardIcon />
@@ -525,7 +508,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
           </Box>
         </Modal>
       </NextContainer>
-    </>
+    </Grid>
   )
 }
 

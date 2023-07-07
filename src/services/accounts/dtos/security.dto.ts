@@ -28,12 +28,13 @@ export interface SecurityDto {
   difference: number
   active: boolean
   consecutive: number | null
-  view: number
+  view: number;
+  activeView?: number;
   discounts: SecurityDiscountDto[] | []
   idCReinsuranceCompany: ReinsuranceCompanyDto
-  idCReinsuranceCompanyBinder: ReinsuranceCompanyBinderDto
-  idCRetroCedant: RetroCedantDto
-  idCRetroCedantContact: RetroCedantContactDto
+  idCReinsuranceCompanyBinder: ReinsuranceCompanyBinderDto | null
+  idCRetroCedant: RetroCedantDto | null
+  idCRetroCedantContact: RetroCedantContactDto | null
   idEndorsement: number
   idAccount: number
   isGross: boolean
@@ -128,6 +129,7 @@ export type errorsSecurity = {
   idCRetroCedantContact: string
 }
 export type SecurityContextDto = {
+  firstTimeSecurities: SecurityDto[]
   securities: SecurityDto[]
   allErrors: boolean[]
   activeErros: boolean

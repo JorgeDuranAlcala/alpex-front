@@ -7,14 +7,15 @@ export const DiscountsProvider = ({ children }: { children: ReactNode }) => {
   const addDiscount = () => {
     let tempPercentTotalDiscount = 0
     for (const discount of discountsList) {
-      tempPercentTotalDiscount += discount.discountPercent
+      tempPercentTotalDiscount += discount.percentage
     }
     if (tempPercentTotalDiscount < 100)
       setDiscountsList(prev => [
         ...prev,
         {
-          discountPercent: 0,
-          discountAmount: 0
+          active: true,
+          percentage: 0,
+          amount: 0
         }
       ])
   }
@@ -22,18 +23,16 @@ export const DiscountsProvider = ({ children }: { children: ReactNode }) => {
   const removeDiscountByIndex = (index: number) => {
     const newDiscounts = [...discountsList.slice(0, index).concat(discountsList.slice(index + 1))]
 
-    // console.log({ index, discountsList, newDiscounts })
-    // debugger;
-
     setDiscountsList(newDiscounts)
   }
 
-  const updateDiscountByIndex = ({ index, discountPercent, discountAmount }: IUpdateDiscountByIndex) => {
+  const updateDiscountByIndex = ({ index, percentage, amount }: IUpdateDiscountByIndex) => {
     setDiscountsList(prev => {
       const newDiscounts = [...prev]
       newDiscounts[index] = {
-        discountPercent,
-        discountAmount
+        ...newDiscounts[index],
+        percentage,
+        ...(amount ? { amount } : null)
       }
 
       return newDiscounts

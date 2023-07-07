@@ -21,8 +21,8 @@ export const ShareAmount = ({ index, value, errorMessage, validateForm }: ShareA
 
   const {
     activeErros,
+    securities,
 
-    // securities,
     // calculateSecurities
   } = useContext(SecurityContext);
 
@@ -52,6 +52,7 @@ export const ShareAmount = ({ index, value, errorMessage, validateForm }: ShareA
         customInput={TextField}
         decimalScale={2}
         thousandSeparator=','
+        disabled={securities[index].view === 2}
       />
 
       <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>

@@ -1,5 +1,9 @@
+import { useGetAllEndorsementTypes } from '@/hooks/catalogs/endorsementType/getAllEndorsementTypes'
+import { useFindEndorsementsByIdAccount } from '@/hooks/endorsement'
+import { useAppSelector } from '@/store'
 import CloseIcon from '@mui/icons-material/Close'
 import { Box, Button, FormControlLabel, Modal, Radio, RadioGroup, TextField, styled } from '@mui/material'
+import { useEffect } from 'react'
 import Icon from 'src/@core/components/icon'
 import {
   ButtonClose,
@@ -30,8 +34,20 @@ export const ActionsHeaderBoundModal = ({
   handleSubmit,
   value,
   handleRadioChange,
-  setCancellEndorsment
+  setCancellEndorsment,
+  setActiveEndorsement
 }: any) => {
+  const { endorsementTypes } = useGetAllEndorsementTypes()
+  const account = useAppSelector(state => state.accounts?.formsData?.form1)
+  const { endorsements, setIdAccount } = useFindEndorsementsByIdAccount()
+
+  useEffect(() => {
+    setIdAccount(account?.id)
+    /* eslint-disable react-hooks/exhaustive-deps */
+  }, [])
+
+  console.log('Este es el historial de endorsements: ', endorsements)
+
   return (
     <div className='header-btns'>
       <ButtonIcon
@@ -71,16 +87,22 @@ export const ActionsHeaderBoundModal = ({
                 name='radio-buttons-group'
                 value={value}
                 onChange={handleRadioChange}
+                sx={{ display: 'flex', flexDirection: 'column-reverse' }}
               >
-                <FormControlLabel sx={{ height: '54px' }} value='Informative' control={<Radio />} label='Informative' />
-                <FormControlLabel sx={{ height: '54px' }} value='Increase' control={<Radio />} label='Increase' />
-                <FormControlLabel sx={{ height: '54px' }} value='Decrease' control={<Radio />} label='Decrease' />
-                <FormControlLabel
-                  sx={{ height: '54px' }}
-                  value='Cancellation'
-                  control={<Radio />}
-                  label='Cancellation'
-                />
+                {endorsementTypes &&
+                  endorsementTypes?.map(item => {
+                    // console.log(item)
+
+                    return (
+                      <FormControlLabel
+                        sx={{ height: '54px' }}
+                        key={item?.id}
+                        control={<Radio />}
+                        label={item.type}
+                        value={item.type}
+                      />
+                    )
+                  })}
               </RadioGroup>
             </form>
           </FormContainer>
@@ -110,7 +132,8 @@ export const ActionsHeaderBoundModal = ({
                   setOpenHistory(false)
                   setCancellEndorsment(true)
                 } else {
-                  console.log('Hola')
+                  setActiveEndorsement(true)
+                  setOpenHistory(false)
                 }
               }}
             >

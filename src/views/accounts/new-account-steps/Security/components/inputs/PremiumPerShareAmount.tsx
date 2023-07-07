@@ -47,6 +47,7 @@ export const PremiumPerShareAmount = ({ index, value, errorMessage, validateForm
         customInput={TextField}
         decimalScale={2}
         thousandSeparator=','
+        disabled={securities[index].view === 2}
       />
       <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
         {activeErros && errorMessage}

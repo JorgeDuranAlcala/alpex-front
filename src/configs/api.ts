@@ -273,3 +273,12 @@ export enum ENDORSEMENT_ROUTES {
   GET_BY_ID = 'endorsement',
   ADD = 'endorsement/add'
 }
+
+// ==== REPORTS
+export enum PRINT_ACCOUNT_ROUTES {
+  GET_BY_ID_ACCOUNT_LANGUAGE = 'reports/print-report'
+}
+
+export enum BOURDEROU_ROUTES {
+  DOWNLOAD = 'reports/bourderau/download'
+}

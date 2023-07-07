@@ -46,6 +46,13 @@ interface PlacementStructureErrors {
   discountsErrors: boolean
 }
 
+interface DiscountInputs {
+  id: number,
+  percentage: number | string | undefined,
+  amount: number | string | undefined,
+  idAccount: number
+}
+
 export type PlacementStructureProps = {
   placementStructure: {
     currency: string
@@ -104,18 +111,18 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
   const { currencies } = useGetAllCurrencies()
   const { typesOfLimits } = useGetAllTypeOfLimit()
 
-  const [reinsuranceBrokerageP, setReinsuranceBrokerageP] = useState<number>(placementStructure.reinsuranceBrokerage)
-  const [taxesP, setTaxesP] = useState<number>()
-  const [frontingFeeP, setFrontingFeeP] = useState<number>()
+  const [reinsuranceBrokerageP, setReinsuranceBrokerageP] = useState<number|string>(placementStructure.reinsuranceBrokerage)
+  const [taxesP, setTaxesP] = useState<number|string>()
+  const [frontingFeeP, setFrontingFeeP] = useState<number|string>()
   const [netPremium, setNetPremium] = useState<number>()
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [netPremiumWithTaxes, setNetPremiumWithTaxes] = useState<number>()
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [netPremiumWithoutDiscounts, setNetPremiumWithoutDiscounts] = useState<number>()
-  const [grossPremium, setGrossPremium] = useState<number>(placementStructure.grossPremium)
-  const [reinsuranceBrokerage, setReinsuranceBrokerage] = useState<number>()
-  const [taxes, setTaxes] = useState<number>()
-  const [frontingFee, setFrontingFee] = useState<number>()
+  const [grossPremium, setGrossPremium] = useState<number|string>(placementStructure.grossPremium)
+  const [reinsuranceBrokerage, setReinsuranceBrokerage] = useState<number|string>()
+  const [taxes, setTaxes] = useState<number | string>()
+  const [frontingFee, setFrontingFee] = useState<number|string>()
   const [taxesChecked, setTaxesChecked] = useState(false)
   const [frontingChecked, setFrontingChecked] = useState(false)
 
@@ -123,7 +130,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
   const [discountCounter, setDiscountCounter] = useState(1)
   const [totalDiscountsError, setTotalDiscountsError] = useState(false)
   const [discountsErrorsIndex, setDiscountsErrorsIndex] = useState<number[]>([])
-  const [discount, setDiscount] = useState<DiscountDto>({
+  const [discount, setDiscount] = useState<DiscountInputs>({
     id: 0,
     percentage: 0,
     amount: 0,
@@ -131,9 +138,11 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
   })
 
   const { discounts, getDiscounts, setDiscounts } = useGetDiscountByIdAccount()
+  const [discountInputs, setDiscountInputs] = useState<DiscountInputs[]>([])
   const { deleteDiscountsById } = useDeleteDiscountsById()
 
   // const [valid, setValid] = useState(false)
+   const [singleValidation, setSingleValidation] = useState(false)
   const [errors, setErrors] = useState<PlacementStructureErrors>({
     currencyError: false,
     totalError: false,
@@ -156,67 +165,102 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
     const idAccountCache = Number(localStorage.getItem('idAccount'))
     const discountRes = await getDiscounts(idAccountCache)
     setDiscounts(discountRes)
+    setDiscountInputs(discountRes)
   }
 
   const calculate = async (type = 'any', value?: string | number) => {
-    let grossPremiumc: number = grossPremium || 0
-    let reinsuranceBrokeragePc: number = reinsuranceBrokerageP || 0
-    let reinsuranceBrokeragec: number = reinsuranceBrokerage || 0
-    let taxesPc: number = taxesP || 0
-    let taxesc: number = taxes || 0
-    let frontingFeePc: number = frontingFeeP || 0
-    let frontingFeec: number = frontingFee || 0
-    let updatedDiscounts = discounts.map(discount => {
-      const newAmount = (discount.percentage / 100) * grossPremiumc
+    let grossPremiumc: number = typeof grossPremium == 'number' ? grossPremium :  0
+    let grossPremiumTemp: number | string | undefined= grossPremium
 
-      return { ...discount, amount: newAmount }
+    let reinsuranceBrokeragePc: number = typeof reinsuranceBrokerageP == 'number' ? reinsuranceBrokerageP :  0
+    let reinsuranceBrokeragePTemp: number | string | undefined= reinsuranceBrokerageP
+    let reinsuranceBrokeragec: number = typeof reinsuranceBrokerage == 'number' ? reinsuranceBrokerage :  0
+    let reinsuranceBrokerageTemp: number | string | undefined= reinsuranceBrokerage
+
+    let taxesPc: number = typeof taxesP == 'number' ? taxesP :  0
+    let taxesPTemp: number | string | undefined= taxesP
+    let taxesc: number = typeof taxes == 'number' ? taxes :  0
+    let taxesTemp: number | string | undefined= taxes
+
+    let frontingFeePc: number = typeof frontingFeeP == 'number' ? frontingFeeP :  0
+    let frontingFeePTemp: number | string | undefined= frontingFeeP
+    let frontingFeec: number = typeof frontingFee == 'number' ? frontingFee :  0
+    let frontingFeeTemp: number | string | undefined= frontingFee
+
+    let updatedDiscounts = discounts.map(discountItem => {
+      const newAmount = (discountItem.percentage / 100) * grossPremiumc
+
+      return { ...discountItem, amount: newAmount }
     })
+
+    let updatedDiscountInputs = discountInputs.map(discountItem => {
+      if(typeof discountItem.percentage == 'number'){
+         const newAmount = (discountItem.percentage / 100) * grossPremiumc
+
+        return { ...discountItem, amount: newAmount }
+      }else{
+        return { ...discountItem, amount: 0 }
+      }
+
+    })
+
     switch (type) {
       case 'reinsuranceBrokerageP': {
-
-        if(typeof value == 'number' ){
+        if (typeof value == 'number') {
           reinsuranceBrokeragePc = value
+          reinsuranceBrokeragePTemp = value
           const result = (grossPremiumc * reinsuranceBrokeragePc) / 100
           reinsuranceBrokeragec = isFinite(result) ? result : 0
-          handleNumericInputChange(value, 'reinsuranceBrokerageP')
-        }else{
-          reinsuranceBrokeragec = 0
-        }
+          reinsuranceBrokerageTemp = isFinite(result) ? result : 0
 
+        }else{
+          reinsuranceBrokeragePTemp = ''
+          reinsuranceBrokerageTemp = 0
+        }
         break
       }
       case 'reinsuranceBrokerage': {
-        if(typeof value == 'number' ){
+        if (typeof value == 'number') {
           reinsuranceBrokeragec = value
+          reinsuranceBrokerageTemp = value
           const result = (reinsuranceBrokeragec * 100) / grossPremiumc
-          reinsuranceBrokeragePc= isFinite(result) ? result : 0
-          handleNumericInputChange(value, 'reinsuranceBrokerageP')
-        }else{
-          reinsuranceBrokeragePc = 0
-        }
+          reinsuranceBrokeragePc = isFinite(result) ? result : 0
+          reinsuranceBrokeragePTemp = isFinite(result) ? result : 0
 
+        }else{
+
+          reinsuranceBrokerageTemp = ''
+          reinsuranceBrokeragePTemp = 0
+        }
         break
       }
       case 'taxes': {
-        if(typeof value == 'number' ){
+        if (typeof value == 'number') {
           taxesc = value
           const result = (taxesc * 100) / grossPremiumc
           taxesPc = isFinite(result) ? result : 0
-          handleNumericInputChange(value, 'taxes')
+          taxesPTemp = isFinite(result) ? result : 0
+          taxesTemp= value
         }else{
+          taxesPTemp = 0
+          taxesTemp = ''
           taxesPc = 0
         }
-
         break
       }
       case 'taxesP': {
-        if(typeof value == 'number' ){
+        if (typeof value == 'number') {
           taxesPc = value
           const result = (grossPremiumc * taxesPc) / 100
-          taxesc=isFinite(result) ? result : 0
+          taxesc = isFinite(result) ? result : 0
           handleNumericInputChange(value, 'taxesP')
+          taxesPTemp = value
+          taxesTemp= isFinite(result) ? result : 0
         }else{
+          taxesPTemp = ''
+          taxesTemp = 0
           taxesc = 0
+          handleNumericInputChange(0, 'taxesP')
         }
 
         break
@@ -225,73 +269,97 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
 
         if(typeof value == 'number' ){
         frontingFeePc = value
+        frontingFeePTemp = value
         const result = (grossPremiumc * frontingFeePc  )/ 100
         frontingFeec = isFinite(result) ? result : 0
-
-        handleNumericInputChange(value, 'frontingFeeP')
-
+        frontingFeeTemp = isFinite(result) ? result : 0
       }else{
-        frontingFeec = 0
+        frontingFeePTemp = ''
+        frontingFeeTemp =  0
       }
         break
       }
       case 'frontingFee': {
-        if(typeof value == 'number' ){
-        const result = (value * 100) / grossPremiumc
-        frontingFeePc = isFinite(result) ? result : 0
-        frontingFeec = value
-        handleNumericInputChange(value, 'frontingFee')
-
-        }else{
-          frontingFeePc = 0
+        if (typeof value == 'number') {
+          const result = (value * 100) / grossPremiumc
+          frontingFeePc = isFinite(result) ? result : 0
+          frontingFeePTemp = isFinite(result) ? result : 0
+          frontingFeec = value
+          frontingFeeTemp = value
+        }
+        else{
+          frontingFeePTemp = 0
+          frontingFeeTemp =  ''
         }
         break
       }
       case 'grossPremium': {
         if(typeof value == 'number' ){
         grossPremiumc=value
+        grossPremiumTemp=value
         const resultBrokerage = grossPremiumc * (reinsuranceBrokeragePc / 100)
         const resultTaxes = grossPremiumc * (taxesPc / 100)
         const resultFronting = grossPremiumc * (frontingFeePc / 100)
 
         reinsuranceBrokeragec = isFinite(resultBrokerage) ? resultBrokerage : 0
         taxesc = isFinite(resultTaxes) ? resultTaxes : 0
+        taxesTemp = isFinite(resultTaxes) ? resultTaxes : 0
         frontingFeec = isFinite(resultFronting) ? resultFronting : 0
 
-        updatedDiscounts = discounts.map(discount => {
-          const newAmount = (discount.percentage / 100) * grossPremiumc
+        updatedDiscounts = discounts.map(discountItem => {
+          const newAmount = (discountItem.percentage / 100) * grossPremiumc
 
-          return { ...discount, amount: newAmount }
+          return { ...discountItem, amount: newAmount }
         })
+        updatedDiscountInputs = discounts.map(discountItem => {
+          if(typeof discountItem.percentage == 'number'){
+            const newAmount = (discountItem.percentage / 100) * value
 
+           return { ...discountItem, amount: newAmount }
+         }else{
+           return { ...discountItem, amount: 0 }
+         }
+
+        })
         }else{
-          reinsuranceBrokeragec = 0
-          taxesc =  0
+          grossPremiumTemp = ''
+          reinsuranceBrokeragec =  0
+          reinsuranceBrokerageTemp =  0
+          taxesc = 0
+          taxesTemp =  0
           frontingFeec =  0
+          frontingFeeTemp =  0
+          updatedDiscounts = discounts.map(discountItem => {
+            return { ...discountItem, amount: 0 }
+          })
+          updatedDiscountInputs = discounts.map(discountItem => {
+              return { ...discountItem, amount: 0}
+          })
         }
-
         break
       }
       default:
         break
     }
 
-
     const reinsuranceBrokerageTotalFinal = reinsuranceBrokeragec ? reinsuranceBrokeragec : 0
     const taxesFinal = taxesc ? taxesc : 0
     const frontingFeeTotalFinal = frontingFeec ? frontingFeec : 0
-    const discountsAmount = updatedDiscounts.reduce((sum, discount) => sum + discount.amount, 0) ?? 0
-    const netPremiumc =grossPremiumc - reinsuranceBrokerageTotalFinal - taxesFinal - frontingFeeTotalFinal - discountsAmount
-    const netPremiumWithTaxesc = grossPremiumc - reinsuranceBrokerageTotalFinal - frontingFeeTotalFinal - discountsAmount
+    const discountsAmount = updatedDiscounts.reduce((sum, discountItem) => sum + discountItem.amount, 0) ?? 0
+    const netPremiumc =
+      grossPremiumc - reinsuranceBrokerageTotalFinal - taxesFinal - frontingFeeTotalFinal - discountsAmount
+    const netPremiumWithTaxesc =
+      grossPremiumc - reinsuranceBrokerageTotalFinal - frontingFeeTotalFinal - discountsAmount
     const netPremiumWithoutDiscountsc = grossPremiumc - reinsuranceBrokerageTotalFinal
-    setFrontingFee(frontingFeec)
-    setFrontingFeeP(frontingFeePc)
-    setTaxesP(taxesPc)
-    setTaxes(taxesc)
-    setGrossPremium(grossPremiumc)
+    setFrontingFee(frontingFeeTemp)
+    setFrontingFeeP(frontingFeePTemp)
+    setTaxesP(taxesPTemp)
+    setTaxes(taxesTemp)
+    setGrossPremium(grossPremiumTemp)
     setDiscounts(updatedDiscounts)
-    setReinsuranceBrokerage(reinsuranceBrokeragec)
-    setReinsuranceBrokerageP(reinsuranceBrokeragePc)
+    setDiscountInputs(updatedDiscountInputs)
+    setReinsuranceBrokerage(reinsuranceBrokerageTemp)
+    setReinsuranceBrokerageP(reinsuranceBrokeragePTemp)
     setNetPremiumWithoutDiscounts(netPremiumWithoutDiscountsc)
     setNetPremiumWithTaxes(netPremiumWithTaxesc)
     setNetPremium(netPremiumc)
@@ -339,8 +407,8 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
     if (!taxesChecked === false) {
       setTaxesP(0)
       setTaxes(0)
-      calculate('taxesP',0)
-      calculate('taxes',0)
+      calculate('taxesP', 0)
+      calculate('taxes', 0)
       setPlacementStructure({
         ...placementStructure,
         taxes: 0,
@@ -354,8 +422,8 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
     if (!frontingChecked === false) {
       setFrontingFeeP(0)
       setFrontingFee(0)
-      calculate('frontingFeeP',0)
-      calculate('frontingFee',0)
+      calculate('frontingFeeP', 0)
+      calculate('frontingFee', 0)
       setPlacementStructure({
         ...placementStructure,
         frontingFee: 0,
@@ -368,28 +436,40 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
   const addDiscount = () => {
     const newDiscount = { id: 0, percentage: 0, amount: 0, idAccount: 0 }
     const newDiscounts = [...discounts, newDiscount]
+    const newDiscountInput  = [...discountInputs, newDiscount]
     setDiscounts(newDiscounts)
+    setDiscountInputs(newDiscountInput)
     setDiscountCounter(discountCounter + 1)
   }
 
   const deleteDiscount = async (index: number) => {
     const discountToDelete = discounts[index].id
     const newDiscounts = [...discounts]
+    const newDiscountInput = [...discountInputs]
     newDiscounts.splice(index, 1)
+    newDiscountInput.splice(index, 1)
     setDiscounts(newDiscounts)
+    setDiscountInputs(newDiscountInput)
 
-    const updatedDiscounts = newDiscounts.map(discount => {
-      const updatedDiscount = { ...discount }
+    const updatedDiscounts = newDiscounts.map(discountItem => {
+      const updatedDiscount = { ...discountItem }
+
+      return updatedDiscount
+    })
+
+    const updatedDiscountInputs = newDiscountInput.map(discountItem => {
+      const updatedDiscount = { ...discountItem }
 
       return updatedDiscount
     })
 
     setDiscounts(updatedDiscounts)
+    setDiscountInputs(updatedDiscountInputs)
     setDiscountCounter(updatedDiscounts.length + 1)
 
     if (index === discounts.length - 1) {
       // Si se eliminó el último descuento, actualizamos el estado "discount" para mostrar el último descuento en el formulario
-      setDiscount(updatedDiscounts[index - 1] || { id: 0, percentage: 0, amount: 0, idAccount: 0 })
+      setDiscount(updatedDiscountInputs[index - 1] || { id: 0, percentage: 0, amount: 0, idAccount: 0 })
     }
 
     if (discountToDelete) {
@@ -397,41 +477,99 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
     }
   }
 
-  const updateDiscountInArray = (updatedDiscount: DiscountDto, index: number) => {
+
+  const calculateDiscountP = (index: number, newDiscount: DiscountInputs) => {
+    const total = typeof grossPremium == 'number'? grossPremium : 0
+    let updatedDiscountInput: DiscountInputs = newDiscount
+    let updatedDiscount: DiscountDto = {
+      id: newDiscount.id,
+      amount: typeof newDiscount.amount == 'number' ? newDiscount.amount : 0,
+      percentage: typeof newDiscount.percentage == 'number' ? newDiscount.percentage : 0,
+      idAccount: newDiscount.idAccount
+    }
+    if(typeof newDiscount.amount == 'number'){
+      const percentage = ( newDiscount.amount / total) * 100
+    updatedDiscountInput = { ... newDiscount, percentage }
+    updatedDiscount =  { ... updatedDiscount, percentage }
+    }else{
+
+     updatedDiscountInput = { ... newDiscount, percentage: 0 }
+     updatedDiscount =  { ... updatedDiscount, percentage: 0 }
+    }
+    setDiscount(updatedDiscountInput)
+
     setDiscounts(state => {
       const newState = [...state]
       newState[index] = updatedDiscount
 
       return newState
     })
+
+    setDiscountInputs(state => {
+      const newState = [...state]
+      newState[index] = updatedDiscountInput
+
+      return newState
+    })
+
+
   }
 
-  const calculateDiscountP = (index: number, disount: DiscountDto) => {
-    const total = grossPremium
-    const percentage = (disount.amount / total) * 100
-    const updatedDiscount = { ...disount, percentage }
-    setDiscount(updatedDiscount)
-    updateDiscountInArray(updatedDiscount, index)
-  }
 
-  const calculateDiscount = (index: number, disount: DiscountDto) => {
-    const total = grossPremium
-    const amount = (disount.percentage / 100) * total
-    const updatedDiscount = { ...disount, amount }
-    setDiscount(updatedDiscount)
-    updateDiscountInArray(updatedDiscount, index)
+  const calculateDiscount = (index: number, newDiscount: DiscountInputs) => {
+    console.log(newDiscount)
+    const total = typeof grossPremium == 'number' ? grossPremium : 0
+    let updatedDiscountInput: DiscountInputs = newDiscount
+    let updatedDiscount: DiscountDto = {
+      id: newDiscount.id,
+      amount: typeof newDiscount.amount == 'number' ? newDiscount.amount : 0,
+      percentage: typeof newDiscount.percentage == 'number' ? newDiscount.percentage : 0,
+      idAccount: newDiscount.idAccount
+    }
+
+    if(typeof newDiscount.percentage == 'number'){
+      console.log('number')
+      const amount = (newDiscount.percentage / 100) * total
+      updatedDiscountInput = { ... newDiscount, amount }
+      updatedDiscount =  { ... updatedDiscount, amount }
+
+    }else{
+      console.log("vacio")
+      updatedDiscountInput = { ... newDiscount, amount: 0 }
+      updatedDiscount =  { ... updatedDiscount, amount: 0 }
+     }
+     console.log(updatedDiscountInput)
+     setDiscount(updatedDiscountInput)
+
+    setDiscounts(state => {
+      const newState = [...state]
+      newState[index] = updatedDiscount
+
+      return newState
+    })
+
+    setDiscountInputs(state => {
+      const newState = [...state]
+      newState[index] = updatedDiscountInput
+
+      return newState
+    })
+
+
+
+
   }
 
   const validations = () => {
     const newErrors: PlacementStructureErrors = {
       currencyError: placementStructure.currency === '',
-      totalError: placementStructure.total === 0,
+      totalError: placementStructure.total === 0 || placementStructure.total === undefined,
       reinsuranceBrokeragePError: placementStructure.reinsuranceBrokerageP === 0,
       taxesPError: taxesChecked && placementStructure.taxesP === 0,
       frontingFeePError: frontingChecked && placementStructure.frontingFeeP === 0,
-      exchangeRateError: placementStructure.exchangeRate === 0,
-      limitError: placementStructure.limit === 0,
-      grossPremiumError: placementStructure.grossPremium === 0,
+      exchangeRateError: placementStructure.exchangeRate === 0 || placementStructure.exchangeRate === undefined,
+      limitError: placementStructure.limit === 0 || placementStructure.limit === undefined,
+      grossPremiumError: placementStructure.grossPremium === 0 || placementStructure.grossPremium === undefined,
       reinsuranceBrokerageError: placementStructure.reinsuranceBrokerage === 0,
       taxesError: taxesChecked && (placementStructure.taxes === undefined || placementStructure.taxes === 0),
       frontingFeeError:
@@ -439,14 +577,14 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
       typeOfLimitError: placementStructure.typeOfLimit === '',
       totalDiscountsError: discountValidation(),
       discountsErrors:
-        discounts.length > 0 && discounts.some(discount => discount.percentage === 0 || discount.amount === 0)
+        discounts.length > 0 && discounts.some(discountItem => discountItem.percentage === 0 || discountItem.amount === 0)
     }
 
     if (discounts.length > 0) {
       const newDiscountErrors: number[] = []
 
-      discounts.forEach((discount, index) => {
-        if (discount.percentage === 0 || discount.amount === 0) {
+      discounts.forEach((discountItem, index) => {
+        if (discountItem.percentage === 0 || discountItem.amount === 0) {
           newDiscountErrors.push(index)
         }
       })
@@ -458,6 +596,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
     if (Object.values(newErrors).every(error => !error)) {
       // enviar formulario si no hay errores
       onValidationComplete(true, 'placementStructure')
+      setSingleValidation(false)
 
       // isValidForm(true)
     } else {
@@ -466,13 +605,13 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
   }
 
   const discountValidation = () => {
-    const discountPercentages = discounts.reduce((sum, discount) => sum + discount.percentage, 0) ?? 0
-    const discountAmount = discounts.reduce((sum, discount) => sum + discount.amount, 0) ?? 0
+    const discountPercentages = discounts.reduce((sum, discountItem) => sum + discountItem.percentage, 0) ?? 0
+    const discountAmount = discounts.reduce((sum, discountItem) => sum + discountItem.amount, 0) ?? 0
 
     const totalPercentages = discountPercentages + placementStructure.taxesP + placementStructure.frontingFeeP
     const totalAmount = discountAmount + placementStructure.taxes + placementStructure.frontingFee
 
-    if (totalPercentages > 100 || totalAmount > grossPremium) return true
+    if (totalPercentages > 100 || totalAmount > (typeof grossPremium == 'number'? grossPremium : 0)) return true
     else return false
   }
 
@@ -491,20 +630,6 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [triggerSubject])
 
-  // useEffect(() => {
-  //   // calculate()
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [
-  //   reinsuranceBrokerageP,
-  //   taxesP,
-  //   frontingFeeP,
-  //   grossPremium,
-  //   reinsuranceBrokerage,
-  //   taxes,
-  //   frontingFee,
-  //   discount,
-  //   setDiscount
-  // ])
 
   useEffect(() => {
     setGrossPremium(placementStructure.grossPremium)
@@ -538,18 +663,31 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
     setTotalDiscountsError(discountValidation)
     calculate()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [discount])
+  }, [discount, discountCounter])
+
+  React.useEffect(() => {
+    console.log("discount Inputs cambio")
+    console.log(discountInputs)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [discountInputs])
 
   React.useEffect(() => {
     setTotalDiscountsError(discountValidation)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [taxesP, taxes, frontingFee, frontingFeeP, grossPremium])
 
+  React.useEffect(() => {
+    if(singleValidation){
+      validations()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [placementStructure, setPlacementStructure])
 
 
   React.useEffect(() => {
     if (makeValidations) {
       validations()
+      setSingleValidation(true)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [makeValidations])
@@ -680,13 +818,11 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
 
                 return (floatValue! >= 0 && floatValue! <= 100) || floatValue === undefined
               }}
-
               onValueChange={value => {
                 if (value.floatValue) {
-                  calculate('reinsuranceBrokerageP',value.floatValue)
-
-                }else{
-                  calculate('reinsuranceBrokerageP','')
+                  calculate('reinsuranceBrokerageP', value.floatValue)
+                } else {
+                  calculate('reinsuranceBrokerageP', '')
                 }
               }}
               error={errors.reinsuranceBrokeragePError}
@@ -750,10 +886,9 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               decimalScale={2}
               onValueChange={value => {
                 if (value.floatValue) {
-                  calculate('grossPremium',value.floatValue)
-
-                }else{
-                  calculate('grossPremium','')
+                  calculate('grossPremium', value.floatValue)
+                } else {
+                  calculate('grossPremium', '')
                 }
               }}
               error={errors.grossPremiumError}
@@ -777,16 +912,15 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               decimalScale={2}
               isAllowed={values => {
                 const { floatValue } = values
-                const upLimit = grossPremium || 0
+                const upLimit = typeof grossPremium == 'number'? grossPremium : 0
 
                 return (floatValue! >= 0 && floatValue! <= upLimit) || floatValue === undefined
               }}
               onValueChange={value => {
                 if (value.floatValue) {
-                  calculate('reinsuranceBrokerage',value.floatValue)
-
-                }else{
-                  calculate('reinsuranceBrokerage','')
+                  calculate('reinsuranceBrokerage', value.floatValue)
+                } else {
+                  calculate('reinsuranceBrokerage', '')
                 }
               }}
               error={errors.reinsuranceBrokerageError}
@@ -876,10 +1010,14 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               }}
               onValueChange={value => {
                 if (value.floatValue) {
-                  calculate('taxesP',value.floatValue)
-
-                }else{
-                  calculate('taxesP','')
+                  calculate('taxesP', value.floatValue)
+                } else {
+                  calculate('taxesP', '')
+                }
+              }}
+              onFocus={e => {
+                if (e.target.value === '0') {
+                  e.target.value = '';
                 }
               }}
               error={taxesChecked && (errors.taxesPError || errors.totalDiscountsError || totalDiscountsError)}
@@ -910,16 +1048,22 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               decimalScale={2}
               isAllowed={values => {
                 const { floatValue } = values
-                const upLimit = grossPremium || 0
+                const upLimit = typeof grossPremium == 'number'? grossPremium : 0
 
                 return (floatValue! >= 0 && floatValue! <= upLimit) || floatValue === undefined
               }}
+
               onValueChange={value => {
                 if (value.floatValue) {
                   calculate('taxes',value.floatValue)
 
                 }else{
                   calculate('taxes','')
+                }
+              }}
+              onFocus={e => {
+                if (e.target.value === '0') {
+                  e.target.value = '';
                 }
               }}
               error={taxesChecked && (errors.taxesError || errors.totalDiscountsError || totalDiscountsError)}
@@ -930,7 +1074,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
                   ? 'The total amount of discounts should be less than Gross Premium'
                   : taxesChecked && totalDiscountsError
                   ? 'The total amount of discounts should be less than Gross Premium'
-                  :''
+                  : ''
               }
             />
           </FormControl>
@@ -958,7 +1102,6 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               decimalScale={2}
               variant='outlined'
               disabled={frontingChecked ? false : true}
-
               isAllowed={values => {
                 const { floatValue } = values
 
@@ -966,13 +1109,11 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               }}
               onValueChange={value => {
                 if (value.floatValue) {
-                  calculate('frontingFeeP',value.floatValue)
-
-                }else{
-                  calculate('frontingFeeP','')
+                  calculate('frontingFeeP', value.floatValue)
+                } else {
+                  calculate('frontingFeeP', '')
                 }
               }}
-
               error={frontingChecked && (errors.frontingFeePError || errors.totalDiscountsError || totalDiscountsError)}
               helperText={
                 frontingChecked && errors.frontingFeePError
@@ -1001,26 +1142,24 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               decimalScale={2}
               isAllowed={values => {
                 const { floatValue } = values
-                const upLimit = grossPremium || 0
+                const upLimit = typeof grossPremium == 'number'? grossPremium : 0
 
                 return (floatValue! >= 0 && floatValue! <= upLimit) || floatValue === undefined
               }}
               onValueChange={value => {
                 if (value.floatValue) {
-                  calculate('frontingFee',value.floatValue)
-
-                }else{
-                  calculate('frontingFee',0)
+                  calculate('frontingFee', value.floatValue)
+                } else {
+                  calculate('frontingFee', '')
                 }
               }}
-
               error={frontingChecked && (errors.frontingFeeError || errors.totalDiscountsError || totalDiscountsError)}
               helperText={
                 frontingChecked && errors.frontingFeeError
                   ? 'This field must be greater than 0'
                   : frontingChecked && errors.totalDiscountsError
                   ? 'The total amount of discounts should be less than Gross Premium'
-                  :frontingChecked && totalDiscountsError
+                  : frontingChecked && totalDiscountsError
                   ? 'The total amount of discounts should be less than Gross Premium'
                   : ''
               }
@@ -1028,7 +1167,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
           </FormControl>
         </div>
 
-        {discounts.map((discount, index) => (
+        {discountInputs.map((discountItem, index) => (
           <div className='form-col' key={index}>
             <div className='form-row'>
               <div className='row-title'>Other Discount</div>
@@ -1045,7 +1184,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
             <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
               <NumericFormat
                 name='discountP'
-                value={discount.percentage}
+                value={discountItem.percentage}
                 allowLeadingZeros
                 thousandSeparator=','
                 customInput={TextField}
@@ -1062,10 +1201,10 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
                 }}
                 onValueChange={value => {
                   if (value.floatValue) {
-                    const updatedDiscount = { ...discount, percentage: value.floatValue }
+                    const updatedDiscount = { ...discountItem, percentage: value.floatValue }
                     calculateDiscount(index, updatedDiscount)
                   } else {
-                    calculateDiscount(index, { ...discount, percentage: 0 })
+                    calculateDiscount(index, { ...discountItem, percentage: '' })
                   }
                 }}
                 error={totalDiscountsError || discountsErrorsIndex.includes(index)}
@@ -1081,7 +1220,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
             <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
               <NumericFormat
                 name='discount'
-                value={discount.amount}
+                value={discountItem.amount}
                 allowLeadingZeros
                 thousandSeparator=','
                 customInput={TextField}
@@ -1093,16 +1232,16 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
                 decimalScale={2}
                 isAllowed={values => {
                   const { floatValue } = values
-                  const upLimit = grossPremium || 0
+                  const upLimit = typeof grossPremium == 'number'? grossPremium : 0
 
                   return (floatValue! >= 0 && floatValue! <= upLimit) || floatValue === undefined
                 }}
                 onValueChange={value => {
                   if (value.floatValue) {
-                    const updatedDiscount = { ...discount, amount: value.floatValue }
+                    const updatedDiscount = { ...discountItem, amount: value.floatValue }
                     calculateDiscountP(index, updatedDiscount)
                   } else {
-                    calculateDiscountP(index, { ...discount, amount: 0 })
+                    calculateDiscountP(index, { ...discountItem, amount: '' })
                   }
                 }}
                 error={totalDiscountsError || discountsErrorsIndex.includes(index)}

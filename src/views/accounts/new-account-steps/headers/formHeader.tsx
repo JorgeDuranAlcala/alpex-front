@@ -1,3 +1,4 @@
+// import { useGetAllEndorsementTypes } from '@/hooks/accounts/endorsementType/getAllEndorsementTypes.tsx'
 import { useFindInformationByIdAccount } from '@/hooks/accounts/information'
 import { ContainerMobileBound } from '@/styled-components/accounts/Security.styled'
 import { formatStatus } from '@/utils/formatStatus'
@@ -24,6 +25,11 @@ interface StatusHistory {
   id: number
   name: string
   date: string
+}
+interface FormHeaderProps {
+  isNewAccount?: boolean
+  setActiveEndorsement?: any
+  setTypeofAccount?: any
 }
 
 //Pending types
@@ -117,10 +123,9 @@ const ModalUploadImage = () => {
   )
 }
 
-const FormHeader = ({ isNewAccount }: any) => {
+const FormHeader = ({ isNewAccount, setActiveEndorsement, setTypeofAccount }: FormHeaderProps) => {
   const [status, setStatus] = useState('')
   const [accounts, setAccounts] = useState<any>([])
-
   const account = useAppSelector(state => state.accounts?.formsData?.form1)
 
   const { setIdAccount, information } = useFindInformationByIdAccount()
@@ -136,6 +141,7 @@ const FormHeader = ({ isNewAccount }: any) => {
       })
     }
   }
+
   const formatDate = (date: Date | null | undefined): string => {
     if (date) {
       const options: Intl.DateTimeFormatOptions = {
@@ -176,7 +182,7 @@ const FormHeader = ({ isNewAccount }: any) => {
 
     setAccounts(formatedRows || [])
     const data = accounts?.find((item: any) => item.id === account?.id)
-    console.log('datoss', data)
+    // console.log('datoss', data)
 
     setStatus(data?.status)
   }, [accountsReducer])
@@ -185,10 +191,11 @@ const FormHeader = ({ isNewAccount }: any) => {
     account && setIdAccount(account.id)
   }, [account])
 
-  console.log('información', information, account, accounts, accountsReducer)
-
-  console.log('objeto', status)
-
+  useEffect(() => {
+    if (status !== undefined && setTypeofAccount) {
+      setTypeofAccount(status)
+    }
+  }, [status])
   return (
     <>
       <Card className='info-header' style={{ marginBottom: '16px' }}>
@@ -201,8 +208,7 @@ const FormHeader = ({ isNewAccount }: any) => {
 
               <span className='subtitle'>Net premium</span>
               <span className='moneySubtitle'>
-                ${account && account?.placementStructure?.netPremium}
-                {account?.placementStructure?.currency}
+                ${account && formaterAmount(account?.placementStructure?.netPremium)}{' '}
                 {account?.placementStructure?.currency}
               </span>
               <span className='subtitle'>Reception Date</span>
@@ -223,7 +229,7 @@ const FormHeader = ({ isNewAccount }: any) => {
                 <div className='form-header-money-data'>
                   <span className='form-header-money-data-txt'>Net premium</span>
                   <span className='form-header-money-data-num'>
-                    ${account && account?.placementStructure?.netPremium}
+                    ${account && formaterAmount(account?.placementStructure?.netPremium)}{' '}
                     {account?.placementStructure?.currency}
                   </span>
                   <span className='form-header-money-data-date'>
@@ -274,7 +280,11 @@ const FormHeader = ({ isNewAccount }: any) => {
                 {status !== 'bound' ? (
                   <ActionsHeader accountStatus='PENDING' sideHeader={true} />
                 ) : (
-                  <ActionsHeaderBound accountStatus='BOUND' sideHeader={true} />
+                  <ActionsHeaderBound
+                    setActiveEndorsement={setActiveEndorsement}
+                    accountStatus='BOUND'
+                    sideHeader={true}
+                  />
                 )}
               </div>
             </div>
