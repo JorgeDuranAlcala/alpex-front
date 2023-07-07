@@ -25,11 +25,14 @@ export const SecondViewProvider = ({ children }: { children: ReactNode }) => {
   const closeModalUndo = () => {
     setIsOpenModalUndo(false)
   }
-
+  const createSecuritiesOriginal = (security: SecurityDto) => {
+    securitesOriginal.push({ ...security, view: 2 })
+  }
   const createSecondView = ({ securities, calculateSecurities }: CreateSecondViewProps) => {
     const tempSecurities = securities.map(security => ({ ...security, view: 2 }))
     setActiveView(1)
-    setSecuritiesOriginal(tempSecurities)
+
+    securitesOriginal.length === 0 && setSecuritiesOriginal(tempSecurities)
 
     console.log('end create')
 
@@ -52,7 +55,8 @@ export const SecondViewProvider = ({ children }: { children: ReactNode }) => {
       setSecuritiesOriginal(
         securities.map((security, index) => ({
           ...security,
-          netPremiumAt100: securitesOriginal[index].netPremiumAt100
+          netPremiumAt100: securitesOriginal[index].netPremiumAt100,
+          view: 2
         }))
       )
       setSecuritiesV1(tempSecurities)
@@ -62,7 +66,8 @@ export const SecondViewProvider = ({ children }: { children: ReactNode }) => {
       setSecuritiesOriginal(
         securities.map((security, index) => ({
           ...security,
-          netPremiumAt100: securitesOriginal[index].netPremiumAt100
+          netPremiumAt100: securitesOriginal[index].netPremiumAt100,
+          view: 2
         }))
       )
     }
@@ -85,7 +90,8 @@ export const SecondViewProvider = ({ children }: { children: ReactNode }) => {
         createSecondView,
         deleteSecondView,
         switchView,
-        securitesOriginal
+        securitesOriginal,
+        createSecuritiesOriginal
       }}
     >
       {children}

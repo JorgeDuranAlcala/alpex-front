@@ -29,6 +29,7 @@ interface SecondViewContextProps {
   openModalUndo: () => void
   closeModalUndo: () => void
   securitesOriginal: SecurityDto[]
+  createSecuritiesOriginal: (security: SecurityDto) => void
 }
 
 export const SecondViewContext = createContext<SecondViewContextProps>({} as SecondViewContextProps)
