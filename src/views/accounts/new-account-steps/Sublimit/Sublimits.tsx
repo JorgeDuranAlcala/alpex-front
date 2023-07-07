@@ -11,24 +11,26 @@ import InputLimit from './components/InputLimit/InputLimit'
 import SelectCoverage from './components/SelectCoverage/SelectCoverage'
 import { GenericCard } from './components/SublimitsCards'
 
-const initialValues: Partial<SublimitDto> = {
-  id: undefined,
-  sublimit: 0,
-  deductible: 0,
-  amount: 0,
-  min: 0,
-  daysBi: 0,
-  amountBi: 0,
-  coinsurance: 0,
-  yes: false,
-  luc: false,
-  typeDeductible: '',
-  typeBi: '',
-  at100: false,
-  idCDeductiblePer: 0
+// const initialValues: Partial<SublimitDto> = {
+//   id: undefined,
+//   sublimit: 0,
+//   deductible: 0,
+//   amount: 0,
+//   min: 0,
+//   daysBi: 0,
+//   amountBi: 0,
+//   coinsurance: 0,
+//   yes: false,
+//   luc: false,
+//   typeDeductible: '',
+//   typeBi: '',
+//   at100: false,
+//   idCDeductiblePer: 0,
+//   idAccount: 0,
+//   title: ''
 
-  // typeDeductibleRadio: 'default'
-}
+//   // typeDeductibleRadio: 'default'
+// }
 
 interface FormErrors {
   sublimit: string
@@ -86,21 +88,19 @@ const Sublimits = () => {
   }
   const handleToggle = (value: number, label: string) => {
     try {
-      const idAccountCache = Number(localStorage.getItem('idAccount'))
+      // const idAccountCache = Number(localStorage.getItem('idAccount'))
       const subLimitsTemp = subLimits.find(sublimit => sublimit.title === label)
 
       if (!subLimitsTemp) {
-        setSubLimits(statePreview => {
-          return [
-            ...statePreview,
-            {
-              ...initialValues,
-              title: label,
-              idCCoverage: value,
-              idAccount: idAccountCache || account?.id
-            }
-          ]
-        })
+        // setSubLimits(statePreview => {
+        //   statePreview.push({
+        //     ...initialValues,
+        //     title: label,
+        //     idCCoverage: value,
+        //     idAccount: account ? account?.id : idAccountCache
+        //   })
+        //   return statePreview
+        // })
       }
       setFormErrors([...formErrors, initialErrorValues])
     } catch (error) {
