@@ -28,17 +28,19 @@ import {
   Modal,
   TextField
 } from '@mui/material'
-import { createContext, useEffect, useState } from 'react'
+import { createContext, useContext, useEffect, useState } from 'react'
 import Icon from 'src/@core/components/icon'
 import UserThemeOptions from 'src/layouts/UserThemeOptions'
 import { SecurityMapper } from './mappers/SecurityForm.mapper'
 
+import { SecondViewContext } from './components/secondView/SecondViewContext'
 import { SecondViewProvider } from './components/secondView/SecondViewProvider'
 import { CalculateSecurity } from './utils/calculates-securities'
 
 export const SecurityContext = createContext<SecurityContextDto>({} as SecurityContextDto)
 
 const Security = ({ onStepChange }: SecurityProps) => {
+  const { activeView } = useContext(SecondViewContext)
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
   const [securities, setSecurities] = useState<SecurityDto[]>([])
   const [firstTimeSecurities, setFirstTimeSecurities] = useState<SecurityDto[]>([])
@@ -432,7 +434,9 @@ const Security = ({ onStepChange }: SecurityProps) => {
                 {/* ADD REINSURER */}
                 <Grid item xs={12} sm={12}>
                   <div className='add-reinsurer'>
+                    {}
                     <Button
+                      disabled={securities.length > 0 && securities[0].view === 2}
                       type='button'
                       onClick={addNewForm}
                       variant='text'
@@ -452,13 +456,23 @@ const Security = ({ onStepChange }: SecurityProps) => {
                     className='section action-buttons'
                     style={{ float: 'right', marginRight: 'auto', marginBottom: '20px' }}
                   >
-                    <Button className='btn-save' color='success' variant='contained' onClick={SaveData}>
+                    <Button
+                      disabled={securities.length > 0 && securities[0].view === 2}
+                      className='btn-save'
+                      color='success'
+                      variant='contained'
+                      onClick={SaveData}
+                    >
                       <div className='btn-icon'>
                         <Icon icon='mdi:content-save' />
                       </div>
                       SAVE CHANGES
                     </Button>
-                    <Button className='btn-next' onClick={handleNextStep}>
+                    <Button
+                      disabled={securities.length > 0 && securities[0].view === 2}
+                      className='btn-next'
+                      onClick={handleNextStep}
+                    >
                       Next Step
                       <div className='btn-icon'>
                         <Icon icon='material-symbols:arrow-right-alt' />
