@@ -34,9 +34,11 @@ class ReportServices {
    * @param idCReinsuranceCompanyBinder
    * @returns
    */
-  async downloadBourderou(bourderauBody: BourderauBodyDto): Promise<any> {
+  async downloadBourderou(bourderauBody: BourderauBodyDto): Promise<ArrayBuffer> {
     try {
-      const { data } = await AppAlpexApiGateWay.post(BOURDEROU_ROUTES.DOWNLOAD, bourderauBody)
+      const { data } = await AppAlpexApiGateWay.post(BOURDEROU_ROUTES.DOWNLOAD, bourderauBody, {
+        responseType: 'arraybuffer'
+      })
 
       return data
     } catch (error) {
