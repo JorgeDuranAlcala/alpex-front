@@ -1,5 +1,15 @@
 import { FormInformation, SecurityDto } from '@/services/accounts/dtos/security.dto'
 
+export type ResultSecurities = {
+  recievedNetPremium: number
+  distribuitedNetPremium: number
+  diference: number
+}
+export const defaultValue = {
+  recievedNetPremium: 0,
+  distribuitedNetPremium: 0,
+  diference: 0
+}
 export class CalculateSecurity {
   private baseAmount = 0
   private security: SecurityDto = {} as SecurityDto
@@ -192,7 +202,10 @@ export class CalculateSecurity {
     }
   }
 
-  static getData(securities: SecurityDto[]) {
+  static getData(
+    securities: SecurityDto[],
+    resultSecuritiesOriginal: ResultSecurities = defaultValue
+  ): ResultSecurities {
     // let sharePercent = 0
     let premiumPerShareAmountNet = 0
     let premiumPerShareAmountGros = 0
@@ -211,6 +224,10 @@ export class CalculateSecurity {
         security.netReinsurancePremium + security.dynamicCommissionAmount + security.frontingFeeAmount ?? 0
       discountAmountGros += security.isGross ? security.totalAmountOfDiscounts : 0
     }
+    if (resultSecuritiesOriginal.distribuitedNetPremium > 0) {
+      distributedNetPremium = resultSecuritiesOriginal.distribuitedNetPremium
+    }
+
     const recievedNetPremium =
       premiumPerShareAmountNet +
       (premiumPerShareAmountGros - taxesGros - brokerageReinsuranceGross - discountAmountGros)

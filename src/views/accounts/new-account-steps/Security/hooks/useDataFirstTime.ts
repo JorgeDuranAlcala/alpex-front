@@ -72,8 +72,7 @@ export const useDataFirstTime = ({ formIndex, operationSecurity }: UseDataFirstT
     if (formIndex > securities.length - 1) return
 
     if (taxes === 0) {
-      // console.log('back to taxes?')
-
+      console.log('back to taxes?')
       backToFirstTimeFor('taxes')
     }
 
