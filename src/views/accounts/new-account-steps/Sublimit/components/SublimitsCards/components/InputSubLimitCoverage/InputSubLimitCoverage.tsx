@@ -28,7 +28,7 @@ const InputSubLimitCoverage: React.FC<InputSubLimitCoverageProps> = ({
 }) => {
   const [limitAmount, setLimitAmount] = useState<number>(0)
   const [isCheckAt100, setIsCheckAt100] = useState<boolean>(false)
-  const [yesOrLuc, setYesOrLuc] = useState<string>(false)
+  const [yesOrLuc, setYesOrLuc] = useState<string>('')
 
   const handleChangeSubLimit = (subLimitAmount: number) => {
     onChangeInput(subLimitAmount)
