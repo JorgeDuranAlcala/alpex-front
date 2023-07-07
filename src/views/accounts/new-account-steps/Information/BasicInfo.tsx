@@ -162,9 +162,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
   //Industry code managing
   const [industryCodeValue, setIndustryCodeValue] = useState<string | number | null | undefined>(basicInfo.industryCode)
   const [inputValue, setInputValue] = useState<string | undefined>('')
-  const industryCodeOptions = [
-    ...riskActivities.map(activities => `${activities.industryCode} / ${activities.riskActivity}`)
-  ]
+  const [industryCodeOptions, setIndustryCodeOptions] = useState<string[]>([])
 
   //Error control
   const [wrongDateError, setWrongDateError] = useState(false)
@@ -224,14 +222,6 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
       basicInfoTem.cedantContact = ''
       setIdCedant(Number(value))
     }
-
-    // if (name === 'industryCode') {
-    //   const riskActivity = riskActivities.find(r => r.id === Number(value))
-    //   if (riskActivity) {
-    //     basicInfoTem.riskActivity = riskActivity.riskActivity
-    //     basicInfoTem.riskClass = riskActivity.class
-    //   }
-    // }
 
     basicInfoTem = {
       ...basicInfoTem,
@@ -377,43 +367,17 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
     !validateForm && validations(basicInfoTem)
     setBasicInfo(basicInfoTem)
 
-    if (riskActivity) {
-    }
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [industryCodeValue, basicInfo.riskActivity])
+  }, [industryCodeValue, basicInfo.riskActivity, riskActivities])
 
   useEffect(() => {
-    if (!basicInfo.riskActivity && basicInfo.industryCode) {
+    if (!basicInfo.riskActivity && basicInfo.industryCode && industryCodeOptions.length > 0) {
       const riskActivity = riskActivities.find(r => r.id === basicInfo.industryCode)
       if (!riskActivity) return
       const autocomplete = `${riskActivity?.industryCode} / ${riskActivity?.riskActivity}`
       setIndustryCodeValue(autocomplete)
     }
-  }, [basicInfo.industryCode])
-
-  //** ESTA SECCIÓN SE COMENTÓ POR QUE AUN DEBEMOS
-  // ** PROBAR LA INTEGRACIÓN CON BACK ANTES DE BORRARLA POR COMPLET0 !!!!!
-
-  // useEffect(() => {
-  //   let riskActivity = {
-  //     riskActivity: '',
-  //     riskClass: 0
-  //   }
-
-  //   const industryCode = riskActivities.find(r => r.id === Number(basicInfo.industryCode))
-
-  //   if (industryCode) {
-  //     riskActivity.riskActivity = industryCode.riskActivity
-  //     riskActivity.riskClass = industryCode.class
-  //   }
-
-  //   setBasicInfo(state => ({
-  //     ...state,
-  //     riskActivity: riskActivity.riskActivity,
-  //     riskClass: riskActivity.riskClass
-  //   }))
-  // }, [basicInfo.industryCode, riskActivities])
+  }, [basicInfo.industryCode, industryCodeOptions])
 
   useEffect(() => {
     if (makeValidations || makeSaveValidations) {
@@ -421,6 +385,13 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
       setValidateForm(false)
     }
   }, [makeValidations, makeSaveValidations])
+
+  useEffect(() => {
+    riskActivities.length > 0 &&
+      setIndustryCodeOptions([
+        ...riskActivities.map(activities => `${activities.industryCode} / ${activities.riskActivity}`)
+      ])
+  }, [riskActivities])
 
   return (
     <>

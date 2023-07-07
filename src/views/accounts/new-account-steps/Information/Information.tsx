@@ -42,6 +42,8 @@ import { DiscountDto } from '@/services/accounts/dtos/discount.dto'
 type InformationProps = {
   onStepChange: (step: number) => void
   onIsNewAccountChange: (status: boolean) => void
+  typeofAccount?: string
+  activeEndorsement?: boolean
 }
 
 export interface BasicInfoInterface {
@@ -91,7 +93,12 @@ export interface PlacementStructure {
   typeOfLimit: string | number | null
 }
 
-const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountChange }) => {
+const Information: React.FC<InformationProps> = ({
+  onStepChange,
+  onIsNewAccountChange,
+  typeofAccount,
+  activeEndorsement
+}) => {
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
   const [subjectState] = useState<Subject<void>>(new Subject())
   const inter = userThemeConfig.typography?.fontFamilyInter
@@ -762,6 +769,8 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [validationCount, validatedForms])
 
+  console.log('Esta cuenta es de tipo: ', typeofAccount)
+
   return (
     <>
       <div className='information' style={{ fontFamily: inter }}>
@@ -801,17 +810,31 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
             />
           </div>
           <div className='section action-buttons'>
-            <Button
-              className='btn-save'
-              onClick={() => handleAction('save')}
-              variant='contained'
-              disabled={disableSave}
-            >
-              <div className='btn-icon'>
-                <Icon icon='mdi:content-save' />
-              </div>
-              SAVE CHANGES
-            </Button>
+            {typeofAccount && typeofAccount === 'bound' ? (
+              <Button
+                className='btn-save'
+                onClick={() => handleAction('save')}
+                variant='contained'
+                disabled={!activeEndorsement}
+              >
+                <div className='btn-icon' style={{ marginRight: '8px' }}>
+                  <Icon icon='mdi:content-save' />
+                </div>
+                ENDORSEMENT
+              </Button>
+            ) : (
+              <Button
+                className='btn-save'
+                onClick={() => handleAction('save')}
+                variant='contained'
+                disabled={disableSave}
+              >
+                <div className='btn-icon' style={{ marginRight: '8px' }}>
+                  <Icon icon='mdi:content-save' />
+                </div>
+                SAVE CHANGES
+              </Button>
+            )}
             <Button
               className='btn-next'
               onClick={() => {

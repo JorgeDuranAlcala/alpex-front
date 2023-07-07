@@ -1,130 +1,101 @@
-
-
-import { SecurityDto } from "@/services/accounts/dtos/security.dto";
-import { ReactNode, useRef, useState } from "react";
-import { CreateSecondViewProps, DeleteSecondViewProps, SecondViewContext, SwitchViewProps } from "./SecondViewContext";
+import { SecurityDto } from '@/services/accounts/dtos/security.dto'
+import { ReactNode, useRef, useState } from 'react'
+import { CreateSecondViewProps, DeleteSecondViewProps, SecondViewContext, SwitchViewProps } from './SecondViewContext'
 
 export const SecondViewProvider = ({ children }: { children: ReactNode }) => {
+  const [isOpenModal, setIsOpenModal] = useState<boolean>(false)
+  const [isOpenModalUndo, setIsOpenModalUndo] = useState<boolean>(false)
+  const [activeView, setActiveView] = useState(0)
+  const [securitesOriginal, setSecuritiesOriginal] = useState<SecurityDto[]>([])
+  const [securitesV1, setSecuritiesV1] = useState<SecurityDto[]>([])
 
-  const [isOpenModal, setIsOpenModal] = useState<{ [key: number]: boolean }>({});
-  const [isOpenModalUndo, setIsOpenModalUndo] = useState<{ [key: number]: boolean }>({});
-  const [securitiesAtMoment, setSecuritiesAtMoment] = useState<{ [key: number]: SecurityDto }>({})
+  const $inputRef = useRef<{ [key: number]: HTMLInputElement }>({})
 
-  const isFormHasSecondView = useRef<{ [key: number]: boolean }>({});
-  const isFormDeletedSecondView = useRef<{ [key: number]: boolean }>({});
-  const $inputRef = useRef<{ [key: number]: HTMLInputElement }>({});
-
-
-
-  const openModalSecondView = (formIndex: number) => {
-    console.log('open modal second view', formIndex)
-    setIsOpenModal({ ...isOpenModal, [formIndex]: true });
+  const openModalSecondView = () => {
+    console.log('open modal second view')
+    setIsOpenModal(true)
   }
-  const closeModalSecondView = (formIndex: number) => {
-    setIsOpenModal({ ...isOpenModal, [formIndex]: false });
+  const closeModalSecondView = () => {
+    setIsOpenModal(false)
   }
 
-  const openModalUndo = (formIndex: number) => {
-    setIsOpenModalUndo({ ...isOpenModalUndo, [formIndex]: true });
+  const openModalUndo = () => {
+    setIsOpenModalUndo(true)
   }
-  const closeModalUndo = (formIndex: number) => {
-    setIsOpenModalUndo({ ...isOpenModalUndo, [formIndex]: false });
+  const closeModalUndo = () => {
+    setIsOpenModalUndo(false)
   }
+  const createSecuritiesOriginal = (security: SecurityDto) => {
+    securitesOriginal.push({ ...security, view: 2 })
+  }
+  const createSecondView = ({ securities, calculateSecurities }: CreateSecondViewProps) => {
+    const tempSecurities = securities.map(security => ({ ...security, view: 2 }))
+    setActiveView(1)
 
-  const createSecondView = ({ formIndex, securities, calculateSecurities }: CreateSecondViewProps) => {
-    const tempSecurities = [...securities];
-    tempSecurities[formIndex].activeView = 1;
-    setSecuritiesAtMoment({
-      ...securitiesAtMoment,
-      [formIndex]: { ...tempSecurities[formIndex] }
-    });
-    const secondSecurity = { ...tempSecurities[formIndex] };
-    secondSecurity.view = 2;
-    secondSecurity.activeView = 1;
-    const start = formIndex + 1; // <-- posición donde se insertará el elemento
-    const deleteCount = 0; // <-- no se eliminará ningún elemento
-    tempSecurities.splice(start, deleteCount, secondSecurity); // <-- insertamos el elemento
+    securitesOriginal.length === 0 && setSecuritiesOriginal(tempSecurities)
 
-    isFormHasSecondView.current = { ...isFormHasSecondView.current, [formIndex]: true };
-    isFormDeletedSecondView.current = { ...isFormDeletedSecondView.current, [formIndex]: false };
-    console.log('create')
-    console.log({
-      securities,
-      tempSecurities,
-      formIndex,
-      securitiesAtMoment,
-      isFormHasSecondView: isFormHasSecondView.current,
-      isFormDeletedSecondView: isFormDeletedSecondView.current
-    })
     console.log('end create')
 
-
-    calculateSecurities(tempSecurities);
+    calculateSecurities(securities, securitesOriginal)
   }
 
-  const deleteSecondView = ({ formIndex, securities, calculateSecurities }: DeleteSecondViewProps) => {
-    const tempSecurities = [...securities];
-    tempSecurities[formIndex - 1] = { ...securitiesAtMoment[formIndex - 1] };
-    tempSecurities[formIndex - 1].activeView = 1;
-
-    tempSecurities.splice(formIndex, 1);
-    isFormHasSecondView.current = { ...isFormHasSecondView.current, [formIndex - 1]: false };
-    isFormDeletedSecondView.current = { ...isFormDeletedSecondView.current, [formIndex - 1]: true };
-
-    console.log('delete')
-    console.log({
-      securities,
-      tempSecurities,
-      formIndex,
-      securitiesAtMoment,
-      isFormHasSecondView: isFormHasSecondView.current,
-      isFormDeletedSecondView: isFormDeletedSecondView.current
-
-    })
-    calculateSecurities(tempSecurities);
-    console.log('end delete')
+  const deleteSecondView = ({ calculateSecurities }: DeleteSecondViewProps) => {
+    const tempSecurities = securitesOriginal.map(security => ({ ...security, view: 1 }))
+    setActiveView(0)
+    setSecuritiesOriginal([])
+    calculateSecurities(tempSecurities, [])
   }
 
-  const switchView = ({ formIndex, securities, calculateSecurities, view }: SwitchViewProps) => {
-    const tempSecurities = [...securities];
+  const switchView = ({ securities, calculateSecurities, view }: SwitchViewProps) => {
+    let tempSecurities: SecurityDto[] = []
 
-    if (view === 1) {
-      tempSecurities[formIndex - 1].activeView = 1;
-      tempSecurities[formIndex].activeView = 1;
-    } else if (view === 2) {
-      tempSecurities[formIndex].activeView = 2;
-
-      // * Cada vez que se cambie a vista 2 se clona lo que se trabajó en la vista 1
-      // * a excepción del netPremiumAt100
-      // Todo verificar las validaciones que sean correctas con el netPremiumAt100 fijo
-      tempSecurities[formIndex + 1] = {
-        ...tempSecurities[formIndex],
-        netPremiumAt100: tempSecurities[formIndex + 1].netPremiumAt100,
-        view: 2,
-        activeView: 2,
-      }
-
+    if (view === 1 && securitesV1.length === 0) {
+      tempSecurities = securities.map(security => ({ ...security, view: 1 }))
+      setSecuritiesOriginal(
+        securities.map((security, index) => ({
+          ...security,
+          netPremiumAt100: securitesOriginal[index].netPremiumAt100,
+          view: 2
+        }))
+      )
+      setSecuritiesV1(tempSecurities)
+    } else if (view === 1) {
+      tempSecurities = securities.map(security => ({ ...security, view: 1 }))
+      setSecuritiesV1(tempSecurities)
+      setSecuritiesOriginal(
+        securities.map((security, index) => ({
+          ...security,
+          netPremiumAt100: securitesOriginal[index].netPremiumAt100,
+          view: 2
+        }))
+      )
     }
 
-    calculateSecurities(tempSecurities);
+    setActiveView(view === 1 ? 2 : 1)
+    calculateSecurities(
+      view === 1 ? securitesOriginal : securitesV1.length === 0 ? securities : securitesV1,
+      view === 2 ? (securitesV1.length === 0 ? securities : securitesV1) : []
+    )
   }
 
-
   return (
-    <SecondViewContext.Provider value={{
-      $inputRef: $inputRef.current,
-      isFormHasSecondView: isFormHasSecondView.current,
-      isFormDeletedSecondView: isFormDeletedSecondView.current,
-      isOpenModal,
-      isOpenModalUndo,
-      openModalSecondView,
-      closeModalSecondView,
-      openModalUndo,
-      closeModalUndo,
-      createSecondView,
-      deleteSecondView,
-      switchView
-    }}>
+    <SecondViewContext.Provider
+      value={{
+        $inputRef: $inputRef.current,
+        activeView,
+        isOpenModal,
+        isOpenModalUndo,
+        openModalSecondView,
+        closeModalSecondView,
+        openModalUndo,
+        closeModalUndo,
+        createSecondView,
+        deleteSecondView,
+        switchView,
+        securitesOriginal,
+        createSecuritiesOriginal
+      }}
+    >
       {children}
     </SecondViewContext.Provider>
   )

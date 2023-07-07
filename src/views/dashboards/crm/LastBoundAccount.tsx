@@ -33,7 +33,7 @@ const LastBoundAccount = () => {
   const netPremiumParseInt = Number(account && account?.informations[0]?.netPremium)
   const netPremium = netPremiumParseInt?.toLocaleString('en-US', { style: 'currency', currency: 'USD' })
 
-  const replaceDashes = account?.accountHistoryLogs[0]?.effectiveDate.replace(/-/g, '/')
+  const replaceDashes = account && account?.accountHistoryLogs[0]?.effectiveDate.replace(/-/g, '/')
 
   const fromatDate = new Date(replaceDashes)
 

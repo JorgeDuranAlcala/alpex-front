@@ -74,6 +74,7 @@ const Table = ({ status }: IAccountTable) => {
     status: undefined,
     icon: undefined
   })
+  const [typeofCount, settypeofCount] = useState('')
 
   // **Reducers
   const dispatch = useAppDispatch()
@@ -142,6 +143,7 @@ const Table = ({ status }: IAccountTable) => {
     }
 
     setAccounts(formatedRows || [])
+    settypeofCount(formatedRows[0]?.status)
     //eslint-disable-next-line
   }, [accountsReducer])
 
@@ -422,9 +424,12 @@ const Table = ({ status }: IAccountTable) => {
         }
       })
     )
+
     localStorage.setItem('idAccount', String(id))
-    router.push(`/accounts/new-account/?&id=${id}`)
+    router.push(`/accounts/view/?&${typeofCount}/?&id=${id}`)
   }
+
+  console.log('esta cuenta es: ', typeofCount)
 
   return (
     <>

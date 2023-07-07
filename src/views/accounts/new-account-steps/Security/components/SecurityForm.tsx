@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useGetAllCountries } from '@/hooks/catalogs/country'
 import { useGetAllReinsuranceCompanies } from '@/hooks/catalogs/reinsuranceCompany'
 import { useGetAllRetroCedants } from '@/hooks/catalogs/retroCedant'
@@ -5,12 +6,11 @@ import { useGetAllByIdRetroCedant } from '@/hooks/catalogs/retroCedantContact'
 
 import { ReinsuranceCompanyDto } from '@/services/catalogs/dtos/ReinsuranceCompanyDto'
 
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
-import { Grid, Icon } from '@mui/material'
-
 import { FormSectionProps, SecurityDto, errorsSecurity } from '@/services/accounts/dtos/security.dto'
 import { ReinsuranceCompanyBinderDto } from '@/services/catalogs/dtos/ReinsuranceCompanyBinder.dto'
 import DialogCustomAlpex from '@/views/components/dialogs/DialogCustomAlpex'
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
+import { Grid, Icon } from '@mui/material'
 import { useContext, useEffect, useState } from 'react'
 import * as yup from 'yup'
 import { SecurityContext } from '../SecurityView'
@@ -63,6 +63,7 @@ import { SwitchFrontingFee } from './inputs/SwitchFrontingFee'
 import { SwitchTaxes } from './inputs/SwitchTaxes'
 import { ModalActivateSecondView } from './secondView/ModalActivateSecondView'
 import { ModalUndoSecondView } from './secondView/ModalUndoSecondView'
+import { SecondViewContext } from './secondView/SecondViewContext'
 import { SwitchSecondView } from './secondView/SwitchSecondView'
 import { UndoSecondView } from './secondView/UndoSecondView'
 
@@ -88,6 +89,26 @@ const initialErrorValues: errorsSecurity = {
   idCRetroCedantContact: '',
   idCRetroCedant: ''
 }
+function areArraysEqual(arr1: SecurityDto[], arr2: SecurityDto[]): boolean {
+  if (arr1.length !== arr2.length) {
+    return false
+  }
+
+  for (let i = 0; i < arr1.length; i++) {
+    if (!compareObjects(arr1[i], arr2[i])) {
+      return false
+    }
+  }
+
+  return true
+}
+
+function compareObjects(obj1: SecurityDto, obj2: SecurityDto): boolean {
+  // Comparar las propiedades relevantes para la igualdad de los objetos
+
+  return obj1.netPremiumAt100 === obj2.netPremiumAt100
+}
+
 export const FormSection = ({ index, security, onDeleteItemList }: FormSectionProps) => {
   const [isGross, setIsGross] = useState<boolean>(security.isGross)
   const [errorsSecurity, setErrorsSecurity] = useState<errorsSecurity>(initialErrorValues)
@@ -103,6 +124,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
 
   const { allErrors, setAllErrors, information, companiesSelect, securities, calculateSecurities } =
     useContext(SecurityContext)
+  const { activeView, createSecondView, createSecuritiesOriginal, securitesOriginal } = useContext(SecondViewContext)
 
   const { reinsuranceCompany } = useGetAllReinsuranceCompanies()
   const { retroCedants } = useGetAllRetroCedants()
@@ -162,11 +184,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
           }
         }
         errorsTemp[index] = true
-        setErrorsSecurity(data);
-
-        // console.log({ error: data, index });
-
-        //setEnableNextStep(false)
+        setErrorsSecurity(data)
       })
       .finally(() => {
         setAllErrors(() => [...errorsTemp])
@@ -204,7 +222,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
 
     //validacion taxes
 
-    if ((informationForm1.taxes === 0 || isGross) && securities[index].view === 1) {
+    if (informationForm1.taxes === 0 || isGross) {
       setIsShowToggleTaxes(true)
       setIsTaxesEnabled(informationForm1.taxes > 0)
 
@@ -213,7 +231,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
         taxes: informationForm1.taxes === 0 ? 0 : informationForm1.taxesP,
         taxesAmount: 0
       }
-    } else if (securities[index].view === 1) {
+    } else {
       setIsShowToggleTaxes(false)
       setIsTaxesEnabled(false)
 
@@ -224,7 +242,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
       }
     }
 
-    if ((informationForm1.frontingFee === 0 || isGross) && securities[index].view === 1) {
+    if (informationForm1.frontingFee === 0 || isGross) {
       setIsShowToggleFrontingFee(true)
       setFrontingFeeEnabled(informationForm1.frontingFee > 0)
       setIsShowRetroCedant(true)
@@ -234,7 +252,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
         frontingFee: informationForm1.frontingFee === 0 ? 0 : informationForm1.frontingFeeP,
         frontingFeeAmount: 0
       }
-    } else if (securities[index].view === 1) {
+    } else {
       setIsShowToggleFrontingFee(false)
       setFrontingFeeEnabled(false)
       setIsShowRetroCedant(false)
@@ -253,7 +271,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
   useEffect(() => {
     const tempSecurities = [...securities]
 
-    if (!frontingFeeEnabled && securities[index].view === 1) {
+    if (!frontingFeeEnabled) {
       tempSecurities[index] = {
         ...tempSecurities[index],
         frontingFee: 0,
@@ -262,7 +280,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
       validateForm(tempSecurities[index])
       calculateSecurities(tempSecurities)
     }
-    if (!isTaxesEnabled && securities[index].view === 1) {
+    if (!isTaxesEnabled) {
       tempSecurities[index] = {
         ...tempSecurities[index],
         taxes: 0,
@@ -284,38 +302,64 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
   const { forTaxes, forFrontingFee, checkValues } = useDataFirstTime({ formIndex: index, operationSecurity })
 
   useEffect(() => {
-    if (securities[index].view === 1) {
-
-      checkValues({
-        taxes: securities[index].taxes,
-        frontingFee: securities[index].taxes
-      })
-    }
-
+    checkValues({
+      taxes: securities[index].taxes,
+      frontingFee: securities[index].taxes
+    })
     if (securities[index].taxes > 0) {
       setIsTaxesEnabled(true)
-      if (securities[index].view === 2) {
-        setIsShowToggleTaxes(true)
-      }
     }
     if (securities[index].frontingFee > 0) {
       setFrontingFeeEnabled(true)
-      if (securities[index].view === 2) {
-        setIsShowToggleFrontingFee(true)
-      }
-
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [securities[index].taxes, securities[index].frontingFee])
 
+  useEffect(() => {
+    // const tempSecurities = [...securities]
+    // const grossNet = isGross
+    //   ? information.grossPremium !== tempSecurities[index].netPremiumAt100
+    //     ? information.grossPremium
+    //     : tempSecurities[index].netPremiumAt100
+    //   : information.netPremium !== tempSecurities[index].netPremiumAt100
+    //   ? information.netPremium
+    //   : tempSecurities[index].netPremiumAt100
+    // if (activeView === 0 && securitesOriginal.length < tempSecurities.length) {
+    //   createSecuritiesOriginal({ ...tempSecurities[index], netPremiumAt100: grossNet })
+    // }
+    // if (activeView === 0 && securities.length - 1 === index) {
+    //   if (securitesOriginal.length === tempSecurities.length) {
+    //     if (!areArraysEqual(securitesOriginal, tempSecurities)) {
+    //       createSecondView({
+    //         securities,
+    //         calculateSecurities
+    //       })
+    //     }
+    //   }
+    // }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   return (
     <DiscountsProvider>
+      <ModalActivateSecondView securities={securities} calculateSecurities={calculateSecurities} />
+
+      <ModalUndoSecondView securities={securities} calculateSecurities={calculateSecurities} />
+
       <div style={{ position: 'relative' }}>
         {index > 0 && <hr style={{ margin: '40px 0px', backgroundColor: 'lightgray' }} />}
         <Grid container item xs={12} sm={12}>
           <Grid item xs={12} sm={12}>
-            {index > 0 && (
+            {index === 0 && activeView !== 0 ? (
+              <>
+                {activeView === 2 && (
+                  <UndoSecondView securities={securities} calculateSecurities={calculateSecurities} />
+                )}
+                <SwitchSecondView view={activeView} securities={securities} calculateSecurities={calculateSecurities} />
+              </>
+            ) : null}
+            {index > 0 && activeView === 1 && (
               <div
                 className='section action-buttons'
                 style={{ float: 'right', marginRight: 'auto', marginBottom: '20px' }}
@@ -558,37 +602,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
           <ListDiscounts formIndex={index} operationSecurity={operationSecurity} validateForm={validateForm} />
         </Grid>
 
-        <ButtonAddDiscount />
-
-        <ModalActivateSecondView
-          formIndex={index}
-          securities={securities}
-          calculateSecurities={calculateSecurities}
-        />
-
-
-        <SwitchSecondView
-          formIndex={index}
-          securities={securities}
-          calculateSecurities={calculateSecurities}
-        />
-
-        {securities[index].view === 2 ?
-          <>
-            <UndoSecondView
-              formIndex={index}
-              securities={securities}
-              calculateSecurities={calculateSecurities}
-            />
-            <ModalUndoSecondView
-              formIndex={index}
-              securities={securities}
-              calculateSecurities={calculateSecurities}
-            />
-          </>
-
-          : null}
-
+        <ButtonAddDiscount formIndex={index} />
       </div>
       <DialogCustomAlpex
         openDialog={openDialog}

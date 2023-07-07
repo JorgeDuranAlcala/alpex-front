@@ -465,6 +465,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
             color: texButtonColor
           }}
           onClick={openModal}
+          disabled
         >
           Next step &nbsp;
           <ArrowForwardIcon />

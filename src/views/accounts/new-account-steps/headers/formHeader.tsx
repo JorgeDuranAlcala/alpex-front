@@ -26,6 +26,11 @@ interface StatusHistory {
   name: string
   date: string
 }
+interface FormHeaderProps {
+  isNewAccount?: boolean
+  setActiveEndorsement?: any
+  setTypeofAccount?: any
+}
 
 //Pending types
 
@@ -118,10 +123,9 @@ const ModalUploadImage = () => {
   )
 }
 
-const FormHeader = ({ isNewAccount }: any) => {
+const FormHeader = ({ isNewAccount, setActiveEndorsement, setTypeofAccount }: FormHeaderProps) => {
   const [status, setStatus] = useState('')
   const [accounts, setAccounts] = useState<any>([])
-
   const account = useAppSelector(state => state.accounts?.formsData?.form1)
 
   const { setIdAccount, information } = useFindInformationByIdAccount()
@@ -187,6 +191,11 @@ const FormHeader = ({ isNewAccount }: any) => {
     account && setIdAccount(account.id)
   }, [account])
 
+  useEffect(() => {
+    if (status !== undefined && setTypeofAccount) {
+      setTypeofAccount(status)
+    }
+  }, [status])
   return (
     <>
       <Card className='info-header' style={{ marginBottom: '16px' }}>
@@ -271,7 +280,11 @@ const FormHeader = ({ isNewAccount }: any) => {
                 {status !== 'bound' ? (
                   <ActionsHeader accountStatus='PENDING' sideHeader={true} />
                 ) : (
-                  <ActionsHeaderBound accountStatus='BOUND' sideHeader={true} />
+                  <ActionsHeaderBound
+                    setActiveEndorsement={setActiveEndorsement}
+                    accountStatus='BOUND'
+                    sideHeader={true}
+                  />
                 )}
               </div>
             </div>

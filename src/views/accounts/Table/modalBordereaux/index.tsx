@@ -1,3 +1,6 @@
+import { useGetAllReinsuranceCompanies } from '@/hooks/catalogs/reinsuranceCompany'
+import useGetReinsCompBindByIdReinsComp from '@/hooks/catalogs/reinsuranceCompanyBinder/useGetAllByIdReinsurance'
+import useDownloadBourderau from '@/hooks/reports/useDownloadBourderau'
 import {
   Backdrop,
   Box,
@@ -35,17 +38,21 @@ const ModalBordereaux: React.FC<IModalBordereaux> = ({
   setShow = false
 }) => {
   const [open, setOpen] = useState(false)
-  const [value, setValue] = useState<string>('')
+  const [values, setValues] = useState({
+    reinsurer: undefined,
+    binder: undefined
+  })
+
+  const { buffer, setDownloadBourderauParams } = useDownloadBourderau()
+  const { reinsuranceCompany } = useGetAllReinsuranceCompanies()
+  const { reinsuranceCompanyBinders, setIdReinsuranceCompany } = useGetReinsCompBindByIdReinsComp()
 
   const handleChange = (event: SelectChangeEvent) => {
-    setValue(event.target.value as string)
+    setValues({
+      ...values,
+      [event.target.name]: event.target.value
+    })
   }
-
-  // ** handlers for continue and cancel
-  // const onContinue = () => {
-  //   handleClose()
-  //   handleClickContinue()
-  // }
 
   const onCancel = () => {
     handleClose()
@@ -57,19 +64,34 @@ const ModalBordereaux: React.FC<IModalBordereaux> = ({
   // ** Handlers for opening and closing
   // const handleOpen = () => setOpen(true)
   const handleClose = (event?: any, reason?: string) => {
+    setValues({
+      binder: undefined,
+      reinsurer: undefined
+    })
+
     if (reason === 'escapeKeyDown' || reason === 'backdropClick') {
       return
     }
+
     if (onClose) {
       onClose()
     }
+
     setOpen(false)
   }
 
-  // ** Component
-  // const ButtonComponent: React.FC<{ onClick: () => void }> = ({ onClick }) => {
-  //   return renderButton(onClick)
-  // }
+  const handleDownload = () => {
+    if (values.reinsurer && values.binder) {
+      setDownloadBourderauParams({
+        idCReinsuranceCompany: values.reinsurer,
+        idCReinsuranceCompanyBinder: values.binder
+      })
+    }
+  }
+
+  const backdropProps = {
+    timeout: 500
+  }
 
   // ** Hooks
   useEffect(() => {
@@ -78,9 +100,25 @@ const ModalBordereaux: React.FC<IModalBordereaux> = ({
     }
   }, [setShow])
 
-  const backdropProps = {
-    timeout: 500
-  }
+  useEffect(() => {
+    console.log(values.reinsurer)
+    if (values.reinsurer) {
+      setIdReinsuranceCompany(values.reinsurer)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [values.reinsurer])
+
+  useEffect(() => {
+    if (buffer) {
+      const fileToDownload = new File([buffer], 'REINSURANCE BDX DYNAMIC.xlsx')
+      const downloadUrl = URL.createObjectURL(fileToDownload)
+      const link = document.createElement('a')
+      link.href = downloadUrl
+      link.download = fileToDownload.name
+      link.click()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [buffer])
 
   return (
     <Box>
@@ -141,29 +179,43 @@ const ModalBordereaux: React.FC<IModalBordereaux> = ({
                   <FormControl fullWidth>
                     <InputLabel id='controlled-select-label'>Select Reinsurer</InputLabel>
                     <Select
-                      value={value}
+                      name={'reinsurer'}
+                      value={values?.reinsurer}
                       label='Select Reinsurer'
                       id='controlled-select'
                       onChange={handleChange}
                       labelId='controlled-select-label'
                     >
-                      <MenuItem value={10}>Ten</MenuItem>
-                      <MenuItem value={20}>Twenty</MenuItem>
-                      <MenuItem value={30}>Thirty</MenuItem>
+                      {reinsuranceCompany && reinsuranceCompany?.length > 0
+                        ? reinsuranceCompany?.map(reinsuranceCompany => {
+                            return (
+                              <MenuItem key={reinsuranceCompany.id} value={reinsuranceCompany.id}>
+                                {reinsuranceCompany.name}
+                              </MenuItem>
+                            )
+                          })
+                        : null}
                     </Select>
                   </FormControl>
                   <FormControl fullWidth>
                     <InputLabel id='controlled-select-label'>Select Binder</InputLabel>
                     <Select
-                      value={value}
+                      name={'binder'}
+                      value={values?.binder}
                       label='Select Binder'
                       id='controlled-select'
                       onChange={handleChange}
                       labelId='controlled-select-label'
                     >
-                      <MenuItem value={10}>Ten</MenuItem>
-                      <MenuItem value={20}>Twenty</MenuItem>
-                      <MenuItem value={30}>Thirty</MenuItem>
+                      {reinsuranceCompanyBinders && reinsuranceCompanyBinders?.length > 0
+                        ? reinsuranceCompanyBinders?.map(reinsuranceCompanyBinders => {
+                            return (
+                              <MenuItem key={reinsuranceCompanyBinders.id} value={reinsuranceCompanyBinders.id}>
+                                {reinsuranceCompanyBinders.referenceNumber}
+                              </MenuItem>
+                            )
+                          })
+                        : null}
                     </Select>
                   </FormControl>
                 </Box>
@@ -176,7 +228,7 @@ const ModalBordereaux: React.FC<IModalBordereaux> = ({
                     mt: 10
                   }}
                 >
-                  <Button variant='contained' size='large' sx={{ width: '100%' }}>
+                  <Button variant='contained' size='large' sx={{ width: '100%' }} onClick={handleDownload}>
                     Download
                   </Button>
                   <Button onClick={onCancel} size='large' sx={{ width: '100%' }}>
@@ -191,9 +243,4 @@ const ModalBordereaux: React.FC<IModalBordereaux> = ({
     </Box>
   )
 }
-
 export default ModalBordereaux
-
-{
-  /* <ButtonComponent onClick={handleOpen} /> */
-}
