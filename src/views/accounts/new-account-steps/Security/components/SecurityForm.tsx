@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useGetAllCountries } from '@/hooks/catalogs/country'
 import { useGetAllReinsuranceCompanies } from '@/hooks/catalogs/reinsuranceCompany'
 import { useGetAllRetroCedants } from '@/hooks/catalogs/retroCedant'
@@ -5,12 +6,11 @@ import { useGetAllByIdRetroCedant } from '@/hooks/catalogs/retroCedantContact'
 
 import { ReinsuranceCompanyDto } from '@/services/catalogs/dtos/ReinsuranceCompanyDto'
 
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
-import { Grid, Icon } from '@mui/material'
-
 import { FormSectionProps, SecurityDto, errorsSecurity } from '@/services/accounts/dtos/security.dto'
 import { ReinsuranceCompanyBinderDto } from '@/services/catalogs/dtos/ReinsuranceCompanyBinder.dto'
 import DialogCustomAlpex from '@/views/components/dialogs/DialogCustomAlpex'
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
+import { Grid, Icon } from '@mui/material'
 import { useContext, useEffect, useState } from 'react'
 import * as yup from 'yup'
 import { SecurityContext } from '../SecurityView'
@@ -89,6 +89,26 @@ const initialErrorValues: errorsSecurity = {
   idCRetroCedantContact: '',
   idCRetroCedant: ''
 }
+function areArraysEqual(arr1: SecurityDto[], arr2: SecurityDto[]): boolean {
+  if (arr1.length !== arr2.length) {
+    return false
+  }
+
+  for (let i = 0; i < arr1.length; i++) {
+    if (!compareObjects(arr1[i], arr2[i])) {
+      return false
+    }
+  }
+
+  return true
+}
+
+function compareObjects(obj1: SecurityDto, obj2: SecurityDto): boolean {
+  // Comparar las propiedades relevantes para la igualdad de los objetos
+
+  return obj1.netPremiumAt100 === obj2.netPremiumAt100
+}
+
 export const FormSection = ({ index, security, onDeleteItemList }: FormSectionProps) => {
   const [isGross, setIsGross] = useState<boolean>(security.isGross)
   const [errorsSecurity, setErrorsSecurity] = useState<errorsSecurity>(initialErrorValues)
@@ -104,7 +124,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
 
   const { allErrors, setAllErrors, information, companiesSelect, securities, calculateSecurities } =
     useContext(SecurityContext)
-  const { activeView } = useContext(SecondViewContext)
+  const { activeView, createSecondView, createSecuritiesOriginal, securitesOriginal } = useContext(SecondViewContext)
 
   const { reinsuranceCompany } = useGetAllReinsuranceCompanies()
   const { retroCedants } = useGetAllRetroCedants()
@@ -165,10 +185,6 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
         }
         errorsTemp[index] = true
         setErrorsSecurity(data)
-
-        // console.log({ error: data, index });
-
-        //setEnableNextStep(false)
       })
       .finally(() => {
         setAllErrors(() => [...errorsTemp])
@@ -300,6 +316,32 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [securities[index].taxes, securities[index].frontingFee])
+  useEffect(() => {
+    const tempSecurities = [...securities]
+
+    const grossNet = isGross
+      ? information.grossPremium !== tempSecurities[index].netPremiumAt100
+        ? information.grossPremium
+        : tempSecurities[index].netPremiumAt100
+      : information.netPremium !== tempSecurities[index].netPremiumAt100
+      ? information.netPremium
+      : tempSecurities[index].netPremiumAt100
+
+    if (activeView === 0 && securitesOriginal.length < tempSecurities.length) {
+      createSecuritiesOriginal({ ...tempSecurities[index], netPremiumAt100: grossNet })
+    }
+
+    if (activeView === 0 && securities.length - 1 === index) {
+      if (securitesOriginal.length === tempSecurities.length) {
+        if (!areArraysEqual(securitesOriginal, tempSecurities)) {
+          createSecondView({
+            securities,
+            calculateSecurities
+          })
+        }
+      }
+    }
+  }, [])
 
   return (
     <DiscountsProvider>
