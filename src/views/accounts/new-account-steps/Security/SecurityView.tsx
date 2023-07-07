@@ -142,14 +142,15 @@ const Security = ({ onStepChange }: SecurityProps) => {
 
       if (securitiesOriginal.length > 0 && distributedNetPremiumV2.distribuitedNetPremium === 0) {
         const tempSecuritiesOrinal = getSecuritiesCalculate(securitiesOriginal)
+
         const resultSecurities = CalculateSecurity.getData(tempSecuritiesOrinal)
-        setDistributedNetPremiumV2(resultSecurities)
+        setDistributedNetPremiumV2(state => ({ ...state, ...resultSecurities }))
       }
 
       let dataForm: FormSecurity = {
         ...allFormData,
         formData: tempSecurities,
-        ...CalculateSecurity.getData(tempSecurities)
+        ...CalculateSecurity.getData(tempSecurities, distributedNetPremiumV2)
       }
 
       if (account && account.securitiesTotal[0]) {
