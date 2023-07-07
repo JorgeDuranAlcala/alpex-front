@@ -28,19 +28,17 @@ import {
   Modal,
   TextField
 } from '@mui/material'
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, useEffect, useState } from 'react'
 import Icon from 'src/@core/components/icon'
 import UserThemeOptions from 'src/layouts/UserThemeOptions'
 import { SecurityMapper } from './mappers/SecurityForm.mapper'
 
-import { SecondViewContext } from './components/secondView/SecondViewContext'
 import { SecondViewProvider } from './components/secondView/SecondViewProvider'
 import { CalculateSecurity } from './utils/calculates-securities'
 
 export const SecurityContext = createContext<SecurityContextDto>({} as SecurityContextDto)
 
 const Security = ({ onStepChange }: SecurityProps) => {
-  const { activeView } = useContext(SecondViewContext)
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
   const [securities, setSecurities] = useState<SecurityDto[]>([])
   const [firstTimeSecurities, setFirstTimeSecurities] = useState<SecurityDto[]>([])
