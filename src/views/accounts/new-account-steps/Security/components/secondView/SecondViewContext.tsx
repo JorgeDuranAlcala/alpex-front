@@ -21,6 +21,8 @@ interface SecondViewContextProps {
   $inputRef: { [key: number]: HTMLInputElement | null }
   isOpenModal: boolean
   isOpenModalUndo: boolean
+  securitesOriginal: SecurityDto[]
+  securitesView1: SecurityDto[]
   createSecondView: (props: CreateSecondViewProps) => void
   deleteSecondView: (props: DeleteSecondViewProps) => void
   switchView: (props: SwitchViewProps) => void
@@ -28,8 +30,9 @@ interface SecondViewContextProps {
   closeModalSecondView: () => void
   openModalUndo: () => void
   closeModalUndo: () => void
-  securitesOriginal: SecurityDto[]
   createSecuritiesOriginal: (security: SecurityDto) => void
+  updateSecuritiesView1: (securities: SecurityDto[]) => void
+  updateSecuritiesOriginal: (securities: SecurityDto[]) => void
 }
 
 export const SecondViewContext = createContext<SecondViewContextProps>({} as SecondViewContextProps)

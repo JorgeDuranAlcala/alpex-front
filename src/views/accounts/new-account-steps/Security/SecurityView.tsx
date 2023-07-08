@@ -133,24 +133,31 @@ const Security = ({ onStepChange }: SecurityProps) => {
   const calculateSecurities = (
     securitiesParam: SecurityDto[],
     securitiesOriginal: SecurityDto[] = [],
-    isFirstTime = false
+    isFirstTime = false,
+    reCalculate = false
   ) => {
     if (securitiesParam.length > 0 && information) {
       companiesSelect.splice(0, companiesSelect.length)
 
       const tempSecurities = getSecuritiesCalculate(securitiesParam)
 
-      if (securitiesOriginal.length > 0 && distributedNetPremiumV2.distribuitedNetPremium === 0) {
-        console.log({ securitiesOriginal })
-        const tempSecuritiesOrinal = getSecuritiesCalculate(securitiesOriginal)
-        const resultSecurities = CalculateSecurity.getData(tempSecuritiesOrinal)
+      if (securitiesOriginal.length > 0) {
+        const resultSecurities = CalculateSecurity.getData(getSecuritiesCalculate(securitiesOriginal))
+
         setDistributedNetPremiumV2(state => ({ ...state, ...resultSecurities }))
       }
 
       let dataForm: FormSecurity = {
         ...allFormData,
         formData: tempSecurities,
-        ...CalculateSecurity.getData(tempSecurities, distributedNetPremiumV2)
+        ...CalculateSecurity.getData(
+          tempSecurities,
+          securitiesParam[0].view === 1 && reCalculate
+            ? CalculateSecurity.getData(getSecuritiesCalculate(securitiesOriginal))
+            : distributedNetPremiumV2.distribuitedNetPremium !== 0
+            ? distributedNetPremiumV2
+            : defaultValue
+        )
       }
 
       if (account && account.securitiesTotal[0]) {
@@ -373,8 +380,6 @@ const Security = ({ onStepChange }: SecurityProps) => {
           <SecondViewProvider>
             <CardContent>
               {securities.map((security, index) => {
-                // console.log('se imprime')
-
                 return (
                   <FormSection
                     key={`${index}-${security?.id}`}

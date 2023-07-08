@@ -89,27 +89,53 @@ const initialErrorValues: errorsSecurity = {
   idCRetroCedantContact: '',
   idCRetroCedant: ''
 }
+function areArraysEqual(arr1: SecurityDto[], arr2: SecurityDto[]): boolean {
+  if (arr1.length !== arr2.length) {
+    return false
+  }
 
-// function areArraysEqual(arr1: SecurityDto[], arr2: SecurityDto[]): boolean {
-//   if (arr1.length !== arr2.length) {
-//     return false
-//   }
+  for (let i = 0; i < arr1.length; i++) {
+    if (!compareObjects(arr1[i], arr2[i])) {
+      return false
+    }
+  }
 
-//   for (let i = 0; i < arr1.length; i++) {
-//     if (!compareObjects(arr1[i], arr2[i])) {
-//       return false
-//     }
-//   }
+  return true
+}
 
-//   return true
-// }
+function compareObjects(obj1: SecurityDto, obj2: SecurityDto): boolean {
+  // Comparar las propiedades relevantes para la igualdad de los objetos
 
-// function compareObjects(obj1: SecurityDto, obj2: SecurityDto): boolean {
-//   // Comparar las propiedades relevantes para la igualdad de los objetos
+  return obj1.netPremiumAt100 === obj2.netPremiumAt100
+}
+function deepEqual(obj1: any, obj2: any): boolean {
+  // Verificar si son del mismo tipo
+  if (typeof obj1 !== typeof obj2) {
+    return false
+  }
 
-//   return obj1.netPremiumAt100 === obj2.netPremiumAt100
-// }
+  // Verificar si son objetos
+  if (typeof obj1 === 'object' && obj1 !== null && obj2 !== null) {
+    const keys1 = Object.keys(obj1)
+    const keys2 = Object.keys(obj2)
 
+    // Verificar si tienen la misma cantidad de propiedades
+    if (keys1.length !== keys2.length) {
+      return false
+    }
+
+    for (const key of keys1) {
+      if (!deepEqual(obj1[key], obj2[key])) {
+        return false
+      }
+    }
+
+    return true
+  }
+
+  // Comparar valores primitivos
+  return obj1 === obj2
+}
 export const FormSection = ({ index, security, onDeleteItemList }: FormSectionProps) => {
   const [isGross, setIsGross] = useState<boolean>(security.isGross)
   const [errorsSecurity, setErrorsSecurity] = useState<errorsSecurity>(initialErrorValues)
@@ -125,9 +151,15 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
 
   const { allErrors, setAllErrors, information, companiesSelect, securities, calculateSecurities } =
     useContext(SecurityContext)
-
-  //createSecondView, createSecuritiesOriginal, securitesOriginal
-  const { activeView } = useContext(SecondViewContext)
+  const {
+    activeView,
+    createSecondView,
+    securitesView1,
+    createSecuritiesOriginal,
+    securitesOriginal,
+    updateSecuritiesView1,
+    updateSecuritiesOriginal
+  } = useContext(SecondViewContext)
 
   const { reinsuranceCompany } = useGetAllReinsuranceCompanies()
   const { retroCedants } = useGetAllRetroCedants()
@@ -320,29 +352,69 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
   }, [securities[index].taxes, securities[index].frontingFee])
 
   useEffect(() => {
-    // const tempSecurities = [...securities]
-    // const grossNet = isGross
-    //   ? information.grossPremium !== tempSecurities[index].netPremiumAt100
-    //     ? information.grossPremium
-    //     : tempSecurities[index].netPremiumAt100
-    //   : information.netPremium !== tempSecurities[index].netPremiumAt100
-    //   ? information.netPremium
-    //   : tempSecurities[index].netPremiumAt100
-    // if (activeView === 0 && securitesOriginal.length < tempSecurities.length) {
-    //   createSecuritiesOriginal({ ...tempSecurities[index], netPremiumAt100: grossNet })
-    // }
-    // if (activeView === 0 && securities.length - 1 === index) {
-    //   if (securitesOriginal.length === tempSecurities.length) {
-    //     if (!areArraysEqual(securitesOriginal, tempSecurities)) {
-    //       createSecondView({
-    //         securities,
-    //         calculateSecurities
-    //       })
-    //     }
-    //   }
-    // }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const tempSecurities = [...securities]
+
+    const grossNet = isGross
+      ? information.grossPremium !== tempSecurities[index].netPremiumAt100
+        ? information.grossPremium
+        : tempSecurities[index].netPremiumAt100
+      : information.netPremium !== tempSecurities[index].netPremiumAt100
+      ? information.netPremium
+      : tempSecurities[index].netPremiumAt100
+
+    if (
+      activeView === 0 &&
+      securitesOriginal.length < tempSecurities.length &&
+      tempSecurities[index].idCReinsuranceCompany?.name
+    ) {
+      createSecuritiesOriginal({ ...tempSecurities[index], netPremiumAt100: grossNet })
+    }
+
+    if (activeView === 0 && securities.length - 1 === index && tempSecurities[index].idCReinsuranceCompany?.name) {
+      if (securitesOriginal.length === tempSecurities.length) {
+        if (!areArraysEqual(securitesOriginal, tempSecurities)) {
+          createSecondView({
+            securities,
+            calculateSecurities
+          })
+        }
+      }
+    }
   }, [])
+
+  useEffect(() => {
+    const tempSecuritiesV = JSON.parse(JSON.stringify(securities)) as SecurityDto[]
+
+    if (
+      securitesView1.length === securitesOriginal.length &&
+      activeView === 1 &&
+      !deepEqual(securitesView1[index], tempSecuritiesV[index])
+    ) {
+      updateSecuritiesView1([...tempSecuritiesV])
+      updateSecuritiesOriginal(
+        tempSecuritiesV.map((security, index) => {
+          return {
+            ...security,
+            netPremiumAt100: securitesOriginal[index].netPremiumAt100,
+            view: 2
+          }
+        })
+      )
+
+      calculateSecurities(
+        tempSecuritiesV,
+        tempSecuritiesV.map((security, index) => {
+          return {
+            ...security,
+            netPremiumAt100: securitesOriginal[index].netPremiumAt100,
+            view: 2
+          }
+        }),
+        false,
+        true
+      )
+    }
+  }, [securities[index]])
 
   return (
     <DiscountsProvider>
