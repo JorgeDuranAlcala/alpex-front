@@ -155,8 +155,8 @@ const Security = ({ onStepChange }: SecurityProps) => {
           securitiesParam[0].view === 1 && reCalculate
             ? CalculateSecurity.getData(getSecuritiesCalculate(securitiesOriginal))
             : distributedNetPremiumV2.distribuitedNetPremium !== 0
-            ? distributedNetPremiumV2
-            : defaultValue
+              ? securitiesOriginal.length > 0 ? distributedNetPremiumV2
+                : defaultValue : defaultValue
         )
       }
 
@@ -452,7 +452,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
                 {/* ADD REINSURER */}
                 <Grid item xs={12} sm={12}>
                   <div className='add-reinsurer'>
-                    {}
+                    { }
                     <Button
                       disabled={securities.length > 0 && securities[0].view === 2}
                       type='button'
