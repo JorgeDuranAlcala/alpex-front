@@ -58,16 +58,22 @@ const NewAccount = () => {
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const activeInputs = () => {
-    if (editInfo) {
+    console.log('aquí se cambia', typeofAccount)
+    if (typeofAccount !== 'bound') {
+      // if (editInfo) {
       setActiveInputs({ ...activeIntpus, allInfo: true, basic: true })
-    } else if (activeEndorsement) {
+    }
+    if (activeEndorsement) {
       setActiveInputs({ ...activeIntpus, basic: true })
+    }
+    if (typeofAccount === 'bound' && !activeEndorsement) {
+      setActiveInputs({ ...activeIntpus, basic: false })
     }
   }
 
   useEffect(() => {
     activeInputs()
-  }, [editInfo, activeEndorsement])
+  }, [editInfo, activeEndorsement, typeofAccount])
 
   const handleStepChange = (step: number) => {
     setActiveStep(step)
