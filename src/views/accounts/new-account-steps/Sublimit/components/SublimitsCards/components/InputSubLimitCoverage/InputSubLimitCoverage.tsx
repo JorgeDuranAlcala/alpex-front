@@ -11,8 +11,10 @@ import {
   TextField,
   Typography
 } from '@mui/material'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { NumericFormat } from 'react-number-format'
+import * as yup from 'yup'
+import { FormErrors } from '../../../../Sublimits'
 
 export type InputSubLimitCoverageProps = {
   limit: number
@@ -20,6 +22,7 @@ export type InputSubLimitCoverageProps = {
   subLimit: SublimitDto
   onChangeInput: (subLimitAmount: number) => void
   onChangeYesOrLuc: (subLimitAmount: string) => void
+  errorCard: FormErrors
 }
 
 const InputSubLimitCoverage: React.FC<InputSubLimitCoverageProps> = ({
@@ -27,7 +30,8 @@ const InputSubLimitCoverage: React.FC<InputSubLimitCoverageProps> = ({
   onChangeInput,
   isNotYesLuc,
   onChangeYesOrLuc,
-  subLimit
+  subLimit,
+  errorCard
 }) => {
   const [limitAmount, setLimitAmount] = useState<number>(subLimit.sublimit)
   const [isCheckAt100, setIsCheckAt100] = useState<boolean>(false)
@@ -46,6 +50,14 @@ const InputSubLimitCoverage: React.FC<InputSubLimitCoverageProps> = ({
     setYesOrLuc(value)
     onChangeYesOrLuc(value)
   }
+  useEffect(() => {
+    console.log({ limitAmount, limit: Number(limit) })
+    if (limitAmount !== Number(limit)) {
+      setIsCheckAt100(false)
+    } else {
+      setIsCheckAt100(true)
+    }
+  }, [limitAmount])
 
   return (
     <Grid container>
@@ -78,7 +90,7 @@ const InputSubLimitCoverage: React.FC<InputSubLimitCoverageProps> = ({
                 handleChangeSubLimit(Number(value.floatValue))
               }}
             />
-            <FormHelperText sx={{ color: 'error.main', marginLeft: '2px' }}></FormHelperText>
+            <FormHelperText sx={{ color: 'error.main', marginLeft: '2px' }}>{errorCard.sublimit}</FormHelperText>
           </FormControl>
         </Grid>
 
@@ -128,3 +140,15 @@ const InputSubLimitCoverage: React.FC<InputSubLimitCoverageProps> = ({
 }
 
 export default InputSubLimitCoverage
+export const inputSublimit_validations = ({ limit }: { limit: number }) =>
+  yup.object().shape({
+    sublimit: yup
+      .number()
+      .transform((_, val) => (val === Number(val) ? val : null))
+      .test('', 'This field is required', value => {
+        const val = value || 0
+
+        return +val <= limit && +val > 0
+      })
+      .required('This field is required')
+  })

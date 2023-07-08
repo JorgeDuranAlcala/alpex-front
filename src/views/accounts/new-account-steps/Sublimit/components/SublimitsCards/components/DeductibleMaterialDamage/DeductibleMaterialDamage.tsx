@@ -35,7 +35,8 @@ const DeductibleMaterialDamage: React.FC<DeductibleMaterialDamageProps> = ({
       deductible: null,
       min: null,
       idCDeductiblePer: null,
-      amount: null
+      amount: null,
+      idCCoverage: null
     }
     const subLimitTemp = { ...subLimit, [name]: event.target.value }
     if (name === 'typeDeductible') {
@@ -44,6 +45,8 @@ const DeductibleMaterialDamage: React.FC<DeductibleMaterialDamageProps> = ({
       onHandleChangeDeductibleDamage(subLimitTemp)
     }
   }
+
+  //TODO: generar un servicio para que se obtenga esto de bd
   const options = [
     { name: 'Loss', id: 1 },
     { name: "TIV's", id: 2 },

@@ -13,9 +13,15 @@ const BusinessInterruption: React.FC<BusinessInterruptionProps> = ({ subLimit, o
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
   const size = userThemeConfig.typography?.size.px16
   const textColor = userThemeConfig.palette?.text.subTitle
-
+  const reeset = {
+    amountBi: 0,
+    daysBi: 0
+  }
   const handleChangeItem = (event: any, name: string) => {
-    const subLimitTemp = { ...subLimit, [name]: event.target.value }
+    let subLimitTemp = { ...subLimit, [name]: event.target.value }
+    if (name === 'typeBi') {
+      subLimitTemp = { ...subLimitTemp, ...reeset }
+    }
 
     onHandleChangeDeductibleDamage(subLimitTemp)
   }
