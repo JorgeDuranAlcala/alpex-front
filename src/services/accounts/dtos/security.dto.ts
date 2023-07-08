@@ -28,8 +28,8 @@ export interface SecurityDto {
   difference: number
   active: boolean
   consecutive: number | null
-  view: number;
-  activeView?: number;
+  view: number
+  activeView?: number
   discounts: SecurityDiscountDto[] | []
   idCReinsuranceCompany: ReinsuranceCompanyDto
   idCReinsuranceCompanyBinder: ReinsuranceCompanyBinderDto | null
@@ -137,7 +137,12 @@ export type SecurityContextDto = {
   companiesSelect: number[]
   setSecurities: React.Dispatch<React.SetStateAction<SecurityDto[]>>
   setAllErrors: React.Dispatch<React.SetStateAction<boolean[]>>
-  calculateSecurities: (securities: SecurityDto[]) => void
+  calculateSecurities: (
+    securities: SecurityDto[],
+    securitiesOrigina?: SecurityDto[],
+    isFirstTime?: boolean,
+    reCalculate?: boolean
+  ) => void
 }
 export type SecurityProps = {
   onStepChange: (step: number) => void
