@@ -28,7 +28,8 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
   formErrors,
   setSubLimits,
   subLimits,
-  setErrors
+  setErrors,
+  showErrors
 }: RenderFormGeneric) => {
   const [subLimitCard, setSublimitCard] = useState<SublimitDto>(subLimit)
   const [errorCard, setErrorCard] = useState<FormErrors>(initialErrorValues)
@@ -39,9 +40,13 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
       ...subLimitsTemp[index],
       ...subLimitParam
     }
+    setSubLimits(state => {
+      const newState = [...state]
+      newState[index] = subLimitsTemp[index]
 
+      return newState
+    })
     validateForm(subLimitsTemp[index])
-    setSubLimits(subLimitsTemp)
   }
 
   const onDeleteItem = async () => {
@@ -73,7 +78,7 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
             [error.path]: error.message
           }
         }
-        console.log({ data })
+
         errorsTemp[index] = true
         setErrorCard(data)
       })
@@ -83,6 +88,8 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
   }
   useEffect(() => {
     subLimit && setSublimitCard(subLimit)
+    validateForm(subLimit)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [subLimit])
 
   return (
@@ -98,7 +105,7 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
           }}
         >
           <Typography
-            className='ÑACÑASE'
+            className=''
             textTransform={'uppercase'}
             sx={{ color: '#FFF', display: 'flex', alignItems: 'center' }}
           >
@@ -116,21 +123,34 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
           onHandleChangeSubLimit={handleChangeSubLimit}
           isNotYesLuc={DONT_SHOW_YES_LUC.includes(subLimitCard.title)}
           errorCard={errorCard}
+          showErrors={showErrors}
         />
         {!DONT_SHOW_DEDUCTIBLE_MATERIAL_DAMAGE.includes(subLimitCard.title) && (
           <DeductibleMaterialDamage
             subLimit={subLimitCard}
             onHandleChangeSubLimit={handleChangeSubLimit}
             errorCard={errorCard}
+            showErrors={showErrors}
           />
         )}
-        <Loss subLimit={subLimitCard} onHandleChangeSubLimit={handleChangeSubLimit} errorCard={errorCard} />
+        <Loss
+          subLimit={subLimitCard}
+          onHandleChangeSubLimit={handleChangeSubLimit}
+          errorCard={errorCard}
+          showErrors={showErrors}
+        />
         <BusinessInterruption
           subLimit={subLimitCard}
           onHandleChangeSubLimit={handleChangeSubLimit}
           errorCard={errorCard}
+          showErrors={showErrors}
         />
-        <Coinsurance subLimit={subLimitCard} onHandleChangeSubLimit={handleChangeSubLimit} errorCard={errorCard} />
+        <Coinsurance
+          subLimit={subLimitCard}
+          onHandleChangeSubLimit={handleChangeSubLimit}
+          errorCard={errorCard}
+          showErrors={showErrors}
+        />
       </ContentCard>
     </ContainerCard>
   )

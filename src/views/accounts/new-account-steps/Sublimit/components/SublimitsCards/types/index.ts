@@ -2,23 +2,6 @@
 
 import { SublimitDto } from '@/services/accounts/dtos/sublimit.dto'
 
-interface FormErrors {
-  sublimit: string
-  at100: string
-  deductible: string
-  amount: string
-  min: string
-  coinsurance: string
-  yes: string
-  luc: string
-  typeBi: string
-  typeDeductible: string
-  daysBi: string
-  idCCoverage: string
-  amountBi: string
-  idCDeductiblePer: string
-}
-
 export interface RenderFormGeneric {
   type?: number
   components?: any
@@ -33,4 +16,5 @@ export interface RenderFormGeneric {
   subLimits: SublimitDto[]
   setSubLimits: React.Dispatch<React.SetStateAction<SublimitDto[]>>
   setErrors: React.Dispatch<React.SetStateAction<boolean[]>>
+  showErrors: boolean
 }
