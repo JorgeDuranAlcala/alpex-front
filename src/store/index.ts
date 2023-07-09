@@ -15,6 +15,7 @@ import invoice from 'src/store/apps/invoice'
 import permissions from 'src/store/apps/permissions'
 import user from 'src/store/apps/user'
 import users from 'src/store/apps/users'
+import securitySlice from '../views/accounts/new-account-steps/SecurityV2/store/securitySlice'
 import uiUserSlice from './apps/user/uiUserSlice'
 
 
@@ -31,7 +32,8 @@ export const store = configureStore({
     users,
     brokers,
     brokerContacts,
-    alertBadgeSecuritySlice
+    alertBadgeSecuritySlice,
+    securitySlice
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
