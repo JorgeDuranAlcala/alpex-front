@@ -4,66 +4,43 @@ import { useEffect, useState } from 'react'
 import Icon from 'src/@core/components/icon'
 import { ContainerCard, ContentCard, HeaderCard } from 'src/styles/Forms/Sublimits'
 
-import BusinessInterruption from './components/BusinessInterruption/BusinessInterruption'
-import Coinsurance from './components/Coinsurance/Coinsurance'
+import * as yup from 'yup'
+import { FormErrors, initialErrorValues } from '../../Sublimits'
+import BusinessInterruption, {
+  validateBusinessInterruption
+} from './components/BusinessInterruption/BusinessInterruption'
+import Coinsurance, { validateCoinsurance } from './components/Coinsurance/Coinsurance'
 import { DeductibleMaterialDamage } from './components/DeductibleMaterialDamage'
+import { validateDeductibleMaterialDamage } from './components/DeductibleMaterialDamage/DeductibleMaterialDamage'
 import { InputSubLimitCoverage } from './components/InputSubLimitCoverage'
+import { inputSublimit_validations } from './components/InputSubLimitCoverage/InputSubLimitCoverage'
 import Loss from './components/Loss/Loss'
 import { RenderFormGeneric } from './types'
 
-interface FormErrors {
-  minError: boolean
-  coinsuranceError: boolean
-  daysError: boolean
-  priceInterruptionError: boolean
-}
 const DONT_SHOW_YES_LUC = ['Wind', 'Flood', 'Earthquake']
 const DONT_SHOW_DEDUCTIBLE_MATERIAL_DAMAGE = ['Business  Interruption  Machinery Breakdown', 'Business  Interruption']
 
 const GenericCard: React.FC<RenderFormGeneric> = ({
   subLimit,
   handleOnDeleteForm,
-
   limit,
   index = 0,
   formErrors,
   setSubLimits,
-  subLimits
+  subLimits,
+  setErrors
 }: RenderFormGeneric) => {
   const [subLimitCard, setSublimitCard] = useState<SublimitDto>(subLimit)
-  const [errors] = useState<FormErrors>({
-    minError: false,
-    coinsuranceError: false,
-    daysError: false,
-    priceInterruptionError: false
-  })
-  console.log(formErrors, errors)
+  const [errorCard, setErrorCard] = useState<FormErrors>(initialErrorValues)
 
-  const handleChangeSubLimit = (subLimitAmount: number) => {
+  const handleChangeSubLimit = (subLimitParam: SublimitDto) => {
     const subLimitsTemp = [...subLimits]
     subLimitsTemp[index] = {
-      ...subLimitCard,
-      sublimit: subLimitAmount
-    }
-    setSubLimits(subLimitsTemp)
-  }
-  const handleChangeYesLuc = (yesOrLuc: string) => {
-    const subLimitsTemp = [...subLimits]
-    subLimitsTemp[index] = {
-      ...subLimitCard,
-      luc: yesOrLuc === 'luc',
-      yes: yesOrLuc === 'yes'
-    }
-    setSubLimits(subLimitsTemp)
-  }
-
-  const handleChangeDeductibleDamage = (subLimitParam: SublimitDto) => {
-    const subLimitsTemp = [...subLimits]
-    subLimitsTemp[index] = {
-      ...subLimitCard,
+      ...subLimitsTemp[index],
       ...subLimitParam
     }
 
+    validateForm(subLimitsTemp[index])
     setSubLimits(subLimitsTemp)
   }
 
@@ -71,6 +48,39 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
     await handleOnDeleteForm(index)
   }
 
+  const validateForm = (subLimitParam: SublimitDto) => {
+    let data = { ...initialErrorValues }
+    const schema = yup.object().shape({
+      ...inputSublimit_validations({ limit, isNotYesLuc: DONT_SHOW_YES_LUC.includes(subLimitParam.title) }).fields,
+      ...validateDeductibleMaterialDamage({ typeDeductible: subLimitParam.typeDeductible }).fields,
+      ...validateBusinessInterruption({ typeBi: subLimitParam.typeBi }).fields,
+      ...validateCoinsurance().fields
+    })
+
+    const errorsTemp = [...formErrors]
+
+    errorsTemp[index] = false
+    schema
+      .validate(subLimitParam, { abortEarly: false })
+      .then(function () {
+        errorsTemp[index] = false
+        setErrorCard(initialErrorValues)
+      })
+      .catch(function (err) {
+        for (const error of err?.inner) {
+          data = {
+            ...data,
+            [error.path]: error.message
+          }
+        }
+        console.log({ data })
+        errorsTemp[index] = true
+        setErrorCard(data)
+      })
+      .finally(() => {
+        setErrors(() => [...errorsTemp])
+      })
+  }
   useEffect(() => {
     subLimit && setSublimitCard(subLimit)
   }, [subLimit])
@@ -103,19 +113,24 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
         <InputSubLimitCoverage
           limit={limit}
           subLimit={subLimitCard}
-          onChangeInput={handleChangeSubLimit}
-          onChangeYesOrLuc={handleChangeYesLuc}
+          onHandleChangeSubLimit={handleChangeSubLimit}
           isNotYesLuc={DONT_SHOW_YES_LUC.includes(subLimitCard.title)}
+          errorCard={errorCard}
         />
         {!DONT_SHOW_DEDUCTIBLE_MATERIAL_DAMAGE.includes(subLimitCard.title) && (
           <DeductibleMaterialDamage
             subLimit={subLimitCard}
-            onHandleChangeDeductibleDamage={handleChangeDeductibleDamage}
+            onHandleChangeSubLimit={handleChangeSubLimit}
+            errorCard={errorCard}
           />
         )}
-        <Loss subLimit={subLimitCard} onHandleChangeDeductibleDamage={handleChangeDeductibleDamage} />
-        <BusinessInterruption subLimit={subLimitCard} onHandleChangeDeductibleDamage={handleChangeDeductibleDamage} />
-        <Coinsurance subLimit={subLimitCard} onHandleChangeDeductibleDamage={handleChangeDeductibleDamage} />
+        <Loss subLimit={subLimitCard} onHandleChangeSubLimit={handleChangeSubLimit} errorCard={errorCard} />
+        <BusinessInterruption
+          subLimit={subLimitCard}
+          onHandleChangeSubLimit={handleChangeSubLimit}
+          errorCard={errorCard}
+        />
+        <Coinsurance subLimit={subLimitCard} onHandleChangeSubLimit={handleChangeSubLimit} errorCard={errorCard} />
       </ContentCard>
     </ContainerCard>
   )

@@ -28,8 +28,9 @@ export interface RenderFormGeneric {
 
   index?: number
   limit: number
-  formErrors: FormErrors
+  formErrors: boolean[]
   subLimit: SublimitDto
   subLimits: SublimitDto[]
   setSubLimits: React.Dispatch<React.SetStateAction<SublimitDto[]>>
+  setErrors: React.Dispatch<React.SetStateAction<boolean[]>>
 }

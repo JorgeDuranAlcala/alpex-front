@@ -20,8 +20,8 @@ const initialValues: SublimitDto = {
   daysBi: 0,
   amountBi: 0,
   coinsurance: 0,
-  yes: false,
-  luc: false,
+  yes: null,
+  luc: null,
   typeDeductible: '',
   typeBi: '',
   at100: false,
@@ -33,7 +33,7 @@ const initialValues: SublimitDto = {
   idAccount: 0
 }
 
-interface FormErrors {
+export interface FormErrors {
   sublimit: string
   at100: string
   deductible: string
@@ -74,7 +74,7 @@ const Sublimits = () => {
     open: false,
     status: 'error'
   })
-  const [formErrors, setFormErrors] = useState<FormErrors[]>([])
+  const [formErrors, setFormErrors] = useState<boolean[]>([])
   const [, setFormInformationData] = useState<any>({})
   const [subLimits, setSubLimits] = useState<SublimitDto[]>([])
   const { account, setAccountId } = useGetAccountById()
@@ -105,7 +105,6 @@ const Sublimits = () => {
           return statePreviewTemp
         })
       }
-      setFormErrors([...formErrors, initialErrorValues])
     } catch (error) {
       console.log(error)
     }
@@ -171,9 +170,10 @@ const Sublimits = () => {
                   setSubLimits={setSubLimits}
                   subLimits={subLimits}
                   index={index}
-                  limit={account.informations[0].limit}
-                  formErrors={formErrors[index]}
+                  limit={Number(account.informations[0].limit)}
+                  formErrors={formErrors}
                   handleOnDeleteForm={handleDeleteSublimit}
+                  setErrors={setFormErrors}
                 />
               </Grid>
             ))}
