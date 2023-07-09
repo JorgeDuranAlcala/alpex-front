@@ -10,9 +10,15 @@ export type BusinessInterruptionProps = {
   onHandleChangeSubLimit: (deductibleDamage: SublimitDto) => void
   subLimit: SublimitDto
   errorCard: FormErrors
+  showErrors: boolean
 }
 
-const BusinessInterruption: React.FC<BusinessInterruptionProps> = ({ subLimit, onHandleChangeSubLimit, errorCard }) => {
+const BusinessInterruption: React.FC<BusinessInterruptionProps> = ({
+  subLimit,
+  onHandleChangeSubLimit,
+  errorCard,
+  showErrors
+}) => {
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
   const size = userThemeConfig.typography?.size.px16
   const textColor = userThemeConfig.palette?.text.subTitle
@@ -70,7 +76,7 @@ const BusinessInterruption: React.FC<BusinessInterruptionProps> = ({ subLimit, o
             }}
           />
         </InputForm>
-        <FormHelperText sx={{ color: 'error.main' }}>{errorCard.daysBi}</FormHelperText>
+        <FormHelperText sx={{ color: 'error.main' }}>{showErrors && errorCard.daysBi}</FormHelperText>
         <InputForm>
           <FormControlLabel sx={{ ml: 0.3 }} value='money' control={<Radio sx={{ mr: -1 }} />} label='' />
           <NumericFormat
@@ -93,8 +99,10 @@ const BusinessInterruption: React.FC<BusinessInterruptionProps> = ({ subLimit, o
             }}
           />
         </InputForm>
-        <FormHelperText sx={{ color: 'error.main' }}>{errorCard.amountBi}</FormHelperText>
-        <FormHelperText sx={{ color: 'error.main', marginTop: '-5px' }}>{errorCard.typeBi}</FormHelperText>
+        <FormHelperText sx={{ color: 'error.main' }}>{showErrors && errorCard.amountBi}</FormHelperText>
+        <FormHelperText sx={{ color: 'error.main', marginTop: '-5px' }}>
+          {showErrors && errorCard.typeBi}
+        </FormHelperText>
       </RadioGroup>
     </SubContainer>
   )

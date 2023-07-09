@@ -11,9 +11,10 @@ export type CoinsuranceProps = {
   onHandleChangeSubLimit: (subLimit: SublimitDto) => void
   subLimit: SublimitDto
   errorCard: FormErrors
+  showErrors: boolean
 }
 
-const Coinsurance: React.FC<CoinsuranceProps> = ({ subLimit, onHandleChangeSubLimit, errorCard }) => {
+const Coinsurance: React.FC<CoinsuranceProps> = ({ subLimit, onHandleChangeSubLimit, errorCard, showErrors }) => {
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
   const size = userThemeConfig.typography?.size.px16
   const textColor = userThemeConfig.palette?.text.subTitle
@@ -54,7 +55,7 @@ const Coinsurance: React.FC<CoinsuranceProps> = ({ subLimit, onHandleChangeSubLi
           return (floatValue! >= 0 && floatValue! <= 100) || floatValue === undefined
         }}
       />
-      <FormHelperText sx={{ color: 'error.main' }}>{errorCard.coinsurance}</FormHelperText>
+      <FormHelperText sx={{ color: 'error.main' }}>{showErrors && errorCard.coinsurance}</FormHelperText>
     </SubContainer>
   )
 }

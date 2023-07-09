@@ -21,7 +21,7 @@ export type InputSubLimitCoverageProps = {
   isNotYesLuc: boolean
   subLimit: SublimitDto
   onHandleChangeSubLimit: (subLimit: SublimitDto) => void
-
+  showErrors: boolean
   errorCard: FormErrors
 }
 
@@ -29,13 +29,13 @@ const InputSubLimitCoverage: React.FC<InputSubLimitCoverageProps> = ({
   limit,
   onHandleChangeSubLimit,
   isNotYesLuc,
-
+  showErrors,
   subLimit,
   errorCard
 }) => {
   const [limitAmount, setLimitAmount] = useState<number>(subLimit.sublimit)
   const [isCheckAt100, setIsCheckAt100] = useState<boolean>(false)
-  const [yesOrLuc, setYesOrLuc] = useState<string>('')
+  const [yesOrLuc, setYesOrLuc] = useState<string>(subLimit.yes ? 'yes' : 'luc')
 
   const handleChangeSubLimit = (subLimitAmount: number) => {
     const subLimitTemp = { ...subLimit }
@@ -60,12 +60,12 @@ const InputSubLimitCoverage: React.FC<InputSubLimitCoverageProps> = ({
     setYesOrLuc(value)
   }
   useEffect(() => {
-    console.log({ limitAmount, limit: Number(limit) })
     if (limitAmount !== Number(limit)) {
       setIsCheckAt100(false)
     } else {
       setIsCheckAt100(true)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [limitAmount])
 
   return (
@@ -99,7 +99,9 @@ const InputSubLimitCoverage: React.FC<InputSubLimitCoverageProps> = ({
                 handleChangeSubLimit(Number(value.floatValue))
               }}
             />
-            <FormHelperText sx={{ color: 'error.main', marginLeft: '2px' }}>{errorCard.sublimit}</FormHelperText>
+            <FormHelperText sx={{ color: 'error.main', marginLeft: '2px' }}>
+              {showErrors && errorCard.sublimit}
+            </FormHelperText>
           </FormControl>
         </Grid>
 
@@ -140,7 +142,7 @@ const InputSubLimitCoverage: React.FC<InputSubLimitCoverageProps> = ({
               <FormControlLabel value='yes' control={<Radio sx={{ mr: 2 }} />} label='Yes' />
               <FormControlLabel value='luc' control={<Radio sx={{ mr: 2 }} />} label='Luc' />
             </RadioGroup>
-            <FormHelperText sx={{ color: 'error.main' }}>{errorCard.luc}</FormHelperText>
+            <FormHelperText sx={{ color: 'error.main' }}>{showErrors && errorCard.luc}</FormHelperText>
           </Grid>
           <Grid item xs={3} sm={3}></Grid>
         </Grid>
