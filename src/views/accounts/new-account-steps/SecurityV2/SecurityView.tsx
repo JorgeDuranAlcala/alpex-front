@@ -4,7 +4,7 @@ import { LayoutSecurity } from './LayoutSecurity'
 import { FormValidationsProvider } from './context/formValidations/FormValidationsProvider'
 import { LayoutSecurityProvider } from './context/layoutSecurity/LayoutSecurityProvider'
 
-export const SecurityView = ({ onStepChange }: SecurityProps) => {
+const SecurityView = ({ onStepChange }: SecurityProps) => {
 
 
   return (
@@ -17,3 +17,5 @@ export const SecurityView = ({ onStepChange }: SecurityProps) => {
     </FormValidationsProvider>
   )
 }
+
+export default SecurityView

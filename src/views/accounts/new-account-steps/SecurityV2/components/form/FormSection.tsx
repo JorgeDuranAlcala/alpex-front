@@ -30,6 +30,8 @@ export const FormSection = ({ security, index }: FormSectionProps) => {
   }, [index, security, validateForm])
 
   return (
-    <div>FormSection</div>
+    <div>
+
+    </div>
   )
 }
