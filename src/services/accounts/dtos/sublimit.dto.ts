@@ -2,8 +2,8 @@ export interface SublimitDto {
   id: number | undefined
   sublimit: number
   at100: boolean
-  yes: boolean
-  luc: boolean
+  yes: boolean | null
+  luc: boolean | null
   typeDeductible: string
   deductible: number | null
   amount: number | null

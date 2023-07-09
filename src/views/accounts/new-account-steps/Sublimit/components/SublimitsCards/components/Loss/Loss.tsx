@@ -4,13 +4,15 @@ import { SubContainer } from '@/styles/Forms/Sublimits'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import { MenuItem, Select, Typography } from '@mui/material'
 import React from 'react'
+import { FormErrors } from '../../../../Sublimits'
 
 export type LossProps = {
-  onHandleChangeDeductibleDamage: (deductibleDamage: SublimitDto) => void
+  onHandleChangeSubLimit: (deductibleDamage: SublimitDto) => void
   subLimit: SublimitDto
+  errorCard: FormErrors
 }
 
-const Loss: React.FC<LossProps> = ({ subLimit, onHandleChangeDeductibleDamage }) => {
+const Loss: React.FC<LossProps> = ({ subLimit, onHandleChangeSubLimit, errorCard }) => {
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
   const size = userThemeConfig.typography?.size.px16
   const textColor = userThemeConfig.palette?.text.subTitle
@@ -18,7 +20,7 @@ const Loss: React.FC<LossProps> = ({ subLimit, onHandleChangeDeductibleDamage })
   const handleChangeItem = (event: any, name: string) => {
     const subLimitTemp = { ...subLimit, [name]: event.target.value }
 
-    onHandleChangeDeductibleDamage(subLimitTemp)
+    onHandleChangeSubLimit(subLimitTemp)
   }
 
   return (

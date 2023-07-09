@@ -20,16 +20,16 @@ export type InputSubLimitCoverageProps = {
   limit: number
   isNotYesLuc: boolean
   subLimit: SublimitDto
-  onChangeInput: (subLimitAmount: number) => void
-  onChangeYesOrLuc: (subLimitAmount: string) => void
+  onHandleChangeSubLimit: (subLimit: SublimitDto) => void
+
   errorCard: FormErrors
 }
 
 const InputSubLimitCoverage: React.FC<InputSubLimitCoverageProps> = ({
   limit,
-  onChangeInput,
+  onHandleChangeSubLimit,
   isNotYesLuc,
-  onChangeYesOrLuc,
+
   subLimit,
   errorCard
 }) => {
@@ -38,17 +38,26 @@ const InputSubLimitCoverage: React.FC<InputSubLimitCoverageProps> = ({
   const [yesOrLuc, setYesOrLuc] = useState<string>('')
 
   const handleChangeSubLimit = (subLimitAmount: number) => {
-    onChangeInput(subLimitAmount)
+    const subLimitTemp = { ...subLimit }
+    subLimitTemp.sublimit = subLimitAmount
+    onHandleChangeSubLimit(subLimitTemp)
     setLimitAmount(subLimitAmount)
   }
   const onChangeCheckAt100 = () => {
-    onChangeInput(!isCheckAt100 ? limit : 0)
-    setLimitAmount(!isCheckAt100 ? limit : 0)
-    setIsCheckAt100(!isCheckAt100)
+    const subLimitTemp = { ...subLimit }
+    subLimitTemp.at100 = !isCheckAt100
+    subLimitTemp.sublimit = !isCheckAt100 ? limit : 0
+    onHandleChangeSubLimit(subLimitTemp)
+
+    setLimitAmount(subLimitTemp.sublimit)
+    setIsCheckAt100(subLimitTemp.at100)
   }
   const handleChangeRadioYesLuc = (value: string) => {
+    const subLimitTemp = { ...subLimit }
+    subLimitTemp.yes = value === 'yes'
+    subLimitTemp.luc = value === 'luc'
+    onHandleChangeSubLimit(subLimitTemp)
     setYesOrLuc(value)
-    onChangeYesOrLuc(value)
   }
   useEffect(() => {
     console.log({ limitAmount, limit: Number(limit) })
@@ -131,6 +140,7 @@ const InputSubLimitCoverage: React.FC<InputSubLimitCoverageProps> = ({
               <FormControlLabel value='yes' control={<Radio sx={{ mr: 2 }} />} label='Yes' />
               <FormControlLabel value='luc' control={<Radio sx={{ mr: 2 }} />} label='Luc' />
             </RadioGroup>
+            <FormHelperText sx={{ color: 'error.main' }}>{errorCard.luc}</FormHelperText>
           </Grid>
           <Grid item xs={3} sm={3}></Grid>
         </Grid>
@@ -140,7 +150,7 @@ const InputSubLimitCoverage: React.FC<InputSubLimitCoverageProps> = ({
 }
 
 export default InputSubLimitCoverage
-export const inputSublimit_validations = ({ limit }: { limit: number }) =>
+export const inputSublimit_validations = ({ limit, isNotYesLuc }: { limit: number; isNotYesLuc: boolean }) =>
   yup.object().shape({
     sublimit: yup
       .number()
@@ -150,5 +160,21 @@ export const inputSublimit_validations = ({ limit }: { limit: number }) =>
 
         return +val <= limit && +val > 0
       })
-      .required('This field is required')
+      .required('This field is required'),
+    yes: yup
+      .boolean()
+      .nullable()
+      .test('', 'This field is required', value => {
+        if (isNotYesLuc) return true
+
+        return value !== null
+      }),
+    luc: yup
+      .boolean()
+      .nullable()
+      .test('', 'This field is required', value => {
+        if (isNotYesLuc) return true
+
+        return value !== null
+      })
   })
