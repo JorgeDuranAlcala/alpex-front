@@ -29,7 +29,8 @@ export const ReinsuranceCompany = ({
   validateForm,
   setIsGross,
   setFrontingFeeEnabled,
-  setBinders
+  setBinders,
+  view
 }: ReinsuranceCompanyProps) => {
   const { activeErros, information, securities, calculateSecurities } = useContext(SecurityContext)
 
@@ -84,7 +85,7 @@ export const ReinsuranceCompany = ({
         onChange={handleChangeCompany}
         labelId='ReinsuranceCompany'
         label='Reinsurance companies'
-        disabled={securities[index].view === 2}
+        disabled={view === 2}
       >
         {avaliableReinsurers
           .filter(

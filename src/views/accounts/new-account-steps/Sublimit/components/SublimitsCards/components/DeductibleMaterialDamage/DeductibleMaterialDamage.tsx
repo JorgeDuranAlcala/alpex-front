@@ -17,15 +17,21 @@ import {
 } from '@mui/material'
 import React from 'react'
 import { NumericFormat } from 'react-number-format'
+import * as yup from 'yup'
+import { FormErrors } from '../../../../Sublimits'
 
 export type DeductibleMaterialDamageProps = {
-  onHandleChangeDeductibleDamage: (deductibleDamage: SublimitDto) => void
+  onHandleChangeSubLimit: (deductibleDamage: SublimitDto) => void
   subLimit: SublimitDto
+  errorCard: FormErrors
+  showErrors: boolean
 }
 
 const DeductibleMaterialDamage: React.FC<DeductibleMaterialDamageProps> = ({
   subLimit,
-  onHandleChangeDeductibleDamage
+  onHandleChangeSubLimit,
+  errorCard,
+  showErrors
 }) => {
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
   const size = userThemeConfig.typography?.size.px16
@@ -35,15 +41,18 @@ const DeductibleMaterialDamage: React.FC<DeductibleMaterialDamageProps> = ({
       deductible: null,
       min: null,
       idCDeductiblePer: null,
-      amount: null
+      amount: null,
+      idCCoverage: null
     }
     const subLimitTemp = { ...subLimit, [name]: event.target.value }
     if (name === 'typeDeductible') {
-      onHandleChangeDeductibleDamage({ ...subLimitTemp, ...reset })
+      onHandleChangeSubLimit({ ...subLimitTemp, ...reset, [name]: event.target.value })
     } else {
-      onHandleChangeDeductibleDamage(subLimitTemp)
+      onHandleChangeSubLimit(subLimitTemp)
     }
   }
+
+  //TODO: generar un servicio para que se obtenga esto de bd
   const options = [
     { name: 'Loss', id: 1 },
     { name: "TIV's", id: 2 },
@@ -122,7 +131,9 @@ const DeductibleMaterialDamage: React.FC<DeductibleMaterialDamageProps> = ({
             }}
           />
         </InputForm>
-        <FormHelperText sx={{ color: 'error.main', marginTop: '-3px' }}></FormHelperText>
+        <FormHelperText sx={{ color: 'error.main', marginTop: '-3px' }}>
+          {showErrors && errorCard.deductible}
+        </FormHelperText>
         {subLimit.typeDeductible === 'per' ? (
           <>
             <FormControl fullWidth>
@@ -139,7 +150,6 @@ const DeductibleMaterialDamage: React.FC<DeductibleMaterialDamageProps> = ({
                 decimalScale={2}
                 variant='outlined'
                 onValueChange={value => {
-                  console.log(value)
                   handleChangeItem({ target: { value: value.floatValue } }, 'min')
                 }}
                 isAllowed={values => {
@@ -148,7 +158,7 @@ const DeductibleMaterialDamage: React.FC<DeductibleMaterialDamageProps> = ({
                   return floatValue! >= 0 || floatValue === undefined
                 }}
               />
-              <FormHelperText sx={{ color: 'error.main' }}></FormHelperText>
+              <FormHelperText sx={{ color: 'error.main' }}>{showErrors && errorCard.min}</FormHelperText>
             </FormControl>
             <FormControl fullWidth>
               <InputLabel id='controlled-select-label'>Aplicable over</InputLabel>
@@ -169,7 +179,7 @@ const DeductibleMaterialDamage: React.FC<DeductibleMaterialDamageProps> = ({
                     </MenuItem>
                   ))}
               </Select>
-              <FormHelperText sx={{ color: 'error.main' }}></FormHelperText>
+              <FormHelperText sx={{ color: 'error.main' }}>{showErrors && errorCard.idCDeductiblePer}</FormHelperText>
             </FormControl>
           </>
         ) : null}
@@ -204,8 +214,6 @@ const DeductibleMaterialDamage: React.FC<DeductibleMaterialDamageProps> = ({
               '&:before, &:after': { display: 'none' }
             }}
             onValueChange={value => {
-              console.log(value)
-
               handleChangeItem({ target: { value: value.floatValue } }, 'amount')
             }}
             isAllowed={values => {
@@ -215,10 +223,64 @@ const DeductibleMaterialDamage: React.FC<DeductibleMaterialDamageProps> = ({
             }}
           />
         </InputForm>
-        <FormHelperText sx={{ color: 'error.main', marginTop: '-3px' }}></FormHelperText>
+        <FormHelperText sx={{ color: 'error.main', marginTop: '-3px' }}>
+          {showErrors && errorCard.amount}
+        </FormHelperText>
       </RadioGroup>
+      <FormHelperText sx={{ color: 'error.main' }}>{showErrors && errorCard.typeDeductible}</FormHelperText>
     </SubContainer>
   )
 }
 
 export default DeductibleMaterialDamage
+export const validateDeductibleMaterialDamage = ({ typeDeductible }: { typeDeductible: string }) =>
+  yup.object().shape({
+    typeDeductible: yup
+      .string()
+      .nullable()
+      .test('', 'This field is required', value => {
+        return value !== null && value !== ''
+      }),
+    amount: yup
+      .number()
+      .nullable()
+      .transform((_, val) => (val === Number(val) ? val : null))
+      .test('', 'This field is required', value => {
+        const val = value || 0
+
+        if (typeDeductible !== 'amount') return true
+
+        return +val > 0
+      }),
+    min: yup
+      .number()
+      .nullable()
+      .transform((_, val) => (val === Number(val) ? val : null))
+      .test('', 'This field is required', value => {
+        const val = value || 0
+        if (typeDeductible !== 'per') return true
+
+        return +val > 0
+      }),
+    idCDeductiblePer: yup
+      .number()
+      .nullable()
+      .transform((_, val) => (val === Number(val) ? val : null))
+      .test('', 'This field is required', value => {
+        const val = value || 0
+        if (typeDeductible !== 'per') return true
+
+        return +val > 0
+      }),
+    deductible: yup
+      .number()
+      .nullable()
+      .transform((_, val) => (val === Number(val) ? val : null))
+      .test('', 'This field is required', value => {
+        const val = value || 0
+
+        if (typeDeductible !== 'per') return true
+
+        return +val > 0
+      })
+  })
