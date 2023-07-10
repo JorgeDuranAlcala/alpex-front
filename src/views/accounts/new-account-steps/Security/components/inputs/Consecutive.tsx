@@ -12,7 +12,7 @@ type ConsecutiveProps = Omit<ISecurityInputProps, 'index' | 'errorMessage' | 'va
 export const Consecutive = ({ value, view }: ConsecutiveProps) => {
   return (
     <FormControl fullWidth sx={{ mb: 6.5 }}>
-      <TextField autoFocus disabled fullWidth label='Consecutive' value={value || view === 2} />
+      <TextField autoFocus disabled={true || view === 2} fullWidth label='Consecutive' value={value} />
     </FormControl>
   )
 }

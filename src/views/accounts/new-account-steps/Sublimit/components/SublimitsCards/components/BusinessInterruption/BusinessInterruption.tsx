@@ -60,7 +60,6 @@ const BusinessInterruption: React.FC<BusinessInterruptionProps> = ({
             thousandSeparator=','
             customInput={Input}
             disabled={!(subLimit?.typeBi === 'days')}
-            decimalScale={2}
             sx={{
               width: '100%',
               height: '100%',
@@ -88,7 +87,6 @@ const BusinessInterruption: React.FC<BusinessInterruptionProps> = ({
             disabled={!(subLimit?.typeBi === 'money')}
             customInput={Input}
             prefix={'$'}
-            decimalScale={2}
             sx={{
               width: '100%',
               height: '100%',
