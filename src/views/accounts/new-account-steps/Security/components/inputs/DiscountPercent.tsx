@@ -64,7 +64,6 @@ export const DiscountPercent = ({
         }}
         suffix={'%'}
         customInput={TextField}
-        decimalScale={2}
         isAllowed={values => {
           return (values.floatValue! >= 0 && values.floatValue! <= 100) || values.floatValue === undefined
         }}

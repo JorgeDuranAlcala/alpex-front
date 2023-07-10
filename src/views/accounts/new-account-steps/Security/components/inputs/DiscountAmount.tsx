@@ -37,7 +37,6 @@ export const DiscountAmount = ({ discountIndex, value, operationSecurity, view }
         }}
         prefix={'$'}
         customInput={TextField}
-        decimalScale={2}
         thousandSeparator=','
         disabled={view === 2}
       />
