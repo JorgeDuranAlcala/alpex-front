@@ -160,7 +160,7 @@ export const ContactModal = ({ id, service, updateContacts, setIdCreated, disabl
 
   const validateForm = () => {
     const nameErrorTemp = !expresions.name.test(contactData.name)
-    const phoneErrorTemp = !expresions.phone.test(contactData.phone)
+    const phoneErrorTemp = contactData.phone === undefined || contactData.phone === ''
     const countryErrorTemp = contactData.country === undefined || contactData.country === ''
     const emailErrorTemp = !expresions.email.test(contactData.email)
 
@@ -248,7 +248,7 @@ export const ContactModal = ({ id, service, updateContacts, setIdCreated, disabl
                 <FormHelperText sx={{ color: 'error.main' }}>
                   {contactData.phone == '' || contactData.phone == undefined
                     ? 'This field is required'
-                    : 'Enter a valid phone'}
+                    : ''}
                 </FormHelperText>
               )}
             </FormControl>
