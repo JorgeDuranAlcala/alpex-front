@@ -322,16 +322,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
           const accountSecurities = accountById?.securities as SecurityDto[]
 
           if (accountSecurities && information) {
-            calculateSecurities(
-              accountSecurities,
-              accountSecurities.map(security => ({
-                ...security,
-                netPremiumAt100: security.isGross ? information.grossPremium : information.netPremium,
-                view: 2
-              })),
-              0,
-              true
-            )
+            calculateSecurities(accountSecurities, 0, true)
             accountById.securitiesTotal &&
               setAllFormData({
                 ...allFormData,
