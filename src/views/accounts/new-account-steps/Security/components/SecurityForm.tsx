@@ -89,53 +89,7 @@ const initialErrorValues: errorsSecurity = {
   idCRetroCedantContact: '',
   idCRetroCedant: ''
 }
-function areArraysEqual(arr1: SecurityDto[], arr2: SecurityDto[]): boolean {
-  if (arr1.length !== arr2.length) {
-    return false
-  }
 
-  for (let i = 0; i < arr1.length; i++) {
-    if (!compareObjects(arr1[i], arr2[i])) {
-      return false
-    }
-  }
-
-  return true
-}
-
-function compareObjects(obj1: SecurityDto, obj2: SecurityDto): boolean {
-  // Comparar las propiedades relevantes para la igualdad de los objetos
-
-  return obj1.netPremiumAt100 === obj2.netPremiumAt100
-}
-function deepEqual(obj1: any, obj2: any): boolean {
-  // Verificar si son del mismo tipo
-  if (typeof obj1 !== typeof obj2) {
-    return false
-  }
-
-  // Verificar si son objetos
-  if (typeof obj1 === 'object' && obj1 !== null && obj2 !== null) {
-    const keys1 = Object.keys(obj1)
-    const keys2 = Object.keys(obj2)
-
-    // Verificar si tienen la misma cantidad de propiedades
-    if (keys1.length !== keys2.length) {
-      return false
-    }
-
-    for (const key of keys1) {
-      if (!deepEqual(obj1[key], obj2[key])) {
-        return false
-      }
-    }
-
-    return true
-  }
-
-  // Comparar valores primitivos
-  return obj1 === obj2
-}
 export const FormSection = ({ index, security, onDeleteItemList }: FormSectionProps) => {
   const [isGross, setIsGross] = useState<boolean>(security.isGross)
   const [errorsSecurity, setErrorsSecurity] = useState<errorsSecurity>(initialErrorValues)
@@ -149,17 +103,9 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
 
   const [avaliableReinsurers, setAvaliableReinsurers] = useState<ReinsuranceCompanyDto[]>([])
 
-  const { allErrors, setAllErrors, information, companiesSelect, securities, calculateSecurities } =
+  const { allErrors, setAllErrors, information, companiesSelect, securities, calculateSecurities, setCurrentView } =
     useContext(SecurityContext)
-  const {
-    activeView,
-    createSecondView,
-    securitesView1,
-    createSecuritiesOriginal,
-    securitesOriginal,
-    updateSecuritiesView1,
-    updateSecuritiesOriginal
-  } = useContext(SecondViewContext)
+  const { activeView, createSecondView } = useContext(SecondViewContext)
 
   const { reinsuranceCompany } = useGetAllReinsuranceCompanies()
   const { retroCedants } = useGetAllRetroCedants()
@@ -354,67 +300,24 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
   useEffect(() => {
     const tempSecurities = [...securities]
 
-    const grossNet = isGross
+    const isDifferent = isGross
       ? information.grossPremium !== tempSecurities[index].netPremiumAt100
-        ? information.grossPremium
-        : tempSecurities[index].netPremiumAt100
       : information.netPremium !== tempSecurities[index].netPremiumAt100
-      ? information.netPremium
-      : tempSecurities[index].netPremiumAt100
 
-    if (
-      activeView === 0 &&
-      securitesOriginal.length < tempSecurities.length &&
-      tempSecurities[index].idCReinsuranceCompany?.name
-    ) {
-      createSecuritiesOriginal({ ...tempSecurities[index], netPremiumAt100: grossNet })
-    }
-
-    if (activeView === 0 && securities.length - 1 === index && tempSecurities[index].idCReinsuranceCompany?.name) {
-      if (securitesOriginal.length === tempSecurities.length) {
-        if (!areArraysEqual(securitesOriginal, tempSecurities)) {
-          createSecondView({
-            securities,
-            calculateSecurities
-          })
-        }
-      }
+    // index === tempSecurities.length - 1 &&
+    if (activeView === 0 && isDifferent && securities[index].idCReinsuranceCompany?.id) {
+      setCurrentView(1)
+      createSecondView({
+        securities: tempSecurities,
+        calculateSecurities
+      })
     }
   }, [])
 
   useEffect(() => {
-    const tempSecuritiesV = JSON.parse(JSON.stringify(securities)) as SecurityDto[]
-
-    if (
-      securitesView1.length === securitesOriginal.length &&
-      activeView === 1 &&
-      !deepEqual(securitesView1[index], tempSecuritiesV[index])
-    ) {
-      updateSecuritiesView1([...tempSecuritiesV])
-      updateSecuritiesOriginal(
-        tempSecuritiesV.map((security, index) => {
-          return {
-            ...security,
-            netPremiumAt100: securitesOriginal[index].netPremiumAt100,
-            view: 2
-          }
-        })
-      )
-
-      calculateSecurities(
-        tempSecuritiesV,
-        tempSecuritiesV.map((security, index) => {
-          return {
-            ...security,
-            netPremiumAt100: securitesOriginal[index].netPremiumAt100,
-            view: 2
-          }
-        }),
-        false,
-        true
-      )
-    }
-  }, [securities[index]])
+    console.log(activeView)
+    setCurrentView(activeView)
+  }, [activeView])
 
   return (
     <DiscountsProvider>
@@ -431,7 +334,12 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
                 {activeView === 2 && (
                   <UndoSecondView securities={securities} calculateSecurities={calculateSecurities} />
                 )}
-                <SwitchSecondView view={activeView} securities={securities} calculateSecurities={calculateSecurities} />
+                <SwitchSecondView
+                  view={activeView}
+                  information={information}
+                  securities={securities}
+                  calculateSecurities={calculateSecurities}
+                />
               </>
             ) : null}
             {index > 0 && activeView === 1 && (
@@ -464,6 +372,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
               index={index}
               validateForm={validateForm}
               operationSecurity={operationSecurity}
+              view={security.view}
             />
 
             <SharePercent
@@ -472,6 +381,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
               index={index}
               validateForm={validateForm}
               operationSecurity={operationSecurity}
+              view={security.view}
             />
 
             <GrossPremiumPerShareAmount
@@ -480,6 +390,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
               validateForm={validateForm}
               index={index}
               operationSecurity={operationSecurity}
+              view={security.view}
             />
 
             {isGross && (
@@ -488,6 +399,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
                 errorMessage={errorsSecurity.reinsuranceBrokerage}
                 index={index}
                 validateForm={validateForm}
+                view={security.view}
               />
             )}
 
@@ -496,6 +408,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
               errorMessage={errorsSecurity.dynamicCommission}
               index={index}
               validateForm={validateForm}
+              view={security.view}
             />
           </Grid>
           {/* Col-2 */}
@@ -511,6 +424,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
               setIsGross={setIsGross}
               setFrontingFeeEnabled={setFrontingFeeEnabled}
               setBinders={setBinders}
+              view={security.view}
             />
 
             {/* // Todo - New Component */}
@@ -519,6 +433,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
               errorMessage={errorsSecurity.shareAmount}
               index={index}
               validateForm={validateForm}
+              view={security.view}
             />
 
             <PremiumPerShareAmount
@@ -527,6 +442,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
               index={index}
               validateForm={validateForm}
               operationSecurity={operationSecurity}
+              view={security.view}
             />
 
             {isGross && (
@@ -536,6 +452,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
                 index={index}
                 validateForm={validateForm}
                 operationSecurity={operationSecurity}
+                view={security.view}
               />
             )}
 
@@ -545,6 +462,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
               index={index}
               validateForm={validateForm}
               operationSecurity={operationSecurity}
+              view={security.view}
             />
           </Grid>
           {/* Col-3 */}
@@ -553,13 +471,15 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
               value={security.idCReinsuranceCompanyBinder ? String(security.idCReinsuranceCompanyBinder?.id) : ''}
               binders={binders}
               index={index}
+              view={security.view}
             />
 
-            <Consecutive value={0} />
+            <Consecutive value={0} view={security.view} />
 
             <NetReinsurancePremium
               value={security.netReinsurancePremium}
               errorMessage={errorsSecurity.netReinsurancePremium}
+              view={security.view}
             />
 
             {isShowRetroCedant ? (
@@ -571,6 +491,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
                   validateForm={validateForm}
                   retroCedants={retroCedants}
                   setIdRetroCedant={setIdRetroCedant}
+                  view={security.view}
                 />
                 <SelectRetroCedantContact
                   value={security.idCRetroCedantContact?.id ? String(security.idCRetroCedantContact?.id) : ''}
@@ -578,15 +499,16 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
                   index={index}
                   validateForm={validateForm}
                   retroCedantContacts={retroCedantContacts}
+                  view={security.view}
                 />
               </>
             ) : null}
 
             {frontingFeeEnabled && security.idCRetroCedantContact?.id && (
               <>
-                <ContactEmail value={security.idCRetroCedantContact?.email} />
+                <ContactEmail value={security.idCRetroCedantContact?.email} view={security.view} />
 
-                <ContactPhone value={security.idCRetroCedantContact?.phone} />
+                <ContactPhone value={security.idCRetroCedantContact?.phone} view={security.view} />
 
                 <ContactCountry
                   value={
@@ -595,6 +517,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
                       : security.idCRetroCedantContact.idCCountry ?? ''
                   }
                   countries={countries}
+                  view={security.view}
                 />
               </>
             )}
@@ -617,6 +540,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
                 isChecked={isTaxesEnabled}
                 setIsTaxesEnabled={setIsTaxesEnabled}
                 fieldRef={forTaxes}
+                view={security.view}
               />
 
               <TaxesPercent
@@ -627,6 +551,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
                 operationSecurity={operationSecurity}
                 isDisabled={!isTaxesEnabled}
                 fieldRef={forTaxes}
+                view={security.view}
               />
 
               <TaxesAmount
@@ -637,6 +562,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
                 operationSecurity={operationSecurity}
                 isDisabled={!isTaxesEnabled}
                 fieldRef={forTaxes}
+                view={security.view}
               />
             </Grid>
           ) : null}
@@ -650,6 +576,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
                 isChecked={frontingFeeEnabled}
                 setFrontingFeeEnabled={setFrontingFeeEnabled}
                 fieldRef={forFrontingFee}
+                view={security.view}
               />
 
               <FrontingFeePercent
@@ -660,6 +587,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
                 operationSecurity={operationSecurity}
                 isDisabled={!frontingFeeEnabled}
                 fieldRef={forFrontingFee}
+                view={security.view}
               />
 
               <FrontingFeeAmount
@@ -670,14 +598,20 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
                 operationSecurity={operationSecurity}
                 isDisabled={!frontingFeeEnabled}
                 fieldRef={forFrontingFee}
+                view={security.view}
               />
             </Grid>
           ) : null}
 
-          <ListDiscounts formIndex={index} operationSecurity={operationSecurity} validateForm={validateForm} />
+          <ListDiscounts
+            view={security.view}
+            formIndex={index}
+            operationSecurity={operationSecurity}
+            validateForm={validateForm}
+          />
         </Grid>
 
-        <ButtonAddDiscount formIndex={index} />
+        <ButtonAddDiscount formIndex={index} view={security.view} />
       </div>
       <DialogCustomAlpex
         openDialog={openDialog}

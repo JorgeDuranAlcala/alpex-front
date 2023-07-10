@@ -19,7 +19,8 @@ export const SelectRetroCedant = ({
   errorMessage,
   retroCedants,
   validateForm,
-  setIdRetroCedant
+  setIdRetroCedant,
+  view
 }: SelectRetroCedantProps) => {
   const { activeErros, securities, setSecurities } = useContext(SecurityContext)
 
@@ -81,7 +82,7 @@ export const SelectRetroCedant = ({
         value={value.toString()}
         onChange={handleChangeRetroCedant}
         labelId='Retrocedant'
-        disabled={securities[index].view === 2}
+        disabled={view === 2}
       >
         {retroCedants?.map(cedant => (
           <MenuItem key={cedant.name} value={cedant.id}>

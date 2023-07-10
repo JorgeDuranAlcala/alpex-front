@@ -20,7 +20,8 @@ export const GrossOrNetPremiumAt100 = ({
   value,
   errorMessage,
   validateForm,
-  operationSecurity
+  operationSecurity,
+  view
 }: GrossOrNetPremiumAt100Props) => {
   const { discountsList, updateAllDiscounts } = useContext(DiscountsContext)
 
@@ -97,7 +98,7 @@ export const GrossOrNetPremiumAt100 = ({
       <NumericFormat
         fullWidth
         autoFocus
-        label={isGross ? 'Gross premium at %100' : 'Net premium at %100'}
+        label={isGross ? `Gross premium at %100 ` : 'Net premium at %100'}
         value={value}
         onValueChange={value => {
           handleChangeBaseAmount(Number(value.floatValue))
@@ -107,7 +108,7 @@ export const GrossOrNetPremiumAt100 = ({
         customInput={TextField}
         decimalScale={2}
         thousandSeparator=','
-        disabled={securities[index].view === 2}
+        disabled={view === 2}
       />
 
       <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>{activeErros && errorMessage}</FormHelperText>

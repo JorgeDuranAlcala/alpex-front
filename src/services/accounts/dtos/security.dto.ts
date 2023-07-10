@@ -137,12 +137,8 @@ export type SecurityContextDto = {
   companiesSelect: number[]
   setSecurities: React.Dispatch<React.SetStateAction<SecurityDto[]>>
   setAllErrors: React.Dispatch<React.SetStateAction<boolean[]>>
-  calculateSecurities: (
-    securities: SecurityDto[],
-    securitiesOrigina?: SecurityDto[],
-    isFirstTime?: boolean,
-    reCalculate?: boolean
-  ) => void
+  setCurrentView: React.Dispatch<React.SetStateAction<number>>
+  calculateSecurities: (securities: SecurityDto[], view?: number, isFirstTime?: boolean) => void
 }
 export type SecurityProps = {
   onStepChange: (step: number) => void
