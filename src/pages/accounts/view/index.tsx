@@ -44,19 +44,32 @@ const NewAccount = () => {
   const [isNewAccount, setIsNewAccount] = useState<boolean>(true)
   const [activeStep, setActiveStep] = useState(1)
 
-  //! Este estado se encarga de activar el endorsement del componente
+  //!: Este estado se encarga de activar el endorsement del componente
   const [activeEndorsement, setActiveEndorsement] = useState(false)
+
+  //!:  Este estado se encarga de activar el editar info en los forms
+  const [editInfo, setEditInfo] = useState(false)
+
+  //Todo:  Une a los dos active inputs
+  const [activeIntpus, setActiveInputs] = useState({ basic: false, allInfo: false })
 
   //* Este estado se encarga de definir el tipo de cuenta
   const [typeofAccount, setTypeofAccount] = useState('')
 
-  // const [sidebar, setSidebar] = useState<boolean>(false)
-  // const handleSidebarMenu = () => {
-  //   setSidebar(!sidebar)
-  //   console.log('Hola')
-  // }
-
-  // console.log({ account })
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const activeInputs = () => {
+    console.log('aquí se cambia', typeofAccount)
+    if (typeofAccount !== 'bound') {
+      // if (editInfo) {
+      setActiveInputs({ ...activeIntpus, allInfo: true, basic: true })
+    }
+    if (activeEndorsement) {
+      setActiveInputs({ ...activeIntpus, basic: true })
+    }
+    if (typeofAccount === 'bound' && !activeEndorsement) {
+      setActiveInputs({ ...activeIntpus, basic: false })
+    }
+  }
 
   const handleStepChange = (step: number) => {
     setActiveStep(step)
@@ -72,6 +85,7 @@ const NewAccount = () => {
       case 1:
         return (
           <Information
+            editInfo={activeIntpus}
             activeEndorsement={activeEndorsement}
             typeofAccount={typeofAccount}
             onStepChange={handleStepChange}
@@ -113,14 +127,27 @@ const NewAccount = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, router.events])
 
-  console.log('el endorsement se activó: ', activeEndorsement)
+  // console.log('el endorsement se activó: ', activeEndorsement, editInfo)
+  useEffect(() => {
+    activeInputs()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editInfo, activeEndorsement, typeofAccount])
 
   return (
     <Grid className='new-account' item xs={12}>
       {activeStep == 1 && isNewAccount ? (
-        <FormHeader isNewAccount setTypeofAccount={setTypeofAccount} setActiveEndorsement={setActiveEndorsement} />
+        <FormHeader
+          isNewAccount
+          setTypeofAccount={setTypeofAccount}
+          setActiveEndorsement={setActiveEndorsement}
+          setEditInfo={setEditInfo}
+        />
       ) : (
-        <FormHeader setTypeofAccount={setTypeofAccount} setActiveEndorsement={setActiveEndorsement} />
+        <FormHeader
+          setTypeofAccount={setTypeofAccount}
+          setActiveEndorsement={setActiveEndorsement}
+          setEditInfo={setEditInfo}
+        />
       )}
       <div style={{ display: 'flex', flexDirection: 'row', gap: '16px' }}>
         <Card>

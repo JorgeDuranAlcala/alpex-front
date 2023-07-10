@@ -1,9 +1,10 @@
-import { SecurityDto } from '@/services/accounts/dtos/security.dto'
+import { FormInformation, SecurityDto } from '@/services/accounts/dtos/security.dto'
 import { createContext } from 'react'
 
 export interface CreateSecondViewProps {
   securities: SecurityDto[]
-  calculateSecurities: (securities: SecurityDto[], securityOriginal?: SecurityDto[]) => void
+  calculateSecurities: (securities: SecurityDto[], view?: number) => void
+  information: FormInformation
 }
 
 // export interface DeleteSecondViewProps extends CreateSecondViewProps {
@@ -28,8 +29,6 @@ interface SecondViewContextProps {
   closeModalSecondView: () => void
   openModalUndo: () => void
   closeModalUndo: () => void
-  securitesOriginal: SecurityDto[]
-  createSecuritiesOriginal: (security: SecurityDto) => void
 }
 
 export const SecondViewContext = createContext<SecondViewContextProps>({} as SecondViewContextProps)

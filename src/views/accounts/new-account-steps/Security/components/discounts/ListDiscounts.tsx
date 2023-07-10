@@ -11,10 +11,11 @@ import { DiscountsContext } from './DiscountsContext'
 interface ListDiscountsProps {
   formIndex: number
   operationSecurity: CalculateSecurity
+  view: number
 
   validateForm: (securityParam: SecurityDto) => void
 }
-export const ListDiscounts = ({ formIndex, operationSecurity, validateForm }: ListDiscountsProps) => {
+export const ListDiscounts = ({ formIndex, operationSecurity, validateForm, view }: ListDiscountsProps) => {
   const {
     firstTimeSecurities,
     securities,
@@ -78,7 +79,7 @@ export const ListDiscounts = ({ formIndex, operationSecurity, validateForm }: Li
         <Grid item xs={12} sm={4} key={`discount_${formIndex}_${index}`}>
           <Box sx={{ mb: 2, display: 'flex', alignItems: 'center', gap: '8px' }}>
             <Typography>Discount {index + 1}</Typography>
-            <IconButton disabled={securities[formIndex].view === 2} onClick={() => removeDiscountByIndex(index)}>
+            <IconButton disabled={view === 2} onClick={() => removeDiscountByIndex(index)}>
               <Icon icon='clarity:remove-line' />
             </IconButton>
           </Box>
@@ -90,6 +91,7 @@ export const ListDiscounts = ({ formIndex, operationSecurity, validateForm }: Li
             value={discountItem.percentage}
             validateForm={() => null}
             operationSecurity={operationSecurity}
+            view={view}
           />
           <DiscountAmount
             index={formIndex}
@@ -97,6 +99,7 @@ export const ListDiscounts = ({ formIndex, operationSecurity, validateForm }: Li
             value={discountItem.amount}
             validateForm={() => null}
             operationSecurity={operationSecurity}
+            view={view}
           />
         </Grid>
       ))}

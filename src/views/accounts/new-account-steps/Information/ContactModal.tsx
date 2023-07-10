@@ -101,6 +101,8 @@ export const ContactModal = ({ id, service, updateContacts, setIdCreated, disabl
               brokerContact: contactBroker.id
             }))
             setStartValidations(false)
+            setError(true)
+            updateContacts(id)
           })
           .catch(err => {
             console.error('ERROR-SERVICE [saveBrokerContact]', err)
@@ -122,6 +124,8 @@ export const ContactModal = ({ id, service, updateContacts, setIdCreated, disabl
               cedantContact: contactCedant.id
             }))
             setStartValidations(false)
+            setError(true)
+            updateContacts(id)
           })
           .catch(err => {
             console.error('ERROR-SERVICE [saveCedantContact]', err)
@@ -129,8 +133,6 @@ export const ContactModal = ({ id, service, updateContacts, setIdCreated, disabl
 
         break
     }
-
-    await updateContacts(id)
     closeModal()
   }
 
@@ -158,11 +160,12 @@ export const ContactModal = ({ id, service, updateContacts, setIdCreated, disabl
 
   const validateForm = () => {
     const nameErrorTemp = !expresions.name.test(contactData.name)
-    const phoneErrorTemp = !expresions.phone.test(contactData.phone)
+    const phoneErrorTemp = contactData.phone === undefined || contactData.phone === ''
     const countryErrorTemp = contactData.country === undefined || contactData.country === ''
     const emailErrorTemp = !expresions.email.test(contactData.email)
 
     const errorTemp = nameErrorTemp || emailErrorTemp || phoneErrorTemp || countryErrorTemp
+
 
     setError(errorTemp)
     setEmptyForm(errorTemp)
@@ -170,6 +173,7 @@ export const ContactModal = ({ id, service, updateContacts, setIdCreated, disabl
     setEmailError(emailErrorTemp)
     setPhoneError(phoneErrorTemp)
     setCountryError(countryErrorTemp)
+    setStartValidations(false)
   }
 
   useEffect(() => {
@@ -181,7 +185,7 @@ export const ContactModal = ({ id, service, updateContacts, setIdCreated, disabl
   useEffect(() => {
     !error && saveContact()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [error])
+  }, [error, setError])
 
   return (
     <>
@@ -244,7 +248,7 @@ export const ContactModal = ({ id, service, updateContacts, setIdCreated, disabl
                 <FormHelperText sx={{ color: 'error.main' }}>
                   {contactData.phone == '' || contactData.phone == undefined
                     ? 'This field is required'
-                    : 'Enter a valid phone'}
+                    : ''}
                 </FormHelperText>
               )}
             </FormControl>

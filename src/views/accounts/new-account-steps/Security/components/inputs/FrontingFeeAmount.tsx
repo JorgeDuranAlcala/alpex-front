@@ -21,7 +21,8 @@ export const FrontingFeeAmount = ({
   errorMessage,
   validateForm,
   operationSecurity,
-  fieldRef
+  fieldRef,
+  view
 }: FrontingFeeAmountProps) => {
   const { activeErros, securities, calculateSecurities } = useContext(SecurityContext)
 
@@ -52,9 +53,8 @@ export const FrontingFeeAmount = ({
         }}
         prefix={'$'}
         customInput={TextField}
-        decimalScale={2}
         thousandSeparator=','
-        disabled={securities[index].view === 2 || isDisabled}
+        disabled={view === 2 || isDisabled}
       />
       <FormHelperText sx={{ color: 'error.main', minHeight: '25px' }}>{activeErros && errorMessage}</FormHelperText>
     </FormControl>

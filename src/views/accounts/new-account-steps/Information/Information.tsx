@@ -44,6 +44,7 @@ type InformationProps = {
   onIsNewAccountChange: (status: boolean) => void
   typeofAccount?: string
   activeEndorsement?: boolean
+  editInfo?: object
 }
 
 export interface BasicInfoInterface {
@@ -97,7 +98,8 @@ const Information: React.FC<InformationProps> = ({
   onStepChange,
   onIsNewAccountChange,
   typeofAccount,
-  activeEndorsement
+  activeEndorsement,
+  editInfo
 }) => {
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
   const [subjectState] = useState<Subject<void>>(new Subject())
@@ -769,7 +771,7 @@ const Information: React.FC<InformationProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [validationCount, validatedForms])
 
-  console.log('Esta cuenta es de tipo: ', typeofAccount)
+  console.log('Esta cuenta es de tipo: ', editInfo)
 
   return (
     <>
@@ -780,6 +782,8 @@ const Information: React.FC<InformationProps> = ({
         <form noValidate autoComplete='on' onSubmit={handleNextStep}>
           <div className='section'>
             <BasicInfo
+              editInfo={editInfo}
+              activeEndorsement={activeEndorsement}
               basicInfo={basicInfo}
               setBasicInfo={setBasicInfo}
               makeValidations={makeValidations}

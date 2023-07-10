@@ -63,7 +63,13 @@ const NewAccount = () => {
   const StepForm = ({ step }: { step: number }) => {
     switch (step) {
       case 1:
-        return <Information onStepChange={handleStepChange} onIsNewAccountChange={handleIsNewAccountChange} />
+        return (
+          <Information
+            editInfo={{ basic: true, allInfo: true }}
+            onStepChange={handleStepChange}
+            onIsNewAccountChange={handleIsNewAccountChange}
+          />
+        )
       case 2:
         return <Security onStepChange={handleStepChange} />
       case 3:

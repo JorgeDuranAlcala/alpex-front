@@ -23,7 +23,7 @@ interface BinderProps extends Omit<ISecurityInputProps, 'index' | 'errorMessage'
   index: number
 }
 
-export const Binder = ({ value, binders, index }: BinderProps) => {
+export const Binder = ({ value, binders, index, view }: BinderProps) => {
   const { securities, setSecurities } = useContext(SecurityContext)
   const [selectedBinder, setSelectedBinder] = useState<ReinsuranceCompanyBinderDto | null>(null)
 
@@ -59,7 +59,7 @@ export const Binder = ({ value, binders, index }: BinderProps) => {
         label='Binder'
         value={selectedBinder && binders.length > 0 ? selectedBinder.id : value.toString()}
         labelId='binder'
-        disabled={binders.length === 0 || securities[index].view === 2}
+        disabled={binders.length === 0 || view === 2}
         onChange={e => handleOnChangeBinder(Number(e.target.value))}
       >
         {binders?.map(binder => (
