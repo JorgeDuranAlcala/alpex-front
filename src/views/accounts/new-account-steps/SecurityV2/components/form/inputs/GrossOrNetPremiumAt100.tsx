@@ -4,7 +4,7 @@ import { NumericFormat } from 'react-number-format'
 import * as yup from 'yup'
 
 import { SecurityDto } from '@/services/accounts/dtos/security.dto'
-import { useAppDispatch } from '@/store'
+import { useAppDispatch, useAppSelector } from '@/store'
 import { SecondViewContext } from '../../../context/secondView/SecondViewContext'
 import { ISecurityInputProps } from '../../../interfaces/ISecurityInputProps.interface'
 import { updateSecuritiesAtIndex } from '../../../store/securitySlice'
@@ -30,11 +30,14 @@ export const GrossOrNetPremiumAt100 = ({
 
   // const { discountsList, updateAllDiscounts } = useContext(DiscountsContext)
 
-
+  const { hasSecondView } = useAppSelector(state => state.securitySlice);
   const { $inputRef, openModalSecondView, isOpenModal, isOpenModalUndo } = useContext(SecondViewContext)
 
   const handleClick = (e: any) => {
-    if (activeView === 0) {
+    if (activeView === 1 && !hasSecondView) {
+      // console.log(e);
+      // console.log($inputRef)
+
       $inputRef[index] = e.target
       openModalSecondView()
     }
@@ -67,7 +70,7 @@ export const GrossOrNetPremiumAt100 = ({
     if (!isOpenModal) {
       if (!$inputRef) return
 
-      if (activeView !== 0) {
+      if (activeView !== 1) {
         setTimeout(() => {
           // console.log(index, 'focus', $inputRef.current || 'null');
 
@@ -87,7 +90,7 @@ export const GrossOrNetPremiumAt100 = ({
     if (!isOpenModalUndo) {
       if (!$inputRef) return
 
-      if (activeView === 0) {
+      if (activeView === 1) {
         setTimeout(() => {
           $inputRef[index]?.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' })
         }, 300)

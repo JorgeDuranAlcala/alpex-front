@@ -1,9 +1,9 @@
 import { useAppDispatch } from "@/store";
 import { ReactNode, useContext, useState } from "react";
 import UserThemeOptions from 'src/layouts/UserThemeOptions';
-import { useLoadAndSaveSecurities } from "../../hooks/useLoadAndSaveSecurities";
 import { Security, createNewSecurity } from "../../store/securitySlice";
 import { FormValidationsContext } from "../formValidations/FormValidationsContext";
+import { LoadAndSaveSecuritiesContext } from "../loadAndSaveSecurities/LoadAndSaveSecuritiesContext";
 import { LayoutSecurityContext } from "./LayoutSecurityContext";
 
 interface NextStep {
@@ -19,7 +19,7 @@ export const LayoutSecurityProvider = ({ children }: { children: ReactNode }) =>
   const dispatch = useAppDispatch();
 
   const { allErrors, setActiveErrors } = useContext(FormValidationsContext);
-  const { saveData } = useLoadAndSaveSecurities();
+  const { saveData } = useContext(LoadAndSaveSecuritiesContext);
 
   const [nextStep, setNextStep] = useState<NextStep>({
     isOpenModal: false,

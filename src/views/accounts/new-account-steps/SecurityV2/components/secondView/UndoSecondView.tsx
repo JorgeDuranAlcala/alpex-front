@@ -30,8 +30,16 @@ const AlertContainer = styled(Box)(({ theme }) => ({
   }
 }))
 
-export const UndoSecondView = () => {
+interface UndoSecondViewProps {
+  activeView: number
+  hasSecondView: boolean
+}
+
+export const UndoSecondView = ({ activeView, hasSecondView }: UndoSecondViewProps) => {
   const { openModalUndo } = useContext(SecondViewContext)
+
+  if (!hasSecondView) return null
+  if (activeView === 1) return null
 
   const handleOpenModalUndo = () => {
     openModalUndo()

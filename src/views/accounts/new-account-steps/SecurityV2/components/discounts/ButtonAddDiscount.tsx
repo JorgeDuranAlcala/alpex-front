@@ -4,10 +4,10 @@ import { useContext } from 'react'
 import CoreIcon from 'src/@core/components/icon'
 import { DiscountsContext } from '../../context/discounts/DiscountsContext'
 
-export const ButtonAddDiscount = ({ formIndex, isDisabled }: { formIndex: number, isDisabled: boolean }) => {
+export const ButtonAddDiscount = ({ isDisabled }: { formIndex: number, isDisabled: boolean }) => {
   const { addDiscount } = useContext(DiscountsContext)
 
-  console.log(formIndex)
+
 
   return (
     <Grid

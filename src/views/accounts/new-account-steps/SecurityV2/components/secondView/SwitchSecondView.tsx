@@ -6,10 +6,13 @@ import { SecondViewContext } from '../../context/secondView/SecondViewContext';
 
 interface SwitchSecondViewProps {
   activeView: number;
+  hasSecondView: boolean;
 
 }
-export const SwitchSecondView = ({ activeView }: SwitchSecondViewProps) => {
+export const SwitchSecondView = ({ activeView, hasSecondView }: SwitchSecondViewProps) => {
   const { handleSwitchView } = useContext(SecondViewContext)
+
+  if (!hasSecondView) return null;
 
   const onHandleSwitchView = () => {
     handleSwitchView({ toView: activeView === 1 ? 2 : 1 })

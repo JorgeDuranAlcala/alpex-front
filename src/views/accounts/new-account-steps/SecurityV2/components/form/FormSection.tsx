@@ -6,6 +6,7 @@ import { FormValidationsContext } from '../../context/formValidations/FormValida
 import { Security } from '../../store/securitySlice';
 
 import { useAppSelector } from '@/store';
+import { initialErrorValues } from '../../context/formValidations/FormValidationsProvider';
 import { CalculateSecurity } from '../../utils/calculates-securities';
 import { ButtonAddDiscount } from '../discounts/ButtonAddDiscount';
 import { DiscountsProvider } from '../discounts/DiscountsProvider';
@@ -39,10 +40,13 @@ export const FormSection = ({ security, index, children }: FormSectionProps) => 
     updateAllErrors
   } = useContext(FormValidationsContext)
 
+  // console.log('errorsSecurity', errorsSecurity);
 
   useEffect(() => {
-    validateForm({ securityParam: security, index })
-  }, [index, security, validateForm])
+    validateForm({ securityParam: security, index });
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [index, security])
 
   return (
     <FormSectionProvider>
@@ -67,7 +71,7 @@ export const FormSection = ({ security, index, children }: FormSectionProps) => 
               index={index}
               security={security}
               isActiveErrors={isActiveErrors}
-              errorsSecurity={errorsSecurity[index]}
+              errorsSecurity={errorsSecurity[index] || initialErrorValues}
             />
           </Grid>
 
@@ -77,7 +81,7 @@ export const FormSection = ({ security, index, children }: FormSectionProps) => 
               index={index}
               security={security}
               isActiveErrors={isActiveErrors}
-              errorsSecurity={errorsSecurity[index]}
+              errorsSecurity={errorsSecurity[index] || initialErrorValues}
             />
           </Grid>
 
@@ -87,7 +91,7 @@ export const FormSection = ({ security, index, children }: FormSectionProps) => 
               index={index}
               security={security}
               isActiveErrors={isActiveErrors}
-              errorsSecurity={errorsSecurity[index]}
+              errorsSecurity={errorsSecurity[index] || initialErrorValues}
             />
           </Grid>
 
@@ -106,7 +110,7 @@ export const FormSection = ({ security, index, children }: FormSectionProps) => 
                 index={index}
                 security={security}
                 isActiveErrors={isActiveErrors}
-                errorsSecurity={errorsSecurity[index]}
+                errorsSecurity={errorsSecurity[index] || initialErrorValues}
               />
             </Grid>
           ) : null}
@@ -117,7 +121,7 @@ export const FormSection = ({ security, index, children }: FormSectionProps) => 
                 index={index}
                 security={security}
                 isActiveErrors={isActiveErrors}
-                errorsSecurity={errorsSecurity[index]}
+                errorsSecurity={errorsSecurity[index] || initialErrorValues}
               />
             </Grid>
           ) : null}
@@ -141,6 +145,7 @@ function ColumnInputs_1({ index, security, isActiveErrors, errorsSecurity }: Col
         activeView={security.view}
         index={index}
         isActiveErrors={isActiveErrors}
+        isDisabled={security.view === 2}
       />
 
       <SharePercent
@@ -186,7 +191,7 @@ function ColumnInputs_2({ index, security, isActiveErrors, errorsSecurity }: Col
 
   const operationSecurity: CalculateSecurity = new CalculateSecurity()
     .setInformation(information)
-    .setSecurity(security)
+    .setSecurity({ ...security })
 
   return (
     <>
@@ -301,7 +306,7 @@ function ColumnTaxes({ index, security, isActiveErrors, errorsSecurity }: Column
 
   const operationSecurity: CalculateSecurity = new CalculateSecurity()
     .setInformation(information)
-    .setSecurity(security)
+    .setSecurity({ ...security })
 
   return (
     <>
@@ -339,7 +344,7 @@ function ColumnFrontingFee({ index, security, isActiveErrors, errorsSecurity }: 
 
   const operationSecurity: CalculateSecurity = new CalculateSecurity()
     .setInformation(information)
-    .setSecurity(security)
+    .setSecurity({ ...security })
 
   return (
     <>

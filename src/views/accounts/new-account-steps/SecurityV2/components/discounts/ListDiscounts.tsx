@@ -21,7 +21,7 @@ export const ListDiscounts = ({ formIndex, }: ListDiscountsProps) => {
 
   const operationSecurity: CalculateSecurity = new CalculateSecurity()
     .setInformation(information)
-    .setSecurity(securities[formIndex])
+    .setSecurity({ ...securities[formIndex] })
 
   const { discountsList, removeDiscountByIndex, updateAllDiscounts } = useContext(DiscountsContext)
 

@@ -2,21 +2,30 @@ import { ResponseGetAccount, useGetAccountById } from "@/hooks/accounts/forms";
 import { useAddSecurityTotal, useUpdateSecurityTotalById } from "@/hooks/accounts/securityTotal";
 import { FormInformation, SecurityDto } from "@/services/accounts/dtos/security.dto";
 import { useAppDispatch, useAppSelector } from "@/store";
-import { setAlertBadgeSecurity } from "../store/alertBadgeSecuritySlice";
+import { setAlertBadgeSecurity } from "../../store/alertBadgeSecuritySlice";
 
 import { useAddSecurities } from "@/hooks/accounts/security";
-import { useEffect, useRef } from "react";
+import { ReactNode, useEffect, useRef } from "react";
 import Icon from 'src/@core/components/icon';
-import { SecurityMapper } from "../mappers/SecurityForm.mapper";
-import type { Information, Security } from "../store/securitySlice";
-import { updateAllSecurities, updateInformation } from "../store/securitySlice";
+import { useGetDatas } from "../../hooks/useGetDatas";
+import { SecurityMapper } from "../../mappers/SecurityForm.mapper";
+import type { Information, Security } from "../../store/securitySlice";
+import { updateAllSecurities, updateAllSecuritiesAndAllFormData, updateInformation } from "../../store/securitySlice";
+import { LoadAndSaveSecuritiesContext } from './LoadAndSaveSecuritiesContext';
 
 
-export const useLoadAndSaveSecurities = () => {
+export const LoadAndSaveSecuritiesProvider = ({ children }: { children: ReactNode }) => {
 
   const dispatch = useAppDispatch();
   const accountData = useAppSelector(state => state.accounts);
   const { allFormData, information, securities, } = useAppSelector(state => state.securitySlice)
+
+  // * + + + + + INIT ON GET DATAS + + + + +
+  // * Obtiene la data de los catálogos
+  // * de countries, retrocedants y reinsuranceCompanies
+  useGetDatas();
+
+  // * + + + + + END ON GET DATAS + + + + +
 
   const { account, setAccountId, getAccountById, accountId } = useGetAccountById()
   const { saveSecurityTotal } = useAddSecurityTotal()
@@ -26,9 +35,10 @@ export const useLoadAndSaveSecurities = () => {
   const isLoadedInformation = useRef(false);
   const isLoadedSecurities = useRef(false);
 
-  console.log(accountData)
   const saveData = async () => {
     // const isError = allErrors.find(error => error)
+
+
 
     // if (!isError) {
     const update: Partial<SecurityDto>[] = []
@@ -105,17 +115,22 @@ export const useLoadAndSaveSecurities = () => {
 
           if (accountSecurities && information) {
 
-            // calculateSecurities(accountSecurities, [], true)
-            dispatch(updateAllSecurities({ securities: accountSecurities as Security[] }))
 
-            // accountById.securitiesTotal &&
-            //   setAllFormData({
-            //     ...allFormData,
-            //     recievedNetPremium: Number(accountById.securitiesTotal[0].receivedNetPremium),
-            //     distribuitedNetPremium: Number(accountById.securitiesTotal[0].distributedNetPremium),
-            //     diference: Number(accountById.securitiesTotal[0].difference),
-            //     id: Number(accountById.securitiesTotal[0].id)
-            //   })
+            if (accountById.securitiesTotal) {
+              dispatch(updateAllSecuritiesAndAllFormData({
+                securities: accountSecurities as Security[],
+                allFormData: {
+                  ...allFormData,
+                  recievedNetPremium: Number(accountById.securitiesTotal[0].receivedNetPremium),
+                  distribuitedNetPremium: Number(accountById.securitiesTotal[0].distributedNetPremium),
+                  diference: Number(accountById.securitiesTotal[0].difference),
+                  id: Number(accountById.securitiesTotal[0].id)
+                }
+              }))
+            } else {
+              dispatch(updateAllSecurities({ securities: accountSecurities as Security[] }))
+
+            }
           }
 
           update.length === 0 &&
@@ -156,39 +171,50 @@ export const useLoadAndSaveSecurities = () => {
   useEffect(() => {
 
     if (isLoadedInformation.current) return;
+    console.log('LOAD INFORMATION ACCOUNT DATA')
 
     if (accountData.formsData.form1.id) {
       const idAccountCache = Number(localStorage.getItem('idAccount'))
       setAccountId(accountData.formsData.form1.id || idAccountCache)
       const data = accountData.formsData.form1.placementStructure as FormInformation
+
+      // console.log('data', data)
+      // debugger;
       dispatch(updateInformation(data as Information))
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [accountData.formsData.form1.id])
+  }, [accountData.formsData?.form1?.id])
 
   useEffect(() => {
 
     if (isLoadedSecurities.current) return;
 
     if (account && information) {
-      // calculateSecurities(account.securities, [], true)
 
-      // account.securitiesTotal.length > 0 &&
-      //   setAllFormData({
-      //     ...allFormData,
-      //     recievedNetPremium: Number(account.securitiesTotal[0].receivedNetPremium),
-      //     distribuitedNetPremium: Number(account.securitiesTotal[0].distributedNetPremium),
-      //     diference: Number(account.securitiesTotal[0].difference),
-      //     id: Number(account.securitiesTotal[0].id)
-      //   })
-      dispatch(updateAllSecurities({ securities: account.securities as Security[] }))
+      if (account.securitiesTotal.length > 0) {
+        dispatch(updateAllSecuritiesAndAllFormData({
+          securities: account.securities as Security[],
+          allFormData: {
+            ...allFormData,
+            recievedNetPremium: Number(account.securitiesTotal[0].receivedNetPremium),
+            distribuitedNetPremium: Number(account.securitiesTotal[0].distributedNetPremium),
+            diference: Number(account.securitiesTotal[0].difference),
+            id: Number(account.securitiesTotal[0].id)
+          }
+        }))
+      } else {
+
+        dispatch(updateAllSecurities({ securities: account.securities as Security[] }))
+      }
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [account, information])
 
-  return {
-    saveData
-  }
+  return (
+    <LoadAndSaveSecuritiesContext.Provider value={{ saveData }}>
+      {children}
+    </LoadAndSaveSecuritiesContext.Provider>
+  )
 
 }

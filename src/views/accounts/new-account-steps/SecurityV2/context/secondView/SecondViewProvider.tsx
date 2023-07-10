@@ -29,11 +29,11 @@ export const SecondViewProvider = ({ children }: { children: ReactNode }) => {
     setIsOpenModalUndo(false)
   }
   const handleCreateSecondView = () => {
-    dispatch(createSecondView)
+    dispatch(createSecondView())
   }
 
   const handleDeleteSecondView = () => {
-    dispatch(deleteSecondView)
+    dispatch(deleteSecondView())
   }
 
   const handleSwitchView = ({ toView }: SwitchViewProps) => {

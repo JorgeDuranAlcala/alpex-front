@@ -23,7 +23,7 @@ import {
 } from '../../components/form/inputs';
 import { Security } from "../../store/securitySlice";
 
-const initialErrorValues: errorsSecurity = {
+export const initialErrorValues: errorsSecurity = {
   netPremiumAt100: '',
   share: '',
   shareAmount: '',

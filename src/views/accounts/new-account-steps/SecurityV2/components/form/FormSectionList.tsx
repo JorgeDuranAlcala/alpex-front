@@ -28,6 +28,7 @@ interface FormSectionListProps {
 
 export function FormSectionList({ securities }: FormSectionListProps) {
 
+  // console.log('FormSectionList - render')
   const dispatch = useAppDispatch();
 
   const memoizedSecurities = useMemo(() => securities, [securities]);

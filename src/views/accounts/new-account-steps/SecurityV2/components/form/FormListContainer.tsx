@@ -1,28 +1,28 @@
 import { useAppSelector } from '@/store'
-import { SecondViewProvider } from '../../../Security/components/secondView/SecondViewProvider'
+
 import { ModalActivateSecondView } from '../secondView/ModalActivateSecondView'
 import { ModalUndoSecondView } from '../secondView/ModalUndoSecondView'
 import { SwitchSecondView } from '../secondView/SwitchSecondView'
 import { UndoSecondView } from '../secondView/UndoSecondView'
-import { FormSectionList } from './FormSectionList'
+import { MemoizedFormSectionList } from './FormSectionList'
 import { TotalInputs } from './TotalInputs'
 
 
 export const FormListContainer = () => {
 
-  const { securities, allFormData, activeView, } = useAppSelector(state => state.securitySlice)
+  const { securities, allFormData, activeView, hasSecondView } = useAppSelector(state => state.securitySlice)
+
+  // console.log('ListContainer - render')
 
   return (
-    <SecondViewProvider>
+    <>
       <ModalUndoSecondView />
       <ModalActivateSecondView />
-      {activeView === 2 ?
-        <UndoSecondView />
-        : null}
-      <SwitchSecondView activeView={activeView} />
+      <UndoSecondView activeView={activeView} hasSecondView={hasSecondView} />
+      <SwitchSecondView activeView={activeView} hasSecondView={hasSecondView} />
 
 
-      <FormSectionList securities={securities} />
+      <MemoizedFormSectionList securities={securities} />
 
 
       <TotalInputs
@@ -30,7 +30,7 @@ export const FormListContainer = () => {
         distribuitedNetPremium={allFormData.distribuitedNetPremium}
         difference={allFormData.diference}
       />
-    </SecondViewProvider>
+    </>
   )
 }
 

@@ -24,7 +24,7 @@ export class CalculateSecurity {
     this.security = security
 
     if (this.security.netPremiumAt100) {
-      this.security.netPremiumAt100 = this.security.netPremiumAt100
+      // this.security.netPremiumAt100 = this.security.netPremiumAt100
       this.baseAmount = this.security.netPremiumAt100
     } else
       this.baseAmount = this.security.isGross
