@@ -4,7 +4,7 @@ import {
 } from '@mui/material';
 
 
-import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interface';
+import { ISecurityInputProps } from '../../../interfaces/ISecurityInputProps.interface';
 
 // ! only if we want specific props
 // interface ConsecutiveProps extends ISecurityInputProps {

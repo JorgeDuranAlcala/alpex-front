@@ -3,30 +3,35 @@ import { useContext, useEffect } from 'react'
 import { NumericFormat } from 'react-number-format'
 import * as yup from 'yup'
 
-import { SecurityContext } from '../../SecurityView'
-import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interface'
-import { CalculateSecurity } from '../../utils/calculates-securities'
-import { DiscountsContext } from '../discounts/DiscountsContext'
-import { SecondViewContext } from '../secondView/SecondViewContext'
+import { SecurityDto } from '@/services/accounts/dtos/security.dto'
+import { useAppDispatch } from '@/store'
+import { SecondViewContext } from '../../../context/secondView/SecondViewContext'
+import { ISecurityInputProps } from '../../../interfaces/ISecurityInputProps.interface'
+import { updateSecuritiesAtIndex } from '../../../store/securitySlice'
+
+// import { DiscountsContext } from '../discounts/DiscountsContext'
 
 interface GrossOrNetPremiumAt100Props extends ISecurityInputProps {
-  isGross: boolean
-  operationSecurity: CalculateSecurity
+  isGross: boolean,
+  activeView: number,
 }
 
 export const GrossOrNetPremiumAt100 = ({
   index,
   isGross,
+  activeView,
   value,
   errorMessage,
-  validateForm,
-  operationSecurity
+  isDisabled,
+  isActiveErrors
 }: GrossOrNetPremiumAt100Props) => {
-  const { discountsList, updateAllDiscounts } = useContext(DiscountsContext)
 
-  const { activeErros, securities, calculateSecurities } = useContext(SecurityContext)
+  const dispatch = useAppDispatch();
 
-  const { activeView, $inputRef, openModalSecondView, isOpenModal, isOpenModalUndo } = useContext(SecondViewContext)
+  // const { discountsList, updateAllDiscounts } = useContext(DiscountsContext)
+
+
+  const { $inputRef, openModalSecondView, isOpenModal, isOpenModalUndo } = useContext(SecondViewContext)
 
   const handleClick = (e: any) => {
     if (activeView === 0) {
@@ -37,26 +42,26 @@ export const GrossOrNetPremiumAt100 = ({
 
   const handleChangeBaseAmount = (value: number) => {
     console.log('change gross or net at 100%')
-    const tempSecurities = [...securities]
-    tempSecurities[index] = {
-      ...tempSecurities[index],
-      netPremiumAt100: value
-    }
-    validateForm(tempSecurities[index])
-    calculateSecurities(tempSecurities)
+
+    dispatch(updateSecuritiesAtIndex({
+      index,
+      security: {
+        netPremiumAt100: value
+      } as SecurityDto
+    }))
   }
 
-  useEffect(() => {
-    const newDiscountsList = discountsList.map(discount => ({
-      ...discount,
-      percentage: discount.percentage,
-      amount: operationSecurity.getDiscountAmount(discount.amount)
-    }))
+  // useEffect(() => {
+  //   const newDiscountsList = discountsList.map(discount => ({
+  //     ...discount,
+  //     percentage: discount.percentage,
+  //     amount: operationSecurity.getDiscountAmount(discount.amount)
+  //   }))
 
-    updateAllDiscounts(newDiscountsList)
+  //   updateAllDiscounts(newDiscountsList)
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value])
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [value])
 
   useEffect(() => {
     if (!isOpenModal) {
@@ -107,10 +112,10 @@ export const GrossOrNetPremiumAt100 = ({
         customInput={TextField}
         decimalScale={2}
         thousandSeparator=','
-        disabled={securities[index].view === 2}
+        disabled={isDisabled}
       />
 
-      <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>{activeErros && errorMessage}</FormHelperText>
+      <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>{isActiveErrors && errorMessage}</FormHelperText>
     </FormControl>
   )
 }

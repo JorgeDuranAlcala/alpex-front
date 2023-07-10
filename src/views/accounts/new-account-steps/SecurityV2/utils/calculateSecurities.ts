@@ -1,5 +1,5 @@
-import { CalculateSecurity } from "../../Security/utils/calculates-securities";
 import { Information, Security } from "../store/securitySlice";
+import { CalculateSecurity } from "./calculates-securities";
 
 interface CalculateSecuritiesProps {
   securities: Security[];
@@ -92,7 +92,7 @@ export const calculateSecurities = ({ securities, information }: CalculateSecuri
       // * además se mostrarán los inputs de retrocedant
       security.isShowToggleFrontingFee = true;
       security.isFrontingFeeEnabled = information.frontingFee > 0;
-      security.isShowRetrocedant = true;
+      security.isShowRetroCedant = true;
 
       // * Si NO se ha modificado el input frontingFee por el usuario
       // * y si frontingFee NO contiene un valor o es igual a 0
@@ -116,7 +116,7 @@ export const calculateSecurities = ({ securities, information }: CalculateSecuri
       if (!security.isTouchedFrontingFee && security.frontingFee === 0) {
         security.isShowToggleFrontingFee = false;
         security.isFrontingFeeEnabled = false;
-        security.isShowRetrocedant = false;
+        security.isShowRetroCedant = false;
 
       }
 
@@ -128,7 +128,7 @@ export const calculateSecurities = ({ securities, information }: CalculateSecuri
       else if (!security.isTouchedFrontingFee && security.frontingFee > 0) {
         security.isShowToggleFrontingFee = true;
         security.isFrontingFeeEnabled = true;
-        security.isShowRetrocedant = true;
+        security.isShowRetroCedant = true;
       }
     }
 

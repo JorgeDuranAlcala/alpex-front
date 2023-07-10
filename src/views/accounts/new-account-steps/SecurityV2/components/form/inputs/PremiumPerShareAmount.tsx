@@ -3,35 +3,35 @@ import {
   FormHelperText,
   TextField
 } from '@mui/material';
-import { useContext } from 'react';
 import { NumericFormat } from 'react-number-format';
 import * as yup from 'yup';
 
-import { SecurityContext } from '../../SecurityView';
-import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interface';
-import { CalculateSecurity } from '../../utils/calculates-securities';
+import { SecurityDto } from '@/services/accounts/dtos/security.dto';
+import { useAppDispatch } from '@/store';
+import { ISecurityInputProps } from '../../../interfaces/ISecurityInputProps.interface';
+import { updateSecuritiesAtIndex } from '../../../store/securitySlice';
+import { CalculateSecurity } from '../../../utils/calculates-securities';
 
 interface PremiumPerShareAmountProps extends ISecurityInputProps {
   operationSecurity: CalculateSecurity
 }
 
+// type PremiumPerShareAmountProps = ISecurityInputProps;
 
-export const PremiumPerShareAmount = ({ index, value, errorMessage, validateForm, operationSecurity }: PremiumPerShareAmountProps) => {
 
-  const {
-    activeErros,
-    securities,
-    calculateSecurities
-  } = useContext(SecurityContext);
+export const PremiumPerShareAmount = ({ index, value, errorMessage, isActiveErrors, isDisabled, operationSecurity }: PremiumPerShareAmountProps) => {
+
+  const dispatch = useAppDispatch();
 
   const handleChangePremiumPerShareAmount = (value: number) => {
-    const tempSecurities = [...securities]
-    tempSecurities[index] = {
-      ...tempSecurities[index],
-      share: operationSecurity.getsharePercent(value)
-    }
-    validateForm(tempSecurities[index])
-    calculateSecurities(tempSecurities)
+
+    dispatch(updateSecuritiesAtIndex({
+      index,
+      security: {
+        share: operationSecurity.getsharePercent(value)
+      } as SecurityDto
+    }))
+
   }
 
   return (
@@ -47,10 +47,10 @@ export const PremiumPerShareAmount = ({ index, value, errorMessage, validateForm
         customInput={TextField}
         decimalScale={2}
         thousandSeparator=','
-        disabled={securities[index].view === 2}
+        disabled={isDisabled}
       />
       <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
-        {activeErros && errorMessage}
+        {isActiveErrors && errorMessage}
       </FormHelperText>
     </FormControl>
   )

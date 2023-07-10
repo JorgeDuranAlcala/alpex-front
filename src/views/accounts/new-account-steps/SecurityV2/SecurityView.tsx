@@ -6,6 +6,7 @@ import { LayoutSecurityProvider } from './context/layoutSecurity/LayoutSecurityP
 
 const SecurityView = ({ onStepChange }: SecurityProps) => {
 
+  console.log('SecurityView Vol 2');
 
   return (
     <FormValidationsProvider>

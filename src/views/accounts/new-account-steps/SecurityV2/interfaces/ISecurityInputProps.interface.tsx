@@ -5,4 +5,5 @@ export interface ISecurityInputProps {
   errorMessage: string;
   isActiveError?: boolean;
   isDisabled?: boolean;
+  isActiveErrors?: boolean;
 }

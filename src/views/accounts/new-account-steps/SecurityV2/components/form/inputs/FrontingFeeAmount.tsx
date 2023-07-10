@@ -1,17 +1,15 @@
 import { FormControl, FormHelperText, TextField } from '@mui/material'
-import { MutableRefObject, useContext } from 'react'
 import { NumericFormat } from 'react-number-format'
 import * as yup from 'yup'
 
-import { SecurityContext } from '../../SecurityView'
-import { IForField } from '../../hooks/useDataFirstTime'
-import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interface'
-import { CalculateSecurity } from '../../utils/calculates-securities'
+import { useAppDispatch } from '@/store'
+import { ISecurityInputProps } from '../../../interfaces/ISecurityInputProps.interface'
+import { Security, updateSecuritiesAtIndex } from '../../../store/securitySlice'
+import { CalculateSecurity } from '../../../utils/calculates-securities'
 
 interface FrontingFeeAmountProps extends ISecurityInputProps {
   operationSecurity: CalculateSecurity
   isDisabled: boolean
-  fieldRef: MutableRefObject<IForField>
 }
 
 export const FrontingFeeAmount = ({
@@ -19,26 +17,25 @@ export const FrontingFeeAmount = ({
   value,
   isDisabled,
   errorMessage,
-  validateForm,
   operationSecurity,
-  fieldRef
+  isActiveErrors,
 }: FrontingFeeAmountProps) => {
-  const { activeErros, securities, calculateSecurities } = useContext(SecurityContext)
+
+  const dispatch = useAppDispatch();
 
   const handleChangeFrontingFeeAmount = (value: number) => {
     // console.log(value)
-    if (fieldRef) {
-      fieldRef.current.isTouched = true
-    }
-    const tempSecurities = [...securities]
-    tempSecurities[index] = {
-      ...tempSecurities[index],
 
-      frontingFee: operationSecurity.getFrontingFeePercent(value),
-      frontingFeeAmount: value
-    }
-    validateForm(tempSecurities[index])
-    calculateSecurities(tempSecurities)
+
+    dispatch(updateSecuritiesAtIndex({
+      index,
+      security: {
+        frontingFee: operationSecurity.getFrontingFeePercent(value),
+        frontingFeeAmount: value,
+        isTouchedFrontingFee: true,
+        isTouchedFrontingFeeAmount: true,
+      } as Security
+    }))
   }
 
   return (
@@ -54,9 +51,9 @@ export const FrontingFeeAmount = ({
         customInput={TextField}
         decimalScale={2}
         thousandSeparator=','
-        disabled={securities[index].view === 2 || isDisabled}
+        disabled={isDisabled}
       />
-      <FormHelperText sx={{ color: 'error.main', minHeight: '25px' }}>{activeErros && errorMessage}</FormHelperText>
+      <FormHelperText sx={{ color: 'error.main', minHeight: '25px' }}>{isActiveErrors && errorMessage}</FormHelperText>
     </FormControl>
   )
 }

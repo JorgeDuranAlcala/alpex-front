@@ -3,17 +3,17 @@ import { useContext } from 'react'
 import { NumericFormat } from 'react-number-format'
 
 // import { SecurityContext } from '../../SecurityView';
-import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interface'
-import { DiscountsContext } from '../discounts/DiscountsContext'
+import { DiscountsContext } from '../../../context/discounts/DiscountsContext'
+import { ISecurityInputProps } from '../../../interfaces/ISecurityInputProps.interface'
 
 // ! only if we want specific props
 interface DiscountAmountProps extends Omit<ISecurityInputProps, 'errorMessage'> {
   discountIndex: number
 }
 
-export const DiscountAmount = ({ index, discountIndex, value }: DiscountAmountProps) => {
+export const DiscountAmount = ({ index, discountIndex, value, isDisabled }: DiscountAmountProps) => {
 
-
+  console.log({ index })
   const { updateDiscountByIndex } = useContext(DiscountsContext)
 
   const handleChangeDiscountAmount = (value: number) => {
@@ -46,7 +46,7 @@ export const DiscountAmount = ({ index, discountIndex, value }: DiscountAmountPr
         customInput={TextField}
         decimalScale={2}
         thousandSeparator=','
-        disabled={securities[index].view === 2}
+        disabled={isDisabled}
       />
       <FormHelperText sx={{ color: 'error.main', minHeight: '25px' }}></FormHelperText>
     </FormControl>

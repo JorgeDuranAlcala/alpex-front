@@ -26,6 +26,7 @@ export const useLoadAndSaveSecurities = () => {
   const isLoadedInformation = useRef(false);
   const isLoadedSecurities = useRef(false);
 
+  console.log(accountData)
   const saveData = async () => {
     // const isError = allErrors.find(error => error)
 

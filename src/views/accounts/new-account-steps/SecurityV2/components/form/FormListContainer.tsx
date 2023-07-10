@@ -1,17 +1,19 @@
 import { useAppSelector } from '@/store'
+import { SecondViewProvider } from '../../../Security/components/secondView/SecondViewProvider'
 import { ModalActivateSecondView } from '../secondView/ModalActivateSecondView'
 import { ModalUndoSecondView } from '../secondView/ModalUndoSecondView'
 import { SwitchSecondView } from '../secondView/SwitchSecondView'
 import { UndoSecondView } from '../secondView/UndoSecondView'
-import { FormSection } from './FormSection'
+import { FormSectionList } from './FormSectionList'
 import { TotalInputs } from './TotalInputs'
 
-export const FormList = () => {
+
+export const FormListContainer = () => {
 
   const { securities, allFormData, activeView, } = useAppSelector(state => state.securitySlice)
 
   return (
-    <>
+    <SecondViewProvider>
       <ModalUndoSecondView />
       <ModalActivateSecondView />
       {activeView === 2 ?
@@ -20,22 +22,15 @@ export const FormList = () => {
       <SwitchSecondView activeView={activeView} />
 
 
+      <FormSectionList securities={securities} />
 
-      {securities.map((security, index) => {
-        return (
-          <FormSection
-            key={`${index}-${security?.id}`}
-            security={security}
-            index={index}
-          />
-        )
-      })}
 
       <TotalInputs
         recievedNetPremium={allFormData.recievedNetPremium}
         distribuitedNetPremium={allFormData.distribuitedNetPremium}
         difference={allFormData.diference}
       />
-    </>
+    </SecondViewProvider>
   )
 }
+

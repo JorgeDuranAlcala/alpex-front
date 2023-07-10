@@ -3,12 +3,13 @@ import {
   FormHelperText,
   TextField
 } from '@mui/material';
-import { useContext } from 'react';
 import { NumericFormat } from 'react-number-format';
 import * as yup from 'yup';
 
-import { SecurityContext } from '../../SecurityView';
-import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interface';
+import { SecurityDto } from '@/services/accounts/dtos/security.dto';
+import { useAppDispatch } from '@/store';
+import { ISecurityInputProps } from '../../../interfaces/ISecurityInputProps.interface';
+import { updateSecuritiesAtIndex } from '../../../store/securitySlice';
 
 
 // ! only if we want specific props
@@ -18,22 +19,20 @@ import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interf
 
 type ReinsuranceBrokeragePercentProps = ISecurityInputProps;
 
-export const ReinsuranceBrokeragePercent = ({ index, value, errorMessage, validateForm }: ReinsuranceBrokeragePercentProps) => {
+export const ReinsuranceBrokeragePercent = ({ index, value, errorMessage, isActiveErrors, isDisabled }: ReinsuranceBrokeragePercentProps) => {
 
-  const {
-    activeErros,
-    securities,
-    calculateSecurities
-  } = useContext(SecurityContext);
+  const dispatch = useAppDispatch();
+
 
   const handleChangeBrokerRagePercent = (value: number) => {
-    const tempSecurities = [...securities]
-    tempSecurities[index] = {
-      ...tempSecurities[index],
-      reinsuranceBrokerage: value
-    }
-    validateForm(tempSecurities[index])
-    calculateSecurities(tempSecurities)
+
+    dispatch(updateSecuritiesAtIndex({
+      index,
+      security: {
+        reinsuranceBrokerage: value
+      } as SecurityDto
+    }))
+
   }
 
   return (
@@ -51,11 +50,11 @@ export const ReinsuranceBrokeragePercent = ({ index, value, errorMessage, valida
         isAllowed={values => {
           return (values.floatValue! >= 0 && values.floatValue! <= 100) || values.floatValue === undefined
         }}
-        disabled={securities[index].view === 2}
+        disabled={isDisabled}
       />
 
       <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
-        {activeErros && errorMessage}
+        {isActiveErrors && errorMessage}
       </FormHelperText>
     </FormControl>
   )

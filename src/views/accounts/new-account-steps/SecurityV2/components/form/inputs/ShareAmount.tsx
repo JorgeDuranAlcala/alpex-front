@@ -3,12 +3,10 @@ import {
   FormHelperText,
   TextField
 } from '@mui/material';
-import { useContext } from 'react';
 import { NumericFormat } from 'react-number-format';
 import * as yup from 'yup';
 
-import { SecurityContext } from '../../SecurityView';
-import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interface';
+import { ISecurityInputProps } from '../../../interfaces/ISecurityInputProps.interface';
 
 // ! only if we want specific props
 // interface ShareAmountProps extends ISecurityInputProps {
@@ -17,17 +15,12 @@ import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interf
 
 type ShareAmountProps = ISecurityInputProps;
 
-export const ShareAmount = ({ index, value, errorMessage, validateForm }: ShareAmountProps) => {
+export const ShareAmount = ({ index, value, errorMessage, isActiveErrors, isDisabled }: ShareAmountProps) => {
 
-  const {
-    activeErros,
-    securities,
 
-    // calculateSecurities
-  } = useContext(SecurityContext);
 
   const handleChangeShareAmount = (value: number) => {
-    console.log('OnChange ShareAmount value: ', { index, value, validateForm });
+    console.log('OnChange ShareAmount value: ', { index, value });
 
     // const tempSecurities = [...securities]
     // tempSecurities[index] = {
@@ -52,11 +45,11 @@ export const ShareAmount = ({ index, value, errorMessage, validateForm }: ShareA
         customInput={TextField}
         decimalScale={2}
         thousandSeparator=','
-        disabled={securities[index].view === 2}
+        disabled={isDisabled}
       />
 
       <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
-        {activeErros && errorMessage}
+        {isActiveErrors && errorMessage}
       </FormHelperText>
     </FormControl>
   )

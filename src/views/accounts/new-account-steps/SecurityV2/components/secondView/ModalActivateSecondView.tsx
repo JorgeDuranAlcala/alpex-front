@@ -16,7 +16,7 @@ export const ModalActivateSecondView = () => {
 
   return (
     <Dialog
-      open={isOpenModal}
+      open={isOpenModal || false}
       onClose={closeModalSecondView}
       aria-labelledby='alert-dialog-second-view'
       aria-describedby='alert-dialog-create-a-second-view'

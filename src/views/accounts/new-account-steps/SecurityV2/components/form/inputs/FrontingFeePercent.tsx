@@ -1,19 +1,19 @@
 import { FormControl, FormHelperText, TextField } from '@mui/material'
-import { MutableRefObject, useContext, useEffect } from 'react'
+import { useEffect } from 'react'
 import { NumericFormat } from 'react-number-format'
 import * as yup from 'yup'
 
-import { SecurityContext } from '../../SecurityView'
-import { IForField } from '../../hooks/useDataFirstTime'
-import { usePercentageAchieved } from '../../hooks/usePercentageAchieved'
-import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interface'
-import { CalculateSecurity } from '../../utils/calculates-securities'
+import { useAppDispatch } from '@/store'
+import { usePercentageAchieved } from '../../../hooks/usePercentageAchieved'
+import { ISecurityInputProps } from '../../../interfaces/ISecurityInputProps.interface'
+import { Security, updateSecuritiesAtIndex } from '../../../store/securitySlice'
+import { CalculateSecurity } from '../../../utils/calculates-securities'
 
 // ! only if we want specific props
 interface FrontingFeePercentProps extends ISecurityInputProps {
   operationSecurity: CalculateSecurity
-  isDisabled: boolean
-  fieldRef: MutableRefObject<IForField>
+  isDisabled: boolean;
+  security: Security;
 }
 
 // type FrontingFeePercentProps = ISecurityInputProps;
@@ -23,36 +23,34 @@ export const FrontingFeePercent = ({
   value,
   isDisabled,
   errorMessage,
-  validateForm,
-  fieldRef,
-  operationSecurity
+  isActiveErrors,
+  operationSecurity,
+  security
 }: FrontingFeePercentProps) => {
-  const { activeErros, securities, calculateSecurities } = useContext(SecurityContext)
 
-  const { achievedMessageError, checkIsPercentageAchieved } = usePercentageAchieved()
+  const dispatch = useAppDispatch();
+  const { achievedMessageError, checkIsPercentageAchieved } = usePercentageAchieved();
+
 
   const handleChangeFrontingFeePercent = (value: number) => {
     // console.log('frontingFee Percent', value)
+    dispatch(updateSecuritiesAtIndex({
+      index,
+      security: {
+        frontingFee: value,
+        frontingFeeAmount: operationSecurity.getFrontingFeeAmount(value),
+        isTouchedFrontingFee: true,
+        isTouchedFrontingFeeAmount: true,
 
-    if (fieldRef) {
-      fieldRef.current.isTouched = true
-    }
-
-    const tempSecurities = [...securities]
-    tempSecurities[index] = {
-      ...tempSecurities[index],
-      frontingFee: value,
-      frontingFeeAmount: operationSecurity.getFrontingFeeAmount(value)
-    }
-    calculateSecurities(tempSecurities)
-    validateForm(tempSecurities[index])
+      } as Security
+    }))
   }
 
   useEffect(() => {
     checkIsPercentageAchieved({ formIndex: index })
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [securities[index].frontingFee])
+  }, [security.frontingFee])
 
   // * Si el campo ya cuenta con un mensaje de error, se ejecuta el chequeo de porcentaje
   // * alcanzado, esto con el fin de que el mensaje de error se borre para este campo
@@ -62,7 +60,7 @@ export const FrontingFeePercent = ({
     checkIsPercentageAchieved({ formIndex: index })
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [securities[index]])
+  }, [security])
 
   return (
     <FormControl fullWidth>
@@ -79,12 +77,12 @@ export const FrontingFeePercent = ({
         isAllowed={values => {
           return (values.floatValue! >= 0 && values.floatValue! <= 100) || values.floatValue === undefined
         }}
-        disabled={securities[index].view === 2 || isDisabled}
+        disabled={isDisabled}
 
       />
 
       <FormHelperText sx={{ color: 'error.main', minHeight: '25px' }}>
-        {activeErros ? errorMessage : achievedMessageError}
+        {isActiveErrors ? errorMessage : achievedMessageError}
       </FormHelperText>
     </FormControl>
   )

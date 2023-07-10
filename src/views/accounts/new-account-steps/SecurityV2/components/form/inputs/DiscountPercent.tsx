@@ -2,19 +2,20 @@ import { FormControl, FormHelperText, TextField } from '@mui/material'
 import { useContext, useEffect } from 'react'
 import { NumericFormat } from 'react-number-format'
 
-import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interface'
-import { CalculateSecurity } from '../../utils/calculates-securities'
-import { DiscountsContext, IDiscountInputs } from '../discounts/DiscountsContext'
+import { DiscountsContext, IDiscountInputs } from '../../../context/discounts/DiscountsContext'
+import { ISecurityInputProps } from '../../../interfaces/ISecurityInputProps.interface'
+import { CalculateSecurity } from '../../../utils/calculates-securities'
 
 // import { SecurityContext } from '../../SecurityView'
-import { usePercentageAchieved } from '../../hooks/usePercentageAchieved'
-import { SecurityContext } from '../../SecurityView'
+import { SecurityDto } from '@/services/accounts/dtos/security.dto'
+import { usePercentageAchieved } from '../../../hooks/usePercentageAchieved'
 
 // ! only if we want specific props
 interface DiscountPercentProps extends Omit<ISecurityInputProps, 'errorMessage'> {
   discountIndex: number
   operationSecurity: CalculateSecurity
   discountsList: IDiscountInputs[]
+  securities: SecurityDto[]
 }
 
 export const DiscountPercent = ({
@@ -22,9 +23,13 @@ export const DiscountPercent = ({
   discountIndex,
   value,
   operationSecurity,
-  discountsList
+  discountsList,
+  isDisabled,
+  securities
 }: DiscountPercentProps) => {
-  const { securities } = useContext(SecurityContext)
+
+
+
   const { achievedMessageError, checkIsPercentageAchieved } = usePercentageAchieved()
 
   const { updateDiscountByIndex } = useContext(DiscountsContext)
@@ -67,7 +72,7 @@ export const DiscountPercent = ({
         isAllowed={values => {
           return (values.floatValue! >= 0 && values.floatValue! <= 100) || values.floatValue === undefined
         }}
-        disabled={securities[index].view === 2}
+        disabled={isDisabled}
       />
 
       <FormHelperText sx={{ color: 'error.main', minHeight: '25px' }}>
