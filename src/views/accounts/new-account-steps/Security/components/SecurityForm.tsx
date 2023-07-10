@@ -611,7 +611,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
           />
         </Grid>
 
-        <ButtonAddDiscount formIndex={index} view={security.view} />
+        <ButtonAddDiscount view={security.view} />
       </div>
       <DialogCustomAlpex
         openDialog={openDialog}

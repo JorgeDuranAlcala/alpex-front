@@ -15,8 +15,7 @@ type ShareAmountProps = ISecurityInputProps
 
 export const ShareAmount = ({ index, value, errorMessage, validateForm, view }: ShareAmountProps) => {
   const {
-    activeErros,
-    securities
+    activeErros
 
     // calculateSecurities
   } = useContext(SecurityContext)
