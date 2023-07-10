@@ -64,6 +64,7 @@ export const ContactModal = ({ id, service, updateContacts, setIdCreated, disabl
   const [error, setError] = useState(true)
   const [nameError, setNameError] = useState(false)
   const [emailError, setEmailError] = useState(false)
+  const [phoneError, setPhoneError] = useState(false)
   const [countryError, setCountryError] = useState(false)
   const [, setEmptyForm] = useState(true)
 
@@ -78,6 +79,7 @@ export const ContactModal = ({ id, service, updateContacts, setIdCreated, disabl
     setContactData({ ...initialContactData })
     setNameError(false)
     setEmailError(false)
+    setPhoneError(false)
     setCountryError(false)
     setEmptyForm(false)
     setStartValidations(false)
@@ -143,6 +145,9 @@ export const ContactModal = ({ id, service, updateContacts, setIdCreated, disabl
       case 'email':
         setEmailError(false)
         break
+      case 'phone':
+        setPhoneError(false)
+        break
       case 'country':
         setCountryError(false)
         break
@@ -155,15 +160,18 @@ export const ContactModal = ({ id, service, updateContacts, setIdCreated, disabl
 
   const validateForm = () => {
     const nameErrorTemp = !expresions.name.test(contactData.name)
+    const phoneErrorTemp = contactData.phone === undefined || contactData.phone === ''
     const countryErrorTemp = contactData.country === undefined || contactData.country === ''
     const emailErrorTemp = !expresions.email.test(contactData.email)
-    const errorTemp = nameErrorTemp || emailErrorTemp || countryErrorTemp
+
+    const errorTemp = nameErrorTemp || emailErrorTemp || phoneErrorTemp || countryErrorTemp
 
 
     setError(errorTemp)
     setEmptyForm(errorTemp)
     setNameError(nameErrorTemp)
     setEmailError(emailErrorTemp)
+    setPhoneError(phoneErrorTemp)
     setCountryError(countryErrorTemp)
     setStartValidations(false)
   }
@@ -236,6 +244,13 @@ export const ContactModal = ({ id, service, updateContacts, setIdCreated, disabl
                 onChange={e => handleChange('phone', e.target.value)}
               />
 
+              {phoneError && (
+                <FormHelperText sx={{ color: 'error.main' }}>
+                  {contactData.phone == '' || contactData.phone == undefined
+                    ? 'This field is required'
+                    : ''}
+                </FormHelperText>
+              )}
             </FormControl>
             <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
               <InputLabel>Select country</InputLabel>
