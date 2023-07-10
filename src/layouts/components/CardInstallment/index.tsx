@@ -104,7 +104,6 @@ const CardInstallment = ({ index, installment, onChangeList, error100Percent }: 
                 label='Payment %'
                 multiline
                 prefix={'%'}
-                decimalScale={2}
                 variant='outlined'
                 isAllowed={values => {
                   const { floatValue } = values
@@ -129,7 +128,6 @@ const CardInstallment = ({ index, installment, onChangeList, error100Percent }: 
                 label='Balance Due'
                 multiline
                 prefix={'$'}
-                decimalScale={2}
                 variant='outlined'
                 value={installment.balanceDue}
                 disabled={true}

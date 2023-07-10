@@ -34,7 +34,7 @@ import UserThemeOptions from 'src/layouts/UserThemeOptions'
 import { SecurityMapper } from './mappers/SecurityForm.mapper'
 
 import { SecondViewProvider } from './components/secondView/SecondViewProvider'
-import { CalculateSecurity, defaultValue } from './utils/calculates-securities'
+import { CalculateSecurity } from './utils/calculates-securities'
 
 export const SecurityContext = createContext<SecurityContextDto>({} as SecurityContextDto)
 let securitiesSecondView: SecurityDto[] = []
@@ -105,7 +105,26 @@ const Security = ({ onStepChange }: SecurityProps) => {
         .setInformation(information)
         .setSecurity(security)
       if (security?.idCReinsuranceCompany?.id) companiesSelect.push(security.idCReinsuranceCompany.id)
+      console.log({ security })
 
+      security.frontingFee = Number(security.frontingFee) || 0
+      security.taxes = Number(security.taxes) || 0
+      security.netPremiumAt100 = Number(security.netPremiumAt100) || 0
+
+      security.premiumPerShareAmount = operationSecurity.getPremierPerShare() || 0
+
+      security.grossPremiumPerShare = operationSecurity.getGrossPremierPerShare() || 0
+      security.brokerAgeAmount = operationSecurity.getBrokerAge() || 0
+      security.dynamicCommissionAmount = operationSecurity.getDynamicComissionAmount() || 0
+
+      security.frontingFeeAmount = operationSecurity.getFrontingFeeAmount(security.frontingFee) || 0
+
+      security.taxesAmount = operationSecurity.getTaxesAmount(security.taxes) || 0
+
+      security.shareAmount = operationSecurity.getShareAmount() || 0
+      security.share = Number(security.share) || 0
+
+      operationSecurity.setSecurity(security)
       const tempDiscountList = []
       if (security?.discounts) {
         security.totalAmountOfDiscounts = 0
@@ -116,33 +135,18 @@ const Security = ({ onStepChange }: SecurityProps) => {
           tempDiscountList.push(discount)
         }
       }
+
       security.discounts = tempDiscountList
-      security.frontingFee = Number(security.frontingFee) || 0
-      security.taxes = Number(security.taxes) || 0
-      security.netPremiumAt100 = Number(security.netPremiumAt100) || 0
-      operationSecurity.setSecurity(security)
-      security.premiumPerShareAmount = operationSecurity.getPremierPerShare() || 0
-      security.grossPremiumPerShare = operationSecurity.getGrossPremierPerShare() || 0
-      security.brokerAgeAmount = operationSecurity.getBrokerAge() || 0
-      security.dynamicCommissionAmount = operationSecurity.getDynamicComissionAmount() || 0
-
-      security.frontingFeeAmount = operationSecurity.getFrontingFeeAmount(security.frontingFee) || 0
-
-      security.taxesAmount = operationSecurity.getTaxesAmount(security.taxes) || 0
-
-      security.shareAmount = operationSecurity.getShareAmount() || 0
       security.netReinsurancePremium = operationSecurity.getNetReinsurancePremium() || 0
 
       tempSecurities.push({
         ...security,
         difference: Number(security.difference) || 0,
         distributedNetPremium: Number(security.distributedNetPremium) || 0,
-        dynamicCommission: Number(security.dynamicCommission) || 0,
+        dynamicCommission: Number(security.dynamicCommission),
 
-        netPremiumAt100: Number(security.netPremiumAt100) || 0,
         receivedNetPremium: Number(security.receivedNetPremium) || 0,
-        reinsuranceBrokerage: Number(security.reinsuranceBrokerage) || 0,
-        share: Number(security.share) || 0
+        reinsuranceBrokerage: Number(security.reinsuranceBrokerage) || 0
       })
     }
 
@@ -154,7 +158,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
     view = 0,
     isFirstTime = false
   ) => {
-    if (securitiesParam.length > 0 && information) {
+    if (securitiesParam.length > 0 && information && currentView !== 3) {
       companiesSelect.splice(0, companiesSelect.length)
       const tempSecurities = getSecuritiesCalculate(securitiesParam)
       let dataFormView2: FormSecurity = {} as FormSecurity
@@ -164,24 +168,50 @@ const Security = ({ onStepChange }: SecurityProps) => {
         tempSecurities.map(security => ({
           ...security,
           netPremiumAt100: security.isGross ? information.grossPremium : information.netPremium,
-          view: 2
+          view: view === 3 ? 1 : 2
         }))
       )
 
       dataFormView2 = {
         ...allFormDataView2,
         formData: tempSecuritiesView2,
-        ...CalculateSecurity.getData(tempSecuritiesView2, defaultValue)
+        ...CalculateSecurity.getData(tempSecuritiesView2)
       }
       securitiesSecondView = [...tempSecuritiesView2]
       allFormDataView2 = dataFormView2
+      console.log('view dentro de calculate', { view, dataFormView2, tempSecuritiesView2 })
+      if (view === 3) {
+        if (account) {
+          if (account.securitiesTotal[0])
+            dataFormView2 = {
+              ...dataFormView2,
+              id: account.securitiesTotal[0].id
+            }
+        }
 
-      if (currentView !== 2) {
-        console.log({ currentView })
+        setAllFormData(dataFormView2)
+
+        setAllErrors(allErrors.map(error => error))
+
+        setSecurities(tempSecuritiesView2)
+
+        setCurrentView(0)
+        securitiesSecondView = []
+        allFormDataView2 = {
+          formData: [],
+          recievedNetPremium: 0,
+          distribuitedNetPremium: 0,
+          diference: 0
+        }
+
+        return
+      }
+
+      if (currentView < 2) {
         let dataForm: FormSecurity = {
           ...allFormData,
           formData: tempSecurities,
-          ...CalculateSecurity.getData(tempSecurities, currentView === 1 ? allFormDataView2 : defaultValue)
+          ...CalculateSecurity.getData(tempSecurities, dataFormView2)
         }
 
         if (account) {
@@ -194,34 +224,13 @@ const Security = ({ onStepChange }: SecurityProps) => {
         setAllFormData(dataForm)
 
         setAllErrors(allErrors.map(error => error))
-
+        console.log({ tempSecurities, view })
         setSecurities(tempSecurities)
       }
-      if (view !== 0) {
-        console.log({ view })
-        setCurrentView(() => view)
-      }
+
       if (isFirstTime) {
         setFirstTimeSecurities(tempSecurities)
       }
-    } else {
-      setSecurities(
-        securitiesSecondView.map(security => ({
-          ...security,
-          netPremiumAt100: security.isGross ? information.grossPremium : information.netPremium,
-          view: 1
-        }))
-      )
-      setAllFormData(allFormDataView2)
-      securitiesSecondView = []
-      allFormDataView2 = {
-        formData: [],
-        recievedNetPremium: 0,
-        distribuitedNetPremium: 0,
-        diference: 0
-      }
-
-      setCurrentView(0)
     }
   }
 
@@ -407,7 +416,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
   }, [isNextStep])
 
   useEffect(() => {
-    if (currentView !== 0) calculateSecurities(securities, currentView, true)
+    if (currentView === 3) calculateSecurities(securities, currentView, true)
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentView])

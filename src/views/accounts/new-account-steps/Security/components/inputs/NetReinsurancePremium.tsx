@@ -25,7 +25,6 @@ export const NetReinsurancePremium = ({ value, errorMessage, view }: NetReinsura
         value={value}
         prefix={'$'}
         customInput={TextField}
-        decimalScale={2}
         thousandSeparator=','
         disabled={true || view === 2}
       />
