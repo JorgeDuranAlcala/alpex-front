@@ -20,8 +20,7 @@ export const GrossPremiumPerShareAmount = ({
   view
 }: GrossPremiumPerShareAmountProps) => {
   const {
-    activeErros,
-    securities
+    activeErros
 
     // calculateSecurities
   } = useContext(SecurityContext)

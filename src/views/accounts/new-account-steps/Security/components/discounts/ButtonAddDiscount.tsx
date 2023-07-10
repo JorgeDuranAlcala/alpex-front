@@ -2,12 +2,10 @@ import { Button, Grid } from '@mui/material'
 import { useContext } from 'react'
 
 import CoreIcon from 'src/@core/components/icon'
-import { SecurityContext } from '../../SecurityView'
 import { DiscountsContext } from './DiscountsContext'
 
-export const ButtonAddDiscount = ({ formIndex, view }: { formIndex: number; view: number }) => {
+export const ButtonAddDiscount = ({ view }: { view: number }) => {
   const { addDiscount } = useContext(DiscountsContext)
-  const { securities } = useContext(SecurityContext)
 
   return (
     <Grid
