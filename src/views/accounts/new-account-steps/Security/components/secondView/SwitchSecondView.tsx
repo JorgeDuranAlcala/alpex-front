@@ -1,4 +1,4 @@
-import { FormInformation, SecurityDto } from '@/services/accounts/dtos/security.dto'
+import { SecurityDto } from '@/services/accounts/dtos/security.dto'
 import { Icon } from '@iconify/react'
 import { Box, Button } from '@mui/material'
 
@@ -9,13 +9,12 @@ interface SwitchSecondViewProps {
   securities: SecurityDto[]
   calculateSecurities: (securities: SecurityDto[]) => void
   view: number
-  information: FormInformation
 }
-export const SwitchSecondView = ({ securities, calculateSecurities, view, information }: SwitchSecondViewProps) => {
+export const SwitchSecondView = ({ securities, calculateSecurities, view }: SwitchSecondViewProps) => {
   const { switchView } = useContext(SecondViewContext)
 
   const handleSwitchView = () => {
-    switchView({ securities, calculateSecurities, view, information })
+    switchView({ securities, calculateSecurities, view })
   }
 
   return (

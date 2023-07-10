@@ -334,12 +334,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
                 {activeView === 2 && (
                   <UndoSecondView securities={securities} calculateSecurities={calculateSecurities} />
                 )}
-                <SwitchSecondView
-                  view={activeView}
-                  information={information}
-                  securities={securities}
-                  calculateSecurities={calculateSecurities}
-                />
+                <SwitchSecondView view={activeView} securities={securities} calculateSecurities={calculateSecurities} />
               </>
             ) : null}
             {index > 0 && activeView === 1 && (
