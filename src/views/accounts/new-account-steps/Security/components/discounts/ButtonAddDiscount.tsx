@@ -5,7 +5,7 @@ import CoreIcon from 'src/@core/components/icon'
 import { SecurityContext } from '../../SecurityView'
 import { DiscountsContext } from './DiscountsContext'
 
-export const ButtonAddDiscount = ({ formIndex }: { formIndex: number }) => {
+export const ButtonAddDiscount = ({ formIndex, view }: { formIndex: number; view: number }) => {
   const { addDiscount } = useContext(DiscountsContext)
   const { securities } = useContext(SecurityContext)
 
@@ -26,7 +26,7 @@ export const ButtonAddDiscount = ({ formIndex }: { formIndex: number }) => {
           color='primary'
           size='large'
           sx={{ justifyContent: 'start' }}
-          disabled={securities[formIndex].view === 2}
+          disabled={view === 2}
         >
           <CoreIcon icon='material-symbols:add-circle-outline' fontSize={20} className='icon-btn' /> ADD DISCOUNT
         </Button>
