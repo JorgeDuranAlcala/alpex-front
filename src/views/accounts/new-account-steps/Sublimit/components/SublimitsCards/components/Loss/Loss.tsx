@@ -2,15 +2,18 @@ import UserThemeOptions from '@/layouts/UserThemeOptions'
 import { SublimitDto } from '@/services/accounts/dtos/sublimit.dto'
 import { SubContainer } from '@/styles/Forms/Sublimits'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
-import { MenuItem, Select, Typography } from '@mui/material'
+import { FormHelperText, MenuItem, Select, Typography } from '@mui/material'
 import React from 'react'
+import { FormErrors } from '../../../../Sublimits'
 
 export type LossProps = {
-  onHandleChangeDeductibleDamage: (deductibleDamage: SublimitDto) => void
+  onHandleChangeSubLimit: (deductibleDamage: SublimitDto) => void
   subLimit: SublimitDto
+  errorCard: FormErrors
+  showErrors: boolean
 }
 
-const Loss: React.FC<LossProps> = ({ subLimit, onHandleChangeDeductibleDamage }) => {
+const Loss: React.FC<LossProps> = ({ subLimit, onHandleChangeSubLimit, errorCard, showErrors }) => {
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
   const size = userThemeConfig.typography?.size.px16
   const textColor = userThemeConfig.palette?.text.subTitle
@@ -18,7 +21,7 @@ const Loss: React.FC<LossProps> = ({ subLimit, onHandleChangeDeductibleDamage })
   const handleChangeItem = (event: any, name: string) => {
     const subLimitTemp = { ...subLimit, [name]: event.target.value }
 
-    onHandleChangeDeductibleDamage(subLimitTemp)
+    onHandleChangeSubLimit(subLimitTemp)
   }
 
   return (
@@ -38,6 +41,7 @@ const Loss: React.FC<LossProps> = ({ subLimit, onHandleChangeDeductibleDamage })
           {'No options available'}
         </MenuItem>
       </Select>
+      <FormHelperText sx={{ color: 'error.main', marginTop: '-3px' }}>{showErrors && errorCard.amount}</FormHelperText>
     </SubContainer>
   )
 }

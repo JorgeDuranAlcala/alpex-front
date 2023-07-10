@@ -3,21 +3,36 @@ import { SublimitDto } from '@/services/accounts/dtos/sublimit.dto'
 import { FormControlLabel, FormHelperText, Input, Radio, RadioGroup, Typography } from '@mui/material'
 import { NumericFormat } from 'react-number-format'
 import { InputForm, SubContainer } from 'src/styles/Forms/Sublimits'
+import * as yup from 'yup'
+import { FormErrors } from '../../../../Sublimits'
 
 export type BusinessInterruptionProps = {
-  onHandleChangeDeductibleDamage: (deductibleDamage: SublimitDto) => void
+  onHandleChangeSubLimit: (deductibleDamage: SublimitDto) => void
   subLimit: SublimitDto
+  errorCard: FormErrors
+  showErrors: boolean
 }
 
-const BusinessInterruption: React.FC<BusinessInterruptionProps> = ({ subLimit, onHandleChangeDeductibleDamage }) => {
+const BusinessInterruption: React.FC<BusinessInterruptionProps> = ({
+  subLimit,
+  onHandleChangeSubLimit,
+  errorCard,
+  showErrors
+}) => {
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
   const size = userThemeConfig.typography?.size.px16
   const textColor = userThemeConfig.palette?.text.subTitle
-
+  const reset = {
+    amountBi: 0,
+    daysBi: 0
+  }
   const handleChangeItem = (event: any, name: string) => {
-    const subLimitTemp = { ...subLimit, [name]: event.target.value }
+    let subLimitTemp = { ...subLimit, [name]: event.target.value }
+    if (name === 'typeBi') {
+      subLimitTemp = { ...subLimitTemp, ...reset, [name]: event.target.value }
+    }
 
-    onHandleChangeDeductibleDamage(subLimitTemp)
+    onHandleChangeSubLimit(subLimitTemp)
   }
 
   return (
@@ -61,7 +76,7 @@ const BusinessInterruption: React.FC<BusinessInterruptionProps> = ({ subLimit, o
             }}
           />
         </InputForm>
-        <FormHelperText sx={{ color: 'error.main' }}></FormHelperText>
+        <FormHelperText sx={{ color: 'error.main' }}>{showErrors && errorCard.daysBi}</FormHelperText>
         <InputForm>
           <FormControlLabel sx={{ ml: 0.3 }} value='money' control={<Radio sx={{ mr: -1 }} />} label='' />
           <NumericFormat
@@ -84,11 +99,43 @@ const BusinessInterruption: React.FC<BusinessInterruptionProps> = ({ subLimit, o
             }}
           />
         </InputForm>
-        <FormHelperText sx={{ color: 'error.main' }}></FormHelperText>
-        <FormHelperText sx={{ color: 'error.main', marginTop: '-5px' }}></FormHelperText>
+        <FormHelperText sx={{ color: 'error.main' }}>{showErrors && errorCard.amountBi}</FormHelperText>
+        <FormHelperText sx={{ color: 'error.main', marginTop: '-5px' }}>
+          {showErrors && errorCard.typeBi}
+        </FormHelperText>
       </RadioGroup>
     </SubContainer>
   )
 }
 
 export default BusinessInterruption
+export const validateBusinessInterruption = ({ typeBi }: { typeBi: string }) =>
+  yup.object().shape({
+    typeBi: yup
+      .string()
+      .nullable()
+      .test('', 'This field is required', value => {
+        return value !== null && value !== ''
+      }),
+    daysBi: yup
+      .number()
+      .nullable()
+      .transform((_, val) => (val === Number(val) ? val : null))
+      .test('', 'This field is required', value => {
+        const val = value || 0
+
+        if (typeBi !== 'days') return true
+
+        return +val > 0
+      }),
+    amountBi: yup
+      .number()
+      .nullable()
+      .transform((_, val) => (val === Number(val) ? val : null))
+      .test('', 'This field is required', value => {
+        const val = value || 0
+        if (typeBi !== 'money') return true
+
+        return +val > 0
+      })
+  })

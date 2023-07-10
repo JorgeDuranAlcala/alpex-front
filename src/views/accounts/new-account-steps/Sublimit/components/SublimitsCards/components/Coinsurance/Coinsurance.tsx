@@ -4,13 +4,17 @@ import { FormHelperText, TextField, Typography } from '@mui/material'
 import React from 'react'
 import { NumericFormat } from 'react-number-format'
 import { SubContainer } from 'src/styles/Forms/Sublimits'
+import * as yup from 'yup'
+import { FormErrors } from '../../../../Sublimits'
 
 export type CoinsuranceProps = {
-  onHandleChangeDeductibleDamage: (deductibleDamage: SublimitDto) => void
+  onHandleChangeSubLimit: (subLimit: SublimitDto) => void
   subLimit: SublimitDto
+  errorCard: FormErrors
+  showErrors: boolean
 }
 
-const Coinsurance: React.FC<CoinsuranceProps> = ({ subLimit, onHandleChangeDeductibleDamage }) => {
+const Coinsurance: React.FC<CoinsuranceProps> = ({ subLimit, onHandleChangeSubLimit, errorCard, showErrors }) => {
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
   const size = userThemeConfig.typography?.size.px16
   const textColor = userThemeConfig.palette?.text.subTitle
@@ -18,7 +22,7 @@ const Coinsurance: React.FC<CoinsuranceProps> = ({ subLimit, onHandleChangeDeduc
   const handleChangeItem = (event: any, name: string) => {
     const subLimitTemp = { ...subLimit, [name]: event.target.value }
 
-    onHandleChangeDeductibleDamage(subLimitTemp)
+    onHandleChangeSubLimit(subLimitTemp)
   }
 
   return (
@@ -51,9 +55,13 @@ const Coinsurance: React.FC<CoinsuranceProps> = ({ subLimit, onHandleChangeDeduc
           return (floatValue! >= 0 && floatValue! <= 100) || floatValue === undefined
         }}
       />
-      <FormHelperText sx={{ color: 'error.main' }}></FormHelperText>
+      <FormHelperText sx={{ color: 'error.main' }}>{showErrors && errorCard.coinsurance}</FormHelperText>
     </SubContainer>
   )
 }
 
 export default Coinsurance
+export const validateCoinsurance = () =>
+  yup.object().shape({
+    coinsurance: yup.number().required()
+  })

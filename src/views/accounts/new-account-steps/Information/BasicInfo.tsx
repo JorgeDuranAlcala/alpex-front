@@ -110,6 +110,8 @@ type BasicInfoProps = {
   setBasicInfo: React.Dispatch<React.SetStateAction<BasicInfoType>>
   makeValidations: boolean
   makeSaveValidations: boolean
+  editInfo?: any
+  activeEndorsement?: boolean
   onValidationComplete: (valid: boolean, formName: string) => void
 }
 
@@ -139,7 +141,8 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
   setBasicInfo,
   makeValidations,
   makeSaveValidations,
-  onValidationComplete
+  onValidationComplete,
+  editInfo
 }) => {
   //cargamos la informacion de los catalogos de base de datos
   const { countries } = useCountryGetAll()
@@ -394,6 +397,8 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
       ])
   }, [riskActivities])
 
+  console.log('Esta cuenta es de tipo: !!!!!!!!', editInfo)
+
   return (
     <>
       <div className='title'>Basic info</div>
@@ -423,6 +428,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               onChange={handleInputChange}
               error={!!errors.insuredError}
               helperText={getErrorMessage('insuredError')}
+              disabled={!editInfo.basic}
             />
           </FormControl>
 
@@ -436,6 +442,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               value={String(basicInfo.country)}
               onChange={handleSelectChange}
               labelId='invoice-country'
+              disabled={!editInfo.basic}
             >
               {countries.length > 0 ? (
                 countries.map(country => {
@@ -468,6 +475,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               value={String(basicInfo.economicSector)}
               onChange={handleSelectChange}
               labelId='economic-sector'
+              disabled={!editInfo.basic}
             >
               {economicSectors.length > 0 ? (
                 economicSectors.map(sector => {
@@ -503,6 +511,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               value={String(basicInfo.broker)}
               onChange={handleSelectChange}
               labelId='broker'
+              disabled={!editInfo.basic}
             >
               {brokers.length > 0 ? (
                 brokers.map(broker => {
@@ -531,7 +540,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               name='brokerContact'
               label='Select Broker Contact'
               value={String(basicInfo.brokerContact)}
-              disabled={basicInfo.broker !== '' ? false : true}
+              disabled={editInfo.basic && basicInfo.broker !== '' ? false : true}
               defaultValue=''
               onChange={handleSelectChange}
               labelId='broker-contact'
@@ -596,6 +605,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               value={String(basicInfo.cedant)}
               onChange={handleSelectChange}
               labelId='cedant'
+              disabled={!editInfo.basic}
             >
               {cedant.length > 0 ? (
                 cedant.map(cedant => {
@@ -625,7 +635,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               name='cedantContact'
               label='Select Cedant Contact'
               value={`${basicInfo.cedantContact == 0 ? '' : basicInfo.cedantContact}`}
-              disabled={basicInfo.cedant !== '' ? false : true}
+              disabled={editInfo.basic && basicInfo.cedant !== '' ? false : true}
               onChange={handleSelectChange}
               defaultValue=''
               labelId='cedant-contact'
@@ -690,6 +700,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               value={String(basicInfo.lineOfBusiness)}
               onChange={handleSelectChange}
               labelId='business'
+              disabled={!editInfo.basic}
             >
               {lineOfBussines.length > 0 ? (
                 lineOfBussines.map(lineOfBussine => {
@@ -726,6 +737,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               sx={{ width: '100%' }}
               className={errors.industryCodeError ? 'error' : ''}
               renderInput={params => <TextField {...params} label={'Industry Code'} />}
+              disabled={!editInfo.basic}
             />
             {false && (
               <Select
@@ -801,6 +813,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
                 timeFormat='HH:mm'
                 timeIntervals={15}
                 dateFormat='dd/MM/yyyy h:mm aa'
+                disabled={!editInfo.basic}
               />
               {errors.receptionDateError && (
                 <FormHelperText
@@ -829,6 +842,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
                 timeFormat='HH:mm'
                 timeIntervals={15}
                 dateFormat='dd/MM/yyyy h:mm aa'
+                disabled={!editInfo.basic}
               />
               {errors.effectiveDateError && (
                 <FormHelperText
@@ -857,6 +871,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
                 timeFormat='HH:mm'
                 timeIntervals={15}
                 dateFormat='dd/MM/yyyy h:mm aa'
+                disabled={!editInfo.basic}
               />
               {errors.expirationDateError && (
                 <FormHelperText
@@ -885,6 +900,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               value={String(basicInfo.underwriter)}
               onChange={handleSelectChange}
               labelId='underwriter'
+              disabled={!editInfo.basic}
             >
               {underwriters.length > 0 ? (
                 underwriters.map(underwriter => {
@@ -910,6 +926,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               value={String(basicInfo.leadUnderwriter)}
               onChange={handleSelectChange}
               labelId='lead-underwriter'
+              disabled={!editInfo.basic}
             >
               {leadUnderwriters.length > 0 ? (
                 leadUnderwriters.map(leadUnderwriter => {
@@ -938,6 +955,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               value={String(basicInfo.technicalAssistant)}
               onChange={handleSelectChange}
               labelId='assistant'
+              disabled={!editInfo.basic}
             >
               {technicalAssistants.length > 0 ? (
                 technicalAssistants.map(technicalAssistant => {

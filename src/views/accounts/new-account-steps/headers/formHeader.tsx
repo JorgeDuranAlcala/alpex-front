@@ -29,6 +29,7 @@ interface StatusHistory {
 interface FormHeaderProps {
   isNewAccount?: boolean
   setActiveEndorsement?: any
+  setEditInfo?: any
   setTypeofAccount?: any
 }
 
@@ -123,10 +124,11 @@ const ModalUploadImage = () => {
   )
 }
 
-const FormHeader = ({ isNewAccount, setActiveEndorsement, setTypeofAccount }: FormHeaderProps) => {
+const FormHeader = ({ isNewAccount, setActiveEndorsement, setTypeofAccount, setEditInfo }: FormHeaderProps) => {
   const [status, setStatus] = useState('')
   const [accounts, setAccounts] = useState<any>([])
   const account = useAppSelector(state => state.accounts?.formsData?.form1)
+  // const [editInfo, setEditInfo] = useState(false)
 
   const { setIdAccount, information } = useFindInformationByIdAccount()
   const accountsReducer = useAppSelector(state => state.accounts)
@@ -196,6 +198,7 @@ const FormHeader = ({ isNewAccount, setActiveEndorsement, setTypeofAccount }: Fo
       setTypeofAccount(status)
     }
   }, [status])
+
   return (
     <>
       <Card className='info-header' style={{ marginBottom: '16px' }}>
@@ -278,7 +281,12 @@ const FormHeader = ({ isNewAccount, setActiveEndorsement, setTypeofAccount }: Fo
                   </span>
                 </div>
                 {status !== 'bound' ? (
-                  <ActionsHeader accountStatus='PENDING' sideHeader={true} />
+                  <ActionsHeader
+                    accountId={account?.id}
+                    setEditInfo={setEditInfo}
+                    accountStatus='PENDING'
+                    sideHeader={true}
+                  />
                 ) : (
                   <ActionsHeaderBound
                     setActiveEndorsement={setActiveEndorsement}

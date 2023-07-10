@@ -3,7 +3,6 @@ import { useContext } from 'react'
 import { NumericFormat } from 'react-number-format'
 
 // import { SecurityContext } from '../../SecurityView';
-import { SecurityContext } from '../../SecurityView'
 import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interface'
 import { CalculateSecurity } from '../../utils/calculates-securities'
 import { DiscountsContext } from '../discounts/DiscountsContext'
@@ -12,15 +11,10 @@ import { DiscountsContext } from '../discounts/DiscountsContext'
 interface DiscountAmountProps extends Omit<ISecurityInputProps, 'errorMessage'> {
   discountIndex: number
   operationSecurity: CalculateSecurity
+  view: number
 }
 
-export const DiscountAmount = ({ index, discountIndex, value, operationSecurity }: DiscountAmountProps) => {
-  const {
-
-    securities,
-
-  } = useContext(SecurityContext);
-
+export const DiscountAmount = ({ discountIndex, value, operationSecurity, view }: DiscountAmountProps) => {
   const { updateDiscountByIndex } = useContext(DiscountsContext)
 
   const handleChangeDiscountAmount = (value: number) => {
@@ -31,14 +25,6 @@ export const DiscountAmount = ({ index, discountIndex, value, operationSecurity 
       percentage: operationSecurity.getDiscountPercent(value),
       amount: value
     })
-
-    // const tempSecurities = [...securities]
-    // tempSecurities[index] = {
-    //   ...tempSecurities[index],
-    //   share: value
-    // }
-    // validateForm(tempSecurities[index])
-    // calculateSecurities(tempSecurities)
   }
 
   return (
@@ -53,7 +39,7 @@ export const DiscountAmount = ({ index, discountIndex, value, operationSecurity 
         customInput={TextField}
         decimalScale={2}
         thousandSeparator=','
-        disabled={securities[index].view === 2}
+        disabled={view === 2}
       />
       <FormHelperText sx={{ color: 'error.main', minHeight: '25px' }}></FormHelperText>
     </FormControl>

@@ -3,7 +3,7 @@ import { createContext } from 'react'
 
 export interface CreateSecondViewProps {
   securities: SecurityDto[]
-  calculateSecurities: (securities: SecurityDto[], securityOriginal?: SecurityDto[]) => void
+  calculateSecurities: (securities: SecurityDto[], view?: number) => void
 }
 
 // export interface DeleteSecondViewProps extends CreateSecondViewProps {
@@ -28,8 +28,6 @@ interface SecondViewContextProps {
   closeModalSecondView: () => void
   openModalUndo: () => void
   closeModalUndo: () => void
-  securitesOriginal: SecurityDto[]
-  createSecuritiesOriginal: (security: SecurityDto) => void
 }
 
 export const SecondViewContext = createContext<SecondViewContextProps>({} as SecondViewContextProps)

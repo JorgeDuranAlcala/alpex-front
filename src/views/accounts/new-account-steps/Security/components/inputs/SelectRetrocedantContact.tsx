@@ -16,7 +16,8 @@ export const SelectRetroCedantContact = ({
   errorMessage,
   isDisabled,
   retroCedantContacts,
-  validateForm
+  validateForm,
+  view
 }: SelectRetroCedantContactProps) => {
   const { activeErros, securities, setSecurities } = useContext(SecurityContext)
 
@@ -43,7 +44,7 @@ export const SelectRetroCedantContact = ({
         value={value.toString()}
         onChange={handleChangeRetroCedantContact}
         labelId='RetroCedantcontact'
-        disabled={securities[index].view === 2 || isDisabled}
+        disabled={view === 2 || isDisabled}
       >
         {retroCedantContacts?.map(contact => (
           <MenuItem key={contact.name} value={contact.id}>
