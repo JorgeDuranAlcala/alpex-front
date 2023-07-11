@@ -106,7 +106,7 @@ const ModalBordereaux: React.FC<IModalBordereaux> = ({
   const handleDownload = async () => {
     if (values.reinsurer && values.binder) {
       setBadgeData({
-        message: `DOWNLOADING BOURDERAU`,
+        message: `DOWNLOADING BOURDERAUX`,
         status: 'secondary',
         open: true,
         icon: <CircularProgress size={20} color='primary' />,

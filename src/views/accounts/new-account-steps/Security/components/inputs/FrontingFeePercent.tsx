@@ -25,7 +25,8 @@ export const FrontingFeePercent = ({
   errorMessage,
   validateForm,
   fieldRef,
-  operationSecurity
+  operationSecurity,
+  view
 }: FrontingFeePercentProps) => {
   const { activeErros, securities, calculateSecurities } = useContext(SecurityContext)
 
@@ -75,12 +76,10 @@ export const FrontingFeePercent = ({
         }}
         suffix={'%'}
         customInput={TextField}
-        decimalScale={2}
         isAllowed={values => {
           return (values.floatValue! >= 0 && values.floatValue! <= 100) || values.floatValue === undefined
         }}
-        disabled={securities[index].view === 2 || isDisabled}
-
+        disabled={view === 2 || isDisabled}
       />
 
       <FormHelperText sx={{ color: 'error.main', minHeight: '25px' }}>

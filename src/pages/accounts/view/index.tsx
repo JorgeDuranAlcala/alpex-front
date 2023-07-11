@@ -71,10 +71,6 @@ const NewAccount = () => {
     }
   }
 
-  useEffect(() => {
-    activeInputs()
-  }, [editInfo, activeEndorsement, typeofAccount])
-
   const handleStepChange = (step: number) => {
     setActiveStep(step)
     console.log(step)
@@ -132,6 +128,10 @@ const NewAccount = () => {
   }, [dispatch, router.events])
 
   // console.log('el endorsement se activó: ', activeEndorsement, editInfo)
+  useEffect(() => {
+    activeInputs()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editInfo, activeEndorsement, typeofAccount])
 
   return (
     <Grid className='new-account' item xs={12}>

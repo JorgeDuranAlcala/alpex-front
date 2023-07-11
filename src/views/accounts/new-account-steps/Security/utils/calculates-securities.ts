@@ -106,14 +106,19 @@ export class CalculateSecurity {
   getNetReinsurancePremium(): number {
     if (this.security.isGross) {
       // * is Gross Premium
-      return (
-        this.security.premiumPerShareAmount -
-        this.security.dynamicCommissionAmount -
-        (this.security.frontingFeeAmount ? this.security.frontingFeeAmount : 0) -
-        this.security.brokerAgeAmount -
-        (this.security.taxesAmount ? this.security.taxesAmount : 0) -
+      const sumOthers =
+        this.security.dynamicCommissionAmount +
+        (this.security.frontingFeeAmount ? this.security.frontingFeeAmount : 0) +
+        this.security.brokerAgeAmount +
+        (this.security.taxesAmount ? this.security.taxesAmount : 0) +
         (this.security.totalAmountOfDiscounts ? this.security.totalAmountOfDiscounts : 0)
+      console.log(
+        `${this.security.premiumPerShareAmount} - ${sumOthers} = ${Number(
+          this.security.premiumPerShareAmount - sumOthers
+        )}`
       )
+
+      return Number((this.security.premiumPerShareAmount - sumOthers).toPrecision(6))
     } else {
       // * is Net Premium
 
@@ -192,10 +197,12 @@ export class CalculateSecurity {
     if (this.security.isGross) {
       // * is Gross Premium
       const base = (this.security.premiumPerShareAmount * valuePercent) / 100
+      console.log({ premiumPerShareAmount: this.security.premiumPerShareAmount, view: this.security.view })
 
       return base
     } else {
       // * is Net Premium
+
       const base = (this.security.netPremiumAt100 * this.security.share) / 100
 
       return (base * valuePercent) / 100
@@ -224,6 +231,7 @@ export class CalculateSecurity {
         security.netReinsurancePremium + security.dynamicCommissionAmount + security.frontingFeeAmount ?? 0
       discountAmountGros += security.isGross ? security.totalAmountOfDiscounts : 0
     }
+
     if (resultSecuritiesOriginal.distribuitedNetPremium > 0) {
       distributedNetPremium = resultSecuritiesOriginal.distribuitedNetPremium
     }

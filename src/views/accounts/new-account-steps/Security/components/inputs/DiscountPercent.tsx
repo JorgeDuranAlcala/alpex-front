@@ -22,7 +22,8 @@ export const DiscountPercent = ({
   discountIndex,
   value,
   operationSecurity,
-  discountsList
+  discountsList,
+  view
 }: DiscountPercentProps) => {
   const { securities } = useContext(SecurityContext)
   const { achievedMessageError, checkIsPercentageAchieved } = usePercentageAchieved()
@@ -63,11 +64,10 @@ export const DiscountPercent = ({
         }}
         suffix={'%'}
         customInput={TextField}
-        decimalScale={2}
         isAllowed={values => {
           return (values.floatValue! >= 0 && values.floatValue! <= 100) || values.floatValue === undefined
         }}
-        disabled={securities[index].view === 2}
+        disabled={view === 2}
       />
 
       <FormHelperText sx={{ color: 'error.main', minHeight: '25px' }}>

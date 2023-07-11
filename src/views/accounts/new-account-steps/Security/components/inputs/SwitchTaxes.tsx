@@ -19,7 +19,8 @@ export const SwitchTaxes = ({
   security,
   isChecked,
   setIsTaxesEnabled,
-  fieldRef
+  fieldRef,
+  view
 }: SwitchTaxesProps) => {
   const { securities, calculateSecurities } = useContext(SecurityContext)
 
@@ -48,8 +49,7 @@ export const SwitchTaxes = ({
     <FormControl fullWidth sx={{ mb: 6 }}>
       <div>
         <span className='switch-text'>Taxes </span>
-        <SwitchAlpex checked={isChecked} onClick={handleSwitch}
-          disabled={securities[index].view === 2} />
+        <SwitchAlpex checked={isChecked} onClick={handleSwitch} disabled={view === 2} />
       </div>
     </FormControl>
   )

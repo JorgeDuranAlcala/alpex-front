@@ -1,4 +1,4 @@
-import { SecurityDto } from '@/services/accounts/dtos/security.dto'
+import { FormInformation, SecurityDto } from '@/services/accounts/dtos/security.dto'
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material'
 import { useContext } from 'react'
 import { SecondViewContext } from './SecondViewContext'
@@ -6,16 +6,18 @@ import { SecondViewContext } from './SecondViewContext'
 interface ModalUndoSecondViewProps {
   securities: SecurityDto[]
   calculateSecurities: (securities: SecurityDto[]) => void
+  information: FormInformation
 }
 
-export const ModalUndoSecondView = ({ securities, calculateSecurities }: ModalUndoSecondViewProps) => {
+export const ModalUndoSecondView = ({ securities, calculateSecurities, information }: ModalUndoSecondViewProps) => {
   const { isOpenModalUndo, closeModalUndo, deleteSecondView } = useContext(SecondViewContext)
 
   const handleDeleteSecondView = () => {
     handleCloseModalUndo()
     deleteSecondView({
       securities,
-      calculateSecurities
+      calculateSecurities,
+      information
     })
   }
 
