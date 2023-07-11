@@ -3,12 +3,10 @@ import {
   FormHelperText,
   TextField
 } from '@mui/material';
-import { useContext } from 'react';
 import { NumericFormat } from 'react-number-format';
 import * as yup from 'yup';
 
-import { SecurityContext } from '../../SecurityView';
-import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interface';
+import { ISecurityInputProps } from '../../../interfaces/ISecurityInputProps.interface';
 
 // ! only if we want specific props
 // interface NetReinsurancePremiumProps extends ISecurityInputProps {
@@ -17,11 +15,8 @@ import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interf
 
 type NetReinsurancePremiumProps = Omit<ISecurityInputProps, 'index' | 'validateForm'>;
 
-export const NetReinsurancePremium = ({ value, errorMessage }: NetReinsurancePremiumProps) => {
+export const NetReinsurancePremium = ({ value, errorMessage, isActiveErrors }: NetReinsurancePremiumProps) => {
 
-  const {
-    activeErros,
-  } = useContext(SecurityContext);
 
 
 
@@ -40,7 +35,7 @@ export const NetReinsurancePremium = ({ value, errorMessage }: NetReinsurancePre
       />
 
       <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
-        {activeErros && errorMessage}
+        {isActiveErrors && errorMessage}
       </FormHelperText>
     </FormControl>
   )

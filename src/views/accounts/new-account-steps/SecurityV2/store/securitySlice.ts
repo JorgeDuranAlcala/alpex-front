@@ -1,4 +1,7 @@
 import { FormInformation, FormSecurity, SecurityDto } from '@/services/accounts/dtos/security.dto';
+import { ReinsuranceCompanyDto } from '@/services/catalogs/dtos/ReinsuranceCompanyDto';
+import { RetroCedantDto } from '@/services/catalogs/dtos/RetroCedantDto';
+import { CountryDto } from '@/services/catalogs/dtos/country.dto';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 import { calculateSecurities } from '../utils/calculateSecurities';
@@ -7,7 +10,7 @@ import { calculateSecurities } from '../utils/calculateSecurities';
 export interface Security extends SecurityDto {
   originalNetOrGrossPremium: number;
   actualNetOrGrossPremium: number;
-  isShowRetrocedant?: boolean;
+  isShowRetroCedant?: boolean;
   isShowToggleTaxes?: boolean;
   isTaxesEnabled?: boolean;
   isShowToggleFrontingFee?: boolean;
@@ -26,6 +29,12 @@ export interface Information extends FormInformation {
   frontingFeeP: number;
 }
 
+export interface GetDatas {
+  countries: CountryDto[];
+  retroCedants: RetroCedantDto[];
+  availableReinsurens: ReinsuranceCompanyDto[];
+}
+
 export interface SecurityState {
   allFormData: FormSecurity;
   information: Information;
@@ -33,6 +42,7 @@ export interface SecurityState {
   companiesSelected: number[];
   activeView: number;
   hasSecondView: boolean;
+  getDatas: GetDatas;
 
 }
 
@@ -52,6 +62,11 @@ const initialState: SecurityState = {
     grossPremium: 0,
     limit: 0
   },
+  getDatas: {
+    countries: [],
+    retroCedants: [],
+    availableReinsurens: []
+  },
   securities: [],
   companiesSelected: [],
   activeView: 1,
@@ -65,18 +80,24 @@ export const securitySlice = createSlice({
     createNewSecurity: (state, action: PayloadAction<Security>) => {
       const tempSecurities = [...state.securities];
       tempSecurities.push(action.payload);
-      state = {
-        ...state,
-        hasSecondView: true,
-        ...calculateSecurities({ securities: tempSecurities, information: state.information })
-      }
+
+      const calculatedSecurities = { ...calculateSecurities({ securities: tempSecurities, information: state.information }) };
+      state.companiesSelected = calculatedSecurities.companiesSelected;
+      state.securities = calculatedSecurities.securities;
+      state.allFormData = calculatedSecurities.allFormData;
+      state.hasSecondView = true;
     },
     createSecondView: (state) => {
-      state.securities = state.securities.map((security) => ({
+      const tempSecurities = state.securities.map((security) => ({
         ...security,
-        originalNetOrGrossPremium: security.netPremiumAt100
+        originalNetOrGrossPremium: security.netPremiumAt100,
+        view: 2
 
       }));
+
+      state.securities = tempSecurities;
+      state.activeView = 2;
+      state.hasSecondView = true;
     },
 
     deleteSecondView: (state) => {
@@ -86,12 +107,11 @@ export const securitySlice = createSlice({
         view: 1,
         netPremiumAt100: security.originalNetOrGrossPremium,
       }));
-
-      state = {
-        ...state,
-        hasSecondView: false,
-        ...calculateSecurities({ securities: tempSecurities, information: state.information })
-      }
+      const calculatedSecurities = { ...calculateSecurities({ securities: tempSecurities, information: state.information }) };
+      state.companiesSelected = calculatedSecurities.companiesSelected;
+      state.securities = calculatedSecurities.securities;
+      state.allFormData = calculatedSecurities.allFormData;
+      state.hasSecondView = false;
     },
 
     switchView: (state, action: PayloadAction<{ toView: number }>) => {
@@ -101,56 +121,109 @@ export const securitySlice = createSlice({
         view: action.payload.toView,
         ...(action.payload.toView === 1 ? {
           netPremiumAt100: security.actualNetOrGrossPremium,
-          activeView: 1
         } : {
           actualNetOrGrossPremium: security.netPremiumAt100,
           netPremiumAt100: security.originalNetOrGrossPremium,
-          activeView: 2
         }),
       }));
 
-      state = {
-        ...state,
-        ...calculateSecurities({ securities: tempSecurities, information: state.information })
-      }
+      const calculatedSecurities = { ...calculateSecurities({ securities: tempSecurities, information: state.information }) };
+      state.companiesSelected = calculatedSecurities.companiesSelected;
+      state.securities = calculatedSecurities.securities;
+      state.allFormData = calculatedSecurities.allFormData;
+
+      state.activeView = action.payload.toView;
     },
 
     updateInformation: (state, action: PayloadAction<Information>) => {
-      state.information = action.payload;
+      state.information = { ...action.payload };
+
+      // debugger;
     },
-    updateSecuritiesAtIndex: (state, action: PayloadAction<{ index: number, securities: SecurityDto }>) => {
+
+    updateAllFormData: (state, action: PayloadAction<FormSecurity>) => {
+      state.allFormData = action.payload;
+
+    },
+
+    updateSecuritiesAtIndex: (state, action: PayloadAction<{ index: number, security: SecurityDto }>) => {
       const tempSecurities = [...state.securities];
       tempSecurities[action.payload.index] = {
-        ...state.securities,
-        ...action.payload.securities as Security
+        ...state.securities[action.payload.index],
+        ...action.payload.security as Security
       };
-      state = {
-        ...state,
-        ...calculateSecurities({ securities: tempSecurities, information: state.information })
-      }
+
+      const calculatedSecurities = { ...calculateSecurities({ securities: tempSecurities, information: state.information }) };
+      state.companiesSelected = calculatedSecurities.companiesSelected;
+      state.securities = calculatedSecurities.securities;
+      state.allFormData = calculatedSecurities.allFormData;
     },
 
     updateAllSecurities: (state, action: PayloadAction<{ securities: SecurityDto[] }>) => {
       const tempSecurities = action.payload.securities as Security[];
-      state = {
-        ...state,
-        ...calculateSecurities({ securities: tempSecurities, information: state.information })
-      }
+      const calculatedSecurities = { ...calculateSecurities({ securities: tempSecurities, information: state.information }) };
+      state.companiesSelected = calculatedSecurities.companiesSelected;
+      state.securities = calculatedSecurities.securities;
+      state.allFormData = calculatedSecurities.allFormData;
+
+      // debugger;
+    },
+
+    updateAllSecuritiesAndAllFormData: (state, action: PayloadAction<{ securities: SecurityDto[], allFormData: FormSecurity }>) => {
+      const tempSecurities = action.payload.securities as Security[];
+      const calculatedSecurities = { ...calculateSecurities({ securities: tempSecurities, information: state.information }) };
+
+      state.companiesSelected = calculatedSecurities.companiesSelected;
+      state.securities = calculatedSecurities.securities;
+      state.allFormData = action.payload.allFormData;
+
+
+
+
     },
 
     deleteSecurityByIndex: (state, action: PayloadAction<{ index: number }>) => {
       const tempSecurities = [...state.securities];
       tempSecurities.splice(action.payload.index, 1);
-      state = {
-        ...state,
-        ...calculateSecurities({ securities: tempSecurities, information: state.information })
-      }
+      const calculatedSecurities = { ...calculateSecurities({ securities: tempSecurities, information: state.information }) };
+
+      state.companiesSelected = calculatedSecurities.companiesSelected;
+      state.securities = calculatedSecurities.securities;
+      state.allFormData = calculatedSecurities.allFormData;
+      state.activeView = 1;
+
+    },
+
+    updateCountries: (state, action: PayloadAction<{ countries: CountryDto[] }>) => {
+      state.getDatas.countries = action.payload.countries;
+    },
+
+    updateRetroCedants: (state, action: PayloadAction<{ retroCedants: RetroCedantDto[] }>) => {
+      state.getDatas.retroCedants = action.payload.retroCedants;
+    },
+
+    updateAvailableReinsurers: (state, action: PayloadAction<{ availableReinsurens: ReinsuranceCompanyDto[] }>) => {
+      state.getDatas.availableReinsurens = action.payload.availableReinsurens;
     }
 
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { createNewSecurity, createSecondView, switchView, deleteSecondView, updateInformation, updateSecuritiesAtIndex, updateAllSecurities, deleteSecurityByIndex } = securitySlice.actions;
+export const {
+  createNewSecurity,
+  createSecondView,
+  switchView,
+  deleteSecondView,
+  updateInformation,
+  updateSecuritiesAtIndex,
+  updateAllSecurities,
+  deleteSecurityByIndex,
+  updateCountries,
+  updateRetroCedants,
+  updateAvailableReinsurers,
+  updateAllFormData,
+  updateAllSecuritiesAndAllFormData
+} = securitySlice.actions;
 
 export default securitySlice.reducer;

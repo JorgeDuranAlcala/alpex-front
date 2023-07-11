@@ -3,28 +3,25 @@ import {
   FormHelperText,
   TextField
 } from '@mui/material';
-import { useContext } from 'react';
 import { NumericFormat } from 'react-number-format';
 import * as yup from 'yup';
 
-import { SecurityContext } from '../../SecurityView';
-import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interface';
-import { CalculateSecurity } from '../../utils/calculates-securities';
+import { SecurityDto } from '@/services/accounts/dtos/security.dto';
+import { useAppDispatch } from '@/store';
+import { ISecurityInputProps } from '../../../interfaces/ISecurityInputProps.interface';
+import { updateSecuritiesAtIndex } from '../../../store/securitySlice';
+import { CalculateSecurity } from '../../../utils/calculates-securities';
+
 
 
 interface ReinsuranceBrokerageAmountProps extends ISecurityInputProps {
-
   operationSecurity: CalculateSecurity;
 }
 
 
-export const ReinsuranceBrokerageAmount = ({ index, value, errorMessage, operationSecurity, validateForm }: ReinsuranceBrokerageAmountProps) => {
+export const ReinsuranceBrokerageAmount = ({ index, value, errorMessage, isActiveErrors, isDisabled, operationSecurity }: ReinsuranceBrokerageAmountProps) => {
 
-  const {
-    activeErros,
-    securities,
-    calculateSecurities
-  } = useContext(SecurityContext);
+  const dispatch = useAppDispatch();
 
   const handleChangeBrokerAgeAmount = (value: number) => {
     // clearInterval(typingTimer)
@@ -32,13 +29,13 @@ export const ReinsuranceBrokerageAmount = ({ index, value, errorMessage, operati
     // // Iniciar un nuevo intervalo
     // typingTimer = setInterval(() => {
     //   // Código a ejecutar cuando se deja de escribir
-    const tempSecurities = [...securities]
-    tempSecurities[index] = {
-      ...tempSecurities[index],
-      reinsuranceBrokerage: operationSecurity.getBrokerAgePercent(value)
-    }
-    validateForm(tempSecurities[index])
-    calculateSecurities(tempSecurities)
+
+    dispatch(updateSecuritiesAtIndex({
+      index,
+      security: {
+        reinsuranceBrokerage: operationSecurity.getBrokerAgePercent(value)
+      } as SecurityDto
+    }))
 
     //   // Limpiar el intervalo
     //   clearInterval(typingTimer)
@@ -58,11 +55,11 @@ export const ReinsuranceBrokerageAmount = ({ index, value, errorMessage, operati
         customInput={TextField}
         decimalScale={2}
         thousandSeparator=','
-        disabled={securities[index].view === 2}
+        disabled={isDisabled}
       />
 
       <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
-        {activeErros && errorMessage}
+        {isActiveErrors && errorMessage}
       </FormHelperText>
     </FormControl>
   )

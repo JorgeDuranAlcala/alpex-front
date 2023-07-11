@@ -1,49 +1,60 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { FormControl, FormHelperText, InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material'
-import { Dispatch, SetStateAction, useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import * as yup from 'yup'
 
 import { RetroCedantDto } from '@/services/catalogs/dtos/RetroCedantDto'
 import { RetroCedantContactDto } from '@/services/catalogs/dtos/retroCedantContact.dto'
-import { SecurityContext } from '../../SecurityView'
-import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interface'
 
-interface SelectRetroCedantProps extends ISecurityInputProps {
-  retroCedants: RetroCedantDto[] | undefined
-  setIdRetroCedant: Dispatch<SetStateAction<number | null>>
-}
+import { SecurityDto } from '@/services/accounts/dtos/security.dto'
+import { useAppSelector } from '@/store'
+import { useDispatch } from 'react-redux'
+import { FormSectionContext } from '../../../context/formSection/FormSectionContext'
+import { ISecurityInputProps } from '../../../interfaces/ISecurityInputProps.interface'
+import { updateSecuritiesAtIndex } from '../../../store/securitySlice'
+
+// interface SelectRetroCedantProps extends ISecurityInputProps {
+//   retroCedants: RetroCedantDto[] | undefined
+//   setIdRetroCedant: Dispatch<SetStateAction<number | null>>
+// }
+
+type SelectRetroCedantProps = ISecurityInputProps;
 
 export const SelectRetroCedant = ({
   index,
   value,
   errorMessage,
-  retroCedants,
-  validateForm,
-  setIdRetroCedant
+  isActiveErrors,
+  isDisabled,
 }: SelectRetroCedantProps) => {
-  const { activeErros, securities, setSecurities } = useContext(SecurityContext)
 
-  const [counter, setCounter] = useState(1)
+  const dispatch = useDispatch();
+  const { getDatas: { retroCedants } } = useAppSelector(state => state.securitySlice);
+  const { updateIdRetroCedant } = useContext(FormSectionContext);
+
+  const [counter, setCounter] = useState(1);
+
+
   const handleChangeRetroCedant = (e: SelectChangeEvent<string>) => {
     const selectedRetroCendantId = e.target.value
     const retroCedant = retroCedants?.find(retroCedant => retroCedant.id === Number(selectedRetroCendantId))
-    const tempSecurities = [...securities]
 
     if (retroCedant) {
-      tempSecurities[index] = {
-        ...tempSecurities[index],
-        idCRetroCedant: retroCedant,
-        idCRetroCedantContact: {} as RetroCedantContactDto
-      }
-      validateForm(tempSecurities[index])
-      setSecurities(tempSecurities)
-      setIdRetroCedant(retroCedant.id)
+
+      dispatch(updateSecuritiesAtIndex({
+        index,
+        security: {
+          idCRetroCedant: retroCedant,
+          idCRetroCedantContact: {} as RetroCedantContactDto
+        } as SecurityDto
+      }))
+
+      updateIdRetroCedant(retroCedant.id)
     }
   }
 
   useEffect(() => {
     if (counter < 2 && retroCedants && retroCedants?.length > 0) {
-      const tempSecurities = [...securities]
       const selectedRetroCendantId = value
       const retroCedant = retroCedants?.find(retroCedant => retroCedant.id === Number(selectedRetroCendantId))
 
@@ -51,24 +62,27 @@ export const SelectRetroCedant = ({
       if (retroCedant) {
         // console.log('se monta')
 
-        tempSecurities[index] = {
-          ...tempSecurities[index],
-          idCRetroCedant: retroCedant,
-          idCRetroCedantContact: {} as RetroCedantContactDto
-        }
+        dispatch(updateSecuritiesAtIndex({
+          index,
+          security: {
+            idCRetroCedant: retroCedant,
+            idCRetroCedantContact: {} as RetroCedantContactDto
+          } as SecurityDto
+        }))
 
-        validateForm(tempSecurities[index])
-        setSecurities(tempSecurities)
-        setIdRetroCedant(retroCedant.id)
+        updateIdRetroCedant(retroCedant.id)
         setCounter(2)
       } else {
-        tempSecurities[index] = {
-          ...tempSecurities[index],
-          idCRetroCedant: {} as RetroCedantDto,
-          idCRetroCedantContact: {} as RetroCedantContactDto
-        }
-        validateForm(tempSecurities[index])
-        setSecurities(tempSecurities)
+
+        dispatch(updateSecuritiesAtIndex({
+          index,
+          security: {
+            idCRetroCedant: {} as RetroCedantDto,
+            idCRetroCedantContact: {} as RetroCedantContactDto
+          } as SecurityDto
+        }));
+
+
       }
     }
   }, [retroCedants])
@@ -81,7 +95,7 @@ export const SelectRetroCedant = ({
         value={value.toString()}
         onChange={handleChangeRetroCedant}
         labelId='Retrocedant'
-        disabled={securities[index].view === 2}
+        disabled={isDisabled}
       >
         {retroCedants?.map(cedant => (
           <MenuItem key={cedant.name} value={cedant.id}>
@@ -89,7 +103,7 @@ export const SelectRetroCedant = ({
           </MenuItem>
         ))}
       </Select>
-      <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>{activeErros && errorMessage}</FormHelperText>
+      <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>{isActiveErrors && errorMessage}</FormHelperText>
     </FormControl>
   )
 }

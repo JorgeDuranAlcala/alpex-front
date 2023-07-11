@@ -3,13 +3,14 @@ import {
   FormHelperText,
   TextField
 } from '@mui/material';
-import { useContext } from 'react';
 import { NumericFormat } from 'react-number-format';
 import * as yup from 'yup';
 
-import { SecurityContext } from '../../SecurityView';
-import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interface';
-import { CalculateSecurity } from '../../utils/calculates-securities';
+import { SecurityDto } from '@/services/accounts/dtos/security.dto';
+import { useAppDispatch } from '@/store';
+import { ISecurityInputProps } from '../../../interfaces/ISecurityInputProps.interface';
+import { updateSecuritiesAtIndex } from '../../../store/securitySlice';
+import { CalculateSecurity } from '../../../utils/calculates-securities';
 
 
 // ! only if we want specific props
@@ -18,24 +19,20 @@ interface DynamicComissionAmountProps extends ISecurityInputProps {
 }
 
 
-export const DynamicComissionAmount = ({ index, value, errorMessage, validateForm, operationSecurity }: DynamicComissionAmountProps) => {
+export const DynamicComissionAmount = ({ index, value, errorMessage, isActiveErrors, isDisabled, operationSecurity }: DynamicComissionAmountProps) => {
 
-  const {
-    activeErros,
-    securities,
-    calculateSecurities
-  } = useContext(SecurityContext);
 
+  const dispatch = useAppDispatch();
 
 
   const handleChangeDynamicComissionAmount = (value: number) => {
-    const tempSecurities = [...securities]
-    tempSecurities[index] = {
-      ...tempSecurities[index],
-      dynamicCommission: operationSecurity.getDynamicComissionPercent(value)
-    }
-    validateForm(tempSecurities[index])
-    calculateSecurities(tempSecurities)
+
+    dispatch(updateSecuritiesAtIndex({
+      index,
+      security: {
+        dynamicCommission: operationSecurity.getDynamicComissionPercent(value)
+      } as SecurityDto
+    }))
   }
 
   return (
@@ -51,11 +48,11 @@ export const DynamicComissionAmount = ({ index, value, errorMessage, validateFor
         customInput={TextField}
         decimalScale={2}
         thousandSeparator=','
-        disabled={securities[index].view === 2}
+        disabled={isDisabled}
       />
 
       <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
-        {activeErros && errorMessage}
+        {isActiveErrors && errorMessage}
       </FormHelperText>
     </FormControl>
   )

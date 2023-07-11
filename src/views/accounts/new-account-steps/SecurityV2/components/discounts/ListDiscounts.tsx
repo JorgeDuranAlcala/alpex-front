@@ -1,26 +1,27 @@
 import { SecurityDto } from '@/services/accounts/dtos/security.dto'
+import { useAppDispatch, useAppSelector } from '@/store'
 import { Box, Grid, IconButton, Typography } from '@mui/material'
 import { useContext, useEffect } from 'react'
 import Icon from 'src/@core/components/icon'
-import { SecurityContext } from '../../SecurityView'
 import { DiscountsContext } from '../../context/discounts/DiscountsContext'
+import { updateSecuritiesAtIndex } from '../../store/securitySlice'
 import { CalculateSecurity } from '../../utils/calculates-securities'
 import { DiscountAmount } from '../form/inputs/DiscountAmount'
 import { DiscountPercent } from '../form/inputs/DiscountPercent'
 
 interface ListDiscountsProps {
   formIndex: number
-  operationSecurity: CalculateSecurity
 
-  validateForm: (securityParam: SecurityDto) => void
 }
-export const ListDiscounts = ({ formIndex, operationSecurity, validateForm }: ListDiscountsProps) => {
-  const {
-    firstTimeSecurities,
-    securities,
+export const ListDiscounts = ({ formIndex, }: ListDiscountsProps) => {
 
-    calculateSecurities
-  } = useContext(SecurityContext)
+  const dispatch = useAppDispatch();
+
+  const { information, securities } = useAppSelector(state => state.securitySlice);
+
+  const operationSecurity: CalculateSecurity = new CalculateSecurity()
+    .setInformation(information)
+    .setSecurity({ ...securities[formIndex] })
 
   const { discountsList, removeDiscountByIndex, updateAllDiscounts } = useContext(DiscountsContext)
 
@@ -37,40 +38,37 @@ export const ListDiscounts = ({ formIndex, operationSecurity, validateForm }: Li
       return value
     }, 0)
 
-    const tempSecurities = [...securities]
-
-    if (!tempSecurities[formIndex].totalAmountOfDiscounts && totalAmountOfDiscounts === 0) {
+    if (!securities[formIndex].totalAmountOfDiscounts && totalAmountOfDiscounts === 0) {
       return
     }
 
-    tempSecurities[formIndex] = {
-      ...tempSecurities[formIndex],
-      discounts: discountsList,
-      totalAmountOfDiscounts
-    }
+    dispatch(updateSecuritiesAtIndex({
+      index: formIndex,
+      security: {
+        discounts: discountsList,
+        totalAmountOfDiscounts
+      } as SecurityDto
+    }))
 
-    validateForm(tempSecurities[formIndex])
-
-    calculateSecurities(tempSecurities)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [discountsList, formIndex])
 
-  useEffect(() => {
-    if (firstTimeSecurities.length > 0) {
-      if (formIndex > firstTimeSecurities.length - 1) return
-      if (securities[formIndex].discounts.length > firstTimeSecurities[formIndex].discounts.length) {
-        updateAllDiscounts(securities[formIndex].discounts)
+  // useEffect(() => {
+  //   if (firstTimeSecurities.length > 0) {
+  //     if (formIndex > firstTimeSecurities.length - 1) return
+  //     if (securities[formIndex].discounts.length > firstTimeSecurities[formIndex].discounts.length) {
+  //       updateAllDiscounts(securities[formIndex].discounts)
 
-        return
-      }
+  //       return
+  //     }
 
-      if (firstTimeSecurities[formIndex].discounts.length > 0) {
-        updateAllDiscounts(firstTimeSecurities[formIndex].discounts)
-      }
-    }
+  //     if (firstTimeSecurities[formIndex].discounts.length > 0) {
+  //       updateAllDiscounts(firstTimeSecurities[formIndex].discounts)
+  //     }
+  //   }
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [firstTimeSecurities, formIndex])
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [firstTimeSecurities, formIndex])
 
   return (
     <>
@@ -88,15 +86,17 @@ export const ListDiscounts = ({ formIndex, operationSecurity, validateForm }: Li
             index={formIndex}
             discountIndex={index}
             value={discountItem.percentage}
-            validateForm={() => null}
             operationSecurity={operationSecurity}
+            securities={securities}
+            isDisabled={securities[formIndex].view === 2}
           />
           <DiscountAmount
             index={formIndex}
             discountIndex={index}
             value={discountItem.amount}
-            validateForm={() => null}
-            operationSecurity={operationSecurity}
+            isDisabled={securities[formIndex].view === 2}
+
+          // operationSecurity={operationSecurity}
           />
         </Grid>
       ))}

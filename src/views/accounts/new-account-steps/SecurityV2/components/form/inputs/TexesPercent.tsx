@@ -1,19 +1,19 @@
 import { FormControl, FormHelperText, TextField } from '@mui/material'
-import { MutableRefObject, useContext, useEffect } from 'react'
+import { useEffect } from 'react'
 import { NumericFormat } from 'react-number-format'
 import * as yup from 'yup'
 
-import { SecurityContext } from '../../SecurityView'
-import { IForField } from '../../hooks/useDataFirstTime'
-import { usePercentageAchieved } from '../../hooks/usePercentageAchieved'
-import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interface'
-import { CalculateSecurity } from '../../utils/calculates-securities'
+import { SecurityDto } from '@/services/accounts/dtos/security.dto'
+import { useAppDispatch } from '@/store'
+import { usePercentageAchieved } from '../../../hooks/usePercentageAchieved'
+import { ISecurityInputProps } from '../../../interfaces/ISecurityInputProps.interface'
+import { Security, updateSecuritiesAtIndex } from '../../../store/securitySlice'
+import { CalculateSecurity } from '../../../utils/calculates-securities'
 
 // ! only if we want specific props
 interface TaxesPercentProps extends ISecurityInputProps {
-  operationSecurity: CalculateSecurity
-  isDisabled: boolean
-  fieldRef: MutableRefObject<IForField>
+  security: Security;
+  operationSecurity: CalculateSecurity;
 }
 
 export const TaxesPercent = ({
@@ -21,33 +21,34 @@ export const TaxesPercent = ({
   value,
   isDisabled,
   errorMessage,
-  validateForm,
-  operationSecurity,
-  fieldRef
+  isActiveErrors,
+
+  // operationSecurity,
+
+  security,
 }: TaxesPercentProps) => {
-  const { activeErros, securities, calculateSecurities } = useContext(SecurityContext)
 
   const { achievedMessageError, checkIsPercentageAchieved } = usePercentageAchieved()
 
+  const dispatch = useAppDispatch();
+
+
   const handleChangeTaxesPercent = (value: number) => {
-    if (fieldRef) {
-      fieldRef.current.isTouched = true
-    }
-    const tempSecurities = [...securities]
-    tempSecurities[index] = {
-      ...tempSecurities[index],
-      taxes: value,
-      taxesAmount: operationSecurity.getTaxesAmount(value)
-    }
-    validateForm(tempSecurities[index])
-    calculateSecurities(tempSecurities)
+    // taxesAmount: operationSecurity.getTaxesAmount(value)
+
+    dispatch(updateSecuritiesAtIndex({
+      index,
+      security: {
+        taxes: value,
+      } as SecurityDto
+    }))
   }
 
   useEffect(() => {
     checkIsPercentageAchieved({ formIndex: index })
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [securities[index].taxes])
+  }, [security.taxes])
 
   // * Si el campo ya cuenta con un mensaje de error, se ejecuta el chequeo de porcentaje
   // * alcanzado, esto con el fin de que el mensaje de error se borre para este campo
@@ -57,7 +58,7 @@ export const TaxesPercent = ({
     checkIsPercentageAchieved({ formIndex: index })
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [securities[index]])
+  }, [security])
 
   // console.log({ isTacesTouxhes: forTaxes.current.isTouched, value })
 
@@ -76,11 +77,11 @@ export const TaxesPercent = ({
         isAllowed={values => {
           return (values.floatValue! >= 0 && values.floatValue! <= 100) || values.floatValue === undefined
         }}
-        disabled={securities[index].view === 2 || isDisabled}
+        disabled={isDisabled}
       />
 
       <FormHelperText sx={{ color: 'error.main', minHeight: '25px' }}>
-        {activeErros ? errorMessage : achievedMessageError}
+        {isActiveErrors ? errorMessage : achievedMessageError}
       </FormHelperText>
     </FormControl>
   )

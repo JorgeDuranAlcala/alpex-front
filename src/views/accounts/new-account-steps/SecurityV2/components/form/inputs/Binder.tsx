@@ -1,9 +1,12 @@
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material'
 
+import { SecurityDto } from '@/services/accounts/dtos/security.dto'
 import { ReinsuranceCompanyBinderDto } from '@/services/catalogs/dtos/ReinsuranceCompanyBinder.dto'
+import { useAppDispatch } from '@/store'
 import { useContext, useEffect, useState } from 'react'
-import { SecurityContext } from '../../SecurityView'
-import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interface'
+import { FormSectionContext } from '../../../context/formSection/FormSectionContext'
+import { ISecurityInputProps } from '../../../interfaces/ISecurityInputProps.interface'
+import { updateSecuritiesAtIndex } from '../../../store/securitySlice'
 
 // const NoBindersContainer = styled(Box)(({ theme }) => ({
 //   // backgroundColor: 'lightblue',
@@ -18,30 +21,29 @@ import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interf
 //   }
 // }))
 
-interface BinderProps extends Omit<ISecurityInputProps, 'index' | 'errorMessage' | 'validateForm'> {
-  binders: ReinsuranceCompanyBinderDto[]
-  index: number
-}
+type BinderProps = Omit<ISecurityInputProps, 'errorMessage' | 'validateForm'>;
 
-export const Binder = ({ value, binders, index }: BinderProps) => {
-  const { securities, setSecurities } = useContext(SecurityContext)
+export const Binder = ({ value, index, isDisabled }: BinderProps) => {
+
+  const dispatch = useAppDispatch();
+  const { binders } = useContext(FormSectionContext)
+
   const [selectedBinder, setSelectedBinder] = useState<ReinsuranceCompanyBinderDto | null>(null)
 
   const handleOnChangeBinder = (value: number) => {
     const binderSelect = binders.find(b => b.id === value)
-    const tempSecurities = [...securities]
 
     // console.log('se monta', retroCedant, value, retroCedants)
     if (binderSelect) {
       // console.log('se monta')
-
-      tempSecurities[index] = {
-        ...tempSecurities[index],
-        idCReinsuranceCompanyBinder: binderSelect
-      }
+      dispatch(updateSecuritiesAtIndex({
+        index,
+        security: {
+          idCReinsuranceCompanyBinder: binderSelect
+        } as SecurityDto
+      }))
 
       setSelectedBinder(binderSelect)
-      setSecurities(tempSecurities)
     }
   }
 
@@ -59,7 +61,7 @@ export const Binder = ({ value, binders, index }: BinderProps) => {
         label='Binder'
         value={selectedBinder && binders.length > 0 ? selectedBinder.id : value.toString()}
         labelId='binder'
-        disabled={binders.length === 0 || securities[index].view === 2}
+        disabled={isDisabled || binders.length === 0}
         onChange={e => handleOnChangeBinder(Number(e.target.value))}
       >
         {binders?.map(binder => (

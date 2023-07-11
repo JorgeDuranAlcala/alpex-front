@@ -6,14 +6,17 @@ import {
 } from '@mui/material';
 
 
-import { CountryDto } from '@/services/catalogs/dtos/country.dto';
-import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interface';
+import { useAppSelector } from '@/store';
+import { ISecurityInputProps } from '../../../interfaces/ISecurityInputProps.interface';
 
-interface ContactCountryProps extends Omit<ISecurityInputProps, 'index' | 'errorMessage' | 'validateForm'> {
-  countries: CountryDto[] | undefined
-}
+// interface ContactCountryProps extends Omit<ISecurityInputProps, 'index' | 'errorMessage' | 'validateForm'> {
+//   countries: CountryDto[] | undefined
+// }
 
-export const ContactCountry = ({ value, countries }: ContactCountryProps) => {
+type ContactCountryProps = Omit<ISecurityInputProps, 'index' | 'errorMessage' | 'validateForm'>
+export const ContactCountry = ({ value }: ContactCountryProps) => {
+
+  const { getDatas: { countries } } = useAppSelector(state => state.securitySlice)
 
 
   return (

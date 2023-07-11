@@ -1,44 +1,42 @@
 import { FormControl, FormHelperText, TextField } from '@mui/material'
-import { MutableRefObject, useContext } from 'react'
 import { NumericFormat } from 'react-number-format'
 import * as yup from 'yup'
 
-import { SecurityContext } from '../../SecurityView'
-import { IForField } from '../../hooks/useDataFirstTime'
-import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interface'
-import { CalculateSecurity } from '../../utils/calculates-securities'
+import { useAppDispatch } from '@/store'
+import { ISecurityInputProps } from '../../../interfaces/ISecurityInputProps.interface'
+import { Security, updateSecuritiesAtIndex } from '../../../store/securitySlice'
+import { CalculateSecurity } from '../../../utils/calculates-securities'
 
 // ! only if we want specific props
 interface TaxesAmountProps extends ISecurityInputProps {
   operationSecurity: CalculateSecurity
-  isDisabled: boolean
-  fieldRef: MutableRefObject<IForField>
 }
 
 export const TaxesAmount = ({
   index,
   value,
   isDisabled,
+  isActiveErrors,
   errorMessage,
-  validateForm,
+
   operationSecurity,
-  fieldRef
+
 }: TaxesAmountProps) => {
-  const { activeErros, securities, calculateSecurities } = useContext(SecurityContext)
+
+  const dispatch = useAppDispatch();
 
   const handleChangeTaxesAmount = (value: number) => {
-    console.log(value)
-    if (fieldRef) {
-      fieldRef.current.isTouched = true
-    }
-    const tempSecurities = [...securities]
-    tempSecurities[index] = {
-      ...tempSecurities[index],
-      taxesAmount: value,
-      taxes: operationSecurity.getTaxesPercent(value)
-    }
-    validateForm(tempSecurities[index])
-    calculateSecurities(tempSecurities)
+
+
+    dispatch(updateSecuritiesAtIndex({
+      index,
+      security: {
+        taxesAmount: value,
+        taxes: operationSecurity.getTaxesPercent(value),
+        isTouchedTaxes: true,
+        isTouchedTaxesAmount: true,
+      } as Security
+    }))
   }
 
   return (
@@ -54,9 +52,9 @@ export const TaxesAmount = ({
         customInput={TextField}
         decimalScale={2}
         thousandSeparator=','
-        disabled={securities[index].view === 2 || isDisabled}
+        disabled={isDisabled}
       />
-      <FormHelperText sx={{ color: 'error.main', minHeight: '25px' }}>{activeErros && errorMessage}</FormHelperText>
+      <FormHelperText sx={{ color: 'error.main', minHeight: '25px' }}>{isActiveErrors && errorMessage}</FormHelperText>
     </FormControl>
   )
 }

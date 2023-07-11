@@ -1,77 +1,73 @@
 import { FormControl, FormHelperText, InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material'
-import { Dispatch, SetStateAction, useContext, useEffect } from 'react'
+import { useContext, useEffect } from 'react'
 
 // import * as yup from 'yup';
 
+
 import { SecurityDto } from '@/services/accounts/dtos/security.dto'
-import { ReinsuranceCompanyBinderDto } from '@/services/catalogs/dtos/ReinsuranceCompanyBinder.dto'
 import { ReinsuranceCompanyDto } from '@/services/catalogs/dtos/ReinsuranceCompanyDto'
+import { useAppDispatch, useAppSelector } from '@/store'
 import ReinsuranceCompanyBinderService from 'src/services/catalogs/reinsuranceCompanyBinder.service'
-import { SecurityContext } from '../../SecurityView'
-import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interface'
+import { FormSectionContext } from '../../../context/formSection/FormSectionContext'
+import { ISecurityInputProps } from '../../../interfaces/ISecurityInputProps.interface'
+import { Security, updateSecuritiesAtIndex } from '../../../store/securitySlice'
 
 interface ReinsuranceCompanyProps extends ISecurityInputProps {
-  avaliableReinsurers: ReinsuranceCompanyDto[]
-  companiesSelect: number[]
-  security: SecurityDto | undefined
-  setIsGross: Dispatch<SetStateAction<boolean>>
-  setFrontingFeeEnabled: Dispatch<SetStateAction<boolean>>
-  setBinders: Dispatch<SetStateAction<ReinsuranceCompanyBinderDto[]>>
+  security: SecurityDto,
 }
+
+// type ReinsuranceCompanyProps = ISecurityInputProps;
 
 export const ReinsuranceCompany = ({
   index,
   value,
   errorMessage,
-  security,
-  avaliableReinsurers,
-  companiesSelect,
-  validateForm,
-  setIsGross,
-  setFrontingFeeEnabled,
-  setBinders
+  isDisabled,
+  isActiveErrors,
+  security
 }: ReinsuranceCompanyProps) => {
-  const { activeErros, information, securities, calculateSecurities } = useContext(SecurityContext)
+
 
   // console.log(avaliableReinsurers)
+  const dispatch = useAppDispatch()
+  const { getDatas: { availableReinsurens }, companiesSelected, information } = useAppSelector(state => state.securitySlice);
+
+  const { updateBinders } = useContext(FormSectionContext)
 
   const updateBindersAsync = async (idCReinsuranceCompany: number) => {
     const binders = await ReinsuranceCompanyBinderService.findByIdReinsuranceCompany(idCReinsuranceCompany)
-    setBinders(binders)
+    updateBinders(binders)
   }
 
   const handleChangeCompany = (e: SelectChangeEvent<string>): void => {
-    const avaliableCompanies: ReinsuranceCompanyDto | undefined = avaliableReinsurers
-      .filter(reinsure => !companiesSelect.includes(reinsure.id) || security?.idCReinsuranceCompany?.id === reinsure.id)
+    const avaliableCompanies: ReinsuranceCompanyDto | undefined = availableReinsurens
+      .filter(reinsure => !companiesSelected.includes(reinsure.id) || security?.idCReinsuranceCompany?.id === reinsure.id)
       .find(reinsurer => reinsurer.id === Number(e.target.value))
 
-    const tempSecurities = [...securities]
     if (avaliableCompanies) {
-      tempSecurities[index] = {
-        ...tempSecurities[index],
-        idCReinsuranceCompany: avaliableCompanies,
 
-        // frontingFeeActive: false,
 
-        isGross: avaliableCompanies.special,
-        netPremiumAt100: avaliableCompanies.special ? information.grossPremium : information.netPremium
-      }
+      dispatch(updateSecuritiesAtIndex({
+        index,
+        security: {
+          idCReinsuranceCompany: avaliableCompanies,
+          isGross: avaliableCompanies.special,
+          netPremiumAt100: avaliableCompanies.special ? information.grossPremium : information.netPremium,
+          isFrontingFeeEnabled: false,
+        } as Security
+      }))
 
-      setIsGross(() => avaliableCompanies.special)
-      setFrontingFeeEnabled(() => false)
-      calculateSecurities(tempSecurities)
-      validateForm(tempSecurities[index])
       updateBindersAsync(avaliableCompanies.id)
     }
   }
   useEffect(() => {
     if (value) {
-      ReinsuranceCompanyBinderService.findByIdReinsuranceCompany(Number(value)).then(binders => setBinders(binders))
+      ReinsuranceCompanyBinderService.findByIdReinsuranceCompany(Number(value)).then(binders => updateBinders(binders))
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value])
 
-  if (avaliableReinsurers.length === 0) {
+  if (availableReinsurens.length === 0) {
     return null
   }
 
@@ -84,11 +80,11 @@ export const ReinsuranceCompany = ({
         onChange={handleChangeCompany}
         labelId='ReinsuranceCompany'
         label='Reinsurance companies'
-        disabled={securities[index].view === 2}
+        disabled={isDisabled}
       >
-        {avaliableReinsurers
+        {availableReinsurens
           .filter(
-            reinsure => !companiesSelect.includes(reinsure.id) || security?.idCReinsuranceCompany?.id === reinsure.id
+            reinsure => !companiesSelected.includes(reinsure.id) || security?.idCReinsuranceCompany?.id === reinsure.id
           )
           .map(reinsurer => (
             <MenuItem key={reinsurer.id} value={reinsurer.id}>
@@ -96,7 +92,7 @@ export const ReinsuranceCompany = ({
             </MenuItem>
           ))}
       </Select>
-      <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>{activeErros && errorMessage}</FormHelperText>
+      <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>{isActiveErrors && errorMessage}</FormHelperText>
     </FormControl>
   )
 }

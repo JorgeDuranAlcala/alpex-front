@@ -3,30 +3,22 @@ import {
   FormHelperText,
   TextField
 } from '@mui/material';
-import { useContext } from 'react';
 import { NumericFormat } from 'react-number-format';
 import * as yup from 'yup';
 
-import { SecurityContext } from '../../SecurityView';
-import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interface';
-import { CalculateSecurity } from '../../utils/calculates-securities';
+import { ISecurityInputProps } from '../../../interfaces/ISecurityInputProps.interface';
 
-interface GrossPremiumPerShareAmountProps extends ISecurityInputProps {
-  operationSecurity: CalculateSecurity
-}
+// interface GrossPremiumPerShareAmountProps extends ISecurityInputProps {
+// }
+
+type GrossPremiumPerShareAmountProps = ISecurityInputProps
 
 
-export const GrossPremiumPerShareAmount = ({ index, value, errorMessage, validateForm, operationSecurity }: GrossPremiumPerShareAmountProps) => {
+export const GrossPremiumPerShareAmount = ({ index, value, errorMessage, isActiveErrors, isDisabled }: GrossPremiumPerShareAmountProps) => {
 
-  const {
-    activeErros,
-    securities,
-
-    // calculateSecurities
-  } = useContext(SecurityContext);
 
   const handleChangeGrossPremiumPerShareAmount = (value: number) => {
-    console.log('gross Premium PerShare value', { value, index, validateForm, operationSecurity });
+    console.log('gross Premium PerShare value', { value, index });
 
 
     // const tempSecurities = [...securities]
@@ -51,10 +43,10 @@ export const GrossPremiumPerShareAmount = ({ index, value, errorMessage, validat
         customInput={TextField}
         decimalScale={2}
         thousandSeparator=','
-        disabled={securities[index].view === 2}
+        disabled={isDisabled}
       />
       <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
-        {activeErros && errorMessage}
+        {isActiveErrors && errorMessage}
       </FormHelperText>
     </FormControl>
   )

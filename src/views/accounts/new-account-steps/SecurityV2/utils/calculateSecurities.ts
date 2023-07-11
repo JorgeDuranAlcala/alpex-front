@@ -1,5 +1,5 @@
-import { CalculateSecurity } from "../../Security/utils/calculates-securities";
 import { Information, Security } from "../store/securitySlice";
+import { CalculateSecurity } from "./calculates-securities";
 
 interface CalculateSecuritiesProps {
   securities: Security[];
@@ -8,9 +8,10 @@ interface CalculateSecuritiesProps {
 
 export const calculateSecurities = ({ securities, information }: CalculateSecuritiesProps) => {
   const tempSecurities: Security[] = []
+  const tempSecurities_2: Security[] = [...securities]
   const tempCompaniesSelected: number[] = [];
 
-  for (const security of securities) {
+  for (const security of tempSecurities_2) {
 
     // * Se inicializan las operaciones de cálculos para cada security
     const operationSecurity: CalculateSecurity = new CalculateSecurity()
@@ -28,10 +29,12 @@ export const calculateSecurities = ({ securities, information }: CalculateSecuri
     if (security?.discounts) {
       security.totalAmountOfDiscounts = 0
       for (const discount of security?.discounts) {
-        discount.percentage = Number(discount.percentage)
-        discount.amount = operationSecurity.getDiscountAmount(Number(discount.percentage))
-        security.totalAmountOfDiscounts += discount.amount
-        tempDiscountList.push(discount)
+        const tempDiscount = { ...discount };
+
+        tempDiscount.percentage = Number(discount.percentage)
+        tempDiscount.amount = operationSecurity.getDiscountAmount(Number(discount.percentage))
+        security.totalAmountOfDiscounts += tempDiscount.amount
+        tempDiscountList.push(tempDiscount)
       }
     }
     security.discounts = tempDiscountList
@@ -92,7 +95,7 @@ export const calculateSecurities = ({ securities, information }: CalculateSecuri
       // * además se mostrarán los inputs de retrocedant
       security.isShowToggleFrontingFee = true;
       security.isFrontingFeeEnabled = information.frontingFee > 0;
-      security.isShowRetrocedant = true;
+      security.isShowRetroCedant = true;
 
       // * Si NO se ha modificado el input frontingFee por el usuario
       // * y si frontingFee NO contiene un valor o es igual a 0
@@ -116,7 +119,7 @@ export const calculateSecurities = ({ securities, information }: CalculateSecuri
       if (!security.isTouchedFrontingFee && security.frontingFee === 0) {
         security.isShowToggleFrontingFee = false;
         security.isFrontingFeeEnabled = false;
-        security.isShowRetrocedant = false;
+        security.isShowRetroCedant = false;
 
       }
 
@@ -128,12 +131,25 @@ export const calculateSecurities = ({ securities, information }: CalculateSecuri
       else if (!security.isTouchedFrontingFee && security.frontingFee > 0) {
         security.isShowToggleFrontingFee = true;
         security.isFrontingFeeEnabled = true;
-        security.isShowRetrocedant = true;
+        security.isShowRetroCedant = true;
       }
     }
 
     // *  + + + + + + + END - VALIDACIÓN INPUT FRONTING FEE  + + + + + + +
 
+
+    // * Si el usuario toca algún input o toggle de taxes,
+    // * entonces los inputs de taxes se activarán
+    if (security.isTouchedTaxes || security.isTouchedTaxesAmount) {
+      security.isTaxesEnabled = true;
+    }
+
+    // * Si el usuario toca algún input o toggle de frontingFee,
+    // * entonces los inputs de frontingFee se activarán,
+    if (security.isTouchedFrontingFee || security.isTouchedFrontingFeeAmount) {
+      security.isFrontingFeeEnabled = true;
+
+    }
 
     security.frontingFee = Number(security.frontingFee) || 0
     security.taxes = Number(security.taxes) || 0
