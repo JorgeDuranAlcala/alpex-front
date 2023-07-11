@@ -26,8 +26,8 @@ const initialValues: SublimitDto = {
   daysBi: 0,
   amountBi: 0,
   coinsurance: 0,
-  yes: null,
-  luc: null,
+  yes: false,
+  luc: true,
   typeDeductible: '',
   typeBi: '',
   at100: false,
@@ -269,13 +269,13 @@ const Sublimits = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  console.log(
-    'Seleccionados: ',
-    'Coverage seleccionadas: ',
-    coverageSelected,
-    'Coverage que se van a mapear en la interfaz: ',
-    subLimits
-  )
+  // console.log(
+  //   'Seleccionados: ',
+  //   'Coverage seleccionadas: ',
+  //   coverageSelected,
+  //   'Coverage que se van a mapear en la interfaz: ',
+  //   subLimits
+  // )
 
   return (
     <CardContent>

@@ -55,6 +55,7 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
 
   const handleChangeSubLimit = (subLimitParam: SublimitDto) => {
     const subLimitsTemp = [...subLimits]
+
     subLimitsTemp[index] = {
       ...subLimitsTemp[index],
       ...subLimitParam
@@ -74,6 +75,9 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
 
   const validateForm = (subLimitParam: SublimitDto) => {
     let data = { ...initialErrorValues }
+
+    // console.log('no se ejecuta', subLimitParam)
+
     const schema = yup.object().shape({
       ...inputSublimit_validations({ limit, isNotYesLuc: DONT_SHOW_YES_LUC.includes(subLimitParam.title) }).fields,
       ...validateDeductibleMaterialDamage({ typeDeductible: subLimitParam.typeDeductible }).fields,
@@ -111,6 +115,8 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
     validateForm(subLimit)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [subLimit])
+
+  // console.log('error card', errorCard)
 
   return (
     <ContainerCard>
