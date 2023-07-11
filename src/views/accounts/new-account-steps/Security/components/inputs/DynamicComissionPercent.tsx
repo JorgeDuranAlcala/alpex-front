@@ -28,6 +28,7 @@ export const DynamicComissionPercent = ({
       ...tempSecurities[index],
       dynamicCommission: value
     }
+    debugger
     validateForm(tempSecurities[index])
     calculateSecurities(tempSecurities)
   }
@@ -43,7 +44,6 @@ export const DynamicComissionPercent = ({
         }}
         suffix={'%'}
         customInput={TextField}
-        decimalScale={2}
         isAllowed={values => {
           return (values.floatValue! >= 0 && values.floatValue! <= 100) || values.floatValue === undefined
         }}

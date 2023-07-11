@@ -381,7 +381,6 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
                   thousandSeparator=','
                   customInput={TextField}
                   id='DynamicNetPremium'
-                  decimalScale={2}
                   label='Dynamic net premium'
                   multiline
                   variant='outlined'

@@ -1,4 +1,4 @@
-import { SecurityDto } from '@/services/accounts/dtos/security.dto'
+import { FormInformation, SecurityDto } from '@/services/accounts/dtos/security.dto'
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material'
 import { useContext } from 'react'
 import { SecondViewContext } from './SecondViewContext'
@@ -6,16 +6,22 @@ import { SecondViewContext } from './SecondViewContext'
 interface ModalActivateSecondViewProps {
   securities: SecurityDto[]
   calculateSecurities: (securities: SecurityDto[]) => void
+  information: FormInformation
 }
 
-export const ModalActivateSecondView = ({ securities, calculateSecurities }: ModalActivateSecondViewProps) => {
+export const ModalActivateSecondView = ({
+  securities,
+  calculateSecurities,
+  information
+}: ModalActivateSecondViewProps) => {
   const { isOpenModal, closeModalSecondView, createSecondView } = useContext(SecondViewContext)
 
   const handleCreateSecondView = () => {
     handleCloseModal()
     createSecondView({
       securities,
-      calculateSecurities
+      calculateSecurities,
+      information
     })
   }
 

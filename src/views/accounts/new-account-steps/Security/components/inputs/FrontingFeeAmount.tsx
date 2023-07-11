@@ -53,7 +53,6 @@ export const FrontingFeeAmount = ({
         }}
         prefix={'$'}
         customInput={TextField}
-        decimalScale={2}
         thousandSeparator=','
         disabled={view === 2 || isDisabled}
       />

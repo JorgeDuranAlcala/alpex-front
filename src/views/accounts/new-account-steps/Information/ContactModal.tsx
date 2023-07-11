@@ -71,6 +71,7 @@ export const ContactModal = ({ id, service, updateContacts, setIdCreated, disabl
   const { countries } = useGetAllCountries()
   const { saveBrokerContact } = useAddBrokerContact()
   const { saveCedantContact } = useAddCedantContact()
+  const ALPHA_REGEX =/^[a-zA-ZÀ-ÿ\s]+$/;
 
   // const {  saveCedant } = useAddCedant()
 
@@ -216,6 +217,11 @@ export const ContactModal = ({ id, service, updateContacts, setIdCreated, disabl
                 label='Contact Name'
                 value={contactData.name}
                 onChange={e => handleChange('name', e.target.value)}
+                onKeyDown={(event) => {
+                  if (!ALPHA_REGEX.test(event.key)) {
+                    event.preventDefault();
+                  }
+                }}
               />
 
               {nameError && <FormHelperText sx={{ color: 'error.main' }}>Invalid name</FormHelperText>}

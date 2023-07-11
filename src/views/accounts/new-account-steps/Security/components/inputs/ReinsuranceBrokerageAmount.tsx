@@ -51,7 +51,6 @@ export const ReinsuranceBrokerageAmount = ({
         }}
         prefix={'$'}
         customInput={TextField}
-        decimalScale={2}
         thousandSeparator=','
         disabled={view === 2}
       />

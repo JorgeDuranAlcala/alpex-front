@@ -83,7 +83,6 @@ const InputSubLimitCoverage: React.FC<InputSubLimitCoverageProps> = ({
               label='subLimit'
               multiline
               prefix={'$'}
-              decimalScale={2}
               isAllowed={values => {
                 const { floatValue } = values
                 const upLimit = +limit
