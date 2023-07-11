@@ -33,6 +33,8 @@ const SelectCoverage: React.FC<SelectCoverageProps> = ({ onChangeSelected, cover
     coverageSelect && onChangeSelected(coverageSelect)
   }
 
+  console.log('Seleccionados: ', coverages)
+
   return (
     <Grid item xs={12} sm={4}>
       <Select
