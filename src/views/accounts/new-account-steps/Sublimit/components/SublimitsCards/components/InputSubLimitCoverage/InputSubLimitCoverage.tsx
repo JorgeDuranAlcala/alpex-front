@@ -80,7 +80,7 @@ const InputSubLimitCoverage: React.FC<InputSubLimitCoverageProps> = ({
               thousandSeparator=','
               customInput={TextField}
               id='filled-multiline-flexible'
-              label='subLimit'
+              label='Sublimit'
               multiline
               prefix={'$'}
               decimalScale={2}

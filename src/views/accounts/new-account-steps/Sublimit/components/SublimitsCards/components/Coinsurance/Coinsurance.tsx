@@ -32,7 +32,7 @@ const Coinsurance: React.FC<CoinsuranceProps> = ({ subLimit, onHandleChangeSubLi
       </Typography>
 
       <NumericFormat
-        label='%'
+        label=''
         placeholder='0%'
         name='coinsurance'
         allowLeadingZeros
