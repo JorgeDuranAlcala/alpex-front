@@ -48,7 +48,6 @@ export const GrossPremiumPerShareAmount = ({
         }}
         prefix={'$'}
         customInput={TextField}
-        decimalScale={2}
         thousandSeparator=','
         disabled={view === 2}
       />

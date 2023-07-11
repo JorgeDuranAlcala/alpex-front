@@ -305,36 +305,48 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
       : information.netPremium !== tempSecurities[index].netPremiumAt100
 
     // index === tempSecurities.length - 1 &&
-    if (activeView === 0 && isDifferent && securities[index].idCReinsuranceCompany?.id) {
-      setCurrentView(1)
+    if (information && activeView === 0 && isDifferent && securities[index].idCReinsuranceCompany?.id) {
       createSecondView({
         securities: tempSecurities,
-        calculateSecurities
+        calculateSecurities,
+        information
       })
     }
   }, [])
 
   useEffect(() => {
-    console.log(activeView)
     setCurrentView(activeView)
   }, [activeView])
 
   return (
     <DiscountsProvider>
-      <ModalActivateSecondView securities={securities} calculateSecurities={calculateSecurities} />
+      <ModalActivateSecondView
+        information={information}
+        securities={securities}
+        calculateSecurities={calculateSecurities}
+      />
 
-      <ModalUndoSecondView securities={securities} calculateSecurities={calculateSecurities} />
+      <ModalUndoSecondView
+        information={information}
+        securities={securities}
+        calculateSecurities={calculateSecurities}
+      />
 
       <div style={{ position: 'relative' }}>
         {index > 0 && <hr style={{ margin: '40px 0px', backgroundColor: 'lightgray' }} />}
         <Grid container item xs={12} sm={12}>
           <Grid item xs={12} sm={12}>
-            {index === 0 && activeView !== 0 ? (
+            {index === 0 && activeView > 0 && activeView < 3 ? (
               <>
                 {activeView === 2 && (
                   <UndoSecondView securities={securities} calculateSecurities={calculateSecurities} />
                 )}
-                <SwitchSecondView view={activeView} securities={securities} calculateSecurities={calculateSecurities} />
+                <SwitchSecondView
+                  information={information}
+                  view={activeView}
+                  securities={securities}
+                  calculateSecurities={calculateSecurities}
+                />
               </>
             ) : null}
             {index > 0 && activeView === 1 && (
@@ -368,6 +380,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
               validateForm={validateForm}
               operationSecurity={operationSecurity}
               view={security.view}
+              security={security}
             />
 
             <SharePercent

@@ -115,7 +115,6 @@ const DeductibleMaterialDamage: React.FC<DeductibleMaterialDamageProps> = ({
             thousandSeparator=','
             customInput={Input}
             suffix={'%'}
-            decimalScale={2}
             sx={{
               width: '100%',
               height: '100%',
@@ -147,7 +146,6 @@ const DeductibleMaterialDamage: React.FC<DeductibleMaterialDamageProps> = ({
                 label='Minimum'
                 multiline
                 prefix={'$'}
-                decimalScale={2}
                 variant='outlined'
                 onValueChange={value => {
                   handleChangeItem({ target: { value: value.floatValue } }, 'min')
@@ -207,7 +205,6 @@ const DeductibleMaterialDamage: React.FC<DeductibleMaterialDamageProps> = ({
             thousandSeparator=','
             customInput={Input}
             prefix={'$'}
-            decimalScale={2}
             sx={{
               width: '100%',
               height: '100%',

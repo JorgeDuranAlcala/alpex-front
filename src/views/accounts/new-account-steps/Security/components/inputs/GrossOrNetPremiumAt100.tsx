@@ -3,6 +3,7 @@ import { useContext, useEffect } from 'react'
 import { NumericFormat } from 'react-number-format'
 import * as yup from 'yup'
 
+import { SecurityDto } from '@/services/accounts/dtos/security.dto'
 import { SecurityContext } from '../../SecurityView'
 import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interface'
 import { CalculateSecurity } from '../../utils/calculates-securities'
@@ -12,6 +13,7 @@ import { SecondViewContext } from '../secondView/SecondViewContext'
 interface GrossOrNetPremiumAt100Props extends ISecurityInputProps {
   isGross: boolean
   operationSecurity: CalculateSecurity
+  security: SecurityDto
 }
 
 export const GrossOrNetPremiumAt100 = ({
@@ -21,7 +23,8 @@ export const GrossOrNetPremiumAt100 = ({
   errorMessage,
   validateForm,
   operationSecurity,
-  view
+  view,
+  security
 }: GrossOrNetPremiumAt100Props) => {
   const { discountsList, updateAllDiscounts } = useContext(DiscountsContext)
 
@@ -30,7 +33,7 @@ export const GrossOrNetPremiumAt100 = ({
   const { activeView, $inputRef, openModalSecondView, isOpenModal, isOpenModalUndo } = useContext(SecondViewContext)
 
   const handleClick = (e: any) => {
-    if (activeView === 0) {
+    if (activeView === 0 || activeView === 3) {
       $inputRef[index] = e.target
       openModalSecondView()
     }
@@ -93,6 +96,12 @@ export const GrossOrNetPremiumAt100 = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpenModalUndo])
 
+  useEffect(() => {
+    console.log()
+    security.discounts.length > 0 && updateAllDiscounts(security.discounts)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeView])
+
   return (
     <FormControl fullWidth sx={{ mb: 2 }}>
       <NumericFormat
@@ -106,7 +115,6 @@ export const GrossOrNetPremiumAt100 = ({
         onClick={handleClick}
         prefix={'$'}
         customInput={TextField}
-        decimalScale={2}
         thousandSeparator=','
         disabled={view === 2}
       />

@@ -35,7 +35,6 @@ export const ShareAmount = ({ index, value, errorMessage, validateForm, view }: 
         }}
         prefix={'$'}
         customInput={TextField}
-        decimalScale={2}
         thousandSeparator=','
         disabled={view === 2}
       />
