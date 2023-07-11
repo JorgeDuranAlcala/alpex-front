@@ -444,25 +444,25 @@ const Security = ({ onStepChange }: SecurityProps) => {
             <CardContent>
               {currentView !== 2
                 ? securities.map((security, index) => {
-                    return (
-                      <FormSection
-                        key={`${index}-${security?.id}`}
-                        security={security}
-                        index={index}
-                        onDeleteItemList={DeleteNewForm}
-                      />
-                    )
-                  })
+                  return (
+                    <FormSection
+                      key={`${index}-${security?.id}`}
+                      security={security}
+                      index={index}
+                      onDeleteItemList={DeleteNewForm}
+                    />
+                  )
+                })
                 : securitiesSecondView.map((security, index) => {
-                    return (
-                      <FormSection
-                        key={`${index}-${security?.id}`}
-                        security={security}
-                        index={index}
-                        onDeleteItemList={DeleteNewForm}
-                      />
-                    )
-                  })}
+                  return (
+                    <FormSection
+                      key={`${index}-${security?.id}`}
+                      security={security}
+                      index={index}
+                      onDeleteItemList={DeleteNewForm}
+                    />
+                  )
+                })}
 
               <Grid container spacing={5}>
                 <Grid item xs={12} sm={4}>
@@ -529,7 +529,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
                 {/* ADD REINSURER */}
                 <Grid item xs={12} sm={12}>
                   <div className='add-reinsurer'>
-                    {}
+                    { }
                     <Button
                       disabled={currentView === 2}
                       type='button'

@@ -12,7 +12,7 @@ import { useRouter } from 'next/router'
 import Information from 'src/views/accounts/new-account-steps/Information/Information'
 
 import PaymentWarranty from 'src/views/accounts/new-account-steps/PaymentWarranty'
-import Security from 'src/views/accounts/new-account-steps/Security/SecurityView'
+import Security from 'src/views/accounts/new-account-steps/SecurityV2/SecurityView'
 
 import CommentSection from 'src/views/components/new-accounts/CommentSection'
 import NewAccountStepper from 'src/views/components/new-accounts/NewAccountStepper'
