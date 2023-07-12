@@ -26,8 +26,8 @@ const initialValues: SublimitDto = {
   daysBi: 0,
   amountBi: 0,
   coinsurance: 0,
-  yes: null,
-  luc: null,
+  yes: false,
+  luc: true,
   typeDeductible: '',
   typeBi: '',
   at100: false,
@@ -113,6 +113,7 @@ const Sublimits = () => {
   const handleSelectedCoverage = (coverageSelect: CoverageDto) => {
     setCoverageSelected([...coverageSelected, coverageSelect])
   }
+
   const handleToggle = (value: number, label: string) => {
     try {
       const idAccountCache = Number(localStorage.getItem('idAccount'))
@@ -136,6 +137,7 @@ const Sublimits = () => {
       console.log(error)
     }
   }
+
   const handleDeleteSublimit = async (index: number) => {
     const sublimit = subLimits[index]
     const coverageDelete = coverageSelected.filter(cov => cov.coverage !== sublimit.title)
@@ -170,6 +172,7 @@ const Sublimits = () => {
       setShowErrors(true)
     }
   }
+
   const handleSubmit = async () => {
     setDisableBoundBtn(true)
     setDisableSaveBtn(true)
@@ -211,6 +214,7 @@ const Sublimits = () => {
       })
     }, 4000)
   }
+
   const handleUpdateStatus = async () => {
     const existError = formErrors.find(error => error)
     if (!existError) {
@@ -240,6 +244,7 @@ const Sublimits = () => {
       }, 50)
     }
   }
+
   const getAccountData = async () => {
     const idAccountCache = Number(localStorage.getItem('idAccount'))
     setAccountId(idAccountCache)
@@ -251,16 +256,26 @@ const Sublimits = () => {
       formErrors.push(false)
     }
   }
+
   useEffect(() => {
     if (accountData.formsData.form1?.id) {
       setAccountId(accountData.formsData.form1.id)
       setFormInformationData(accountData.formsData.form1)
     }
   }, [accountData, setAccountId])
+
   useEffect(() => {
     getAccountData()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  // console.log(
+  //   'Seleccionados: ',
+  //   'Coverage seleccionadas: ',
+  //   coverageSelected,
+  //   'Coverage que se van a mapear en la interfaz: ',
+  //   subLimits
+  // )
 
   return (
     <CardContent>

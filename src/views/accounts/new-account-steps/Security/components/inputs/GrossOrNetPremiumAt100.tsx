@@ -3,17 +3,12 @@ import { useContext, useEffect } from 'react'
 import { NumericFormat } from 'react-number-format'
 import * as yup from 'yup'
 
-import { SecurityDto } from '@/services/accounts/dtos/security.dto'
 import { SecurityContext } from '../../SecurityView'
 import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interface'
-import { CalculateSecurity } from '../../utils/calculates-securities'
-import { DiscountsContext } from '../discounts/DiscountsContext'
 import { SecondViewContext } from '../secondView/SecondViewContext'
 
 interface GrossOrNetPremiumAt100Props extends ISecurityInputProps {
   isGross: boolean
-  operationSecurity: CalculateSecurity
-  security: SecurityDto
 }
 
 export const GrossOrNetPremiumAt100 = ({
@@ -22,16 +17,13 @@ export const GrossOrNetPremiumAt100 = ({
   value,
   errorMessage,
   validateForm,
-  operationSecurity,
-  view,
-  security
+  view
 }: GrossOrNetPremiumAt100Props) => {
-  const { discountsList, updateAllDiscounts } = useContext(DiscountsContext)
-
   const { activeErros, securities, calculateSecurities } = useContext(SecurityContext)
 
   const { activeView, $inputRef, openModalSecondView, isOpenModal, isOpenModalUndo } = useContext(SecondViewContext)
 
+  // al hacer click en el input se desplega un modal para la visualizacion de la segunda vista
   const handleClick = (e: any) => {
     if (activeView === 0 || activeView === 3) {
       $inputRef[index] = e.target
@@ -51,25 +43,12 @@ export const GrossOrNetPremiumAt100 = ({
   }
 
   useEffect(() => {
-    const newDiscountsList = discountsList.map(discount => ({
-      ...discount,
-      percentage: discount.percentage,
-      amount: operationSecurity.getDiscountAmount(discount.amount)
-    }))
-
-    updateAllDiscounts(newDiscountsList)
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value])
-
-  useEffect(() => {
+    // activacion de modal para visualizar la segunda vista
     if (!isOpenModal) {
       if (!$inputRef) return
 
       if (activeView !== 0) {
         setTimeout(() => {
-          // console.log(index, 'focus', $inputRef.current || 'null');
-
           $inputRef[index]?.focus()
 
           $inputRef[index]?.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' })
@@ -95,12 +74,6 @@ export const GrossOrNetPremiumAt100 = ({
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpenModalUndo])
-
-  useEffect(() => {
-    console.log()
-    security.discounts.length > 0 && updateAllDiscounts(security.discounts)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeView])
 
   return (
     <FormControl fullWidth sx={{ mb: 2 }}>

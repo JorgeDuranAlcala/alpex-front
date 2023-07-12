@@ -2,10 +2,33 @@ import { Button, Grid } from '@mui/material'
 import { useContext } from 'react'
 
 import CoreIcon from 'src/@core/components/icon'
-import { DiscountsContext } from './DiscountsContext'
+import { SecurityContext } from '../../SecurityView'
 
-export const ButtonAddDiscount = ({ view }: { view: number }) => {
-  const { addDiscount } = useContext(DiscountsContext)
+export const ButtonAddDiscount = ({ view, formIndex }: { view: number; formIndex: number }) => {
+  const {
+    securities,
+
+    calculateSecurities
+  } = useContext(SecurityContext)
+
+  const addDiscount = () => {
+    const securitiesTemp = [...securities]
+    let tempPercentTotalDiscount = 0
+    for (const discount of securitiesTemp[formIndex].discounts) {
+      tempPercentTotalDiscount += discount.percentage
+    }
+    if (tempPercentTotalDiscount < 100) {
+      securitiesTemp[formIndex].discounts = [
+        ...securitiesTemp[formIndex].discounts,
+        {
+          active: true,
+          percentage: 0,
+          amount: 0
+        }
+      ]
+      calculateSecurities(securitiesTemp)
+    }
+  }
 
   return (
     <Grid

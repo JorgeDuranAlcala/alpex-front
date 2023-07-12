@@ -5,30 +5,28 @@ import * as yup from 'yup'
 
 import { SecurityContext } from '../../SecurityView'
 import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interface'
-import { CalculateSecurity } from '../../utils/calculates-securities'
 
-interface PremiumPerShareAmountProps extends ISecurityInputProps {
-  operationSecurity: CalculateSecurity
-}
+type PremiumPerShareAmountProps = ISecurityInputProps
 
 export const PremiumPerShareAmount = ({
   index,
   value,
   errorMessage,
   validateForm,
-  operationSecurity,
   view
 }: PremiumPerShareAmountProps) => {
-  const { activeErros, securities, calculateSecurities } = useContext(SecurityContext)
+  const { activeErros, securities } = useContext(SecurityContext)
 
   const handleChangePremiumPerShareAmount = (value: number) => {
+    //todo @omar persistir valor
     const tempSecurities = [...securities]
     tempSecurities[index] = {
       ...tempSecurities[index],
-      share: operationSecurity.getsharePercent(value)
+      premiumPerShareAmount: value
     }
     validateForm(tempSecurities[index])
-    calculateSecurities(tempSecurities)
+
+    // calculateSecurities(tempSecurities)
   }
 
   return (

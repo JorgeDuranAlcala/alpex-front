@@ -298,7 +298,7 @@ const Information: React.FC<InformationProps> = ({
       idLeadUnderwriter: Number(basicInfo.leadUnderwriter) === 0 ? null : Number(basicInfo.leadUnderwriter),
       idTechnicalAssistant: Number(basicInfo.technicalAssistant) === 0 ? null : Number(basicInfo.technicalAssistant),
       idUnderwriter: Number(basicInfo.underwriter) === 0 ? null : Number(basicInfo.underwriter),
-      riskClass: basicInfo.riskClass,
+      riskClass: Number(basicInfo.riskClass),
       currency: placementStructure.currency,
       exchangeRate: placementStructure.exchangeRate,
       attachmentPoint: placementStructure.attachmentPoint,

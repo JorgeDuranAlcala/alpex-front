@@ -33,8 +33,17 @@ export const useGetAccountById = () => {
           if (accounts) {
             accounts.securities =
               accounts.securities.length === 0
-                ? [{ frontingFeeActive: false, isGross: false } as SecurityDto]
-                : accounts.securities
+                ? [
+                    {
+                      frontingFeeActive: false,
+                      isGross: false,
+                      discounts: [],
+                      share: 0,
+                      dynamicCommission: 0,
+                      view: 1
+                    } as SecurityDto
+                  ]
+                : (accounts.securities as SecurityDto[])
           }
           setAccount(accounts)
         })

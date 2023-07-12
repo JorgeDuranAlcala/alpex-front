@@ -22,11 +22,6 @@ export const ReinsuranceBrokerageAmount = ({
   const { activeErros, securities, calculateSecurities } = useContext(SecurityContext)
 
   const handleChangeBrokerAgeAmount = (value: number) => {
-    // clearInterval(typingTimer)
-
-    // // Iniciar un nuevo intervalo
-    // typingTimer = setInterval(() => {
-    //   // Código a ejecutar cuando se deja de escribir
     const tempSecurities = [...securities]
     tempSecurities[index] = {
       ...tempSecurities[index],
@@ -34,10 +29,6 @@ export const ReinsuranceBrokerageAmount = ({
     }
     validateForm(tempSecurities[index])
     calculateSecurities(tempSecurities)
-
-    //   // Limpiar el intervalo
-    //   clearInterval(typingTimer)
-    // }, doneTypingInterval)
   }
 
   return (

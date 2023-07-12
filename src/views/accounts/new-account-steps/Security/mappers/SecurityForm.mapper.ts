@@ -6,7 +6,7 @@ import { RetroCedantContactDto } from '@/services/catalogs/dtos/retroCedantConta
 import { IAccountsState } from '@/types/apps/accountsTypes'
 import { IDiscountInputs } from '../components/discounts/DiscountsContext'
 
-export interface SecurityModel {
+export interface SecurityModel extends SecurityDto {
   netPremiumAt100: number
   share: number
   frontingFeeActive: boolean
@@ -19,7 +19,7 @@ export interface SecurityModel {
   idCReinsuranceCompany: ReinsuranceCompanyDto
   idCRetroCedant: RetroCedantDto | null
   idCRetroCedantContact: RetroCedantContactDto | null
-  idEndorsement: number | undefined
+  idEndorsement: number
   idAccount: number
   receivedNetPremium: number
   distributedNetPremium: number
@@ -44,14 +44,16 @@ export interface SecurityModel {
 export class SecurityMapper {
   static securityToSecurityForm(security: SecurityDto, accountData: IAccountsState): SecurityModel {
     return {
-      netPremiumAt100: security.netPremiumAt100,
-      share: security.share,
+      id: security.id,
+      premiumPerShare: Number(security.premiumPerShare) || 0,
+      netPremiumAt100: Number(security.netPremiumAt100) || 0,
+      share: Number(security.share) || 0,
       frontingFeeActive: security.frontingFeeActive,
-      dynamicCommission: security.dynamicCommission,
+      dynamicCommission: Number(security.dynamicCommission) || 0,
       frontingFee: Number(security.frontingFee) || 0,
-      netReinsurancePremium: security.netReinsurancePremium,
+      netReinsurancePremium: Number(security.netReinsurancePremium),
       taxes: Number(security.taxes) || 0,
-      reinsuranceBrokerage: security.reinsuranceBrokerage,
+      reinsuranceBrokerage: Number(security.reinsuranceBrokerage) || 0,
       active: true,
       idCReinsuranceCompany: security.idCReinsuranceCompany,
       idCRetroCedant:
@@ -64,28 +66,31 @@ export class SecurityMapper {
         security.idCReinsuranceCompanyBinder && security.idCReinsuranceCompanyBinder.hasOwnProperty('id')
           ? security.idCReinsuranceCompanyBinder
           : null,
-      idEndorsement: undefined,
+      idEndorsement: security.idEndorsement,
       idAccount: +accountData.formsData.form1.id,
       receivedNetPremium: 0,
       distributedNetPremium: 0,
       difference: 0,
-      discounts: security.discounts.map(discount => ({
-        percentage: discount.percentage,
-        amount: discount.amount,
-        active: discount.active
-      })),
-      shareAmount: security.shareAmount,
-      premiumPerShareAmount: security.premiumPerShareAmount,
+      discounts:
+        security.discounts &&
+        security.discounts.map(discount => ({
+          percentage: Number(discount.percentage) || 0,
+          amount: Number(discount.amount) || 0,
+          active: discount.active
+        })),
+      shareAmount: Number(security.shareAmount) || 0,
+      premiumPerShareAmount: Number(security.premiumPerShareAmount) || 0,
       taxesActive: security.taxesActive,
-      dynamicCommissionAmount: security.dynamicCommissionAmount,
-      frontingFeeAmount: security.frontingFeeAmount,
-      grossPremiumPerShare: security.grossPremiumPerShare || 0,
-      taxesAmount: security.taxesAmount,
-      brokerAgeAmount: security.brokerAgeAmount,
+      dynamicCommissionAmount: Number(security.dynamicCommissionAmount) || 0,
+      frontingFeeAmount: Number(security.frontingFeeAmount) || 0,
+      grossPremiumPerShare: Number(security.grossPremiumPerShare) || 0,
+      taxesAmount: Number(security.taxesAmount) || 0,
+      brokerAgeAmount: Number(security.brokerAgeAmount) || 0,
       consecutive: security.consecutive,
       view: security.view,
       isGross: security.isGross,
-      totalAmountOfDiscounts: security.totalAmountOfDiscounts
+      totalAmountOfDiscounts: Number(security.totalAmountOfDiscounts) || 0,
+      recievedNetPremium: 0
     }
   }
 }

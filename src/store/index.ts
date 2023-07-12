@@ -3,6 +3,7 @@ import { configureStore } from '@reduxjs/toolkit'
 import { useSelector } from 'react-redux'
 
 // ** Reducers
+import alertBadgeSecuritySlice from '@/views/accounts/new-account-steps/SecurityV2/store/alertBadgeSecuritySlice'
 import { TypedUseSelectorHook, useDispatch } from 'react-redux'
 import accounts from 'src/store/apps/accounts'
 import calendar from 'src/store/apps/calendar'
@@ -14,6 +15,7 @@ import invoice from 'src/store/apps/invoice'
 import permissions from 'src/store/apps/permissions'
 import user from 'src/store/apps/user'
 import users from 'src/store/apps/users'
+import securitySlice from '../views/accounts/new-account-steps/SecurityV2/store/securitySlice'
 import uiUserSlice from './apps/user/uiUserSlice'
 
 
@@ -30,6 +32,8 @@ export const store = configureStore({
     users,
     brokers,
     brokerContacts,
+    alertBadgeSecuritySlice,
+    securitySlice
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
