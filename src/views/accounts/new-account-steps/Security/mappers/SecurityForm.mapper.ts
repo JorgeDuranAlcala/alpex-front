@@ -71,11 +71,13 @@ export class SecurityMapper {
       receivedNetPremium: 0,
       distributedNetPremium: 0,
       difference: 0,
-      discounts: security.discounts.map(discount => ({
-        percentage: Number(discount.percentage),
-        amount: Number(discount.amount),
-        active: discount.active
-      })),
+      discounts:
+        security.discounts &&
+        security.discounts.map(discount => ({
+          percentage: Number(discount.percentage),
+          amount: Number(discount.amount),
+          active: discount.active
+        })),
       shareAmount: Number(security.shareAmount),
       premiumPerShareAmount: Number(security.premiumPerShareAmount),
       taxesActive: security.taxesActive,
