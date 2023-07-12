@@ -12,7 +12,6 @@ import { DeductibleMaterialDamage } from './components/DeductibleMaterialDamage'
 import { validateDeductibleMaterialDamage } from './components/DeductibleMaterialDamage/DeductibleMaterialDamage'
 import { InputSubLimitCoverage } from './components/InputSubLimitCoverage'
 import { inputSublimit_validations } from './components/InputSubLimitCoverage/InputSubLimitCoverage'
-import Loss from './components/Loss/Loss'
 import { RenderFormGeneric } from './types'
 
 const DONT_SHOW_YES_LUC = [
@@ -26,16 +25,17 @@ const DONT_SHOW_YES_LUC = [
 ]
 const DONT_SHOW_BUSSINES_INTERRUPTION = ['Machinery Breakdown', 'AMIT & SRCC', 'Electronic Equipment']
 const DONT_SHOW_DEDUCTIBLE_MATERIAL_DAMAGE = ['Business  Interruption  Machinery Breakdown', 'Business  Interruption']
-const DONT_SHOW_LOSS = [
-  'Business  Interruption  Machinery Breakdown',
-  'Wind',
-  'Business  Interruption',
-  'Earthquake',
-  'Flood',
-  'Business interruption',
-  'Fire',
-  'Terrorism'
-]
+
+// const DONT_SHOW_LOSS = [
+//   'Business  Interruption  Machinery Breakdown',
+//   'Wind',
+//   'Business  Interruption',
+//   'Earthquake',
+//   'Flood',
+//   'Business interruption',
+//   'Fire',
+//   'Terrorism'
+// ]
 
 const GenericCard: React.FC<RenderFormGeneric> = ({
   subLimit,
@@ -151,14 +151,14 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
             showErrors={showErrors}
           />
         )}
-        {!DONT_SHOW_LOSS.includes(subLimitCard.title) && (
+        {/* {!DONT_SHOW_LOSS.includes(subLimitCard.title) && (
           <Loss
             subLimit={subLimitCard}
             onHandleChangeSubLimit={handleChangeSubLimit}
             errorCard={errorCard}
             showErrors={showErrors}
           />
-        )}
+        )} */}
         {!DONT_SHOW_BUSSINES_INTERRUPTION.includes(subLimitCard.title) && (
           <BusinessInterruption
             subLimit={subLimitCard}
