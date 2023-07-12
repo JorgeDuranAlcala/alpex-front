@@ -5,6 +5,11 @@ export interface AccountProps {
   idAccountType: number
 }
 
+export interface AccountStatus {
+  id: number
+  status: string
+}
+
 export interface UpdateStatusDto {
   idAccount: number
   status: number
