@@ -1,12 +1,10 @@
 import { FormControl, FormHelperText, InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material'
-import { Dispatch, SetStateAction, useContext, useEffect } from 'react'
+import { Dispatch, SetStateAction, useContext } from 'react'
 
 // import * as yup from 'yup';
 
 import { SecurityDto } from '@/services/accounts/dtos/security.dto'
-import { ReinsuranceCompanyBinderDto } from '@/services/catalogs/dtos/ReinsuranceCompanyBinder.dto'
 import { ReinsuranceCompanyDto } from '@/services/catalogs/dtos/ReinsuranceCompanyDto'
-import ReinsuranceCompanyBinderService from 'src/services/catalogs/reinsuranceCompanyBinder.service'
 import { SecurityContext } from '../../SecurityView'
 import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interface'
 
@@ -16,7 +14,6 @@ interface ReinsuranceCompanyProps extends ISecurityInputProps {
   security: SecurityDto | undefined
   setIsGross: Dispatch<SetStateAction<boolean>>
   setFrontingFeeEnabled: Dispatch<SetStateAction<boolean>>
-  setBinders: Dispatch<SetStateAction<ReinsuranceCompanyBinderDto[]>>
 }
 
 export const ReinsuranceCompany = ({
@@ -28,18 +25,9 @@ export const ReinsuranceCompany = ({
   companiesSelect,
   validateForm,
   setIsGross,
-  setFrontingFeeEnabled,
-  setBinders,
   view
 }: ReinsuranceCompanyProps) => {
   const { activeErros, information, securities, calculateSecurities } = useContext(SecurityContext)
-
-  // console.log(avaliableReinsurers)
-
-  const updateBindersAsync = async (idCReinsuranceCompany: number) => {
-    const binders = await ReinsuranceCompanyBinderService.findByIdReinsuranceCompany(idCReinsuranceCompany)
-    setBinders(binders)
-  }
 
   const handleChangeCompany = (e: SelectChangeEvent<string>): void => {
     const avaliableCompanies: ReinsuranceCompanyDto | undefined = avaliableReinsurers
@@ -51,29 +39,19 @@ export const ReinsuranceCompany = ({
       tempSecurities[index] = {
         ...tempSecurities[index],
         idCReinsuranceCompany: avaliableCompanies,
-
-        // frontingFeeActive: false,
-
+        frontingFee: 0,
+        taxes: 0,
         isGross: avaliableCompanies.special,
+        frontingFeeActive: false,
+        taxesActive: false,
         netPremiumAt100: avaliableCompanies.special ? information.grossPremium : information.netPremium
       }
 
       setIsGross(() => avaliableCompanies.special)
-      setFrontingFeeEnabled(() => false)
+
       calculateSecurities(tempSecurities)
       validateForm(tempSecurities[index])
-      updateBindersAsync(avaliableCompanies.id)
     }
-  }
-  useEffect(() => {
-    if (value) {
-      ReinsuranceCompanyBinderService.findByIdReinsuranceCompany(Number(value)).then(binders => setBinders(binders))
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value])
-
-  if (avaliableReinsurers.length === 0) {
-    return null
   }
 
   return (
