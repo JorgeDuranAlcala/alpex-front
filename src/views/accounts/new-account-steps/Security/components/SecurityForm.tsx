@@ -201,7 +201,7 @@ export const FormSection = ({ index, security, onDeleteItemList, securities }: F
         setIsShowToggleTaxes(true)
         setIsShowToggleFrontingFee(true)
 
-        if (security.taxes === 0 && informationForm1.taxesP > 0) {
+        if (security.taxes === 0 && informationForm1.taxesP > 0 && !security.id) {
           setIsTaxesEnabled(true)
           tempSecurities[index] = {
             ...tempSecurities[index],
@@ -209,7 +209,7 @@ export const FormSection = ({ index, security, onDeleteItemList, securities }: F
             taxesAmount: 0
           }
         }
-        if (security.frontingFee === 0 && informationForm1.frontingFeeP > 0) {
+        if (security.frontingFee === 0 && informationForm1.frontingFeeP > 0 && !security.id) {
           setIsShowRetroCedant(true)
           setFrontingFeeEnabled(true)
           tempSecurities[index] = {
@@ -219,7 +219,7 @@ export const FormSection = ({ index, security, onDeleteItemList, securities }: F
           }
         }
       } else {
-        if (security.taxes === 0 && informationForm1.taxesP === 0) {
+        if (security.taxes === 0 && informationForm1.taxesP === 0 && !security.id) {
           setIsShowToggleTaxes(true)
           tempSecurities[index] = {
             ...tempSecurities[index],
@@ -227,7 +227,7 @@ export const FormSection = ({ index, security, onDeleteItemList, securities }: F
             taxesAmount: 0
           }
         }
-        if (security.frontingFee === 0 && informationForm1.frontingFeeP === 0) {
+        if (security.frontingFee === 0 && informationForm1.frontingFeeP === 0 && !security.id) {
           setIsShowToggleFrontingFee(true)
           tempSecurities[index] = {
             ...tempSecurities[index],
@@ -241,9 +241,10 @@ export const FormSection = ({ index, security, onDeleteItemList, securities }: F
 
     if (localSecuritiesTemp.length === tempSecurities.length) {
       calculateSecurities(localSecuritiesTemp)
-      validateForm(localSecuritiesTemp[index])
+
       localSecuritiesTemp = []
     }
+    validateForm(localSecuritiesTemp[index])
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
