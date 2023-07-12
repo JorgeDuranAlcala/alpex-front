@@ -58,9 +58,8 @@ const NewAccount = () => {
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const activeInputs = () => {
-    console.log('aquí se cambia', typeofAccount)
+    // console.log('aquí se cambia', typeofAccount)
     if (typeofAccount !== 'bound') {
-      // if (editInfo) {
       setActiveInputs({ ...activeIntpus, allInfo: true, basic: true })
     }
     if (activeEndorsement) {
