@@ -1,4 +1,5 @@
 // import { useGetAllEndorsementTypes } from '@/hooks/accounts/endorsementType/getAllEndorsementTypes.tsx'
+import { useGetAccountById } from '@/hooks/accounts/forms'
 import { useFindInformationByIdAccount } from '@/hooks/accounts/information'
 import { ContainerMobileBound } from '@/styled-components/accounts/Security.styled'
 import { formatStatus } from '@/utils/formatStatus'
@@ -130,7 +131,9 @@ const FormHeader = ({ isNewAccount, setActiveEndorsement, setTypeofAccount, setE
   const account = useAppSelector(state => state.accounts?.formsData?.form1)
   // const [editInfo, setEditInfo] = useState(false)
 
+  //hooks
   const { setIdAccount, information } = useFindInformationByIdAccount()
+  const { account: accountDetails, setAccountId } = useGetAccountById()
   const accountsReducer = useAppSelector(state => state.accounts)
 
   const formaterAmount = (amount: number) => {
@@ -167,6 +170,20 @@ const FormHeader = ({ isNewAccount, setActiveEndorsement, setTypeofAccount, setE
     return `${dia}/${mes < 10 ? '0' + mes : mes}/${anio}`
   }
 
+  const formatDateFromUTC = (date: Date | null): string => {
+    if (date) {
+      const fecha = new Date(new Date(date).toLocaleString('en-US', { timeZone: 'UTC' }))
+      const options: Intl.DateTimeFormatOptions = {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric'
+      }
+
+      return new Intl.DateTimeFormat('ban', options).format(fecha)
+    }
+    return ''
+  }
+
   useEffect(() => {
     const formatedRows = []
     const rawRows = accountsReducer.accounts
@@ -191,6 +208,7 @@ const FormHeader = ({ isNewAccount, setActiveEndorsement, setTypeofAccount, setE
 
   useEffect(() => {
     account && setIdAccount(account.id)
+    account && setAccountId(account.id)
   }, [account])
 
   useEffect(() => {
@@ -198,6 +216,11 @@ const FormHeader = ({ isNewAccount, setActiveEndorsement, setTypeofAccount, setE
       setTypeofAccount(status)
     }
   }, [status])
+
+  /*NEW*/
+  useEffect(() => {
+    accountDetails && setStatus(accountDetails.status)
+  }, [accountDetails])
 
   return (
     <>
@@ -247,7 +270,12 @@ const FormHeader = ({ isNewAccount, setActiveEndorsement, setTypeofAccount, setE
               <div className='form-secondContainer-wrapper-first-side'>
                 <div className='form-secondContainer-first' style={{ marginRight: '20px' }}>
                   <span className='form-secondContainer-header-title'>Status</span>
-                  {status !== '' && <StatusSelect margin={0} initialStatus='PENDING' setSelectedStatus={setStatus} />}
+                  {status !== '' && accountDetails?.status && (
+                    <StatusSelect margin={0} initialStatus={accountDetails?.status} setSelectedStatus={setStatus} />
+                  )}
+                  {status !== '' && !accountDetails && (
+                    <StatusSelect margin={0} initialStatus='PENDING' setSelectedStatus={setStatus} />
+                  )}
                 </div>
 
                 <div className='form-secondContainer-third'>
@@ -260,7 +288,7 @@ const FormHeader = ({ isNewAccount, setActiveEndorsement, setTypeofAccount, setE
                   <div className='form-secondContainer-second'>
                     <span className='form-secondContainer-header-title'>Line of Business</span>
                     <span className='form-secondContainer-header-subtitle'>
-                      {information && formatDate(information?.createdAt)}
+                      {accountDetails && accountDetails?.informations[0]?.idLineOfBussines?.lineOfBussines}
                     </span>
                   </div>
                 )}
@@ -269,7 +297,7 @@ const FormHeader = ({ isNewAccount, setActiveEndorsement, setTypeofAccount, setE
                   <div className='form-secondContainer-second'>
                     <span className='form-secondContainer-header-title'>Reception Date</span>
                     <span className='form-secondContainer-header-subtitle'>
-                      {information && formatDate(information?.createdAt)}
+                      {accountDetails && formatDateFromUTC(accountDetails?.informations[0]?.receptionDate)}
                     </span>
                   </div>
                 )}

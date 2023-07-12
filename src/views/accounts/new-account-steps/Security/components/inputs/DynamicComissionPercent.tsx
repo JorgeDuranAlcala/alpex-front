@@ -28,7 +28,7 @@ export const DynamicComissionPercent = ({
       ...tempSecurities[index],
       dynamicCommission: value
     }
-    debugger
+
     validateForm(tempSecurities[index])
     calculateSecurities(tempSecurities)
   }

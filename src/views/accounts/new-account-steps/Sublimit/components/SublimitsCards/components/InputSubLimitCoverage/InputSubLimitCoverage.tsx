@@ -59,6 +59,7 @@ const InputSubLimitCoverage: React.FC<InputSubLimitCoverageProps> = ({
     onHandleChangeSubLimit(subLimitTemp)
     setYesOrLuc(value)
   }
+
   useEffect(() => {
     if (limitAmount !== Number(limit)) {
       setIsCheckAt100(false)
@@ -80,7 +81,7 @@ const InputSubLimitCoverage: React.FC<InputSubLimitCoverageProps> = ({
               thousandSeparator=','
               customInput={TextField}
               id='filled-multiline-flexible'
-              label='subLimit'
+              label='Sublimit'
               multiline
               prefix={'$'}
               isAllowed={values => {
@@ -129,7 +130,7 @@ const InputSubLimitCoverage: React.FC<InputSubLimitCoverageProps> = ({
           <Grid item xs={9} sm={9} mt={8}>
             <RadioGroup
               aria-labelledby='demo-radio-buttons-group-label'
-              defaultValue='yes'
+              defaultValue='luc'
               name='radio-buttons-group'
               value={yesOrLuc}
               row
@@ -151,6 +152,7 @@ const InputSubLimitCoverage: React.FC<InputSubLimitCoverageProps> = ({
 }
 
 export default InputSubLimitCoverage
+
 export const inputSublimit_validations = ({ limit, isNotYesLuc }: { limit: number; isNotYesLuc: boolean }) =>
   yup.object().shape({
     sublimit: yup

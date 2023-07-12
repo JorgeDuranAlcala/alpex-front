@@ -1,17 +1,15 @@
 import { FormControl, FormHelperText, TextField } from '@mui/material'
-import { MutableRefObject, useContext } from 'react'
+import { useContext } from 'react'
 import { NumericFormat } from 'react-number-format'
 import * as yup from 'yup'
 
 import { SecurityContext } from '../../SecurityView'
-import { IForField } from '../../hooks/useDataFirstTime'
 import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interface'
 import { CalculateSecurity } from '../../utils/calculates-securities'
 
 interface FrontingFeeAmountProps extends ISecurityInputProps {
   operationSecurity: CalculateSecurity
   isDisabled: boolean
-  fieldRef: MutableRefObject<IForField>
 }
 
 export const FrontingFeeAmount = ({
@@ -21,16 +19,11 @@ export const FrontingFeeAmount = ({
   errorMessage,
   validateForm,
   operationSecurity,
-  fieldRef,
   view
 }: FrontingFeeAmountProps) => {
   const { activeErros, securities, calculateSecurities } = useContext(SecurityContext)
 
   const handleChangeFrontingFeeAmount = (value: number) => {
-    // console.log(value)
-    if (fieldRef) {
-      fieldRef.current.isTouched = true
-    }
     const tempSecurities = [...securities]
     tempSecurities[index] = {
       ...tempSecurities[index],

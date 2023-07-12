@@ -7,14 +7,12 @@ import { useGetAllByIdRetroCedant } from '@/hooks/catalogs/retroCedantContact'
 import { ReinsuranceCompanyDto } from '@/services/catalogs/dtos/ReinsuranceCompanyDto'
 
 import { FormSectionProps, SecurityDto, errorsSecurity } from '@/services/accounts/dtos/security.dto'
-import { ReinsuranceCompanyBinderDto } from '@/services/catalogs/dtos/ReinsuranceCompanyBinder.dto'
 import DialogCustomAlpex from '@/views/components/dialogs/DialogCustomAlpex'
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
 import { Grid, Icon } from '@mui/material'
 import { useContext, useEffect, useState } from 'react'
 import * as yup from 'yup'
 import { SecurityContext } from '../SecurityView'
-import { useDataFirstTime } from '../hooks/useDataFirstTime'
 import { CalculateSecurity } from '../utils/calculates-securities'
 import { ButtonAddDiscount } from './discounts/ButtonAddDiscount'
 import { DiscountsProvider } from './discounts/DiscountsProvider'
@@ -90,34 +88,34 @@ const initialErrorValues: errorsSecurity = {
   idCRetroCedant: ''
 }
 
-export const FormSection = ({ index, security, onDeleteItemList }: FormSectionProps) => {
+//este estate se utilizara cuando se necesite actualizar el estado hasta que este completo
+let localSecuritiesTemp: SecurityDto[] = []
+export const FormSection = ({ index, security, onDeleteItemList, securities }: FormSectionProps) => {
   const [isGross, setIsGross] = useState<boolean>(security.isGross)
   const [errorsSecurity, setErrorsSecurity] = useState<errorsSecurity>(initialErrorValues)
-  const [frontingFeeEnabled, setFrontingFeeEnabled] = useState(security.frontingFeeActive || false)
-  const [isShowToggleFrontingFee, setIsShowToggleFrontingFee] = useState(false)
-  const [isTaxesEnabled, setIsTaxesEnabled] = useState(false)
-  const [isShowToggleTaxes, setIsShowToggleTaxes] = useState(false)
-  const [isShowRetroCedant, setIsShowRetroCedant] = useState(false)
-  const [binders, setBinders] = useState<ReinsuranceCompanyBinderDto[]>([])
+  const [isShowToggleFrontingFee, setIsShowToggleFrontingFee] = useState(security.frontingFeeActive || false)
+  const [frontingFeeEnabled, setFrontingFeeEnabled] = useState<boolean>(security.frontingFeeActive || false)
+  const [isTaxesEnabled, setIsTaxesEnabled] = useState<boolean>(security.taxesActive || false)
+  const [isShowToggleTaxes, setIsShowToggleTaxes] = useState<boolean>(security.taxesActive || false)
+  const [isShowRetroCedant, setIsShowRetroCedant] = useState<boolean>(true)
+
   const [openDialog, setOpenDialog] = useState(false)
 
+  //CUSTOM HOOK
   const [avaliableReinsurers, setAvaliableReinsurers] = useState<ReinsuranceCompanyDto[]>([])
-
-  const { allErrors, setAllErrors, information, companiesSelect, securities, calculateSecurities, setCurrentView } =
-    useContext(SecurityContext)
-  const { activeView, createSecondView } = useContext(SecondViewContext)
-
   const { reinsuranceCompany } = useGetAllReinsuranceCompanies()
   const { retroCedants } = useGetAllRetroCedants()
   const { retroCedantContacts, setIdRetroCedant } = useGetAllByIdRetroCedant()
   const { countries } = useGetAllCountries()
 
-  const operationSecurity: CalculateSecurity = new CalculateSecurity().setInformation(information).setSecurity(security)
+  //** Context
+  const { allErrors, setAllErrors, information, companiesSelect, calculateSecurities, setCurrentView } =
+    useContext(SecurityContext)
+  const { activeView, createSecondView } = useContext(SecondViewContext)
 
+  const operationSecurity: CalculateSecurity = new CalculateSecurity().setInformation(information).setSecurity(security)
   const schemaRetrocedant = yup.object().shape({
     ...selectRetroCedant_validations({ frontingFeeEnabled, isGross }).fields,
-
-    // ...selectRetroCedantContact_validations({ frontingFeeEnabled }).fields,
     ...frontingFeePercent_validations({ frontingFeeEnabled }).fields,
     ...frontingFeeAmount_validations({ frontingFeeEnabled }).fields
   })
@@ -135,7 +133,6 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
     ...taxesPercent_validations({ isGross, isTaxesEnabled }).fields,
     ...netReinsurancePremium_validations().fields
   })
-
   const validateForm = (securityParam: SecurityDto) => {
     let data = { ...initialErrorValues }
 
@@ -164,6 +161,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
             [error.path]: error.message
           }
         }
+        console.log({ data, index })
         errorsTemp[index] = true
         setErrorsSecurity(data)
       })
@@ -193,109 +191,64 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
   }, [security])
 
   useEffect(() => {
-    validateForm(security)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isGross, frontingFeeEnabled])
-
-  useEffect(() => {
     const informationForm1 = information as any
     const tempSecurities = [...securities]
 
-    //validacion taxes
+    if (information)
+      if (isGross) {
+        setIsShowToggleTaxes(true)
+        setIsShowToggleFrontingFee(true)
 
-    if (informationForm1.taxes === 0 || isGross) {
-      setIsShowToggleTaxes(true)
-      setIsTaxesEnabled(informationForm1.taxes > 0)
-
-      tempSecurities[index] = {
-        ...tempSecurities[index],
-        taxes: informationForm1.taxes === 0 ? 0 : informationForm1.taxesP,
-        taxesAmount: 0
+        if (security.taxes === 0 && informationForm1.taxesP > 0 && !security.id) {
+          setIsTaxesEnabled(true)
+          tempSecurities[index] = {
+            ...tempSecurities[index],
+            taxes: informationForm1.taxesP,
+            taxesAmount: 0
+          }
+        }
+        if (security.frontingFee === 0 && informationForm1.frontingFeeP > 0 && !security.id) {
+          setIsShowRetroCedant(true)
+          setFrontingFeeEnabled(true)
+          tempSecurities[index] = {
+            ...tempSecurities[index],
+            frontingFee: informationForm1.frontingFeeP,
+            frontingFeeAmount: 0
+          }
+        }
+      } else {
+        if (security.taxes === 0 && informationForm1.taxesP === 0) {
+          setIsShowToggleTaxes(true)
+          if (!security.id) {
+            tempSecurities[index] = {
+              ...tempSecurities[index],
+              taxes: 0,
+              taxesAmount: 0
+            }
+          }
+        }
+        if (security.frontingFee === 0 && informationForm1.frontingFeeP === 0) {
+          setIsShowToggleFrontingFee(true)
+          if (!security.id) {
+            tempSecurities[index] = {
+              ...tempSecurities[index],
+              frontingFee: 0,
+              frontingFeeAmount: 0
+            }
+          }
+        }
       }
-    } else {
-      setIsShowToggleTaxes(false)
-      setIsTaxesEnabled(false)
 
-      tempSecurities[index] = {
-        ...tempSecurities[index],
-        taxes: 0,
-        taxesAmount: 0
-      }
-    }
+    localSecuritiesTemp.push(tempSecurities[index])
 
-    if (informationForm1.frontingFee === 0 || isGross) {
-      setIsShowToggleFrontingFee(true)
-      setFrontingFeeEnabled(informationForm1.frontingFee > 0)
-      setIsShowRetroCedant(true)
-
-      tempSecurities[index] = {
-        ...tempSecurities[index],
-        frontingFee: informationForm1.frontingFee === 0 ? 0 : informationForm1.frontingFeeP,
-        frontingFeeAmount: 0
-      }
-    } else {
-      setIsShowToggleFrontingFee(false)
-      setFrontingFeeEnabled(false)
-      setIsShowRetroCedant(false)
-
-      tempSecurities[index] = {
-        ...tempSecurities[index],
-        frontingFee: 0,
-        frontingFeeAmount: 0
-      }
-    }
-    validateForm(tempSecurities[index])
-    calculateSecurities(tempSecurities)
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isGross, security.idCReinsuranceCompany?.id])
-  useEffect(() => {
-    const tempSecurities = [...securities]
-
-    if (!frontingFeeEnabled) {
-      tempSecurities[index] = {
-        ...tempSecurities[index],
-        frontingFee: 0,
-        frontingFeeAmount: 0
-      }
-      validateForm(tempSecurities[index])
-      calculateSecurities(tempSecurities)
-    }
-    if (!isTaxesEnabled) {
-      tempSecurities[index] = {
-        ...tempSecurities[index],
-        taxes: 0,
-        taxesAmount: 0
-      }
-      validateForm(tempSecurities[index])
-      calculateSecurities(tempSecurities)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [frontingFeeEnabled, isTaxesEnabled])
-
-  /**
-   * * Las validaciones actuales resetean los porcentages de taxes y frontingFee
-   * * aún cuando ya hay valores desde bdd.
-   * * Para no reestructuras las validaciones actuales,
-   * * se crea este hook que comprueba si existen valores desde bdd
-   * * si es así, los setea en el formulario después de las validaciones actuales.
-   */
-  const { forTaxes, forFrontingFee, checkValues } = useDataFirstTime({ formIndex: index, operationSecurity })
-
-  useEffect(() => {
-    checkValues({
-      taxes: securities[index].taxes,
-      frontingFee: securities[index].taxes
-    })
-    if (securities[index].taxes > 0) {
-      setIsTaxesEnabled(true)
-    }
-    if (securities[index].frontingFee > 0) {
-      setFrontingFeeEnabled(true)
+    if (localSecuritiesTemp.length === tempSecurities.length) {
+      calculateSecurities(localSecuritiesTemp)
+      validateForm(security)
+      localSecuritiesTemp = []
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [securities[index].taxes, securities[index].frontingFee])
+  }, [])
 
   useEffect(() => {
     const tempSecurities = [...securities]
@@ -318,6 +271,11 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
     setCurrentView(activeView)
   }, [activeView])
 
+  // useEffect(() => {
+  //   validateForm(security)
+  // }, [isGross, frontingFeeEnabled, isTaxesEnabled])
+
+  /*NOTE: en los componentes de porcentajes no es necesario calcular los otros valores ya que todos los calculos se hacen en el calculate securities a exception de las modificaciones de montos */
   return (
     <DiscountsProvider>
       <ModalActivateSecondView
@@ -349,7 +307,8 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
                 />
               </>
             ) : null}
-            {index > 0 && activeView === 1 && (
+            {/* eliminacion de securities */}
+            {index > 0 && activeView !== 2 && (
               <div
                 className='section action-buttons'
                 style={{ float: 'right', marginRight: 'auto', marginBottom: '20px' }}
@@ -378,9 +337,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
               isGross={isGross}
               index={index}
               validateForm={validateForm}
-              operationSecurity={operationSecurity}
               view={security.view}
-              security={security}
             />
 
             <SharePercent
@@ -388,7 +345,6 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
               errorMessage={errorsSecurity.share}
               index={index}
               validateForm={validateForm}
-              operationSecurity={operationSecurity}
               view={security.view}
             />
 
@@ -431,11 +387,9 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
               security={security}
               setIsGross={setIsGross}
               setFrontingFeeEnabled={setFrontingFeeEnabled}
-              setBinders={setBinders}
               view={security.view}
             />
 
-            {/* // Todo - New Component */}
             <ShareAmount
               value={security.shareAmount}
               errorMessage={errorsSecurity.shareAmount}
@@ -449,7 +403,6 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
               errorMessage={errorsSecurity.premiumPerShareAmount}
               index={index}
               validateForm={validateForm}
-              operationSecurity={operationSecurity}
               view={security.view}
             />
 
@@ -477,9 +430,9 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
           <Grid item xs={12} sm={4}>
             <Binder
               value={security.idCReinsuranceCompanyBinder ? String(security.idCReinsuranceCompanyBinder?.id) : ''}
-              binders={binders}
               index={index}
               view={security.view}
+              companyId={security.idCReinsuranceCompany?.id ? String(security.idCReinsuranceCompany?.id) : ''}
             />
 
             <Consecutive value={0} view={security.view} />
@@ -547,7 +500,6 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
                 security={security}
                 isChecked={isTaxesEnabled}
                 setIsTaxesEnabled={setIsTaxesEnabled}
-                fieldRef={forTaxes}
                 view={security.view}
               />
 
@@ -556,9 +508,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
                 errorMessage={errorsSecurity.taxes}
                 index={index}
                 validateForm={validateForm}
-                operationSecurity={operationSecurity}
                 isDisabled={!isTaxesEnabled}
-                fieldRef={forTaxes}
                 view={security.view}
               />
 
@@ -569,7 +519,6 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
                 validateForm={validateForm}
                 operationSecurity={operationSecurity}
                 isDisabled={!isTaxesEnabled}
-                fieldRef={forTaxes}
                 view={security.view}
               />
             </Grid>
@@ -580,10 +529,8 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
               <SwitchFrontingFee
                 index={index}
                 validateForm={validateForm}
-                security={security}
                 isChecked={frontingFeeEnabled}
                 setFrontingFeeEnabled={setFrontingFeeEnabled}
-                fieldRef={forFrontingFee}
                 view={security.view}
               />
 
@@ -592,9 +539,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
                 errorMessage={errorsSecurity.frontingFee}
                 index={index}
                 validateForm={validateForm}
-                operationSecurity={operationSecurity}
                 isDisabled={!frontingFeeEnabled}
-                fieldRef={forFrontingFee}
                 view={security.view}
               />
 
@@ -605,7 +550,6 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
                 validateForm={validateForm}
                 operationSecurity={operationSecurity}
                 isDisabled={!frontingFeeEnabled}
-                fieldRef={forFrontingFee}
                 view={security.view}
               />
             </Grid>
@@ -613,22 +557,22 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
 
           <ListDiscounts
             view={security.view}
+            discounts={security.discounts}
             formIndex={index}
             operationSecurity={operationSecurity}
             validateForm={validateForm}
           />
         </Grid>
 
-        <ButtonAddDiscount view={security.view} />
+        <ButtonAddDiscount view={security.view} formIndex={index} />
       </div>
       <DialogCustomAlpex
         openDialog={openDialog}
-        body={`This action will not delete the Reinsurer from Catalogs,
-only for this section.`}
+        body={`This action will not delete the Reinsurer from Catalogs, only for this section.`}
         title={'Remove Reinsurer from this account'}
         resolve={() => onDeleteItemList(index)}
         reject={() => setOpenDialog(false)}
-      ></DialogCustomAlpex>
+      />
     </DiscountsProvider>
   )
 }

@@ -26,13 +26,13 @@ const initialValues: SublimitDto = {
   daysBi: 0,
   amountBi: 0,
   coinsurance: 0,
-  yes: null,
-  luc: null,
+  yes: false,
+  luc: false,
   typeDeductible: '',
   typeBi: '',
   at100: false,
   idCDeductiblePer: 0,
-  active: null,
+  active: true,
   idCCoverage: null,
   idEndorsement: null,
   title: '',
@@ -113,29 +113,30 @@ const Sublimits = () => {
   const handleSelectedCoverage = (coverageSelect: CoverageDto) => {
     setCoverageSelected([...coverageSelected, coverageSelect])
   }
+
   const handleToggle = (value: number, label: string) => {
     try {
       const idAccountCache = Number(localStorage.getItem('idAccount'))
       const subLimitsTemp = subLimits.find(sublimit => sublimit.title === label)
 
       if (!subLimitsTemp) {
-        setSubLimits(statePreview => {
-          const statePreviewTemp = [...statePreview]
-          statePreviewTemp.push({
+        const subLimitsTemp = [...subLimits]
+        setSubLimits([
+          ...subLimitsTemp,
+          {
             ...initialValues,
             title: label,
             idCCoverage: value,
             idAccount: account ? account?.id : idAccountCache
-          })
-
-          return statePreviewTemp
-        })
+          }
+        ])
         formErrors.push(false)
       }
     } catch (error) {
       console.log(error)
     }
   }
+
   const handleDeleteSublimit = async (index: number) => {
     const sublimit = subLimits[index]
     const coverageDelete = coverageSelected.filter(cov => cov.coverage !== sublimit.title)
@@ -170,6 +171,7 @@ const Sublimits = () => {
       setShowErrors(true)
     }
   }
+
   const handleSubmit = async () => {
     setDisableBoundBtn(true)
     setDisableSaveBtn(true)
@@ -211,6 +213,7 @@ const Sublimits = () => {
       })
     }, 4000)
   }
+
   const handleUpdateStatus = async () => {
     const existError = formErrors.find(error => error)
     if (!existError) {
@@ -240,6 +243,7 @@ const Sublimits = () => {
       }, 50)
     }
   }
+
   const getAccountData = async () => {
     const idAccountCache = Number(localStorage.getItem('idAccount'))
     setAccountId(idAccountCache)
@@ -251,16 +255,19 @@ const Sublimits = () => {
       formErrors.push(false)
     }
   }
+
   useEffect(() => {
     if (accountData.formsData.form1?.id) {
       setAccountId(accountData.formsData.form1.id)
       setFormInformationData(accountData.formsData.form1)
     }
   }, [accountData, setAccountId])
+
   useEffect(() => {
     getAccountData()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+  console.log({ subLimits })
 
   return (
     <CardContent>

@@ -111,7 +111,7 @@ const CardInstallment = ({ index, installment, onChangeList, error100Percent }: 
 
                   return (floatValue! >= 0 && floatValue! <= upLimit) || floatValue === undefined
                 }}
-                value={installment.paymentPercentage}
+                value={installment.paymentPercentage.toFixed(2)}
                 onValueChange={value => handleNumericInputChange(value.floatValue, 'paymentPercentage')}
               />
               {error100Percent && (
@@ -129,7 +129,7 @@ const CardInstallment = ({ index, installment, onChangeList, error100Percent }: 
                 multiline
                 prefix={'$'}
                 variant='outlined'
-                value={installment.balanceDue}
+                value={installment.balanceDue.toFixed(2)}
                 disabled={true}
               />
             </FormControl>

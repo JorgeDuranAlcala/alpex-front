@@ -26,10 +26,11 @@ export class CalculateSecurity {
     if (this.security.netPremiumAt100) {
       this.security.netPremiumAt100 = this.security.netPremiumAt100
       this.baseAmount = this.security.netPremiumAt100
-    } else
+    } else {
       this.baseAmount = this.security.isGross
         ? parseFloat(String(this.information.grossPremium))
         : parseFloat(String(this.information.netPremium))
+    }
     this.security.netPremiumAt100 = this.baseAmount
 
     return this
@@ -38,38 +39,49 @@ export class CalculateSecurity {
     if (this.security.isGross) {
       // * is Gross Premium
 
-      return (this.security.netPremiumAt100 * this.security.share) / 100
+      const result = (this.security.netPremiumAt100 * this.security.share) / 100
+      this.security.premiumPerShareAmount = result
+
+      return result
     } else {
       // * is Net Premium
       let result = (this.security.netPremiumAt100 * this.security.share) / 100
       result = result - this.getTaxesAmount()
       result = result - (this.security.totalAmountOfDiscounts || 0)
+      this.security.premiumPerShareAmount = result
 
       return result
     }
   }
-  getGrossPremierPerShare(): number {
-    if (this.security.isGross) {
-      // * is Gross Premium
-      return (this.security.netPremiumAt100 * this.security.share) / 100
-    } else {
-      // * is Net Premium
 
-      return (this.information.grossPremium * this.security.share) / 100
-    }
+  getGrossPremierPerShare(): number {
+    // * is Gross Premium or  is Net Premium
+    this.security.grossPremiumPerShare = this.security.isGross
+      ? (this.security.netPremiumAt100 * this.security.share) / 100
+      : (this.information.grossPremium * this.security.share) / 100
+
+    return this.security.grossPremiumPerShare
   }
+
   getsharePercent(premiumPerShareAmount: number): number {
     return (premiumPerShareAmount / this.baseAmount) * 100
   }
 
   getBrokerAge(): number {
-    return (this.security.reinsuranceBrokerage * this.security.premiumPerShareAmount) / 100
+    this.security.brokerAgeAmount = (this.security.reinsuranceBrokerage * this.security.premiumPerShareAmount) / 100
+
+    return this.security.brokerAgeAmount
   }
+
   getBrokerAgePercent(reinsuranceBrokerage: number): number {
     return (reinsuranceBrokerage / this.security.premiumPerShareAmount) * 100
   }
+
   getDynamicComissionAmount(): number {
-    return (this.security.dynamicCommission * this.security.premiumPerShareAmount) / 100
+    this.security.dynamicCommissionAmount =
+      (this.security.dynamicCommission * this.security.premiumPerShareAmount) / 100
+
+    return this.security.dynamicCommissionAmount
   }
   getDynamicComissionPercent(dynamicCommission: number): number {
     return (dynamicCommission * 100) / this.security.premiumPerShareAmount
@@ -78,13 +90,13 @@ export class CalculateSecurity {
     // return (this.security.frontingFee * this.security.premiumPerShareAmount) / 100
     if (this.security.isGross) {
       // * is Gross Premium
-      const base = (this.security.premiumPerShareAmount * valuePercent) / 100
-
-      return base
+      this.security.frontingFeeAmount = (this.security.premiumPerShareAmount * valuePercent) / 100
     } else {
       // * is Net Premium
-      return (this.security.premiumPerShareAmount * valuePercent) / 100
+      this.security.frontingFeeAmount = (this.security.premiumPerShareAmount * valuePercent) / 100
     }
+
+    return this.security.frontingFeeAmount
   }
   getFrontingFeePercent(valueAmount: number): number {
     // return (frontingFee / this.security.premiumPerShareAmount) * 100
@@ -100,7 +112,9 @@ export class CalculateSecurity {
     }
   }
   getShareAmount(): number {
-    return (this.information.limit * this.security.share) / 100
+    this.security.shareAmount = (this.information.limit * this.security.share) / 100
+
+    return this.security.shareAmount
   }
 
   getNetReinsurancePremium(): number {
@@ -112,29 +126,21 @@ export class CalculateSecurity {
         this.security.brokerAgeAmount +
         (this.security.taxesAmount ? this.security.taxesAmount : 0) +
         (this.security.totalAmountOfDiscounts ? this.security.totalAmountOfDiscounts : 0)
-      console.log(
-        `${this.security.premiumPerShareAmount} - ${sumOthers} = ${Number(
-          this.security.premiumPerShareAmount - sumOthers
-        )}`
-      )
 
-      return Number((this.security.premiumPerShareAmount - sumOthers).toPrecision(6))
+      this.security.netReinsurancePremium = Number((this.security.premiumPerShareAmount - sumOthers).toPrecision(6))
     } else {
       // * is Net Premium
 
-      return (
+      this.security.netReinsurancePremium =
         this.security.premiumPerShareAmount -
         this.security.dynamicCommissionAmount -
         (this.security.frontingFeeActive ? this.security.frontingFeeAmount : 0)
-
-        // this.security.brokerAgeAmount -
-        // this.security.taxesAmount -
-      )
     }
-  }
-  getTaxesPercent(taxes: number): number {
-    console.log('taxesPercent', { taxes })
 
+    return this.security.netReinsurancePremium
+  }
+
+  getTaxesPercent(taxes: number): number {
     // return (taxes / this.security.premiumPerShareAmount) * 100
     if (this.security.isGross) {
       // * is Gross Premium
@@ -151,10 +157,8 @@ export class CalculateSecurity {
       return (taxes / base) * 100
     }
   }
-  getTaxesAmount(value?: number): number {
-    // console.log('taxesAmount', { value })
 
-    // return (this.security.taxes * this.security.premiumPerShareAmount) / 100
+  getTaxesAmount(value?: number): number {
     if (this.security.isGross) {
       // * is Gross Premium
 
@@ -165,17 +169,18 @@ export class CalculateSecurity {
       } else {
         result = 0
       }
-
-      return result
+      this.security.taxesAmount = result
     } else {
       // * is Net Premium
       const base = (this.security.netPremiumAt100 * this.security.share) / 100
       if (this.security.taxes || value) {
-        return (base * (value || this.security.taxes)) / 100
+        this.security.taxesAmount = (base * (value || this.security.taxes)) / 100
       } else {
-        return 0
+        this.security.taxesAmount = 0
       }
     }
+
+    return this.security.taxesAmount
   }
 
   getDiscountPercent(valueAmount: number): number {
@@ -188,24 +193,25 @@ export class CalculateSecurity {
       // * is Net Premium
 
       const base = (this.security.netPremiumAt100 * this.security.share) / 100
-      console.log({ base })
+      const result = (valueAmount / base) * 100
 
-      return (valueAmount / base) * 100
+      return result
     }
   }
   getDiscountAmount(valuePercent: number): number {
     if (this.security.isGross) {
       // * is Gross Premium
       const base = (this.security.premiumPerShareAmount * valuePercent) / 100
-      console.log({ premiumPerShareAmount: this.security.premiumPerShareAmount, view: this.security.view })
+      console.log({ isGross: this.security.isGross, base })
 
       return base
     } else {
       // * is Net Premium
 
       const base = (this.security.netPremiumAt100 * this.security.share) / 100
+      const result = (base * valuePercent) / 100
 
-      return (base * valuePercent) / 100
+      return result
     }
   }
 

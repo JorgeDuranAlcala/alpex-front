@@ -6,19 +6,36 @@ import { ContainerCard, ContentCard, HeaderCard } from 'src/styles/Forms/Sublimi
 
 import * as yup from 'yup'
 import { FormErrors, initialErrorValues } from '../../Sublimits'
-import BusinessInterruption, {
-  validateBusinessInterruption
-} from './components/BusinessInterruption/BusinessInterruption'
+import BusinessInterruption from './components/BusinessInterruption/BusinessInterruption'
 import Coinsurance, { validateCoinsurance } from './components/Coinsurance/Coinsurance'
 import { DeductibleMaterialDamage } from './components/DeductibleMaterialDamage'
 import { validateDeductibleMaterialDamage } from './components/DeductibleMaterialDamage/DeductibleMaterialDamage'
 import { InputSubLimitCoverage } from './components/InputSubLimitCoverage'
 import { inputSublimit_validations } from './components/InputSubLimitCoverage/InputSubLimitCoverage'
-import Loss from './components/Loss/Loss'
 import { RenderFormGeneric } from './types'
 
-const DONT_SHOW_YES_LUC = ['Wind', 'Flood', 'Earthquake']
+const DONT_SHOW_YES_LUC = [
+  'Wind',
+  'Flood',
+  'Earthquake',
+  'Fire',
+  'Machinery Breakdown',
+  'AMIT & SRCC',
+  'Electronic Equipment'
+]
+const DONT_SHOW_BUSSINES_INTERRUPTION = ['Machinery Breakdown', 'AMIT & SRCC', 'Electronic Equipment']
 const DONT_SHOW_DEDUCTIBLE_MATERIAL_DAMAGE = ['Business  Interruption  Machinery Breakdown', 'Business  Interruption']
+
+// const DONT_SHOW_LOSS = [
+//   'Business  Interruption  Machinery Breakdown',
+//   'Wind',
+//   'Business  Interruption',
+//   'Earthquake',
+//   'Flood',
+//   'Business interruption',
+//   'Fire',
+//   'Terrorism'
+// ]
 
 const GenericCard: React.FC<RenderFormGeneric> = ({
   subLimit,
@@ -36,16 +53,12 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
 
   const handleChangeSubLimit = (subLimitParam: SublimitDto) => {
     const subLimitsTemp = [...subLimits]
+
     subLimitsTemp[index] = {
       ...subLimitsTemp[index],
       ...subLimitParam
     }
-    setSubLimits(state => {
-      const newState = [...state]
-      newState[index] = subLimitsTemp[index]
-
-      return newState
-    })
+    setSubLimits(subLimitsTemp)
     validateForm(subLimitsTemp[index])
   }
 
@@ -55,10 +68,12 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
 
   const validateForm = (subLimitParam: SublimitDto) => {
     let data = { ...initialErrorValues }
+
+    // console.log('no se ejecuta', subLimitParam)
+
     const schema = yup.object().shape({
       ...inputSublimit_validations({ limit, isNotYesLuc: DONT_SHOW_YES_LUC.includes(subLimitParam.title) }).fields,
       ...validateDeductibleMaterialDamage({ typeDeductible: subLimitParam.typeDeductible }).fields,
-      ...validateBusinessInterruption({ typeBi: subLimitParam.typeBi }).fields,
       ...validateCoinsurance().fields
     })
 
@@ -78,7 +93,7 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
             [error.path]: error.message
           }
         }
-
+        console.log({ data })
         errorsTemp[index] = true
         setErrorCard(data)
       })
@@ -86,11 +101,14 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
         setErrors(() => [...errorsTemp])
       })
   }
+
   useEffect(() => {
     subLimit && setSublimitCard(subLimit)
     validateForm(subLimit)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [subLimit])
+
+  // console.log('error card', errorCard)
 
   return (
     <ContainerCard>
@@ -133,18 +151,22 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
             showErrors={showErrors}
           />
         )}
-        <Loss
-          subLimit={subLimitCard}
-          onHandleChangeSubLimit={handleChangeSubLimit}
-          errorCard={errorCard}
-          showErrors={showErrors}
-        />
-        <BusinessInterruption
-          subLimit={subLimitCard}
-          onHandleChangeSubLimit={handleChangeSubLimit}
-          errorCard={errorCard}
-          showErrors={showErrors}
-        />
+        {/* {!DONT_SHOW_LOSS.includes(subLimitCard.title) && (
+          <Loss
+            subLimit={subLimitCard}
+            onHandleChangeSubLimit={handleChangeSubLimit}
+            errorCard={errorCard}
+            showErrors={showErrors}
+          />
+        )} */}
+        {!DONT_SHOW_BUSSINES_INTERRUPTION.includes(subLimitCard.title) && (
+          <BusinessInterruption
+            subLimit={subLimitCard}
+            onHandleChangeSubLimit={handleChangeSubLimit}
+            errorCard={errorCard}
+            showErrors={showErrors}
+          />
+        )}
         <Coinsurance
           subLimit={subLimitCard}
           onHandleChangeSubLimit={handleChangeSubLimit}
