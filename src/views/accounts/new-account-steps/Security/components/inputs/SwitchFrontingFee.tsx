@@ -10,7 +10,7 @@ interface SwitchFrontingFeeProps extends Omit<ISecurityInputProps, 'value' | 'er
   isChecked: boolean
   security: SecurityDto
   setFrontingFeeEnabled: (value: SetStateAction<boolean>) => void
-  fieldRef: MutableRefObject<IForField>
+  fieldRef?: MutableRefObject<IForField>
 }
 
 export const SwitchFrontingFee = ({
@@ -19,27 +19,22 @@ export const SwitchFrontingFee = ({
   security,
   isChecked,
   setFrontingFeeEnabled,
-  fieldRef,
   view
 }: SwitchFrontingFeeProps) => {
   const { securities, calculateSecurities } = useContext(SecurityContext)
 
   const handleSwitch = () => {
     const tempSecurities = [...securities]
-    if (fieldRef) {
-      fieldRef.current.isTouched = true
+    tempSecurities[index] = {
+      ...tempSecurities[index]
     }
     tempSecurities[index] = {
       ...tempSecurities[index],
-
-      // idCRetroCedant: {} as RetroCedantDto,
-      // idCRetroCedantContact: {} as RetroCedantContactDto,
-
-      // frontingFee: Number(null),
-      // frontingFeeAmount: Number(null),
-      frontingFeeActive: !security.frontingFeeActive
+      frontingFeeActive: !isChecked,
+      frontingFee: !isChecked ? 0 : tempSecurities[index].frontingFee,
+      frontingFeeAmount: !isChecked ? 0 : tempSecurities[index].frontingFeeAmount
     }
-    setFrontingFeeEnabled(() => !security.frontingFeeActive)
+    setFrontingFeeEnabled(() => !isChecked)
     validateForm(tempSecurities[index])
     calculateSecurities(tempSecurities)
   }

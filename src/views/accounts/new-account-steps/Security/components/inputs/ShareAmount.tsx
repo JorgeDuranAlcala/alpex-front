@@ -22,6 +22,8 @@ export const ShareAmount = ({ index, value, errorMessage, validateForm, view }: 
 
   const handleChangeShareAmount = (value: number) => {
     console.log('OnChange ShareAmount value: ', { index, value, validateForm })
+
+    //@omar persistir valor
   }
 
   return (

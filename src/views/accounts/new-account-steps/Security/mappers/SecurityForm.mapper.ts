@@ -6,7 +6,7 @@ import { RetroCedantContactDto } from '@/services/catalogs/dtos/retroCedantConta
 import { IAccountsState } from '@/types/apps/accountsTypes'
 import { IDiscountInputs } from '../components/discounts/DiscountsContext'
 
-export interface SecurityModel {
+export interface SecurityModel extends SecurityDto {
   netPremiumAt100: number
   share: number
   frontingFeeActive: boolean
@@ -19,7 +19,7 @@ export interface SecurityModel {
   idCReinsuranceCompany: ReinsuranceCompanyDto
   idCRetroCedant: RetroCedantDto | null
   idCRetroCedantContact: RetroCedantContactDto | null
-  idEndorsement: number | undefined
+  idEndorsement: number
   idAccount: number
   receivedNetPremium: number
   distributedNetPremium: number
@@ -44,14 +44,14 @@ export interface SecurityModel {
 export class SecurityMapper {
   static securityToSecurityForm(security: SecurityDto, accountData: IAccountsState): SecurityModel {
     return {
-      netPremiumAt100: security.netPremiumAt100,
-      share: security.share,
+      netPremiumAt100: Number(security.netPremiumAt100),
+      share: Number(security.share),
       frontingFeeActive: security.frontingFeeActive,
-      dynamicCommission: security.dynamicCommission,
+      dynamicCommission: Number(security.dynamicCommission),
       frontingFee: Number(security.frontingFee) || 0,
-      netReinsurancePremium: security.netReinsurancePremium,
+      netReinsurancePremium: Number(security.netReinsurancePremium),
       taxes: Number(security.taxes) || 0,
-      reinsuranceBrokerage: security.reinsuranceBrokerage,
+      reinsuranceBrokerage: Number(security.reinsuranceBrokerage),
       active: true,
       idCReinsuranceCompany: security.idCReinsuranceCompany,
       idCRetroCedant:
@@ -70,22 +70,22 @@ export class SecurityMapper {
       distributedNetPremium: 0,
       difference: 0,
       discounts: security.discounts.map(discount => ({
-        percentage: discount.percentage,
-        amount: discount.amount,
+        percentage: Number(discount.percentage),
+        amount: Number(discount.amount),
         active: discount.active
       })),
-      shareAmount: security.shareAmount,
-      premiumPerShareAmount: security.premiumPerShareAmount,
+      shareAmount: Number(security.shareAmount),
+      premiumPerShareAmount: Number(security.premiumPerShareAmount),
       taxesActive: security.taxesActive,
-      dynamicCommissionAmount: security.dynamicCommissionAmount,
-      frontingFeeAmount: security.frontingFeeAmount,
-      grossPremiumPerShare: security.grossPremiumPerShare || 0,
-      taxesAmount: security.taxesAmount,
-      brokerAgeAmount: security.brokerAgeAmount,
+      dynamicCommissionAmount: Number(security.dynamicCommissionAmount),
+      frontingFeeAmount: Number(security.frontingFeeAmount),
+      grossPremiumPerShare: Number(security.grossPremiumPerShare) || 0,
+      taxesAmount: Number(security.taxesAmount),
+      brokerAgeAmount: Number(security.brokerAgeAmount),
       consecutive: security.consecutive,
       view: security.view,
       isGross: security.isGross,
-      totalAmountOfDiscounts: security.totalAmountOfDiscounts
+      totalAmountOfDiscounts: Number(security.totalAmountOfDiscounts)
     }
   }
 }

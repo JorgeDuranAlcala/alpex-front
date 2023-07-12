@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef } from 'react'
+import { useContext, useRef } from 'react'
 import { SecurityContext } from '../SecurityView'
 import { CalculateSecurity } from '../utils/calculates-securities'
 
@@ -15,7 +15,7 @@ interface UseDataFirstTimeProps {
 }
 
 export const useDataFirstTime = ({ formIndex, operationSecurity }: UseDataFirstTimeProps) => {
-  const { firstTimeSecurities, securities, calculateSecurities } = useContext(SecurityContext)
+  const { securities, calculateSecurities } = useContext(SecurityContext)
 
   const forTaxes = useRef<IForField>({
     isTouched: false,
@@ -80,18 +80,6 @@ export const useDataFirstTime = ({ formIndex, operationSecurity }: UseDataFirstT
       backToFirstTimeFor('frontingFee')
     }
   }
-
-  useEffect(() => {
-    if (forTaxes.current.percent > 0 && forFrontingFee.current.percent > 0) return
-    if (forTaxes.current.isTouched && forFrontingFee.current.isTouched) return
-    if (firstTimeSecurities.length === 0) return
-    if (formIndex > firstTimeSecurities.length - 1) return
-
-    forTaxes.current.percent = Number(firstTimeSecurities[formIndex].taxes)
-    forFrontingFee.current.percent = Number(firstTimeSecurities[formIndex].frontingFee)
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [firstTimeSecurities, formIndex])
 
   return {
     forTaxes,

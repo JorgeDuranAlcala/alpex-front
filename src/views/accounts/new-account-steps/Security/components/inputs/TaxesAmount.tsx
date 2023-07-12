@@ -12,7 +12,7 @@ import { CalculateSecurity } from '../../utils/calculates-securities'
 interface TaxesAmountProps extends ISecurityInputProps {
   operationSecurity: CalculateSecurity
   isDisabled: boolean
-  fieldRef: MutableRefObject<IForField>
+  fieldRef?: MutableRefObject<IForField>
 }
 
 export const TaxesAmount = ({
@@ -22,16 +22,15 @@ export const TaxesAmount = ({
   errorMessage,
   validateForm,
   operationSecurity,
-  fieldRef,
   view
 }: TaxesAmountProps) => {
   const { activeErros, securities, calculateSecurities } = useContext(SecurityContext)
 
   const handleChangeTaxesAmount = (value: number) => {
-    console.log(value)
-    if (fieldRef) {
-      fieldRef.current.isTouched = true
-    }
+    // console.log(value)
+    // if (fieldRef) {
+    //   fieldRef.current.isTouched = true
+    // }
     const tempSecurities = [...securities]
     tempSecurities[index] = {
       ...tempSecurities[index],

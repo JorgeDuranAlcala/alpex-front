@@ -20,7 +20,8 @@ export const GrossPremiumPerShareAmount = ({
   view
 }: GrossPremiumPerShareAmountProps) => {
   const {
-    activeErros
+    activeErros,
+    securities
 
     // calculateSecurities
   } = useContext(SecurityContext)
@@ -28,12 +29,13 @@ export const GrossPremiumPerShareAmount = ({
   const handleChangeGrossPremiumPerShareAmount = (value: number) => {
     console.log('gross Premium PerShare value', { value, index, validateForm, operationSecurity })
 
-    // const tempSecurities = [...securities]
-    // tempSecurities[index] = {
-    //   ...tempSecurities[index],
-    //   share: operationSecurity.getsharePercent(value)
-    // }
-    // validateForm(tempSecurities[index])
+    const tempSecurities = [...securities]
+    tempSecurities[index] = {
+      ...tempSecurities[index],
+      grossPremiumPerShare: value
+    }
+    validateForm(tempSecurities[index])
+
     // calculateSecurities(tempSecurities)
   }
 

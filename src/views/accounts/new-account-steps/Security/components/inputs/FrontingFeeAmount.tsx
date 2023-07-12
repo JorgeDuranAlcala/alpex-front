@@ -11,7 +11,7 @@ import { CalculateSecurity } from '../../utils/calculates-securities'
 interface FrontingFeeAmountProps extends ISecurityInputProps {
   operationSecurity: CalculateSecurity
   isDisabled: boolean
-  fieldRef: MutableRefObject<IForField>
+  fieldRef?: MutableRefObject<IForField>
 }
 
 export const FrontingFeeAmount = ({
@@ -21,16 +21,15 @@ export const FrontingFeeAmount = ({
   errorMessage,
   validateForm,
   operationSecurity,
-  fieldRef,
   view
 }: FrontingFeeAmountProps) => {
   const { activeErros, securities, calculateSecurities } = useContext(SecurityContext)
 
   const handleChangeFrontingFeeAmount = (value: number) => {
     // console.log(value)
-    if (fieldRef) {
-      fieldRef.current.isTouched = true
-    }
+    // if (fieldRef) {
+    //   fieldRef.current.isTouched = true
+    // }
     const tempSecurities = [...securities]
     tempSecurities[index] = {
       ...tempSecurities[index],
