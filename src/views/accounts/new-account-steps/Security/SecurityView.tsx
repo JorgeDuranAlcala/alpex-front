@@ -99,9 +99,12 @@ const Security = ({ onStepChange }: SecurityProps) => {
     const tempSecurities: SecurityDto[] = []
 
     for (const security of securitiesParam) {
-      const operationSecurity: CalculateSecurity = new CalculateSecurity()
-        .setInformation(information)
-        .setSecurity(security)
+      const operationSecurity: CalculateSecurity = new CalculateSecurity().setInformation(information).setSecurity({
+        ...security,
+        reinsuranceBrokerage: Number(security.reinsuranceBrokerage) || 0,
+        dynamicCommission: Number(security.dynamicCommission) || 0,
+        share: Number(security.share) || 0
+      })
 
       if (security?.idCReinsuranceCompany?.id) companiesSelect.push(security.idCReinsuranceCompany.id)
 
@@ -119,16 +122,18 @@ const Security = ({ onStepChange }: SecurityProps) => {
         if (security?.discounts) {
           security.totalAmountOfDiscounts = 0
           for (const discount of security?.discounts) {
-            discount.percentage = Number(discount.percentage)
+            const tempDiscount = { ...discount }
+
+            tempDiscount.percentage = Number(discount.percentage)
 
             //este campo necesita: premiumPerShareAmount,netPremiumAt100
-            discount.amount = operationSecurity.getDiscountAmount(Number(discount.percentage))
-            security.totalAmountOfDiscounts += discount.amount
-            tempDiscountList.push(discount)
+            tempDiscount.amount = operationSecurity.getDiscountAmount(Number(tempDiscount.percentage))
+            security.totalAmountOfDiscounts += tempDiscount.amount
+            tempDiscountList.push(tempDiscount)
           }
         }
 
-        security.discounts = tempDiscountList
+        security.discounts = [...tempDiscountList]
         operationSecurity.setSecurity(security)
       }
 
@@ -149,22 +154,18 @@ const Security = ({ onStepChange }: SecurityProps) => {
         if (security?.discounts) {
           security.totalAmountOfDiscounts = 0
           for (const discount of security?.discounts) {
-            discount.percentage = Number(discount.percentage)
+            const tempDiscount = { ...discount }
+            tempDiscount.percentage = Number(discount.percentage)
 
             //este campo necesita: premiumPerShareAmount,netPremiumAt100
-            discount.amount = operationSecurity.getDiscountAmount(Number(discount.percentage))
-            security.totalAmountOfDiscounts += discount.amount
-            tempDiscountList.push(discount)
+            tempDiscount.amount = operationSecurity.getDiscountAmount(Number(tempDiscount.percentage))
+            security.totalAmountOfDiscounts += tempDiscount.amount
+            tempDiscountList.push(tempDiscount)
           }
         }
 
-        security.discounts = tempDiscountList
-        operationSecurity.setSecurity({
-          ...security,
-          reinsuranceBrokerage: Number(security.reinsuranceBrokerage) || 0,
-          dynamicCommission: Number(security.dynamicCommission) || 0,
-          share: Number(security.share) || 0
-        })
+        security.discounts = [...tempDiscountList]
+        operationSecurity.setSecurity(security)
       }
 
       /**
@@ -176,6 +177,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
 
       tempSecurities.push({ ...security })
     }
+    console.log({ tempSecuritiesCal: tempSecurities })
 
     return tempSecurities
   }
