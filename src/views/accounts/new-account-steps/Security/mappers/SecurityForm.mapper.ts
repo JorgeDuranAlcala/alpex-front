@@ -45,15 +45,15 @@ export class SecurityMapper {
   static securityToSecurityForm(security: SecurityDto, accountData: IAccountsState): SecurityModel {
     return {
       id: security.id,
-      premiumPerShare: Number(security.premiumPerShare),
-      netPremiumAt100: Number(security.netPremiumAt100),
-      share: Number(security.share),
+      premiumPerShare: Number(security.premiumPerShare) || 0,
+      netPremiumAt100: Number(security.netPremiumAt100) || 0,
+      share: Number(security.share) || 0,
       frontingFeeActive: security.frontingFeeActive,
-      dynamicCommission: Number(security.dynamicCommission),
+      dynamicCommission: Number(security.dynamicCommission) || 0,
       frontingFee: Number(security.frontingFee) || 0,
       netReinsurancePremium: Number(security.netReinsurancePremium),
       taxes: Number(security.taxes) || 0,
-      reinsuranceBrokerage: Number(security.reinsuranceBrokerage),
+      reinsuranceBrokerage: Number(security.reinsuranceBrokerage) || 0,
       active: true,
       idCReinsuranceCompany: security.idCReinsuranceCompany,
       idCRetroCedant:
@@ -74,22 +74,22 @@ export class SecurityMapper {
       discounts:
         security.discounts &&
         security.discounts.map(discount => ({
-          percentage: Number(discount.percentage),
-          amount: Number(discount.amount),
+          percentage: Number(discount.percentage) || 0,
+          amount: Number(discount.amount) || 0,
           active: discount.active
         })),
-      shareAmount: Number(security.shareAmount),
-      premiumPerShareAmount: Number(security.premiumPerShareAmount),
+      shareAmount: Number(security.shareAmount) || 0,
+      premiumPerShareAmount: Number(security.premiumPerShareAmount) || 0,
       taxesActive: security.taxesActive,
-      dynamicCommissionAmount: Number(security.dynamicCommissionAmount),
-      frontingFeeAmount: Number(security.frontingFeeAmount),
+      dynamicCommissionAmount: Number(security.dynamicCommissionAmount) || 0,
+      frontingFeeAmount: Number(security.frontingFeeAmount) || 0,
       grossPremiumPerShare: Number(security.grossPremiumPerShare) || 0,
-      taxesAmount: Number(security.taxesAmount),
-      brokerAgeAmount: Number(security.brokerAgeAmount),
+      taxesAmount: Number(security.taxesAmount) || 0,
+      brokerAgeAmount: Number(security.brokerAgeAmount) || 0,
       consecutive: security.consecutive,
       view: security.view,
       isGross: security.isGross,
-      totalAmountOfDiscounts: Number(security.totalAmountOfDiscounts),
+      totalAmountOfDiscounts: Number(security.totalAmountOfDiscounts) || 0,
       recievedNetPremium: 0
     }
   }

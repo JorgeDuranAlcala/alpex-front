@@ -159,7 +159,12 @@ const Security = ({ onStepChange }: SecurityProps) => {
         }
 
         security.discounts = tempDiscountList
-        operationSecurity.setSecurity(security)
+        operationSecurity.setSecurity({
+          ...security,
+          reinsuranceBrokerage: Number(security.reinsuranceBrokerage) || 0,
+          dynamicCommission: Number(security.dynamicCommission) || 0,
+          share: Number(security.share) || 0
+        })
       }
 
       /**
@@ -239,6 +244,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
         discounts: [],
         share: 0,
         dynamicCommission: 0,
+        reinsuranceBrokerage: 0,
         view: 1
       } as SecurityDto
     ])
