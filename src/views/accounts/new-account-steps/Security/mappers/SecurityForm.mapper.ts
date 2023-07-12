@@ -44,6 +44,8 @@ export interface SecurityModel extends SecurityDto {
 export class SecurityMapper {
   static securityToSecurityForm(security: SecurityDto, accountData: IAccountsState): SecurityModel {
     return {
+      id: security.id,
+      premiumPerShare: Number(security.premiumPerShare),
       netPremiumAt100: Number(security.netPremiumAt100),
       share: Number(security.share),
       frontingFeeActive: security.frontingFeeActive,
@@ -64,7 +66,7 @@ export class SecurityMapper {
         security.idCReinsuranceCompanyBinder && security.idCReinsuranceCompanyBinder.hasOwnProperty('id')
           ? security.idCReinsuranceCompanyBinder
           : null,
-      idEndorsement: undefined,
+      idEndorsement: security.idEndorsement,
       idAccount: +accountData.formsData.form1.id,
       receivedNetPremium: 0,
       distributedNetPremium: 0,
@@ -85,7 +87,8 @@ export class SecurityMapper {
       consecutive: security.consecutive,
       view: security.view,
       isGross: security.isGross,
-      totalAmountOfDiscounts: Number(security.totalAmountOfDiscounts)
+      totalAmountOfDiscounts: Number(security.totalAmountOfDiscounts),
+      recievedNetPremium: 0
     }
   }
 }

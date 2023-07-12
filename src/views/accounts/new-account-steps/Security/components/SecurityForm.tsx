@@ -363,7 +363,6 @@ export const FormSection = ({ index, security, onDeleteItemList, securities }: F
               errorMessage={errorsSecurity.share}
               index={index}
               validateForm={validateForm}
-              operationSecurity={operationSecurity}
               view={security.view}
             />
 
