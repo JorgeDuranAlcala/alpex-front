@@ -11,9 +11,9 @@ import { CalculateSecurity } from '../../utils/calculates-securities'
 
 // ! only if we want specific props
 interface TaxesPercentProps extends ISecurityInputProps {
-  operationSecurity: CalculateSecurity
+  operationSecurity?: CalculateSecurity
   isDisabled: boolean
-  fieldRef: MutableRefObject<IForField>
+  fieldRef?: MutableRefObject<IForField>
 }
 
 export const TaxesPercent = ({
@@ -22,8 +22,7 @@ export const TaxesPercent = ({
   isDisabled,
   errorMessage,
   validateForm,
-  operationSecurity,
-  fieldRef,
+
   view
 }: TaxesPercentProps) => {
   const { activeErros, securities, calculateSecurities } = useContext(SecurityContext)
@@ -31,14 +30,10 @@ export const TaxesPercent = ({
   const { achievedMessageError, checkIsPercentageAchieved } = usePercentageAchieved()
 
   const handleChangeTaxesPercent = (value: number) => {
-    if (fieldRef) {
-      fieldRef.current.isTouched = true
-    }
     const tempSecurities = [...securities]
     tempSecurities[index] = {
       ...tempSecurities[index],
-      taxes: value,
-      taxesAmount: operationSecurity.getTaxesAmount(value)
+      taxes: value
     }
     validateForm(tempSecurities[index])
     calculateSecurities(tempSecurities)
@@ -48,7 +43,7 @@ export const TaxesPercent = ({
     checkIsPercentageAchieved({ formIndex: index })
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [securities[index].taxes])
+  }, [value])
 
   // * Si el campo ya cuenta con un mensaje de error, se ejecuta el chequeo de porcentaje
   // * alcanzado, esto con el fin de que el mensaje de error se borre para este campo
@@ -58,7 +53,7 @@ export const TaxesPercent = ({
     checkIsPercentageAchieved({ formIndex: index })
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [securities[index]])
+  }, [value])
 
   // console.log({ isTacesTouxhes: forTaxes.current.isTouched, value })
 

@@ -19,7 +19,7 @@ export const SelectRetroCedantContact = ({
   validateForm,
   view
 }: SelectRetroCedantContactProps) => {
-  const { activeErros, securities, setSecurities } = useContext(SecurityContext)
+  const { activeErros, securities, calculateSecurities } = useContext(SecurityContext)
 
   const handleChangeRetroCedantContact = (e: SelectChangeEvent<string>) => {
     const selectedRetroCendantContactId = e.target.value
@@ -33,7 +33,7 @@ export const SelectRetroCedantContact = ({
       idCRetroCedantContact: retroCedantContact ? retroCedantContact : ({} as RetroCedantContactDto)
     }
     validateForm(tempSecurities[index])
-    setSecurities(tempSecurities)
+    calculateSecurities(tempSecurities)
   }
 
   return (
@@ -67,10 +67,6 @@ export const selectRetroCedantContact_validations = ({ frontingFeeEnabled }: { f
       })
       .test('', 'This field is required', value => {
         console.log({ frontingFeeEnabled, value }, 'este no es obligatorio en ningun momento')
-
-        // if (!isGross && value && typeof value === 'object') {
-        //   return value.hasOwnProperty('id')
-        // }
 
         return true
       })

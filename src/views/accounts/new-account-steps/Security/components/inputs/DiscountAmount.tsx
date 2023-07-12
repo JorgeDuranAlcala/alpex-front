@@ -3,9 +3,9 @@ import { useContext } from 'react'
 import { NumericFormat } from 'react-number-format'
 
 // import { SecurityContext } from '../../SecurityView';
+import { SecurityContext } from '../../SecurityView'
 import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interface'
 import { CalculateSecurity } from '../../utils/calculates-securities'
-import { DiscountsContext } from '../discounts/DiscountsContext'
 
 // ! only if we want specific props
 interface DiscountAmountProps extends Omit<ISecurityInputProps, 'errorMessage'> {
@@ -14,17 +14,16 @@ interface DiscountAmountProps extends Omit<ISecurityInputProps, 'errorMessage'> 
   view: number
 }
 
-export const DiscountAmount = ({ discountIndex, value, operationSecurity, view }: DiscountAmountProps) => {
-  const { updateDiscountByIndex } = useContext(DiscountsContext)
-
+export const DiscountAmount = ({ discountIndex, value, operationSecurity, view, index }: DiscountAmountProps) => {
+  const { securities, calculateSecurities } = useContext(SecurityContext)
   const handleChangeDiscountAmount = (value: number) => {
-    // console.log('OnChange DiscountAmount value: ', { value, index, discountIndex });
-
-    updateDiscountByIndex({
-      index: discountIndex,
+    const securitiesTemp = [...securities]
+    securitiesTemp[index].discounts[discountIndex] = {
       percentage: operationSecurity.getDiscountPercent(value),
-      amount: value
-    })
+      amount: value,
+      active: true
+    }
+    calculateSecurities(securitiesTemp)
   }
 
   return (

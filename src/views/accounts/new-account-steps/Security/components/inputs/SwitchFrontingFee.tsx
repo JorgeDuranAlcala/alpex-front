@@ -1,4 +1,3 @@
-import { SecurityDto } from '@/services/accounts/dtos/security.dto'
 import SwitchAlpex from '@/views/custom/switchs'
 import { FormControl } from '@mui/material'
 import { MutableRefObject, SetStateAction, useContext } from 'react'
@@ -8,38 +7,33 @@ import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interf
 
 interface SwitchFrontingFeeProps extends Omit<ISecurityInputProps, 'value' | 'errorMessage'> {
   isChecked: boolean
-  security: SecurityDto
+
   setFrontingFeeEnabled: (value: SetStateAction<boolean>) => void
-  fieldRef: MutableRefObject<IForField>
+  fieldRef?: MutableRefObject<IForField>
 }
 
 export const SwitchFrontingFee = ({
   index,
   validateForm,
-  security,
+
   isChecked,
   setFrontingFeeEnabled,
-  fieldRef,
   view
 }: SwitchFrontingFeeProps) => {
   const { securities, calculateSecurities } = useContext(SecurityContext)
 
   const handleSwitch = () => {
     const tempSecurities = [...securities]
-    if (fieldRef) {
-      fieldRef.current.isTouched = true
+    tempSecurities[index] = {
+      ...tempSecurities[index]
     }
     tempSecurities[index] = {
       ...tempSecurities[index],
-
-      // idCRetroCedant: {} as RetroCedantDto,
-      // idCRetroCedantContact: {} as RetroCedantContactDto,
-
-      // frontingFee: Number(null),
-      // frontingFeeAmount: Number(null),
-      frontingFeeActive: !security.frontingFeeActive
+      frontingFeeActive: !isChecked,
+      frontingFee: !isChecked ? 0 : tempSecurities[index].frontingFee,
+      frontingFeeAmount: !isChecked ? 0 : tempSecurities[index].frontingFeeAmount
     }
-    setFrontingFeeEnabled(() => !security.frontingFeeActive)
+    setFrontingFeeEnabled(() => !isChecked)
     validateForm(tempSecurities[index])
     calculateSecurities(tempSecurities)
   }

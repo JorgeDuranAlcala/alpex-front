@@ -1,4 +1,4 @@
-import { ResponseGetAccount, useGetAccountById } from '@/hooks/accounts/forms'
+import { useGetAccountById } from '@/hooks/accounts/forms'
 import { useAddSecurities } from '@/hooks/accounts/security'
 import { useAddSecurityTotal, useUpdateSecurityTotalById } from '@/hooks/accounts/securityTotal'
 import {
@@ -37,29 +37,22 @@ import { SecondViewProvider } from './components/secondView/SecondViewProvider'
 import { CalculateSecurity } from './utils/calculates-securities'
 
 export const SecurityContext = createContext<SecurityContextDto>({} as SecurityContextDto)
-let securitiesSecondView: SecurityDto[] = []
-let allFormDataView2: FormSecurity = {
-  formData: [],
-  recievedNetPremium: 0,
-  distribuitedNetPremium: 0,
-  diference: 0
-}
+
 const Security = ({ onStepChange }: SecurityProps) => {
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
   const [securities, setSecurities] = useState<SecurityDto[]>([])
 
-  const [firstTimeSecurities, setFirstTimeSecurities] = useState<SecurityDto[]>([])
   const [activeErros, setActiveErrors] = useState<boolean>(false)
 
   //** second view */
-  // const [securitiesSecondView, setSecuritiesSecondView] = useState<SecurityDto[]>([])
+  const [securitiesSecondView, setSecuritiesSecondView] = useState<SecurityDto[]>([])
 
-  // const [allFormDataView2, setAllFormDataView2] = useState<FormSecurity>({
-  //   formData: [],
-  //   recievedNetPremium: 0,
-  //   distribuitedNetPremium: 0,
-  //   diference: 0
-  // })
+  const [allFormDataView2, setAllFormDataView2] = useState<FormSecurity>({
+    formData: [],
+    recievedNetPremium: 0,
+    distribuitedNetPremium: 0,
+    diference: 0
+  })
   const [currentView, setCurrentView] = useState<number>(0)
 
   const [isNextStep, setIsNextStep] = useState<boolean>(false)
@@ -80,7 +73,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
   })
   const [companiesSelect] = useState<number[]>([])
 
-  const { account, setAccountId, getAccountById, accountId } = useGetAccountById()
+  const { account, setAccountId } = useGetAccountById()
   const { saveSecurityTotal } = useAddSecurityTotal()
   const { updateSecurityTotal } = useUpdateSecurityTotalById()
 
@@ -96,141 +89,145 @@ const Security = ({ onStepChange }: SecurityProps) => {
     open: false,
     status: 'error'
   })
+
+  /**
+   *
+   * @param securitiesParam
+   * @returns
+   */
   const getSecuritiesCalculate = (securitiesParam: SecurityDto[]): SecurityDto[] => {
     const tempSecurities: SecurityDto[] = []
 
-    for (const securityOrigin of securitiesParam) {
-      const security = { ...securityOrigin }
+    for (const security of securitiesParam) {
       const operationSecurity: CalculateSecurity = new CalculateSecurity()
         .setInformation(information)
         .setSecurity(security)
+
       if (security?.idCReinsuranceCompany?.id) companiesSelect.push(security.idCReinsuranceCompany.id)
-      console.log({ security })
 
-      security.frontingFee = Number(security.frontingFee) || 0
-      security.taxes = Number(security.taxes) || 0
-      security.netPremiumAt100 = Number(security.netPremiumAt100) || 0
-
-      security.premiumPerShareAmount = operationSecurity.getPremierPerShare() || 0
-
-      security.grossPremiumPerShare = operationSecurity.getGrossPremierPerShare() || 0
-      security.brokerAgeAmount = operationSecurity.getBrokerAge() || 0
-      security.dynamicCommissionAmount = operationSecurity.getDynamicComissionAmount() || 0
-
-      security.frontingFeeAmount = operationSecurity.getFrontingFeeAmount(security.frontingFee) || 0
-
-      security.taxesAmount = operationSecurity.getTaxesAmount(security.taxes) || 0
-
+      //campos que necesitan: information.limit,share
       security.shareAmount = operationSecurity.getShareAmount() || 0
-      security.share = Number(security.share) || 0
 
-      operationSecurity.setSecurity(security)
-      const tempDiscountList = []
-      if (security?.discounts) {
-        security.totalAmountOfDiscounts = 0
-        for (const discount of security?.discounts) {
-          discount.percentage = Number(discount.percentage)
-          discount.amount = operationSecurity.getDiscountAmount(Number(discount.percentage))
-          security.totalAmountOfDiscounts += discount.amount
-          tempDiscountList.push(discount)
+      //campos que necesitan: inetPremiumAt100,information.grossPremium,share
+      security.grossPremiumPerShare = operationSecurity.getGrossPremierPerShare() || 0
+
+      //este campo necesita grossPremiumPerShare,brokerAgeAmount,taxes,netPremiumAt100,share
+
+      if (!security.isGross) {
+        security.taxesAmount = operationSecurity.getTaxesAmount(security.taxes) || 0
+        const tempDiscountList = []
+        if (security?.discounts) {
+          security.totalAmountOfDiscounts = 0
+          for (const discount of security?.discounts) {
+            discount.percentage = Number(discount.percentage)
+
+            //este campo necesita: premiumPerShareAmount,netPremiumAt100
+            discount.amount = operationSecurity.getDiscountAmount(Number(discount.percentage))
+            security.totalAmountOfDiscounts += discount.amount
+            tempDiscountList.push(discount)
+          }
         }
+
+        security.discounts = tempDiscountList
+        operationSecurity.setSecurity(security)
       }
 
-      security.discounts = tempDiscountList
+      //este campo necesita : netPremiumAt100,share, sumTaxes, sum discount
+      security.premiumPerShareAmount = operationSecurity.getPremierPerShare() || 0
+
+      //campos que necesitan el premiumPerShareAmount
+      security.dynamicCommissionAmount = operationSecurity.getDynamicComissionAmount() || 0
+
+      //este campo necesita reinsuranceBrokerage,premiumPerShareAmount
+      security.brokerAgeAmount = operationSecurity.getBrokerAge() || 0
+
+      //este campo necesita premiumPerShareAmount
+      security.frontingFeeAmount = operationSecurity.getFrontingFeeAmount(security.frontingFee) || 0
+      if (security.isGross) {
+        security.taxesAmount = operationSecurity.getTaxesAmount(security.taxes) || 0
+        const tempDiscountList = []
+        if (security?.discounts) {
+          security.totalAmountOfDiscounts = 0
+          for (const discount of security?.discounts) {
+            discount.percentage = Number(discount.percentage)
+
+            //este campo necesita: premiumPerShareAmount,netPremiumAt100
+            discount.amount = operationSecurity.getDiscountAmount(Number(discount.percentage))
+            security.totalAmountOfDiscounts += discount.amount
+            tempDiscountList.push(discount)
+          }
+        }
+
+        security.discounts = tempDiscountList
+        operationSecurity.setSecurity(security)
+      }
+
+      /**
+       * este campo necesita:
+       * dynamicCommissionAmount, frontingFeeAmount, brokerAgeAmount
+       * taxesAmount,premiumPerShareAmount
+       */
       security.netReinsurancePremium = operationSecurity.getNetReinsurancePremium() || 0
 
-      tempSecurities.push({
-        ...security,
-        difference: Number(security.difference) || 0,
-        distributedNetPremium: Number(security.distributedNetPremium) || 0,
-        dynamicCommission: Number(security.dynamicCommission),
-
-        receivedNetPremium: Number(security.receivedNetPremium) || 0,
-        reinsuranceBrokerage: Number(security.reinsuranceBrokerage) || 0
-      })
+      tempSecurities.push({ ...security })
     }
 
     return tempSecurities
   }
-  const calculateSecurities = (
-    securitiesParam: SecurityDto[],
 
-    view = 0,
-    isFirstTime = false
-  ) => {
-    if (securitiesParam.length > 0 && information && currentView !== 3) {
+  const calculateSecurities = (securitiesParam: SecurityDto[]) => {
+    if (securitiesParam.length > 0 && information) {
       companiesSelect.splice(0, companiesSelect.length)
+
+      //hace el calculo de securities de la primer vista es decir cuando el current view este en 0 o en 1
       const tempSecurities = getSecuritiesCalculate(securitiesParam)
-      let dataFormView2: FormSecurity = {} as FormSecurity
-      let tempSecuritiesView2: SecurityDto[] = []
 
-      tempSecuritiesView2 = getSecuritiesCalculate(
-        tempSecurities.map(security => ({
-          ...security,
-          netPremiumAt100: security.isGross ? information.grossPremium : information.netPremium,
-          view: view === 3 ? 1 : 2
-        }))
-      )
+      // este estara siempre haciendo los calculos independiente si la vista ya halla cambiado es decir sea 0,1,2,3
+      const securitiesView2: SecurityDto[] = []
+      for (const seconSecurity of securitiesParam) {
+        securitiesView2.push({
+          ...seconSecurity,
+          netPremiumAt100: seconSecurity.isGross ? information.grossPremium : information.netPremium,
+          view: currentView === 3 ? 1 : 2
+        })
+      }
+      const tempSecuritiesView2 = getSecuritiesCalculate(securitiesView2)
 
-      dataFormView2 = {
+      const dataFormView2 = {
         ...allFormDataView2,
         formData: tempSecuritiesView2,
         ...CalculateSecurity.getData(tempSecuritiesView2)
       }
-      securitiesSecondView = [...tempSecuritiesView2]
-      allFormDataView2 = dataFormView2
-      console.log('view dentro de calculate', { view, dataFormView2, tempSecuritiesView2 })
-      if (view === 3) {
-        if (account) {
-          if (account.securitiesTotal[0])
-            dataFormView2 = {
-              ...dataFormView2,
-              id: account.securitiesTotal[0].id
-            }
-        }
+      console.log({ allFormDataView2, tempSecuritiesView2 })
 
-        setAllFormData(dataFormView2)
+      let dataForm: FormSecurity = {
+        ...allFormData,
+        formData: tempSecurities,
+        ...CalculateSecurity.getData(tempSecurities, dataFormView2)
+      }
 
-        setAllErrors(allErrors.map(error => error))
+      if (account) {
+        if (account.securitiesTotal[0])
+          dataForm = {
+            ...dataForm,
+            id: account.securitiesTotal[0].id
+          }
+      }
+      if (currentView !== 3) {
+        setSecurities(() => tempSecurities)
 
-        setSecurities(tempSecuritiesView2)
+        setAllFormData(() => dataForm)
+      } else {
+        setSecurities(() => tempSecuritiesView2)
 
+        setAllFormData(() => dataFormView2)
         setCurrentView(0)
-        securitiesSecondView = []
-        allFormDataView2 = {
-          formData: [],
-          recievedNetPremium: 0,
-          distribuitedNetPremium: 0,
-          diference: 0
-        }
-
-        return
       }
 
-      if (currentView < 2) {
-        let dataForm: FormSecurity = {
-          ...allFormData,
-          formData: tempSecurities,
-          ...CalculateSecurity.getData(tempSecurities, dataFormView2)
-        }
-
-        if (account) {
-          if (account.securitiesTotal[0])
-            dataForm = {
-              ...dataForm,
-              id: account.securitiesTotal[0].id
-            }
-        }
-        setAllFormData(dataForm)
-
-        setAllErrors(allErrors.map(error => error))
-        console.log({ tempSecurities, view })
-        setSecurities(tempSecurities)
-      }
-
-      if (isFirstTime) {
-        setFirstTimeSecurities(tempSecurities)
-      }
+      setAllErrors(allErrors.map(error => error))
+      setAllFormData(() => dataForm)
+      setAllFormDataView2(dataFormView2)
+      setSecuritiesSecondView(tempSecuritiesView2)
     }
   }
 
@@ -256,9 +253,6 @@ const Security = ({ onStepChange }: SecurityProps) => {
   }
 
   const SaveData = async () => {
-    // const isError = allErrors.find(error => error)
-
-    // if (!isError) {
     const update: Partial<SecurityDto>[] = []
     const save: Partial<SecurityDto>[] = []
 
@@ -266,13 +260,13 @@ const Security = ({ onStepChange }: SecurityProps) => {
       // * Con esta validación no se guardarán los datos de la vista 2
       if (security.view === 2) return
 
-      // Todo quitar el as any
-      const mapper = SecurityMapper.securityToSecurityForm(security, accountData as any)
+      const mapper = SecurityMapper.securityToSecurityForm(security, accountData)
 
       save.push({ ...mapper, view: 1 })
     }
 
     if (!allFormData.id) {
+      //TODO REVISAR SI PUEDE TRABAJAR CON PROMISE ALL
       await saveSecurityTotal([
         {
           receivedNetPremium: +allFormData.recievedNetPremium,
@@ -309,39 +303,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
 
     if (save.length > 0) {
       await saveSecurities({ idAccount: +accountData.formsData.form1.id, securities: save })
-        .then(async res => {
-          console.log('saveSecurities', { res })
-          const accountById: Partial<ResponseGetAccount> = await getAccountById(Number(accountId))
-            .then(account => {
-              if (account) {
-                account.securities =
-                  account.securities.length === 0
-                    ? [{ frontingFeeActive: false, isGross: false } as SecurityDto]
-                    : account.securities
-              }
-
-              return account
-            })
-            .catch((error: Error) => {
-              console.log(error)
-
-              return {}
-            })
-
-          const accountSecurities = accountById?.securities as SecurityDto[]
-
-          if (accountSecurities && information) {
-            calculateSecurities(accountSecurities, 0, true)
-            accountById.securitiesTotal &&
-              setAllFormData({
-                ...allFormData,
-                recievedNetPremium: Number(accountById.securitiesTotal[0].receivedNetPremium),
-                distribuitedNetPremium: Number(accountById.securitiesTotal[0].distributedNetPremium),
-                diference: Number(accountById.securitiesTotal[0].difference),
-                id: Number(accountById.securitiesTotal[0].id)
-              })
-          }
-
+        .then(async () => {
           update.length === 0 &&
             setBadgeData({
               message: 'THE INFORMATION HAS BEEN SAVED',
@@ -383,9 +345,8 @@ const Security = ({ onStepChange }: SecurityProps) => {
   }
 
   useEffect(() => {
-    const idAccountCache = Number(localStorage.getItem('idAccount'))
     if (accountData.formsData.form1.id) {
-      setAccountId(accountData.formsData.form1.id || idAccountCache)
+      setAccountId(accountData.formsData.form1.id)
       const data = accountData.formsData.form1.placementStructure as FormInformation
       setInformation(data)
     }
@@ -393,8 +354,10 @@ const Security = ({ onStepChange }: SecurityProps) => {
   }, [accountData.formsData.form1.id])
 
   useEffect(() => {
-    if (account && information) {
-      calculateSecurities(account.securities, 0, true)
+    if (account && account.securities.length > 0 && information) {
+      calculateSecurities(
+        account.securities.map(security => SecurityMapper.securityToSecurityForm(security, accountData))
+      )
 
       account.securitiesTotal.length > 0 &&
         setAllFormData({
@@ -416,7 +379,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
   }, [isNextStep])
 
   useEffect(() => {
-    if (currentView === 3) calculateSecurities(securities, currentView, true)
+    calculateSecurities(securities)
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentView])
@@ -424,9 +387,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
   return (
     <SecurityContext.Provider
       value={{
-        firstTimeSecurities,
         securities,
-        setSecurities,
         information,
         activeErros,
         allErrors,
@@ -442,24 +403,15 @@ const Security = ({ onStepChange }: SecurityProps) => {
         <form noValidate autoComplete='on'>
           <SecondViewProvider>
             <CardContent>
-              {currentView !== 2
-                ? securities.map((security, index) => {
+              {securities.length > 0 &&
+                securities.map((security, index) => {
                   return (
                     <FormSection
                       key={`${index}-${security?.id}`}
-                      security={security}
+                      security={currentView === 2 ? securitiesSecondView[index] : security}
                       index={index}
                       onDeleteItemList={DeleteNewForm}
-                    />
-                  )
-                })
-                : securitiesSecondView.map((security, index) => {
-                  return (
-                    <FormSection
-                      key={`${index}-${security?.id}`}
-                      security={security}
-                      index={index}
-                      onDeleteItemList={DeleteNewForm}
+                      securities={securities}
                     />
                   )
                 })}
@@ -529,7 +481,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
                 {/* ADD REINSURER */}
                 <Grid item xs={12} sm={12}>
                   <div className='add-reinsurer'>
-                    { }
+                    {}
                     <Button
                       disabled={currentView === 2}
                       type='button'

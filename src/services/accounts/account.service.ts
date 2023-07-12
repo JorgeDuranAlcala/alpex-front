@@ -2,6 +2,7 @@ import { AppAlpexApiGateWay } from '../app.alpex.api-getway'
 
 //Routes
 import { ACCOUNT_ROUTES } from '@/configs/api'
+import { ResponseGetAccount } from '@/hooks/accounts/forms/useGetById'
 import { queryBuilder } from '@/services/helper/queryBuilder'
 import { IAccountsState } from '@/types/apps/accountsTypes'
 import { UpdateStatusArrayDto } from './dtos/account.dto'
@@ -17,7 +18,7 @@ class AccountServices {
    */
   async getAccountById(id: number) {
     try {
-      const { data } = await AppAlpexApiGateWay.get(`${ACCOUNT_ROUTES.GET_BY_ID}/${id}`)
+      const { data } = await AppAlpexApiGateWay.get<ResponseGetAccount>(`${ACCOUNT_ROUTES.GET_BY_ID}/${id}`)
 
       return data
     } catch (error) {

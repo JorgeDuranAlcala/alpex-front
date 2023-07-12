@@ -1,55 +1,51 @@
-import { FormControl, InputLabel, MenuItem, Select } from '@mui/material'
+import { FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material'
 
 import { ReinsuranceCompanyBinderDto } from '@/services/catalogs/dtos/ReinsuranceCompanyBinder.dto'
+import ReinsuranceCompanyBinderService from '@/services/catalogs/reinsuranceCompanyBinder.service'
 import { useContext, useEffect, useState } from 'react'
 import { SecurityContext } from '../../SecurityView'
 import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interface'
 
-// const NoBindersContainer = styled(Box)(({ theme }) => ({
-//   // backgroundColor: 'lightblue',
-//   display: 'flex',
-//   justifyContent: 'center',
-//   alignItems: 'center',
-//   minHeight: '56px',
-//   padding: '16.5px 0px',
-//   marginBottom: '24px',
-//   [theme.breakpoints.down('sm')]: {
-//     display: 'none',
-//   }
-// }))
-
 interface BinderProps extends Omit<ISecurityInputProps, 'index' | 'errorMessage' | 'validateForm'> {
-  binders: ReinsuranceCompanyBinderDto[]
   index: number
+  companyId: number | string
 }
 
-export const Binder = ({ value, binders, index, view }: BinderProps) => {
-  const { securities, setSecurities } = useContext(SecurityContext)
+export const Binder = ({ value, index, view, companyId }: BinderProps) => {
+  const { securities, calculateSecurities } = useContext(SecurityContext)
   const [selectedBinder, setSelectedBinder] = useState<ReinsuranceCompanyBinderDto | null>(null)
+  const [binders, setBinders] = useState<ReinsuranceCompanyBinderDto[]>([])
 
-  const handleOnChangeBinder = (value: number) => {
-    const binderSelect = binders.find(b => b.id === value)
+  const handleOnChangeBinder = (event: SelectChangeEvent) => {
+    const value = event.target.value
+    const binderSelect = binders.find(b => String(b.id) === String(value))
     const tempSecurities = [...securities]
 
-    // console.log('se monta', retroCedant, value, retroCedants)
     if (binderSelect) {
-      // console.log('se monta')
-
       tempSecurities[index] = {
         ...tempSecurities[index],
         idCReinsuranceCompanyBinder: binderSelect
       }
 
       setSelectedBinder(binderSelect)
-      setSecurities(tempSecurities)
+      calculateSecurities(tempSecurities)
     }
   }
-
+  useEffect(() => {
+    if (companyId) {
+      ReinsuranceCompanyBinderService.findByIdReinsuranceCompany(Number(companyId)).then(binders => {
+        setBinders(binders)
+      })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [companyId])
   useEffect(() => {
     if (binders && binders.length > 0 && value) {
-      const binderSelect = binders.find(b => b.id === value)
+      const binderSelect = binders.find(b => String(b.id) === String(value))
+
       binderSelect && setSelectedBinder(binderSelect)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [binders, value])
 
   return (
@@ -57,10 +53,10 @@ export const Binder = ({ value, binders, index, view }: BinderProps) => {
       <InputLabel id='Binder'>Binder</InputLabel>
       <Select
         label='Binder'
-        value={selectedBinder && binders.length > 0 ? selectedBinder.id : value.toString()}
+        value={selectedBinder && binders.length > 0 ? String(selectedBinder.id) : String(value)}
         labelId='binder'
-        disabled={binders.length === 0 || view === 2}
-        onChange={e => handleOnChangeBinder(Number(e.target.value))}
+        onChange={handleOnChangeBinder}
+        disabled={view === 2}
       >
         {binders?.map(binder => (
           <MenuItem key={binder.id} value={binder.id}>
