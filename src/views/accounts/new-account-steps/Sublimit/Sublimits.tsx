@@ -27,12 +27,12 @@ const initialValues: SublimitDto = {
   amountBi: 0,
   coinsurance: 0,
   yes: false,
-  luc: true,
+  luc: false,
   typeDeductible: '',
   typeBi: '',
   at100: false,
   idCDeductiblePer: 0,
-  active: null,
+  active: true,
   idCCoverage: null,
   idEndorsement: null,
   title: '',
@@ -120,17 +120,16 @@ const Sublimits = () => {
       const subLimitsTemp = subLimits.find(sublimit => sublimit.title === label)
 
       if (!subLimitsTemp) {
-        setSubLimits(statePreview => {
-          const statePreviewTemp = [...statePreview]
-          statePreviewTemp.push({
+        const subLimitsTemp = [...subLimits]
+        setSubLimits([
+          ...subLimitsTemp,
+          {
             ...initialValues,
             title: label,
             idCCoverage: value,
             idAccount: account ? account?.id : idAccountCache
-          })
-
-          return statePreviewTemp
-        })
+          }
+        ])
         formErrors.push(false)
       }
     } catch (error) {
@@ -268,14 +267,7 @@ const Sublimits = () => {
     getAccountData()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-
-  // console.log(
-  //   'Seleccionados: ',
-  //   'Coverage seleccionadas: ',
-  //   coverageSelected,
-  //   'Coverage que se van a mapear en la interfaz: ',
-  //   subLimits
-  // )
+  console.log({ subLimits })
 
   return (
     <CardContent>
