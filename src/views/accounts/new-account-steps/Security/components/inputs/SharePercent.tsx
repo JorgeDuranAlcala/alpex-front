@@ -5,30 +5,19 @@ import * as yup from 'yup'
 
 import { SecurityContext } from '../../SecurityView'
 import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interface'
-import { CalculateSecurity } from '../../utils/calculates-securities'
 
-// ! only if we want specific props
 interface SharePercentProps extends ISecurityInputProps {
-  operationSecurity: CalculateSecurity
   view: number
 }
 
-export const SharePercent = ({
-  index,
-  value,
-  errorMessage,
-  validateForm,
-  operationSecurity,
-  view
-}: SharePercentProps) => {
+export const SharePercent = ({ index, value, errorMessage, validateForm, view }: SharePercentProps) => {
   const { activeErros, securities, calculateSecurities } = useContext(SecurityContext)
 
   const handleChangeSharePercent = (value: number) => {
     const tempSecurities = [...securities]
     tempSecurities[index] = {
       ...tempSecurities[index],
-      share: value,
-      premiumPerShare: operationSecurity.getPremierPerShare()
+      share: value
     }
     validateForm(tempSecurities[index])
     calculateSecurities(tempSecurities)

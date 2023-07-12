@@ -3,13 +3,9 @@ import { createContext } from 'react'
 
 export interface CreateSecondViewProps {
   securities: SecurityDto[]
-  calculateSecurities: (securities: SecurityDto[], view?: number) => void
+  calculateSecurities: (securities: SecurityDto[]) => void
   information: FormInformation
 }
-
-// export interface DeleteSecondViewProps extends CreateSecondViewProps {
-
-// }
 
 export type DeleteSecondViewProps = CreateSecondViewProps
 

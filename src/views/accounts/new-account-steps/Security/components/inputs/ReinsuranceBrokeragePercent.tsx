@@ -54,8 +54,8 @@ export const ReinsuranceBrokeragePercent = ({
   )
 }
 
-export const reinsuranceBrokeragePercent_validations = ({ isGross }: { isGross: boolean }) =>
-  yup.object().shape({
+export const reinsuranceBrokeragePercent_validations = ({ isGross }: { isGross: boolean }) => {
+  return yup.object().shape({
     reinsuranceBrokerage: yup
       .number()
       .transform((_, val) => (val === Number(val) ? val : null))
@@ -67,3 +67,4 @@ export const reinsuranceBrokeragePercent_validations = ({ isGross }: { isGross: 
       })
       .max(100)
   })
+}
