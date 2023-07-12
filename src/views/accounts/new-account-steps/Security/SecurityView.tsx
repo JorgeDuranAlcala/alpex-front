@@ -177,7 +177,6 @@ const Security = ({ onStepChange }: SecurityProps) => {
 
       tempSecurities.push({ ...security })
     }
-    console.log({ tempSecuritiesCal: tempSecurities })
 
     return tempSecurities
   }
