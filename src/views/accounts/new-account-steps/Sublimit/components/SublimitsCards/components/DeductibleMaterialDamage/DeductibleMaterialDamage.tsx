@@ -41,8 +41,7 @@ const DeductibleMaterialDamage: React.FC<DeductibleMaterialDamageProps> = ({
       deductible: null,
       min: null,
       idCDeductiblePer: null,
-      amount: null,
-      idCCoverage: null
+      amount: null
     }
     const subLimitTemp = { ...subLimit, [name]: event.target.value }
     if (name === 'typeDeductible') {
@@ -232,12 +231,6 @@ const DeductibleMaterialDamage: React.FC<DeductibleMaterialDamageProps> = ({
 export default DeductibleMaterialDamage
 export const validateDeductibleMaterialDamage = ({ typeDeductible }: { typeDeductible: string }) =>
   yup.object().shape({
-    typeDeductible: yup
-      .string()
-      .nullable()
-      .test('', 'This field is required', value => {
-        return value !== null && value !== ''
-      }),
     amount: yup
       .number()
       .nullable()
