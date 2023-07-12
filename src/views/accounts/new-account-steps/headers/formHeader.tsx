@@ -2,6 +2,7 @@
 import { useGetAccountById } from '@/hooks/accounts/forms'
 import { useFindInformationByIdAccount } from '@/hooks/accounts/information'
 import { ContainerMobileBound } from '@/styled-components/accounts/Security.styled'
+import { formatStatus } from '@/utils/formatStatus'
 import { Box, Button, Card, ListItemIcon, ListItemText, Menu, MenuItem, Modal, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
 import Icon from 'src/@core/components/icon'
@@ -183,7 +184,7 @@ const FormHeader = ({ isNewAccount, setActiveEndorsement, setTypeofAccount, setE
     return ''
   }
 
-  /*  useEffect(() => {
+  useEffect(() => {
     const formatedRows = []
     const rawRows = accountsReducer.accounts
 
@@ -203,7 +204,7 @@ const FormHeader = ({ isNewAccount, setActiveEndorsement, setTypeofAccount, setE
     // console.log('datoss', data)
 
     setStatus(data?.status)
-  }, [accountsReducer]) */
+  }, [accountsReducer])
 
   useEffect(() => {
     account && setIdAccount(account.id)
@@ -307,7 +308,7 @@ const FormHeader = ({ isNewAccount, setActiveEndorsement, setTypeofAccount, setE
                     Last Update: {account && convertirFecha(information?.updatedAt)}
                   </span>
                 </div>
-                {accountDetails && accountDetails?.idAccountStatus !== 5 ? (
+                {status !== 'bound' ? (
                   <ActionsHeader
                     accountId={account?.id}
                     setEditInfo={setEditInfo}
