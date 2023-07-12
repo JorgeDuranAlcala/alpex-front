@@ -41,8 +41,7 @@ const DeductibleMaterialDamage: React.FC<DeductibleMaterialDamageProps> = ({
       deductible: null,
       min: null,
       idCDeductiblePer: null,
-      amount: null,
-      idCCoverage: null
+      amount: null
     }
     const subLimitTemp = { ...subLimit, [name]: event.target.value }
     if (name === 'typeDeductible') {

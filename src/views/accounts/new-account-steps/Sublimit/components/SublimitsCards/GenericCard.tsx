@@ -6,9 +6,7 @@ import { ContainerCard, ContentCard, HeaderCard } from 'src/styles/Forms/Sublimi
 
 import * as yup from 'yup'
 import { FormErrors, initialErrorValues } from '../../Sublimits'
-import BusinessInterruption, {
-  validateBusinessInterruption
-} from './components/BusinessInterruption/BusinessInterruption'
+import BusinessInterruption from './components/BusinessInterruption/BusinessInterruption'
 import Coinsurance, { validateCoinsurance } from './components/Coinsurance/Coinsurance'
 import { DeductibleMaterialDamage } from './components/DeductibleMaterialDamage'
 import { validateDeductibleMaterialDamage } from './components/DeductibleMaterialDamage/DeductibleMaterialDamage'
@@ -60,12 +58,7 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
       ...subLimitsTemp[index],
       ...subLimitParam
     }
-    setSubLimits(state => {
-      const newState = [...state]
-      newState[index] = subLimitsTemp[index]
-
-      return newState
-    })
+    setSubLimits(subLimitsTemp)
     validateForm(subLimitsTemp[index])
   }
 
@@ -81,7 +74,6 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
     const schema = yup.object().shape({
       ...inputSublimit_validations({ limit, isNotYesLuc: DONT_SHOW_YES_LUC.includes(subLimitParam.title) }).fields,
       ...validateDeductibleMaterialDamage({ typeDeductible: subLimitParam.typeDeductible }).fields,
-      ...validateBusinessInterruption({ typeBi: subLimitParam.typeBi }).fields,
       ...validateCoinsurance().fields
     })
 
@@ -101,7 +93,7 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
             [error.path]: error.message
           }
         }
-
+        console.log({ data })
         errorsTemp[index] = true
         setErrorCard(data)
       })
