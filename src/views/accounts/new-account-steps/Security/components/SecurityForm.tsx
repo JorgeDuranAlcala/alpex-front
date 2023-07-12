@@ -13,7 +13,6 @@ import { Grid, Icon } from '@mui/material'
 import { useContext, useEffect, useState } from 'react'
 import * as yup from 'yup'
 import { SecurityContext } from '../SecurityView'
-import { useDataFirstTime } from '../hooks/useDataFirstTime'
 import { CalculateSecurity } from '../utils/calculates-securities'
 import { ButtonAddDiscount } from './discounts/ButtonAddDiscount'
 import { DiscountsProvider } from './discounts/DiscountsProvider'
@@ -250,30 +249,6 @@ export const FormSection = ({ index, security, onDeleteItemList, securities }: F
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-
-  /**
-   * * Las validaciones actuales resetean los porcentages de taxes y frontingFee
-   * * aún cuando ya hay valores desde bdd.
-   * * Para no reestructuras las validaciones actuales,
-   * * se crea este hook que comprueba si existen valores desde bdd
-   * * si es así, los setea en el formulario después de las validaciones actuales.
-   */
-  const { checkValues } = useDataFirstTime({ formIndex: index, operationSecurity })
-
-  useEffect(() => {
-    checkValues({
-      taxes: security.taxes,
-      frontingFee: security.frontingFee
-    })
-    if (security.taxes > 0) {
-      setIsTaxesEnabled(true)
-    }
-    if (security.frontingFee > 0) {
-      setFrontingFeeEnabled(true)
-    }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [security.taxes, security.frontingFee])
 
   useEffect(() => {
     const tempSecurities = [...securities]

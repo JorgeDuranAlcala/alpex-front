@@ -1,10 +1,9 @@
 import { FormControl, FormHelperText, TextField } from '@mui/material'
-import { MutableRefObject, useContext, useEffect } from 'react'
+import { useContext, useEffect } from 'react'
 import { NumericFormat } from 'react-number-format'
 import * as yup from 'yup'
 
 import { SecurityContext } from '../../SecurityView'
-import { IForField } from '../../hooks/useDataFirstTime'
 import { usePercentageAchieved } from '../../hooks/usePercentageAchieved'
 import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interface'
 import { CalculateSecurity } from '../../utils/calculates-securities'
@@ -13,7 +12,6 @@ import { CalculateSecurity } from '../../utils/calculates-securities'
 interface FrontingFeePercentProps extends ISecurityInputProps {
   operationSecurity?: CalculateSecurity
   isDisabled: boolean
-  fieldRef?: MutableRefObject<IForField>
 }
 
 // type FrontingFeePercentProps = ISecurityInputProps;
