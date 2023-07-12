@@ -240,7 +240,7 @@ export const FormSection = ({ index, security, onDeleteItemList, securities }: F
     localSecuritiesTemp.push(tempSecurities[index])
 
     if (localSecuritiesTemp.length === tempSecurities.length) {
-      calculateSecurities(localSecuritiesTemp, 10)
+      calculateSecurities(localSecuritiesTemp)
       validateForm(localSecuritiesTemp[index])
       localSecuritiesTemp = []
     }
@@ -548,7 +548,6 @@ export const FormSection = ({ index, security, onDeleteItemList, securities }: F
               <SwitchFrontingFee
                 index={index}
                 validateForm={validateForm}
-                security={security}
                 isChecked={frontingFeeEnabled}
                 setFrontingFeeEnabled={setFrontingFeeEnabled}
                 view={security.view}

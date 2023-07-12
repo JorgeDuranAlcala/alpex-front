@@ -18,7 +18,7 @@ export const PremiumPerShareAmount = ({
   const { activeErros, securities } = useContext(SecurityContext)
 
   const handleChangePremiumPerShareAmount = (value: number) => {
-    // @omar persistir valor
+    //todo @omar persistir valor
     const tempSecurities = [...securities]
     tempSecurities[index] = {
       ...tempSecurities[index],

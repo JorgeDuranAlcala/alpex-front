@@ -175,7 +175,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
     return tempSecurities
   }
 
-  const calculateSecurities = (securitiesParam: SecurityDto[], view = 0) => {
+  const calculateSecurities = (securitiesParam: SecurityDto[]) => {
     if (securitiesParam.length > 0 && information) {
       companiesSelect.splice(0, companiesSelect.length)
 
@@ -356,8 +356,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
   useEffect(() => {
     if (account && account.securities.length > 0 && information) {
       calculateSecurities(
-        account.securities.map(security => SecurityMapper.securityToSecurityForm(security, accountData)),
-        30
+        account.securities.map(security => SecurityMapper.securityToSecurityForm(security, accountData))
       )
 
       account.securitiesTotal.length > 0 &&
@@ -380,7 +379,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
   }, [isNextStep])
 
   useEffect(() => {
-    calculateSecurities(securities, currentView)
+    calculateSecurities(securities)
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentView])

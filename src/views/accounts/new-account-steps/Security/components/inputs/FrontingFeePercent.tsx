@@ -1,5 +1,5 @@
 import { FormControl, FormHelperText, TextField } from '@mui/material'
-import { MutableRefObject, useContext } from 'react'
+import { MutableRefObject, useContext, useEffect } from 'react'
 import { NumericFormat } from 'react-number-format'
 import * as yup from 'yup'
 
@@ -31,12 +31,6 @@ export const FrontingFeePercent = ({
   const { achievedMessageError, checkIsPercentageAchieved } = usePercentageAchieved()
 
   const handleChangeFrontingFeePercent = (value: number) => {
-    // console.log('frontingFee Percent', value)
-
-    // if (fieldRef) {
-    //   fieldRef.current.isTouched = true
-    // }
-
     const tempSecurities = securities ? [...securities] : []
     tempSecurities[index] = {
       ...tempSecurities[index],
@@ -46,21 +40,23 @@ export const FrontingFeePercent = ({
     validateForm(tempSecurities[index])
   }
 
-  // useEffect(() => {
-  //   checkIsPercentageAchieved({ formIndex: index })
+  useEffect(() => {
+    //TODO @OMAR REVISAR SU FUNCIONALIDAD DESPUES DE PRUEBA
+    checkIsPercentageAchieved({ formIndex: index })
 
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [securities[index].frontingFee])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [securities[index].frontingFee])
 
   // * Si el campo ya cuenta con un mensaje de error, se ejecuta el chequeo de porcentaje
   // * alcanzado, esto con el fin de que el mensaje de error se borre para este campo
   // * en caso de que el porcentaje se disminuya desde otro lugar
-  // useEffect(() => {
-  //   if (!achievedMessageError) return
-  //   checkIsPercentageAchieved({ formIndex: index })
+  useEffect(() => {
+    //TODO @OMAR REVISAR SU FUNCIONALIDAD DESPUES DE PRUEBA
+    if (!achievedMessageError) return
+    checkIsPercentageAchieved({ formIndex: index })
 
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [securities[index]])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [securities[index]])
 
   return (
     <FormControl fullWidth>

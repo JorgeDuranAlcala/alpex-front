@@ -14,16 +14,12 @@ import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interf
 type ShareAmountProps = ISecurityInputProps
 
 export const ShareAmount = ({ index, value, errorMessage, validateForm, view }: ShareAmountProps) => {
-  const {
-    activeErros
-
-    // calculateSecurities
-  } = useContext(SecurityContext)
+  const { activeErros } = useContext(SecurityContext)
 
   const handleChangeShareAmount = (value: number) => {
     console.log('OnChange ShareAmount value: ', { index, value, validateForm })
 
-    //@omar persistir valor
+    //TODO @omar persistir valor
   }
 
   return (

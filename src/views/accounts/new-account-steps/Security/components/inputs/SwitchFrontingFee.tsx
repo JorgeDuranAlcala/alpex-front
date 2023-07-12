@@ -1,4 +1,3 @@
-import { SecurityDto } from '@/services/accounts/dtos/security.dto'
 import SwitchAlpex from '@/views/custom/switchs'
 import { FormControl } from '@mui/material'
 import { MutableRefObject, SetStateAction, useContext } from 'react'
@@ -8,7 +7,7 @@ import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interf
 
 interface SwitchFrontingFeeProps extends Omit<ISecurityInputProps, 'value' | 'errorMessage'> {
   isChecked: boolean
-  security: SecurityDto
+
   setFrontingFeeEnabled: (value: SetStateAction<boolean>) => void
   fieldRef?: MutableRefObject<IForField>
 }
@@ -16,7 +15,7 @@ interface SwitchFrontingFeeProps extends Omit<ISecurityInputProps, 'value' | 'er
 export const SwitchFrontingFee = ({
   index,
   validateForm,
-  security,
+
   isChecked,
   setFrontingFeeEnabled,
   view

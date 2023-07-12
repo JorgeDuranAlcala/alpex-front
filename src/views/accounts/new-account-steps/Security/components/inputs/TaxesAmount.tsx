@@ -27,10 +27,6 @@ export const TaxesAmount = ({
   const { activeErros, securities, calculateSecurities } = useContext(SecurityContext)
 
   const handleChangeTaxesAmount = (value: number) => {
-    // console.log(value)
-    // if (fieldRef) {
-    //   fieldRef.current.isTouched = true
-    // }
     const tempSecurities = [...securities]
     tempSecurities[index] = {
       ...tempSecurities[index],
