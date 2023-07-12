@@ -98,7 +98,7 @@ export const FormSection = ({ index, security, onDeleteItemList, securities }: F
   const [frontingFeeEnabled, setFrontingFeeEnabled] = useState<boolean>(security.frontingFeeActive || false)
   const [isTaxesEnabled, setIsTaxesEnabled] = useState<boolean>(security.taxesActive || false)
   const [isShowToggleTaxes, setIsShowToggleTaxes] = useState<boolean>(security.taxesActive || false)
-  const [isShowRetroCedant, setIsShowRetroCedant] = useState<boolean>(security.frontingFeeActive || false)
+  const [isShowRetroCedant, setIsShowRetroCedant] = useState<boolean>(true)
 
   const [openDialog, setOpenDialog] = useState(false)
 
@@ -115,7 +115,6 @@ export const FormSection = ({ index, security, onDeleteItemList, securities }: F
   const { activeView, createSecondView } = useContext(SecondViewContext)
 
   const operationSecurity: CalculateSecurity = new CalculateSecurity().setInformation(information).setSecurity(security)
-
   const schemaRetrocedant = yup.object().shape({
     ...selectRetroCedant_validations({ frontingFeeEnabled, isGross }).fields,
     ...frontingFeePercent_validations({ frontingFeeEnabled }).fields,
@@ -135,7 +134,6 @@ export const FormSection = ({ index, security, onDeleteItemList, securities }: F
     ...taxesPercent_validations({ isGross, isTaxesEnabled }).fields,
     ...netReinsurancePremium_validations().fields
   })
-
   const validateForm = (securityParam: SecurityDto) => {
     let data = { ...initialErrorValues }
 
@@ -164,6 +162,7 @@ export const FormSection = ({ index, security, onDeleteItemList, securities }: F
             [error.path]: error.message
           }
         }
+        console.log({ data, index })
         errorsTemp[index] = true
         setErrorsSecurity(data)
       })
@@ -201,7 +200,7 @@ export const FormSection = ({ index, security, onDeleteItemList, securities }: F
         setIsShowToggleTaxes(true)
         setIsShowToggleFrontingFee(true)
 
-        if (security.taxes === 0 && informationForm1.taxesP > 0) {
+        if (security.taxes === 0 && informationForm1.taxesP > 0 && !security.id) {
           setIsTaxesEnabled(true)
           tempSecurities[index] = {
             ...tempSecurities[index],
@@ -209,7 +208,7 @@ export const FormSection = ({ index, security, onDeleteItemList, securities }: F
             taxesAmount: 0
           }
         }
-        if (security.frontingFee === 0 && informationForm1.frontingFeeP > 0) {
+        if (security.frontingFee === 0 && informationForm1.frontingFeeP > 0 && !security.id) {
           setIsShowRetroCedant(true)
           setFrontingFeeEnabled(true)
           tempSecurities[index] = {
@@ -219,7 +218,7 @@ export const FormSection = ({ index, security, onDeleteItemList, securities }: F
           }
         }
       } else {
-        if (security.taxes === 0 && informationForm1.taxesP === 0) {
+        if (security.taxes === 0 && informationForm1.taxesP === 0 && !security.id) {
           setIsShowToggleTaxes(true)
           tempSecurities[index] = {
             ...tempSecurities[index],
@@ -227,7 +226,7 @@ export const FormSection = ({ index, security, onDeleteItemList, securities }: F
             taxesAmount: 0
           }
         }
-        if (security.frontingFee === 0 && informationForm1.frontingFeeP === 0) {
+        if (security.frontingFee === 0 && informationForm1.frontingFeeP === 0 && !security.id) {
           setIsShowToggleFrontingFee(true)
           tempSecurities[index] = {
             ...tempSecurities[index],
@@ -241,7 +240,7 @@ export const FormSection = ({ index, security, onDeleteItemList, securities }: F
 
     if (localSecuritiesTemp.length === tempSecurities.length) {
       calculateSecurities(localSecuritiesTemp)
-      validateForm(localSecuritiesTemp[index])
+      validateForm(security)
       localSecuritiesTemp = []
     }
 
@@ -292,6 +291,10 @@ export const FormSection = ({ index, security, onDeleteItemList, securities }: F
   useEffect(() => {
     setCurrentView(activeView)
   }, [activeView])
+
+  // useEffect(() => {
+  //   validateForm(security)
+  // }, [isGross, frontingFeeEnabled, isTaxesEnabled])
 
   /*NOTE: en los componentes de porcentajes no es necesario calcular los otros valores ya que todos los calculos se hacen en el calculate securities a exception de las modificaciones de montos */
   return (

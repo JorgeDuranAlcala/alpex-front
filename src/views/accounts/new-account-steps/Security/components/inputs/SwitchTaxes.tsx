@@ -22,8 +22,8 @@ export const SwitchTaxes = ({ index, validateForm, isChecked, setIsTaxesEnabled,
     tempSecurities[index] = {
       ...tempSecurities[index],
       taxesActive: !isChecked,
-      taxes: !isChecked ? 0 : tempSecurities[index].taxes,
-      taxesAmount: !isChecked ? 0 : tempSecurities[index].taxesAmount
+      taxes: !isChecked ? tempSecurities[index].taxes : 0,
+      taxesAmount: !isChecked ? tempSecurities[index].taxesAmount : 0
     }
     setIsTaxesEnabled(() => !isChecked)
     validateForm(tempSecurities[index])

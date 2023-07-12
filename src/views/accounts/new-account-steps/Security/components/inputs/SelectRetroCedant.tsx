@@ -96,8 +96,8 @@ export const selectRetroCedant_validations = ({
 }: {
   frontingFeeEnabled: boolean
   isGross: boolean
-}) =>
-  yup.object().shape({
+}) => {
+  return yup.object().shape({
     idCRetroCedant: yup
       .object()
       .shape({
@@ -113,3 +113,4 @@ export const selectRetroCedant_validations = ({
         return true
       })
   })
+}

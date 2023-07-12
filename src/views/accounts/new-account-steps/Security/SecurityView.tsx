@@ -159,7 +159,12 @@ const Security = ({ onStepChange }: SecurityProps) => {
         }
 
         security.discounts = tempDiscountList
-        operationSecurity.setSecurity(security)
+        operationSecurity.setSecurity({
+          ...security,
+          reinsuranceBrokerage: Number(security.reinsuranceBrokerage) || 0,
+          dynamicCommission: Number(security.dynamicCommission) || 0,
+          share: Number(security.share) || 0
+        })
       }
 
       /**
@@ -198,7 +203,6 @@ const Security = ({ onStepChange }: SecurityProps) => {
         formData: tempSecuritiesView2,
         ...CalculateSecurity.getData(tempSecuritiesView2)
       }
-      console.log({ allFormDataView2, tempSecuritiesView2 })
 
       let dataForm: FormSecurity = {
         ...allFormData,
@@ -232,13 +236,24 @@ const Security = ({ onStepChange }: SecurityProps) => {
   }
 
   const addNewForm = () => {
-    const securityNew = {} as SecurityDto
-    calculateSecurities([...securities, { ...securityNew, frontingFeeActive: false, view: 1 }])
+    setSecurities([
+      ...securities,
+      {
+        frontingFeeActive: false,
+        isGross: false,
+        discounts: [],
+        share: 0,
+        dynamicCommission: 0,
+        reinsuranceBrokerage: 0,
+        view: 1
+      } as SecurityDto
+    ])
   }
 
   const handleNextStep = () => {
     const isError = allErrors.find(error => error)
     setActiveErrors(isError || false)
+
     if (!isError) setOpenNextModal(true)
   }
 
@@ -481,7 +496,6 @@ const Security = ({ onStepChange }: SecurityProps) => {
                 {/* ADD REINSURER */}
                 <Grid item xs={12} sm={12}>
                   <div className='add-reinsurer'>
-                    {}
                     <Button
                       disabled={currentView === 2}
                       type='button'
