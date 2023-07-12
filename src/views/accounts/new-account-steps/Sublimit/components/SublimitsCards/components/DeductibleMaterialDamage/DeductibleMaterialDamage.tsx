@@ -231,12 +231,6 @@ const DeductibleMaterialDamage: React.FC<DeductibleMaterialDamageProps> = ({
 export default DeductibleMaterialDamage
 export const validateDeductibleMaterialDamage = ({ typeDeductible }: { typeDeductible: string }) =>
   yup.object().shape({
-    typeDeductible: yup
-      .string()
-      .nullable()
-      .test('', 'This field is required', value => {
-        return value !== null && value !== ''
-      }),
     amount: yup
       .number()
       .nullable()
