@@ -253,7 +253,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
   const handleNextStep = () => {
     const isError = allErrors.find(error => error)
     setActiveErrors(isError || false)
-    debugger
+
     if (!isError) setOpenNextModal(true)
   }
 
