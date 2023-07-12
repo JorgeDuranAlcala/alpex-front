@@ -36,11 +36,15 @@ export const useGetAccountById = () => {
                 ? [
                     {
                       frontingFeeActive: false,
+                      taxesActive: false,
                       isGross: false,
                       discounts: [],
                       share: 0,
                       dynamicCommission: 0,
-                      view: 1
+                      view: 1,
+                      reinsuranceBrokerage: 0,
+                      taxes: 0,
+                      frontingFee: 0
                     } as SecurityDto
                   ]
                 : (accounts.securities as SecurityDto[])
