@@ -26,11 +26,12 @@ export class CalculateSecurity {
     if (this.security.netPremiumAt100) {
       this.security.netPremiumAt100 = this.security.netPremiumAt100
       this.baseAmount = this.security.netPremiumAt100
-    } else
+    } else {
       this.baseAmount = this.security.isGross
         ? parseFloat(String(this.information.grossPremium))
         : parseFloat(String(this.information.netPremium))
-    this.security.netPremiumAt100 = this.baseAmount
+      this.security.netPremiumAt100 = this.baseAmount
+    }
 
     return this
   }
@@ -192,23 +193,30 @@ export class CalculateSecurity {
       // * is Net Premium
 
       const base = (this.security.netPremiumAt100 * this.security.share) / 100
-      console.log({ base })
+      const result = (valueAmount / base) * 100
 
-      return (valueAmount / base) * 100
+      return result
     }
   }
   getDiscountAmount(valuePercent: number): number {
     if (this.security.isGross) {
       // * is Gross Premium
       const base = (this.security.premiumPerShareAmount * valuePercent) / 100
+      console.log({ isGross: this.security.isGross, base })
 
       return base
     } else {
       // * is Net Premium
 
       const base = (this.security.netPremiumAt100 * this.security.share) / 100
+      const result = (base * valuePercent) / 100
+      console.log({
+        discountAmount: result,
+        netPremiumAt100: this.security.netPremiumAt100,
+        isGross: this.security.isGross
+      })
 
-      return (base * valuePercent) / 100
+      return result
     }
   }
 

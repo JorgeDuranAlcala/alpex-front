@@ -218,20 +218,24 @@ export const FormSection = ({ index, security, onDeleteItemList, securities }: F
           }
         }
       } else {
-        if (security.taxes === 0 && informationForm1.taxesP === 0 && !security.id) {
+        if (security.taxes === 0 && informationForm1.taxesP === 0) {
           setIsShowToggleTaxes(true)
-          tempSecurities[index] = {
-            ...tempSecurities[index],
-            taxes: 0,
-            taxesAmount: 0
+          if (!security.id) {
+            tempSecurities[index] = {
+              ...tempSecurities[index],
+              taxes: 0,
+              taxesAmount: 0
+            }
           }
         }
-        if (security.frontingFee === 0 && informationForm1.frontingFeeP === 0 && !security.id) {
+        if (security.frontingFee === 0 && informationForm1.frontingFeeP === 0) {
           setIsShowToggleFrontingFee(true)
-          tempSecurities[index] = {
-            ...tempSecurities[index],
-            frontingFee: 0,
-            frontingFeeAmount: 0
+          if (!security.id) {
+            tempSecurities[index] = {
+              ...tempSecurities[index],
+              frontingFee: 0,
+              frontingFeeAmount: 0
+            }
           }
         }
       }
