@@ -1,7 +1,7 @@
 
 import { SecurityProps } from '@/services/accounts/dtos/security.dto';
 import { Title } from '@/styled-components/accounts/Security.styled';
-import { CardContent, CardHeader } from '@mui/material';
+import { Box, CardContent, CardHeader, CircularProgress } from '@mui/material';
 import { useContext, useEffect } from 'react';
 import { FormBottomButtons } from './components/form/FormBottomButtons';
 import { FormListContainer } from './components/form/FormListContainer';
@@ -16,7 +16,8 @@ export const LayoutSecurity = ({ onStepChange }: SecurityProps) => {
     isNextStep,
     handleBeforeNextStep,
     handleAddNewForm,
-    handleSaveData
+    handleSaveData,
+    isDataLoaded,
   } = useContext(LayoutSecurityContext);
 
 
@@ -55,16 +56,24 @@ export const LayoutSecurity = ({ onStepChange }: SecurityProps) => {
       <AlertOnSave />
       <NextModal />
 
-      <CardContent sx={{ position: 'relative' }}>
+      {isDataLoaded ? (
+        <CardContent sx={{ position: 'relative' }}>
 
-        <FormListContainer />
+          <FormListContainer />
 
-        <FormBottomButtons
-          onClickAddReinsurer={handleAddNewForm}
-          onClickSave={handleSaveData}
-          onClickNextStep={handleBeforeNextStep}
-        />
-      </CardContent>
+          <FormBottomButtons
+            onClickAddReinsurer={handleAddNewForm}
+            onClickSave={handleSaveData}
+            onClickNextStep={handleBeforeNextStep}
+          />
+        </CardContent>
+
+      ) : (
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', p: 24 }}>
+
+          <CircularProgress size={50} />
+        </Box>
+      )}
 
 
     </div>
