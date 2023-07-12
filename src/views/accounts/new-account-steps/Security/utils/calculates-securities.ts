@@ -30,8 +30,8 @@ export class CalculateSecurity {
       this.baseAmount = this.security.isGross
         ? parseFloat(String(this.information.grossPremium))
         : parseFloat(String(this.information.netPremium))
-      this.security.netPremiumAt100 = this.baseAmount
     }
+    this.security.netPremiumAt100 = this.baseAmount
 
     return this
   }
@@ -210,11 +210,6 @@ export class CalculateSecurity {
 
       const base = (this.security.netPremiumAt100 * this.security.share) / 100
       const result = (base * valuePercent) / 100
-      console.log({
-        discountAmount: result,
-        netPremiumAt100: this.security.netPremiumAt100,
-        isGross: this.security.isGross
-      })
 
       return result
     }
