@@ -55,14 +55,8 @@ const ActionsHeaderBound: React.FC<IActionsHeaderProps> = ({ accountStatus, side
   const [editInfo, setEditInfo] = useState(false)
   const [openEndorsment, setOpenEndorsment] = useState(false)
   const [openHistory, setOpenHistory] = useState(false)
-  const [openDelete, setOpenDelete] = useState(false)
   const [cancellEndorsment, setCancellEndorsment] = useState(false)
   const [value, setValue] = useState('')
-
-  const deleteAccount = () => {
-    console.log('Deleted')
-    setOpenDelete(false)
-  }
 
   // const downloadSpanish = () => {
   //   console.log('Spanish Download')
@@ -180,7 +174,7 @@ const ActionsHeaderBound: React.FC<IActionsHeaderProps> = ({ accountStatus, side
               <ButtonIcon
                 className='delete-button'
                 onClick={() => {
-                  setOpenDelete(true)
+                  console.log('Print')
                 }}
                 disabled={uneditableAccount}
               >
@@ -188,39 +182,6 @@ const ActionsHeaderBound: React.FC<IActionsHeaderProps> = ({ accountStatus, side
                   <Icon icon='mdi:printer' />
                 </div>
               </ButtonIcon>
-
-              <Modal
-                className='delete-modal'
-                open={openDelete}
-                onClose={() => {
-                  setOpenDelete(false)
-                }}
-              >
-                <Box className='modal-wrapper'>
-                  <HeaderTitleModal>
-                    <Typography variant='h6'>Are you sure you want to delete this account?</Typography>
-                    <ButtonClose
-                      onClick={() => {
-                        setOpenDelete(false)
-                      }}
-                    >
-                      <CloseIcon />
-                    </ButtonClose>
-                  </HeaderTitleModal>
-                  <div className='delete-modal-text'>This action can’t be undone.</div>
-                  <Button className='header-modal-btn' variant='contained' onClick={deleteAccount}>
-                    DELETE
-                  </Button>
-                  <Button
-                    className='close-modal header-modal-btn'
-                    onClick={() => {
-                      setOpenDelete(false)
-                    }}
-                  >
-                    CANCEL
-                  </Button>
-                </Box>
-              </Modal>
             </div>
           </div>
         </div>

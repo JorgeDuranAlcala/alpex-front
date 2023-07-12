@@ -2,7 +2,6 @@
 import { useGetAccountById } from '@/hooks/accounts/forms'
 import { useFindInformationByIdAccount } from '@/hooks/accounts/information'
 import { ContainerMobileBound } from '@/styled-components/accounts/Security.styled'
-import { formatStatus } from '@/utils/formatStatus'
 import { Box, Button, Card, ListItemIcon, ListItemText, Menu, MenuItem, Modal, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
 import Icon from 'src/@core/components/icon'
@@ -10,8 +9,6 @@ import { useAppSelector } from 'src/store'
 import StatusSelect from 'src/views/custom/select/StatusSelect'
 import ActionsHeader from './ActionsHeader'
 import ActionsHeaderBound from './ActionsHeaderBound'
-
-// import StatusSelect from 'src/views/custom/select/StatusSelect'
 
 // ** MUI Imports
 
@@ -127,14 +124,12 @@ const ModalUploadImage = () => {
 
 const FormHeader = ({ isNewAccount, setActiveEndorsement, setTypeofAccount, setEditInfo }: FormHeaderProps) => {
   const [status, setStatus] = useState('')
-  const [accounts, setAccounts] = useState<any>([])
   const account = useAppSelector(state => state.accounts?.formsData?.form1)
-  // const [editInfo, setEditInfo] = useState(false)
 
   //hooks
   const { setIdAccount, information } = useFindInformationByIdAccount()
   const { account: accountDetails, setAccountId } = useGetAccountById()
-  const accountsReducer = useAppSelector(state => state.accounts)
+  // const accountsReducer = useAppSelector(state => state.accounts)
 
   const formaterAmount = (amount: number) => {
     if (amount) {
@@ -184,27 +179,27 @@ const FormHeader = ({ isNewAccount, setActiveEndorsement, setTypeofAccount, setE
     return ''
   }
 
-  useEffect(() => {
-    const formatedRows = []
-    const rawRows = accountsReducer.accounts
+  // useEffect(() => {
+  //   const formatedRows = []
+  //   const rawRows = accountsReducer.accounts
 
-    if (rawRows && rawRows.length > 0) {
-      for (const rawRow of rawRows) {
-        formatedRows.push({
-          id: rawRow?.id,
-          status: formatStatus(rawRow?.idAccountStatus?.status),
-          insured: rawRow?.informations[0]?.insured,
-          lob: rawRow?.informations[0]?.idLineOfBussines?.lineOfBussines
-        })
-      }
-    }
+  //   if (rawRows && rawRows.length > 0) {
+  //     for (const rawRow of rawRows) {
+  //       formatedRows.push({
+  //         id: rawRow?.id,
+  //         status: formatStatus(rawRow?.idAccountStatus?.status),
+  //         insured: rawRow?.informations[0]?.insured,
+  //         lob: rawRow?.informations[0]?.idLineOfBussines?.lineOfBussines
+  //       })
+  //     }
+  //   }
 
-    setAccounts(formatedRows || [])
-    const data = accounts?.find((item: any) => item.id === account?.id)
-    // console.log('datoss', data)
+  //   setAccounts(formatedRows || [])
+  //   const data = accounts?.find((item: any) => item.id === account?.id)
+  //   // console.log('datoss', data)
 
-    setStatus(data?.status)
-  }, [accountsReducer])
+  //   setStatus(data?.status)
+  // }, [accountsReducer])
 
   useEffect(() => {
     account && setIdAccount(account.id)
@@ -212,8 +207,8 @@ const FormHeader = ({ isNewAccount, setActiveEndorsement, setTypeofAccount, setE
   }, [account])
 
   useEffect(() => {
-    if (status !== undefined && setTypeofAccount) {
-      setTypeofAccount(status)
+    if (accountDetails !== undefined && setTypeofAccount) {
+      setTypeofAccount(accountDetails?.status)
     }
   }, [status])
 
@@ -221,6 +216,8 @@ const FormHeader = ({ isNewAccount, setActiveEndorsement, setTypeofAccount, setE
   useEffect(() => {
     accountDetails && setStatus(accountDetails.status)
   }, [accountDetails])
+
+  // console.log('Hola: ', accountDetails)
 
   return (
     <>
@@ -308,7 +305,7 @@ const FormHeader = ({ isNewAccount, setActiveEndorsement, setTypeofAccount, setE
                     Last Update: {account && convertirFecha(information?.updatedAt)}
                   </span>
                 </div>
-                {status !== 'bound' ? (
+                {accountDetails && accountDetails?.status !== 'BOUND' ? (
                   <ActionsHeader
                     accountId={account?.id}
                     setEditInfo={setEditInfo}
