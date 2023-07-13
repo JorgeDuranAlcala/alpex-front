@@ -1,5 +1,4 @@
 // import { useGetAllEndorsementTypes } from '@/hooks/accounts/endorsementType/getAllEndorsementTypes.tsx'
-import { useGetAccountById } from '@/hooks/accounts/forms'
 import { ContainerMobileBound } from '@/styled-components/accounts/Security.styled'
 import { Box, Button, Card, ListItemIcon, ListItemText, Menu, MenuItem, Modal, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
@@ -28,6 +27,8 @@ interface FormHeaderProps {
   setActiveEndorsement?: any
   setEditInfo?: any
   setTypeofAccount?: any
+  accountDetails: any
+  setAccountId: any
 }
 
 //Pending types
@@ -121,12 +122,19 @@ const ModalUploadImage = () => {
   )
 }
 
-const FormHeader = ({ isNewAccount, setActiveEndorsement, setTypeofAccount, setEditInfo }: FormHeaderProps) => {
+const FormHeader = ({
+  isNewAccount,
+  setActiveEndorsement,
+  setTypeofAccount,
+  setEditInfo,
+  accountDetails,
+  setAccountId
+}: FormHeaderProps) => {
   const [status, setStatus] = useState('')
   const account = useAppSelector(state => state.accounts?.formsData?.form1)
 
   //hooks
-  const { account: accountDetails, setAccountId } = useGetAccountById()
+  //const { account: accountDetails, setAccountId } = useGetAccountById()
 
   const formaterAmount = (amount: number) => {
     if (amount) {
