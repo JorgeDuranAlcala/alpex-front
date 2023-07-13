@@ -771,7 +771,7 @@ const Information: React.FC<InformationProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [validationCount, validatedForms])
 
-  console.log('Esta cuenta es de tipo: ', editInfo)
+  // console.log('Esta cuenta es de tipo: ', editInfo)
 
   return (
     <>
@@ -794,6 +794,7 @@ const Information: React.FC<InformationProps> = ({
 
           <div className='section'>
             <PlacementStructure
+              editInfo={editInfo}
               placementStructure={placementStructure}
               setPlacementStructure={setPlacementStructure}
               onDiscountsChange={handleDiscountsChange}

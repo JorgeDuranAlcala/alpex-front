@@ -26,6 +26,7 @@ import { IFilters } from 'src/types/apps/accountsTypes'
 import CustomAlert, { IAlert } from 'src/views/custom/alerts'
 
 //Google Analytics
+import { useMultiTabButtons } from '@/layouts/components/multiTabButtons/hooks/useMultiTabButtons'
 import Analytics from '@/utils/analytics'
 import ModalBordereaux from './modalBordereaux'
 
@@ -73,6 +74,7 @@ const TableHeader: React.FC<ITableHeader> = ({
   // ** Custom Hooks
   const router = useRouter()
   const { deleteAccounts, changeStatusAccounts } = useAccountTable()
+  const { addNewTabButton } = useMultiTabButtons();
 
   const dispatch = useAppDispatch()
   const accountsReducer = useAppSelector(state => state.accounts)
@@ -227,7 +229,12 @@ const TableHeader: React.FC<ITableHeader> = ({
       action: 'Add Account'
     })
 
-    router.push('/accounts/new-account')
+    router.push('/accounts/new-account');
+    addNewTabButton({
+      text: 'New Account',
+      link: `/accounts/new-account`,
+      isActive: true
+    })
   }
 
   return (
