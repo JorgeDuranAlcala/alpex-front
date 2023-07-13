@@ -28,8 +28,8 @@ export interface SecurityDto {
   difference: number
   active: boolean
   consecutive: number | null
-  view: number;
-  activeView?: number;
+  view: number
+  activeView?: number
   discounts: SecurityDiscountDto[] | []
   idCReinsuranceCompany: ReinsuranceCompanyDto
   idCReinsuranceCompanyBinder: ReinsuranceCompanyBinderDto | null
@@ -70,6 +70,7 @@ export interface FormInformation {
 export interface FormSectionProps {
   index: number
   security: SecurityDto
+  securities: SecurityDto[]
   onDeleteItemList: (index: number) => void
 }
 
@@ -128,16 +129,17 @@ export type errorsSecurity = {
   idCRetroCedant: string
   idCRetroCedantContact: string
 }
+
+//setSecurities: React.Dispatch<React.SetStateAction<SecurityDto[]>>
 export type SecurityContextDto = {
-  firstTimeSecurities: SecurityDto[]
-  securities: SecurityDto[]
   allErrors: boolean[]
+  securities: SecurityDto[]
   activeErros: boolean
   information: FormInformation
   companiesSelect: number[]
-  setSecurities: React.Dispatch<React.SetStateAction<SecurityDto[]>>
   setAllErrors: React.Dispatch<React.SetStateAction<boolean[]>>
-  calculateSecurities: (securities: SecurityDto[]) => void
+  setCurrentView: React.Dispatch<React.SetStateAction<number>>
+  calculateSecurities: (securities: SecurityDto[], view?: number) => void
 }
 export type SecurityProps = {
   onStepChange: (step: number) => void

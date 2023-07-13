@@ -1,12 +1,15 @@
 import { useGetAllReinsuranceCompanies } from '@/hooks/catalogs/reinsuranceCompany'
 import useGetReinsCompBindByIdReinsComp from '@/hooks/catalogs/reinsuranceCompanyBinder/useGetAllByIdReinsurance'
 import useDownloadBourderau from '@/hooks/reports/useDownloadBourderau'
+import { delayMs } from '@/utils/formatDates'
+import CustomAlert, { IAlert } from '@/views/custom/alerts'
 import {
   Backdrop,
   Box,
   Button,
   Card,
   CardContent,
+  CircularProgress,
   Fade,
   FormControl,
   IconButton,
@@ -39,11 +42,24 @@ const ModalBordereaux: React.FC<IModalBordereaux> = ({
 }) => {
   const [open, setOpen] = useState(false)
   const [values, setValues] = useState({
-    reinsurer: undefined,
-    binder: undefined
+    reinsurer: '',
+    binder: ''
+  })
+  const [disabledControl, setDisabledControl] = useState({
+    selectReinsurer: true,
+    downloadButton: true
   })
 
-  const { buffer, setDownloadBourderauParams } = useDownloadBourderau()
+  // Notifications
+  const [badgeData, setBadgeData] = useState<IAlert>({
+    message: '',
+    theme: 'success',
+    open: false,
+    status: 'error'
+  })
+
+  // Custom hooks
+  const { getBourderau } = useDownloadBourderau()
   const { reinsuranceCompany } = useGetAllReinsuranceCompanies()
   const { reinsuranceCompanyBinders, setIdReinsuranceCompany } = useGetReinsCompBindByIdReinsComp()
 
@@ -61,13 +77,20 @@ const ModalBordereaux: React.FC<IModalBordereaux> = ({
     }
   }
 
-  // ** Handlers for opening and closing
-  // const handleOpen = () => setOpen(true)
-  const handleClose = (event?: any, reason?: string) => {
+  const resetStates = () => {
     setValues({
-      binder: undefined,
-      reinsurer: undefined
+      reinsurer: '',
+      binder: ''
     })
+    setDisabledControl({
+      selectReinsurer: true,
+      downloadButton: true
+    })
+  }
+
+  // ** Handlers for opening and closing
+  const handleClose = (event?: any, reason?: string) => {
+    resetStates()
 
     if (reason === 'escapeKeyDown' || reason === 'backdropClick') {
       return
@@ -80,17 +103,91 @@ const ModalBordereaux: React.FC<IModalBordereaux> = ({
     setOpen(false)
   }
 
-  const handleDownload = () => {
+  const handleDownload = async () => {
     if (values.reinsurer && values.binder) {
-      setDownloadBourderauParams({
-        idCReinsuranceCompany: values.reinsurer,
-        idCReinsuranceCompanyBinder: values.binder
+      setBadgeData({
+        message: `DOWNLOADING BOURDERAUX`,
+        status: 'secondary',
+        open: true,
+        icon: <CircularProgress size={20} color='primary' />,
+        backgroundColor: '#828597',
+        theme: 'info',
+        disableAutoHide: true
+      })
+      await delayMs(1000)
+
+      try {
+        const bourderauBuffer = await getBourderau({
+          idCReinsuranceCompany: Number(values.reinsurer),
+          idCReinsuranceCompanyBinder: Number(values.binder)
+        })
+
+        if (bourderauBuffer) {
+          setBadgeData({
+            message: `DOWNLOADED SUCCESSFULLY`,
+            status: 'success',
+            open: true,
+            icon: <Icon icon='ic:baseline-check-circle' />,
+            theme: 'success',
+            disableAutoHide: true
+          })
+          await delayMs(1000)
+
+          const fileToDownload = new File([bourderauBuffer], 'REINSURANCE BDX DYNAMIC.xlsx')
+          const downloadUrl = URL.createObjectURL(fileToDownload)
+          const link = document.createElement('a')
+          link.href = downloadUrl
+          link.download = fileToDownload.name
+          link.click()
+        }
+      } catch (error) {
+        setBadgeData({
+          message: `NOT DATA FOUND`,
+          theme: 'warning',
+          open: true,
+          status: 'warning',
+          icon: (
+            <Icon
+              style={{
+                color: '#EF9713',
+                marginTop: '-1px'
+              }}
+              icon='material-symbols:warning-outline'
+            />
+          ),
+          disableAutoHide: true
+        })
+      }
+      await delayMs(1500)
+
+      setBadgeData({
+        message: '',
+        status: undefined,
+        icon: undefined,
+        open: false
       })
     }
   }
 
   const backdropProps = {
     timeout: 500
+  }
+
+  const drawBinderOptions = () => {
+    const binderOptions = []
+
+    if (reinsuranceCompanyBinders && reinsuranceCompanyBinders?.length > 0) {
+      binderOptions.push(<MenuItem value={'-1'}>All binders</MenuItem>)
+      reinsuranceCompanyBinders?.map(reinsuranceCompanyBinders => {
+        binderOptions.push(
+          <MenuItem key={reinsuranceCompanyBinders.id} value={reinsuranceCompanyBinders.id}>
+            {reinsuranceCompanyBinders.referenceNumber}
+          </MenuItem>
+        )
+      })
+    }
+
+    if (binderOptions.length > 0) return binderOptions
   }
 
   // ** Hooks
@@ -101,21 +198,33 @@ const ModalBordereaux: React.FC<IModalBordereaux> = ({
   }, [setShow])
 
   useEffect(() => {
-    console.log(values.reinsurer)
     if (values.reinsurer) {
-      setIdReinsuranceCompany(values.reinsurer)
+      setDisabledControl({
+        selectReinsurer: false,
+        downloadButton: true
+      })
+      setValues({
+        ...values,
+        binder: ''
+      })
+      setIdReinsuranceCompany(Number(values.reinsurer))
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [values.reinsurer])
 
   useEffect(() => {
-    if (buffer) {
+    if (values.binder) {
+      setDisabledControl({
+        ...disabledControl,
+        downloadButton: false
+      })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [buffer])
+  }, [values.binder])
 
   return (
     <Box>
+      <CustomAlert {...badgeData} />
       {setShow && (
         <Modal
           aria-labelledby='transition-modal-title'
@@ -195,21 +304,18 @@ const ModalBordereaux: React.FC<IModalBordereaux> = ({
                     <InputLabel id='controlled-select-label'>Select Binder</InputLabel>
                     <Select
                       name={'binder'}
-                      value={values?.binder}
+                      value={values.binder}
                       label='Select Binder'
                       id='controlled-select'
                       onChange={handleChange}
                       labelId='controlled-select-label'
+                      disabled={
+                        disabledControl.selectReinsurer ||
+                        !reinsuranceCompanyBinders ||
+                        reinsuranceCompanyBinders?.length === 0
+                      }
                     >
-                      {reinsuranceCompanyBinders && reinsuranceCompanyBinders?.length > 0
-                        ? reinsuranceCompanyBinders?.map(reinsuranceCompanyBinders => {
-                            return (
-                              <MenuItem key={reinsuranceCompanyBinders.id} value={reinsuranceCompanyBinders.id}>
-                                {reinsuranceCompanyBinders.referenceNumber}
-                              </MenuItem>
-                            )
-                          })
-                        : null}
+                      {drawBinderOptions()}
                     </Select>
                   </FormControl>
                 </Box>
@@ -222,7 +328,13 @@ const ModalBordereaux: React.FC<IModalBordereaux> = ({
                     mt: 10
                   }}
                 >
-                  <Button variant='contained' size='large' sx={{ width: '100%' }} onClick={handleDownload}>
+                  <Button
+                    variant='contained'
+                    size='large'
+                    sx={{ width: '100%' }}
+                    onClick={handleDownload}
+                    disabled={disabledControl.downloadButton}
+                  >
                     Download
                   </Button>
                   <Button onClick={onCancel} size='large' sx={{ width: '100%' }}>

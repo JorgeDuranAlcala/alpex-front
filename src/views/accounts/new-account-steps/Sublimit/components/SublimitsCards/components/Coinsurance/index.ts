@@ -1,0 +1,1 @@
+export { default as Coinsurance } from './Coinsurance';

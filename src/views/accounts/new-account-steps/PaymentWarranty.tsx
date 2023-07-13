@@ -144,19 +144,25 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
       const installmentsTemp = []
 
       //Change the paymentPercentage of each installment when the count changes to be equal to 100/count
-      const paymentPercentage = 100 / count
+      const fixedPercentageString = Math.floor((100 / count) * 100) / 100 // toFixed returns a string with the percentage fixed
+      const fixedPercentage = +fixedPercentageString //Parse fixed percentage String to Number
+      const lastPercentage = 100 - fixedPercentage * (count - 1) //Calculate the last/residual percentage.
       const defaultObject: InstallmentDto = {
         balanceDue: 0,
-        paymentPercentage: paymentPercentage,
+        paymentPercentage: fixedPercentage,
         premiumPaymentWarranty: 0,
         settlementDueDate: account ? new Date(account?.informations[0]?.effectiveDate || '') : new Date(),
         idAccount: account ? idAccount : Number(localStorage.getItem('idAccount')),
         id: 0
       }
       for (let i = 0; i < count; i++) {
-        const temp = { ...defaultObject, premiumPaymentWarranty: 30 * (i + 1) }
-
-        installmentsTemp[i] = makeCalculates({ ...temp })
+        if (i < count - 1) {
+          const temp = { ...defaultObject, premiumPaymentWarranty: 30 * (i + 1) }
+          installmentsTemp[i] = makeCalculates({ ...temp })
+        } else {
+          const temp = { ...defaultObject, paymentPercentage: lastPercentage, premiumPaymentWarranty: 30 * (i + 1) }
+          installmentsTemp[i] = makeCalculates({ ...temp })
+        }
       }
 
       setInstallmentList(installmentsTemp)
@@ -375,7 +381,6 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
                   thousandSeparator=','
                   customInput={TextField}
                   id='DynamicNetPremium'
-                  decimalScale={2}
                   label='Dynamic net premium'
                   multiline
                   variant='outlined'

@@ -1,24 +1,13 @@
 import { BourderauBodyDto } from '@/services/reports/dtos/report.dto'
 import reportService from '@/services/reports/report.service'
-import { useEffect, useState } from 'react'
 
 const useDownloadBourderau = () => {
-  const [downloadBourderauParams, setDownloadBourderauParams] = useState<BourderauBodyDto>()
-  const [buffer, setBuffer] = useState<any>()
-
-  const getReport = async (reportParams: BourderauBodyDto) => {
-    const data = await reportService.downloadBourderou({ ...reportParams })
-    setBuffer(data)
+  const getBourderau = async (bourderauParams: BourderauBodyDto) => {
+    return await reportService.downloadBourderou({ ...bourderauParams })
   }
 
-  useEffect(() => {
-    downloadBourderauParams && getReport(downloadBourderauParams)
-  }, [downloadBourderauParams])
-
   return {
-    setDownloadBourderauParams,
-    buffer,
-    getReport
+    getBourderau
   }
 }
 export default useDownloadBourderau

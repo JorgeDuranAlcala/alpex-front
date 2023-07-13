@@ -1,73 +1,96 @@
-import { FormControl, InputLabel, MenuItem, Select } from '@mui/material'
+import { FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material'
 
 import { ReinsuranceCompanyBinderDto } from '@/services/catalogs/dtos/ReinsuranceCompanyBinder.dto'
+import ReinsuranceCompanyBinderService from '@/services/catalogs/reinsuranceCompanyBinder.service'
 import { useContext, useEffect, useState } from 'react'
 import { SecurityContext } from '../../SecurityView'
 import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interface'
 
-// const NoBindersContainer = styled(Box)(({ theme }) => ({
-//   // backgroundColor: 'lightblue',
-//   display: 'flex',
-//   justifyContent: 'center',
-//   alignItems: 'center',
-//   minHeight: '56px',
-//   padding: '16.5px 0px',
-//   marginBottom: '24px',
-//   [theme.breakpoints.down('sm')]: {
-//     display: 'none',
-//   }
-// }))
-
 interface BinderProps extends Omit<ISecurityInputProps, 'index' | 'errorMessage' | 'validateForm'> {
-  binders: ReinsuranceCompanyBinderDto[]
   index: number
+  companyId: number | string
 }
 
-export const Binder = ({ value, binders, index }: BinderProps) => {
-  const { securities, setSecurities } = useContext(SecurityContext)
-  const [selectedBinder, setSelectedBinder] = useState<ReinsuranceCompanyBinderDto | null>(null)
+const LoaderMenuItem = () => (
+  <MenuItem  disabled>
+     <div className="binder-loader">Loading...</div>
+  </MenuItem>
+);
 
-  const handleOnChangeBinder = (value: number) => {
-    const binderSelect = binders.find(b => b.id === value)
+
+export const Binder = ({ value, index, view, companyId }: BinderProps) => {
+  const { securities, calculateSecurities } = useContext(SecurityContext)
+  const [selectedBinder, setSelectedBinder] = useState<ReinsuranceCompanyBinderDto | null>(null)
+  const [binders, setBinders] = useState<ReinsuranceCompanyBinderDto[]>([])
+  const [loading, setLoading] = useState(false);
+
+  const handleOnChangeBinder = (event: SelectChangeEvent) => {
+    const value = event.target.value
+    const binderSelect = binders.find(b => String(b.id) === String(value))
     const tempSecurities = [...securities]
 
-    // console.log('se monta', retroCedant, value, retroCedants)
     if (binderSelect) {
-      // console.log('se monta')
-
       tempSecurities[index] = {
         ...tempSecurities[index],
         idCReinsuranceCompanyBinder: binderSelect
       }
 
       setSelectedBinder(binderSelect)
-      setSecurities(tempSecurities)
+      calculateSecurities(tempSecurities)
     }
   }
+  useEffect(() => {
+    if (companyId) {
+      setLoading(true);
+      ReinsuranceCompanyBinderService.findByIdReinsuranceCompany(Number(companyId))
+        .then((binders) => {
+          setBinders(binders)
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.error('Binder data error:', error);
+          setLoading(false); // Hide loader on error
+        });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [companyId])
 
   useEffect(() => {
     if (binders && binders.length > 0 && value) {
-      const binderSelect = binders.find(b => b.id === value)
+      const binderSelect = binders.find(b => String(b.id) === String(value))
+
       binderSelect && setSelectedBinder(binderSelect)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [binders, value])
 
   return (
     <FormControl fullWidth sx={{ mb: 6.5 }}>
+
       <InputLabel id='Binder'>Binder</InputLabel>
+
       <Select
         label='Binder'
-        value={selectedBinder && binders.length > 0 ? selectedBinder.id : value.toString()}
+        value={selectedBinder && binders.length > 0 ? String(selectedBinder.id) : String(value)}
         labelId='binder'
-        disabled={binders.length === 0}
-        onChange={e => handleOnChangeBinder(Number(e.target.value))}
+        onChange={handleOnChangeBinder}
+        disabled={view === 2}
+        MenuProps={{ style: { position: 'absolute' } }}
       >
-        {binders?.map(binder => (
-          <MenuItem key={binder.id} value={binder.id}>
-            {binder.referenceNumber}
-          </MenuItem>
-        ))}
+
+        {loading ? (
+          <LoaderMenuItem />  // Show loader
+          ) : (
+              binders?.map(binder => (
+                <MenuItem key={binder.id} value={binder.id}>
+                {binder.referenceNumber}
+                </MenuItem>
+              ))
+          )
+        }
+
       </Select>
+
     </FormControl>
   )
 }

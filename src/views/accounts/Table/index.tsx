@@ -15,6 +15,7 @@ import Icon from 'src/@core/components/icon'
 import { useRouter } from 'next/router'
 
 // ** Custom Hooks imports
+import { useMultiTabButtons } from '@/layouts/components/multiTabButtons/hooks/useMultiTabButtons'
 
 // ** Custom Components Imports
 import ColumnHeader from './ColumnHeader'
@@ -39,6 +40,7 @@ import {
 import colors from 'src/views/accounts/colors'
 import fonts from 'src/views/accounts/font'
 import { IAlert } from 'src/views/custom/alerts'
+
 
 export interface IAccount {
   id: string
@@ -90,6 +92,7 @@ const Table = ({ status }: IAccountTable) => {
   // ** Custom Hooks
   //const { accounts, getAccounts } = useAccountTable()
   const { duplicateAccounts } = useAccountTable()
+  const { setBaseLink, setBackButtonProps, addNewTabButton } = useMultiTabButtons();
 
   // ** Hooks
   const router = useRouter()
@@ -427,9 +430,24 @@ const Table = ({ status }: IAccountTable) => {
 
     localStorage.setItem('idAccount', String(id))
     router.push(`/accounts/view/?&${typeofCount}/?&id=${id}`)
+    addNewTabButton({
+      text: id.toString(),
+      link: `/accounts/view/?&${typeofCount}/?&id=${id}`,
+      isActive: true
+    })
   }
 
   console.log('esta cuenta es: ', typeofCount)
+
+
+  useEffect(() => {
+    setBaseLink();
+    setBackButtonProps({
+      text: 'Back to Accounts',
+      link: `/accounts/`,
+      isShow: false
+    })
+  }, [setBaseLink, setBackButtonProps])
 
   return (
     <>

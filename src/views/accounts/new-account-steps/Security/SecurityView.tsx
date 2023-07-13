@@ -1,4 +1,4 @@
-import { ResponseGetAccount, useGetAccountById } from '@/hooks/accounts/forms'
+import { useGetAccountById } from '@/hooks/accounts/forms'
 import { useAddSecurities } from '@/hooks/accounts/security'
 import { useAddSecurityTotal, useUpdateSecurityTotalById } from '@/hooks/accounts/securityTotal'
 import {
@@ -41,8 +41,19 @@ export const SecurityContext = createContext<SecurityContextDto>({} as SecurityC
 const Security = ({ onStepChange }: SecurityProps) => {
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
   const [securities, setSecurities] = useState<SecurityDto[]>([])
-  const [firstTimeSecurities, setFirstTimeSecurities] = useState<SecurityDto[]>([])
+
   const [activeErros, setActiveErrors] = useState<boolean>(false)
+
+  //** second view */
+  const [securitiesSecondView, setSecuritiesSecondView] = useState<SecurityDto[]>([])
+
+  const [allFormDataView2, setAllFormDataView2] = useState<FormSecurity>({
+    formData: [],
+    recievedNetPremium: 0,
+    distribuitedNetPremium: 0,
+    diference: 0
+  })
+  const [currentView, setCurrentView] = useState<number>(0)
 
   const [isNextStep, setIsNextStep] = useState<boolean>(false)
   const [allFormData, setAllFormData] = useState<FormSecurity>({
@@ -62,7 +73,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
   })
   const [companiesSelect] = useState<number[]>([])
 
-  const { account, setAccountId, getAccountById, accountId } = useGetAccountById()
+  const { account, setAccountId } = useGetAccountById()
   const { saveSecurityTotal } = useAddSecurityTotal()
   const { updateSecurityTotal } = useUpdateSecurityTotalById()
 
@@ -79,91 +90,174 @@ const Security = ({ onStepChange }: SecurityProps) => {
     status: 'error'
   })
 
-  const calculateSecurities = (securities: SecurityDto[], isFirstTime = false) => {
-    if (securities.length > 0 && information) {
-      const tempSecurities = []
-      companiesSelect.splice(0, companiesSelect.length)
+  /**
+   *
+   * @param securitiesParam
+   * @returns
+   */
+  const getSecuritiesCalculate = (securitiesParam: SecurityDto[]): SecurityDto[] => {
+    const tempSecurities: SecurityDto[] = []
 
-      for (const security of securities) {
-        if (!security.activeView) {
-          security.activeView = 1
-        }
-        const operationSecurity: CalculateSecurity = new CalculateSecurity()
-          .setInformation(information)
-          .setSecurity(security)
-        if (security?.idCReinsuranceCompany?.id) companiesSelect.push(security.idCReinsuranceCompany.id)
+    for (const security of securitiesParam) {
+      const operationSecurity: CalculateSecurity = new CalculateSecurity().setInformation(information).setSecurity({
+        ...security,
+        reinsuranceBrokerage: Number(security.reinsuranceBrokerage) || 0,
+        dynamicCommission: Number(security.dynamicCommission) || 0,
+        share: Number(security.share) || 0
+      })
 
+      if (security?.idCReinsuranceCompany?.id) companiesSelect.push(security.idCReinsuranceCompany.id)
+
+      //campos que necesitan: information.limit,share
+      security.shareAmount = operationSecurity.getShareAmount() || 0
+
+      //campos que necesitan: inetPremiumAt100,information.grossPremium,share
+      security.grossPremiumPerShare = operationSecurity.getGrossPremierPerShare() || 0
+
+      //este campo necesita grossPremiumPerShare,brokerAgeAmount,taxes,netPremiumAt100,share
+
+      if (!security.isGross) {
+        security.taxesAmount = operationSecurity.getTaxesAmount(security.taxes) || 0
         const tempDiscountList = []
         if (security?.discounts) {
           security.totalAmountOfDiscounts = 0
           for (const discount of security?.discounts) {
-            discount.percentage = Number(discount.percentage)
-            discount.amount = operationSecurity.getDiscountAmount(Number(discount.percentage))
-            security.totalAmountOfDiscounts += discount.amount
-            tempDiscountList.push(discount)
+            const tempDiscount = { ...discount }
+
+            tempDiscount.percentage = Number(discount.percentage)
+
+            //este campo necesita: premiumPerShareAmount,netPremiumAt100
+            tempDiscount.amount = operationSecurity.getDiscountAmount(Number(tempDiscount.percentage))
+            security.totalAmountOfDiscounts += tempDiscount.amount
+            tempDiscountList.push(tempDiscount)
           }
         }
-        security.discounts = tempDiscountList
-        security.frontingFee = Number(security.frontingFee) || 0
-        security.taxes = Number(security.taxes) || 0
-        security.netPremiumAt100 = Number(security.netPremiumAt100) || 0
+
+        security.discounts = [...tempDiscountList]
         operationSecurity.setSecurity(security)
-        security.premiumPerShareAmount = operationSecurity.getPremierPerShare() || 0
-        security.grossPremiumPerShare = operationSecurity.getGrossPremierPerShare() || 0
-        security.brokerAgeAmount = operationSecurity.getBrokerAge() || 0
-        security.dynamicCommissionAmount = operationSecurity.getDynamicComissionAmount() || 0
+      }
 
-        security.frontingFeeAmount = operationSecurity.getFrontingFeeAmount(security.frontingFee) || 0
+      //este campo necesita : netPremiumAt100,share, sumTaxes, sum discount
+      security.premiumPerShareAmount = operationSecurity.getPremierPerShare() || 0
 
+      //campos que necesitan el premiumPerShareAmount
+      security.dynamicCommissionAmount = operationSecurity.getDynamicComissionAmount() || 0
+
+      //este campo necesita reinsuranceBrokerage,premiumPerShareAmount
+      security.brokerAgeAmount = operationSecurity.getBrokerAge() || 0
+
+      //este campo necesita premiumPerShareAmount
+      security.frontingFeeAmount = operationSecurity.getFrontingFeeAmount(security.frontingFee) || 0
+      if (security.isGross) {
         security.taxesAmount = operationSecurity.getTaxesAmount(security.taxes) || 0
+        const tempDiscountList = []
+        if (security?.discounts) {
+          security.totalAmountOfDiscounts = 0
+          for (const discount of security?.discounts) {
+            const tempDiscount = { ...discount }
+            tempDiscount.percentage = Number(discount.percentage)
 
-        security.shareAmount = operationSecurity.getShareAmount() || 0
-        security.netReinsurancePremium = operationSecurity.getNetReinsurancePremium() || 0
+            //este campo necesita: premiumPerShareAmount,netPremiumAt100
+            tempDiscount.amount = operationSecurity.getDiscountAmount(Number(tempDiscount.percentage))
+            security.totalAmountOfDiscounts += tempDiscount.amount
+            tempDiscountList.push(tempDiscount)
+          }
+        }
 
-        tempSecurities.push({
-          ...security,
-          difference: Number(security.difference) || 0,
-          distributedNetPremium: Number(security.distributedNetPremium) || 0,
-          dynamicCommission: Number(security.dynamicCommission) || 0,
+        security.discounts = [...tempDiscountList]
+        operationSecurity.setSecurity(security)
+      }
 
-          netPremiumAt100: Number(security.netPremiumAt100) || 0,
-          receivedNetPremium: Number(security.receivedNetPremium) || 0,
-          reinsuranceBrokerage: Number(security.reinsuranceBrokerage) || 0,
-          share: Number(security.share) || 0
+      /**
+       * este campo necesita:
+       * dynamicCommissionAmount, frontingFeeAmount, brokerAgeAmount
+       * taxesAmount,premiumPerShareAmount
+       */
+      security.netReinsurancePremium = operationSecurity.getNetReinsurancePremium() || 0
+
+      tempSecurities.push({ ...security })
+    }
+
+    return tempSecurities
+  }
+
+  const calculateSecurities = (securitiesParam: SecurityDto[]) => {
+    if (securitiesParam.length > 0 && information) {
+      companiesSelect.splice(0, companiesSelect.length)
+
+      //hace el calculo de securities de la primer vista es decir cuando el current view este en 0 o en 1
+      const tempSecurities = getSecuritiesCalculate(securitiesParam)
+
+      // este estara siempre haciendo los calculos independiente si la vista ya halla cambiado es decir sea 0,1,2,3
+      const securitiesView2: SecurityDto[] = []
+      for (const seconSecurity of securitiesParam) {
+        securitiesView2.push({
+          ...seconSecurity,
+          netPremiumAt100: seconSecurity.isGross ? information.grossPremium : information.netPremium,
+          view: currentView === 3 ? 1 : 2
         })
       }
+      const tempSecuritiesView2 = getSecuritiesCalculate(securitiesView2)
+
+      const dataFormView2 = {
+        ...allFormDataView2,
+        formData: tempSecuritiesView2,
+        ...CalculateSecurity.getData(tempSecuritiesView2)
+      }
+
       let dataForm: FormSecurity = {
         ...allFormData,
         formData: tempSecurities,
-        ...CalculateSecurity.getData(tempSecurities)
+        ...CalculateSecurity.getData(tempSecurities, dataFormView2)
       }
 
-      if (account && account.securitiesTotal[0]) {
-        dataForm = {
-          ...dataForm,
-          id: account.securitiesTotal[0].id
-        }
+      if (account) {
+        if (account.securitiesTotal[0])
+          dataForm = {
+            ...dataForm,
+            id: account.securitiesTotal[0].id
+          }
       }
-      setAllFormData(dataForm)
+      if (currentView !== 3) {
+        setSecurities(() => tempSecurities)
+
+        setAllFormData(() => dataForm)
+      } else {
+        setSecurities(() => tempSecuritiesView2)
+
+        setAllFormData(() => dataFormView2)
+        setCurrentView(0)
+      }
 
       setAllErrors(allErrors.map(error => error))
-
-      setSecurities(tempSecurities)
-
-      if (isFirstTime) {
-        setFirstTimeSecurities(tempSecurities)
-      }
+      setAllFormData(() => dataForm)
+      setAllFormDataView2(dataFormView2)
+      setSecuritiesSecondView(tempSecuritiesView2)
     }
   }
 
   const addNewForm = () => {
-    const securityNew = {} as SecurityDto
-    calculateSecurities([...securities, { ...securityNew, frontingFeeActive: false, view: 1 }])
+    setSecurities([
+      ...securities,
+      {
+        frontingFeeActive: false,
+        taxesActive: false,
+        isGross: false,
+        discounts: [],
+        share: 0,
+        dynamicCommission: 0,
+        view: 1,
+        reinsuranceBrokerage: 0,
+        taxes: 0,
+        frontingFee: 0
+      } as SecurityDto
+    ])
   }
 
   const handleNextStep = () => {
     const isError = allErrors.find(error => error)
     setActiveErrors(isError || false)
+
     if (!isError) setOpenNextModal(true)
   }
 
@@ -178,33 +272,20 @@ const Security = ({ onStepChange }: SecurityProps) => {
   }
 
   const SaveData = async () => {
-    // const isError = allErrors.find(error => error)
-
-    // if (!isError) {
     const update: Partial<SecurityDto>[] = []
     const save: Partial<SecurityDto>[] = []
 
     for (const security of securities) {
-
       // * Con esta validación no se guardarán los datos de la vista 2
-      if (security.view === 2) return;
+      if (security.view === 2) return
 
-      // Todo quitar el as any
-      const mapper = SecurityMapper.securityToSecurityForm(security, accountData as any)
+      const mapper = SecurityMapper.securityToSecurityForm(security, accountData)
 
-      // if (security.id) {
-      //   update.push({
-      //     ...mapper,
-      //     id: security.id,
-      //     view: 1
-      //   })
-      // } else {
       save.push({ ...mapper, view: 1 })
-
-      // }
     }
 
     if (!allFormData.id) {
+      //TODO REVISAR SI PUEDE TRABAJAR CON PROMISE ALL
       await saveSecurityTotal([
         {
           receivedNetPremium: +allFormData.recievedNetPremium,
@@ -239,73 +320,9 @@ const Security = ({ onStepChange }: SecurityProps) => {
         })
     }
 
-    // if (update.length > 0) {
-    //   await updateSecurities(update)
-    //     .then(res => {
-    //       console.log('updateSecurities', { res })
-
-    //       setBadgeData({
-    //         message: 'THE INFORMATION HAS BEEN SAVED',
-    //         theme: 'success',
-    //         open: true,
-    //         status: 'error'
-    //       })
-    //     })
-    //     .catch(e => {
-    //       console.log('ERROR updateSecurities', e)
-
-    //       setBadgeData({
-    //         message: 'Error saving data',
-    //         theme: 'error',
-    //         open: true,
-    //         status: 'error',
-    //         icon: <Icon style={{ color: '#FF4D49' }} icon='icon-park-outline:error' />
-    //       })
-    //     })
-
-    //   setTimeout(() => {
-    //     setBadgeData({
-    //       ...badgeData,
-    //       open: false
-    //     })
-    //   }, 2000)
-    // }
-
     if (save.length > 0) {
       await saveSecurities({ idAccount: +accountData.formsData.form1.id, securities: save })
-        .then(async res => {
-          console.log('saveSecurities', { res })
-          const accountById: Partial<ResponseGetAccount> = await getAccountById(Number(accountId))
-            .then(account => {
-              if (account) {
-                account.securities =
-                  account.securities.length === 0
-                    ? [{ frontingFeeActive: false, isGross: false } as SecurityDto]
-                    : account.securities
-              }
-
-              return account
-            })
-            .catch((error: Error) => {
-              console.log(error)
-
-              return {}
-            })
-
-          const accountSecurities = accountById?.securities as SecurityDto[]
-
-          if (accountSecurities && information) {
-            calculateSecurities(accountSecurities, true)
-            accountById.securitiesTotal &&
-              setAllFormData({
-                ...allFormData,
-                recievedNetPremium: Number(accountById.securitiesTotal[0].receivedNetPremium),
-                distribuitedNetPremium: Number(accountById.securitiesTotal[0].distributedNetPremium),
-                diference: Number(accountById.securitiesTotal[0].difference),
-                id: Number(accountById.securitiesTotal[0].id)
-              })
-          }
-
+        .then(async () => {
           update.length === 0 &&
             setBadgeData({
               message: 'THE INFORMATION HAS BEEN SAVED',
@@ -347,9 +364,8 @@ const Security = ({ onStepChange }: SecurityProps) => {
   }
 
   useEffect(() => {
-    const idAccountCache = Number(localStorage.getItem('idAccount'))
     if (accountData.formsData.form1.id) {
-      setAccountId(accountData.formsData.form1.id || idAccountCache)
+      setAccountId(accountData.formsData.form1.id)
       const data = accountData.formsData.form1.placementStructure as FormInformation
       setInformation(data)
     }
@@ -357,8 +373,10 @@ const Security = ({ onStepChange }: SecurityProps) => {
   }, [accountData.formsData.form1.id])
 
   useEffect(() => {
-    if (account && information) {
-      calculateSecurities(account.securities, true)
+    if (account && account.securities.length > 0 && information) {
+      calculateSecurities(
+        account.securities.map(security => SecurityMapper.securityToSecurityForm(security, accountData))
+      )
 
       account.securitiesTotal.length > 0 &&
         setAllFormData({
@@ -379,18 +397,23 @@ const Security = ({ onStepChange }: SecurityProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isNextStep])
 
+  useEffect(() => {
+    calculateSecurities(securities)
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentView])
+
   return (
     <SecurityContext.Provider
       value={{
-        firstTimeSecurities,
         securities,
-        setSecurities,
         information,
         activeErros,
         allErrors,
         companiesSelect,
         calculateSecurities,
-        setAllErrors
+        setAllErrors,
+        setCurrentView
       }}
     >
       <div style={{ fontFamily: inter }}>
@@ -398,25 +421,20 @@ const Security = ({ onStepChange }: SecurityProps) => {
         <CustomAlert {...badgeData} />
         <form noValidate autoComplete='on'>
           <SecondViewProvider>
-
             <CardContent>
-              {securities.map((security, index) => {
+              {securities.length > 0 &&
+                securities.map((security, index) => {
+                  return (
+                    <FormSection
+                      key={`${index}-${security?.id}`}
+                      security={currentView === 2 ? securitiesSecondView[index] : security}
+                      index={index}
+                      onDeleteItemList={DeleteNewForm}
+                      securities={securities}
+                    />
+                  )
+                })}
 
-                // console.log(index, security.view, security.activeView)
-                if (security.view === 1 && security.activeView === 2) return null;
-                if (security.view === 2 && security.activeView === 1) return null;
-
-                // console.log('se imprime')
-
-                return (
-                  <FormSection
-                    key={`${index}-${security?.id}`}
-                    security={security}
-                    index={index}
-                    onDeleteItemList={DeleteNewForm}
-                  />
-                )
-              })}
               <Grid container spacing={5}>
                 <Grid item xs={12} sm={4}>
                   <FormControl fullWidth>
@@ -425,7 +443,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
                       label='Received net premium'
                       disabled
                       fullWidth
-                      value={allFormData.recievedNetPremium}
+                      value={currentView !== 2 ? allFormData.recievedNetPremium : allFormDataView2.recievedNetPremium}
                       InputProps={{
                         inputComponent: NumericFormatCustom as any
                       }}
@@ -440,7 +458,9 @@ const Security = ({ onStepChange }: SecurityProps) => {
                     <TextField
                       autoFocus
                       label='Distributed net premium'
-                      value={allFormData.distribuitedNetPremium}
+                      value={
+                        currentView !== 2 ? allFormData.distribuitedNetPremium : allFormDataView2.distribuitedNetPremium
+                      }
                       InputProps={{
                         inputComponent: NumericFormatCustom as any
                       }}
@@ -457,7 +477,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
                     <TextField
                       autoFocus
                       label='Difference'
-                      value={allFormData.diference}
+                      value={currentView !== 2 ? allFormData.diference : allFormDataView2.diference}
                       InputProps={{
                         inputComponent: NumericFormatCustom as any
                       }}
@@ -481,6 +501,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
                 <Grid item xs={12} sm={12}>
                   <div className='add-reinsurer'>
                     <Button
+                      disabled={currentView === 2}
                       type='button'
                       onClick={addNewForm}
                       variant='text'
@@ -489,7 +510,8 @@ const Security = ({ onStepChange }: SecurityProps) => {
                       fullWidth
                       sx={{ justifyContent: 'start' }}
                     >
-                      <Icon icon='material-symbols:add-circle-outline' fontSize={20} className='icon-btn' /> ADD REINSURER
+                      <Icon icon='material-symbols:add-circle-outline' fontSize={20} className='icon-btn' /> ADD
+                      REINSURER
                     </Button>
                   </div>
                 </Grid>
@@ -499,13 +521,19 @@ const Security = ({ onStepChange }: SecurityProps) => {
                     className='section action-buttons'
                     style={{ float: 'right', marginRight: 'auto', marginBottom: '20px' }}
                   >
-                    <Button className='btn-save' color='success' variant='contained' onClick={SaveData}>
+                    <Button
+                      disabled={currentView === 2}
+                      className='btn-save'
+                      color='success'
+                      variant='contained'
+                      onClick={SaveData}
+                    >
                       <div className='btn-icon'>
                         <Icon icon='mdi:content-save' />
                       </div>
                       SAVE CHANGES
                     </Button>
-                    <Button className='btn-next' onClick={handleNextStep}>
+                    <Button disabled={currentView === 2} className='btn-next' onClick={handleNextStep}>
                       Next Step
                       <div className='btn-icon'>
                         <Icon icon='material-symbols:arrow-right-alt' />

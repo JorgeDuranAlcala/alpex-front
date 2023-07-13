@@ -1,37 +1,27 @@
-import {
-  FormControl,
-  FormHelperText,
-  TextField
-} from '@mui/material';
-import { useContext } from 'react';
-import { NumericFormat } from 'react-number-format';
-import * as yup from 'yup';
+import { FormControl, FormHelperText, TextField } from '@mui/material'
+import { useContext } from 'react'
+import { NumericFormat } from 'react-number-format'
+import * as yup from 'yup'
 
-import { SecurityContext } from '../../SecurityView';
-import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interface';
-import { CalculateSecurity } from '../../utils/calculates-securities';
-
+import { SecurityContext } from '../../SecurityView'
+import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interface'
+import { CalculateSecurity } from '../../utils/calculates-securities'
 
 interface ReinsuranceBrokerageAmountProps extends ISecurityInputProps {
-
-  operationSecurity: CalculateSecurity;
+  operationSecurity: CalculateSecurity
 }
 
-
-export const ReinsuranceBrokerageAmount = ({ index, value, errorMessage, operationSecurity, validateForm }: ReinsuranceBrokerageAmountProps) => {
-
-  const {
-    activeErros,
-    securities,
-    calculateSecurities
-  } = useContext(SecurityContext);
+export const ReinsuranceBrokerageAmount = ({
+  index,
+  value,
+  errorMessage,
+  operationSecurity,
+  validateForm,
+  view
+}: ReinsuranceBrokerageAmountProps) => {
+  const { activeErros, securities, calculateSecurities } = useContext(SecurityContext)
 
   const handleChangeBrokerAgeAmount = (value: number) => {
-    // clearInterval(typingTimer)
-
-    // // Iniciar un nuevo intervalo
-    // typingTimer = setInterval(() => {
-    //   // Código a ejecutar cuando se deja de escribir
     const tempSecurities = [...securities]
     tempSecurities[index] = {
       ...tempSecurities[index],
@@ -39,10 +29,6 @@ export const ReinsuranceBrokerageAmount = ({ index, value, errorMessage, operati
     }
     validateForm(tempSecurities[index])
     calculateSecurities(tempSecurities)
-
-    //   // Limpiar el intervalo
-    //   clearInterval(typingTimer)
-    // }, doneTypingInterval)
   }
 
   return (
@@ -56,26 +42,24 @@ export const ReinsuranceBrokerageAmount = ({ index, value, errorMessage, operati
         }}
         prefix={'$'}
         customInput={TextField}
-        decimalScale={2}
         thousandSeparator=','
-        disabled={securities[index].view === 2}
+        disabled={view === 2}
       />
 
-      <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
-        {activeErros && errorMessage}
-      </FormHelperText>
+      <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>{activeErros && errorMessage}</FormHelperText>
     </FormControl>
   )
 }
 
-export const reinsuranceBrokerageAmount_validations = ({ isGross }: { isGross: boolean }) => yup.object().shape({
-  brokerAgeAmount: yup
-    .number()
-    .transform((_, val) => (val === Number(val) ? val : null))
-    .test('', 'This field is required', value => {
-      const val = value || 0
-      if (isGross) return +val > 0
+export const reinsuranceBrokerageAmount_validations = ({ isGross }: { isGross: boolean }) =>
+  yup.object().shape({
+    brokerAgeAmount: yup
+      .number()
+      .transform((_, val) => (val === Number(val) ? val : null))
+      .test('', 'This field is required', value => {
+        const val = value || 0
+        if (isGross) return +val > 0
 
-      return true
-    }),
-});
+        return true
+      })
+  })

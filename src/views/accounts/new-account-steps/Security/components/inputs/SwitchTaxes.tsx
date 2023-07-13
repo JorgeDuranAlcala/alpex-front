@@ -1,43 +1,28 @@
 import { SecurityDto } from '@/services/accounts/dtos/security.dto'
 import SwitchAlpex from '@/views/custom/switchs'
 import { FormControl } from '@mui/material'
-import { MutableRefObject, SetStateAction, useContext } from 'react'
+import { SetStateAction, useContext } from 'react'
 import { SecurityContext } from '../../SecurityView'
-import { IForField } from '../../hooks/useDataFirstTime'
 import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interface'
 
 interface SwitchTaxesProps extends Omit<ISecurityInputProps, 'value' | 'errorMessage'> {
   isChecked: boolean
-  security: SecurityDto
-  fieldRef: MutableRefObject<IForField>
+  security?: SecurityDto
+
   setIsTaxesEnabled: (value: SetStateAction<boolean>) => void
 }
 
-export const SwitchTaxes = ({
-  index,
-  validateForm,
-  security,
-  isChecked,
-  setIsTaxesEnabled,
-  fieldRef
-}: SwitchTaxesProps) => {
+export const SwitchTaxes = ({ index, validateForm, isChecked, setIsTaxesEnabled, view }: SwitchTaxesProps) => {
   const { securities, calculateSecurities } = useContext(SecurityContext)
 
   const handleSwitch = () => {
-    console.log({ security })
-    if (fieldRef) {
-      fieldRef.current.isTouched = true
-    }
     const tempSecurities = [...securities]
+
     tempSecurities[index] = {
       ...tempSecurities[index],
-      taxesActive: !isChecked
-
-      // idCRetroCedant: {} as RetroCedantDto,
-      // idCRetroCedantContact: {} as RetroCedantContactDto,
-      // frontingFee: Number(null),
-      // frontingFeeAmount: Number(null),
-      // frontingFeeActive: !security.frontingFeeActive
+      taxesActive: !isChecked,
+      taxes: !isChecked ? tempSecurities[index].taxes : 0,
+      taxesAmount: !isChecked ? tempSecurities[index].taxesAmount : 0
     }
     setIsTaxesEnabled(() => !isChecked)
     validateForm(tempSecurities[index])
@@ -48,8 +33,7 @@ export const SwitchTaxes = ({
     <FormControl fullWidth sx={{ mb: 6 }}>
       <div>
         <span className='switch-text'>Taxes </span>
-        <SwitchAlpex checked={isChecked} onClick={handleSwitch}
-          disabled={securities[index].view === 2} />
+        <SwitchAlpex checked={isChecked} onClick={handleSwitch} disabled={view === 2} />
       </div>
     </FormControl>
   )

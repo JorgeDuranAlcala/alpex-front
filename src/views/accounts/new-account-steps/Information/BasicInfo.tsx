@@ -110,6 +110,8 @@ type BasicInfoProps = {
   setBasicInfo: React.Dispatch<React.SetStateAction<BasicInfoType>>
   makeValidations: boolean
   makeSaveValidations: boolean
+  editInfo?: any
+  activeEndorsement?: boolean
   onValidationComplete: (valid: boolean, formName: string) => void
 }
 
@@ -139,7 +141,8 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
   setBasicInfo,
   makeValidations,
   makeSaveValidations,
-  onValidationComplete
+  onValidationComplete,
+  editInfo
 }) => {
   //cargamos la informacion de los catalogos de base de datos
   const { countries } = useCountryGetAll()
@@ -162,9 +165,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
   //Industry code managing
   const [industryCodeValue, setIndustryCodeValue] = useState<string | number | null | undefined>(basicInfo.industryCode)
   const [inputValue, setInputValue] = useState<string | undefined>('')
-  const industryCodeOptions = [
-    ...riskActivities.map(activities => `${activities.industryCode} / ${activities.riskActivity}`)
-  ]
+  const [industryCodeOptions, setIndustryCodeOptions] = useState<string[]>([])
 
   //Error control
   const [wrongDateError, setWrongDateError] = useState(false)
@@ -225,14 +226,6 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
       setIdCedant(Number(value))
     }
 
-    // if (name === 'industryCode') {
-    //   const riskActivity = riskActivities.find(r => r.id === Number(value))
-    //   if (riskActivity) {
-    //     basicInfoTem.riskActivity = riskActivity.riskActivity
-    //     basicInfoTem.riskClass = riskActivity.class
-    //   }
-    // }
-
     basicInfoTem = {
       ...basicInfoTem,
       [name]: value
@@ -254,6 +247,19 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
   const handleExpirationDateChange = (date: Date | null) => {
     setBasicInfo({ ...basicInfo, expirationDate: date })
     !validateForm && validations({ ...basicInfo, expirationDate: date })
+  }
+
+  const handleChangeIndustryCode = (value: string) => {
+    setIndustryCodeValue(value)
+    const riskActivity = riskActivities.find(r => value.includes(r.riskActivity))
+    basicInfo.riskActivity = riskActivity!.riskActivity
+    basicInfo.riskClass = riskActivity!.class
+    basicInfo = {
+      ...basicInfo,
+      industryCode: riskActivity!.id
+    }
+    !validateForm && validations(basicInfo)
+    setBasicInfo(basicInfo)
   }
 
   const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -333,6 +339,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
     //get broker contact info
     const idBrokerContact = basicInfo.brokerContact ? parseInt(basicInfo.brokerContact.toString()) : 0
     const brokerContactInfo = brokerContacts.find(brokerContact => brokerContact.id === idBrokerContact)
+
     setBasicInfo(prevBasicInfo => ({
       ...prevBasicInfo,
       brokerContactEmail: brokerContactInfo?.email || 'test',
@@ -357,63 +364,37 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
 
   useEffect(() => {
     // useEffect to handle industry code changes.
-    let value = industryCodeValue
-    let basicInfoTem = { ...basicInfo }
+    if (riskActivities.length > 0) {
+      let value = industryCodeValue
+      let basicInfoTem = { ...basicInfo }
 
-    if (value == null) value = ''
+      if (value == null) value = ''
 
-    const riskActivity = riskActivities.find(r => String(value).includes(r.riskActivity))
+      const riskActivity = riskActivities.find(r => String(value).includes(r.riskActivity))
 
-    if (!riskActivity) return
+      if (!riskActivity) return
 
-    basicInfoTem.riskActivity = riskActivity.riskActivity
-    basicInfoTem.riskClass = riskActivity.class
+      basicInfoTem.riskActivity = riskActivity.riskActivity
+      basicInfoTem = {
+        ...basicInfoTem,
+        ['industryCode']: riskActivity.id
+      }
 
-    basicInfoTem = {
-      ...basicInfoTem,
-      ['industryCode']: riskActivity.id
-    }
-
-    !validateForm && validations(basicInfoTem)
-    setBasicInfo(basicInfoTem)
-
-    if (riskActivity) {
+      !validateForm && validations(basicInfoTem)
+      setBasicInfo(basicInfoTem)
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [industryCodeValue, basicInfo.riskActivity])
+  }, [industryCodeValue, basicInfo.riskActivity, riskActivities])
 
   useEffect(() => {
-    if (!basicInfo.riskActivity && basicInfo.industryCode) {
+    if (!basicInfo.riskActivity && basicInfo.industryCode && industryCodeOptions.length > 0) {
       const riskActivity = riskActivities.find(r => r.id === basicInfo.industryCode)
       if (!riskActivity) return
       const autocomplete = `${riskActivity?.industryCode} / ${riskActivity?.riskActivity}`
       setIndustryCodeValue(autocomplete)
     }
-  }, [basicInfo.industryCode])
-
-  //** ESTA SECCIÓN SE COMENTÓ POR QUE AUN DEBEMOS
-  // ** PROBAR LA INTEGRACIÓN CON BACK ANTES DE BORRARLA POR COMPLET0 !!!!!
-
-  // useEffect(() => {
-  //   let riskActivity = {
-  //     riskActivity: '',
-  //     riskClass: 0
-  //   }
-
-  //   const industryCode = riskActivities.find(r => r.id === Number(basicInfo.industryCode))
-
-  //   if (industryCode) {
-  //     riskActivity.riskActivity = industryCode.riskActivity
-  //     riskActivity.riskClass = industryCode.class
-  //   }
-
-  //   setBasicInfo(state => ({
-  //     ...state,
-  //     riskActivity: riskActivity.riskActivity,
-  //     riskClass: riskActivity.riskClass
-  //   }))
-  // }, [basicInfo.industryCode, riskActivities])
+  }, [basicInfo.industryCode, industryCodeOptions])
 
   useEffect(() => {
     if (makeValidations || makeSaveValidations) {
@@ -422,6 +403,24 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
     }
   }, [makeValidations, makeSaveValidations])
 
+  useEffect(() => {
+    riskActivities.length > 0 &&
+      setIndustryCodeOptions([
+        ...riskActivities.map(activities => `${activities.industryCode} / ${activities.riskActivity}`)
+      ])
+  }, [riskActivities])
+
+  console.log('Esta cuenta es de tipo: !!!!!!!!', editInfo)
+  if (
+    countries.length === 0 &&
+    economicSectors.length === 0 &&
+    brokers.length === 0 &&
+    cedant.length === 0 &&
+    riskActivities.length === 0 &&
+    lineOfBussines.length === 0
+  ) {
+    return null
+  }
   return (
     <>
       <div className='title'>Basic info</div>
@@ -451,6 +450,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               onChange={handleInputChange}
               error={!!errors.insuredError}
               helperText={getErrorMessage('insuredError')}
+              disabled={!editInfo.basic}
             />
           </FormControl>
 
@@ -464,6 +464,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               value={String(basicInfo.country)}
               onChange={handleSelectChange}
               labelId='invoice-country'
+              disabled={!editInfo.basic}
             >
               {countries.length > 0 ? (
                 countries.map(country => {
@@ -496,6 +497,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               value={String(basicInfo.economicSector)}
               onChange={handleSelectChange}
               labelId='economic-sector'
+              disabled={!editInfo.basic}
             >
               {economicSectors.length > 0 ? (
                 economicSectors.map(sector => {
@@ -531,6 +533,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               value={String(basicInfo.broker)}
               onChange={handleSelectChange}
               labelId='broker'
+              disabled={!editInfo.basic}
             >
               {brokers.length > 0 ? (
                 brokers.map(broker => {
@@ -559,7 +562,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               name='brokerContact'
               label='Select Broker Contact'
               value={String(basicInfo.brokerContact)}
-              disabled={basicInfo.broker !== '' ? false : true}
+              disabled={editInfo.basic && basicInfo.broker !== '' ? false : true}
               defaultValue=''
               onChange={handleSelectChange}
               labelId='broker-contact'
@@ -624,6 +627,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               value={String(basicInfo.cedant)}
               onChange={handleSelectChange}
               labelId='cedant'
+              disabled={!editInfo.basic}
             >
               {cedant.length > 0 ? (
                 cedant.map(cedant => {
@@ -653,7 +657,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               name='cedantContact'
               label='Select Cedant Contact'
               value={`${basicInfo.cedantContact == 0 ? '' : basicInfo.cedantContact}`}
-              disabled={basicInfo.cedant !== '' ? false : true}
+              disabled={editInfo.basic && basicInfo.cedant !== '' ? false : true}
               onChange={handleSelectChange}
               defaultValue=''
               labelId='cedant-contact'
@@ -718,6 +722,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               value={String(basicInfo.lineOfBusiness)}
               onChange={handleSelectChange}
               labelId='business'
+              disabled={!editInfo.basic}
             >
               {lineOfBussines.length > 0 ? (
                 lineOfBussines.map(lineOfBussine => {
@@ -743,7 +748,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
             <Autocomplete
               value={industryCodeValue}
               onChange={(event: any, newValue: string | number | null | undefined) => {
-                setIndustryCodeValue(newValue)
+                handleChangeIndustryCode(String(newValue))
               }}
               inputValue={inputValue}
               onInputChange={(event, newInputValue) => {
@@ -754,6 +759,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               sx={{ width: '100%' }}
               className={errors.industryCodeError ? 'error' : ''}
               renderInput={params => <TextField {...params} label={'Industry Code'} />}
+              disabled={!editInfo.basic}
             />
             {false && (
               <Select
@@ -829,6 +835,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
                 timeFormat='HH:mm'
                 timeIntervals={15}
                 dateFormat='dd/MM/yyyy h:mm aa'
+                disabled={!editInfo.basic}
               />
               {errors.receptionDateError && (
                 <FormHelperText
@@ -857,6 +864,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
                 timeFormat='HH:mm'
                 timeIntervals={15}
                 dateFormat='dd/MM/yyyy h:mm aa'
+                disabled={!editInfo.basic}
               />
               {errors.effectiveDateError && (
                 <FormHelperText
@@ -885,6 +893,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
                 timeFormat='HH:mm'
                 timeIntervals={15}
                 dateFormat='dd/MM/yyyy h:mm aa'
+                disabled={!editInfo.basic}
               />
               {errors.expirationDateError && (
                 <FormHelperText
@@ -913,6 +922,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               value={String(basicInfo.underwriter)}
               onChange={handleSelectChange}
               labelId='underwriter'
+              disabled={!editInfo.basic}
             >
               {underwriters.length > 0 ? (
                 underwriters.map(underwriter => {
@@ -938,6 +948,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               value={String(basicInfo.leadUnderwriter)}
               onChange={handleSelectChange}
               labelId='lead-underwriter'
+              disabled={!editInfo.basic}
             >
               {leadUnderwriters.length > 0 ? (
                 leadUnderwriters.map(leadUnderwriter => {
@@ -966,6 +977,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               value={String(basicInfo.technicalAssistant)}
               onChange={handleSelectChange}
               labelId='assistant'
+              disabled={!editInfo.basic}
             >
               {technicalAssistants.length > 0 ? (
                 technicalAssistants.map(technicalAssistant => {

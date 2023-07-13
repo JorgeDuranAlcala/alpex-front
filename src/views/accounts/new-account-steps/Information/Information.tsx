@@ -44,6 +44,7 @@ type InformationProps = {
   onIsNewAccountChange: (status: boolean) => void
   typeofAccount?: string
   activeEndorsement?: boolean
+  editInfo?: object
 }
 
 export interface BasicInfoInterface {
@@ -97,7 +98,8 @@ const Information: React.FC<InformationProps> = ({
   onStepChange,
   onIsNewAccountChange,
   typeofAccount,
-  activeEndorsement
+  activeEndorsement,
+  editInfo
 }) => {
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
   const [subjectState] = useState<Subject<void>>(new Subject())
@@ -296,7 +298,7 @@ const Information: React.FC<InformationProps> = ({
       idLeadUnderwriter: Number(basicInfo.leadUnderwriter) === 0 ? null : Number(basicInfo.leadUnderwriter),
       idTechnicalAssistant: Number(basicInfo.technicalAssistant) === 0 ? null : Number(basicInfo.technicalAssistant),
       idUnderwriter: Number(basicInfo.underwriter) === 0 ? null : Number(basicInfo.underwriter),
-      riskClass: basicInfo.riskClass,
+      riskClass: Number(basicInfo.riskClass),
       currency: placementStructure.currency,
       exchangeRate: placementStructure.exchangeRate,
       attachmentPoint: placementStructure.attachmentPoint,
@@ -769,7 +771,7 @@ const Information: React.FC<InformationProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [validationCount, validatedForms])
 
-  console.log('Esta cuenta es de tipo: ', typeofAccount)
+  // console.log('Esta cuenta es de tipo: ', editInfo)
 
   return (
     <>
@@ -780,6 +782,8 @@ const Information: React.FC<InformationProps> = ({
         <form noValidate autoComplete='on' onSubmit={handleNextStep}>
           <div className='section'>
             <BasicInfo
+              editInfo={editInfo}
+              activeEndorsement={activeEndorsement}
               basicInfo={basicInfo}
               setBasicInfo={setBasicInfo}
               makeValidations={makeValidations}
@@ -790,6 +794,7 @@ const Information: React.FC<InformationProps> = ({
 
           <div className='section'>
             <PlacementStructure
+              editInfo={editInfo}
               placementStructure={placementStructure}
               setPlacementStructure={setPlacementStructure}
               onDiscountsChange={handleDiscountsChange}
@@ -810,19 +815,7 @@ const Information: React.FC<InformationProps> = ({
             />
           </div>
           <div className='section action-buttons'>
-            {typeofAccount && typeofAccount !== 'bound' ? (
-              <Button
-                className='btn-save'
-                onClick={() => handleAction('save')}
-                variant='contained'
-                disabled={disableSave}
-              >
-                <div className='btn-icon' style={{ marginRight: '8px' }}>
-                  <Icon icon='mdi:content-save' />
-                </div>
-                SAVE CHANGES
-              </Button>
-            ) : (
+            {typeofAccount && typeofAccount === 'bound' ? (
               <Button
                 className='btn-save'
                 onClick={() => handleAction('save')}
@@ -833,6 +826,18 @@ const Information: React.FC<InformationProps> = ({
                   <Icon icon='mdi:content-save' />
                 </div>
                 ENDORSEMENT
+              </Button>
+            ) : (
+              <Button
+                className='btn-save'
+                onClick={() => handleAction('save')}
+                variant='contained'
+                disabled={disableSave}
+              >
+                <div className='btn-icon' style={{ marginRight: '8px' }}>
+                  <Icon icon='mdi:content-save' />
+                </div>
+                SAVE CHANGES
               </Button>
             )}
             <Button

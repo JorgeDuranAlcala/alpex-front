@@ -1,19 +1,17 @@
 import { FormControl, FormHelperText, TextField } from '@mui/material'
-import { MutableRefObject, useContext, useEffect } from 'react'
+import { useContext, useEffect } from 'react'
 import { NumericFormat } from 'react-number-format'
 import * as yup from 'yup'
 
 import { SecurityContext } from '../../SecurityView'
-import { IForField } from '../../hooks/useDataFirstTime'
 import { usePercentageAchieved } from '../../hooks/usePercentageAchieved'
 import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interface'
 import { CalculateSecurity } from '../../utils/calculates-securities'
 
 // ! only if we want specific props
 interface FrontingFeePercentProps extends ISecurityInputProps {
-  operationSecurity: CalculateSecurity
+  operationSecurity?: CalculateSecurity
   isDisabled: boolean
-  fieldRef: MutableRefObject<IForField>
 }
 
 // type FrontingFeePercentProps = ISecurityInputProps;
@@ -24,31 +22,24 @@ export const FrontingFeePercent = ({
   isDisabled,
   errorMessage,
   validateForm,
-  fieldRef,
-  operationSecurity
+  view
 }: FrontingFeePercentProps) => {
   const { activeErros, securities, calculateSecurities } = useContext(SecurityContext)
 
   const { achievedMessageError, checkIsPercentageAchieved } = usePercentageAchieved()
 
   const handleChangeFrontingFeePercent = (value: number) => {
-    // console.log('frontingFee Percent', value)
-
-    if (fieldRef) {
-      fieldRef.current.isTouched = true
-    }
-
-    const tempSecurities = [...securities]
+    const tempSecurities = securities ? [...securities] : []
     tempSecurities[index] = {
       ...tempSecurities[index],
-      frontingFee: value,
-      frontingFeeAmount: operationSecurity.getFrontingFeeAmount(value)
+      frontingFee: value
     }
     calculateSecurities(tempSecurities)
     validateForm(tempSecurities[index])
   }
 
   useEffect(() => {
+    //TODO @OMAR REVISAR SU FUNCIONALIDAD DESPUES DE PRUEBA
     checkIsPercentageAchieved({ formIndex: index })
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -58,6 +49,7 @@ export const FrontingFeePercent = ({
   // * alcanzado, esto con el fin de que el mensaje de error se borre para este campo
   // * en caso de que el porcentaje se disminuya desde otro lugar
   useEffect(() => {
+    //TODO @OMAR REVISAR SU FUNCIONALIDAD DESPUES DE PRUEBA
     if (!achievedMessageError) return
     checkIsPercentageAchieved({ formIndex: index })
 
@@ -69,18 +61,16 @@ export const FrontingFeePercent = ({
       <NumericFormat
         autoFocus
         label='Fronting fee %'
-        value={value}
+        value={String(value)}
         onChange={e => {
           handleChangeFrontingFeePercent(Number(e.target.value.replace('%', '')))
         }}
         suffix={'%'}
         customInput={TextField}
-        decimalScale={2}
         isAllowed={values => {
           return (values.floatValue! >= 0 && values.floatValue! <= 100) || values.floatValue === undefined
         }}
-        disabled={securities[index].view === 2 || isDisabled}
-
+        disabled={view === 2 || isDisabled}
       />
 
       <FormHelperText sx={{ color: 'error.main', minHeight: '25px' }}>

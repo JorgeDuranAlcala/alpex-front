@@ -1,7 +1,7 @@
 // import { useGetAllEndorsementTypes } from '@/hooks/accounts/endorsementType/getAllEndorsementTypes.tsx'
+import { useGetAccountById } from '@/hooks/accounts/forms'
 import { useFindInformationByIdAccount } from '@/hooks/accounts/information'
 import { ContainerMobileBound } from '@/styled-components/accounts/Security.styled'
-import { formatStatus } from '@/utils/formatStatus'
 import { Box, Button, Card, ListItemIcon, ListItemText, Menu, MenuItem, Modal, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
 import Icon from 'src/@core/components/icon'
@@ -9,8 +9,6 @@ import { useAppSelector } from 'src/store'
 import StatusSelect from 'src/views/custom/select/StatusSelect'
 import ActionsHeader from './ActionsHeader'
 import ActionsHeaderBound from './ActionsHeaderBound'
-
-// import StatusSelect from 'src/views/custom/select/StatusSelect'
 
 // ** MUI Imports
 
@@ -29,6 +27,7 @@ interface StatusHistory {
 interface FormHeaderProps {
   isNewAccount?: boolean
   setActiveEndorsement?: any
+  setEditInfo?: any
   setTypeofAccount?: any
 }
 
@@ -123,13 +122,14 @@ const ModalUploadImage = () => {
   )
 }
 
-const FormHeader = ({ isNewAccount, setActiveEndorsement, setTypeofAccount }: FormHeaderProps) => {
+const FormHeader = ({ isNewAccount, setActiveEndorsement, setTypeofAccount, setEditInfo }: FormHeaderProps) => {
   const [status, setStatus] = useState('')
-  const [accounts, setAccounts] = useState<any>([])
   const account = useAppSelector(state => state.accounts?.formsData?.form1)
 
+  //hooks
   const { setIdAccount, information } = useFindInformationByIdAccount()
-  const accountsReducer = useAppSelector(state => state.accounts)
+  const { account: accountDetails, setAccountId } = useGetAccountById()
+  // const accountsReducer = useAppSelector(state => state.accounts)
 
   const formaterAmount = (amount: number) => {
     if (amount) {
@@ -165,37 +165,60 @@ const FormHeader = ({ isNewAccount, setActiveEndorsement, setTypeofAccount }: Fo
     return `${dia}/${mes < 10 ? '0' + mes : mes}/${anio}`
   }
 
-  useEffect(() => {
-    const formatedRows = []
-    const rawRows = accountsReducer.accounts
-
-    if (rawRows && rawRows.length > 0) {
-      for (const rawRow of rawRows) {
-        formatedRows.push({
-          id: rawRow?.id,
-          status: formatStatus(rawRow?.idAccountStatus?.status),
-          insured: rawRow?.informations[0]?.insured,
-          lob: rawRow?.informations[0]?.idLineOfBussines?.lineOfBussines
-        })
+  const formatDateFromUTC = (date: Date | null): string => {
+    if (date) {
+      const fecha = new Date(new Date(date).toLocaleString('en-US', { timeZone: 'UTC' }))
+      const options: Intl.DateTimeFormatOptions = {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric'
       }
+
+      return new Intl.DateTimeFormat('ban', options).format(fecha)
     }
+    return ''
+  }
 
-    setAccounts(formatedRows || [])
-    const data = accounts?.find((item: any) => item.id === account?.id)
-    // console.log('datoss', data)
+  // useEffect(() => {
+  //   const formatedRows = []
+  //   const rawRows = accountsReducer.accounts
 
-    setStatus(data?.status)
-  }, [accountsReducer])
+  //   if (rawRows && rawRows.length > 0) {
+  //     for (const rawRow of rawRows) {
+  //       formatedRows.push({
+  //         id: rawRow?.id,
+  //         status: formatStatus(rawRow?.idAccountStatus?.status),
+  //         insured: rawRow?.informations[0]?.insured,
+  //         lob: rawRow?.informations[0]?.idLineOfBussines?.lineOfBussines
+  //       })
+  //     }
+  //   }
+
+  //   setAccounts(formatedRows || [])
+  //   const data = accounts?.find((item: any) => item.id === account?.id)
+  //   // console.log('datoss', data)
+
+  //   setStatus(data?.status)
+  // }, [accountsReducer])
 
   useEffect(() => {
     account && setIdAccount(account.id)
+    account && setAccountId(account.id)
   }, [account])
 
   useEffect(() => {
-    if (status !== undefined && setTypeofAccount) {
-      setTypeofAccount(status)
+    if (accountDetails !== undefined && setTypeofAccount) {
+      setTypeofAccount(accountDetails?.status)
     }
   }, [status])
+
+  /*NEW*/
+  useEffect(() => {
+    accountDetails && setStatus(accountDetails.status)
+  }, [accountDetails])
+
+  // console.log('Hola: ', accountDetails)
+
   return (
     <>
       <Card className='info-header' style={{ marginBottom: '16px' }}>
@@ -244,7 +267,12 @@ const FormHeader = ({ isNewAccount, setActiveEndorsement, setTypeofAccount }: Fo
               <div className='form-secondContainer-wrapper-first-side'>
                 <div className='form-secondContainer-first' style={{ marginRight: '20px' }}>
                   <span className='form-secondContainer-header-title'>Status</span>
-                  {status !== '' && <StatusSelect margin={0} initialStatus='PENDING' setSelectedStatus={setStatus} />}
+                  {status !== '' && accountDetails?.status && (
+                    <StatusSelect margin={0} initialStatus={accountDetails?.status} setSelectedStatus={setStatus} />
+                  )}
+                  {status !== '' && !accountDetails && (
+                    <StatusSelect margin={0} initialStatus='PENDING' setSelectedStatus={setStatus} />
+                  )}
                 </div>
 
                 <div className='form-secondContainer-third'>
@@ -257,7 +285,7 @@ const FormHeader = ({ isNewAccount, setActiveEndorsement, setTypeofAccount }: Fo
                   <div className='form-secondContainer-second'>
                     <span className='form-secondContainer-header-title'>Line of Business</span>
                     <span className='form-secondContainer-header-subtitle'>
-                      {information && formatDate(information?.createdAt)}
+                      {accountDetails && accountDetails?.informations[0]?.idLineOfBussines?.lineOfBussines}
                     </span>
                   </div>
                 )}
@@ -266,7 +294,7 @@ const FormHeader = ({ isNewAccount, setActiveEndorsement, setTypeofAccount }: Fo
                   <div className='form-secondContainer-second'>
                     <span className='form-secondContainer-header-title'>Reception Date</span>
                     <span className='form-secondContainer-header-subtitle'>
-                      {information && formatDate(information?.createdAt)}
+                      {accountDetails && formatDateFromUTC(accountDetails?.informations[0]?.receptionDate)}
                     </span>
                   </div>
                 )}
@@ -277,8 +305,13 @@ const FormHeader = ({ isNewAccount, setActiveEndorsement, setTypeofAccount }: Fo
                     Last Update: {account && convertirFecha(information?.updatedAt)}
                   </span>
                 </div>
-                {status !== 'bound' ? (
-                  <ActionsHeader accountStatus='PENDING' sideHeader={true} />
+                {accountDetails && accountDetails?.status !== 'BOUND' ? (
+                  <ActionsHeader
+                    accountId={account?.id}
+                    setEditInfo={setEditInfo}
+                    accountStatus='PENDING'
+                    sideHeader={true}
+                  />
                 ) : (
                   <ActionsHeaderBound
                     setActiveEndorsement={setActiveEndorsement}

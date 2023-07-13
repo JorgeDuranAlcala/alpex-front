@@ -1,47 +1,34 @@
-import {
-  FormControl,
-  FormHelperText,
-  TextField
-} from '@mui/material';
-import { useContext, useEffect } from 'react';
-import { NumericFormat } from 'react-number-format';
-import * as yup from 'yup';
+import { FormControl, FormHelperText, TextField } from '@mui/material'
+import { useContext, useEffect } from 'react'
+import { NumericFormat } from 'react-number-format'
+import * as yup from 'yup'
 
-import { SecurityContext } from '../../SecurityView';
-import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interface';
-import { CalculateSecurity } from '../../utils/calculates-securities';
-import { DiscountsContext } from '../discounts/DiscountsContext';
-import { SecondViewContext } from '../secondView/SecondViewContext';
-
+import { SecurityContext } from '../../SecurityView'
+import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interface'
+import { SecondViewContext } from '../secondView/SecondViewContext'
 
 interface GrossOrNetPremiumAt100Props extends ISecurityInputProps {
-  isGross: boolean;
-  operationSecurity: CalculateSecurity
-
+  isGross: boolean
 }
 
-export const GrossOrNetPremiumAt100 = ({ index, isGross, value, errorMessage, validateForm, operationSecurity }: GrossOrNetPremiumAt100Props) => {
+export const GrossOrNetPremiumAt100 = ({
+  index,
+  isGross,
+  value,
+  errorMessage,
+  validateForm,
+  view
+}: GrossOrNetPremiumAt100Props) => {
+  const { activeErros, securities, calculateSecurities } = useContext(SecurityContext)
 
-  const { discountsList, updateAllDiscounts } = useContext(DiscountsContext);
+  const { activeView, $inputRef, openModalSecondView, isOpenModal, isOpenModalUndo } = useContext(SecondViewContext)
 
-  const {
-    activeErros,
-    securities,
-    calculateSecurities
-  } = useContext(SecurityContext);
-
-  const { $inputRef, openModalSecondView, isOpenModal, isOpenModalUndo, isFormHasSecondView, isFormDeletedSecondView, } = useContext(SecondViewContext)
-
-
-
+  // al hacer click en el input se desplega un modal para la visualizacion de la segunda vista
   const handleClick = (e: any) => {
-    if (securities[index].view === 2) return
-    if (securities[index + 1]) {
-      if (securities[index + 1].view === 2) return
+    if (activeView === 0 || activeView === 3) {
+      $inputRef[index] = e.target
+      openModalSecondView()
     }
-    $inputRef[index] = e.target
-    openModalSecondView(index);
-
   }
 
   const handleChangeBaseAmount = (value: number) => {
@@ -52,72 +39,48 @@ export const GrossOrNetPremiumAt100 = ({ index, isGross, value, errorMessage, va
       netPremiumAt100: value
     }
     validateForm(tempSecurities[index])
-    calculateSecurities(tempSecurities);
-
-
-
+    calculateSecurities(tempSecurities)
   }
 
   useEffect(() => {
-    const newDiscountsList = discountsList.map(discount => ({
-      ...discount,
-      percentage: discount.percentage,
-      amount: operationSecurity.getDiscountAmount(discount.amount),
-    }));
+    // activacion de modal para visualizar la segunda vista
+    if (!isOpenModal) {
+      if (!$inputRef) return
 
-    updateAllDiscounts(newDiscountsList);
-
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value])
-
-  useEffect(() => {
-    if (!isOpenModal[index]) {
-      if (!$inputRef[index]) return;
-
-      if (isFormHasSecondView[index]) {
-
+      if (activeView !== 0) {
         setTimeout(() => {
-          // console.log(index, 'focus', $inputRef.current || 'null');
+          $inputRef[index]?.focus()
 
-          $inputRef[index]?.focus();
-
-          $inputRef[index]?.scrollIntoView({ behavior: "smooth", block: "center", inline: "center" })
-        }, 300);
-
-
+          $inputRef[index]?.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' })
+        }, 300)
       } else {
-        $inputRef[index]?.blur();
+        $inputRef[index]?.blur()
       }
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpenModal]);
+  }, [isOpenModal])
 
   useEffect(() => {
-    if (!isOpenModalUndo[index + 1]) {
-      if (!$inputRef[index]) return;
+    if (!isOpenModalUndo) {
+      if (!$inputRef) return
 
-      if (isFormDeletedSecondView[index]) {
+      if (activeView === 0) {
         setTimeout(() => {
-          $inputRef[index]?.scrollIntoView({ behavior: "smooth", block: "center", inline: "center" })
-        }, 300);
+          $inputRef[index]?.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' })
+        }, 300)
       }
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpenModalUndo[index + 1]]);
-
+  }, [isOpenModalUndo])
 
   return (
     <FormControl fullWidth sx={{ mb: 2 }}>
       <NumericFormat
-
-        // getInputRef={(el: HTMLInputElement) => $inputRef.current[index] = el
-        // }
         fullWidth
         autoFocus
-        label={isGross ? 'Gross premium at %100' : 'Net premium at %100'}
+        label={isGross ? `Gross premium at %100 ` : 'Net premium at %100'}
         value={value}
         onValueChange={value => {
           handleChangeBaseAmount(Number(value.floatValue))
@@ -125,26 +88,24 @@ export const GrossOrNetPremiumAt100 = ({ index, isGross, value, errorMessage, va
         onClick={handleClick}
         prefix={'$'}
         customInput={TextField}
-        decimalScale={2}
         thousandSeparator=','
-        disabled={securities[index].view === 2}
+        disabled={view === 2}
       />
 
-      <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
-        {activeErros && errorMessage}
-      </FormHelperText>
+      <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>{activeErros && errorMessage}</FormHelperText>
     </FormControl>
   )
 }
 
-export const grossOrNetPremiumAt100_validations = () => yup.object().shape({
-  netPremiumAt100: yup
-    .number()
-    .transform((_, val) => (val === Number(val) ? val : null))
-    .test('', 'This field is required', value => {
-      const val = value || 0
+export const grossOrNetPremiumAt100_validations = () =>
+  yup.object().shape({
+    netPremiumAt100: yup
+      .number()
+      .transform((_, val) => (val === Number(val) ? val : null))
+      .test('', 'This field is required', value => {
+        const val = value || 0
 
-      return +val > 0
-    })
-    .required('This field is required')
-});
+        return +val > 0
+      })
+      .required('This field is required')
+  })

@@ -4,7 +4,7 @@ import { NumericFormat } from 'react-number-format'
 
 import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interface'
 import { CalculateSecurity } from '../../utils/calculates-securities'
-import { DiscountsContext, IDiscountInputs } from '../discounts/DiscountsContext'
+import { IDiscountInputs } from '../discounts/DiscountsContext'
 
 // import { SecurityContext } from '../../SecurityView'
 import { usePercentageAchieved } from '../../hooks/usePercentageAchieved'
@@ -14,7 +14,7 @@ import { SecurityContext } from '../../SecurityView'
 interface DiscountPercentProps extends Omit<ISecurityInputProps, 'errorMessage'> {
   discountIndex: number
   operationSecurity: CalculateSecurity
-  discountsList: IDiscountInputs[]
+  discounts: IDiscountInputs[]
 }
 
 export const DiscountPercent = ({
@@ -22,25 +22,27 @@ export const DiscountPercent = ({
   discountIndex,
   value,
   operationSecurity,
-  discountsList
+  discounts,
+  view
 }: DiscountPercentProps) => {
-  const { securities } = useContext(SecurityContext)
+  const { securities, calculateSecurities } = useContext(SecurityContext)
   const { achievedMessageError, checkIsPercentageAchieved } = usePercentageAchieved()
 
-  const { updateDiscountByIndex } = useContext(DiscountsContext)
   const handleChangeDiscountPercent = (value: number) => {
-    updateDiscountByIndex({
-      index: discountIndex,
+    const securitiesTemp = [...securities]
+    securitiesTemp[index].discounts[discountIndex] = {
       percentage: value,
-      amount: operationSecurity.getDiscountAmount(value)
-    })
+      amount: operationSecurity.getDiscountAmount(value),
+      active: true
+    }
+    calculateSecurities(securitiesTemp)
   }
 
   useEffect(() => {
     checkIsPercentageAchieved({ formIndex: index })
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [discountsList[discountIndex]])
+  }, [discounts[discountIndex]])
 
   // * Si el campo ya cuenta con un mensaje de error, se ejecuta el chequeo de porcentaje
   // * alcanzado, esto con el fin de que el mensaje de error se borre para este campo
@@ -63,11 +65,10 @@ export const DiscountPercent = ({
         }}
         suffix={'%'}
         customInput={TextField}
-        decimalScale={2}
         isAllowed={values => {
           return (values.floatValue! >= 0 && values.floatValue! <= 100) || values.floatValue === undefined
         }}
-        disabled={securities[index].view === 2}
+        disabled={view === 2}
       />
 
       <FormHelperText sx={{ color: 'error.main', minHeight: '25px' }}>

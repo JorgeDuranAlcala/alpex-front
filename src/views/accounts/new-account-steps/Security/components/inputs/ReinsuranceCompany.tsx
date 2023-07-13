@@ -1,31 +1,20 @@
-import {
-  FormControl,
-  FormHelperText,
-  InputLabel,
-  MenuItem,
-  Select,
-  SelectChangeEvent,
-} from '@mui/material';
-import { Dispatch, SetStateAction, useContext } from 'react';
+import { FormControl, FormHelperText, InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material'
+import { Dispatch, SetStateAction, useContext } from 'react'
 
 // import * as yup from 'yup';
 
-import { SecurityDto } from '@/services/accounts/dtos/security.dto';
-import { ReinsuranceCompanyBinderDto } from '@/services/catalogs/dtos/ReinsuranceCompanyBinder.dto';
-import { ReinsuranceCompanyDto } from '@/services/catalogs/dtos/ReinsuranceCompanyDto';
-import ReinsuranceCompanyBinderService from 'src/services/catalogs/reinsuranceCompanyBinder.service';
-import { SecurityContext } from '../../SecurityView';
-import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interface';
+import { SecurityDto } from '@/services/accounts/dtos/security.dto'
+import { ReinsuranceCompanyDto } from '@/services/catalogs/dtos/ReinsuranceCompanyDto'
+import { SecurityContext } from '../../SecurityView'
+import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interface'
 
 interface ReinsuranceCompanyProps extends ISecurityInputProps {
-  avaliableReinsurers: ReinsuranceCompanyDto[];
-  companiesSelect: number[];
-  security: SecurityDto | undefined;
-  setIsGross: Dispatch<SetStateAction<boolean>>;
-  setFrontingFeeEnabled: Dispatch<SetStateAction<boolean>>;
-  setBinders: Dispatch<SetStateAction<ReinsuranceCompanyBinderDto[]>>;
+  avaliableReinsurers: ReinsuranceCompanyDto[]
+  companiesSelect: number[]
+  security: SecurityDto | undefined
+  setIsGross: Dispatch<SetStateAction<boolean>>
+  setFrontingFeeEnabled: Dispatch<SetStateAction<boolean>>
 }
-
 
 export const ReinsuranceCompany = ({
   index,
@@ -36,23 +25,9 @@ export const ReinsuranceCompany = ({
   companiesSelect,
   validateForm,
   setIsGross,
-  setFrontingFeeEnabled,
-  setBinders
+  view
 }: ReinsuranceCompanyProps) => {
-
-  const {
-    activeErros,
-    information,
-    securities,
-    calculateSecurities,
-  } = useContext(SecurityContext);
-
-  // console.log(avaliableReinsurers)
-
-  const updateBindersAsync = async (idCReinsuranceCompany: number) => {
-    const binders = await ReinsuranceCompanyBinderService.findByIdReinsuranceCompany(idCReinsuranceCompany);
-    setBinders(binders)
-  }
+  const { activeErros, information, securities, calculateSecurities } = useContext(SecurityContext)
 
   const handleChangeCompany = (e: SelectChangeEvent<string>): void => {
     const avaliableCompanies: ReinsuranceCompanyDto | undefined = avaliableReinsurers
@@ -64,23 +39,19 @@ export const ReinsuranceCompany = ({
       tempSecurities[index] = {
         ...tempSecurities[index],
         idCReinsuranceCompany: avaliableCompanies,
-
-        // frontingFeeActive: false,
-
+        frontingFee: 0,
+        taxes: 0,
         isGross: avaliableCompanies.special,
+        frontingFeeActive: false,
+        taxesActive: false,
         netPremiumAt100: avaliableCompanies.special ? information.grossPremium : information.netPremium
       }
 
       setIsGross(() => avaliableCompanies.special)
-      setFrontingFeeEnabled(() => false)
+
       calculateSecurities(tempSecurities)
       validateForm(tempSecurities[index])
-      updateBindersAsync(avaliableCompanies.id)
     }
-  }
-
-  if (avaliableReinsurers.length === 0) {
-    return null;
   }
 
   return (
@@ -92,12 +63,11 @@ export const ReinsuranceCompany = ({
         onChange={handleChangeCompany}
         labelId='ReinsuranceCompany'
         label='Reinsurance companies'
-        disabled={securities[index].view === 2}
+        disabled={view === 2}
       >
         {avaliableReinsurers
           .filter(
-            reinsure =>
-              !companiesSelect.includes(reinsure.id) || security?.idCReinsuranceCompany?.id === reinsure.id
+            reinsure => !companiesSelect.includes(reinsure.id) || security?.idCReinsuranceCompany?.id === reinsure.id
           )
           .map(reinsurer => (
             <MenuItem key={reinsurer.id} value={reinsurer.id}>
@@ -105,9 +75,7 @@ export const ReinsuranceCompany = ({
             </MenuItem>
           ))}
       </Select>
-      <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
-        {activeErros && errorMessage}
-      </FormHelperText>
+      <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>{activeErros && errorMessage}</FormHelperText>
     </FormControl>
   )
 }

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useGetAllCountries } from '@/hooks/catalogs/country'
 import { useGetAllReinsuranceCompanies } from '@/hooks/catalogs/reinsuranceCompany'
 import { useGetAllRetroCedants } from '@/hooks/catalogs/retroCedant'
@@ -5,16 +6,13 @@ import { useGetAllByIdRetroCedant } from '@/hooks/catalogs/retroCedantContact'
 
 import { ReinsuranceCompanyDto } from '@/services/catalogs/dtos/ReinsuranceCompanyDto'
 
+import { FormSectionProps, SecurityDto, errorsSecurity } from '@/services/accounts/dtos/security.dto'
+import DialogCustomAlpex from '@/views/components/dialogs/DialogCustomAlpex'
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
 import { Grid, Icon } from '@mui/material'
-
-import { FormSectionProps, SecurityDto, errorsSecurity } from '@/services/accounts/dtos/security.dto'
-import { ReinsuranceCompanyBinderDto } from '@/services/catalogs/dtos/ReinsuranceCompanyBinder.dto'
-import DialogCustomAlpex from '@/views/components/dialogs/DialogCustomAlpex'
 import { useContext, useEffect, useState } from 'react'
 import * as yup from 'yup'
 import { SecurityContext } from '../SecurityView'
-import { useDataFirstTime } from '../hooks/useDataFirstTime'
 import { CalculateSecurity } from '../utils/calculates-securities'
 import { ButtonAddDiscount } from './discounts/ButtonAddDiscount'
 import { DiscountsProvider } from './discounts/DiscountsProvider'
@@ -63,6 +61,7 @@ import { SwitchFrontingFee } from './inputs/SwitchFrontingFee'
 import { SwitchTaxes } from './inputs/SwitchTaxes'
 import { ModalActivateSecondView } from './secondView/ModalActivateSecondView'
 import { ModalUndoSecondView } from './secondView/ModalUndoSecondView'
+import { SecondViewContext } from './secondView/SecondViewContext'
 import { SwitchSecondView } from './secondView/SwitchSecondView'
 import { UndoSecondView } from './secondView/UndoSecondView'
 
@@ -88,33 +87,35 @@ const initialErrorValues: errorsSecurity = {
   idCRetroCedantContact: '',
   idCRetroCedant: ''
 }
-export const FormSection = ({ index, security, onDeleteItemList }: FormSectionProps) => {
+
+//este estate se utilizara cuando se necesite actualizar el estado hasta que este completo
+let localSecuritiesTemp: SecurityDto[] = []
+export const FormSection = ({ index, security, onDeleteItemList, securities }: FormSectionProps) => {
   const [isGross, setIsGross] = useState<boolean>(security.isGross)
   const [errorsSecurity, setErrorsSecurity] = useState<errorsSecurity>(initialErrorValues)
-  const [frontingFeeEnabled, setFrontingFeeEnabled] = useState(security.frontingFeeActive || false)
-  const [isShowToggleFrontingFee, setIsShowToggleFrontingFee] = useState(false)
-  const [isTaxesEnabled, setIsTaxesEnabled] = useState(false)
-  const [isShowToggleTaxes, setIsShowToggleTaxes] = useState(false)
-  const [isShowRetroCedant, setIsShowRetroCedant] = useState(false)
-  const [binders, setBinders] = useState<ReinsuranceCompanyBinderDto[]>([])
+  const [isShowToggleFrontingFee, setIsShowToggleFrontingFee] = useState(security.frontingFeeActive || false)
+  const [frontingFeeEnabled, setFrontingFeeEnabled] = useState<boolean>(security.frontingFeeActive || false)
+  const [isTaxesEnabled, setIsTaxesEnabled] = useState<boolean>(security.taxesActive || false)
+  const [isShowToggleTaxes, setIsShowToggleTaxes] = useState<boolean>(security.taxesActive || false)
+  const [isShowRetroCedant, setIsShowRetroCedant] = useState<boolean>(true)
+
   const [openDialog, setOpenDialog] = useState(false)
 
+  //CUSTOM HOOK
   const [avaliableReinsurers, setAvaliableReinsurers] = useState<ReinsuranceCompanyDto[]>([])
-
-  const { allErrors, setAllErrors, information, companiesSelect, securities, calculateSecurities } =
-    useContext(SecurityContext)
-
   const { reinsuranceCompany } = useGetAllReinsuranceCompanies()
   const { retroCedants } = useGetAllRetroCedants()
   const { retroCedantContacts, setIdRetroCedant } = useGetAllByIdRetroCedant()
   const { countries } = useGetAllCountries()
 
-  const operationSecurity: CalculateSecurity = new CalculateSecurity().setInformation(information).setSecurity(security)
+  //** Context
+  const { allErrors, setAllErrors, information, companiesSelect, calculateSecurities, setCurrentView } =
+    useContext(SecurityContext)
+  const { activeView, createSecondView } = useContext(SecondViewContext)
 
+  const operationSecurity: CalculateSecurity = new CalculateSecurity().setInformation(information).setSecurity(security)
   const schemaRetrocedant = yup.object().shape({
     ...selectRetroCedant_validations({ frontingFeeEnabled, isGross }).fields,
-
-    // ...selectRetroCedantContact_validations({ frontingFeeEnabled }).fields,
     ...frontingFeePercent_validations({ frontingFeeEnabled }).fields,
     ...frontingFeeAmount_validations({ frontingFeeEnabled }).fields
   })
@@ -132,7 +133,6 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
     ...taxesPercent_validations({ isGross, isTaxesEnabled }).fields,
     ...netReinsurancePremium_validations().fields
   })
-
   const validateForm = (securityParam: SecurityDto) => {
     let data = { ...initialErrorValues }
 
@@ -161,12 +161,9 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
             [error.path]: error.message
           }
         }
+        console.log({ data, index })
         errorsTemp[index] = true
         setErrorsSecurity(data)
-
-        // console.log({ error: data, index });
-
-        //setEnableNextStep(false)
       })
       .finally(() => {
         setAllErrors(() => [...errorsTemp])
@@ -194,126 +191,124 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
   }, [security])
 
   useEffect(() => {
-    validateForm(security)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isGross, frontingFeeEnabled])
-
-  useEffect(() => {
     const informationForm1 = information as any
     const tempSecurities = [...securities]
 
-    //validacion taxes
+    if (information)
+      if (isGross) {
+        setIsShowToggleTaxes(true)
+        setIsShowToggleFrontingFee(true)
 
-    if ((informationForm1.taxes === 0 || isGross) && securities[index].view === 1) {
-      setIsShowToggleTaxes(true)
-      setIsTaxesEnabled(informationForm1.taxes > 0)
-
-      tempSecurities[index] = {
-        ...tempSecurities[index],
-        taxes: informationForm1.taxes === 0 ? 0 : informationForm1.taxesP,
-        taxesAmount: 0
+        if (security.taxes === 0 && informationForm1.taxesP > 0 && !security.id) {
+          setIsTaxesEnabled(true)
+          tempSecurities[index] = {
+            ...tempSecurities[index],
+            taxes: informationForm1.taxesP,
+            taxesAmount: 0
+          }
+        }
+        if (security.frontingFee === 0 && informationForm1.frontingFeeP > 0 && !security.id) {
+          setIsShowRetroCedant(true)
+          setFrontingFeeEnabled(true)
+          tempSecurities[index] = {
+            ...tempSecurities[index],
+            frontingFee: informationForm1.frontingFeeP,
+            frontingFeeAmount: 0
+          }
+        }
+      } else {
+        if (security.taxes === 0 && informationForm1.taxesP === 0) {
+          setIsShowToggleTaxes(true)
+          if (!security.id) {
+            tempSecurities[index] = {
+              ...tempSecurities[index],
+              taxes: 0,
+              taxesAmount: 0
+            }
+          }
+        }
+        if (security.frontingFee === 0 && informationForm1.frontingFeeP === 0) {
+          setIsShowToggleFrontingFee(true)
+          if (!security.id) {
+            tempSecurities[index] = {
+              ...tempSecurities[index],
+              frontingFee: 0,
+              frontingFeeAmount: 0
+            }
+          }
+        }
       }
-    } else if (securities[index].view === 1) {
-      setIsShowToggleTaxes(false)
-      setIsTaxesEnabled(false)
 
-      tempSecurities[index] = {
-        ...tempSecurities[index],
-        taxes: 0,
-        taxesAmount: 0
-      }
+    localSecuritiesTemp.push(tempSecurities[index])
+
+    if (localSecuritiesTemp.length === tempSecurities.length) {
+      calculateSecurities(localSecuritiesTemp)
+      validateForm(security)
+      localSecuritiesTemp = []
     }
-
-    if ((informationForm1.frontingFee === 0 || isGross) && securities[index].view === 1) {
-      setIsShowToggleFrontingFee(true)
-      setFrontingFeeEnabled(informationForm1.frontingFee > 0)
-      setIsShowRetroCedant(true)
-
-      tempSecurities[index] = {
-        ...tempSecurities[index],
-        frontingFee: informationForm1.frontingFee === 0 ? 0 : informationForm1.frontingFeeP,
-        frontingFeeAmount: 0
-      }
-    } else if (securities[index].view === 1) {
-      setIsShowToggleFrontingFee(false)
-      setFrontingFeeEnabled(false)
-      setIsShowRetroCedant(false)
-
-      tempSecurities[index] = {
-        ...tempSecurities[index],
-        frontingFee: 0,
-        frontingFeeAmount: 0
-      }
-    }
-    validateForm(tempSecurities[index])
-    calculateSecurities(tempSecurities)
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isGross, security.idCReinsuranceCompany?.id])
+  }, [])
+
   useEffect(() => {
     const tempSecurities = [...securities]
 
-    if (!frontingFeeEnabled && securities[index].view === 1) {
-      tempSecurities[index] = {
-        ...tempSecurities[index],
-        frontingFee: 0,
-        frontingFeeAmount: 0
-      }
-      validateForm(tempSecurities[index])
-      calculateSecurities(tempSecurities)
-    }
-    if (!isTaxesEnabled && securities[index].view === 1) {
-      tempSecurities[index] = {
-        ...tempSecurities[index],
-        taxes: 0,
-        taxesAmount: 0
-      }
-      validateForm(tempSecurities[index])
-      calculateSecurities(tempSecurities)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [frontingFeeEnabled, isTaxesEnabled])
+    const isDifferent = isGross
+      ? information.grossPremium !== tempSecurities[index].netPremiumAt100
+      : information.netPremium !== tempSecurities[index].netPremiumAt100
 
-  /**
-   * * Las validaciones actuales resetean los porcentages de taxes y frontingFee
-   * * aún cuando ya hay valores desde bdd.
-   * * Para no reestructuras las validaciones actuales,
-   * * se crea este hook que comprueba si existen valores desde bdd
-   * * si es así, los setea en el formulario después de las validaciones actuales.
-   */
-  const { forTaxes, forFrontingFee, checkValues } = useDataFirstTime({ formIndex: index, operationSecurity })
-
-  useEffect(() => {
-    if (securities[index].view === 1) {
-      checkValues({
-        taxes: securities[index].taxes,
-        frontingFee: securities[index].taxes
+    // index === tempSecurities.length - 1 &&
+    if (information && activeView === 0 && isDifferent && securities[index].idCReinsuranceCompany?.id) {
+      createSecondView({
+        securities: tempSecurities,
+        calculateSecurities,
+        information
       })
     }
+  }, [])
 
-    if (securities[index].taxes > 0) {
-      setIsTaxesEnabled(true)
-      if (securities[index].view === 2) {
-        setIsShowToggleTaxes(true)
-      }
-    }
-    if (securities[index].frontingFee > 0) {
-      setFrontingFeeEnabled(true)
-      if (securities[index].view === 2) {
-        setIsShowToggleFrontingFee(true)
-      }
-    }
+  useEffect(() => {
+    setCurrentView(activeView)
+  }, [activeView])
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [securities[index].taxes, securities[index].frontingFee])
+  // useEffect(() => {
+  //   validateForm(security)
+  // }, [isGross, frontingFeeEnabled, isTaxesEnabled])
 
+  /*NOTE: en los componentes de porcentajes no es necesario calcular los otros valores ya que todos los calculos se hacen en el calculate securities a exception de las modificaciones de montos */
   return (
     <DiscountsProvider>
+      <ModalActivateSecondView
+        information={information}
+        securities={securities}
+        calculateSecurities={calculateSecurities}
+      />
+
+      <ModalUndoSecondView
+        information={information}
+        securities={securities}
+        calculateSecurities={calculateSecurities}
+      />
+
       <div style={{ position: 'relative' }}>
         {index > 0 && <hr style={{ margin: '40px 0px', backgroundColor: 'lightgray' }} />}
         <Grid container item xs={12} sm={12}>
           <Grid item xs={12} sm={12}>
-            {index > 0 && (
+            {index === 0 && activeView > 0 && activeView < 3 ? (
+              <>
+                {activeView === 2 && (
+                  <UndoSecondView securities={securities} calculateSecurities={calculateSecurities} />
+                )}
+                <SwitchSecondView
+                  information={information}
+                  view={activeView}
+                  securities={securities}
+                  calculateSecurities={calculateSecurities}
+                />
+              </>
+            ) : null}
+            {/* eliminacion de securities */}
+            {index > 0 && activeView !== 2 && (
               <div
                 className='section action-buttons'
                 style={{ float: 'right', marginRight: 'auto', marginBottom: '20px' }}
@@ -342,7 +337,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
               isGross={isGross}
               index={index}
               validateForm={validateForm}
-              operationSecurity={operationSecurity}
+              view={security.view}
             />
 
             <SharePercent
@@ -350,7 +345,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
               errorMessage={errorsSecurity.share}
               index={index}
               validateForm={validateForm}
-              operationSecurity={operationSecurity}
+              view={security.view}
             />
 
             <GrossPremiumPerShareAmount
@@ -359,6 +354,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
               validateForm={validateForm}
               index={index}
               operationSecurity={operationSecurity}
+              view={security.view}
             />
 
             {isGross && (
@@ -367,6 +363,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
                 errorMessage={errorsSecurity.reinsuranceBrokerage}
                 index={index}
                 validateForm={validateForm}
+                view={security.view}
               />
             )}
 
@@ -375,6 +372,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
               errorMessage={errorsSecurity.dynamicCommission}
               index={index}
               validateForm={validateForm}
+              view={security.view}
             />
           </Grid>
           {/* Col-2 */}
@@ -389,15 +387,15 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
               security={security}
               setIsGross={setIsGross}
               setFrontingFeeEnabled={setFrontingFeeEnabled}
-              setBinders={setBinders}
+              view={security.view}
             />
 
-            {/* // Todo - New Component */}
             <ShareAmount
               value={security.shareAmount}
               errorMessage={errorsSecurity.shareAmount}
               index={index}
               validateForm={validateForm}
+              view={security.view}
             />
 
             <PremiumPerShareAmount
@@ -405,7 +403,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
               errorMessage={errorsSecurity.premiumPerShareAmount}
               index={index}
               validateForm={validateForm}
-              operationSecurity={operationSecurity}
+              view={security.view}
             />
 
             {isGross && (
@@ -415,6 +413,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
                 index={index}
                 validateForm={validateForm}
                 operationSecurity={operationSecurity}
+                view={security.view}
               />
             )}
 
@@ -424,21 +423,24 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
               index={index}
               validateForm={validateForm}
               operationSecurity={operationSecurity}
+              view={security.view}
             />
           </Grid>
           {/* Col-3 */}
           <Grid item xs={12} sm={4}>
             <Binder
               value={security.idCReinsuranceCompanyBinder ? String(security.idCReinsuranceCompanyBinder?.id) : ''}
-              binders={binders}
               index={index}
+              view={security.view}
+              companyId={security.idCReinsuranceCompany?.id ? String(security.idCReinsuranceCompany?.id) : ''}
             />
 
-            <Consecutive value={security.consecutive ? security.consecutive : ''} />
+            <Consecutive value={security.consecutive ? security.consecutive : ''} view={security.view} />
 
             <NetReinsurancePremium
               value={security.netReinsurancePremium}
               errorMessage={errorsSecurity.netReinsurancePremium}
+              view={security.view}
             />
 
             {isShowRetroCedant ? (
@@ -450,6 +452,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
                   validateForm={validateForm}
                   retroCedants={retroCedants}
                   setIdRetroCedant={setIdRetroCedant}
+                  view={security.view}
                 />
                 <SelectRetroCedantContact
                   value={security.idCRetroCedantContact?.id ? String(security.idCRetroCedantContact?.id) : ''}
@@ -457,15 +460,16 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
                   index={index}
                   validateForm={validateForm}
                   retroCedantContacts={retroCedantContacts}
+                  view={security.view}
                 />
               </>
             ) : null}
 
             {frontingFeeEnabled && security.idCRetroCedantContact?.id && (
               <>
-                <ContactEmail value={security.idCRetroCedantContact?.email} />
+                <ContactEmail value={security.idCRetroCedantContact?.email} view={security.view} />
 
-                <ContactPhone value={security.idCRetroCedantContact?.phone} />
+                <ContactPhone value={security.idCRetroCedantContact?.phone} view={security.view} />
 
                 <ContactCountry
                   value={
@@ -474,6 +478,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
                       : security.idCRetroCedantContact.idCCountry ?? ''
                   }
                   countries={countries}
+                  view={security.view}
                 />
               </>
             )}
@@ -495,7 +500,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
                 security={security}
                 isChecked={isTaxesEnabled}
                 setIsTaxesEnabled={setIsTaxesEnabled}
-                fieldRef={forTaxes}
+                view={security.view}
               />
 
               <TaxesPercent
@@ -503,9 +508,8 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
                 errorMessage={errorsSecurity.taxes}
                 index={index}
                 validateForm={validateForm}
-                operationSecurity={operationSecurity}
                 isDisabled={!isTaxesEnabled}
-                fieldRef={forTaxes}
+                view={security.view}
               />
 
               <TaxesAmount
@@ -515,7 +519,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
                 validateForm={validateForm}
                 operationSecurity={operationSecurity}
                 isDisabled={!isTaxesEnabled}
-                fieldRef={forTaxes}
+                view={security.view}
               />
             </Grid>
           ) : null}
@@ -525,10 +529,9 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
               <SwitchFrontingFee
                 index={index}
                 validateForm={validateForm}
-                security={security}
                 isChecked={frontingFeeEnabled}
                 setFrontingFeeEnabled={setFrontingFeeEnabled}
-                fieldRef={forFrontingFee}
+                view={security.view}
               />
 
               <FrontingFeePercent
@@ -536,9 +539,8 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
                 errorMessage={errorsSecurity.frontingFee}
                 index={index}
                 validateForm={validateForm}
-                operationSecurity={operationSecurity}
                 isDisabled={!frontingFeeEnabled}
-                fieldRef={forFrontingFee}
+                view={security.view}
               />
 
               <FrontingFeeAmount
@@ -548,35 +550,29 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
                 validateForm={validateForm}
                 operationSecurity={operationSecurity}
                 isDisabled={!frontingFeeEnabled}
-                fieldRef={forFrontingFee}
+                view={security.view}
               />
             </Grid>
           ) : null}
 
-          <ListDiscounts formIndex={index} operationSecurity={operationSecurity} validateForm={validateForm} />
+          <ListDiscounts
+            view={security.view}
+            discounts={security.discounts}
+            formIndex={index}
+            operationSecurity={operationSecurity}
+            validateForm={validateForm}
+          />
         </Grid>
 
-        <ButtonAddDiscount />
-
-        <ModalActivateSecondView formIndex={index} securities={securities} calculateSecurities={calculateSecurities} />
-
-        <SwitchSecondView formIndex={index} securities={securities} calculateSecurities={calculateSecurities} />
-
-        {securities[index].view === 2 ? (
-          <>
-            <UndoSecondView formIndex={index} securities={securities} calculateSecurities={calculateSecurities} />
-            <ModalUndoSecondView formIndex={index} securities={securities} calculateSecurities={calculateSecurities} />
-          </>
-        ) : null}
+        <ButtonAddDiscount view={security.view} formIndex={index} />
       </div>
       <DialogCustomAlpex
         openDialog={openDialog}
-        body={`This action will not delete the Reinsurer from Catalogs,
-only for this section.`}
+        body={`This action will not delete the Reinsurer from Catalogs, only for this section.`}
         title={'Remove Reinsurer from this account'}
         resolve={() => onDeleteItemList(index)}
         reject={() => setOpenDialog(false)}
-      ></DialogCustomAlpex>
+      />
     </DiscountsProvider>
   )
 }

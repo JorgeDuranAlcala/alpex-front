@@ -23,9 +23,10 @@ import NewAccountStepper from 'src/views/components/new-accounts/NewAccountStepp
 import MenuForm from '@/pages/menuForm'
 import { updateFormsData } from '@/store/apps/accounts'
 import FormAddress from '@/views/accounts/new-account-steps/FormAddress'
-import Sublimits from 'src/views/accounts/new-account-steps/Sublimits'
+
 import FormHeader from 'src/views/accounts/new-account-steps/headers/formHeader'
 
+import Sublimits from '@/views/accounts/new-account-steps/Sublimit/Sublimits'
 import Icon from 'src/@core/components/icon'
 
 // import UserList from 'src/pages/apps/user/list'
@@ -43,19 +44,33 @@ const NewAccount = () => {
   const [isNewAccount, setIsNewAccount] = useState<boolean>(true)
   const [activeStep, setActiveStep] = useState(1)
 
-  //! Este estado se encarga de activar el endorsement del componente
+  //!: Este estado se encarga de activar el endorsement del componente
   const [activeEndorsement, setActiveEndorsement] = useState(false)
+
+  //!:  Este estado se encarga de activar el editar info en los forms
+  const [editInfo, setEditInfo] = useState(false)
+
+  //Todo:  Une a los dos active inputs
+  const [activeIntpus, setActiveInputs] = useState({ basic: false, allInfo: false })
 
   //* Este estado se encarga de definir el tipo de cuenta
   const [typeofAccount, setTypeofAccount] = useState('')
 
-  // const [sidebar, setSidebar] = useState<boolean>(false)
-  // const handleSidebarMenu = () => {
-  //   setSidebar(!sidebar)
-  //   console.log('Hola')
-  // }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const activeInputs = () => {
+    if (typeofAccount !== 'BOUND') {
+      setActiveInputs({ ...activeIntpus, allInfo: true, basic: true })
+    }
+    if (activeEndorsement) {
+      // console.log('!!!Esta cuenta es de tipo: ')
+      setActiveInputs({ ...activeIntpus, basic: true, allInfo: false })
+    }
+    if (typeofAccount === 'BOUND' && !activeEndorsement) {
+      // console.log('!!!Esta cuenta es de tipo: ', typeofAccount)
 
-  // console.log({ account })
+      setActiveInputs({ ...activeIntpus, basic: false, allInfo: false })
+    }
+  }
 
   const handleStepChange = (step: number) => {
     setActiveStep(step)
@@ -71,6 +86,7 @@ const NewAccount = () => {
       case 1:
         return (
           <Information
+            editInfo={activeIntpus}
             activeEndorsement={activeEndorsement}
             typeofAccount={typeofAccount}
             onStepChange={handleStepChange}
@@ -99,7 +115,7 @@ const NewAccount = () => {
 
     const handleRouteChange = (url: string) => {
       if (url !== '/accounts/new-account') {
-        console.log('change')
+        // console.log('change')
         handleExit()
       }
     }
@@ -112,14 +128,27 @@ const NewAccount = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, router.events])
 
-  console.log('el endorsement se activó: ', activeEndorsement)
+  // console.log('el endorsement se activó: ', activeEndorsement, editInfo)
+  useEffect(() => {
+    activeInputs()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editInfo, activeEndorsement, typeofAccount])
 
   return (
     <Grid className='new-account' item xs={12}>
       {activeStep == 1 && isNewAccount ? (
-        <FormHeader isNewAccount setTypeofAccount={setTypeofAccount} setActiveEndorsement={setActiveEndorsement} />
+        <FormHeader
+          isNewAccount
+          setTypeofAccount={setTypeofAccount}
+          setActiveEndorsement={setActiveEndorsement}
+          setEditInfo={setEditInfo}
+        />
       ) : (
-        <FormHeader setTypeofAccount={setTypeofAccount} setActiveEndorsement={setActiveEndorsement} />
+        <FormHeader
+          setTypeofAccount={setTypeofAccount}
+          setActiveEndorsement={setActiveEndorsement}
+          setEditInfo={setEditInfo}
+        />
       )}
       <div style={{ display: 'flex', flexDirection: 'row', gap: '16px' }}>
         <Card>

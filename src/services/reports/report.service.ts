@@ -16,9 +16,12 @@ class ReportServices {
    */
   async printAccountReport(printReportParams: PrintReportParamsDto): Promise<Buffer> {
     try {
-      const { idAccount, idLanguage } = printReportParams
-      const { data } = await AppAlpexApiGateWay.get(
-        `${PRINT_ACCOUNT_ROUTES.GET_BY_ID_ACCOUNT_LANGUAGE}/${idAccount}/${idLanguage}`
+      const { data } = await AppAlpexApiGateWay.post(
+        PRINT_ACCOUNT_ROUTES.GET_BY_ID_ACCOUNT_LANGUAGE,
+        printReportParams,
+        {
+          responseType: 'arraybuffer'
+        }
       )
 
       return data
@@ -34,9 +37,11 @@ class ReportServices {
    * @param idCReinsuranceCompanyBinder
    * @returns
    */
-  async downloadBourderou(bourderauBody: BourderauBodyDto): Promise<any> {
+  async downloadBourderou(bourderauBody: BourderauBodyDto): Promise<ArrayBuffer> {
     try {
-      const { data } = await AppAlpexApiGateWay.post(BOURDEROU_ROUTES.DOWNLOAD, bourderauBody)
+      const { data } = await AppAlpexApiGateWay.post(BOURDEROU_ROUTES.DOWNLOAD, bourderauBody, {
+        responseType: 'arraybuffer'
+      })
 
       return data
     } catch (error) {
