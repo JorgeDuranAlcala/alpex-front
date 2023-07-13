@@ -5,7 +5,7 @@ import { useAppDispatch, useAppSelector } from "@/store";
 import { setAlertBadgeSecurity } from "../../store/alertBadgeSecuritySlice";
 
 import { useAddSecurities } from "@/hooks/accounts/security";
-import { ReactNode, useEffect, useRef } from "react";
+import { ReactNode, useEffect, useRef, useState } from "react";
 import Icon from 'src/@core/components/icon';
 import { useGetDatas } from "../../hooks/useGetDatas";
 import { SecurityMapper } from "../../mappers/SecurityForm.mapper";
@@ -18,7 +18,8 @@ export const LoadAndSaveSecuritiesProvider = ({ children }: { children: ReactNod
 
   const dispatch = useAppDispatch();
   const accountData = useAppSelector(state => state.accounts);
-  const { allFormData, information, securities, } = useAppSelector(state => state.securitySlice)
+  const { allFormData, information, securities, } = useAppSelector(state => state.securitySlice);
+  const [isDataLoaded, setIsDataLoaded] = useState(false);
 
   // * + + + + + INIT ON GET DATAS + + + + +
   // * Obtiene la data de los catálogos
@@ -171,9 +172,9 @@ export const LoadAndSaveSecuritiesProvider = ({ children }: { children: ReactNod
   useEffect(() => {
 
     if (isLoadedInformation.current) return;
-    console.log('LOAD INFORMATION ACCOUNT DATA')
 
     if (accountData.formsData.form1.id) {
+      console.log('LOAD INFORMATION ACCOUNT DATA')
       const idAccountCache = Number(localStorage.getItem('idAccount'))
       setAccountId(accountData.formsData.form1.id || idAccountCache)
       const data = accountData.formsData.form1.placementStructure as FormInformation
@@ -181,6 +182,7 @@ export const LoadAndSaveSecuritiesProvider = ({ children }: { children: ReactNod
       // console.log('data', data)
       // debugger;
       dispatch(updateInformation(data as Information))
+      isLoadedInformation.current = true
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accountData.formsData?.form1?.id])
@@ -206,13 +208,22 @@ export const LoadAndSaveSecuritiesProvider = ({ children }: { children: ReactNod
 
         dispatch(updateAllSecurities({ securities: account.securities as Security[] }))
       }
+      isLoadedSecurities.current = true
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [account, information])
 
+  useEffect(() => {
+    if (isLoadedSecurities.current && isLoadedInformation.current && securities.length > 0) {
+
+      setIsDataLoaded(true);
+    };
+
+  }, [isLoadedSecurities, isLoadedInformation, securities]);
+
   return (
-    <LoadAndSaveSecuritiesContext.Provider value={{ saveData }}>
+    <LoadAndSaveSecuritiesContext.Provider value={{ saveData, isDataLoaded }}>
       {children}
     </LoadAndSaveSecuritiesContext.Provider>
   )

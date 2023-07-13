@@ -226,6 +226,7 @@
   height: 100%;
   display: flex;
   align-items: center;
+
   .MuiOutlinedInput-notchedOutline {
     border: none !important;
   }
@@ -439,6 +440,7 @@
   height: 64px;
   padding: 16px 0px 16px 0px;
 }
+
 .no-documentsText {
   height: 72px;
   width: 100%;
@@ -447,12 +449,14 @@
   background-color: rgba(130, 133, 151, 0.05);
   margin-bottom: 5px;
 }
+
 .final-slip {
   background-color: #686b7e;
   border-radius: 10px;
   height: 36px;
   width: 100%;
 }
+
 .actions-icons {
   display: flex;
   flex-direction: row;
@@ -461,6 +465,7 @@
   width: 132px;
   margin-left: auto;
 }
+
 .menu-btn {
   position: relative;
   display: flex;
@@ -553,6 +558,7 @@
   .uploaded-files {
     justify-content: space-between;
   }
+
   .file-details {
     width: 48%;
   }
@@ -562,9 +568,18 @@
   .uploaded-files {
     justify-content: center;
   }
+
   .upload-btn .file-details {
     width: 98%;
   }
+}
+
+/* ---- Security ----*/
+.binder-loader {
+  display: flex;
+  justify-content: center;
+  color: #000000;
+  font-size: 14px;
 }
 
 /*---- Comment section ----*/
@@ -719,6 +734,7 @@
     width: 20%;
     justify-content: center;
   }
+
   .steps .step.active .step-name {
     display: none;
   }
@@ -877,6 +893,7 @@
 .header-form-main {
   display: inline-block;
 }
+
 .header-form-main button {
   padding: 0px;
 }
@@ -959,12 +976,12 @@
   flex-grow: 0;
 }
 
-.react-datepicker > .react-datepicker__navigation.react-datepicker__navigation--next--with-time {
+.react-datepicker>.react-datepicker__navigation.react-datepicker__navigation--next--with-time {
   right: 127px;
   display: none;
 }
 
-.react-datepicker > .react-datepicker__navigation.react-datepicker__navigation--previous {
+.react-datepicker>.react-datepicker__navigation.react-datepicker__navigation--previous {
   width: 24px;
   height: 24px;
   border: none;
@@ -1056,11 +1073,13 @@
   display: flex;
   gap: 20px;
 }
+
 .form-header-info-profile-txt-container {
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
+
 .form-header-info-profile-txt-title {
   font-size: 24px;
   line-height: 32.02px;
@@ -1068,6 +1087,7 @@
   font-family: Inter;
   color: #4d5062de;
 }
+
 .form-header-info-profile-num {
   font-size: 20px;
   line-height: 32px;
@@ -1101,6 +1121,7 @@
   letter-spacing: 0.4px;
   color: #4d5062de;
 }
+
 .form-header-money-data-date {
   font-weight: 400;
   font-size: 16px;
@@ -1117,6 +1138,7 @@
     letter-spacing: 0.4px;
   }
 }
+
 .form-header-money-data-date {
   font-weight: 400;
   font-size: 12px;
@@ -1126,6 +1148,7 @@
   color: #4d506261;
   align-self: end;
   margin-right: 14px;
+
   @media (max-width: 900px) {
     align-self: center;
     margin-right: 0px;
@@ -1146,6 +1169,7 @@
   gap: 4px;
   min-height: 59px;
   justify-content: space-between;
+
   @media (max-width: 900px) {
     max-width: 100%;
     width: 100%;
@@ -1160,15 +1184,19 @@
   gap: 4px;
   /* min-height: 59px; */
   justify-content: space-between;
+
   @media (max-width: 1300px) {
     width: 170px;
   }
+
   @media (max-width: 900px) {
     display: none;
   }
 }
+
 .form-secondContainer-third {
   display: none;
+
   @media (max-width: 900px) {
     display: flex;
     /* border: 1px solid red; */
@@ -1176,9 +1204,11 @@
     justify-content: space-between;
   }
 }
+
 .form-secondContainer-fourth {
   display: flex;
   flex-direction: column;
+
   @media (max-width: 900px) {
     display: none;
     /* border: 1px solid red; */
@@ -1186,9 +1216,11 @@
     justify-content: space-between;
   }
 }
+
 .form-secondContainer-fourths {
   display: flex;
   flex-direction: column;
+
   @media (max-width: 900px) {
     display: flex;
     /* border: 1px solid red; */
@@ -1200,6 +1232,7 @@
 .display-none {
   display: none;
 }
+
 .form-secondContainer-header-title {
   font-weight: 400;
   font-size: 12px;
@@ -1208,6 +1241,7 @@
   letter-spacing: 0.4px;
   color: #4d5062ad;
 }
+
 .form-secondContainer-header-subtitle {
   font-weight: 400;
   font-size: 20px;
@@ -1229,6 +1263,7 @@
 .form-secondContainer-wrapper-first-side {
   display: flex;
   gap: 12px;
+
   @media (max-width: 900px) {
     flex-direction: column;
   }
@@ -1241,6 +1276,7 @@
 .btnWrappers {
   /* border: 1px solid yellow; */
   width: 100%;
+
   .MuiButton-root {
     width: 100%;
     padding: 8px 0px !important;
@@ -1268,6 +1304,7 @@
   align-items: center;
   width: 100%;
 }
+
 .btnWrapperFth .header-rows {
   /* padding: 10px 5px; */
   /* justify-content: end; */

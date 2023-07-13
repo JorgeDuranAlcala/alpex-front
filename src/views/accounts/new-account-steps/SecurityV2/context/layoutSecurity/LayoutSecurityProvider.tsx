@@ -19,7 +19,7 @@ export const LayoutSecurityProvider = ({ children }: { children: ReactNode }) =>
   const dispatch = useAppDispatch();
 
   const { allErrors, setActiveErrors } = useContext(FormValidationsContext);
-  const { saveData } = useContext(LoadAndSaveSecuritiesContext);
+  const { saveData, isDataLoaded } = useContext(LoadAndSaveSecuritiesContext);
 
   const [nextStep, setNextStep] = useState<NextStep>({
     isOpenModal: false,
@@ -76,6 +76,7 @@ export const LayoutSecurityProvider = ({ children }: { children: ReactNode }) =>
       // states
       isOpenNextModal: nextStep.isOpenModal,
       isNextStep: nextStep.isNextStep,
+      isDataLoaded,
 
       // methods
       handleCloseNextModal,
