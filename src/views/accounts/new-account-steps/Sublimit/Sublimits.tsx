@@ -178,12 +178,28 @@ const Sublimits = () => {
     const save: Partial<SublimitDto>[] = []
     const update: Partial<SublimitDto>[] = []
     for (const subLimit of subLimits) {
+
+      // * Cuando hay un cambio en el componente DeductibleMaterialDamage,
+      // * desaparece el campo idCDeductiblePer, si no hay un cambio
+      // * lo deja en 0, entonces cuando venga en 0, lo elimino
+
+      // * Se elimina el campo title porque no existe en la base de datos,
+      // * ya hay otro llamado "coverage" el cuál contiene el título de la card
+      const tempSubmit = {
+        ...subLimit,
+        ...(subLimit?.idCDeductiblePer === 0 ? { idCDeductiblePer: null } : null),
+        ...(subLimit?.title ? { title: undefined } : null)
+      }
+
+
       if (subLimit.id) {
-        update.push(subLimit)
+        update.push(tempSubmit)
       } else {
-        save.push(subLimit)
+        save.push(tempSubmit)
       }
     }
+
+    console.log({ update, save })
     Promise.all([updateSublimits(update), saveSublimits(save)])
       .then(values => {
         console.log({ values })
