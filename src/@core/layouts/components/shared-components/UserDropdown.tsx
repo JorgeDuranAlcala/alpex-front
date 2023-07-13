@@ -45,7 +45,7 @@ const AvatarLetter = styled(Box)(({ theme }) => ({
   borderRadius: '50%',
 
   width: '40px',
-  height: '40px',
+  height: '40px'
 }))
 
 const UserDropdown = (props: Props) => {
@@ -57,8 +57,7 @@ const UserDropdown = (props: Props) => {
 
   // ** Hooks
   const router = useRouter()
-  const { user, logout } = useAuth();
-  console.log({ user })
+  const { user, logout } = useAuth()
 
   // ** Vars
   const { direction } = settings
@@ -99,16 +98,14 @@ const UserDropdown = (props: Props) => {
       <Badge
         overlap='circular'
         onClick={handleDropdownOpen}
-        sx={{ ml: 2, cursor: 'pointer' }}
+        sx={{ ml: 2, cursor: 'pointer', zIndex: 1000 }}
         badgeContent={<BadgeContentSpan />}
         anchorOrigin={{
           vertical: 'bottom',
           horizontal: 'right'
         }}
       >
-        <AvatarLetter>
-          {user?.fullName[0].toUpperCase()}
-        </AvatarLetter>
+        <AvatarLetter>{user?.fullName[0].toUpperCase()}</AvatarLetter>
         {/* <Avatar
           alt={user?.fullName}
           onClick={handleDropdownOpen}
@@ -134,13 +131,13 @@ const UserDropdown = (props: Props) => {
                 horizontal: 'right'
               }}
             >
-              <AvatarLetter>
-                {user?.fullName[0].toUpperCase()}
-              </AvatarLetter>
+              <AvatarLetter>{user?.fullName[0].toUpperCase()}</AvatarLetter>
               {/* <Avatar alt={user?.fullName} src='/images/avatars/1.png' sx={{ width: '2.5rem', height: '2.5rem' }} /> */}
             </Badge>
             <Box sx={{ display: 'flex', ml: 3, alignItems: 'flex-start', flexDirection: 'column' }}>
-              <Typography sx={{ fontWeight: 600, ':first-letter': { textTransform: 'uppercase' } }}>{user?.fullName}</Typography>
+              <Typography sx={{ fontWeight: 600, ':first-letter': { textTransform: 'uppercase' } }}>
+                {user?.fullName}
+              </Typography>
               <Typography variant='body2' sx={{ fontSize: '0.8rem', color: 'text.disabled' }}>
                 {user?.role}
               </Typography>

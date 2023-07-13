@@ -151,15 +151,15 @@ const RetroCedantsTable = () => {
     setAlertType(type)
 
     switch (type) {
-      case 'success':
+      case 'success-alert':
         setAlertText(text)
         setAlertIcon('mdi:check-circle-outline')
         break
-      case 'error':
+      case 'error-alert':
         setAlertText('UNKNOWN ERROR, TRY AGAIN')
         setAlertIcon('mdi:alert-circle-outline')
         break
-      case 'warn':
+      case 'warn-alert':
         setAlertText('NO INTERNET CONNECTION')
         setAlertIcon('mdi:alert-outline')
         break
@@ -196,7 +196,7 @@ const RetroCedantsTable = () => {
     const result = await deleteRetroCedant({ idDeleteList: selectedRows })
     if (result) {
       getRetroCedantsPagination({ ...retroCedantPagination })
-      triggerAlert('success', 'DELETED')
+      triggerAlert('success-alert', 'DELETED')
     }
     setOpenDeleteRows(false)
   }
@@ -210,7 +210,7 @@ const RetroCedantsTable = () => {
     const result = await deleteRetroCedant({ idDeleteList: [retroCedantToDelete] })
     if (result) {
       getRetroCedantsPagination({ ...retroCedantPagination })
-      triggerAlert('success', 'DELETED')
+      triggerAlert('success-alert', 'DELETED')
     }
     setOpenDelete(false)
   }
@@ -240,7 +240,7 @@ const RetroCedantsTable = () => {
           }}
           deleteBtn={selectedRows.length > 0 ? true : false}
           onSearch={searchRetroCedant}
-          textBtn='ADD NEW CEDANT'
+          textBtn='ADD NEW RETRO CEDANT'
           onClickBtn={() => router.push('/catalogues/dynamic/add-retrocedants')}
         />
         <div className='cedant-list'>

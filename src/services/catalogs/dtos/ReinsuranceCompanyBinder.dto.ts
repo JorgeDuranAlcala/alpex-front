@@ -1,5 +1,5 @@
 export interface ReinsuranceCompanyBinderDto {
-  id: number
+  id?: number
   referenceNumber: string
   idCReinsuranceCompany: number
 }
@@ -38,4 +38,8 @@ export interface ReinsuranceCompanyBindersPaginationDto {
   idCReinsuranceCompany: number
   filters: ReinsuranceCompanyBinderFiltersDto[]
   info: ReinsuranceCompanyBindersInfoDto
+}
+
+export interface ReinsCompBindByIdCompParams {
+  idCReinsuranceCompany: number
 }

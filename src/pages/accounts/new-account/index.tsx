@@ -13,16 +13,20 @@ import Information from 'src/views/accounts/new-account-steps/Information/Inform
 
 import PaymentWarranty from 'src/views/accounts/new-account-steps/PaymentWarranty'
 import Security from 'src/views/accounts/new-account-steps/Security/SecurityView'
-import ActionsHeader from 'src/views/accounts/new-account-steps/headers/ActionsHeader'
+
 import CommentSection from 'src/views/components/new-accounts/CommentSection'
 import NewAccountStepper from 'src/views/components/new-accounts/NewAccountStepper'
 
 // import TabAccount from 'src/views/pages/account-settings/TabAccount'
 
 // import { useGetAccountById } from '@/hooks/accounts/forms'
+import MenuForm from '@/pages/menuForm'
 import { updateFormsData } from '@/store/apps/accounts'
-import Sublimits from 'src/views/accounts/new-account-steps/Sublimits'
+import FormAddress from '@/views/accounts/new-account-steps/FormAddress'
+import Sublimits from '@/views/accounts/new-account-steps/Sublimit/Sublimits'
 import FormHeader from 'src/views/accounts/new-account-steps/headers/formHeader'
+
+import Icon from 'src/@core/components/icon'
 
 // import UserList from 'src/pages/apps/user/list'
 
@@ -39,6 +43,12 @@ const NewAccount = () => {
   const [isNewAccount, setIsNewAccount] = useState<boolean>(true)
   const [activeStep, setActiveStep] = useState(1)
 
+  // const [sidebar, setSidebar] = useState<boolean>(false)
+  // const handleSidebarMenu = () => {
+  //   setSidebar(!sidebar)
+  //   console.log('Hola')
+  // }
+
   // console.log({ account })
 
   const handleStepChange = (step: number) => {
@@ -53,13 +63,22 @@ const NewAccount = () => {
   const StepForm = ({ step }: { step: number }) => {
     switch (step) {
       case 1:
-        return <Information onStepChange={handleStepChange} onIsNewAccountChange={handleIsNewAccountChange} />
+        return (
+          <Information
+            editInfo={{ basic: true, allInfo: true }}
+            onStepChange={handleStepChange}
+            onIsNewAccountChange={handleIsNewAccountChange}
+          />
+        )
       case 2:
         return <Security onStepChange={handleStepChange} />
       case 3:
         return <PaymentWarranty onStepChange={handleStepChange} />
       case 4:
         return <Sublimits />
+
+      case 5:
+        return <FormAddress />
       default:
         return <></>
     }
@@ -137,18 +156,26 @@ const NewAccount = () => {
       {/* "ActionsHeader" component receives the initial status of the
       account and in order to use it as a "side header" (forms 2 to 4),
       it is necessary to send the boolean variable "sideHeader = true". */}
-      {activeStep == 1 && isNewAccount ? <ActionsHeader accountStatus='PENDING' sideHeader={false} /> : <FormHeader />}
+      {/* {activeStep == 1 && isNewAccount ? <ActionsHeader accountStatus='PENDING' sideHeader={false} /> : <FormHeader />} */}
+      {activeStep == 1 && isNewAccount ? <FormHeader isNewAccount /> : <FormHeader />}
+      <div style={{ display: 'flex', flexDirection: 'row', gap: '16px' }}>
+        <Card>
+          <NewAccountStepper changeStep={activeStep} onStepChange={handleStepChange} />
+          <StepForm step={activeStep} />
+          {/* <TabAccount /> */}
 
-      <Card>
-        <NewAccountStepper changeStep={activeStep} onStepChange={handleStepChange} />
-        <StepForm step={activeStep} />
-        {/* <TabAccount /> */}
+          {/* <UserList /> */}
 
-        {/* <UserList /> */}
-
-        {/* <InvoiceAdd /> */}
-      </Card>
-      <Card>
+          {/* <InvoiceAdd /> */}
+        </Card>
+        <div style={{ display: 'none' }}>
+          <MenuForm />
+        </div>
+      </div>
+      <Card sx={{ '@media (min-width:809px)': { display: 'none' } }}>
+        <div style={{ display: 'flex', height: '50px', padding: '14px', alignItems: 'center' }}>
+          <Icon icon={'material-symbols:chat-bubble-outline'} fontSize={24} color='#4D5062' />
+        </div>
         <CommentSection disable={disableComments} step={activeStep} />
       </Card>
     </Grid>

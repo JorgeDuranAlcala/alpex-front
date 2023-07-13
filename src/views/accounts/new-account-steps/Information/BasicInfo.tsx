@@ -4,12 +4,16 @@ import React, { ForwardedRef, ReactNode, forwardRef, useEffect, useState } from 
 // ** MUI Imports
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
 import {
+  Autocomplete,
   FormControl,
+  FormControlLabel,
   FormHelperText,
   Grid,
   InputAdornment,
   InputLabel,
   MenuItem,
+  Radio,
+  RadioGroup,
   SxProps,
   TextField,
   Theme
@@ -20,10 +24,20 @@ import Select, { SelectChangeEvent } from '@mui/material/Select' //SelectChangeE
 import { ContactModal } from '@/views/accounts/new-account-steps/Information/ContactModal'
 
 //hooks para base info y  modal contac
-import { useGetAllCountries as useCountyGetAll } from 'src/hooks/catalogs/country'
+import { useGetAllCountries as useCountryGetAll } from 'src/hooks/catalogs/country'
 
 // ** Third Party Imports
+import DatePickerWrapper from '@/@core/styles/libs/react-datepicker'
+import { ROLES } from '@/configs/api'
+import { useGetAllEconomicSectors } from '@/hooks/catalogs/economic-sector'
 import DatePicker from 'react-datepicker'
+import { useGetAll as useBrokerGetAll } from 'src/hooks/catalogs/broker'
+import { useGetAllByIdBroker } from 'src/hooks/catalogs/broker-contact/'
+import { useGetAll as useCedantGetAll } from 'src/hooks/catalogs/cedant'
+import { useGetAllByCedant } from 'src/hooks/catalogs/cedant-contact'
+import { useGetAllLineOfBussines } from 'src/hooks/catalogs/lineOfBussines'
+import { useGetAllRiskActivities } from 'src/hooks/catalogs/riskActivity'
+import { useGetByIdRole } from 'src/hooks/catalogs/users/'
 
 interface PickerProps {
   label?: string
@@ -31,6 +45,24 @@ interface PickerProps {
 }
 
 interface BasicInfoErrors {
+  insuredError: boolean
+  countryError: boolean
+  economicSectorError: boolean
+  brokerError: boolean
+  cedantError: boolean
+  lineOfBusinessError: boolean
+
+  // underwriterError: boolean
+  // leadUnderwriterError: boolean
+  // technicalAssistantError: boolean
+  industryCodeError: boolean
+  riskActivityError: boolean
+  riskClassError: boolean
+  receptionDateError: boolean
+  effectiveDateError: boolean
+  expirationDateError: boolean
+}
+interface BasicInfoSaveErrors {
   insuredError: boolean
   countryError: boolean
   brokerError: boolean
@@ -47,9 +79,10 @@ interface BasicInfoErrors {
   effectiveDateError: boolean
   expirationDateError: boolean
 }
-type BasicInputType = {
+type BasicInfoType = {
   insured: string
   country: number | string
+  economicSector: number | string
   broker: number | string
   brokerContact: number | null | string
   brokerContactEmail: string
@@ -64,18 +97,22 @@ type BasicInputType = {
   underwriter: number | string | null
   leadUnderwriter: number | string | null
   technicalAssistant: number | string | null
-  industryCode: number | string
+  industryCode: number | string | null | undefined
   riskActivity: string
   riskClass: number
   receptionDate: Date | null
   effectiveDate: Date | null
   expirationDate: Date | null
+  idAccountType: number
 }
 type BasicInfoProps = {
-  basicInfo: BasicInputType
-  setBasicInfo: React.Dispatch<React.SetStateAction<BasicInputType>>
+  basicInfo: BasicInfoType
+  setBasicInfo: React.Dispatch<React.SetStateAction<BasicInfoType>>
   makeValidations: boolean
-  onValidationComplete: (valid: boolean) => void
+  makeSaveValidations: boolean
+  editInfo?: any
+  activeEndorsement?: boolean
+  onValidationComplete: (valid: boolean, formName: string) => void
 }
 
 /* eslint-disable */
@@ -97,19 +134,21 @@ const CustomInput = forwardRef(({ ...props }: PickerProps, ref: ForwardedRef<HTM
   )
 })
 
-import DatePickerWrapper from '@/@core/styles/libs/react-datepicker'
-import { ROLES } from '@/configs/api'
-import { useGetAll as useBrokerGetAll } from 'src/hooks/catalogs/broker'
-import { useGetAllByIdBroker } from 'src/hooks/catalogs/broker-contact/'
-import { useGetAll as useCedantGetAll } from 'src/hooks/catalogs/cedant'
-import { useGetAllByCedant } from 'src/hooks/catalogs/cedant-contact'
-import { useGetAllLineOfBussines } from 'src/hooks/catalogs/lineOfBussines'
-import { useGetAllRiskActivities } from 'src/hooks/catalogs/riskActivity'
-import { useGetByIdRole } from 'src/hooks/catalogs/users/'
+type CheckboxValue = 1 | 2
 
-const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeValidations, onValidationComplete }) => {
+const BasicInfo: React.FC<BasicInfoProps> = ({
+  basicInfo,
+  setBasicInfo,
+  makeValidations,
+  makeSaveValidations,
+  onValidationComplete,
+  editInfo
+}) => {
   //cargamos la informacion de los catalogos de base de datos
-  const { countries } = useCountyGetAll()
+  const { countries } = useCountryGetAll()
+  const { economicSectors } = useGetAllEconomicSectors()
+
+  // const { economicSector } = useGetSectors()
   const { brokers } = useBrokerGetAll()
   const { cedant } = useCedantGetAll()
   const [validateForm, setValidateForm] = useState<boolean>(true)
@@ -120,13 +159,21 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
   const { users: underwriters } = useGetByIdRole(ROLES.UNDERWRITER)
   const { users: leadUnderwriters } = useGetByIdRole(ROLES.LEAD_UNDERWRITER)
   const { users: technicalAssistants } = useGetByIdRole(ROLES.TECHNICAL_ASSISTANT)
-
+  const [checkboxValue, setCheckboxValue] = useState<CheckboxValue>(1)
   const [bussinesFields, setBussinesFields] = useState(true)
 
+  //Industry code managing
+  const [industryCodeValue, setIndustryCodeValue] = useState<string | number | null | undefined>(basicInfo.industryCode)
+  const [inputValue, setInputValue] = useState<string | undefined>('')
+  const [industryCodeOptions, setIndustryCodeOptions] = useState<string[]>([])
+
+  //Error control
+  const [wrongDateError, setWrongDateError] = useState(false)
   // const [valid, setValid]= useState(false)
   const [errors, setErrors] = useState<BasicInfoErrors>({
     insuredError: false,
     countryError: false,
+    economicSectorError: false,
     brokerError: false,
     cedantError: false,
     lineOfBusinessError: false,
@@ -179,14 +226,6 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
       setIdCedant(Number(value))
     }
 
-    if (name === 'industryCode') {
-      const riskActivity = riskActivities.find(r => r.id === Number(value))
-      if (riskActivity) {
-        basicInfoTem.riskActivity = riskActivity.riskActivity
-        basicInfoTem.riskClass = riskActivity.class
-      }
-    }
-
     basicInfoTem = {
       ...basicInfoTem,
       [name]: value
@@ -210,38 +249,82 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
     !validateForm && validations({ ...basicInfo, expirationDate: date })
   }
 
-  const validations = (basicInfoParama: BasicInputType | null = null) => {
+  const handleChangeIndustryCode = (value: string) => {
+    setIndustryCodeValue(value)
+    const riskActivity = riskActivities.find(r => value.includes(r.riskActivity))
+    basicInfo.riskActivity = riskActivity!.riskActivity
+    basicInfo.riskClass = riskActivity!.class
+    basicInfo = {
+      ...basicInfo,
+      industryCode: riskActivity!.id
+    }
+    !validateForm && validations(basicInfo)
+    setBasicInfo(basicInfo)
+  }
+
+  const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setCheckboxValue(Number(event.target.value) as CheckboxValue)
+  }
+
+  const validations = (basicInfoParama: BasicInfoType | null = null) => {
     const basicInfoTemp = basicInfoParama ? basicInfoParama : basicInfo
     const newErrors: BasicInfoErrors = {
       insuredError: basicInfoTemp.insured === '',
       countryError: basicInfoTemp.country === '',
+      economicSectorError: false, //makeValidations && basicInfoTemp.economicSector === '',
       brokerError: basicInfoTemp.broker === '',
       cedantError: basicInfoTemp.cedant === '',
       lineOfBusinessError: basicInfoTemp.lineOfBusiness === '',
       // underwriterError: basicInfoTemp.underwriter === '',
       // leadUnderwriterError: basicInfoTemp.leadUnderwriter === '',
       // technicalAssistantError: basicInfoTemp.technicalAssistant === '',
-      industryCodeError: basicInfoTemp.industryCode === '',
+      industryCodeError: basicInfoTemp.industryCode === '' || basicInfoTemp.industryCode === null,
       riskActivityError: basicInfoTemp.riskActivity === '',
       riskClassError: basicInfoTemp.riskClass === 0,
       receptionDateError: basicInfoTemp.receptionDate === null,
-      effectiveDateError: basicInfoTemp.effectiveDate === null,
-      expirationDateError: basicInfoTemp.expirationDate === null
+      effectiveDateError:
+        basicInfoTemp.effectiveDate === null ||
+        (basicInfoTemp.expirationDate !== null &&
+          basicInfoTemp.effectiveDate !== null &&
+          basicInfoTemp.effectiveDate > basicInfoTemp.expirationDate),
+      expirationDateError:
+        basicInfoTemp.expirationDate === null ||
+        (basicInfoTemp.expirationDate !== null &&
+          basicInfoTemp.effectiveDate !== null &&
+          basicInfoTemp.effectiveDate > basicInfoTemp.expirationDate)
+    }
+
+    if (
+      basicInfoTemp.expirationDate !== null &&
+      basicInfoTemp.effectiveDate !== null &&
+      basicInfoTemp.effectiveDate > basicInfoTemp.expirationDate
+    ) {
+      setWrongDateError(true)
     }
 
     setErrors(newErrors)
 
     if (Object.values(newErrors).every(error => !error)) {
-      onValidationComplete(true)
+      onValidationComplete(true, 'basicInfo')
       setValidateForm(true)
     } else {
-      onValidationComplete(false)
+      onValidationComplete(false, 'basicInfo')
       setValidateForm(false)
     }
   }
 
   const getErrorMessage = (name: keyof BasicInfoErrors) => {
-    return errors[name] ? 'This field is required' : ''
+    let errorMsj = 'This field is required'
+
+    if (name == 'effectiveDateError' && wrongDateError) {
+      errorMsj = 'Effective date cannot be greater than expiration date'
+    }
+
+    if (name == 'expirationDateError' && wrongDateError) {
+      errorMsj = 'Expiration date cannot be less than effective date'
+    }
+
+    return errors[name] ? errorMsj : ''
   }
 
   useEffect(() => {
@@ -256,6 +339,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
     //get broker contact info
     const idBrokerContact = basicInfo.brokerContact ? parseInt(basicInfo.brokerContact.toString()) : 0
     const brokerContactInfo = brokerContacts.find(brokerContact => brokerContact.id === idBrokerContact)
+
     setBasicInfo(prevBasicInfo => ({
       ...prevBasicInfo,
       brokerContactEmail: brokerContactInfo?.email || 'test',
@@ -279,41 +363,81 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
   }, [basicInfo.cedantContact, cedantContacts])
 
   useEffect(() => {
-    let riskActivity = {
-      riskActivity: '',
-      riskClass: 0
+    // useEffect to handle industry code changes.
+    if (riskActivities.length > 0) {
+      let value = industryCodeValue
+      let basicInfoTem = { ...basicInfo }
+
+      if (value == null) value = ''
+
+      const riskActivity = riskActivities.find(r => String(value).includes(r.riskActivity))
+
+      if (!riskActivity) return
+
+      basicInfoTem.riskActivity = riskActivity.riskActivity
+      basicInfoTem = {
+        ...basicInfoTem,
+        ['industryCode']: riskActivity.id
+      }
+
+      !validateForm && validations(basicInfoTem)
+      setBasicInfo(basicInfoTem)
     }
 
-    const industryCode = riskActivities.find(r => r.id === Number(basicInfo.industryCode))
-
-    if (industryCode) {
-      riskActivity.riskActivity = industryCode.riskActivity
-      riskActivity.riskClass = industryCode.class
-    }
-
-    setBasicInfo(state => ({
-      ...state,
-      riskActivity: riskActivity.riskActivity,
-      riskClass: riskActivity.riskClass
-    }))
-  }, [basicInfo.industryCode, riskActivities])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [industryCodeValue, basicInfo.riskActivity, riskActivities])
 
   useEffect(() => {
-    if (makeValidations) {
+    if (!basicInfo.riskActivity && basicInfo.industryCode && industryCodeOptions.length > 0) {
+      const riskActivity = riskActivities.find(r => r.id === basicInfo.industryCode)
+      if (!riskActivity) return
+      const autocomplete = `${riskActivity?.industryCode} / ${riskActivity?.riskActivity}`
+      setIndustryCodeValue(autocomplete)
+    }
+  }, [basicInfo.industryCode, industryCodeOptions])
+
+  useEffect(() => {
+    if (makeValidations || makeSaveValidations) {
       validations()
       setValidateForm(false)
     }
-  }, [makeValidations])
+  }, [makeValidations, makeSaveValidations])
 
-  React.useEffect(() => {
-    console.log('basic info cambio')
-    console.log(basicInfo)
-  }, [basicInfo])
+  useEffect(() => {
+    riskActivities.length > 0 &&
+      setIndustryCodeOptions([
+        ...riskActivities.map(activities => `${activities.industryCode} / ${activities.riskActivity}`)
+      ])
+  }, [riskActivities])
 
+  console.log('Esta cuenta es de tipo: !!!!!!!!', editInfo)
+  if (
+    countries.length === 0 &&
+    economicSectors.length === 0 &&
+    brokers.length === 0 &&
+    cedant.length === 0 &&
+    riskActivities.length === 0 &&
+    lineOfBussines.length === 0
+  ) {
+    return null
+  }
   return (
     <>
       <div className='title'>Basic info</div>
       <div className='form-wrapper'>
+        <div className='form-row'>
+          <FormControl component='fieldset'>
+            <RadioGroup
+              aria-label='checkboxGroup'
+              name='idAccountType'
+              value={basicInfo.idAccountType}
+              onChange={handleInputChange}
+            >
+              <FormControlLabel value={1} control={<Radio />} label='New' />
+              <FormControlLabel value={2} control={<Radio />} label='Renewal' />
+            </RadioGroup>
+          </FormControl>
+        </div>
         <div className='form-col'>
           <div className='title'>Insured</div>
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
@@ -326,6 +450,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
               onChange={handleInputChange}
               error={!!errors.insuredError}
               helperText={getErrorMessage('insuredError')}
+              disabled={!editInfo.basic}
             />
           </FormControl>
 
@@ -339,6 +464,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
               value={String(basicInfo.country)}
               onChange={handleSelectChange}
               labelId='invoice-country'
+              disabled={!editInfo.basic}
             >
               {countries.length > 0 ? (
                 countries.map(country => {
@@ -361,6 +487,39 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
               </FormHelperText>
             )}
           </FormControl>
+          <FormControl fullWidth sx={{ mb: 2, mt: 2 }} error={errors.countryError}>
+            <InputLabel>Economic Sector</InputLabel>
+
+            <Select
+              name='economicSector'
+              label='Economic Sector'
+              defaultValue={''}
+              value={String(basicInfo.economicSector)}
+              onChange={handleSelectChange}
+              labelId='economic-sector'
+              disabled={!editInfo.basic}
+            >
+              {economicSectors.length > 0 ? (
+                economicSectors.map(sector => {
+                  return (
+                    <MenuItem key={sector.id} value={sector.id}>
+                      {sector.sector}
+                    </MenuItem>
+                  )
+                })
+              ) : (
+                <MenuItem key={null} value={''}>
+                  No options available
+                </MenuItem>
+              )}
+            </Select>
+
+            {/* {errors.economicSectorError && (
+              <FormHelperText sx={{ color: 'error.main' }} id='invoice-country-error'>
+                {getErrorMessage('countryError')}
+              </FormHelperText>
+            )} */}
+          </FormControl>
         </div>
 
         <div className='form-col'>
@@ -374,6 +533,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
               value={String(basicInfo.broker)}
               onChange={handleSelectChange}
               labelId='broker'
+              disabled={!editInfo.basic}
             >
               {brokers.length > 0 ? (
                 brokers.map(broker => {
@@ -402,7 +562,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
               name='brokerContact'
               label='Select Broker Contact'
               value={String(basicInfo.brokerContact)}
-              disabled={basicInfo.broker !== '' ? false : true}
+              disabled={editInfo.basic && basicInfo.broker !== '' ? false : true}
               defaultValue=''
               onChange={handleSelectChange}
               labelId='broker-contact'
@@ -467,6 +627,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
               value={String(basicInfo.cedant)}
               onChange={handleSelectChange}
               labelId='cedant'
+              disabled={!editInfo.basic}
             >
               {cedant.length > 0 ? (
                 cedant.map(cedant => {
@@ -496,7 +657,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
               name='cedantContact'
               label='Select Cedant Contact'
               value={`${basicInfo.cedantContact == 0 ? '' : basicInfo.cedantContact}`}
-              disabled={basicInfo.cedant !== '' ? false : true}
+              disabled={editInfo.basic && basicInfo.cedant !== '' ? false : true}
               onChange={handleSelectChange}
               defaultValue=''
               labelId='cedant-contact'
@@ -561,6 +722,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
               value={String(basicInfo.lineOfBusiness)}
               onChange={handleSelectChange}
               labelId='business'
+              disabled={!editInfo.basic}
             >
               {lineOfBussines.length > 0 ? (
                 lineOfBussines.map(lineOfBussine => {
@@ -577,34 +739,51 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
               )}
             </Select>
             {errors.lineOfBusinessError && (
-              <FormHelperText sx={{ color: 'error.main' }} id='industryCode-error'>
-                {getErrorMessage('industryCodeError')}
+              <FormHelperText sx={{ color: 'error.main' }} id='lineOfBusiness-error'>
+                {getErrorMessage('lineOfBusinessError')}
               </FormHelperText>
             )}
           </FormControl>
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
-            <InputLabel>Industry code</InputLabel>
-            <Select
-              name='industryCode'
-              label='Industry Code'
-              value={String(basicInfo.industryCode)}
-              onChange={handleSelectChange}
-              labelId='industryCode'
-            >
-              {riskActivities.length > 0 ? (
-                riskActivities.map(riskActivities => {
-                  return (
-                    <MenuItem key={riskActivities.id} value={riskActivities.id}>
-                      {riskActivities.industryCode} / {riskActivities.riskActivity}
-                    </MenuItem>
-                  )
-                })
-              ) : (
-                <MenuItem key={null} value={''}>
-                  No options available
-                </MenuItem>
-              )}
-            </Select>
+            <Autocomplete
+              value={industryCodeValue}
+              onChange={(event: any, newValue: string | number | null | undefined) => {
+                handleChangeIndustryCode(String(newValue))
+              }}
+              inputValue={inputValue}
+              onInputChange={(event, newInputValue) => {
+                setInputValue(newInputValue)
+              }}
+              id='controllable-states-demo'
+              options={industryCodeOptions}
+              sx={{ width: '100%' }}
+              className={errors.industryCodeError ? 'error' : ''}
+              renderInput={params => <TextField {...params} label={'Industry Code'} />}
+              disabled={!editInfo.basic}
+            />
+            {false && (
+              <Select
+                name='industryCode'
+                label='Industry Code'
+                value={String(basicInfo.industryCode)}
+                onChange={handleSelectChange}
+                labelId='industryCode'
+              >
+                {riskActivities.length > 0 ? (
+                  riskActivities.map(riskActivities => {
+                    return (
+                      <MenuItem key={riskActivities.id} value={riskActivities.id}>
+                        {riskActivities.industryCode} / {riskActivities.riskActivity}
+                      </MenuItem>
+                    )
+                  })
+                ) : (
+                  <MenuItem key={null} value={''}>
+                    No options available
+                  </MenuItem>
+                )}
+              </Select>
+            )}
             {errors.industryCodeError && (
               <FormHelperText sx={{ color: 'error.main' }} id='business-error'>
                 {getErrorMessage('lineOfBusinessError')}
@@ -619,7 +798,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
               label='Risk activity'
               value={basicInfo.riskActivity}
               disabled={true}
-              onChange={handleInputChange}
+              className={errors.riskActivityError ? 'error' : ''}
               error={!!errors.riskActivityError}
               helperText={getErrorMessage('riskActivityError')}
             />
@@ -630,8 +809,9 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
               name='riskClass'
               label='Risk class'
               value={basicInfo.riskClass}
-              disabled={true}
+              disabled={basicInfo.industryCode == null}
               onChange={handleInputChange}
+              className={errors.riskClassError ? 'error' : ''}
               error={!!errors.riskClassError}
               helperText={getErrorMessage('riskClassError')}
             />
@@ -655,6 +835,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
                 timeFormat='HH:mm'
                 timeIntervals={15}
                 dateFormat='dd/MM/yyyy h:mm aa'
+                disabled={!editInfo.basic}
               />
               {errors.receptionDateError && (
                 <FormHelperText
@@ -683,6 +864,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
                 timeFormat='HH:mm'
                 timeIntervals={15}
                 dateFormat='dd/MM/yyyy h:mm aa'
+                disabled={!editInfo.basic}
               />
               {errors.effectiveDateError && (
                 <FormHelperText
@@ -711,6 +893,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
                 timeFormat='HH:mm'
                 timeIntervals={15}
                 dateFormat='dd/MM/yyyy h:mm aa'
+                disabled={!editInfo.basic}
               />
               {errors.expirationDateError && (
                 <FormHelperText
@@ -739,6 +922,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
               value={String(basicInfo.underwriter)}
               onChange={handleSelectChange}
               labelId='underwriter'
+              disabled={!editInfo.basic}
             >
               {underwriters.length > 0 ? (
                 underwriters.map(underwriter => {
@@ -764,6 +948,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
               value={String(basicInfo.leadUnderwriter)}
               onChange={handleSelectChange}
               labelId='lead-underwriter'
+              disabled={!editInfo.basic}
             >
               {leadUnderwriters.length > 0 ? (
                 leadUnderwriters.map(leadUnderwriter => {
@@ -792,6 +977,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ basicInfo, setBasicInfo, makeVali
               value={String(basicInfo.technicalAssistant)}
               onChange={handleSelectChange}
               labelId='assistant'
+              disabled={!editInfo.basic}
             >
               {technicalAssistants.length > 0 ? (
                 technicalAssistants.map(technicalAssistant => {

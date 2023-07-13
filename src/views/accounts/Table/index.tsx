@@ -15,6 +15,7 @@ import Icon from 'src/@core/components/icon'
 import { useRouter } from 'next/router'
 
 // ** Custom Hooks imports
+import { useMultiTabButtons } from '@/layouts/components/multiTabButtons/hooks/useMultiTabButtons'
 
 // ** Custom Components Imports
 import ColumnHeader from './ColumnHeader'
@@ -39,6 +40,7 @@ import {
 import colors from 'src/views/accounts/colors'
 import fonts from 'src/views/accounts/font'
 import { IAlert } from 'src/views/custom/alerts'
+
 
 export interface IAccount {
   id: string
@@ -74,18 +76,23 @@ const Table = ({ status }: IAccountTable) => {
     status: undefined,
     icon: undefined
   })
+  const [typeofCount, settypeofCount] = useState('')
 
   // **Reducers
   const dispatch = useAppDispatch()
   const accountsReducer = useAppSelector(state => state.accounts)
-  console.log({ selectAll })
+
+  // console.log({ selectAll })
+
   const selectAllOption = accountsReducer.accounts.map(account => account.id)
-  console.log({ selectAllOption })
-  console.log(accounts.effectiveDate)
+
+  // console.log({ selectAllOption })
+  // console.log(accounts.effectiveDate)
 
   // ** Custom Hooks
   //const { accounts, getAccounts } = useAccountTable()
   const { duplicateAccounts } = useAccountTable()
+  const { setBaseLink, setBackButtonProps, addNewTabButton } = useMultiTabButtons();
 
   // ** Hooks
   const router = useRouter()
@@ -95,12 +102,15 @@ const Table = ({ status }: IAccountTable) => {
   }
 
   useEffect(() => {
-    dispatch(fetchAccounts(accountsReducer))
+    const page = 1
+    dispatch(fetchAccounts(page))
+
     //eslint-disable-next-line
   }, [accountsReducer.filters])
 
   useEffect(() => {
     dispatch(resetAccountFilter())
+
     if (status === undefined) dispatch(deleteAccountFilter('status'))
     else {
       const index: string = Object.keys(EStatus)[Object.values(EStatus).indexOf(status as any)]
@@ -136,6 +146,7 @@ const Table = ({ status }: IAccountTable) => {
     }
 
     setAccounts(formatedRows || [])
+    settypeofCount(formatedRows[0]?.status)
     //eslint-disable-next-line
   }, [accountsReducer])
 
@@ -416,9 +427,27 @@ const Table = ({ status }: IAccountTable) => {
         }
       })
     )
+
     localStorage.setItem('idAccount', String(id))
-    router.push(`/accounts/new-account/?&id=${id}`)
+    router.push(`/accounts/view/?&${typeofCount}/?&id=${id}`)
+    addNewTabButton({
+      text: id.toString(),
+      link: `/accounts/view/?&${typeofCount}/?&id=${id}`,
+      isActive: true
+    })
   }
+
+  console.log('esta cuenta es: ', typeofCount)
+
+
+  useEffect(() => {
+    setBaseLink();
+    setBackButtonProps({
+      text: 'Back to Accounts',
+      link: `/accounts/`,
+      isShow: false
+    })
+  }, [setBaseLink, setBackButtonProps])
 
   return (
     <>

@@ -1,4 +1,4 @@
-// ** MUI Imports
+// ** MUI ImportsuseMultiTabButtons'
 import Card from '@mui/material/Card'
 import Grid from '@mui/material/Grid'
 
@@ -10,13 +10,15 @@ import Table from 'src/views/accounts/Table'
 
 const Accounts = () => {
 
+
+
   return (
     <AccountsTableContextProvider>
       <Grid item xs={12}>
-      <Card>
-        <Table />
-      </Card>
-    </Grid>
+        <Card>
+          <Table />
+        </Card>
+      </Grid>
     </AccountsTableContextProvider>
   )
 }

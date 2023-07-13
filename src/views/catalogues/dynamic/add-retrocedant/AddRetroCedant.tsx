@@ -40,15 +40,15 @@ const AddRetroCedant = () => {
     setAlertType(type)
 
     switch (type) {
-      case 'success':
+      case 'success-alert':
         setAlertText('NEW CEDANT ADDED')
         setAlertIcon('mdi:check-circle-outline')
         break
-      case 'error':
+      case 'error-alert':
         setAlertText('UNKNOWN ERROR, TRY AGAIN')
         setAlertIcon('mdi:alert-circle-outline')
         break
-      case 'warn':
+      case 'warn-alert':
         setAlertText('NO INTERNET CONNECTION')
         setAlertIcon('mdi:alert-outline')
         break
@@ -67,7 +67,7 @@ const AddRetroCedant = () => {
     // const result = await saveRetroCedant({ name: newRetroCedant.name })
     // if (result) {
       // setNewRetroCedant({ id: result.id, name: result.name })
-      triggerAlert('success')
+      triggerAlert('success-alert')
 
       // dispatch(fetchRetroCedants(retroCedantReducer))
       setIsRetroCedantSaved(true)
@@ -82,17 +82,17 @@ const AddRetroCedant = () => {
       // dispatch(fetchRetroCedants(retroCedantReducer))
 
       setIsRetroCedantSaved(true)
-      triggerAlert('success')
+      triggerAlert('success-alert')
 
     // } else {
-      // triggerAlert('error')
+      // triggerAlert('error-alert')
     }
 
 
   const deleteRetroCedant = async () => {
     // const result = await deleteRetroCedants({ idDeleteList: [newRetroCedant.id] })
     // if (result) {
-      triggerAlert('success')
+      triggerAlert('success-alert')
 
       // dispatch(fetchRetroCedants(retroCedantReducer))
     // }
