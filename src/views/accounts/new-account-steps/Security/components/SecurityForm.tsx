@@ -435,7 +435,7 @@ export const FormSection = ({ index, security, onDeleteItemList, securities }: F
               companyId={security.idCReinsuranceCompany?.id ? String(security.idCReinsuranceCompany?.id) : ''}
             />
 
-            <Consecutive value={0} view={security.view} />
+            <Consecutive value={security.consecutive ? security.consecutive : ''} view={security.view} />
 
             <NetReinsurancePremium
               value={security.netReinsurancePremium}
