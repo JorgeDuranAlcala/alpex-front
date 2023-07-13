@@ -245,7 +245,7 @@ export class CalculateSecurity {
     const recievedNetPremium =
       premiumPerShareAmountNet +
       (premiumPerShareAmountGros - taxesGros - brokerageReinsuranceGross - discountAmountGros)
-    const diference = recievedNetPremium - distributedNetPremium
+    const diference = Math.abs(recievedNetPremium - distributedNetPremium)
 
     return {
       recievedNetPremium,

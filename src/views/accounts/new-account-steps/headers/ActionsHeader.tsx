@@ -167,12 +167,13 @@ const ActionsHeader: React.FC<IActionsHeaderProps> = ({ accountId, accountStatus
                     <div className='date'>Date</div>
                   </div>
                   {statusHistory.map(status => (
-                    <>
-                      <div className={status.id % 2 == 0 ? 'history-status grey-bg' : 'history-status'} key={status.id}>
-                        <div className='name'>{status.name}</div>
-                        <div className='date'>{status.date}</div>
-                      </div>
-                    </>
+                    <div
+                      key={`status-${status.id}`}
+                      className={status.id % 2 == 0 ? 'history-status grey-bg' : 'history-status'}
+                    >
+                      <div className='name'>{status.name}</div>
+                      <div className='date'>{status.date}</div>
+                    </div>
                   ))}
                 </Box>
               </Modal>

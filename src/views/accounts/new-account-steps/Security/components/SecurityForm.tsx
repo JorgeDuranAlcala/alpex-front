@@ -271,8 +271,6 @@ export const FormSection = ({ index, security, onDeleteItemList, securities }: F
     setCurrentView(activeView)
   }, [activeView])
 
-  console.log({ retroCedantContacts: security.idCRetroCedantContact, index })
-
   /*NOTE: en los componentes de porcentajes no es necesario calcular los otros valores ya que todos los calculos se hacen en el calculate securities a exception de las modificaciones de montos */
   return (
     <DiscountsProvider>
