@@ -47,7 +47,7 @@ export const SelectRetroCedant = ({
     if (retroCedants && retroCedants?.length > 0 && value) {
       setRetroCedantId(String(value))
     }
-  }, [value,retroCedants])
+  }, [value, retroCedants])
 
   return (
     <FormControl fullWidth sx={{ mb: 2 }}>
@@ -87,7 +87,14 @@ export const selectRetroCedant_validations = ({
 
       .test('', 'This field is required', value => {
         if (!isGross && frontingFeeEnabled) {
-          return value && typeof value === 'object' && value.hasOwnProperty('id')
+          const isValid =
+            value &&
+            typeof value === 'object' &&
+            value.hasOwnProperty('id') &&
+            value.id !== null &&
+            value.id !== undefined
+
+          return isValid
         }
 
         return true
