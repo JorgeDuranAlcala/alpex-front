@@ -1,5 +1,5 @@
 // ** React Imports
-import { ReactNode } from 'react'
+import { ReactNode, useEffect } from 'react'
 
 // ** Next Imports
 import type { NextPage } from 'next'
@@ -105,6 +105,29 @@ const Guard = ({ children, authGuard, guestGuard }: GuardProps) => {
     return <AuthGuard fallback={<Loader />}>{children}</AuthGuard>
   }
 }
+export const loadHotjar = (): void => {
+  ;(function (h: any, o: any, t: any, j: any, a: any, r: any) {
+    h.hj =
+      h.hj ||
+      function () {
+        // eslint-disable-next-line prefer-rest-params
+        ;(h.hj.q = h.hj.q || []).push(arguments)
+      }
+    h._hjSettings = { hjid: 3525272, hjsv: 6 }
+    a = o.getElementsByTagName('head')[0]
+    r = o.createElement('script')
+    r.async = 1
+    r.src = t + h._hjSettings.hjid + j + h._hjSettings.hjsv
+    a.appendChild(r)
+  })(
+    window,
+    document,
+    'https://static.hotjar.com/c/hotjar-',
+    '.js?sv=',
+    document.head,
+    document.createElement('script')
+  )
+}
 
 // ** Configure JSS & ClassName
 const App = (props: ExtendedAppProps) => {
@@ -122,6 +145,9 @@ const App = (props: ExtendedAppProps) => {
   const guestGuard = Component.guestGuard ?? false
 
   const aclAbilities = Component.acl ?? defaultACLObj
+  useEffect(() => {
+    loadHotjar()
+  }, [])
 
   return (
     <Provider store={store}>
