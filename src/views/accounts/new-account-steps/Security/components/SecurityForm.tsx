@@ -162,7 +162,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
           }
         }
         errorsTemp[index] = true
-        setErrorsSecurity(data);
+        setErrorsSecurity(data)
 
         // console.log({ error: data, index });
 
@@ -285,7 +285,6 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
 
   useEffect(() => {
     if (securities[index].view === 1) {
-
       checkValues({
         taxes: securities[index].taxes,
         frontingFee: securities[index].taxes
@@ -303,7 +302,6 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
       if (securities[index].view === 2) {
         setIsShowToggleFrontingFee(true)
       }
-
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -436,7 +434,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
               index={index}
             />
 
-            <Consecutive value={0} />
+            <Consecutive value={security.consecutive ? security.consecutive : ''} />
 
             <NetReinsurancePremium
               value={security.netReinsurancePremium}
@@ -560,35 +558,16 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
 
         <ButtonAddDiscount />
 
-        <ModalActivateSecondView
-          formIndex={index}
-          securities={securities}
-          calculateSecurities={calculateSecurities}
-        />
+        <ModalActivateSecondView formIndex={index} securities={securities} calculateSecurities={calculateSecurities} />
 
+        <SwitchSecondView formIndex={index} securities={securities} calculateSecurities={calculateSecurities} />
 
-        <SwitchSecondView
-          formIndex={index}
-          securities={securities}
-          calculateSecurities={calculateSecurities}
-        />
-
-        {securities[index].view === 2 ?
+        {securities[index].view === 2 ? (
           <>
-            <UndoSecondView
-              formIndex={index}
-              securities={securities}
-              calculateSecurities={calculateSecurities}
-            />
-            <ModalUndoSecondView
-              formIndex={index}
-              securities={securities}
-              calculateSecurities={calculateSecurities}
-            />
+            <UndoSecondView formIndex={index} securities={securities} calculateSecurities={calculateSecurities} />
+            <ModalUndoSecondView formIndex={index} securities={securities} calculateSecurities={calculateSecurities} />
           </>
-
-          : null}
-
+        ) : null}
       </div>
       <DialogCustomAlpex
         openDialog={openDialog}
