@@ -6,6 +6,7 @@ export interface LayoutSecurityContextProps {
   fontFamily: string;
   isOpenNextModal: boolean;
   isNextStep: boolean;
+  isDataLoaded: boolean;
   handleAddNewForm: () => void;
   handleCloseNextModal: () => void;
   handleBeforeNextStep: () => void;
