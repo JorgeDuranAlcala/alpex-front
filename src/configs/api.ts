@@ -130,6 +130,14 @@ export enum SUBSCRIPTION_TYPE_ROUTERS {
   DELETE = 'catalogs/subscriptionType'
 }
 
+export enum LANGUAGE_ROUTERS {
+  GET_ALL = 'catalogs/language/all',
+  GET_BY_ID = 'catalogs/language',
+  ADD = 'catalogs/language/add',
+  UPDATE = `catalogs/language`,
+  DELETE = 'catalogs/language'
+}
+
 export enum LINE_OF_BUSSINES_ROUTES {
   GET_ALL = 'catalogs/lineOfBussines/all',
   GET_BY_ID = 'catalogs/lineOfBussines',
