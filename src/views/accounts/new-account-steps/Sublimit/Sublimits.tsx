@@ -73,7 +73,11 @@ export const initialErrorValues: FormErrors = {
   idCDeductiblePer: ''
 }
 
-const Sublimits = () => {
+interface SublimitsProps {
+  getAccountByIdHeader: (idAccount: number) => void
+}
+
+const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
   const [badgeData, setBadgeData] = useState<IAlert>({
     message: '',
     theme: 'success',
@@ -178,7 +182,6 @@ const Sublimits = () => {
     const save: Partial<SublimitDto>[] = []
     const update: Partial<SublimitDto>[] = []
     for (const subLimit of subLimits) {
-
       // * Cuando hay un cambio en el componente DeductibleMaterialDamage,
       // * desaparece el campo idCDeductiblePer, si no hay un cambio
       // * lo deja en 0, entonces cuando venga en 0, lo elimino
@@ -190,7 +193,6 @@ const Sublimits = () => {
         ...(subLimit?.idCDeductiblePer === 0 ? { idCDeductiblePer: null } : null),
         ...(subLimit?.title ? { title: undefined } : null)
       }
-
 
       if (subLimit.id) {
         update.push(tempSubmit)
@@ -243,6 +245,7 @@ const Sublimits = () => {
           }
         ]
       })
+      getAccountByIdHeader(formInformationData.id)
       setBadgeData({
         message: 'Account has been updated',
         theme: 'success',

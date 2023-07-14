@@ -28,7 +28,7 @@ export const SelectRetroCedantContact = ({
       retroCedantContact => retroCedantContact.id === Number(selectedRetroCendantContactId)
     )
     const tempSecurities = [...securities]
-    debugger
+
     tempSecurities[index] = {
       ...tempSecurities[index],
       idCRetroCedantContact: retroCedantContact ? retroCedantContact : ({} as RetroCedantContactDto)
