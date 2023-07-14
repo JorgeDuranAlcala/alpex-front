@@ -271,6 +271,6 @@ export const validateDeductibleMaterialDamage = ({ typeDeductible }: { typeDeduc
 
         if (typeDeductible !== 'per') return true
 
-        return +val > 0
+        return +val >= 0
       })
   })
