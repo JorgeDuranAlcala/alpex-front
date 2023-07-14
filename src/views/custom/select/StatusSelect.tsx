@@ -57,6 +57,11 @@ export default function StatusSelect({ setSelectedStatus, initialStatus, margin 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value])
 
+  useEffect(() => {
+    setStatus(initialStatus)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialStatus])
+
   /**
    *
    * PENDING = 'pending',
