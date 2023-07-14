@@ -12,8 +12,8 @@ interface BinderProps extends Omit<ISecurityInputProps, 'index' | 'errorMessage'
 }
 
 const LoaderMenuItem = () => (
-  <MenuItem  disabled>
-     <div className="binder-loader">Loading...</div>
+  <MenuItem disabled>
+    <div className="binder-loader">Loading...</div>
   </MenuItem>
 );
 
@@ -80,13 +80,13 @@ export const Binder = ({ value, index, view, companyId }: BinderProps) => {
 
         {loading ? (
           <LoaderMenuItem />  // Show loader
-          ) : (
-              binders?.map(binder => (
-                <MenuItem key={binder.id} value={binder.id}>
-                {binder.referenceNumber}
-                </MenuItem>
-              ))
-          )
+        ) : (
+          binders?.map(binder => (
+            <MenuItem key={binder.id} value={binder.id}>
+              {binder.referenceNumber}
+            </MenuItem>
+          ))
+        )
         }
 
       </Select>

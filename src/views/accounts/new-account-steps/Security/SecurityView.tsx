@@ -33,6 +33,7 @@ import Icon from 'src/@core/components/icon'
 import UserThemeOptions from 'src/layouts/UserThemeOptions'
 import { SecurityMapper } from './mappers/SecurityForm.mapper'
 
+import { DisableForm } from '../_commons/DisableForm'
 import { SecondViewProvider } from './components/secondView/SecondViewProvider'
 import { CalculateSecurity } from './utils/calculates-securities'
 
@@ -403,9 +404,11 @@ const Security = ({ onStepChange }: SecurityProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentView])
 
+
   return (
     <SecurityContext.Provider
       value={{
+        // account: account || null,
         securities,
         information,
         activeErros,
@@ -419,19 +422,25 @@ const Security = ({ onStepChange }: SecurityProps) => {
       <div style={{ fontFamily: inter }}>
         <CardHeader title={<Title>Security</Title>} />
         <CustomAlert {...badgeData} />
+
         <form noValidate autoComplete='on'>
           <SecondViewProvider>
             <CardContent>
               {securities.length > 0 &&
                 securities.map((security, index) => {
                   return (
-                    <FormSection
+                    <DisableForm
                       key={`${index}-${security?.id}`}
-                      security={currentView === 2 ? securitiesSecondView[index] : security}
-                      index={index}
-                      onDeleteItemList={DeleteNewForm}
-                      securities={securities}
-                    />
+                      isDisabled={account?.idAccountStatus === 5 ? true : false}
+                    >
+                      <FormSection
+                        security={currentView === 2 ? securitiesSecondView[index] : security}
+                        index={index}
+                        onDeleteItemList={DeleteNewForm}
+                        securities={securities}
+                      />
+
+                    </DisableForm>
                   )
                 })}
 
@@ -501,7 +510,10 @@ const Security = ({ onStepChange }: SecurityProps) => {
                 <Grid item xs={12} sm={12}>
                   <div className='add-reinsurer'>
                     <Button
-                      disabled={currentView === 2}
+                      disabled={
+                        currentView === 2 ||
+                          account?.idAccountStatus === 5 ? true : undefined
+                      }
                       type='button'
                       onClick={addNewForm}
                       variant='text'
@@ -522,7 +534,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
                     style={{ float: 'right', marginRight: 'auto', marginBottom: '20px' }}
                   >
                     <Button
-                      disabled={currentView === 2}
+                      disabled={currentView === 2 || account?.idAccountStatus === 5 ? true : undefined}
                       className='btn-save'
                       color='success'
                       variant='contained'
