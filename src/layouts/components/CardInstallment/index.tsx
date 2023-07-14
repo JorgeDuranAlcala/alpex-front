@@ -153,6 +153,7 @@ const CardInstallment = ({ index, installment, onChangeList, error100Percent }: 
                 onChange={() => {
                   return
                 }}
+                dateFormat={'dd/MM/yyyy'}
               />
             </FormControl>
           </ContainerCardInputs>
