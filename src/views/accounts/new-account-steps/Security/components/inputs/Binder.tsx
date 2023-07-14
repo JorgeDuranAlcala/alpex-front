@@ -21,7 +21,7 @@ export const Binder = ({ value, index, view, companyId }: BinderProps) => {
   const { securities, calculateSecurities } = useContext(SecurityContext)
   const [selectedBinder, setSelectedBinder] = useState<ReinsuranceCompanyBinderDto | null>(null)
   const [binders, setBinders] = useState<ReinsuranceCompanyBinderDto[]>([])
-  const [, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   const handleOnChangeBinder = (event: SelectChangeEvent) => {
     const value = event.target.value
@@ -73,16 +73,15 @@ export const Binder = ({ value, index, view, companyId }: BinderProps) => {
         labelId='binder'
         onChange={handleOnChangeBinder}
         disabled={view === 2}
-        MenuProps={{ style: { position: 'absolute' } }}
       >
-        {binders.length > 0 ? (
-          binders.map(binder => (
+        {loading ? (
+          <LoaderMenuItem /> // Show loader
+        ) : (
+          binders?.map(binder => (
             <MenuItem key={binder.id} value={binder.id}>
               {binder.referenceNumber}
             </MenuItem>
           ))
-        ) : (
-          <LoaderMenuItem />
         )}
       </Select>
     </FormControl>
