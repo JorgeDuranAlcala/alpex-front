@@ -13,7 +13,7 @@ interface BinderProps extends Omit<ISecurityInputProps, 'index' | 'errorMessage'
 
 const LoaderMenuItem = () => (
   <MenuItem disabled>
-    <div className='binder-loader'>Loading...</div>
+    <div className="binder-loader">Loading...</div>
   </MenuItem>
 )
 
