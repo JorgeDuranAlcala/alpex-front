@@ -32,9 +32,15 @@ export const useGetAccountById = () => {
   const [accountId, setAccountId] = useState<number | null>(null)
 
   const getAccountById = async (idAccount: number): Promise<ResponseGetAccount> => {
-    const account = await AccountServices.getAccountById(idAccount)
+    const getAccount = await AccountServices.getAccountById(idAccount)
+    if (getAccount) {
+      const idAccountStatus: number = getAccount.idAccountStatus as number
+      const statusKey = `status_${idAccountStatus}`
+      getAccount.status = account_status[statusKey as keyof typeof account_status]
+      setAccount(getAccount)
+    }
 
-    return account
+    return getAccount
   }
 
   useEffect(() => {

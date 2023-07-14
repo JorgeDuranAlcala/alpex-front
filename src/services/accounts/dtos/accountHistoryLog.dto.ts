@@ -4,7 +4,7 @@ export interface AccountHistoryLogDto {
   createdAt: Date
   updatedAt?: Date | null
   accountId: number
-  accountStatus: IAccountStatus
+  idAccountStatus: IAccountStatus
 }
 
 interface IAccountStatus {

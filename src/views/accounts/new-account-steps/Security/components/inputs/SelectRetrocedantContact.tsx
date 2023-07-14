@@ -1,5 +1,5 @@
 import { FormControl, FormHelperText, InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material'
-import { useContext } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import * as yup from 'yup'
 
 import { RetroCedantContactDto } from '@/services/catalogs/dtos/retroCedantContact.dto'
@@ -20,6 +20,7 @@ export const SelectRetroCedantContact = ({
   view
 }: SelectRetroCedantContactProps) => {
   const { activeErros, securities, calculateSecurities } = useContext(SecurityContext)
+  const [retroCedantContactId, setRetroCedantContactId] = useState<string>(String(value) || '')
 
   const handleChangeRetroCedantContact = (e: SelectChangeEvent<string>) => {
     const selectedRetroCendantContactId = e.target.value
@@ -35,13 +36,16 @@ export const SelectRetroCedantContact = ({
     validateForm(tempSecurities[index])
     calculateSecurities(tempSecurities)
   }
+  useEffect(() => {
+    if (retroCedantContacts && value) setRetroCedantContactId(String(value))
+  }, [value, retroCedantContacts])
 
   return (
     <FormControl fullWidth sx={{ mb: 2 }}>
       <InputLabel>Select Retro Cedant contact</InputLabel>
       <Select
         label='Select Retro Cedant contact '
-        value={value.toString()}
+        value={retroCedantContactId}
         onChange={handleChangeRetroCedantContact}
         labelId='RetroCedantcontact'
         disabled={view === 2 || isDisabled}

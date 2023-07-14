@@ -70,7 +70,7 @@ export interface FormInformation {
 export interface FormSectionProps {
   index: number
   security: SecurityDto
-  securities: SecurityDto[]
+
   onDeleteItemList: (index: number) => void
 }
 

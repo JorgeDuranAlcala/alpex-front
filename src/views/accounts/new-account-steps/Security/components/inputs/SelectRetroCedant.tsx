@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { FormControl, FormHelperText, InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material'
-import { Dispatch, SetStateAction, useContext, useEffect } from 'react'
+import { Dispatch, SetStateAction, useContext, useEffect, useState } from 'react'
 import * as yup from 'yup'
 
 import { RetroCedantDto } from '@/services/catalogs/dtos/RetroCedantDto'
@@ -23,6 +23,7 @@ export const SelectRetroCedant = ({
   view
 }: SelectRetroCedantProps) => {
   const { activeErros, securities, calculateSecurities } = useContext(SecurityContext)
+  const [retroCedantId, setRetroCedantId] = useState<string>(String(value) || '')
 
   // const [counter, setCounter] = useState(1)
   const handleChangeRetroCedant = (e: SelectChangeEvent<string>) => {
@@ -43,38 +44,17 @@ export const SelectRetroCedant = ({
   }
 
   useEffect(() => {
-    if (retroCedants && retroCedants?.length > 0) {
-      const tempSecurities = [...securities]
-      const selectedRetroCendantId = value
-      const retroCedant = retroCedants?.find(retroCedant => retroCedant.id === Number(selectedRetroCendantId))
-      if (retroCedant) {
-        tempSecurities[index] = {
-          ...tempSecurities[index],
-          idCRetroCedant: retroCedant,
-          idCRetroCedantContact: {} as RetroCedantContactDto
-        }
-        validateForm(tempSecurities[index])
-
-        calculateSecurities(tempSecurities)
-        setIdRetroCedant(retroCedant.id)
-      } else {
-        tempSecurities[index] = {
-          ...tempSecurities[index],
-          idCRetroCedant: {} as RetroCedantDto,
-          idCRetroCedantContact: {} as RetroCedantContactDto
-        }
-        validateForm(tempSecurities[index])
-        calculateSecurities(tempSecurities)
-      }
+    if (retroCedants && retroCedants?.length > 0 && value) {
+      setRetroCedantId(String(value))
     }
-  }, [retroCedants])
+  }, [value, retroCedants])
 
   return (
     <FormControl fullWidth sx={{ mb: 2 }}>
       <InputLabel>Select Retro cedant</InputLabel>
       <Select
         label='Select Retro cedant'
-        value={value.toString()}
+        value={retroCedantId}
         onChange={handleChangeRetroCedant}
         labelId='Retrocedant'
         disabled={view === 2}
@@ -107,7 +87,14 @@ export const selectRetroCedant_validations = ({
 
       .test('', 'This field is required', value => {
         if (!isGross && frontingFeeEnabled) {
-          return value && typeof value === 'object' && value.hasOwnProperty('id')
+          const isValid =
+            value &&
+            typeof value === 'object' &&
+            value.hasOwnProperty('id') &&
+            value.id !== null &&
+            value.id !== undefined
+
+          return isValid
         }
 
         return true
