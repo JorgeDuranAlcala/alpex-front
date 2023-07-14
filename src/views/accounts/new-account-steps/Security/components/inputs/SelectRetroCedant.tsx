@@ -77,24 +77,29 @@ export const selectRetroCedant_validations = ({
   frontingFeeEnabled: boolean
   isGross: boolean
 }) => {
-  return yup.object().shape({
+  return yup.object({
     idCRetroCedant: yup
-      .object()
-      .shape({
+      .object({
         id: yup.number().notRequired(),
         name: yup.string().notRequired()
       })
 
-      .test('', 'This field is required', value => {
-        if (!isGross && frontingFeeEnabled) {
-          const isValid =
-            value &&
-            typeof value === 'object' &&
-            value.hasOwnProperty('id') &&
-            value.id !== null &&
-            value.id !== undefined
+      // Transform the value prior to testing
+      .transform(value => {
+        // If any child property has a value, skip the transform
+        if (value && Object.values(value).some(v => !(v === null || v === undefined || v === ''))) {
+          return value
+        }
 
-          return isValid
+        // Transform the value to undefined
+        return { id: -0, name: '' }
+      })
+      .test('', 'This field is required', value => {
+        console.log({ value, frontingFeeEnabled })
+        if (!isGross && frontingFeeEnabled) {
+          debugger
+
+          return typeof value === 'object' && value.id !== -0
         }
 
         return true
