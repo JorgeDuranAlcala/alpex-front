@@ -26,6 +26,7 @@ import FormAddress from '@/views/accounts/new-account-steps/FormAddress'
 
 import FormHeader from 'src/views/accounts/new-account-steps/headers/formHeader'
 
+import { useGetAccountById } from '@/hooks/accounts/forms'
 import Sublimits from '@/views/accounts/new-account-steps/Sublimit/Sublimits'
 import Icon from 'src/@core/components/icon'
 
@@ -37,6 +38,9 @@ const NewAccount = () => {
   // ** Hooks
   const router = useRouter()
   const dispatch = useAppDispatch()
+
+  //hooks header
+  const { account: accountDetails, setAccountId, getAccountById } = useGetAccountById()
 
   // const { account, setAccountId } = useGetAccountById()
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -98,7 +102,7 @@ const NewAccount = () => {
       case 3:
         return <PaymentWarranty onStepChange={handleStepChange} />
       case 4:
-        return <Sublimits />
+        return <Sublimits getAccountByIdHeader={getAccountById} />
 
       case 5:
         return <FormAddress />
@@ -142,12 +146,16 @@ const NewAccount = () => {
           setTypeofAccount={setTypeofAccount}
           setActiveEndorsement={setActiveEndorsement}
           setEditInfo={setEditInfo}
+          accountDetails={accountDetails}
+          setAccountId={setAccountId}
         />
       ) : (
         <FormHeader
           setTypeofAccount={setTypeofAccount}
           setActiveEndorsement={setActiveEndorsement}
           setEditInfo={setEditInfo}
+          accountDetails={accountDetails}
+          setAccountId={setAccountId}
         />
       )}
       <div style={{ display: 'flex', flexDirection: 'row', gap: '16px' }}>

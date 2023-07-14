@@ -220,14 +220,12 @@ const Security = ({ onStepChange }: SecurityProps) => {
           }
       }
       if (currentView !== 3) {
-        setSecurities(() => tempSecurities)
-
         setAllFormData(() => dataForm)
+        setSecurities(() => tempSecurities)
       } else {
-        setSecurities(() => tempSecuritiesView2)
-
         setAllFormData(() => dataFormView2)
         setCurrentView(0)
+        setSecurities(() => tempSecuritiesView2)
       }
 
       setAllErrors(allErrors.map(error => error))
@@ -238,21 +236,21 @@ const Security = ({ onStepChange }: SecurityProps) => {
   }
 
   const addNewForm = () => {
-    setSecurities([
-      ...securities,
-      {
-        frontingFeeActive: false,
-        taxesActive: false,
-        isGross: false,
-        discounts: [],
-        share: 0,
-        dynamicCommission: 0,
-        view: 1,
-        reinsuranceBrokerage: 0,
-        taxes: 0,
-        frontingFee: 0
-      } as SecurityDto
-    ])
+    const tempSecurities = [...securities]
+    tempSecurities.push({
+      frontingFeeActive: false,
+      taxesActive: false,
+      isGross: false,
+      discounts: [],
+      share: 0,
+      dynamicCommission: 0,
+      view: 1,
+      reinsuranceBrokerage: 0,
+      taxes: 0,
+      frontingFee: 0
+    } as SecurityDto)
+
+    calculateSecurities(tempSecurities)
   }
 
   const handleNextStep = () => {
@@ -437,7 +435,6 @@ const Security = ({ onStepChange }: SecurityProps) => {
                         security={currentView === 2 ? securitiesSecondView[index] : security}
                         index={index}
                         onDeleteItemList={DeleteNewForm}
-                        securities={securities}
                       />
 
                     </DisableForm>
