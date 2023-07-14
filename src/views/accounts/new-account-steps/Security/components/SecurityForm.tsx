@@ -91,7 +91,7 @@ const initialErrorValues: errorsSecurity = {
 //este estate se utilizara cuando se necesite actualizar el estado hasta que este completo
 let localSecuritiesTemp: SecurityDto[] = []
 export const FormSection = ({ index, security, onDeleteItemList }: FormSectionProps) => {
-  const [isGross, setIsGross] = useState<boolean>(false)
+  const [isGross, setIsGross] = useState<boolean>(security.isGross)
   const [errorsSecurity, setErrorsSecurity] = useState<errorsSecurity>(initialErrorValues)
   const [isShowToggleFrontingFee, setIsShowToggleFrontingFee] = useState(security.frontingFeeActive || false)
   const [frontingFeeEnabled, setFrontingFeeEnabled] = useState<boolean>(security.frontingFeeActive || false)
@@ -274,6 +274,8 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
     const isDifferent = isGross
       ? information.grossPremium !== tempSecurities[index].netPremiumAt100
       : information.netPremium !== tempSecurities[index].netPremiumAt100
+    console.log(isGross, index, information.grossPremium, tempSecurities[index].netPremiumAt100)
+    console.log(isGross, index, information.netPremium, tempSecurities[index].netPremiumAt100)
 
     // index === tempSecurities.length - 1 &&
     if (information && activeView === 0 && isDifferent && securities[index].idCReinsuranceCompany?.id) {
