@@ -12,7 +12,7 @@ export interface SecurityDto {
   premiumPerShare: number
   premiumPerShareAmount: number
   frontingFeeActive: boolean
-  taxesActive: boolean | null
+  taxesActive: boolean
   dynamicCommission: number
   dynamicCommissionAmount: number
   frontingFee: number
