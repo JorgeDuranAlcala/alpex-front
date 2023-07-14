@@ -328,6 +328,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
 
   useEffect(() => {
     idAccount && setAccountId(idAccount)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [idAccount, setAccountId])
 
   useEffect(() => {
