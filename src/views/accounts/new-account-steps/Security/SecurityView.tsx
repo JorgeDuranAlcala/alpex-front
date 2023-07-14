@@ -402,6 +402,8 @@ const Security = ({ onStepChange }: SecurityProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentView])
 
+  console.log({ account });
+
 
   return (
     <SecurityContext.Provider
@@ -429,7 +431,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
                   return (
                     <DisableForm
                       key={`${index}-${security?.id}`}
-                      isDisabled={account?.idAccountStatus === 5 ? true : false}
+                      isDisabled={account?.status.toLowerCase() === 'bound' ? true : false}
                     >
                       <FormSection
                         security={currentView === 2 ? securitiesSecondView[index] : security}
@@ -509,7 +511,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
                     <Button
                       disabled={
                         currentView === 2 ||
-                          account?.idAccountStatus === 5 ? true : undefined
+                          account?.status.toLowerCase() === 'bound' ? true : undefined
                       }
                       type='button'
                       onClick={addNewForm}
@@ -531,7 +533,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
                     style={{ float: 'right', marginRight: 'auto', marginBottom: '20px' }}
                   >
                     <Button
-                      disabled={currentView === 2 || account?.idAccountStatus === 5 ? true : undefined}
+                      disabled={currentView === 2 || account?.status.toLowerCase() === 'bound' ? true : false}
                       className='btn-save'
                       color='success'
                       variant='contained'

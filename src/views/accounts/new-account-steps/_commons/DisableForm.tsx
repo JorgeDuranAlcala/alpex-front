@@ -98,6 +98,39 @@ export const DisableForm = ({ children, isDisabled }: DisableFormProps) => {
     // * + + + + + + + + + + + + + + + + + + + + + + + + + + + +
 
 
+    // * Pintar de color "disabled" los headers del formulario 4 - Sublimits
+    const disableSublimitHeaderCards = ($fieldSet: HTMLFieldSetElement) => {
+      const sublimitHeaderCards = $fieldSet.querySelectorAll('.sublimits-generic-card-header');
+
+      sublimitHeaderCards.forEach((sublimitHeaderCard: any) => {
+
+        // console.log({ sublimitHeaderCard })
+
+        if (sublimitHeaderCard && sublimitHeaderCard instanceof HTMLElement) {
+
+          sublimitHeaderCard.style.backgroundColor = '#4c4e641f';
+        }
+      });
+
+      const sublimitHeaderCardsText = $fieldSet.querySelectorAll('.sublimits-generic-card-header-text');
+
+      sublimitHeaderCardsText.forEach((sublimitHeaderCardText: any) => {
+
+        // console.log({ sublimitHeaderCardText })
+
+        if (sublimitHeaderCardText && sublimitHeaderCardText instanceof HTMLElement) {
+
+          sublimitHeaderCardText.style.color = 'rgba(76, 78, 100, 0.50)';
+          sublimitHeaderCardText.style.fontWeight = '600';
+        }
+      });
+
+    }
+
+    // * + + + + + + + + + + + + + + + + + + + + + + + + + + + +
+
+
+
     if ($fieldSet.current && isDisabled) {
 
       disableButtons($fieldSet.current);
@@ -106,6 +139,7 @@ export const DisableForm = ({ children, isDisabled }: DisableFormProps) => {
       setTimeout(() => {
         if ($fieldSet.current && isDisabled) {
 
+          disableSublimitHeaderCards($fieldSet.current)
           disableAllInputs($fieldSet.current);
           disableAllSelects($fieldSet.current);
           disableAllSwitchButtons($fieldSet.current);

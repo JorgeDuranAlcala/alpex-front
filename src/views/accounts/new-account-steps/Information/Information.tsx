@@ -39,6 +39,9 @@ import { formatInformationDoctos, getFileFromUrl } from '@/utils/formatDoctos'
 // Dtos
 import { DiscountDto } from '@/services/accounts/dtos/discount.dto'
 
+// import { useGetAccountById } from '@/hooks/accounts/forms'
+// import { DisableForm } from '../_commons/DisableForm'
+
 type InformationProps = {
   onStepChange: (step: number) => void
   onIsNewAccountChange: (status: boolean) => void
@@ -144,6 +147,8 @@ const Information: React.FC<InformationProps> = ({
   const { deleteInformationDocument } = useDeleteInformationDocument()
   const { addDiscounts } = useAddDiscounts()
   const { UpdateDiscounts } = useUpdateDiscounts()
+
+  // const { account, setAccountId } = useGetAccountById()
 
   const dispatch = useAppDispatch()
 
@@ -742,6 +747,8 @@ const Information: React.FC<InformationProps> = ({
   useEffect(() => {
     if (idAccount) {
       setDataInformation()
+
+      // setAccountId(idAccount)
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -781,6 +788,10 @@ const Information: React.FC<InformationProps> = ({
         </div>
         <form noValidate autoComplete='on' onSubmit={handleNextStep}>
           <div className='section'>
+            {/* <DisableForm
+              isDisabled={(typeofAccount && typeofAccount === 'bound') ? true : false}
+            > */}
+
             <BasicInfo
               editInfo={editInfo}
               activeEndorsement={activeEndorsement}
@@ -790,9 +801,13 @@ const Information: React.FC<InformationProps> = ({
               makeSaveValidations={makeSaveValidations}
               onValidationComplete={handleValidationComplete}
             />
+            {/* </DisableForm> */}
           </div>
 
           <div className='section'>
+            {/* <DisableForm
+              isDisabled={(typeofAccount && typeofAccount === 'bound') ? true : false}
+            > */}
             <PlacementStructure
               editInfo={editInfo}
               placementStructure={placementStructure}
@@ -802,6 +817,8 @@ const Information: React.FC<InformationProps> = ({
               onValidationComplete={handleValidationComplete}
               triggerSubject={subjectState}
             />
+
+            {/* </DisableForm> */}
           </div>
 
           <div className='section' style={{ display: 'none' }}>
