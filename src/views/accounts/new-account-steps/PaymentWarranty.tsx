@@ -113,6 +113,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
   const idAccount = accountData?.formsData?.form1?.id
   const { account, setAccountId } = useGetAccountById()
   const { deleteInstallments } = useDeleteInstallments()
+  const newAccount = account
 
   const [badgeData, setBadgeData] = useState<IAlert>({
     message: '',
@@ -341,7 +342,13 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
       setInitialInstallmentList([...installments])
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [account])
+    if (newAccount) {
+      const corte = new String(newAccount!.informations[0].effectiveDate!)
+      const fecha = new Date(Date.parse(corte.substring(0, 10)))
+      fecha.setMinutes(fecha.getMinutes() + fecha.getTimezoneOffset())
+      newAccount!.informations[0].effectiveDate = fecha
+    }
+  }, [account, newAccount])
 
   //todo probar en un momento
   useEffect(() => {
@@ -360,7 +367,9 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
               <Grid item xs={12} sm={6} md={4}>
                 <DatePicker
                   selected={
-                    account?.informations[0]?.effectiveDate ? new Date(account.informations[0].effectiveDate) : null
+                    newAccount?.informations[0]?.effectiveDate
+                      ? new Date(newAccount?.informations[0]?.effectiveDate)
+                      : null
                   }
                   shouldCloseOnSelect
                   id='Inception date'
@@ -371,6 +380,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
                   onChange={() => {
                     return
                   }}
+                  dateFormat={'dd/MM/yyyy'}
                 />
               </Grid>
               <Grid item xs={12} sm={6} md={4}>
