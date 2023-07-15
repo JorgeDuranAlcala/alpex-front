@@ -13,7 +13,8 @@ import {
   Typography
 } from '@mui/material'
 import { ForwardedRef, forwardRef, useEffect, useState } from 'react'
-import DatePicker from 'react-datepicker'
+
+import { default as DatePicker } from 'react-datepicker'
 
 // import Icon from 'src/@core/components/icon'
 
@@ -96,6 +97,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
   const [installmentsList, setInstallmentList] = useState<InstallmentDto[]>([])
   const [initialInstallmentList, setInitialInstallmentList] = useState<InstallmentDto[]>([])
 
+  const [check, setCheck] = useState<boolean>(false)
   const [count, setCount] = useState<number>()
   const [btnNext, setBtnNext] = useState<boolean>(false)
   const [daysFirst, setDaysFirst] = useState<number>()
@@ -210,6 +212,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
     setDaysFirst(installmentsLisTemp[0].premiumPaymentWarranty)
 
     setIsChange(true)
+    setCheck(false)
   }
 
   const getTwoDecimals = (num: number) => {
@@ -344,9 +347,11 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
       setInitialInstallmentList([...installments])
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    if (newAccount) {
+    if (newAccount && !check) {
+      setCheck(true)
       const corte = new String(newAccount!.informations[0].effectiveDate!)
-      const fecha = new Date(Date.parse(corte.substring(0, 10)))
+      const corte2 = Date.parse(corte.substring(0, 10))
+      const fecha = new Date(corte2)
       fecha.setMinutes(fecha.getMinutes() + fecha.getTimezoneOffset())
       newAccount!.informations[0].effectiveDate = fecha
     }
