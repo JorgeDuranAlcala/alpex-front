@@ -317,7 +317,7 @@ const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
               <Grid container spacing={5} sx={{ mt: '20px' }}>
                 {account?.informations &&
                   subLimits.map((subLimit, index) => (
-                    <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
+                    <Grid item xs={12} sm={12} md={6} lg={4} key={index}>
                       <GenericCard
                         subLimit={subLimit}
                         setSubLimits={setSubLimits}
