@@ -299,22 +299,25 @@ const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
             <CustomAlert {...badgeData} />
           </div>
         </Grid>
-        <form noValidate autoComplete='on'>
-          <DisableForm
-            isDisabled={account?.status.toLowerCase() === 'bound' ? true : false}
-          >
-            {/* campos header */}
-            <Grid container spacing={5}>
-              <InputLimit account={account} />
-              <SelectCoverage
-                onChangeSelected={handleSelectedCoverage}
-                coverageSelected={coverageSelected}
-                onClickToggle={handleToggle}
-              />
-              <Grid container spacing={5} sx={{ m: '1%' }}>
+        <Grid item xs={12} sm={12}>
+
+          <form noValidate autoComplete='on' >
+            <DisableForm
+              isDisabled={account?.status.toLowerCase() === 'bound' ? true : false}
+            >
+              {/* campos header */}
+              <Grid container spacing={5} >
+                <InputLimit account={account} />
+                <SelectCoverage
+                  onChangeSelected={handleSelectedCoverage}
+                  coverageSelected={coverageSelected}
+                  onClickToggle={handleToggle}
+                />
+              </Grid>
+              <Grid container spacing={5} sx={{ mt: '20px' }}>
                 {account?.informations &&
                   subLimits.map((subLimit, index) => (
-                    <Grid item xs={12} sm={4} md={4} key={index}>
+                    <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
                       <GenericCard
                         subLimit={subLimit}
                         setSubLimits={setSubLimits}
@@ -329,10 +332,10 @@ const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
                     </Grid>
                   ))}
               </Grid>
-            </Grid>
 
-          </DisableForm>
-        </form>
+            </DisableForm>
+          </form>
+        </Grid>
       </Grid>
       <NextContainer>
         <Button
