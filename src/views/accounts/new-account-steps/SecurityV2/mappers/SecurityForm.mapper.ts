@@ -30,7 +30,7 @@ export interface SecurityModel {
   shareAmount: number
 
   premiumPerShareAmount: number
-  taxesActive: boolean | null
+  taxesActive: boolean
   dynamicCommissionAmount: number
   frontingFeeAmount: number
   grossPremiumPerShare: number

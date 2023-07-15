@@ -11,3 +11,7 @@ export interface BourderauBodyDto {
   idCReinsuranceCompany: number
   idCReinsuranceCompanyBinder: number
 }
+
+export interface DebitNoteParamsDto {
+  idAccount: number
+}

@@ -36,7 +36,7 @@ const SelectCoverage: React.FC<SelectCoverageProps> = ({ onChangeSelected, cover
   // console.log('Seleccionados: ', coverages)
 
   return (
-    <Grid item xs={12} sm={4}>
+    <Grid item xs={12} sm={6} md={4}>
       <Select
         fullWidth
         sx={{ outline: 'none', borderColor: texButtonColor }}
