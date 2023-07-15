@@ -53,7 +53,7 @@ const LastBoundAccount = () => {
     },
     { label: 'Broker:', data: account && account?.informations[0]?.idBroker?.name },
     { label: 'Bound date:', data: boundDate, backgroundColor: 'rgba(76, 78, 100, 0.04)' },
-    { label: 'Net premium:', data: `${netPremium} USD` },
+    { label: 'Net premium:', data: `${netPremium} ${account?.informations[0]?.currency}` },
     { label: 'Installments', data: account?.installmentsCount, backgroundColor: 'rgba(76, 78, 100, 0.04)' }
   ]
 
