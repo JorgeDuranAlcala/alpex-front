@@ -48,23 +48,7 @@ export const useGetAccountById = () => {
       AccountServices.getAccountById(accountId)
         .then(accounts => {
           if (accounts) {
-            accounts.securities =
-              accounts.securities.length === 0
-                ? [
-                    {
-                      frontingFeeActive: false,
-                      taxesActive: false,
-                      isGross: false,
-                      discounts: [],
-                      share: 0,
-                      dynamicCommission: 0,
-                      view: 1,
-                      reinsuranceBrokerage: 0,
-                      taxes: 0,
-                      frontingFee: 0
-                    } as SecurityDto
-                  ]
-                : (accounts.securities as SecurityDto[])
+            accounts.securities = accounts.securities as SecurityDto[]
             const idAccountStatus: number = accounts.idAccountStatus as number
             const statusKey = `status_${idAccountStatus}`
             accounts.status = account_status[statusKey as keyof typeof account_status]

@@ -38,7 +38,18 @@ import { SecondViewProvider } from './components/secondView/SecondViewProvider'
 import { CalculateSecurity } from './utils/calculates-securities'
 
 export const SecurityContext = createContext<SecurityContextDto>({} as SecurityContextDto)
-
+const initialSecurity = {
+  frontingFeeActive: false,
+  taxesActive: false,
+  isGross: false,
+  discounts: [],
+  share: 0,
+  dynamicCommission: 0,
+  view: 1,
+  reinsuranceBrokerage: 0,
+  taxes: 0,
+  frontingFee: 0
+} as SecurityDto
 const Security = ({ onStepChange }: SecurityProps) => {
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
   const [securities, setSecurities] = useState<SecurityDto[]>([])
@@ -74,7 +85,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
   })
   const [companiesSelect] = useState<number[]>([])
 
-  const { account, setAccountId } = useGetAccountById()
+  const { account, setAccountId, getAccountById } = useGetAccountById()
   const { saveSecurityTotal } = useAddSecurityTotal()
   const { updateSecurityTotal } = useUpdateSecurityTotalById()
 
@@ -200,7 +211,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
       }
       const tempSecuritiesView2 = getSecuritiesCalculate(securitiesView2)
 
-      const dataFormView2 = {
+      let dataFormView2: FormSecurity = {
         ...allFormDataView2,
         formData: tempSecuritiesView2,
         ...CalculateSecurity.getData(tempSecuritiesView2)
@@ -213,11 +224,17 @@ const Security = ({ onStepChange }: SecurityProps) => {
       }
 
       if (account) {
-        if (account.securitiesTotal[0])
+        account.securitiesTotal.length
+        if (account.securitiesTotal[0]) {
           dataForm = {
             ...dataForm,
             id: account.securitiesTotal[0].id
           }
+          dataFormView2 = {
+            ...dataFormView2,
+            id: account.securitiesTotal[0].id
+          }
+        }
       }
       if (currentView !== 3) {
         setAllFormData(() => dataForm)
@@ -237,18 +254,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
 
   const addNewForm = () => {
     const tempSecurities = [...securities]
-    tempSecurities.push({
-      frontingFeeActive: false,
-      taxesActive: false,
-      isGross: false,
-      discounts: [],
-      share: 0,
-      dynamicCommission: 0,
-      view: 1,
-      reinsuranceBrokerage: 0,
-      taxes: 0,
-      frontingFee: 0
-    } as SecurityDto)
+    tempSecurities.push(initialSecurity)
 
     calculateSecurities(tempSecurities)
   }
@@ -284,7 +290,8 @@ const Security = ({ onStepChange }: SecurityProps) => {
     }
 
     if (!allFormData.id) {
-      //TODO REVISAR SI PUEDE TRABAJAR CON PROMISE ALL
+      //TODO REVISAR SI PUEDE TRABAJAR CON PROMISE ALl
+      console.log({ allFormData, save: true })
       await saveSecurityTotal([
         {
           receivedNetPremium: +allFormData.recievedNetPremium,
@@ -295,7 +302,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
         }
       ])
         .then(response => {
-          console.log('saveSecurityTotal', { response })
+          console.log('saveSecurityTotal', response[0])
         })
         .catch(e => {
           console.log('saveSecurityTotal', e)
@@ -321,7 +328,8 @@ const Security = ({ onStepChange }: SecurityProps) => {
 
     if (save.length > 0) {
       await saveSecurities({ idAccount: +accountData.formsData.form1.id, securities: save })
-        .then(async () => {
+        .then(async response => {
+          response && response.length > 0 && calculateSecurities(response)
           update.length === 0 &&
             setBadgeData({
               message: 'THE INFORMATION HAS BEEN SAVED',
@@ -341,7 +349,17 @@ const Security = ({ onStepChange }: SecurityProps) => {
             icon: <Icon style={{ color: '#FF4D49' }} icon='icon-park-outline:error' />
           })
         })
-
+      getAccountById(accountData.formsData.form1.id)
+        .then(accounts => {
+          calculateSecurities(
+            accounts.securities.length > 0
+              ? accounts.securities.map(security => SecurityMapper.securityToSecurityForm(security, accountData))
+              : [initialSecurity]
+          )
+        })
+        .catch((error: Error) => {
+          console.log(error)
+        })
       setTimeout(() => {
         setBadgeData({
           ...badgeData,
@@ -372,19 +390,13 @@ const Security = ({ onStepChange }: SecurityProps) => {
   }, [accountData.formsData.form1.id])
 
   useEffect(() => {
-    if (account && account.securities.length > 0 && information) {
-      calculateSecurities(
-        account.securities.map(security => SecurityMapper.securityToSecurityForm(security, accountData))
-      )
-
-      account.securitiesTotal.length > 0 &&
-        setAllFormData({
-          ...allFormData,
-          recievedNetPremium: Number(account.securitiesTotal[0].receivedNetPremium),
-          distribuitedNetPremium: Number(account.securitiesTotal[0].distributedNetPremium),
-          diference: Number(account.securitiesTotal[0].difference),
-          id: Number(account.securitiesTotal[0].id)
-        })
+    if (information) {
+      if (account?.securities)
+        calculateSecurities(
+          account.securities.length > 0
+            ? account.securities.map(security => SecurityMapper.securityToSecurityForm(security, accountData))
+            : [initialSecurity]
+        )
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -401,9 +413,6 @@ const Security = ({ onStepChange }: SecurityProps) => {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentView])
-
-  console.log({ account });
-
 
   return (
     <SecurityContext.Provider
@@ -438,7 +447,6 @@ const Security = ({ onStepChange }: SecurityProps) => {
                         index={index}
                         onDeleteItemList={DeleteNewForm}
                       />
-
                     </DisableForm>
                   )
                 })}
@@ -509,10 +517,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
                 <Grid item xs={12} sm={12}>
                   <div className='add-reinsurer'>
                     <Button
-                      disabled={
-                        currentView === 2 ||
-                          account?.status.toLowerCase() === 'bound' ? true : undefined
-                      }
+                      disabled={currentView === 2 || account?.status.toLowerCase() === 'bound' ? true : undefined}
                       type='button'
                       onClick={addNewForm}
                       variant='text'
