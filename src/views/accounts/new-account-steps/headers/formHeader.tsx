@@ -7,6 +7,7 @@ import { useAppSelector } from 'src/store'
 import StatusSelect from 'src/views/custom/select/StatusSelect'
 import ActionsHeader from './ActionsHeader'
 import ActionsHeaderBound from './ActionsHeaderBound'
+import { ModalTxtImg } from './modals/ModalTxtImg'
 import { ModalUploadImg } from './modals/ModalUploadImg'
 
 // ** MUI Imports
@@ -39,7 +40,8 @@ const ModalUploadImage = () => {
   const [image, setImage] = useState('')
   const [imagePreview, setImagePreview] = useState('')
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
-  const [modal, setModal] = useState(false)
+  const [modalUpload, setModalUpload] = useState(false)
+  const [modalTxt, setModalTxt] = useState(false)
   const openMenu = Boolean(anchorEl)
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget)
@@ -56,11 +58,12 @@ const ModalUploadImage = () => {
       case 'upload':
         setOpen(false)
         setAnchorEl(null)
-        setModal(true)
+        setModalUpload(true)
         break
       case 'txtLogo':
         setOpen(false)
         setAnchorEl(null)
+        setModalTxt(true)
         break
       default:
         break
@@ -132,7 +135,8 @@ const ModalUploadImage = () => {
           </Typography>
         </Box>
       </Modal>
-      <ModalUploadImg setOpenHistory={setModal} openHistory={modal} />
+      <ModalTxtImg setOpenHistory={setModalTxt} openHistory={modalTxt} />
+      <ModalUploadImg setOpenHistory={setModalUpload} openHistory={modalUpload} />
     </>
   )
 }
