@@ -91,7 +91,7 @@ const initialErrorValues: errorsSecurity = {
 //este estate se utilizara cuando se necesite actualizar el estado hasta que este completo
 let localSecuritiesTemp: SecurityDto[] = []
 export const FormSection = ({ index, security, onDeleteItemList }: FormSectionProps) => {
-  const [isGross, setIsGross] = useState<boolean>(false)
+  const [isGross, setIsGross] = useState<boolean>(security.isGross)
   const [errorsSecurity, setErrorsSecurity] = useState<errorsSecurity>(initialErrorValues)
   const [isShowToggleFrontingFee, setIsShowToggleFrontingFee] = useState(security.frontingFeeActive || false)
   const [frontingFeeEnabled, setFrontingFeeEnabled] = useState<boolean>(security.frontingFeeActive || false)
@@ -115,27 +115,32 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
   const { activeView, createSecondView } = useContext(SecondViewContext)
 
   const operationSecurity: CalculateSecurity = new CalculateSecurity().setInformation(information).setSecurity(security)
-  const schemaRetrocedant = yup.object().shape({
-    ...selectRetroCedant_validations({ frontingFeeEnabled, isGross }).fields,
-    ...frontingFeePercent_validations({ frontingFeeEnabled }).fields,
-    ...frontingFeeAmount_validations({ frontingFeeEnabled }).fields
-  })
 
-  const schema = yup.object().shape({
-    ...grossOrNetPremiumAt100_validations().fields,
-    ...sharePercent_validations().fields,
-    ...shareAmount_validations().fields,
-    ...premiumPerShareAmount_validations().fields,
-    ...reinsuranceBrokeragePercent_validations({ isGross }).fields,
-    ...reinsuranceBrokerageAmount_validations({ isGross }).fields,
-    ...dynamicComissionPercent_validations().fields,
-    ...dynamicComissionAmount_validations().fields,
-    ...taxesAmount_validations({ isGross, isTaxesEnabled }).fields,
-    ...taxesPercent_validations({ isGross, isTaxesEnabled }).fields,
-    ...netReinsurancePremium_validations().fields
-  })
   const validateForm = (securityParam: SecurityDto) => {
     let data = { ...initialErrorValues }
+    const schemaRetrocedant = yup.object().shape({
+      ...selectRetroCedant_validations({
+        frontingFeeEnabled: securityParam.frontingFeeActive,
+        isGross: securityParam.isGross
+      }).fields,
+      ...frontingFeePercent_validations({ frontingFeeEnabled: securityParam.frontingFeeActive }).fields,
+      ...frontingFeeAmount_validations({ frontingFeeEnabled: securityParam.frontingFeeActive }).fields
+    })
+
+    const schema = yup.object().shape({
+      ...grossOrNetPremiumAt100_validations().fields,
+      ...sharePercent_validations().fields,
+      ...shareAmount_validations().fields,
+      ...premiumPerShareAmount_validations().fields,
+      ...reinsuranceBrokeragePercent_validations({ isGross: securityParam.isGross }).fields,
+      ...reinsuranceBrokerageAmount_validations({ isGross: securityParam.isGross }).fields,
+      ...dynamicComissionPercent_validations().fields,
+      ...dynamicComissionAmount_validations().fields,
+      ...taxesAmount_validations({ isGross: securityParam.isGross, isTaxesEnabled: securityParam?.taxesActive }).fields,
+      ...taxesPercent_validations({ isGross: securityParam.isGross, isTaxesEnabled: securityParam?.taxesActive })
+        .fields,
+      ...netReinsurancePremium_validations().fields
+    })
 
     const errorsTemp = [...allErrors]
 

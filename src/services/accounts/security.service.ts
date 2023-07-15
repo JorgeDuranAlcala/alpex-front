@@ -5,15 +5,17 @@ import { SecurityDto } from './dtos/security.dto'
 class SecurityService {
   async addSecurity(
     securitiesIn: Partial<{ idAccount: number; securities: Partial<SecurityDto>[] }>
-  ): Promise<SecurityDto[] | string> {
+  ): Promise<SecurityDto[]> {
     try {
-      const { data } = await AppAlpexApiGateWay.post<Promise<SecurityDto[]>>(ACCOUNT_SECURITY_ROUTES.ADD, {
+      const response = await AppAlpexApiGateWay.post<Promise<SecurityDto[]>>(ACCOUNT_SECURITY_ROUTES.ADD, {
         ...securitiesIn
       })
+      console.log({ responseAddSecurity: response })
 
-      return data
+      return response.data
     } catch (error) {
-      return 'error'
+      const message = String(error)
+      throw new Error(message)
     }
   }
 

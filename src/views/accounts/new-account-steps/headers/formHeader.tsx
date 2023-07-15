@@ -152,9 +152,6 @@ const FormHeader = ({
   const [status, setStatus] = useState('')
   const account = useAppSelector(state => state.accounts?.formsData?.form1)
 
-  //hooks
-  //const { account: accountDetails, setAccountId } = useGetAccountById()
-
   const formaterAmount = (amount: number) => {
     if (amount) {
       return amount.toLocaleString('en-US', {
@@ -275,9 +272,9 @@ const FormHeader = ({
 
                 {!isNewAccount && (
                   <div className='form-secondContainer-second'>
-                    <span className='form-secondContainer-header-title'>Reception Date</span>
+                    <span className='form-secondContainer-header-title'>Effective Date</span>
                     <span className='form-secondContainer-header-subtitle'>
-                      {accountDetails && formatDateFromUTC(accountDetails?.informations[0]?.receptionDate)}
+                      {accountDetails && formatDateFromUTC(accountDetails?.informations[0]?.effectiveDate)}
                     </span>
                   </div>
                 )}

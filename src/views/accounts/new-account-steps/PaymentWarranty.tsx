@@ -42,6 +42,7 @@ import CustomAlert, { IAlert } from '@/views/custom/alerts'
 import { Icon } from '@iconify/react'
 import { NumericFormat } from 'react-number-format'
 import { InstallmentDto } from 'src/services/accounts/dtos/installments.dto'
+import { DisableForm } from './_commons/DisableForm'
 
 interface InstallmentErrors {
   errorFieldRequired: boolean
@@ -327,6 +328,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
 
   useEffect(() => {
     idAccount && setAccountId(idAccount)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [idAccount, setAccountId])
 
   useEffect(() => {
@@ -348,7 +350,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
       fecha.setMinutes(fecha.getMinutes() + fecha.getTimezoneOffset())
       newAccount!.informations[0].effectiveDate = fecha
     }
-  }, [account, newAccount])
+  }, [account, newAccount, idAccount])
 
   //todo probar en un momento
   useEffect(() => {
@@ -362,98 +364,109 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
       <GeneralContainer>
         <TitleContainer>
           <Typography variant='h5'>Payment warranty</Typography>
-          <InputsContainer>
-            <Grid container spacing={{ xs: 2, sm: 5, md: 5 }} rowSpacing={4} columns={12}>
-              <Grid item xs={12} sm={6} md={4}>
-                <DatePicker
-                  selected={
-                    newAccount?.informations[0]?.effectiveDate
-                      ? new Date(newAccount?.informations[0]?.effectiveDate)
-                      : null
-                  }
-                  shouldCloseOnSelect
-                  id='Inception date'
-                  showTimeSelect
-                  timeIntervals={15}
-                  customInput={<CustomInput label='Inception date' sx={{ mb: 2, mt: 0, width: '100%' }} />}
-                  disabled={true}
-                  onChange={() => {
-                    return
-                  }}
-                  dateFormat={'dd/MM/yyyy'}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6} md={4}>
-                <NumericFormat
-                  fullWidth
-                  name='DynamicNetPremium'
-                  allowLeadingZeros
-                  thousandSeparator=','
-                  customInput={TextField}
-                  id='DynamicNetPremium'
-                  label='Dynamic net premium'
-                  multiline
-                  variant='outlined'
-                  value={account ? account?.securitiesTotal[0]?.receivedNetPremium : ' '}
-                  disabled={true}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6} md={4}>
-                <NumericFormat
-                  fullWidth
-                  name='Installments'
-                  thousandSeparator=','
-                  customInput={TextField}
-                  id='Installments'
-                  label='Installments'
-                  decimalScale={0}
-                  variant='outlined'
-                  value={count}
-                  onValueChange={value => {
-                    handleNumericInputChange(value.floatValue)
-                  }}
-                />
-                {error.errorFieldRequired && (
-                  <FormHelperText sx={{ color: 'error.main' }}>This field is required</FormHelperText>
-                )}
-                {error.erorrRangeInstallments && (
-                  <FormHelperText sx={{ color: 'error.main' }}>
-                    {count && count > 12 ? 'This field cannot be greater than 12' : 'This field cannot be 0'}
-                  </FormHelperText>
-                )}
-                {error.errorOnlyNumbers && <FormHelperText sx={{ color: 'error.main' }}>Only numbers</FormHelperText>}
-              </Grid>
-            </Grid>
-          </InputsContainer>
-        </TitleContainer>
+          <form noValidate autoComplete='on'>
+            <DisableForm
+              isDisabled={account?.status.toLowerCase() === 'bound' ? true : false}
+            >
+              <InputsContainer>
+                <Grid container spacing={{ xs: 2, sm: 5, md: 5 }} rowSpacing={4} columns={12}>
+                  <Grid item xs={12} sm={6} md={4}>
+                    <DatePicker
+                      selected={
+                        newAccount?.informations[0]?.effectiveDate
+                          ? new Date(newAccount?.informations[0]?.effectiveDate)
+                          : null
+                      }
+                      shouldCloseOnSelect
+                      id='Inception date'
+                      showTimeSelect
+                      timeIntervals={15}
+                      customInput={<CustomInput label='Inception date' sx={{ mb: 2, mt: 0, width: '100%' }} />}
+                      disabled={true}
+                      onChange={() => {
+                        return
+                      }}
+                      dateFormat={'dd/MM/yyyy'}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6} md={4}>
+                    <NumericFormat
+                      fullWidth
+                      name='DynamicNetPremium'
+                      allowLeadingZeros
+                      thousandSeparator=','
+                      customInput={TextField}
+                      id='DynamicNetPremium'
+                      label='Dynamic net premium'
+                      multiline
+                      variant='outlined'
+                      value={account ? account?.securitiesTotal[0]?.receivedNetPremium : ' '}
+                      disabled={true}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6} md={4}>
+                    <NumericFormat
+                      fullWidth
+                      name='Installments'
+                      thousandSeparator=','
+                      customInput={TextField}
+                      id='Installments'
+                      label='Installments'
+                      decimalScale={0}
+                      variant='outlined'
+                      value={count}
+                      onValueChange={value => {
+                        handleNumericInputChange(value.floatValue)
+                      }}
+                    />
+                    {error.errorFieldRequired && (
+                      <FormHelperText sx={{ color: 'error.main' }}>This field is required</FormHelperText>
+                    )}
+                    {error.erorrRangeInstallments && (
+                      <FormHelperText sx={{ color: 'error.main' }}>
+                        {count && count > 12 ? 'This field cannot be greater than 12' : 'This field cannot be 0'}
+                      </FormHelperText>
+                    )}
+                    {error.errorOnlyNumbers && <FormHelperText sx={{ color: 'error.main' }}>Only numbers</FormHelperText>}
+                  </Grid>
+                </Grid>
+              </InputsContainer>
+            </DisableForm>
 
-        <Grid container spacing={2}>
-          {installmentsList.map((installment, index) => (
-            <CardInstallment
-              index={index}
-              installment={installment}
-              daysFirst={installment.premiumPaymentWarranty || 0}
-              onChangeList={handleItemChange}
-              globalInfo={{
-                receivedNetPremium: account ? account?.securitiesTotal[0]?.receivedNetPremium : 0,
-                inceptionDate: account?.informations[0]?.effectiveDate
-                  ? new Date(account.informations[0].effectiveDate)
-                  : null,
-                idAccount: account ? idAccount : ''
-              }}
-              count={count}
-              key={index}
-              error100Percent={error.error100Percent}
-            />
-          ))}
-        </Grid>
+          </form>
+        </TitleContainer>
+        <DisableForm
+          isDisabled={account?.status.toLowerCase() === 'bound' ? true : false}
+        >
+
+          <Grid container spacing={2}>
+            {installmentsList.map((installment, index) => (
+              <CardInstallment
+                index={index}
+                installment={installment}
+                daysFirst={installment.premiumPaymentWarranty || 0}
+                onChangeList={handleItemChange}
+                globalInfo={{
+                  receivedNetPremium: account ? account?.securitiesTotal[0]?.receivedNetPremium : 0,
+                  inceptionDate: account?.informations[0]?.effectiveDate
+                    ? new Date(account.informations[0].effectiveDate)
+                    : null,
+                  idAccount: account ? idAccount : ''
+                }}
+                count={count}
+                key={index}
+                error100Percent={error.error100Percent}
+              />
+            ))}
+          </Grid>
+        </DisableForm>
       </GeneralContainer>
       <NextContainer>
         <Button
           variant='contained'
           color='success'
           sx={{ mr: 2, fontFamily: inter, fontSize: size, letterSpacing: '0.4px' }}
-          disabled={disableSaveBtn}
+          disabled={disableSaveBtn || account?.status.toLowerCase() === 'bound' ? true : false}
           onClick={saveInstallments}
         >
           <SaveIcon /> &nbsp; Save changes

@@ -99,7 +99,7 @@ const ActionsHeader: React.FC<IActionsHeaderProps> = ({ accountId, accountStatus
 
   useEffect(() => {
     if (buffer) {
-      const fileToDownload = new File([buffer], 'Account.docx')
+      const fileToDownload = new File([buffer], `Account_${accountId}.docx`)
       const downloadUrl = URL.createObjectURL(fileToDownload)
       const link = document.createElement('a')
       link.href = downloadUrl

@@ -290,3 +290,7 @@ export enum PRINT_ACCOUNT_ROUTES {
 export enum BOURDEROU_ROUTES {
   DOWNLOAD = 'reports/bourderau/download'
 }
+
+export enum DEBIT_NOTE_ROUTES {
+  DOWNLOAD = 'reports/debit-note'
+}
