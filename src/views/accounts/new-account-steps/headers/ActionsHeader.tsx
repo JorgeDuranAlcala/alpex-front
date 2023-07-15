@@ -70,6 +70,8 @@ const ActionsHeader: React.FC<IActionsHeaderProps> = ({ accountId, accountStatus
   const { languages } = useGetAllLanguage()
   const { accountHistoryLog, setIdAccount } = useGetAccountHistoryLogByIdAccount()
 
+  //const { deleteAccounts } = useAccountTable()
+
   useEffect(() => {
     accountId && setIdAccount(accountId)
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -77,6 +79,8 @@ const ActionsHeader: React.FC<IActionsHeaderProps> = ({ accountId, accountStatus
 
   const deleteAccount = () => {
     console.log('Deleted')
+
+    //accountId && deleteAccounts([accountId])
     setOpenDelete(false)
   }
 
