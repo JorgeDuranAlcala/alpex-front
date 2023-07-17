@@ -4,9 +4,13 @@ import { Typography } from '@mui/material'
 import UserThemeOptions from 'src/layouts/UserThemeOptions'
 import { Container, ContainerHeader, TopCardsContainer } from 'src/styles/Dashboard/dashboard'
 
+import BrokersBalanceStatus from 'src/views/dashboards/crm/BrokersBalanceStatus'
+
 import DowlandAccountInfo from 'src/views/dashboards/crm/DowlandAccountInfo'
 
 // import LongMenu from 'src/views/dashboards/crm/filter'
+
+import LastBoundAccount from 'src/views/dashboards/crm/LastBoundAccount'
 
 import CrmTable from 'src/views/dashboards/crm/Table'
 
@@ -42,9 +46,9 @@ const CrmDashboard = () => {
       </ContainerHeader>
 
       <TopCardsContainer>
-        {/* <BrokersBalanceStatus />
+        <BrokersBalanceStatus />
 
-        <LastBoundAccount /> */}
+        <LastBoundAccount />
       </TopCardsContainer>
       <CrmTable />
       <DowlandAccountInfo />
