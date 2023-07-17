@@ -13,7 +13,8 @@ import {
   Typography
 } from '@mui/material'
 import { ForwardedRef, forwardRef, useEffect, useState } from 'react'
-import DatePicker from 'react-datepicker'
+
+import { default as DatePicker } from 'react-datepicker'
 
 // import Icon from 'src/@core/components/icon'
 
@@ -96,6 +97,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
   const [installmentsList, setInstallmentList] = useState<InstallmentDto[]>([])
   const [initialInstallmentList, setInitialInstallmentList] = useState<InstallmentDto[]>([])
 
+  const [check, setCheck] = useState<boolean>(false)
   const [count, setCount] = useState<number>()
   const [btnNext, setBtnNext] = useState<boolean>(false)
   const [daysFirst, setDaysFirst] = useState<number>()
@@ -210,6 +212,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
     setDaysFirst(installmentsLisTemp[0].premiumPaymentWarranty)
 
     setIsChange(true)
+    setCheck(false)
   }
 
   const getTwoDecimals = (num: number) => {
@@ -344,13 +347,15 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
       setInitialInstallmentList([...installments])
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    if (newAccount) {
+    if (newAccount && !check) {
+      setCheck(true)
       const corte = new String(newAccount!.informations[0].effectiveDate!)
-      const fecha = new Date(Date.parse(corte.substring(0, 10)))
+      const corte2 = Date.parse(corte.substring(0, 10))
+      const fecha = new Date(corte2)
       fecha.setMinutes(fecha.getMinutes() + fecha.getTimezoneOffset())
       newAccount!.informations[0].effectiveDate = fecha
     }
-  }, [account, newAccount])
+  }, [account, newAccount, idAccount])
 
   //todo probar en un momento
   useEffect(() => {
@@ -364,76 +369,75 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
       <GeneralContainer>
         <TitleContainer>
           <Typography variant='h5'>Payment warranty</Typography>
-          <form noValidate autoComplete='on'>
-            <DisableForm
-              isDisabled={account?.status.toLowerCase() === 'bound' ? true : false}
-            >
-              <InputsContainer>
-                <Grid container spacing={{ xs: 2, sm: 5, md: 5 }} rowSpacing={4} columns={12}>
-                  <Grid item xs={12} sm={6} md={4}>
-                    <DatePicker
-                      selected={
-                        newAccount?.informations[0]?.effectiveDate
-                          ? new Date(newAccount?.informations[0]?.effectiveDate)
-                          : null
-                      }
-                      shouldCloseOnSelect
-                      id='Inception date'
-                      showTimeSelect
-                      timeIntervals={15}
-                      customInput={<CustomInput label='Inception date' sx={{ mb: 2, mt: 0, width: '100%' }} />}
-                      disabled={true}
-                      onChange={() => {
-                        return
-                      }}
-                      dateFormat={'dd/MM/yyyy'}
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={6} md={4}>
-                    <NumericFormat
-                      fullWidth
-                      name='DynamicNetPremium'
-                      allowLeadingZeros
-                      thousandSeparator=','
-                      customInput={TextField}
-                      id='DynamicNetPremium'
-                      label='Dynamic net premium'
-                      multiline
-                      variant='outlined'
-                      value={account ? account?.securitiesTotal[0]?.receivedNetPremium : ' '}
-                      disabled={true}
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={6} md={4}>
-                    <NumericFormat
-                      fullWidth
-                      name='Installments'
-                      thousandSeparator=','
-                      customInput={TextField}
-                      id='Installments'
-                      label='Installments'
-                      decimalScale={0}
-                      variant='outlined'
-                      value={count}
-                      onValueChange={value => {
-                        handleNumericInputChange(value.floatValue)
-                      }}
-                    />
-                    {error.errorFieldRequired && (
-                      <FormHelperText sx={{ color: 'error.main' }}>This field is required</FormHelperText>
-                    )}
-                    {error.erorrRangeInstallments && (
-                      <FormHelperText sx={{ color: 'error.main' }}>
-                        {count && count > 12 ? 'This field cannot be greater than 12' : 'This field cannot be 0'}
-                      </FormHelperText>
-                    )}
-                    {error.errorOnlyNumbers && <FormHelperText sx={{ color: 'error.main' }}>Only numbers</FormHelperText>}
-                  </Grid>
-                </Grid>
-              </InputsContainer>
-            </DisableForm>
 
-          </form>
+          <DisableForm
+            isDisabled={account?.status.toLowerCase() === 'bound' ? true : false}
+          >
+            <InputsContainer>
+              <Grid container spacing={{ xs: 2, sm: 5, md: 5 }} rowSpacing={4} columns={12}>
+                <Grid item xs={12} sm={6} md={4}>
+                  <DatePicker
+                    selected={
+                      newAccount?.informations[0]?.effectiveDate
+                        ? new Date(newAccount?.informations[0]?.effectiveDate)
+                        : null
+                    }
+                    shouldCloseOnSelect
+                    id='Inception date'
+                    showTimeSelect
+                    timeIntervals={15}
+                    customInput={<CustomInput label='Inception date' sx={{ mb: 2, mt: 0, width: '100%' }} />}
+                    disabled={true}
+                    onChange={() => {
+                      return
+                    }}
+                    dateFormat={'dd/MM/yyyy'}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6} md={4}>
+                  <NumericFormat
+                    fullWidth
+                    name='DynamicNetPremium'
+                    allowLeadingZeros
+                    thousandSeparator=','
+                    customInput={TextField}
+                    id='DynamicNetPremium'
+                    label='Dynamic net premium'
+                    multiline
+                    variant='outlined'
+                    value={account ? account?.securitiesTotal[0]?.receivedNetPremium : ' '}
+                    disabled={true}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6} md={4}>
+                  <NumericFormat
+                    fullWidth
+                    name='Installments'
+                    thousandSeparator=','
+                    customInput={TextField}
+                    id='Installments'
+                    label='Installments'
+                    decimalScale={0}
+                    variant='outlined'
+                    value={count}
+                    onValueChange={value => {
+                      handleNumericInputChange(value.floatValue)
+                    }}
+                  />
+                  {error.errorFieldRequired && (
+                    <FormHelperText sx={{ color: 'error.main' }}>This field is required</FormHelperText>
+                  )}
+                  {error.erorrRangeInstallments && (
+                    <FormHelperText sx={{ color: 'error.main' }}>
+                      {count && count > 12 ? 'This field cannot be greater than 12' : 'This field cannot be 0'}
+                    </FormHelperText>
+                  )}
+                  {error.errorOnlyNumbers && <FormHelperText sx={{ color: 'error.main' }}>Only numbers</FormHelperText>}
+                </Grid>
+              </Grid>
+            </InputsContainer>
+          </DisableForm>
+
         </TitleContainer>
         <DisableForm
           isDisabled={account?.status.toLowerCase() === 'bound' ? true : false}

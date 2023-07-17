@@ -274,8 +274,6 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
     const isDifferent = isGross
       ? information.grossPremium !== tempSecurities[index].netPremiumAt100
       : information.netPremium !== tempSecurities[index].netPremiumAt100
-    console.log(isGross, index, information.grossPremium, tempSecurities[index].netPremiumAt100)
-    console.log(isGross, index, information.netPremium, tempSecurities[index].netPremiumAt100)
 
     // index === tempSecurities.length - 1 &&
     if (information && activeView === 0 && isDifferent && securities[index].idCReinsuranceCompany?.id) {
