@@ -139,6 +139,52 @@ const FormContainer = styled('div')({
   }
 })
 
+const ContentModalUpload = styled('div')({
+  '.title': {
+    fontWeight: '500',
+    fontSize: '24px',
+    lineHeight: '32.02px',
+    color: '#646776'
+  }
+})
+
+const FormContainerUpload = styled('div')({
+  display: 'flex',
+  justifyContent: 'center',
+  flexDirection: 'column',
+  alignContent: 'center',
+
+  // alignItems: 'center',
+  '.img': {
+    display: 'flex',
+    justifyContent: 'center',
+    flexDirection: 'column',
+    alignContent: 'center',
+    height: '160px',
+    width: '160px',
+    border: '1px solid red',
+    marginBottom: '12px',
+    marginTop: '48px',
+    alignSelf: 'center',
+    borderRadius: '8px'
+  },
+
+  '.txt': {
+    fontWeight: '400',
+    fontSize: '16px',
+    lineHeight: '24px',
+    letterSpacing: '.15px',
+    color: '#BBBCC3',
+    marginBottom: '40px'
+  },
+  '.btnContainer': {
+    display: 'flex',
+    justifyContent: 'center',
+    alignContent: 'center',
+    alignItems: 'center'
+  }
+})
+
 export {
   ButtonClose,
   Column,
@@ -148,7 +194,9 @@ export {
   ContainerData,
   ContentEndorsmentContainer,
   ContentEndorsmentContainerCancel,
+  ContentModalUpload,
   FormContainer,
+  FormContainerUpload,
   HeaderColumns,
   HeaderTitleModal,
   Row

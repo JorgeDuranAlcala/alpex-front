@@ -1,3 +1,4 @@
+import { Box } from '@mui/material';
 import { ReactNode, useContext, useEffect, useRef } from 'react';
 import { SecondViewContext } from '../Security/components/secondView/SecondViewContext';
 
@@ -153,12 +154,12 @@ export const DisableForm = ({ children, isDisabled }: DisableFormProps) => {
   }, [isDisabled, activeView])
 
   return (
-    <fieldset
+    <Box component="fieldset"
       ref={$fieldSet}
       disabled={isDisabled}
-      style={{ border: 'none' }}
+      sx={{ border: 'none', width: '100%' }}
     >
       {children}
-    </fieldset>
+    </Box>
   )
 }

@@ -7,6 +7,7 @@ import { useAppSelector } from 'src/store'
 import StatusSelect from 'src/views/custom/select/StatusSelect'
 import ActionsHeader from './ActionsHeader'
 import ActionsHeaderBound from './ActionsHeaderBound'
+import { ModalUploadImg } from './modals/ModalUploadImg'
 
 // ** MUI Imports
 
@@ -38,6 +39,7 @@ const ModalUploadImage = () => {
   const [image, setImage] = useState('')
   const [imagePreview, setImagePreview] = useState('')
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
+  const [modal, setModal] = useState(false)
   const openMenu = Boolean(anchorEl)
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget)
@@ -49,8 +51,20 @@ const ModalUploadImage = () => {
     setOpen(true)
   }
 
-  const handleClose = () => {
-    setOpen(false)
+  const handleClose = (action: string) => {
+    switch (action) {
+      case 'upload':
+        setOpen(false)
+        setAnchorEl(null)
+        setModal(true)
+        break
+      case 'txtLogo':
+        setOpen(false)
+        setAnchorEl(null)
+        break
+      default:
+        break
+    }
   }
 
   const handleImageChange = (e: any) => {
@@ -88,14 +102,14 @@ const ModalUploadImage = () => {
             'aria-labelledby': 'basic-button'
           }}
         >
-          <MenuItem onClick={handleClose}>
+          <MenuItem onClick={() => handleClose('upload')}>
             <ListItemText>Upload Company Logo</ListItemText>
             <ListItemIcon>
               <Icon icon='ic:baseline-file-upload' style={{ marginLeft: 'auto' }} fontSize={20} />
             </ListItemIcon>
           </MenuItem>
-          <MenuItem onClick={handleClose}>
-            <ListItemText>Use a Text-Based Logo </ListItemText>
+          <MenuItem onClick={() => handleClose('txtLogo')}>
+            <ListItemText>Use a Text-Based Logo</ListItemText>
             <ListItemIcon>
               <Icon icon='ph:text-a-underline-bold' style={{ marginLeft: 'auto' }} fontSize={20} />
             </ListItemIcon>
@@ -118,6 +132,7 @@ const ModalUploadImage = () => {
           </Typography>
         </Box>
       </Modal>
+      <ModalUploadImg setOpenHistory={setModal} openHistory={modal} />
     </>
   )
 }
@@ -132,9 +147,6 @@ const FormHeader = ({
 }: FormHeaderProps) => {
   const [status, setStatus] = useState('')
   const account = useAppSelector(state => state.accounts?.formsData?.form1)
-
-  //hooks
-  //const { account: accountDetails, setAccountId } = useGetAccountById()
 
   const formaterAmount = (amount: number) => {
     if (amount) {
@@ -256,9 +268,9 @@ const FormHeader = ({
 
                 {!isNewAccount && (
                   <div className='form-secondContainer-second'>
-                    <span className='form-secondContainer-header-title'>Reception Date</span>
+                    <span className='form-secondContainer-header-title'>Effective Date</span>
                     <span className='form-secondContainer-header-subtitle'>
-                      {accountDetails && formatDateFromUTC(accountDetails?.informations[0]?.receptionDate)}
+                      {accountDetails && formatDateFromUTC(accountDetails?.informations[0]?.effectiveDate)}
                     </span>
                   </div>
                 )}
