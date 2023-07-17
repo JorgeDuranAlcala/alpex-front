@@ -12,6 +12,9 @@ export interface BourderauBodyDto {
   idCReinsuranceCompanyBinder: number
 }
 
+export interface ReportBodyDto {
+  idStatus: number
+}
 export interface DebitNoteParamsDto {
   idAccount: number
 }
