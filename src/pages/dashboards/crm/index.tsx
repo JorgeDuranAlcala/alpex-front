@@ -4,7 +4,7 @@ import { Typography } from '@mui/material'
 import UserThemeOptions from 'src/layouts/UserThemeOptions'
 import { Container, ContainerHeader, TopCardsContainer } from 'src/styles/Dashboard/dashboard'
 
-import DowlandAccountInfo from 'src/views/dashboards/crm/DowlandAccountInfo'
+import DownloadAccountInfo from '@/views/dashboards/crm/DownloadAccountInfo'
 
 // import LongMenu from 'src/views/dashboards/crm/filter'
 
@@ -47,7 +47,7 @@ const CrmDashboard = () => {
         <LastBoundAccount /> */}
       </TopCardsContainer>
       <CrmTable />
-      <DowlandAccountInfo />
+      <DownloadAccountInfo />
     </Container>
   )
 }
