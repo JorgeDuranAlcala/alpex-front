@@ -1,18 +1,20 @@
 // ** MUI Imports
+import { useGetAll } from '@/hooks/catalogs/account-status/useGetAll'
+import { ContainerSelectDownload, HeaderTitle } from '@/styles/Dashboard/DownloadAcounts/downloadAccountsInfo'
 import FileDownloadIcon from '@mui/icons-material/FileDownload'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import { Button, MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material'
 import Card from '@mui/material/Card'
 import { useState } from 'react'
 import UserThemeOptions from 'src/layouts/UserThemeOptions'
-import { ContainerSelectDowland, HeaderTitle } from 'src/styles/Dashboard/DowlandAcounts/dowlandAccountsInfo'
+import ReportServices from 'src/services/reports/report.service'
 
 //Google Analytics
-import Analytics from '@/utils/analytics'
 
-const DowlandAccountInfo = () => {
-  const [broker, setBroker] = useState('')
-  const brokers = [
+const DownloadAccountInfo = () => {
+  const [status, setStatus] = useState('')
+
+  /*const status = [
     { name: 'Select option', value: '' },
     { name: 'Pending', value: 1 },
     { name: 'No materialized', value: 2 },
@@ -21,20 +23,28 @@ const DowlandAccountInfo = () => {
     { name: 'Bound', value: 5 },
     { name: 'Reneward', value: 6 },
     { name: 'All accounts', value: 7 }
-  ]
+  ]*/
+
+  const { accountStatus } = useGetAll()
 
   const handleOnchange = (e: SelectChangeEvent) => {
-    setBroker(e.target.value)
+    setStatus(e.target.value)
   }
 
-  const handleOnDownload = () => {
-    const select = brokers.find(status => status.value === broker)
-    if (broker !== '' && select && select.name) {
-      Analytics.event({
-        action: 'download_report',
-        category: 'download_report',
-        label: select.name
-      })
+  const handleOnDownload = async () => {
+    try {
+      const url = await ReportServices.downloadAllAccountsReport({ idStatus: parseInt(status) })
+      if (url) {
+        const fileToDownload = new File([url], 'AccountsReport.xlsx')
+        const downloadUrl = URL.createObjectURL(fileToDownload)
+        const link = document.createElement('a')
+        link.href = downloadUrl
+        link.download = fileToDownload.name
+        link.click()
+      }
+    } catch (error) {
+      // eslint-disable-next-line
+      console.error(error)
     }
   }
 
@@ -77,20 +87,19 @@ const DowlandAccountInfo = () => {
           Select an option and click on the button to download
         </Typography>
       </HeaderTitle>
-      <ContainerSelectDowland>
+      <ContainerSelectDownload>
         <Select
           sx={{ width: '71%', height: '100%', '@media (max-width:599px)': { width: '100%', height: '38px' } }}
-          value={broker}
+          value={status}
           displayEmpty
           onChange={e => {
             handleOnchange(e)
-            console.log(e.target.value)
           }}
           IconComponent={KeyboardArrowDownIcon}
         >
-          {brokers?.map((item, index) => (
-            <MenuItem key={index} value={item.value}>
-              {item.name}
+          {accountStatus?.map((item, index) => (
+            <MenuItem key={index} value={item.id}>
+              {item.status}
             </MenuItem>
           ))}
         </Select>
@@ -109,9 +118,9 @@ const DowlandAccountInfo = () => {
         >
           Download
         </Button>
-      </ContainerSelectDowland>
+      </ContainerSelectDownload>
     </Card>
   )
 }
 
-export default DowlandAccountInfo
+export default DownloadAccountInfo
