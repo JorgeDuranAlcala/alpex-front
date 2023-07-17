@@ -39,9 +39,9 @@ const DeductibleMaterialDamage: React.FC<DeductibleMaterialDamageProps> = ({
   const handleChangeItem = (event: any, name: string) => {
     const reset = {
       deductible: null,
-      min: null,
+      min: 0,
       idCDeductiblePer: null,
-      amount: null
+      amount: 0
     }
     const subLimitTemp = { ...subLimit, [name]: event.target.value }
     if (name === 'typeDeductible') {
@@ -250,7 +250,7 @@ export const validateDeductibleMaterialDamage = ({ typeDeductible }: { typeDeduc
         const val = value || 0
         if (typeDeductible !== 'per') return true
 
-        return +val > 0
+        return +val >= 0
       }),
     idCDeductiblePer: yup
       .number()
@@ -271,6 +271,6 @@ export const validateDeductibleMaterialDamage = ({ typeDeductible }: { typeDeduc
 
         if (typeDeductible !== 'per') return true
 
-        return +val > 0
+        return +val >= 0
       })
   })

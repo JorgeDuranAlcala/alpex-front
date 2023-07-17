@@ -16,6 +16,7 @@ import { useUpdateAccountsStatus } from '@/hooks/accounts/status'
 import UserThemeOptions from '@/layouts/UserThemeOptions'
 import CheckIcon from '@mui/icons-material/Check'
 import SaveIcon from '@mui/icons-material/Save'
+import { DisableForm } from '../_commons/DisableForm'
 
 const initialValues: SublimitDto = {
   id: undefined,
@@ -73,7 +74,11 @@ export const initialErrorValues: FormErrors = {
   idCDeductiblePer: ''
 }
 
-const Sublimits = () => {
+interface SublimitsProps {
+  getAccountByIdHeader: (idAccount: number) => void
+}
+
+const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
   const [badgeData, setBadgeData] = useState<IAlert>({
     message: '',
     theme: 'success',
@@ -178,7 +183,6 @@ const Sublimits = () => {
     const save: Partial<SublimitDto>[] = []
     const update: Partial<SublimitDto>[] = []
     for (const subLimit of subLimits) {
-
       // * Cuando hay un cambio en el componente DeductibleMaterialDamage,
       // * desaparece el campo idCDeductiblePer, si no hay un cambio
       // * lo deja en 0, entonces cuando venga en 0, lo elimino
@@ -190,7 +194,6 @@ const Sublimits = () => {
         ...(subLimit?.idCDeductiblePer === 0 ? { idCDeductiblePer: null } : null),
         ...(subLimit?.title ? { title: undefined } : null)
       }
-
 
       if (subLimit.id) {
         update.push(tempSubmit)
@@ -243,6 +246,7 @@ const Sublimits = () => {
           }
         ]
       })
+      getAccountByIdHeader(formInformationData.id)
       setBadgeData({
         message: 'Account has been updated',
         theme: 'success',
@@ -295,30 +299,42 @@ const Sublimits = () => {
             <CustomAlert {...badgeData} />
           </div>
         </Grid>
-        {/* campos header */}
-        <InputLimit account={account} />
-        <SelectCoverage
-          onChangeSelected={handleSelectedCoverage}
-          coverageSelected={coverageSelected}
-          onClickToggle={handleToggle}
-        />
-        <Grid container spacing={5} sx={{ m: '1%' }}>
-          {account?.informations &&
-            subLimits.map((subLimit, index) => (
-              <Grid item xs={12} sm={4} md={4} key={index}>
-                <GenericCard
-                  subLimit={subLimit}
-                  setSubLimits={setSubLimits}
-                  subLimits={subLimits}
-                  index={index}
-                  limit={Number(account.informations[0].limit)}
-                  formErrors={formErrors}
-                  handleOnDeleteForm={handleDeleteSublimit}
-                  setErrors={setFormErrors}
-                  showErrors={showErrors}
+        <Grid item xs={12} sm={12}>
+
+          <form noValidate autoComplete='on' >
+            <DisableForm
+              isDisabled={account?.status.toLowerCase() === 'bound' ? true : false}
+            >
+              {/* campos header */}
+              <Grid container spacing={5} >
+                <InputLimit account={account} />
+                <SelectCoverage
+                  onChangeSelected={handleSelectedCoverage}
+                  coverageSelected={coverageSelected}
+                  onClickToggle={handleToggle}
                 />
               </Grid>
-            ))}
+              <Grid container spacing={5} sx={{ mt: '20px' }}>
+                {account?.informations &&
+                  subLimits.map((subLimit, index) => (
+                    <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
+                      <GenericCard
+                        subLimit={subLimit}
+                        setSubLimits={setSubLimits}
+                        subLimits={subLimits}
+                        index={index}
+                        limit={Number(account.informations[0].limit)}
+                        formErrors={formErrors}
+                        handleOnDeleteForm={handleDeleteSublimit}
+                        setErrors={setFormErrors}
+                        showErrors={showErrors}
+                      />
+                    </Grid>
+                  ))}
+              </Grid>
+
+            </DisableForm>
+          </form>
         </Grid>
       </Grid>
       <NextContainer>
@@ -326,7 +342,7 @@ const Sublimits = () => {
           variant='contained'
           color='success'
           sx={{ mr: 2, fontFamily: inter, fontSize: size, letterSpacing: '0.4px' }}
-          disabled={disableSaveBtn}
+          disabled={disableSaveBtn || account?.status.toLowerCase() === 'bound' ? true : false}
           onClick={handleClickSave}
         >
           <SaveIcon /> &nbsp; Save changes
