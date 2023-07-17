@@ -1,21 +1,14 @@
-
 // ** MUI Imports
 import { useAuth } from '@/hooks/useAuth'
 import { Typography } from '@mui/material'
 import UserThemeOptions from 'src/layouts/UserThemeOptions'
 import { Container, ContainerHeader, TopCardsContainer } from 'src/styles/Dashboard/dashboard'
 
-import BrokersBalanceStatus from 'src/views/dashboards/crm/BrokersBalanceStatus'
-
 import DowlandAccountInfo from 'src/views/dashboards/crm/DowlandAccountInfo'
 
 // import LongMenu from 'src/views/dashboards/crm/filter'
 
-import LastBoundAccount from 'src/views/dashboards/crm/LastBoundAccount'
-
 import CrmTable from 'src/views/dashboards/crm/Table'
-
-
 
 // import CrmTable from 'src/views/dashboards/crm/CrmTable'
 const userThemeConfig: any = Object.assign({}, UserThemeOptions())
@@ -26,7 +19,7 @@ const weight = userThemeConfig.typography?.fontWeight.weight500
 const textSize = userThemeConfig.typography?.size.px24
 
 const CrmDashboard = () => {
-  const { user } = useAuth();
+  const { user } = useAuth()
 
   return (
     <Container>
@@ -49,9 +42,9 @@ const CrmDashboard = () => {
       </ContainerHeader>
 
       <TopCardsContainer>
-        <BrokersBalanceStatus />
+        {/* <BrokersBalanceStatus />
 
-        <LastBoundAccount />
+        <LastBoundAccount /> */}
       </TopCardsContainer>
       <CrmTable />
       <DowlandAccountInfo />
