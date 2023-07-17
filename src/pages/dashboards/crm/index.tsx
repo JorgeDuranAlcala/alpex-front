@@ -8,6 +8,9 @@ import DownloadAccountInfo from '@/views/dashboards/crm/DownloadAccountInfo'
 
 // import LongMenu from 'src/views/dashboards/crm/filter'
 
+import LastBoundAccount from 'src/views/dashboards/crm/LastBoundAccount'
+
+import BrokersBalanceStatus from '@/views/dashboards/crm/BrokersBalanceStatus'
 import CrmTable from 'src/views/dashboards/crm/Table'
 
 // import CrmTable from 'src/views/dashboards/crm/CrmTable'
@@ -42,9 +45,9 @@ const CrmDashboard = () => {
       </ContainerHeader>
 
       <TopCardsContainer>
-        {/* <BrokersBalanceStatus />
+        <BrokersBalanceStatus />
 
-        <LastBoundAccount /> */}
+        <LastBoundAccount />
       </TopCardsContainer>
       <CrmTable />
       <DownloadAccountInfo />
