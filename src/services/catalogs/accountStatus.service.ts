@@ -3,7 +3,6 @@ import { AppAlpexApiGateWay } from 'src/services/app.alpex.api-getway'
 import { AccountStatusDto } from 'src/services/catalogs/dtos/accountStatus.dto'
 
 class AccountStatusService {
-  //REEMPLAZAR
   async getAll(): Promise<AccountStatusDto[]> {
     try {
       const { data } = await AppAlpexApiGateWay.get<Promise<AccountStatusDto[]>>(ACCOUNT_STATUS_ROUTERS.GET_ALL)

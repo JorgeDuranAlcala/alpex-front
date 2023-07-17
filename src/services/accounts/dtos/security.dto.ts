@@ -12,7 +12,7 @@ export interface SecurityDto {
   premiumPerShare: number
   premiumPerShareAmount: number
   frontingFeeActive: boolean
-  taxesActive: boolean | null
+  taxesActive: boolean
   dynamicCommission: number
   dynamicCommissionAmount: number
   frontingFee: number
@@ -70,7 +70,7 @@ export interface FormInformation {
 export interface FormSectionProps {
   index: number
   security: SecurityDto
-  securities: SecurityDto[]
+
   onDeleteItemList: (index: number) => void
 }
 

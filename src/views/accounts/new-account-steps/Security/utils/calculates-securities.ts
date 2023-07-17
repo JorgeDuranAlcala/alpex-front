@@ -26,7 +26,7 @@ export class CalculateSecurity {
     if (this.security.netPremiumAt100) {
       this.security.netPremiumAt100 = this.security.netPremiumAt100
       this.baseAmount = this.security.netPremiumAt100
-    } else {
+    } else if (this.security.netPremiumAt100 === undefined) {
       this.baseAmount = this.security.isGross
         ? parseFloat(String(this.information.grossPremium))
         : parseFloat(String(this.information.netPremium))
@@ -245,7 +245,7 @@ export class CalculateSecurity {
     const recievedNetPremium =
       premiumPerShareAmountNet +
       (premiumPerShareAmountGros - taxesGros - brokerageReinsuranceGross - discountAmountGros)
-    const diference = recievedNetPremium - distributedNetPremium
+    const diference = Math.abs(recievedNetPremium - distributedNetPremium)
 
     return {
       recievedNetPremium,

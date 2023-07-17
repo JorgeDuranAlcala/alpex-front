@@ -32,9 +32,15 @@ export const useGetAccountById = () => {
   const [accountId, setAccountId] = useState<number | null>(null)
 
   const getAccountById = async (idAccount: number): Promise<ResponseGetAccount> => {
-    const account = await AccountServices.getAccountById(idAccount)
+    const getAccount = await AccountServices.getAccountById(idAccount)
+    if (getAccount) {
+      const idAccountStatus: number = getAccount.idAccountStatus as number
+      const statusKey = `status_${idAccountStatus}`
+      getAccount.status = account_status[statusKey as keyof typeof account_status]
+      setAccount(getAccount)
+    }
 
-    return account
+    return getAccount
   }
 
   useEffect(() => {
@@ -42,23 +48,7 @@ export const useGetAccountById = () => {
       AccountServices.getAccountById(accountId)
         .then(accounts => {
           if (accounts) {
-            accounts.securities =
-              accounts.securities.length === 0
-                ? [
-                    {
-                      frontingFeeActive: false,
-                      taxesActive: false,
-                      isGross: false,
-                      discounts: [],
-                      share: 0,
-                      dynamicCommission: 0,
-                      view: 1,
-                      reinsuranceBrokerage: 0,
-                      taxes: 0,
-                      frontingFee: 0
-                    } as SecurityDto
-                  ]
-                : (accounts.securities as SecurityDto[])
+            accounts.securities = accounts.securities as SecurityDto[]
             const idAccountStatus: number = accounts.idAccountStatus as number
             const statusKey = `status_${idAccountStatus}`
             accounts.status = account_status[statusKey as keyof typeof account_status]

@@ -15,3 +15,6 @@ export interface BourderauBodyDto {
 export interface ReportBodyDto {
   idStatus: number
 }
+export interface DebitNoteParamsDto {
+  idAccount: number
+}

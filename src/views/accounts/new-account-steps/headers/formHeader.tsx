@@ -1,6 +1,4 @@
 // import { useGetAllEndorsementTypes } from '@/hooks/accounts/endorsementType/getAllEndorsementTypes.tsx'
-import { useGetAccountById } from '@/hooks/accounts/forms'
-import { useFindInformationByIdAccount } from '@/hooks/accounts/information'
 import { ContainerMobileBound } from '@/styled-components/accounts/Security.styled'
 import { Box, Button, Card, ListItemIcon, ListItemText, Menu, MenuItem, Modal, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
@@ -9,6 +7,7 @@ import { useAppSelector } from 'src/store'
 import StatusSelect from 'src/views/custom/select/StatusSelect'
 import ActionsHeader from './ActionsHeader'
 import ActionsHeaderBound from './ActionsHeaderBound'
+import { ModalUploadImg } from './modals/ModalUploadImg'
 
 // ** MUI Imports
 
@@ -29,6 +28,8 @@ interface FormHeaderProps {
   setActiveEndorsement?: any
   setEditInfo?: any
   setTypeofAccount?: any
+  accountDetails: any
+  setAccountId: any
 }
 
 //Pending types
@@ -38,6 +39,7 @@ const ModalUploadImage = () => {
   const [image, setImage] = useState('')
   const [imagePreview, setImagePreview] = useState('')
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
+  const [modal, setModal] = useState(false)
   const openMenu = Boolean(anchorEl)
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget)
@@ -49,8 +51,20 @@ const ModalUploadImage = () => {
     setOpen(true)
   }
 
-  const handleClose = () => {
-    setOpen(false)
+  const handleClose = (action: string) => {
+    switch (action) {
+      case 'upload':
+        setOpen(false)
+        setAnchorEl(null)
+        setModal(true)
+        break
+      case 'txtLogo':
+        setOpen(false)
+        setAnchorEl(null)
+        break
+      default:
+        break
+    }
   }
 
   const handleImageChange = (e: any) => {
@@ -88,14 +102,14 @@ const ModalUploadImage = () => {
             'aria-labelledby': 'basic-button'
           }}
         >
-          <MenuItem onClick={handleClose}>
+          <MenuItem onClick={() => handleClose('upload')}>
             <ListItemText>Upload Company Logo</ListItemText>
             <ListItemIcon>
               <Icon icon='ic:baseline-file-upload' style={{ marginLeft: 'auto' }} fontSize={20} />
             </ListItemIcon>
           </MenuItem>
-          <MenuItem onClick={handleClose}>
-            <ListItemText>Use a Text-Based Logo </ListItemText>
+          <MenuItem onClick={() => handleClose('txtLogo')}>
+            <ListItemText>Use a Text-Based Logo</ListItemText>
             <ListItemIcon>
               <Icon icon='ph:text-a-underline-bold' style={{ marginLeft: 'auto' }} fontSize={20} />
             </ListItemIcon>
@@ -118,18 +132,21 @@ const ModalUploadImage = () => {
           </Typography>
         </Box>
       </Modal>
+      <ModalUploadImg setOpenHistory={setModal} openHistory={modal} />
     </>
   )
 }
 
-const FormHeader = ({ isNewAccount, setActiveEndorsement, setTypeofAccount, setEditInfo }: FormHeaderProps) => {
+const FormHeader = ({
+  isNewAccount,
+  setActiveEndorsement,
+  setTypeofAccount,
+  setEditInfo,
+  accountDetails,
+  setAccountId
+}: FormHeaderProps) => {
   const [status, setStatus] = useState('')
   const account = useAppSelector(state => state.accounts?.formsData?.form1)
-
-  //hooks
-  const { setIdAccount, information } = useFindInformationByIdAccount()
-  const { account: accountDetails, setAccountId } = useGetAccountById()
-  // const accountsReducer = useAppSelector(state => state.accounts)
 
   const formaterAmount = (amount: number) => {
     if (amount) {
@@ -140,19 +157,6 @@ const FormHeader = ({ isNewAccount, setActiveEndorsement, setTypeofAccount, setE
         useGrouping: true
       })
     }
-  }
-
-  const formatDate = (date: Date | null | undefined): string => {
-    if (date) {
-      const options: Intl.DateTimeFormatOptions = {
-        day: '2-digit',
-        month: 'short',
-        year: 'numeric'
-      }
-
-      return new Intl.DateTimeFormat('ban', options).format(date)
-    }
-    return ''
   }
 
   const convertirFecha = (fecha: string) => {
@@ -179,30 +183,7 @@ const FormHeader = ({ isNewAccount, setActiveEndorsement, setTypeofAccount, setE
     return ''
   }
 
-  // useEffect(() => {
-  //   const formatedRows = []
-  //   const rawRows = accountsReducer.accounts
-
-  //   if (rawRows && rawRows.length > 0) {
-  //     for (const rawRow of rawRows) {
-  //       formatedRows.push({
-  //         id: rawRow?.id,
-  //         status: formatStatus(rawRow?.idAccountStatus?.status),
-  //         insured: rawRow?.informations[0]?.insured,
-  //         lob: rawRow?.informations[0]?.idLineOfBussines?.lineOfBussines
-  //       })
-  //     }
-  //   }
-
-  //   setAccounts(formatedRows || [])
-  //   const data = accounts?.find((item: any) => item.id === account?.id)
-  //   // console.log('datoss', data)
-
-  //   setStatus(data?.status)
-  // }, [accountsReducer])
-
   useEffect(() => {
-    account && setIdAccount(account.id)
     account && setAccountId(account.id)
   }, [account])
 
@@ -212,12 +193,9 @@ const FormHeader = ({ isNewAccount, setActiveEndorsement, setTypeofAccount, setE
     }
   }, [status])
 
-  /*NEW*/
   useEffect(() => {
     accountDetails && setStatus(accountDetails.status)
   }, [accountDetails])
-
-  // console.log('Hola: ', accountDetails)
 
   return (
     <>
@@ -256,7 +234,7 @@ const FormHeader = ({ isNewAccount, setActiveEndorsement, setTypeofAccount, setE
                     {account?.placementStructure?.currency}
                   </span>
                   <span className='form-header-money-data-date'>
-                    Last Update: {account && convertirFecha(information?.updatedAt)}
+                    Last Update: {accountDetails && formatDateFromUTC(accountDetails?.informations[0]?.updatedAt)}
                   </span>
                 </div>
               </div>
@@ -270,14 +248,12 @@ const FormHeader = ({ isNewAccount, setActiveEndorsement, setTypeofAccount, setE
                   {status !== '' && accountDetails?.status && (
                     <StatusSelect margin={0} initialStatus={accountDetails?.status} setSelectedStatus={setStatus} />
                   )}
-                  {status !== '' && !accountDetails && (
-                    <StatusSelect margin={0} initialStatus='PENDING' setSelectedStatus={setStatus} />
-                  )}
+                  {isNewAccount && <StatusSelect margin={0} initialStatus='PENDING' setSelectedStatus={setStatus} />}
                 </div>
 
                 <div className='form-secondContainer-third'>
                   <span className='form-header-money-data-date'>
-                    Last update: {account && convertirFecha(information?.updatedAt)}
+                    Last update: {accountDetails && formatDateFromUTC(accountDetails?.informations[0]?.updatedAt)}
                   </span>
                 </div>
 
@@ -292,9 +268,9 @@ const FormHeader = ({ isNewAccount, setActiveEndorsement, setTypeofAccount, setE
 
                 {!isNewAccount && (
                   <div className='form-secondContainer-second'>
-                    <span className='form-secondContainer-header-title'>Reception Date</span>
+                    <span className='form-secondContainer-header-title'>Effective Date</span>
                     <span className='form-secondContainer-header-subtitle'>
-                      {accountDetails && formatDateFromUTC(accountDetails?.informations[0]?.receptionDate)}
+                      {accountDetails && formatDateFromUTC(accountDetails?.informations[0]?.effectiveDate)}
                     </span>
                   </div>
                 )}
@@ -302,20 +278,20 @@ const FormHeader = ({ isNewAccount, setActiveEndorsement, setTypeofAccount, setE
               <div className={!isNewAccount ? 'actions-header' : 'form-secondContainer-fourths'}>
                 <div className={!isNewAccount ? 'display-none' : 'form-secondContainer-fourth'}>
                   <span className='form-header-money-data-date'>
-                    Last Update: {account && convertirFecha(information?.updatedAt)}
+                    Last update: {accountDetails && formatDateFromUTC(accountDetails?.informations[0]?.updatedAt)}
                   </span>
                 </div>
-                {accountDetails && accountDetails?.status !== 'BOUND' ? (
+                {accountDetails && accountDetails?.idAccountStatus === 5 ? ( //TODO
+                  <ActionsHeaderBound
+                    setActiveEndorsement={setActiveEndorsement}
+                    accountStatus='BOUND'
+                    sideHeader={true}
+                  />
+                ) : (
                   <ActionsHeader
                     accountId={account?.id}
                     setEditInfo={setEditInfo}
                     accountStatus='PENDING'
-                    sideHeader={true}
-                  />
-                ) : (
-                  <ActionsHeaderBound
-                    setActiveEndorsement={setActiveEndorsement}
-                    accountStatus='BOUND'
                     sideHeader={true}
                   />
                 )}

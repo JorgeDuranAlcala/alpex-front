@@ -15,7 +15,7 @@ const FormControlLabel = styled(MuiFormControlLabel)<FormControlLabelProps>(({ t
       '&.Mui-checked': {
         transform: 'translateX(20px)',
         color: theme.palette.common.white,
-        '& + .MuiSwitch-track': {
+        '&:not(.Mui-disabled) + .MuiSwitch-track': {
           opacity: 1,
           border: 'none',
           backgroundColor: '#52d869'
@@ -26,7 +26,7 @@ const FormControlLabel = styled(MuiFormControlLabel)<FormControlLabelProps>(({ t
       width: 20,
       height: 18
     },
-    '& .MuiSwitch-track': {
+    '&.MuiSwitch-track': {
       opacity: 1,
       borderRadius: 13,
       backgroundColor: theme.palette.mode === 'dark' ? theme.palette.action.selected : theme.palette.grey[600],

@@ -47,10 +47,9 @@ export const ReinsuranceCompany = ({
         netPremiumAt100: avaliableCompanies.special ? information.grossPremium : information.netPremium
       }
 
-      setIsGross(() => avaliableCompanies.special)
-
       calculateSecurities(tempSecurities)
       validateForm(tempSecurities[index])
+      setIsGross(() => avaliableCompanies.special)
     }
   }
 
