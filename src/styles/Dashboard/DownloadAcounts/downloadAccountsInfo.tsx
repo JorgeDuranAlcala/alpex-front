@@ -10,7 +10,7 @@ const HeaderTitle = styled('div')({
   gap: '4px'
 })
 
-const ContainerSelectDowland = styled('div')({
+const ContainerSelectDownload = styled('div')({
   display: 'flex',
   flexDirection: 'row',
   alignItems: 'center',
@@ -25,4 +25,4 @@ const ContainerSelectDowland = styled('div')({
   }
 })
 
-export { HeaderTitle, ContainerSelectDowland }
+export { ContainerSelectDownload, HeaderTitle }

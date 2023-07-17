@@ -1,8 +1,8 @@
 import { AppAlpexApiGateWay } from '../app.alpex.api-getway'
 
 //Routes
-import { BOURDEROU_ROUTES, PRINT_ACCOUNT_ROUTES } from '@/configs/api'
-import { BourderauBodyDto, PrintReportParamsDto } from './dtos/report.dto'
+import { BOURDEROU_ROUTES, PRINT_ACCOUNT_ROUTES, REPORTS_ROUTES } from '@/configs/api'
+import { BourderauBodyDto, PrintReportParamsDto, ReportBodyDto } from './dtos/report.dto'
 
 /**
  *  service responsible of the reports methods
@@ -40,6 +40,18 @@ class ReportServices {
   async downloadBourderou(bourderauBody: BourderauBodyDto): Promise<ArrayBuffer> {
     try {
       const { data } = await AppAlpexApiGateWay.post(BOURDEROU_ROUTES.DOWNLOAD, bourderauBody, {
+        responseType: 'arraybuffer'
+      })
+
+      return data
+    } catch (error) {
+      const message = String(error)
+      throw new Error(message)
+    }
+  }
+  async downloadAllAccountsReport(reportBody: ReportBodyDto) {
+    try {
+      const { data } = await AppAlpexApiGateWay.post(REPORTS_ROUTES.DOWNLOAD, reportBody, {
         responseType: 'arraybuffer'
       })
 
