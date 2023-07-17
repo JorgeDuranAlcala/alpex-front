@@ -240,8 +240,8 @@ export enum INSTALLMENT_ROUTERS {
 }
 
 export enum ACCOUNT_STATUS_ROUTERS {
-  GET_ALL = 'account/account-status/all',
-  GET_BY_ID = 'account/account-status/'
+  GET_ALL = 'catalogs/account-status/all',
+  GET_BY_ID = 'catalogs/account-status/'
 }
 
 export enum ENDORSEMENT_TYPE_ROUTES {
@@ -289,4 +289,12 @@ export enum PRINT_ACCOUNT_ROUTES {
 
 export enum BOURDEROU_ROUTES {
   DOWNLOAD = 'reports/bourderau/download'
+}
+
+export enum REPORTS_ROUTES {
+  DOWNLOAD = 'reports/allAccounts'
+}
+
+export enum DEBIT_NOTE_ROUTES {
+  DOWNLOAD = 'reports/debit-note'
 }

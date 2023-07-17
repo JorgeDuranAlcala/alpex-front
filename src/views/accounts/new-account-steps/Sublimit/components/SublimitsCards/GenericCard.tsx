@@ -112,7 +112,7 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
 
   return (
     <ContainerCard>
-      <HeaderCard sx={{ padding: '5px 10px 5px 26px' }}>
+      <HeaderCard className="sublimits-generic-card-header" sx={{ padding: '5px 10px 5px 26px' }}>
         <Box
           sx={{
             display: 'flex',
@@ -123,7 +123,7 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
           }}
         >
           <Typography
-            className=''
+            className='sublimits-generic-card-header-text'
             textTransform={'uppercase'}
             sx={{ color: '#FFF', display: 'flex', alignItems: 'center' }}
           >

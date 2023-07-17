@@ -21,6 +21,7 @@ export const SwitchSecondView = ({ securities, calculateSecurities, view, inform
   return (
     <Box style={{ float: 'right', marginRight: 'auto', marginBottom: '20px' }}>
       <Button
+        className="second-view-switch-button"
         variant='text'
         sx={{
           display: 'flex',

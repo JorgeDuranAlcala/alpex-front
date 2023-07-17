@@ -54,6 +54,7 @@ export const ActionsHeaderBoundModal = ({
         onClick={() => {
           setOpenHistory(true)
         }}
+        title='GENERATE ENDT.'
         disabled={uneditableAccount}
       >
         <Icon icon='material-symbols:approval-outline' />

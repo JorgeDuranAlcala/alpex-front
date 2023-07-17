@@ -16,6 +16,7 @@ import { useUpdateAccountsStatus } from '@/hooks/accounts/status'
 import UserThemeOptions from '@/layouts/UserThemeOptions'
 import CheckIcon from '@mui/icons-material/Check'
 import SaveIcon from '@mui/icons-material/Save'
+import { DisableForm } from '../_commons/DisableForm'
 
 const initialValues: SublimitDto = {
   id: undefined,
@@ -298,30 +299,42 @@ const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
             <CustomAlert {...badgeData} />
           </div>
         </Grid>
-        {/* campos header */}
-        <InputLimit account={account} />
-        <SelectCoverage
-          onChangeSelected={handleSelectedCoverage}
-          coverageSelected={coverageSelected}
-          onClickToggle={handleToggle}
-        />
-        <Grid container spacing={5} sx={{ m: '1%' }}>
-          {account?.informations &&
-            subLimits.map((subLimit, index) => (
-              <Grid item xs={12} sm={4} md={4} key={index}>
-                <GenericCard
-                  subLimit={subLimit}
-                  setSubLimits={setSubLimits}
-                  subLimits={subLimits}
-                  index={index}
-                  limit={Number(account.informations[0].limit)}
-                  formErrors={formErrors}
-                  handleOnDeleteForm={handleDeleteSublimit}
-                  setErrors={setFormErrors}
-                  showErrors={showErrors}
+        <Grid item xs={12} sm={12}>
+
+          <form noValidate autoComplete='on' >
+            <DisableForm
+              isDisabled={account?.status.toLowerCase() === 'bound' ? true : false}
+            >
+              {/* campos header */}
+              <Grid container spacing={5} >
+                <InputLimit account={account} />
+                <SelectCoverage
+                  onChangeSelected={handleSelectedCoverage}
+                  coverageSelected={coverageSelected}
+                  onClickToggle={handleToggle}
                 />
               </Grid>
-            ))}
+              <Grid container spacing={5} sx={{ mt: '20px' }}>
+                {account?.informations &&
+                  subLimits.map((subLimit, index) => (
+                    <Grid item xs={12} sm={12} md={6} lg={4} key={index}>
+                      <GenericCard
+                        subLimit={subLimit}
+                        setSubLimits={setSubLimits}
+                        subLimits={subLimits}
+                        index={index}
+                        limit={Number(account.informations[0].limit)}
+                        formErrors={formErrors}
+                        handleOnDeleteForm={handleDeleteSublimit}
+                        setErrors={setFormErrors}
+                        showErrors={showErrors}
+                      />
+                    </Grid>
+                  ))}
+              </Grid>
+
+            </DisableForm>
+          </form>
         </Grid>
       </Grid>
       <NextContainer>
@@ -329,7 +342,7 @@ const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
           variant='contained'
           color='success'
           sx={{ mr: 2, fontFamily: inter, fontSize: size, letterSpacing: '0.4px' }}
-          disabled={disableSaveBtn}
+          disabled={disableSaveBtn || account?.status.toLowerCase() === 'bound' ? true : false}
           onClick={handleClickSave}
         >
           <SaveIcon /> &nbsp; Save changes

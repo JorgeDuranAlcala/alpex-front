@@ -9,7 +9,7 @@ export type InputLimitProps = {
 
 const InputLimit: React.FC<InputLimitProps> = ({ account }) => {
   return (
-    <Grid item xs={12} sm={4}>
+    <Grid item xs={12} sm={6} md={4}>
       <NumericFormat
         value={account?.informations[0].limit || 'Limit'}
         prefix='$'

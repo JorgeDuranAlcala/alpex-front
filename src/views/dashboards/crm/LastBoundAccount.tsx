@@ -33,9 +33,9 @@ const LastBoundAccount = () => {
   const netPremiumParseInt = Number(account && account?.informations[0]?.netPremium)
   const netPremium = netPremiumParseInt?.toLocaleString('en-US', { style: 'currency', currency: 'USD' })
 
-  const replaceDashes = account && account?.accountHistoryLogs[0]?.effectiveDate.replace(/-/g, '/')
+  const replaceDashes = account ? account?.accountHistoryLogs[0]?.effectiveDate.replace(/-/g, '/') : ''
 
-  const fromatDate = new Date(replaceDashes)
+  const fromatDate = replaceDashes ? new Date(replaceDashes) : ''
 
   const options: Intl.DateTimeFormatOptions = {
     year: 'numeric',
@@ -43,7 +43,7 @@ const LastBoundAccount = () => {
     day: '2-digit'
   }
 
-  const boundDate = fromatDate.toLocaleDateString('Es-MX', options).replace(/\//g, '-')
+  const boundDate = fromatDate ? fromatDate.toLocaleDateString('Es-MX', options).replace(/\//g, '-') : ''
 
   const rows = [
     {
@@ -53,8 +53,8 @@ const LastBoundAccount = () => {
     },
     { label: 'Broker:', data: account && account?.informations[0]?.idBroker?.name },
     { label: 'Bound date:', data: boundDate, backgroundColor: 'rgba(76, 78, 100, 0.04)' },
-    { label: 'Net premium:', data: `${netPremium} USD` },
-    { label: 'Installments', data: account?.installmentsCount, backgroundColor: 'rgba(76, 78, 100, 0.04)' }
+    { label: 'Net premium:', data: `${netPremium} ${account && account?.informations[0]?.currency}` },
+    { label: 'Installments', data: account && account?.installmentsCount, backgroundColor: 'rgba(76, 78, 100, 0.04)' }
   ]
 
   return (

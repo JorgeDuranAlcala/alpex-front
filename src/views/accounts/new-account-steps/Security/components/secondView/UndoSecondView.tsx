@@ -36,7 +36,7 @@ interface UndoSecondViewProps {
   calculateSecurities: (securities: SecurityDto[]) => void
 }
 
-export const UndoSecondView = ({}: UndoSecondViewProps) => {
+export const UndoSecondView = ({ }: UndoSecondViewProps) => {
   const { openModalUndo } = useContext(SecondViewContext)
 
   const handleOpenModalUndo = () => {
@@ -52,6 +52,7 @@ export const UndoSecondView = ({}: UndoSecondViewProps) => {
       <AlertContainer>
         <span>You are now on the secondary view, you are not able to edit information here.</span>
         <Button
+          className="second-view-undo-button"
           variant='text'
           sx={{
             display: 'flex',
