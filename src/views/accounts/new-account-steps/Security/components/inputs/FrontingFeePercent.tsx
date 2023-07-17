@@ -61,7 +61,7 @@ export const FrontingFeePercent = ({
       <NumericFormat
         autoFocus
         label='Fronting fee %'
-        value={String(value)}
+        value={String(Number(value).toFixed(2))}
         onChange={e => {
           handleChangeFrontingFeePercent(Number(e.target.value.replace('%', '')))
         }}

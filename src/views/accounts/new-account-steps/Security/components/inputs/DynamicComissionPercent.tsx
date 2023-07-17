@@ -38,7 +38,7 @@ export const DynamicComissionPercent = ({
       <NumericFormat
         autoFocus
         label='Dynamic comission %'
-        value={value}
+        value={Number(Number(value).toFixed(2))}
         onValueChange={value => {
           handleChangeDynamicComissionPercent(Number(value.floatValue))
         }}
