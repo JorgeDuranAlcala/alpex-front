@@ -3,15 +3,19 @@ import { AppAlpexApiGateWay } from '../app.alpex.api-getway'
 import { SecurityTotalDto } from './dtos/securityTotal.dto'
 
 class SecurityTotalService {
-  async addSecurityTotal(securityTotalIn: Partial<SecurityTotalDto>[]): Promise<SecurityTotalDto[] | string> {
+  async addSecurityTotal(securityTotalIn: Partial<SecurityTotalDto>[]): Promise<SecurityTotalDto[]> {
     try {
-      const { data } = await AppAlpexApiGateWay.post<Promise<SecurityTotalDto[]>>(ACCOUNT_SECURITY_TOTAL_ROUTES.ADD, {
+      const response = await AppAlpexApiGateWay.post<Promise<SecurityTotalDto[]>>(ACCOUNT_SECURITY_TOTAL_ROUTES.ADD, {
         securitiesTotal: securityTotalIn
       })
 
-      return data
+      //TODO VALIDAR CON LOS ESTATUS RECIBIDOS POR EL BACK
+      console.log({ responseAddSecurityTotal: response })
+
+      return response.data
     } catch (error) {
-      return 'error'
+      const message = String(error)
+      throw new Error(message)
     }
   }
 

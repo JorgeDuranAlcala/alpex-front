@@ -1,5 +1,9 @@
+import useDownloadDebitNote from '@/hooks/reports/useDownloadDebitNote'
+import { useAppSelector } from '@/store'
+import { delayMs } from '@/utils/formatDates'
+import CustomAlert, { IAlert } from '@/views/custom/alerts'
 import CloseIcon from '@mui/icons-material/Close'
-import { Box, Button, Modal, Typography, styled } from '@mui/material'
+import { Box, Button, CircularProgress, Modal, Typography, styled } from '@mui/material'
 import { useEffect, useState } from 'react'
 import Icon from 'src/@core/components/icon'
 import { ButtonClose, HeaderTitleModal } from 'src/styles/Dashboard/ModalReinsurers/modalReinsurers'
@@ -51,12 +55,24 @@ const ActionsHeaderBound: React.FC<IActionsHeaderProps> = ({ accountStatus, side
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [status, setStatus] = useState({})
   const [uneditableAccount, setUneditableAccount] = useState(false)
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [editInfo, setEditInfo] = useState(false)
   const [openEndorsment, setOpenEndorsment] = useState(false)
   const [openHistory, setOpenHistory] = useState(false)
   const [cancellEndorsment, setCancellEndorsment] = useState(false)
   const [value, setValue] = useState('')
+
+  // Notifications
+  const [badgeData, setBadgeData] = useState<IAlert>({
+    message: '',
+    theme: 'success',
+    open: false,
+    status: 'error'
+  })
+
+  // ** Store
+  const account = useAppSelector(state => state.accounts?.formsData?.form1)
+
+  // ** Custom Hooks
+  const { getDebitNote } = useDownloadDebitNote()
 
   // const downloadSpanish = () => {
   //   console.log('Spanish Download')
@@ -68,12 +84,6 @@ const ActionsHeaderBound: React.FC<IActionsHeaderProps> = ({ accountStatus, side
   //   setShowPrintOptions(false)
   // }
 
-  useEffect(() => {
-    if (sideHeader) {
-      setUneditableAccount(false)
-    }
-  }, [sideHeader])
-
   const handleRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setValue((event.target as HTMLInputElement).value)
   }
@@ -82,8 +92,78 @@ const ActionsHeaderBound: React.FC<IActionsHeaderProps> = ({ accountStatus, side
     event.preventDefault()
   }
 
+  const handleDebitNote = async () => {
+    if (account && account.id) {
+      setBadgeData({
+        message: `DOWNLOADING DEBIT NOTE`,
+        status: 'secondary',
+        open: true,
+        icon: <CircularProgress size={20} color='primary' />,
+        backgroundColor: '#828597',
+        theme: 'info',
+        disableAutoHide: true
+      })
+      await delayMs(1000)
+
+      try {
+        const debitNoteBuffer = await getDebitNote({ idAccount: account.id })
+
+        if (debitNoteBuffer) {
+          setBadgeData({
+            message: `DOWNLOADED`,
+            status: 'success',
+            open: true,
+            icon: <Icon icon='ic:baseline-check-circle' />,
+            theme: 'success',
+            disableAutoHide: true
+          })
+          await delayMs(1000)
+
+          const fileToDownload = new File([debitNoteBuffer], `DEBIT NOTE ID-${account.id}.xlsx`)
+          const downloadUrl = URL.createObjectURL(fileToDownload)
+          const link = document.createElement('a')
+          link.href = downloadUrl
+          link.download = fileToDownload.name
+          link.click()
+        }
+      } catch (error) {
+        setBadgeData({
+          message: `UNKNOWN ERROR, TRY AGAIN`,
+          theme: 'error',
+          open: true,
+          status: 'error',
+          icon: (
+            <Icon
+              style={{
+                color: '#FF4D49',
+                marginTop: '-1px'
+              }}
+              icon='jam:alert'
+            />
+          ),
+          disableAutoHide: true
+        })
+      }
+      await delayMs(1500)
+
+      setBadgeData({
+        message: '',
+        status: undefined,
+        icon: undefined,
+        open: false
+      })
+    }
+  }
+
+  useEffect(() => {
+    if (sideHeader) {
+      setUneditableAccount(false)
+    }
+  }, [sideHeader])
+
   return (
     <>
+      <CustomAlert {...badgeData} />
       <div className={sideHeader ? 'btnWrapperFth' : ' '}>
         <div className='btnWrappers'>
           {sideHeader ? '' : <div className='header-text'>Status:</div>}
@@ -97,12 +177,7 @@ const ActionsHeaderBound: React.FC<IActionsHeaderProps> = ({ accountStatus, side
               </div>
             )}
             <div className='header-btns'>
-              <ButtonIcon
-                onClick={() => {
-                  setEditInfo(true)
-                }}
-                disabled={uneditableAccount}
-              >
+              <ButtonIcon onClick={handleDebitNote} disabled={uneditableAccount} title='DEBIT NOTE'>
                 <Icon icon='material-symbols:post-add' />
               </ButtonIcon>
             </div>
@@ -132,6 +207,7 @@ const ActionsHeaderBound: React.FC<IActionsHeaderProps> = ({ accountStatus, side
                 onClick={() => {
                   setOpenEndorsment(true)
                 }}
+                title='ENDT. HISTORY'
                 disabled={uneditableAccount}
               >
                 <Icon icon='mdi:clock-outline' />
@@ -176,6 +252,7 @@ const ActionsHeaderBound: React.FC<IActionsHeaderProps> = ({ accountStatus, side
                 onClick={() => {
                   console.log('Print')
                 }}
+                title='PRINT SECTION'
                 disabled={uneditableAccount}
               >
                 <div className='btn-icon'>

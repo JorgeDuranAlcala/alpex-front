@@ -97,6 +97,7 @@ const NewAccount = () => {
             onIsNewAccountChange={handleIsNewAccountChange}
           />
         )
+
       case 2:
         return <Security onStepChange={handleStepChange} />
       case 3:
