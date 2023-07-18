@@ -226,6 +226,9 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
           reinsuranceBrokeragec = value
           reinsuranceBrokerageTemp = value
           const result = (reinsuranceBrokeragec * 100) / grossPremiumc
+
+          // console.log({ result, reinsuranceBrokerageTemp })
+          // debugger;
           reinsuranceBrokeragePc = isFinite(result) ? result : 0
           reinsuranceBrokeragePTemp = isFinite(result) ? result : 0
         } else {
@@ -385,6 +388,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
     const value = target.value
     setPair({ targetCurrency: value, baseCurrency: 'USD' })
   }
+
 
   const handleNumericInputChange = (value: any, name: string) => {
     setPlacementStructure({ ...placementStructure, [name]: value })
@@ -745,6 +749,9 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               decimalScale={2}
               error={errors.exchangeRateError}
               helperText={getErrorMessage('exchangeRateError')}
+              onValueChange={value => {
+                handleNumericInputChange(value.floatValue, 'exchangeRate')
+              }}
             />
             {false && <FormHelperText sx={{ color: 'error.main' }}>Required Field</FormHelperText>}
           </FormControl>
@@ -807,12 +814,19 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
 
                 return (floatValue! >= 0 && floatValue! <= 100) || floatValue === undefined
               }}
-              onValueChange={value => {
-                if (value.floatValue) {
-                  calculate('reinsuranceBrokerageP', value.floatValue)
-                } else {
-                  calculate('reinsuranceBrokerageP', '')
-                }
+              onChange={(e: any) => {
+
+                const value = Number(e.target.value.replace('%', ''));
+
+                // console.log(value)
+                calculate('reinsuranceBrokerageP', value);
+
+                // if (!!(value % 1)) {
+                //   console.log('isFLoat')
+                //   calculate('reinsuranceBrokerageP', value)
+                // } else {
+                //   calculate('reinsuranceBrokerageP', '')
+                // }
               }}
               error={errors.reinsuranceBrokeragePError}
               helperText={getErrorMessage('reinsuranceBrokeragePError')}
@@ -838,6 +852,9 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               error={errors.exchangeRateError}
               helperText={getErrorMessage('exchangeRateError')}
               disabled={!editInfo.allInfo}
+              onValueChange={value => {
+                handleNumericInputChange(value.floatValue, 'exchangeRate')
+              }}
             />
             {false && <FormHelperText sx={{ color: 'error.main' }}>Required Field</FormHelperText>}
           </FormControl>
@@ -1009,13 +1026,19 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
 
                 return (floatValue! >= 0 && floatValue! <= 100) || floatValue === undefined
               }}
-              onValueChange={value => {
-                if (value.floatValue) {
-                  calculate('taxesP', value.floatValue)
-                } else {
-                  calculate('taxesP', '')
-                }
+
+              // onValueChange={value => {
+              //   if (value.floatValue) {
+              //     calculate('taxesP', value.floatValue)
+              //   } else {
+              //     calculate('taxesP', '')
+              //   }
+              // }}
+              onChange={(e) => {
+                const value = Number(e.target.value.replace('%', ''));
+                calculate('taxesP', value);
               }}
+
               onFocus={e => {
                 if (e.target.value === '0') {
                   e.target.value = ''
@@ -1111,12 +1134,17 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
 
                 return (floatValue! >= 0 && floatValue! <= 100) || floatValue === undefined
               }}
-              onValueChange={value => {
-                if (value.floatValue) {
-                  calculate('frontingFeeP', value.floatValue)
-                } else {
-                  calculate('frontingFeeP', '')
-                }
+
+              // onValueChange={value => {
+              //   if (value.floatValue) {
+              //     calculate('frontingFeeP', value.floatValue)
+              //   } else {
+              //     calculate('frontingFeeP', '')
+              //   }
+              // }}
+              onChange={(e) => {
+                const value = Number(e.target.value.replace('%', ''));
+                calculate('frontingFeeP', value);
               }}
               error={frontingChecked && (errors.frontingFeePError || errors.totalDiscountsError || totalDiscountsError)}
               helperText={
@@ -1203,14 +1231,22 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
 
                   return (floatValue! >= 0 && floatValue! <= 100) || floatValue === undefined
                 }}
-                onValueChange={value => {
-                  if (value.floatValue) {
-                    const updatedDiscount = { ...discountItem, percentage: value.floatValue }
-                    calculateDiscount(index, updatedDiscount)
-                  } else {
-                    calculateDiscount(index, { ...discountItem, percentage: '' })
-                  }
+
+                // onValueChange={value => {
+                //   if (value.floatValue) {
+                //     const updatedDiscount = { ...discountItem, percentage: value.floatValue }
+                //     calculateDiscount(index, updatedDiscount)
+                //   } else {
+                //     calculateDiscount(index, { ...discountItem, percentage: '' })
+                //   }
+                // }}
+
+                onChange={(e) => {
+                  const value = Number(e.target.value.replace('%', ''));
+                  const updatedDiscount = { ...discountItem, percentage: value }
+                  calculateDiscount(index, updatedDiscount)
                 }}
+
                 error={totalDiscountsError || discountsErrorsIndex.includes(index)}
                 helperText={
                   totalDiscountsError

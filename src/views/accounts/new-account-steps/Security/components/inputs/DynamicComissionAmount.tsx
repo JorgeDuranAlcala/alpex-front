@@ -11,7 +11,9 @@ import { CalculateSecurity } from '../../utils/calculates-securities'
 interface DynamicComissionAmountProps extends ISecurityInputProps {
   operationSecurity: CalculateSecurity
 }
-
+type Timer = ReturnType<typeof setInterval>
+let typingTimer: Timer
+const doneTypingInterval = 900 // Tiempo en milisegundos para considerar que se dejó de escribir
 export const DynamicComissionAmount = ({
   index,
   value,
@@ -23,13 +25,23 @@ export const DynamicComissionAmount = ({
   const { activeErros, securities, calculateSecurities } = useContext(SecurityContext)
 
   const handleChangeDynamicComissionAmount = (value: number) => {
-    const tempSecurities = [...securities]
-    tempSecurities[index] = {
-      ...tempSecurities[index],
-      dynamicCommission: operationSecurity.getDynamicComissionPercent(value)
-    }
-    validateForm(tempSecurities[index])
-    calculateSecurities(tempSecurities)
+    clearInterval(typingTimer)
+    typingTimer = setInterval(() => {
+      // Código a ejecutar cuando se deja de escribir
+      const tempSecurities = structuredClone(securities)
+      const percent = operationSecurity.getDynamicComissionPercent(value || 0)
+
+      tempSecurities[index] = {
+        ...tempSecurities[index],
+        dynamicCommission: percent > 100 ? 0 : percent
+      }
+      console.log({ percent })
+      validateForm(tempSecurities[index])
+      calculateSecurities(tempSecurities)
+
+      // Limpiar el intervalo
+      clearInterval(typingTimer)
+    }, doneTypingInterval)
   }
 
   return (

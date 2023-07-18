@@ -10,7 +10,9 @@ import { CalculateSecurity } from '../../utils/calculates-securities'
 interface ReinsuranceBrokerageAmountProps extends ISecurityInputProps {
   operationSecurity: CalculateSecurity
 }
-
+type Timer = ReturnType<typeof setInterval>
+let typingTimer: Timer
+const doneTypingInterval = 900 // Tiempo en milisegundos para considerar que se dejó de escribir
 export const ReinsuranceBrokerageAmount = ({
   index,
   value,
@@ -22,13 +24,21 @@ export const ReinsuranceBrokerageAmount = ({
   const { activeErros, securities, calculateSecurities } = useContext(SecurityContext)
 
   const handleChangeBrokerAgeAmount = (value: number) => {
-    const tempSecurities = [...securities]
-    tempSecurities[index] = {
-      ...tempSecurities[index],
-      reinsuranceBrokerage: operationSecurity.getBrokerAgePercent(value)
-    }
-    validateForm(tempSecurities[index])
-    calculateSecurities(tempSecurities)
+    clearInterval(typingTimer)
+    typingTimer = setInterval(() => {
+      const tempSecurities = structuredClone(securities)
+      const percent = operationSecurity.getBrokerAgePercent(value || 0)
+      tempSecurities[index] = {
+        ...tempSecurities[index],
+        reinsuranceBrokerage: percent > 100 ? 0 : percent
+      }
+
+      calculateSecurities(tempSecurities)
+      validateForm(tempSecurities[index])
+
+      // Limpiar el intervalo
+      clearInterval(typingTimer)
+    }, doneTypingInterval)
   }
 
   return (
