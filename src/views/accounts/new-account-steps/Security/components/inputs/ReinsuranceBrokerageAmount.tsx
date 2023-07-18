@@ -1,5 +1,5 @@
 import { FormControl, FormHelperText, TextField } from '@mui/material'
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useState } from 'react'
 import { NumericFormat } from 'react-number-format'
 import * as yup from 'yup'
 
@@ -38,10 +38,6 @@ export const ReinsuranceBrokerageAmount = ({
     calculateSecurities(tempSecurities)
     validateForm(tempSecurities[index])
   }
-  useEffect(() => {
-    setReinsuranceBrokerageAmount(Number(value))
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value])
 
   return (
     <FormControl fullWidth sx={{ mb: 2 }}>
