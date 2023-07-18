@@ -386,6 +386,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
     setPair({ targetCurrency: value, baseCurrency: 'USD' })
   }
 
+
   const handleNumericInputChange = (value: any, name: string) => {
     setPlacementStructure({ ...placementStructure, [name]: value })
   }
@@ -745,6 +746,9 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               decimalScale={2}
               error={errors.exchangeRateError}
               helperText={getErrorMessage('exchangeRateError')}
+              onValueChange={value => {
+                handleNumericInputChange(value.floatValue, 'exchangeRate')
+              }}
             />
             {false && <FormHelperText sx={{ color: 'error.main' }}>Required Field</FormHelperText>}
           </FormControl>
@@ -838,6 +842,9 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               error={errors.exchangeRateError}
               helperText={getErrorMessage('exchangeRateError')}
               disabled={!editInfo.allInfo}
+              onValueChange={value => {
+                handleNumericInputChange(value.floatValue, 'exchangeRate')
+              }}
             />
             {false && <FormHelperText sx={{ color: 'error.main' }}>Required Field</FormHelperText>}
           </FormControl>
