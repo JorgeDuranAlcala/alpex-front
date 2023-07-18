@@ -1026,13 +1026,19 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
 
                 return (floatValue! >= 0 && floatValue! <= 100) || floatValue === undefined
               }}
-              onValueChange={value => {
-                if (value.floatValue) {
-                  calculate('taxesP', value.floatValue)
-                } else {
-                  calculate('taxesP', '')
-                }
+
+              // onValueChange={value => {
+              //   if (value.floatValue) {
+              //     calculate('taxesP', value.floatValue)
+              //   } else {
+              //     calculate('taxesP', '')
+              //   }
+              // }}
+              onChange={(e) => {
+                const value = Number(e.target.value.replace('%', ''));
+                calculate('taxesP', value);
               }}
+
               onFocus={e => {
                 if (e.target.value === '0') {
                   e.target.value = ''
@@ -1128,12 +1134,17 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
 
                 return (floatValue! >= 0 && floatValue! <= 100) || floatValue === undefined
               }}
-              onValueChange={value => {
-                if (value.floatValue) {
-                  calculate('frontingFeeP', value.floatValue)
-                } else {
-                  calculate('frontingFeeP', '')
-                }
+
+              // onValueChange={value => {
+              //   if (value.floatValue) {
+              //     calculate('frontingFeeP', value.floatValue)
+              //   } else {
+              //     calculate('frontingFeeP', '')
+              //   }
+              // }}
+              onChange={(e) => {
+                const value = Number(e.target.value.replace('%', ''));
+                calculate('frontingFeeP', value);
               }}
               error={frontingChecked && (errors.frontingFeePError || errors.totalDiscountsError || totalDiscountsError)}
               helperText={
@@ -1220,14 +1231,22 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
 
                   return (floatValue! >= 0 && floatValue! <= 100) || floatValue === undefined
                 }}
-                onValueChange={value => {
-                  if (value.floatValue) {
-                    const updatedDiscount = { ...discountItem, percentage: value.floatValue }
-                    calculateDiscount(index, updatedDiscount)
-                  } else {
-                    calculateDiscount(index, { ...discountItem, percentage: '' })
-                  }
+
+                // onValueChange={value => {
+                //   if (value.floatValue) {
+                //     const updatedDiscount = { ...discountItem, percentage: value.floatValue }
+                //     calculateDiscount(index, updatedDiscount)
+                //   } else {
+                //     calculateDiscount(index, { ...discountItem, percentage: '' })
+                //   }
+                // }}
+
+                onChange={(e) => {
+                  const value = Number(e.target.value.replace('%', ''));
+                  const updatedDiscount = { ...discountItem, percentage: value }
+                  calculateDiscount(index, updatedDiscount)
                 }}
+
                 error={totalDiscountsError || discountsErrorsIndex.includes(index)}
                 helperText={
                   totalDiscountsError
