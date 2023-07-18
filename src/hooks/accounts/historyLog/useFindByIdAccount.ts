@@ -4,6 +4,7 @@ import AccountHistoryLogService from 'src/services/accounts/accountHistoryLog.se
 
 const useGetAccountHistoryLogByIdAccount = () => {
   const [accountHistoryLog, setAccountHistoryLog] = useState<AccountHistoryLogDto[]>([])
+  console.log('accountHistoryLog', accountHistoryLog)
   const [idAccount, setIdAccount] = useState<null | number>(null)
   const findByIdAccount = (idAccount: number) => {
     AccountHistoryLogService.getAllByIdAccount(idAccount).then(setAccountHistoryLog)

@@ -1,73 +1,78 @@
-import {
-  FormControl,
-  FormHelperText,
-  TextField
-} from '@mui/material';
-import { useContext } from 'react';
-import { NumericFormat } from 'react-number-format';
-import * as yup from 'yup';
+import { FormControl, FormHelperText, TextField } from '@mui/material'
+import { useContext, useEffect, useState } from 'react'
+import { NumericFormat } from 'react-number-format'
+import * as yup from 'yup'
 
-import { SecurityContext } from '../../SecurityView';
-import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interface';
-import { CalculateSecurity } from '../../utils/calculates-securities';
-
+import { SecurityContext } from '../../SecurityView'
+import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interface'
+import { CalculateSecurity } from '../../utils/calculates-securities'
 
 // ! only if we want specific props
 interface DynamicComissionAmountProps extends ISecurityInputProps {
   operationSecurity: CalculateSecurity
 }
 
-
-export const DynamicComissionAmount = ({ index, value, isError, validateForm, operationSecurity }: DynamicComissionAmountProps) => {
-
-  const {
-    activeErros,
-    securities,
-    calculateSecurities
-  } = useContext(SecurityContext);
-
-
+export const DynamicComissionAmount = ({
+  index,
+  value,
+  errorMessage,
+  validateForm,
+  operationSecurity,
+  view
+}: DynamicComissionAmountProps) => {
+  const { activeErros, securities, calculateSecurities } = useContext(SecurityContext)
+  const [dynamicComissionAmount, setDynamicComissionAmount] = useState<number>(Number(value))
 
   const handleChangeDynamicComissionAmount = (value: number) => {
-    const tempSecurities = [...securities]
+    const tempSecurities = structuredClone(securities)
+    const percent = operationSecurity.getDynamicComissionPercent(value)
+
     tempSecurities[index] = {
       ...tempSecurities[index],
-      dynamicCommission: operationSecurity.getDynamicComissionPercent(value)
+      dynamicCommission: percent === 101 ? 0 : percent
+    }
+    if (percent === 101 && !isNaN(percent)) {
+      setDynamicComissionAmount(0)
+    } else {
+      setDynamicComissionAmount(value)
     }
     validateForm(tempSecurities[index])
     calculateSecurities(tempSecurities)
   }
+  useEffect(() => {
+    setDynamicComissionAmount(Number(value))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value])
 
   return (
     <FormControl fullWidth sx={{ mb: 2 }}>
       <NumericFormat
         autoFocus
         label='Dynamic comission'
-        value={value}
+        value={String(dynamicComissionAmount)}
         onValueChange={value => {
           handleChangeDynamicComissionAmount(Number(value.floatValue))
         }}
         prefix={'$'}
         customInput={TextField}
-        decimalScale={2}
         thousandSeparator=','
+        disabled={view === 2}
       />
 
-      <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
-        {activeErros && isError}
-      </FormHelperText>
+      <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>{activeErros && errorMessage}</FormHelperText>
     </FormControl>
   )
 }
 
-export const dynamicComissionAmount_validations = () => yup.object().shape({
-  dynamicCommissionAmount: yup
-    .number()
-    .transform((_, val) => (val === Number(val) ? val : null))
-    .test('', 'This field is required', value => {
-      const val = value || 0
+export const dynamicComissionAmount_validations = () =>
+  yup.object().shape({
+    dynamicCommissionAmount: yup
+      .number()
+      .transform((_, val) => (val === Number(val) ? val : null))
+      .test('', 'This field is required', value => {
+        const val = value || 0
 
-      return +val > 0
-    })
-    .required('This field is required'),
-});
+        return +val > 0
+      })
+      .required('This field is required')
+  })

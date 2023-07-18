@@ -20,6 +20,8 @@ import { Settings } from 'src/@core/context/settingsContext'
 // import ShortcutsDropdown, { ShortcutsType } from 'src/@core/layouts/components/shared-components/ShortcutsDropdown'
 import UserDropdown from 'src/@core/layouts/components/shared-components/UserDropdown'
 
+// import { MultiTabButtons } from '../multiTabButtons/MultiTabButtons'
+
 // import Autocomplete from 'src/layouts/components/Autocomplete'
 
 interface Props {
@@ -138,7 +140,9 @@ const AppBarContent = (props: Props) => {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          height: '64px'
+          height: '64px',
+
+          // backgroundColor: 'lightcoral'
         }}
       >
         <Box className='actions-left' sx={{ mr: 2, display: 'flex', alignItems: 'center' }}>
@@ -148,7 +152,11 @@ const AppBarContent = (props: Props) => {
             </IconButton>
           ) : null}
           {/* <Autocomplete hidden={hidden} settings={settings} /> */}
+
+          {/* <MultiTabButtons /> */}
+
         </Box>
+
         <Box className='actions-right' sx={{ display: 'flex', alignItems: 'center' }}>
           {/* <LanguageDropdown settings={settings} saveSettings={saveSettings} /> */}
           {/* <ModeToggler settings={settings} saveSettings={saveSettings} /> */}

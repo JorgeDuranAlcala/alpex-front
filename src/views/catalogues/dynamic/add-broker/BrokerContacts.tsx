@@ -351,7 +351,7 @@ const BrokerContacts = ({ idBroker }: IBrokerContacts) => {
       idCCountry: currentContact.idCCountry.id
     })
     if (result) {
-      triggerAlert('success', 'CHANGES SAVED')
+      triggerAlert('success-alert', 'CHANGES SAVED')
       getBrokerContactsByIdBroker(brokerContactsPagination)
     }
     setOpenEdit(false)
@@ -361,7 +361,7 @@ const BrokerContacts = ({ idBroker }: IBrokerContacts) => {
     const result = await deleteBrokerContact({ idDeleteList: [contactToDelete] })
     if (result) {
       getBrokerContactsByIdBroker(brokerContactsPagination)
-      triggerAlert('success', 'DELETED')
+      triggerAlert('success-alert', 'DELETED')
     }
     setOpenDelete(false)
   }
@@ -370,7 +370,7 @@ const BrokerContacts = ({ idBroker }: IBrokerContacts) => {
     const result = await deleteBrokerContact({ idDeleteList: selectedRows })
     if (result) {
       getBrokerContactsByIdBroker(brokerContactsPagination)
-      triggerAlert('success', 'DELETED')
+      triggerAlert('success-alert', 'DELETED')
     }
     setOpenDeleteRows(false)
   }

@@ -1,5 +1,5 @@
-import { ResponseGetAccount, useGetAccountById } from '@/hooks/accounts/forms'
-import { useAddSecurities, useUpdateSecurities } from '@/hooks/accounts/security'
+import { useGetAccountById } from '@/hooks/accounts/forms'
+import { useAddSecurities } from '@/hooks/accounts/security'
 import { useAddSecurityTotal, useUpdateSecurityTotalById } from '@/hooks/accounts/securityTotal'
 import {
   FormInformation,
@@ -8,7 +8,9 @@ import {
   SecurityDto,
   SecurityProps
 } from '@/services/accounts/dtos/security.dto'
+
 import { useAppSelector } from '@/store'
+
 import { Title } from '@/styled-components/accounts/Security.styled'
 import { ButtonClose, HeaderTitleModal } from '@/styles/modal/modal.styled'
 import { FormSection } from '@/views/accounts/new-account-steps/Security/components/SecurityForm'
@@ -31,17 +33,39 @@ import Icon from 'src/@core/components/icon'
 import UserThemeOptions from 'src/layouts/UserThemeOptions'
 import { SecurityMapper } from './mappers/SecurityForm.mapper'
 
-// import { ViewMocks } from './mocks/ViewMocks'
-
-// import { formInformationData as formInformationDataMock } from './mocks/form_2_FormInformationData'
+import { DisableForm } from '../_commons/DisableForm'
+import { SecondViewProvider } from './components/secondView/SecondViewProvider'
 import { CalculateSecurity } from './utils/calculates-securities'
 
 export const SecurityContext = createContext<SecurityContextDto>({} as SecurityContextDto)
-
+const initialSecurity = {
+  frontingFeeActive: false,
+  taxesActive: false,
+  isGross: false,
+  discounts: [],
+  share: 0,
+  dynamicCommission: 0,
+  view: 1,
+  reinsuranceBrokerage: 0,
+  taxes: 0,
+  frontingFee: 0
+} as SecurityDto
 const Security = ({ onStepChange }: SecurityProps) => {
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
   const [securities, setSecurities] = useState<SecurityDto[]>([])
+
   const [activeErros, setActiveErrors] = useState<boolean>(false)
+
+  //** second view */
+  const [securitiesSecondView, setSecuritiesSecondView] = useState<SecurityDto[]>([])
+
+  const [allFormDataView2, setAllFormDataView2] = useState<FormSecurity>({
+    formData: [],
+    recievedNetPremium: 0,
+    distribuitedNetPremium: 0,
+    diference: 0
+  })
+  const [currentView, setCurrentView] = useState<number>(0)
 
   const [isNextStep, setIsNextStep] = useState<boolean>(false)
   const [allFormData, setAllFormData] = useState<FormSecurity>({
@@ -56,15 +80,20 @@ const Security = ({ onStepChange }: SecurityProps) => {
   const [information, setInformation] = useState<FormInformation>({
     frontingFee: 0,
     netPremium: 0,
-    grossPremium: 0
+    grossPremium: 0,
+    limit: 0
   })
   const [companiesSelect] = useState<number[]>([])
-  const { account, setAccountId, getAccountById, accountId } = useGetAccountById()
+
+  const { account, setAccountId, getAccountById } = useGetAccountById()
   const { saveSecurityTotal } = useAddSecurityTotal()
   const { updateSecurityTotal } = useUpdateSecurityTotalById()
-  const { updateSecurities } = useUpdateSecurities()
+
+  // const { updateSecurities } = useUpdateSecurities()
   const { saveSecurities } = useAddSecurities()
+
   const accountData = useAppSelector(state => state.accounts)
+
   const inter = userThemeConfig.typography?.fontFamilyInter
   const [badgeData, setBadgeData] = useState<IAlert>({
     message: '',
@@ -73,65 +102,167 @@ const Security = ({ onStepChange }: SecurityProps) => {
     status: 'error'
   })
 
-  const calculateSecurities = (securities: SecurityDto[]) => {
-    if (securities.length > 0 && information) {
-      const tempSecurities = []
+  /**
+   *
+   * @param securitiesParam
+   * @returns
+   */
+  const getSecuritiesCalculate = (securitiesParam: SecurityDto[]): SecurityDto[] => {
+    const tempSecurities: SecurityDto[] = []
+
+    for (const security of securitiesParam) {
+      const operationSecurity: CalculateSecurity = new CalculateSecurity().setInformation(information).setSecurity({
+        ...security,
+        reinsuranceBrokerage: Number(security.reinsuranceBrokerage) || 0,
+        dynamicCommission: Number(security.dynamicCommission) || 0,
+        share: Number(security.share) || 0
+      })
+
+      if (security?.idCReinsuranceCompany?.id) companiesSelect.push(security.idCReinsuranceCompany.id)
+
+      //campos que necesitan: information.limit,share
+      security.shareAmount = operationSecurity.getShareAmount() || 0
+
+      //campos que necesitan: inetPremiumAt100,information.grossPremium,share
+      security.grossPremiumPerShare = operationSecurity.getGrossPremierPerShare() || 0
+
+      //este campo necesita grossPremiumPerShare,brokerAgeAmount,taxes,netPremiumAt100,share
+
+      if (!security.isGross) {
+        security.taxesAmount = operationSecurity.getTaxesAmount(security.taxes) || 0
+        const tempDiscountList = []
+        if (security?.discounts) {
+          security.totalAmountOfDiscounts = 0
+          for (const discount of security?.discounts) {
+            const tempDiscount = { ...discount }
+
+            tempDiscount.percentage = Number(discount.percentage)
+
+            //este campo necesita: premiumPerShareAmount,netPremiumAt100
+            tempDiscount.amount = operationSecurity.getDiscountAmount(Number(tempDiscount.percentage))
+            security.totalAmountOfDiscounts += tempDiscount.amount
+            tempDiscountList.push(tempDiscount)
+          }
+        }
+
+        security.discounts = [...tempDiscountList]
+        operationSecurity.setSecurity(security)
+      }
+
+      //este campo necesita : netPremiumAt100,share, sumTaxes, sum discount
+      security.premiumPerShareAmount = operationSecurity.getPremierPerShare() || 0
+
+      //campos que necesitan el premiumPerShareAmount
+      security.dynamicCommissionAmount = operationSecurity.getDynamicComissionAmount() || 0
+
+      //este campo necesita reinsuranceBrokerage,premiumPerShareAmount
+      security.brokerAgeAmount = operationSecurity.getBrokerAge() || 0
+
+      //este campo necesita premiumPerShareAmount
+      security.frontingFeeAmount = operationSecurity.getFrontingFeeAmount(security.frontingFee) || 0
+      if (security.isGross) {
+        security.taxesAmount = operationSecurity.getTaxesAmount(security.taxes) || 0
+        const tempDiscountList = []
+        if (security?.discounts) {
+          security.totalAmountOfDiscounts = 0
+          for (const discount of security?.discounts) {
+            const tempDiscount = { ...discount }
+            tempDiscount.percentage = Number(discount.percentage)
+
+            //este campo necesita: premiumPerShareAmount,netPremiumAt100
+            tempDiscount.amount = operationSecurity.getDiscountAmount(Number(tempDiscount.percentage))
+            security.totalAmountOfDiscounts += tempDiscount.amount
+            tempDiscountList.push(tempDiscount)
+          }
+        }
+
+        security.discounts = [...tempDiscountList]
+        operationSecurity.setSecurity(security)
+      }
+
+      /**
+       * este campo necesita:
+       * dynamicCommissionAmount, frontingFeeAmount, brokerAgeAmount
+       * taxesAmount,premiumPerShareAmount
+       */
+      security.netReinsurancePremium = operationSecurity.getNetReinsurancePremium() || 0
+
+      tempSecurities.push({ ...security })
+    }
+
+    return tempSecurities
+  }
+
+  const calculateSecurities = (securitiesParam: SecurityDto[]) => {
+    if (securitiesParam.length > 0 && information) {
       companiesSelect.splice(0, companiesSelect.length)
 
-      // allErrors.splice(0, allErrors.length)
+      //hace el calculo de securities de la primer vista es decir cuando el current view este en 0 o en 1
+      const tempSecurities = getSecuritiesCalculate(securitiesParam)
 
-      for (const security of securities) {
-        const operationSecurity: CalculateSecurity = new CalculateSecurity()
-          .setInformation(information)
-          .setSecurity(security)
-        if (security?.idCReinsuranceCompany?.id) companiesSelect.push(security.idCReinsuranceCompany.id)
-
-        security.premiumPerShareAmount = operationSecurity.getPremierPerShare() || 0
-        security.brokerAgeAmount = operationSecurity.getBrokerAge() || 0
-        security.dynamicCommissionAmount = operationSecurity.getDynamicComissionAmount() || 0
-        security.frontingFeeAmount = operationSecurity.getFrontingFeeAmount() || 0
-        security.taxesAmount = operationSecurity.getTaxesAmount() || 0
-        security.netReinsurancePremium = operationSecurity.getNetReinsurancePremium() || 0
-        tempSecurities.push({
-          ...security,
-          difference: Number(security.difference) || 0,
-          distributedNetPremium: Number(security.distributedNetPremium) || 0,
-          dynamicCommission: Number(security.dynamicCommission) || 0,
-          frontingFee: Number(security.frontingFee) || 0,
-          netPremiumAt100: Number(security.netPremiumAt100) || 0,
-          receivedNetPremium: Number(security.receivedNetPremium) || 0,
-          reinsuranceBrokerage: Number(security.reinsuranceBrokerage) || 0,
-          share: Number(security.share) || 0,
-          taxes: Number(security.taxes) || 0
+      // este estara siempre haciendo los calculos independiente si la vista ya halla cambiado es decir sea 0,1,2,3
+      const securitiesView2: SecurityDto[] = []
+      for (const seconSecurity of securitiesParam) {
+        securitiesView2.push({
+          ...seconSecurity,
+          netPremiumAt100: seconSecurity.isGross ? information.grossPremium : information.netPremium,
+          view: currentView === 3 ? 1 : 2
         })
       }
+      const tempSecuritiesView2 = getSecuritiesCalculate(securitiesView2)
+
+      let dataFormView2: FormSecurity = {
+        ...allFormDataView2,
+        formData: tempSecuritiesView2,
+        ...CalculateSecurity.getData(tempSecuritiesView2)
+      }
+
       let dataForm: FormSecurity = {
         ...allFormData,
         formData: tempSecurities,
-        ...CalculateSecurity.getData(tempSecurities, information)
+        ...CalculateSecurity.getData(tempSecurities, dataFormView2)
       }
-      if (account && account.securityTotal) {
-        dataForm = {
-          ...dataForm,
-          id: account.securityTotal.id
+
+      if (account) {
+        account.securitiesTotal.length
+        if (account.securitiesTotal[0]) {
+          dataForm = {
+            ...dataForm,
+            id: account.securitiesTotal[0].id
+          }
+          dataFormView2 = {
+            ...dataFormView2,
+            id: account.securitiesTotal[0].id
+          }
         }
       }
-      setAllFormData(dataForm)
+      if (currentView !== 3) {
+        setAllFormData(() => dataForm)
+        setSecurities(() => tempSecurities)
+      } else {
+        setAllFormData(() => dataFormView2)
+        setCurrentView(0)
+        setSecurities(() => tempSecuritiesView2)
+      }
 
       setAllErrors(allErrors.map(error => error))
-
-      setSecurities(tempSecurities)
+      setAllFormData(() => dataForm)
+      setAllFormDataView2(dataFormView2)
+      setSecuritiesSecondView(tempSecuritiesView2)
     }
   }
 
   const addNewForm = () => {
-    const securityNew = {} as SecurityDto
-    calculateSecurities([...securities, { ...securityNew, frontingFeeActive: false }])
+    const tempSecurities = [...securities]
+    tempSecurities.push(initialSecurity)
+
+    calculateSecurities(tempSecurities)
   }
 
   const handleNextStep = () => {
     const isError = allErrors.find(error => error)
     setActiveErrors(isError || false)
+
     if (!isError) setOpenNextModal(true)
   }
 
@@ -146,45 +277,47 @@ const Security = ({ onStepChange }: SecurityProps) => {
   }
 
   const SaveData = async () => {
-    // const isError = allErrors.find(error => error)
-
-    // if (!isError) {
     const update: Partial<SecurityDto>[] = []
     const save: Partial<SecurityDto>[] = []
 
     for (const security of securities) {
+      // * Con esta validación no se guardarán los datos de la vista 2
+      if (security.view === 2) return
+
       const mapper = SecurityMapper.securityToSecurityForm(security, accountData)
 
-      if (security.id) {
-        update.push({
-          ...mapper,
-          id: security.id
-        })
-      } else {
-        save.push({ ...mapper })
-      }
+      save.push({ ...mapper, view: 1 })
     }
 
     if (!allFormData.id) {
-      await saveSecurityTotal({
-        receivedNetPremium: +allFormData.recievedNetPremium,
-        distributedNetPremium: +allFormData.distribuitedNetPremium,
-        difference: +allFormData.diference,
-        idAccount: +accountData.formsData.form1.id
-      })
+      //TODO REVISAR SI PUEDE TRABAJAR CON PROMISE ALl
+      console.log({ allFormData, save: true })
+      await saveSecurityTotal([
+        {
+          receivedNetPremium: +allFormData.recievedNetPremium,
+          distributedNetPremium: +allFormData.distribuitedNetPremium,
+          difference: +allFormData.diference,
+          idAccount: +accountData.formsData.form1.id,
+          view: 1
+        }
+      ])
         .then(response => {
-          console.log('saveSecurityTotal', { response })
+          console.log('saveSecurityTotal', response[0])
         })
         .catch(e => {
           console.log('saveSecurityTotal', e)
         })
     } else {
-      await updateSecurityTotal(allFormData?.id, {
-        receivedNetPremium: +allFormData.recievedNetPremium,
-        distributedNetPremium: +allFormData.distribuitedNetPremium,
-        difference: +allFormData.diference,
-        idAccount: +accountData.formsData.form1.id
-      })
+      await updateSecurityTotal([
+        {
+          id: +allFormData.id,
+          receivedNetPremium: +allFormData.recievedNetPremium,
+          distributedNetPremium: +allFormData.distribuitedNetPremium,
+          difference: +allFormData.diference,
+          idAccount: +accountData.formsData.form1.id,
+          view: 1
+        }
+      ])
         .then(response => {
           console.log('updateSecurityTotal', { response })
         })
@@ -193,73 +326,10 @@ const Security = ({ onStepChange }: SecurityProps) => {
         })
     }
 
-    if (update.length > 0) {
-      await updateSecurities(update)
-        .then(res => {
-          console.log('updateSecurities', { res })
-
-          setBadgeData({
-            message: 'THE INFORMATION HAS BEEN SAVED',
-            theme: 'success',
-            open: true,
-            status: 'error'
-          })
-        })
-        .catch(e => {
-          console.log('ERROR updateSecurities', e)
-
-          setBadgeData({
-            message: 'Error saving data',
-            theme: 'error',
-            open: true,
-            status: 'error',
-            icon: <Icon style={{ color: '#FF4D49' }} icon='icon-park-outline:error' />
-          })
-        })
-
-      setTimeout(() => {
-        setBadgeData({
-          ...badgeData,
-          open: false
-        })
-      }, 2000)
-    }
-
     if (save.length > 0) {
-      await saveSecurities(save)
-        .then(async res => {
-          console.log('saveSecurities', { res })
-          const accountById: Partial<ResponseGetAccount> = await getAccountById(Number(accountId))
-            .then(account => {
-              if (account) {
-                account.securities =
-                  account.securities.length === 0
-                    ? [{ frontingFeeActive: false, isGross: false } as SecurityDto]
-                    : account.securities
-              }
-
-              return account
-            })
-            .catch((error: Error) => {
-              console.log(error)
-
-              return {}
-            })
-
-          const accountSecurities = accountById?.securities as SecurityDto[]
-
-          if (accountSecurities && information) {
-            calculateSecurities(accountSecurities)
-            accountById.securityTotal &&
-              setAllFormData({
-                ...allFormData,
-                recievedNetPremium: Number(accountById.securityTotal.receivedNetPremium),
-                distribuitedNetPremium: Number(accountById.securityTotal.distributedNetPremium),
-                diference: Number(accountById.securityTotal.difference),
-                id: Number(accountById.securityTotal.id)
-              })
-          }
-
+      await saveSecurities({ idAccount: +accountData.formsData.form1.id, securities: save })
+        .then(async response => {
+          response && response.length > 0 && calculateSecurities(response)
           update.length === 0 &&
             setBadgeData({
               message: 'THE INFORMATION HAS BEEN SAVED',
@@ -279,7 +349,17 @@ const Security = ({ onStepChange }: SecurityProps) => {
             icon: <Icon style={{ color: '#FF4D49' }} icon='icon-park-outline:error' />
           })
         })
-
+      getAccountById(accountData.formsData.form1.id)
+        .then(accounts => {
+          calculateSecurities(
+            accounts.securities.length > 0
+              ? accounts.securities.map(security => SecurityMapper.securityToSecurityForm(security, accountData))
+              : [initialSecurity]
+          )
+        })
+        .catch((error: Error) => {
+          console.log(error)
+        })
       setTimeout(() => {
         setBadgeData({
           ...badgeData,
@@ -300,17 +380,9 @@ const Security = ({ onStepChange }: SecurityProps) => {
     setAllErrors(() => [...updatedErrors])
   }
 
-  // useEffect(() => {
-  //   // Todo: comentar mock
-  //   setAccountId(1)
-  //   setInformation(formInformationDataMock)
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [accountData.formsData.form1.id])
-
   useEffect(() => {
-    const idAccountCache = Number(localStorage.getItem('idAccount'))
     if (accountData.formsData.form1.id) {
-      setAccountId(accountData.formsData.form1.id || idAccountCache)
+      setAccountId(accountData.formsData.form1.id)
       const data = accountData.formsData.form1.placementStructure as FormInformation
       setInformation(data)
     }
@@ -318,16 +390,13 @@ const Security = ({ onStepChange }: SecurityProps) => {
   }, [accountData.formsData.form1.id])
 
   useEffect(() => {
-    if (account && information) {
-      calculateSecurities(account.securities)
-      account.securityTotal &&
-        setAllFormData({
-          ...allFormData,
-          recievedNetPremium: Number(account.securityTotal.receivedNetPremium),
-          distribuitedNetPremium: Number(account.securityTotal.distributedNetPremium),
-          diference: Number(account.securityTotal.difference),
-          id: Number(account.securityTotal.id)
-        })
+    if (information) {
+      if (account?.securities)
+        calculateSecurities(
+          account.securities.length > 0
+            ? account.securities.map(security => SecurityMapper.securityToSecurityForm(security, accountData))
+            : [initialSecurity]
+        )
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -339,132 +408,158 @@ const Security = ({ onStepChange }: SecurityProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isNextStep])
 
+  useEffect(() => {
+    calculateSecurities(securities)
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentView])
+
   return (
     <SecurityContext.Provider
       value={{
+        // account: account || null,
         securities,
-        setSecurities,
         information,
         activeErros,
         allErrors,
         companiesSelect,
         calculateSecurities,
-        setAllErrors
+        setAllErrors,
+        setCurrentView
       }}
     >
       <div style={{ fontFamily: inter }}>
-        {/* <ViewMocks /> */}
         <CardHeader title={<Title>Security</Title>} />
         <CustomAlert {...badgeData} />
-        <form noValidate autoComplete='on'>
-          <CardContent>
-            {securities.map((security, index) => {
-              return (
-                <FormSection
-                  key={`${index}-${security?.id}`}
-                  security={security}
-                  index={index}
-                  onDeleteItemList={DeleteNewForm}
-                />
-              )
-            })}
-            <Grid container spacing={5}>
-              <Grid item xs={12} sm={4}>
-                <FormControl fullWidth>
-                  <TextField
-                    autoFocus
-                    label='Received net premium'
-                    disabled
-                    fullWidth
-                    value={allFormData.recievedNetPremium}
-                    InputProps={{
-                      inputComponent: NumericFormatCustom as any
-                    }}
-                    inputProps={{
-                      suffix: ' '
-                    }}
-                  />
-                </FormControl>
-              </Grid>
-              <Grid item xs={12} sm={4}>
-                <FormControl fullWidth>
-                  <TextField
-                    autoFocus
-                    label='Distributed net premium'
-                    value={allFormData.distribuitedNetPremium}
-                    InputProps={{
-                      inputComponent: NumericFormatCustom as any
-                    }}
-                    inputProps={{
-                      suffix: ' '
-                    }}
-                    disabled
-                  />
-                  {false && <FormHelperText sx={{ color: 'error.main' }}>Invalid field</FormHelperText>}
-                </FormControl>
-              </Grid>
-              <Grid item xs={12} sm={4}>
-                <FormControl fullWidth>
-                  <TextField
-                    autoFocus
-                    label='Difference'
-                    value={allFormData.diference}
-                    InputProps={{
-                      inputComponent: NumericFormatCustom as any
-                    }}
-                    inputProps={{
-                      suffix: ' '
-                    }}
-                    disabled
-                  />
-                  {false && <FormHelperText sx={{ color: 'error.main' }}>Invalid field</FormHelperText>}
-                </FormControl>
-              </Grid>
-            </Grid>
-            <Grid
-              container
-              spacing={5}
-              sx={{
-                marginTop: '20px'
-              }}
-            >
-              <Grid item xs={12} sm={12}>
-                <div className='add-reinsurer'>
-                  <Button
-                    type='button'
-                    onClick={addNewForm}
-                    variant='text'
-                    color='primary'
-                    size='large'
-                    fullWidth
-                    sx={{ justifyContent: 'start' }}
-                  >
-                    <Icon icon='material-symbols:add-circle-outline' fontSize={20} className='icon-btn' /> ADD REINSURER
-                  </Button>
-                </div>
-              </Grid>
 
-              <Grid item xs={12} sm={12}>
-                <div
-                  className='section action-buttons'
-                  style={{ float: 'right', marginRight: 'auto', marginBottom: '20px' }}
-                >
-                  <Button className='btn-save' color='success' variant='contained' onClick={SaveData}>
-                    <div className='btn-icon'>
-                      <Icon icon='mdi:content-save' />
-                    </div>
-                    SAVE CHANGES
-                  </Button>
-                  <Button className='btn-next' onClick={handleNextStep}>
-                    Next Step
-                    <div className='btn-icon'>
-                      <Icon icon='material-symbols:arrow-right-alt' />
-                    </div>
-                  </Button>
-                </div>
+        <form noValidate autoComplete='on'>
+          <SecondViewProvider>
+            <CardContent>
+              {securities.length > 0 &&
+                securities.map((security, index) => {
+                  return (
+                    <DisableForm
+                      key={`${index}-${security?.id}`}
+                      isDisabled={account?.status.toLowerCase() === 'bound' ? true : false}
+                    >
+                      <FormSection
+                        security={currentView === 2 ? securitiesSecondView[index] : security}
+                        index={index}
+                        onDeleteItemList={DeleteNewForm}
+                      />
+                    </DisableForm>
+                  )
+                })}
+
+              <Grid container spacing={5}>
+                <Grid item xs={12} sm={4}>
+                  <FormControl fullWidth>
+                    <TextField
+                      autoFocus
+                      label='Received net premium'
+                      disabled
+                      fullWidth
+                      value={currentView !== 2 ? allFormData.recievedNetPremium : allFormDataView2.recievedNetPremium}
+                      InputProps={{
+                        inputComponent: NumericFormatCustom as any
+                      }}
+                      inputProps={{
+                        suffix: ' '
+                      }}
+                    />
+                  </FormControl>
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                  <FormControl fullWidth>
+                    <TextField
+                      autoFocus
+                      label='Distributed net premium'
+                      value={
+                        currentView !== 2 ? allFormData.distribuitedNetPremium : allFormDataView2.distribuitedNetPremium
+                      }
+                      InputProps={{
+                        inputComponent: NumericFormatCustom as any
+                      }}
+                      inputProps={{
+                        suffix: ' '
+                      }}
+                      disabled
+                    />
+                    {false && <FormHelperText sx={{ color: 'error.main' }}>Invalid field</FormHelperText>}
+                  </FormControl>
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                  <FormControl fullWidth>
+                    <TextField
+                      autoFocus
+                      label='Difference'
+                      value={currentView !== 2 ? allFormData.diference : allFormDataView2.diference}
+                      InputProps={{
+                        inputComponent: NumericFormatCustom as any
+                      }}
+                      inputProps={{
+                        suffix: ' '
+                      }}
+                      disabled
+                    />
+                    {false && <FormHelperText sx={{ color: 'error.main' }}>Invalid field</FormHelperText>}
+                  </FormControl>
+                </Grid>
               </Grid>
-            </Grid>
-          </CardContent>
+              <Grid
+                container
+                spacing={5}
+                sx={{
+                  marginTop: '20px'
+                }}
+              >
+                {/* ADD REINSURER */}
+                <Grid item xs={12} sm={12}>
+                  <div className='add-reinsurer'>
+                    <Button
+                      disabled={currentView === 2 || account?.status.toLowerCase() === 'bound' ? true : undefined}
+                      type='button'
+                      onClick={addNewForm}
+                      variant='text'
+                      color='primary'
+                      size='large'
+                      fullWidth
+                      sx={{ justifyContent: 'start' }}
+                    >
+                      <Icon icon='material-symbols:add-circle-outline' fontSize={20} className='icon-btn' /> ADD
+                      REINSURER
+                    </Button>
+                  </div>
+                </Grid>
+
+                <Grid item xs={12} sm={12}>
+                  <div
+                    className='section action-buttons'
+                    style={{ float: 'right', marginRight: 'auto', marginBottom: '20px' }}
+                  >
+                    <Button
+                      disabled={currentView === 2 || account?.status.toLowerCase() === 'bound' ? true : false}
+                      className='btn-save'
+                      color='success'
+                      variant='contained'
+                      onClick={SaveData}
+                    >
+                      <div className='btn-icon'>
+                        <Icon icon='mdi:content-save' />
+                      </div>
+                      SAVE CHANGES
+                    </Button>
+                    <Button disabled={currentView === 2} className='btn-next' onClick={handleNextStep}>
+                      Next Step
+                      <div className='btn-icon'>
+                        <Icon icon='material-symbols:arrow-right-alt' />
+                      </div>
+                    </Button>
+                  </div>
+                </Grid>
+              </Grid>
+            </CardContent>
+          </SecondViewProvider>
           <Modal className='next-step-modal' open={openNextModal} onClose={handleCloseModal}>
             <Box
               sx={{

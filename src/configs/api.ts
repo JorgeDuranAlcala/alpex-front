@@ -37,9 +37,9 @@ export enum ACCOUNT_HISTORY_LOG_ROUTES {
 //Discounts
 export enum ACCOUNT_DISCOUNT_ROUTERS {
   ADD = 'account/discount/add',
-  GET_ALL = 'account/discount/',
-  UPDATE = 'account/discount/',
-  DELETE = 'account/discount/'
+  GET_ALL = 'account/discount',
+  UPDATE = 'account/discount',
+  DELETE = 'account/discount'
 }
 
 export enum ACCOUNT_INFORMATION_ROUTES {
@@ -48,7 +48,8 @@ export enum ACCOUNT_INFORMATION_ROUTES {
   UPDATE = 'account/information',
   UPLOAD_FILE = 'account/information/upload-file',
   DELETE_FILE = 'account/information/delete-file',
-  GET_FILES = 'account/information/all-doctos'
+  GET_FILES = 'account/information/all-doctos',
+  GET_FILES_BY_TYPE = 'account/information/doctosByType'
 }
 
 export enum ACCOUNT_SECURITY_ROUTES {
@@ -60,7 +61,7 @@ export enum ACCOUNT_SECURITY_ROUTES {
 export enum ACCOUNT_SECURITY_TOTAL_ROUTES {
   ADD = 'account/securityTotal/add',
   GET_BY_ID_ACCOUNT = 'account/securityTotal',
-  UPDATE = 'account/securityTotal'
+  UPDATE = 'account/securityTotal/update'
 }
 
 export enum ACCOUNT_SUBLIMIT_ROUTES {
@@ -127,6 +128,14 @@ export enum SUBSCRIPTION_TYPE_ROUTERS {
   ADD = 'catalogs/subscriptionType/add',
   UPDATE = `catalogs/subscriptionType`,
   DELETE = 'catalogs/subscriptionType'
+}
+
+export enum LANGUAGE_ROUTERS {
+  GET_ALL = 'catalogs/language/all',
+  GET_BY_ID = 'catalogs/language',
+  ADD = 'catalogs/language/add',
+  UPDATE = `catalogs/language`,
+  DELETE = 'catalogs/language'
 }
 
 export enum LINE_OF_BUSSINES_ROUTES {
@@ -231,8 +240,16 @@ export enum INSTALLMENT_ROUTERS {
 }
 
 export enum ACCOUNT_STATUS_ROUTERS {
-  GET_ALL = 'account/account-status/all',
-  GET_BY_ID = 'account/account-status/'
+  GET_ALL = 'catalogs/account-status/all',
+  GET_BY_ID = 'catalogs/account-status/'
+}
+
+export enum ENDORSEMENT_TYPE_ROUTES {
+  GET_ALL = 'catalogs/endorsementType/all'
+}
+
+export enum ECONOMIC_SECTOR_ROUTES {
+  GET_ALL = 'catalogs/economic-sector/all'
 }
 
 // ==== USER
@@ -256,4 +273,28 @@ export enum EXCHANGE_RATE {
 
 export enum CHAT_BOT {
   CHAT = 'ai/chat'
+}
+
+// ==== ENDORSEMENT
+export enum ENDORSEMENT_ROUTES {
+  GET_BY_ID_ACCOUNT = 'endorsement/history',
+  GET_BY_ID = 'endorsement',
+  ADD = 'endorsement/add'
+}
+
+// ==== REPORTS
+export enum PRINT_ACCOUNT_ROUTES {
+  GET_BY_ID_ACCOUNT_LANGUAGE = 'reports/print-report'
+}
+
+export enum BOURDEROU_ROUTES {
+  DOWNLOAD = 'reports/bourderau/download'
+}
+
+export enum REPORTS_ROUTES {
+  DOWNLOAD = 'reports/allAccounts'
+}
+
+export enum DEBIT_NOTE_ROUTES {
+  DOWNLOAD = 'reports/debit-note'
 }

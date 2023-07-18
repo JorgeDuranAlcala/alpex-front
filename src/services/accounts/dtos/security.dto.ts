@@ -8,10 +8,11 @@ export interface SecurityDto {
   id: number
   netPremiumAt100: number
   share: number
+  shareAmount: number
   premiumPerShare: number
   premiumPerShareAmount: number
   frontingFeeActive: boolean
-  taxesActive: boolean | null
+  taxesActive: boolean
   dynamicCommission: number
   dynamicCommissionAmount: number
   frontingFee: number
@@ -28,26 +29,48 @@ export interface SecurityDto {
   active: boolean
   consecutive: number | null
   view: number
+  activeView?: number
   discounts: SecurityDiscountDto[] | []
   idCReinsuranceCompany: ReinsuranceCompanyDto
-  idCReinsuranceCompanyBinder: ReinsuranceCompanyBinderDto
-  idCRetroCedant: RetroCedantDto
-  idCRetroCedantContact: RetroCedantContactDto
+  idCReinsuranceCompanyBinder: ReinsuranceCompanyBinderDto | null
+  idCRetroCedant: RetroCedantDto | null
+  idCRetroCedantContact: RetroCedantContactDto | null
   idEndorsement: number
   idAccount: number
   isGross: boolean
   recievedNetPremium: number
+  totalAmountOfDiscounts: number
 }
 
 export interface FormInformation {
   frontingFee: number
   netPremium: number
   grossPremium: number
+  limit: number
 }
+
+// export interface FormInformationPlacementStructure {
+//   currency: string,
+//   typeOfLimit: string,
+//   exchangeRate: number,
+//   attachmentPoint: number,
+//   frontingFee: number,
+//   grossPremium: number,
+//   limit: number,
+//   netPremium: number,
+//   reinsuranceBrokerage: number,
+//   sir: number,
+//   taxes: number,
+//   total: number,
+//   reinsuranceBrokerageP: number,
+//   taxesP: number,
+//   frontingFeeP: number
+// }
 
 export interface FormSectionProps {
   index: number
   security: SecurityDto
+
   onDeleteItemList: (index: number) => void
 }
 
@@ -106,15 +129,17 @@ export type errorsSecurity = {
   idCRetroCedant: string
   idCRetroCedantContact: string
 }
+
+//setSecurities: React.Dispatch<React.SetStateAction<SecurityDto[]>>
 export type SecurityContextDto = {
-  securities: SecurityDto[]
   allErrors: boolean[]
+  securities: SecurityDto[]
   activeErros: boolean
   information: FormInformation
   companiesSelect: number[]
-  setSecurities: React.Dispatch<React.SetStateAction<SecurityDto[]>>
   setAllErrors: React.Dispatch<React.SetStateAction<boolean[]>>
-  calculateSecurities: (securities: SecurityDto[]) => void
+  setCurrentView: React.Dispatch<React.SetStateAction<number>>
+  calculateSecurities: (securities: SecurityDto[], view?: number) => void
 }
 export type SecurityProps = {
   onStepChange: (step: number) => void

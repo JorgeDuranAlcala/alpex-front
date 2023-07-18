@@ -1,12 +1,13 @@
-import { useFindInformationByIdAccount } from '@/hooks/accounts/information'
+// import { useGetAllEndorsementTypes } from '@/hooks/accounts/endorsementType/getAllEndorsementTypes.tsx'
+import { ContainerMobileBound } from '@/styled-components/accounts/Security.styled'
 import { Box, Button, Card, ListItemIcon, ListItemText, Menu, MenuItem, Modal, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
 import Icon from 'src/@core/components/icon'
 import { useAppSelector } from 'src/store'
 import StatusSelect from 'src/views/custom/select/StatusSelect'
 import ActionsHeader from './ActionsHeader'
-
-// import StatusSelect from 'src/views/custom/select/StatusSelect'
+import ActionsHeaderBound from './ActionsHeaderBound'
+import { ModalUploadImg } from './modals/ModalUploadImg'
 
 // ** MUI Imports
 
@@ -22,6 +23,14 @@ interface StatusHistory {
   name: string
   date: string
 }
+interface FormHeaderProps {
+  isNewAccount?: boolean
+  setActiveEndorsement?: any
+  setEditInfo?: any
+  setTypeofAccount?: any
+  accountDetails: any
+  setAccountId: any
+}
 
 //Pending types
 
@@ -30,6 +39,7 @@ const ModalUploadImage = () => {
   const [image, setImage] = useState('')
   const [imagePreview, setImagePreview] = useState('')
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
+  const [modal, setModal] = useState(false)
   const openMenu = Boolean(anchorEl)
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget)
@@ -41,8 +51,20 @@ const ModalUploadImage = () => {
     setOpen(true)
   }
 
-  const handleClose = () => {
-    setOpen(false)
+  const handleClose = (action: string) => {
+    switch (action) {
+      case 'upload':
+        setOpen(false)
+        setAnchorEl(null)
+        setModal(true)
+        break
+      case 'txtLogo':
+        setOpen(false)
+        setAnchorEl(null)
+        break
+      default:
+        break
+    }
   }
 
   const handleImageChange = (e: any) => {
@@ -80,14 +102,14 @@ const ModalUploadImage = () => {
             'aria-labelledby': 'basic-button'
           }}
         >
-          <MenuItem onClick={handleClose}>
+          <MenuItem onClick={() => handleClose('upload')}>
             <ListItemText>Upload Company Logo</ListItemText>
             <ListItemIcon>
               <Icon icon='ic:baseline-file-upload' style={{ marginLeft: 'auto' }} fontSize={20} />
             </ListItemIcon>
           </MenuItem>
-          <MenuItem onClick={handleClose}>
-            <ListItemText>Use a Text-Based Logo </ListItemText>
+          <MenuItem onClick={() => handleClose('txtLogo')}>
+            <ListItemText>Use a Text-Based Logo</ListItemText>
             <ListItemIcon>
               <Icon icon='ph:text-a-underline-bold' style={{ marginLeft: 'auto' }} fontSize={20} />
             </ListItemIcon>
@@ -110,16 +132,22 @@ const ModalUploadImage = () => {
           </Typography>
         </Box>
       </Modal>
+      <ModalUploadImg setOpenHistory={setModal} openHistory={modal} />
     </>
   )
 }
 
-const FormHeader = ({ isNewAccount }: any) => {
-  const [status, setStatus] = useState({})
-
+const FormHeader = ({
+  isNewAccount,
+  setActiveEndorsement,
+  setTypeofAccount,
+  setEditInfo,
+  accountDetails,
+  setAccountId
+}: FormHeaderProps) => {
+  const [status, setStatus] = useState('')
   const account = useAppSelector(state => state.accounts?.formsData?.form1)
 
-  const { setIdAccount, information } = useFindInformationByIdAccount()
   const formaterAmount = (amount: number) => {
     if (amount) {
       return amount.toLocaleString('en-US', {
@@ -130,27 +158,65 @@ const FormHeader = ({ isNewAccount }: any) => {
       })
     }
   }
-  const formatDate = (date: Date | null | undefined): string => {
+
+  const convertirFecha = (fecha: string) => {
+    const fechaObjeto = new Date(fecha)
+
+    const dia = fechaObjeto.getUTCDate()
+    const mes = fechaObjeto.getUTCMonth() + 1
+    const anio = fechaObjeto.getUTCFullYear()
+
+    return `${dia}/${mes < 10 ? '0' + mes : mes}/${anio}`
+  }
+
+  const formatDateFromUTC = (date: Date | null): string => {
     if (date) {
+      const fecha = new Date(new Date(date).toLocaleString('en-US', { timeZone: 'UTC' }))
       const options: Intl.DateTimeFormatOptions = {
         day: '2-digit',
         month: 'short',
         year: 'numeric'
       }
 
-      return new Intl.DateTimeFormat('ban', options).format(date)
+      return new Intl.DateTimeFormat('ban', options).format(fecha)
     }
     return ''
   }
+
   useEffect(() => {
-    account && setIdAccount(account.id)
+    account && setAccountId(account.id)
   }, [account])
+
+  useEffect(() => {
+    if (accountDetails !== undefined && setTypeofAccount) {
+      setTypeofAccount(accountDetails?.status)
+    }
+  }, [status])
+
+  useEffect(() => {
+    accountDetails && setStatus(accountDetails.status)
+  }, [accountDetails])
 
   return (
     <>
       <Card className='info-header' style={{ marginBottom: '16px' }}>
         <div className='form-header-data'>
           <div className='form-container-all-data'>
+            {/* Contenedor mobile bound */}
+            <ContainerMobileBound>
+              <div className='title'>{account?.basicInfo?.insured} </div>
+              <div className='idNumber'>#{account?.id}</div>
+
+              <span className='subtitle'>Net premium</span>
+              <span className='moneySubtitle'>
+                ${account && formaterAmount(account?.placementStructure?.netPremium)}{' '}
+                {account?.placementStructure?.currency}
+              </span>
+              <span className='subtitle'>Reception Date</span>
+              <span className='reception'>{account && convertirFecha(account?.basicInfo?.receptionDate)}</span>
+            </ContainerMobileBound>
+
+            {/* Contenedor mobile bound */}
             {/* Container first */}
             {!isNewAccount && (
               <div className='form-header-sections'>
@@ -167,47 +233,68 @@ const FormHeader = ({ isNewAccount }: any) => {
                     ${account && formaterAmount(account?.placementStructure?.netPremium)}{' '}
                     {account?.placementStructure?.currency}
                   </span>
-                  <span className='form-header-money-data-date'>Last Update: 11 / 03 / 2023</span>
+                  <span className='form-header-money-data-date'>
+                    Last Update: {accountDetails && formatDateFromUTC(accountDetails?.informations[0]?.updatedAt)}
+                  </span>
                 </div>
               </div>
             )}
             {/* Container first */}
-
             {/* Container second */}
-
             <div className='form-secondContainer-wrapper'>
               <div className='form-secondContainer-wrapper-first-side'>
                 <div className='form-secondContainer-first' style={{ marginRight: '20px' }}>
                   <span className='form-secondContainer-header-title'>Status</span>
-                  <StatusSelect margin={0} initialStatus='PENDING' setSelectedStatus={setStatus} />
+                  {status !== '' && accountDetails?.status && (
+                    <StatusSelect margin={0} initialStatus={accountDetails?.status} setSelectedStatus={setStatus} />
+                  )}
+                  {isNewAccount && <StatusSelect margin={0} initialStatus='PENDING' setSelectedStatus={setStatus} />}
                 </div>
 
                 <div className='form-secondContainer-third'>
-                  <span className='form-header-money-data-date'>Last Update: 11 / 03 / 2023</span>
+                  <span className='form-header-money-data-date'>
+                    Last update: {accountDetails && formatDateFromUTC(accountDetails?.informations[0]?.updatedAt)}
+                  </span>
                 </div>
+
                 {!isNewAccount && (
                   <div className='form-secondContainer-second'>
                     <span className='form-secondContainer-header-title'>Line of Business</span>
                     <span className='form-secondContainer-header-subtitle'>
-                      {information && formatDate(information?.createdAt)}
+                      {accountDetails && accountDetails?.informations[0]?.idLineOfBussines?.lineOfBussines}
                     </span>
                   </div>
                 )}
 
                 {!isNewAccount && (
                   <div className='form-secondContainer-second'>
-                    <span className='form-secondContainer-header-title'>Reception Date</span>
+                    <span className='form-secondContainer-header-title'>Effective Date</span>
                     <span className='form-secondContainer-header-subtitle'>
-                      {information && formatDate(information?.createdAt)}
+                      {accountDetails && formatDateFromUTC(accountDetails?.informations[0]?.effectiveDate)}
                     </span>
                   </div>
                 )}
               </div>
               <div className={!isNewAccount ? 'actions-header' : 'form-secondContainer-fourths'}>
                 <div className={!isNewAccount ? 'display-none' : 'form-secondContainer-fourth'}>
-                  <span className='form-header-money-data-date'>Last Update: 11 / 03 / 2023</span>
+                  <span className='form-header-money-data-date'>
+                    Last update: {accountDetails && formatDateFromUTC(accountDetails?.informations[0]?.updatedAt)}
+                  </span>
                 </div>
-                <ActionsHeader accountStatus='PENDING' sideHeader={true} />
+                {accountDetails && accountDetails?.idAccountStatus === 5 ? ( //TODO
+                  <ActionsHeaderBound
+                    setActiveEndorsement={setActiveEndorsement}
+                    accountStatus='BOUND'
+                    sideHeader={true}
+                  />
+                ) : (
+                  <ActionsHeader
+                    accountId={account?.id}
+                    setEditInfo={setEditInfo}
+                    accountStatus='PENDING'
+                    sideHeader={true}
+                  />
+                )}
               </div>
             </div>
             {/* Container second */}

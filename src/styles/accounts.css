@@ -59,6 +59,7 @@
   margin: 0 0 20px;
   overflow: inherit;
   height: 100%;
+  width: 100%;
 }
 
 /*---- Header----*/
@@ -76,7 +77,7 @@
   width: 100%;
   display: flex;
   flex-direction: row;
-  border: 1px solid blue;
+  /* border: 1px solid blue; */
   padding: 0px;
   /* flex-wrap: wrap; */
 }
@@ -225,6 +226,7 @@
   height: 100%;
   display: flex;
   align-items: center;
+
   .MuiOutlinedInput-notchedOutline {
     border: none !important;
   }
@@ -352,7 +354,7 @@
   margin-left: auto !important;
 }
 
-.discount-btn{
+.discount-btn {
   width: 100%;
 }
 
@@ -379,6 +381,7 @@
   display: flex;
   align-items: center;
   font-weight: 500;
+  min-height: 38px;
 }
 
 .form-col {
@@ -395,6 +398,12 @@
   margin-bottom: 10px;
 }
 
+.delete-discount {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
 .uploaded-files {
   width: 100%;
   align-items: center;
@@ -402,10 +411,11 @@
   flex-wrap: wrap;
   gap: 2%;
   justify-content: flex-start;
+  padding: 0px 12px 0px 12px;
 }
 
 .upload-btn .file-details {
-  width: 32%;
+  width: 100%;
   align-items: center;
   display: flex;
   background-color: rgba(130, 133, 151, 0.05);
@@ -413,6 +423,7 @@
   padding: 5px 10px;
   border-radius: 8px;
   justify-content: space-between;
+  height: 42px;
 }
 
 .upload-btn .file-name {
@@ -420,6 +431,39 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.title-documents {
+  font-weight: 500;
+  font-size: 20px;
+  letter-spacing: 0.15px;
+  height: 64px;
+  padding: 16px 0px 16px 0px;
+}
+
+.no-documentsText {
+  height: 72px;
+  width: 100%;
+  border-radius: 8px;
+  padding: 8px 16px;
+  background-color: rgba(130, 133, 151, 0.05);
+  margin-bottom: 5px;
+}
+
+.final-slip {
+  background-color: #686b7e;
+  border-radius: 10px;
+  height: 36px;
+  width: 100%;
+}
+
+.actions-icons {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  height: auto;
+  width: 132px;
+  margin-left: auto;
 }
 
 .menu-btn {
@@ -431,21 +475,25 @@
 
 .menu-options {
   position: absolute;
-  width: 100%;
+  width: 200px;
   max-width: 220px;
   background-color: white;
   min-width: 100px;
   top: 43px;
   right: -12px;
-  padding: 10px 0;
+  padding: 8px 0px 8px 0px;
   border-radius: 8px;
   box-shadow: 0px 4px 6px 1px rgba(0, 0, 0, 0.2);
   z-index: 10;
 }
 
 .menu-options .option {
-  padding: 8px 10px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 8px 8px 8px 16px;
   font-size: 14px;
+  height: 25%;
 }
 
 .menu-options .option:hover {
@@ -510,6 +558,7 @@
   .uploaded-files {
     justify-content: space-between;
   }
+
   .file-details {
     width: 48%;
   }
@@ -519,18 +568,27 @@
   .uploaded-files {
     justify-content: center;
   }
+
   .upload-btn .file-details {
     width: 98%;
   }
+}
+
+/* ---- Security ----*/
+.binder-loader {
+  display: flex;
+  justify-content: center;
+  color: #000000;
+  font-size: 14px;
 }
 
 /*---- Comment section ----*/
 
 .comments .title {
   font-size: 24px;
-  color: rgba(68, 72, 84, 0.87);
-  font-weight: 600;
-  padding: 15px 20px;
+  color: rgba(77, 80, 98, 0.87);
+  font-weight: 500;
+  padding: 15px 17px;
 }
 
 .comments .MuiFormControl-root {
@@ -543,7 +601,7 @@
 }
 
 .comments .comment-view {
-  padding: 10px 8px;
+  padding: 10px 17px;
 }
 
 .comments .user {
@@ -676,6 +734,7 @@
     width: 20%;
     justify-content: center;
   }
+
   .steps .step.active .step-name {
     display: none;
   }
@@ -834,6 +893,7 @@
 .header-form-main {
   display: inline-block;
 }
+
 .header-form-main button {
   padding: 0px;
 }
@@ -916,12 +976,12 @@
   flex-grow: 0;
 }
 
-.react-datepicker > .react-datepicker__navigation.react-datepicker__navigation--next--with-time {
+.react-datepicker>.react-datepicker__navigation.react-datepicker__navigation--next--with-time {
   right: 127px;
   display: none;
 }
 
-.react-datepicker > .react-datepicker__navigation.react-datepicker__navigation--previous {
+.react-datepicker>.react-datepicker__navigation.react-datepicker__navigation--previous {
   width: 24px;
   height: 24px;
   border: none;
@@ -1013,11 +1073,13 @@
   display: flex;
   gap: 20px;
 }
+
 .form-header-info-profile-txt-container {
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
+
 .form-header-info-profile-txt-title {
   font-size: 24px;
   line-height: 32.02px;
@@ -1025,6 +1087,7 @@
   font-family: Inter;
   color: #4d5062de;
 }
+
 .form-header-info-profile-num {
   font-size: 20px;
   line-height: 32px;
@@ -1058,6 +1121,7 @@
   letter-spacing: 0.4px;
   color: #4d5062de;
 }
+
 .form-header-money-data-date {
   font-weight: 400;
   font-size: 16px;
@@ -1074,6 +1138,7 @@
     letter-spacing: 0.4px;
   }
 }
+
 .form-header-money-data-date {
   font-weight: 400;
   font-size: 12px;
@@ -1083,6 +1148,7 @@
   color: #4d506261;
   align-self: end;
   margin-right: 14px;
+
   @media (max-width: 900px) {
     align-self: center;
     margin-right: 0px;
@@ -1103,6 +1169,7 @@
   gap: 4px;
   min-height: 59px;
   justify-content: space-between;
+
   @media (max-width: 900px) {
     max-width: 100%;
     width: 100%;
@@ -1117,15 +1184,19 @@
   gap: 4px;
   /* min-height: 59px; */
   justify-content: space-between;
+
   @media (max-width: 1300px) {
     width: 170px;
   }
+
   @media (max-width: 900px) {
     display: none;
   }
 }
+
 .form-secondContainer-third {
   display: none;
+
   @media (max-width: 900px) {
     display: flex;
     /* border: 1px solid red; */
@@ -1133,9 +1204,11 @@
     justify-content: space-between;
   }
 }
+
 .form-secondContainer-fourth {
   display: flex;
   flex-direction: column;
+
   @media (max-width: 900px) {
     display: none;
     /* border: 1px solid red; */
@@ -1143,9 +1216,11 @@
     justify-content: space-between;
   }
 }
+
 .form-secondContainer-fourths {
   display: flex;
   flex-direction: column;
+
   @media (max-width: 900px) {
     display: flex;
     /* border: 1px solid red; */
@@ -1157,6 +1232,7 @@
 .display-none {
   display: none;
 }
+
 .form-secondContainer-header-title {
   font-weight: 400;
   font-size: 12px;
@@ -1165,6 +1241,7 @@
   letter-spacing: 0.4px;
   color: #4d5062ad;
 }
+
 .form-secondContainer-header-subtitle {
   font-weight: 400;
   font-size: 20px;
@@ -1186,6 +1263,7 @@
 .form-secondContainer-wrapper-first-side {
   display: flex;
   gap: 12px;
+
   @media (max-width: 900px) {
     flex-direction: column;
   }
@@ -1198,6 +1276,7 @@
 .btnWrappers {
   /* border: 1px solid yellow; */
   width: 100%;
+
   .MuiButton-root {
     width: 100%;
     padding: 8px 0px !important;
@@ -1225,6 +1304,7 @@
   align-items: center;
   width: 100%;
 }
+
 .btnWrapperFth .header-rows {
   /* padding: 10px 5px; */
   /* justify-content: end; */

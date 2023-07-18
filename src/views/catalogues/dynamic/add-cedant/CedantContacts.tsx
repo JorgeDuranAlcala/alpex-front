@@ -369,7 +369,7 @@ const CedantContacts = ({ idCedant }: ICedantContacts) => {
       idCCountry: currentContact.idCCountry.id
     })
     if (result) {
-      triggerAlert('success', 'CHANGES SAVED')
+      triggerAlert('success-alert', 'CHANGES SAVED')
       getCedantContactsByIdCedant(cedantContactsPagination)
     }
     setOpenEdit(false)
@@ -379,7 +379,7 @@ const CedantContacts = ({ idCedant }: ICedantContacts) => {
     const result = await deleteCedantContact({ idDeleteList: [contactToDelete] })
     if (result) {
       getCedantContactsByIdCedant(cedantContactsPagination)
-      triggerAlert('success', 'DELETED')
+      triggerAlert('success-alert', 'DELETED')
     }
     setOpenDelete(false)
   }
@@ -388,7 +388,7 @@ const CedantContacts = ({ idCedant }: ICedantContacts) => {
     const result = await deleteCedantContact({ idDeleteList: selectedRows })
     if (result) {
       getCedantContactsByIdCedant(cedantContactsPagination)
-      triggerAlert('success', 'DELETED')
+      triggerAlert('success-alert', 'DELETED')
     }
     setOpenDeleteRows(false)
   }

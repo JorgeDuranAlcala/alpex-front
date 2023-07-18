@@ -1,80 +1,78 @@
-import {
-  FormControl,
-  FormHelperText,
-  TextField
-} from '@mui/material';
-import { useContext } from 'react';
-import { NumericFormat } from 'react-number-format';
-import * as yup from 'yup';
+import { FormControl, FormHelperText, TextField } from '@mui/material'
+import { useContext, useEffect, useState } from 'react'
+import { NumericFormat } from 'react-number-format'
+import * as yup from 'yup'
 
-import { SecurityContext } from '../../SecurityView';
-import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interface';
-import { CalculateSecurity } from '../../utils/calculates-securities';
-
+import { SecurityContext } from '../../SecurityView'
+import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interface'
+import { CalculateSecurity } from '../../utils/calculates-securities'
 
 interface ReinsuranceBrokerageAmountProps extends ISecurityInputProps {
-
-  operationSecurity: CalculateSecurity;
+  operationSecurity: CalculateSecurity
 }
 
-
-export const ReinsuranceBrokerageAmount = ({ index, value, isError, operationSecurity, validateForm }: ReinsuranceBrokerageAmountProps) => {
-
-  const {
-    activeErros,
-    securities,
-    calculateSecurities
-  } = useContext(SecurityContext);
+export const ReinsuranceBrokerageAmount = ({
+  index,
+  value,
+  errorMessage,
+  operationSecurity,
+  validateForm,
+  view
+}: ReinsuranceBrokerageAmountProps) => {
+  const { activeErros, securities, calculateSecurities } = useContext(SecurityContext)
+  const [reinsuranceBrokerageAmount, setReinsuranceBrokerageAmount] = useState<number>(Number(value))
 
   const handleChangeBrokerAgeAmount = (value: number) => {
-    // clearInterval(typingTimer)
-
-    // // Iniciar un nuevo intervalo
-    // typingTimer = setInterval(() => {
-    //   // Código a ejecutar cuando se deja de escribir
-    const tempSecurities = [...securities]
+    const tempSecurities = structuredClone(securities)
+    const percent = operationSecurity.getBrokerAgePercent(value)
     tempSecurities[index] = {
       ...tempSecurities[index],
-      reinsuranceBrokerage: operationSecurity.getBrokerAgePercent(value)
+      reinsuranceBrokerage: percent === 101 ? 0 : percent
     }
-    validateForm(tempSecurities[index])
-    calculateSecurities(tempSecurities)
 
-    //   // Limpiar el intervalo
-    //   clearInterval(typingTimer)
-    // }, doneTypingInterval)
+    if (percent === 101 && !isNaN(percent)) {
+      setReinsuranceBrokerageAmount(0)
+    } else {
+      setReinsuranceBrokerageAmount(value)
+    }
+    calculateSecurities(tempSecurities)
+    validateForm(tempSecurities[index])
   }
+  useEffect(() => {
+    setReinsuranceBrokerageAmount(Number(value))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value])
 
   return (
     <FormControl fullWidth sx={{ mb: 2 }}>
       <NumericFormat
         autoFocus
         label='Reinsurance brokerage'
-        value={value}
+        value={String(reinsuranceBrokerageAmount)}
         onValueChange={value => {
           handleChangeBrokerAgeAmount(Number(value.floatValue))
         }}
+        defaultValue={String(reinsuranceBrokerageAmount)}
         prefix={'$'}
         customInput={TextField}
-        decimalScale={2}
         thousandSeparator=','
+        disabled={view === 2}
       />
 
-      <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>
-        {activeErros && isError}
-      </FormHelperText>
+      <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>{activeErros && errorMessage}</FormHelperText>
     </FormControl>
   )
 }
 
-export const reinsuranceBrokerageAmount_validations = ({ isGross }: { isGross: boolean }) => yup.object().shape({
-  brokerAgeAmount: yup
-    .number()
-    .transform((_, val) => (val === Number(val) ? val : null))
-    .test('', 'This field is required', value => {
-      const val = value || 0
-      if (isGross) return +val > 0
+export const reinsuranceBrokerageAmount_validations = ({ isGross }: { isGross: boolean }) =>
+  yup.object().shape({
+    brokerAgeAmount: yup
+      .number()
+      .transform((_, val) => (val === Number(val) ? val : null))
+      .test('', 'This field is required', value => {
+        const val = value || 0
+        if (isGross) return +val > 0
 
-      return true
-    }),
-});
+        return true
+      })
+  })

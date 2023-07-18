@@ -370,7 +370,7 @@ const RetroCedantContacts = ({ idRetroCedant }: IRetroCedantContacts) => {
       idCCountry: currentContact.idCCountry.id
     })
     if (result) {
-      triggerAlert('success', 'CHANGES SAVED')
+      triggerAlert('success-alert', 'CHANGES SAVED')
       getRetroCedantContactsByIdRetroCedant(retroCedantContactsPagination)
     }
     setOpenEdit(false)
@@ -380,7 +380,7 @@ const RetroCedantContacts = ({ idRetroCedant }: IRetroCedantContacts) => {
     const result = await deleteRetroCedantContact({ idDeleteList: [contactToDelete] })
     if (result) {
       getRetroCedantContactsByIdRetroCedant(retroCedantContactsPagination)
-      triggerAlert('success', 'DELETED')
+      triggerAlert('success-alert', 'DELETED')
     }
     setOpenDelete(false)
   }
@@ -389,7 +389,7 @@ const RetroCedantContacts = ({ idRetroCedant }: IRetroCedantContacts) => {
     const result = await deleteRetroCedantContact({ idDeleteList: selectedRows })
     if (result) {
       getRetroCedantContactsByIdRetroCedant(retroCedantContactsPagination)
-      triggerAlert('success', 'DELETED')
+      triggerAlert('success-alert', 'DELETED')
     }
     setOpenDeleteRows(false)
   }

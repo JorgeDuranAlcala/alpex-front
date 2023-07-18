@@ -245,7 +245,7 @@ const ReinsurerBinders = ({ idReinsuranceCompany }: IReinsuranceCompanyBinders) 
       idCReinsuranceCompany: idReinsuranceCompany
     })
     if (result) {
-      triggerAlert('success', 'CHANGES SAVED')
+      triggerAlert('success-alert', 'CHANGES SAVED')
       getReinsuranceCompanyBindersByIdReinsuranceCompany(reinsuranceCompanyBindersPagination)
     }
     setOpenEdit(false)
@@ -255,7 +255,7 @@ const ReinsurerBinders = ({ idReinsuranceCompany }: IReinsuranceCompanyBinders) 
     const result = await deleteReinsuranceCompanyBinder({ idDeleteList: [binderToDelete] })
     if (result) {
       getReinsuranceCompanyBindersByIdReinsuranceCompany(reinsuranceCompanyBindersPagination)
-      triggerAlert('success', 'DELETED')
+      triggerAlert('success-alert', 'DELETED')
     }
     setOpenDelete(false)
   }
@@ -264,7 +264,7 @@ const ReinsurerBinders = ({ idReinsuranceCompany }: IReinsuranceCompanyBinders) 
     const result = await deleteReinsuranceCompanyBinder({ idDeleteList: selectedRows })
     if (result) {
       getReinsuranceCompanyBindersByIdReinsuranceCompany(reinsuranceCompanyBindersPagination)
-      triggerAlert('success', 'DELETED')
+      triggerAlert('success-alert', 'DELETED')
     }
     setOpenDeleteRows(false)
   }
@@ -289,7 +289,7 @@ const ReinsurerBinders = ({ idReinsuranceCompany }: IReinsuranceCompanyBinders) 
     }
 
     if (startValidations) {
-      if (binderData.referenceNumber.length < 14) {
+      if (binderData.referenceNumber.length < 1) {
         setError(true)
       } else {
         setError(false)

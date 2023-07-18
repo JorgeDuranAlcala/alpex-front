@@ -83,7 +83,7 @@ const TypesOFLimit = () => {
       name: value
     })
     if (result) {
-      triggerAlert('success', 'NEW TYPE ADDED')
+      triggerAlert('success-alert', 'NEW TYPE ADDED')
       getAllTypeOfLimit()
     }
     setOpenAdd(false)
@@ -95,7 +95,7 @@ const TypesOFLimit = () => {
         name: value
       })
       if (result) {
-        triggerAlert('success', 'CHANGES SAVED')
+        triggerAlert('success-alert', 'CHANGES SAVED')
         getAllTypeOfLimit()
       }
     }
@@ -105,7 +105,7 @@ const TypesOFLimit = () => {
   const deleteTypeOfLimit = async () => {
     const result = await deleteTypeOfLimitById(typeToDelete)
     if (result) {
-      triggerAlert('success', 'DELETED')
+      triggerAlert('success-alert', 'DELETED')
       getAllTypeOfLimit()
     }
     setOpenDelete(false)

@@ -43,7 +43,7 @@ const statusArray = [
   }
 ]
 
-export default function StatusSelect({ setSelectedStatus, initialStatus, margin = 1 }: StatusSelect) {
+export default function StatusSelect({ setSelectedStatus, initialStatus, margin = 1 }: any) {
   //eslint-disable-next-line
   const [value, setValue] = useState<string | null>(null)
   const [status, setStatus] = useState(initialStatus)
@@ -56,6 +56,11 @@ export default function StatusSelect({ setSelectedStatus, initialStatus, margin 
     setSelectedStatus(statusArray.find(stat => stat.label === value))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value])
+
+  useEffect(() => {
+    setStatus(initialStatus)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialStatus])
 
   /**
    *

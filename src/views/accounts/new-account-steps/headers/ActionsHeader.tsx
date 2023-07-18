@@ -1,3 +1,6 @@
+import useGetAccountHistoryLogByIdAccount from '@/hooks/accounts/historyLog/useFindByIdAccount'
+import { useGetAllLanguage } from '@/hooks/catalogs/language'
+import usePrintReport from '@/hooks/reports/usePrintReport'
 import CloseIcon from '@mui/icons-material/Close'
 import { Box, Button, Modal, Typography, styled } from '@mui/material'
 import { useEffect, useState } from 'react'
@@ -8,17 +11,20 @@ import StatusSelect from 'src/views/custom/select/StatusSelect'
 // ** MUI Imports
 
 interface IActionsHeaderProps {
+  accountId?: number
   accountStatus: string
   sideHeader: boolean
+  setEditInfo?: any
 }
 
+/* 
 interface StatusHistory {
   id: number
   name: string
   date: string
-}
+} */
 
-const statusHistory: StatusHistory[] = [
+/* const statusHistory: StatusHistory[] = [
   {
     id: 1,
     name: 'Account creation',
@@ -29,7 +35,7 @@ const statusHistory: StatusHistory[] = [
     name: 'Bound status',
     date: '11 / January / 2021'
   }
-]
+] */
 
 const ButtonIcon = styled(Button)({
   boxShadow: 'none',
@@ -48,28 +54,44 @@ const ButtonIcon = styled(Button)({
   '&:focus': {}
 })
 
-const ActionsHeader: React.FC<IActionsHeaderProps> = ({ accountStatus, sideHeader }) => {
+// const ActionsHeader: React.FC<IActionsHeaderProps> = ({ accountStatus, sideHeader, setEditInfo }) => {
+const ActionsHeader: React.FC<IActionsHeaderProps> = ({ accountId, accountStatus, sideHeader, setEditInfo }) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [status, setStatus] = useState({})
   const [uneditableAccount, setUneditableAccount] = useState(false)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [editInfo, setEditInfo] = useState(false)
+  // const [editInfo, setEditInfo] = useState(false)
   const [openHistory, setOpenHistory] = useState(false)
   const [openDelete, setOpenDelete] = useState(false)
   const [showPrintOptions, setShowPrintOptions] = useState(false)
 
+  //hooks
+  const { buffer, setPrintReportParams } = usePrintReport()
+  const { languages } = useGetAllLanguage()
+  const { accountHistoryLog, setIdAccount } = useGetAccountHistoryLogByIdAccount()
+
+  //const { deleteAccounts } = useAccountTable()
+
+  useEffect(() => {
+    accountId && setIdAccount(accountId)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [accountId])
+
   const deleteAccount = () => {
     console.log('Deleted')
+
+    //accountId && deleteAccounts([accountId])
     setOpenDelete(false)
   }
 
-  const downloadSpanish = () => {
-    console.log('Spanish Download')
-    setShowPrintOptions(false)
-  }
-
-  const downloadEnglish = () => {
-    console.log('English Download')
+  const downloadReport = (id: number) => {
+    console.log('downloadReport', id)
+    if (accountId) {
+      setPrintReportParams({
+        idAccount: accountId,
+        idLanguage: id
+      })
+    }
     setShowPrintOptions(false)
   }
 
@@ -78,6 +100,33 @@ const ActionsHeader: React.FC<IActionsHeaderProps> = ({ accountStatus, sideHeade
       setUneditableAccount(false)
     }
   }, [sideHeader])
+
+  useEffect(() => {
+    if (buffer) {
+      const fileToDownload = new File([buffer], `Account_${accountId}.docx`)
+      const downloadUrl = URL.createObjectURL(fileToDownload)
+      const link = document.createElement('a')
+      link.href = downloadUrl
+      link.download = fileToDownload.name
+      link.click()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [buffer])
+
+  const formatDateFromUTC = (date: Date | null): string => {
+    if (date) {
+      const fecha = new Date(new Date(date).toLocaleString('en-US', { timeZone: 'UTC' }))
+      const options: Intl.DateTimeFormatOptions = {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric'
+      }
+
+      return new Intl.DateTimeFormat('ban', options).format(fecha)
+    }
+
+    return ''
+  }
 
   return (
     <>
@@ -109,7 +158,7 @@ const ActionsHeader: React.FC<IActionsHeaderProps> = ({ accountStatus, sideHeade
                 onClick={() => {
                   setOpenHistory(true)
                 }}
-                disabled={uneditableAccount}
+                disabled={uneditableAccount || !accountId}
               >
                 <Icon icon='mdi:clock-outline' />
               </ButtonIcon>
@@ -135,13 +184,14 @@ const ActionsHeader: React.FC<IActionsHeaderProps> = ({ accountStatus, sideHeade
                     <div className='name'>Name</div>
                     <div className='date'>Date</div>
                   </div>
-                  {statusHistory.map(status => (
-                    <>
-                      <div className={status.id % 2 == 0 ? 'history-status grey-bg' : 'history-status'} key={status.id}>
-                        <div className='name'>{status.name}</div>
-                        <div className='date'>{status.date}</div>
-                      </div>
-                    </>
+                  {accountHistoryLog.map(accountHistory => (
+                    <div
+                      className={accountHistory.id % 2 == 0 ? 'history-status grey-bg' : 'history-status'}
+                      key={accountHistory.id}
+                    >
+                      <div className='name'>{accountHistory.idAccountStatus.status}</div>
+                      <div className='date'>{formatDateFromUTC(accountHistory.createdAt)}</div>
+                    </div>
                   ))}
                 </Box>
               </Modal>
@@ -153,7 +203,7 @@ const ActionsHeader: React.FC<IActionsHeaderProps> = ({ accountStatus, sideHeade
                 onClick={() => {
                   setShowPrintOptions(!showPrintOptions)
                 }}
-                disabled={uneditableAccount}
+                disabled={uneditableAccount || !accountId}
               >
                 <div className='btn-icon'>
                   <Icon icon='mdi:printer' />
@@ -161,12 +211,20 @@ const ActionsHeader: React.FC<IActionsHeaderProps> = ({ accountStatus, sideHeade
                 {showPrintOptions ? (
                   <div className='print-options'>
                     <div className='title'>Select a language</div>
-                    <div className='language' onClick={downloadEnglish}>
-                      English
-                    </div>
-                    <div className='language' onClick={downloadSpanish}>
-                      Spanish
-                    </div>
+
+                    {languages.map(language => {
+                      return (
+                        <div
+                          key={language.id}
+                          className='language'
+                          onClick={() => {
+                            downloadReport(language.id)
+                          }}
+                        >
+                          {language.language}
+                        </div>
+                      )
+                    })}
                   </div>
                 ) : (
                   ''
@@ -180,7 +238,7 @@ const ActionsHeader: React.FC<IActionsHeaderProps> = ({ accountStatus, sideHeade
                 onClick={() => {
                   setOpenDelete(true)
                 }}
-                disabled={uneditableAccount}
+                disabled={uneditableAccount || !accountId}
               >
                 <div className='btn-icon'>
                   <Icon icon='mdi:delete-outline' />

@@ -30,15 +30,31 @@ const LastBoundAccount = () => {
   const useColor = userThemeConfig.palette?.buttonText.primary
   const title = userThemeConfig.palette?.text.primary
 
-  const netPremiumParseInt = Number(account?.informations[0]?.netPremium)
+  const netPremiumParseInt = Number(account && account?.informations[0]?.netPremium)
   const netPremium = netPremiumParseInt?.toLocaleString('en-US', { style: 'currency', currency: 'USD' })
 
+  const replaceDashes = account ? account?.accountHistoryLogs[0]?.effectiveDate.replace(/-/g, '/') : ''
+
+  const fromatDate = replaceDashes ? new Date(replaceDashes) : ''
+
+  const options: Intl.DateTimeFormatOptions = {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  }
+
+  const boundDate = fromatDate ? fromatDate.toLocaleDateString('Es-MX', options).replace(/\//g, '-') : ''
+
   const rows = [
-    { label: 'Insured:', data: account?.informations[0]?.insured, backgroundColor: 'rgba(76, 78, 100, 0.04)' },
-    { label: 'Broker:', data: account?.informations[0]?.idBroker?.name },
-    { label: 'Bound date:', data: '06/26/2023', backgroundColor: 'rgba(76, 78, 100, 0.04)' },
-    { label: 'Net premium:', data: `${netPremium} USD` },
-    { label: 'Installments', data: account?.installmentsCount, backgroundColor: 'rgba(76, 78, 100, 0.04)' }
+    {
+      label: 'Insured:',
+      data: account && account?.informations[0]?.insured,
+      backgroundColor: 'rgba(76, 78, 100, 0.04)'
+    },
+    { label: 'Broker:', data: account && account?.informations[0]?.idBroker?.name },
+    { label: 'Bound date:', data: boundDate, backgroundColor: 'rgba(76, 78, 100, 0.04)' },
+    { label: 'Net premium:', data: `${netPremium} ${account && account?.informations[0]?.currency}` },
+    { label: 'Installments', data: account && account?.installmentsCount, backgroundColor: 'rgba(76, 78, 100, 0.04)' }
   ]
 
   return (

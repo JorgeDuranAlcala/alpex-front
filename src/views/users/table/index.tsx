@@ -139,9 +139,8 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
   const handleDelete = () => {
     if (selectedUser) {
       deleteUser({ idUsersList: [selectedUser.id] })
-      setSelectedUser(null);
+      setSelectedUser(null)
     } else {
-
       deleteUser({ idUsersList: idMultiple })
     }
 
@@ -352,7 +351,6 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
   ]
 
   const onDelete = () => {
-    // debugger
     setBadgeData({
       message: `${selectedUser?.name} ${selectedUser?.surname} WAS DELETED SUCCESSFULLY`,
       status: 'success',

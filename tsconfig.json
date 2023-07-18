@@ -30,8 +30,8 @@
       "@/assets/*": [
         "./src/assets/*"
       ],
-      "@/service/*": [
-        "./src/service/*"
+      "@/services/*": [
+        "./src/services/*"
       ],
       "@/*": [
         "src/*"
