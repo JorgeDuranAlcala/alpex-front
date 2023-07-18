@@ -26,6 +26,7 @@ import FormAddress from '@/views/accounts/new-account-steps/FormAddress'
 
 import FormHeader from 'src/views/accounts/new-account-steps/headers/formHeader'
 
+import { AccountsTableContextProvider } from '@/context/accounts/Table/reducer'
 import { useGetAccountById } from '@/hooks/accounts/forms'
 import Sublimits from '@/views/accounts/new-account-steps/Sublimit/Sublimits'
 import Icon from 'src/@core/components/icon'
@@ -140,41 +141,43 @@ const NewAccount = () => {
   }, [editInfo, activeEndorsement, typeofAccount])
 
   return (
-    <Grid className='new-account' item xs={12}>
-      {activeStep == 1 && isNewAccount ? (
-        <FormHeader
-          isNewAccount
-          setTypeofAccount={setTypeofAccount}
-          setActiveEndorsement={setActiveEndorsement}
-          setEditInfo={setEditInfo}
-          accountDetails={accountDetails}
-          setAccountId={setAccountId}
-        />
-      ) : (
-        <FormHeader
-          setTypeofAccount={setTypeofAccount}
-          setActiveEndorsement={setActiveEndorsement}
-          setEditInfo={setEditInfo}
-          accountDetails={accountDetails}
-          setAccountId={setAccountId}
-        />
-      )}
-      <div style={{ display: 'flex', flexDirection: 'row', gap: '16px' }}>
-        <Card>
-          <NewAccountStepper changeStep={activeStep} onStepChange={handleStepChange} />
-          <StepForm step={activeStep} />
+    <AccountsTableContextProvider>
+      <Grid className='new-account' item xs={12}>
+        {activeStep == 1 && isNewAccount ? (
+          <FormHeader
+            isNewAccount
+            setTypeofAccount={setTypeofAccount}
+            setActiveEndorsement={setActiveEndorsement}
+            setEditInfo={setEditInfo}
+            accountDetails={accountDetails}
+            setAccountId={setAccountId}
+          />
+        ) : (
+          <FormHeader
+            setTypeofAccount={setTypeofAccount}
+            setActiveEndorsement={setActiveEndorsement}
+            setEditInfo={setEditInfo}
+            accountDetails={accountDetails}
+            setAccountId={setAccountId}
+          />
+        )}
+        <div style={{ display: 'flex', flexDirection: 'row', gap: '16px' }}>
+          <Card>
+            <NewAccountStepper changeStep={activeStep} onStepChange={handleStepChange} />
+            <StepForm step={activeStep} />
+          </Card>
+          <div style={{ display: 'none' }}>
+            <MenuForm />
+          </div>
+        </div>
+        <Card sx={{ '@media (min-width:809px)': { display: 'none' } }}>
+          <div style={{ display: 'flex', height: '50px', padding: '14px', alignItems: 'center' }}>
+            <Icon icon={'material-symbols:chat-bubble-outline'} fontSize={24} color='#4D5062' />
+          </div>
+          <CommentSection disable={disableComments} step={activeStep} />
         </Card>
-        <div style={{ display: 'none' }}>
-          <MenuForm />
-        </div>
-      </div>
-      <Card sx={{ '@media (min-width:809px)': { display: 'none' } }}>
-        <div style={{ display: 'flex', height: '50px', padding: '14px', alignItems: 'center' }}>
-          <Icon icon={'material-symbols:chat-bubble-outline'} fontSize={24} color='#4D5062' />
-        </div>
-        <CommentSection disable={disableComments} step={activeStep} />
-      </Card>
-    </Grid>
+      </Grid>
+    </AccountsTableContextProvider>
   )
 }
 

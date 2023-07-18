@@ -109,11 +109,13 @@ const navigation = (): VerticalNavItemsType => {
     {
       title: 'Users',
       icon: 'mdi:user-group',
-      path: '/users'
+      path: '/users',
+      subject: 'user',
     },
     {
       title: 'Catalogues',
       icon: 'ic:sharp-menu-book',
+      subject: 'catalog',
       children: [
         {
           title: 'Dynamic',
