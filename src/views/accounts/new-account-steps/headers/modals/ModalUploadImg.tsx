@@ -1,3 +1,4 @@
+import { useUploadInformationDocument } from '@/hooks/accounts/information'
 import CloseIcon from '@mui/icons-material/Close'
 import { Box, Button, Modal } from '@mui/material'
 import { useState } from 'react'
@@ -8,9 +9,11 @@ import {
   HeaderTitleModal
 } from 'src/styles/Dashboard/ModalReinsurers/modalReinsurers'
 
-export const ModalUploadImg = ({ setOpenHistory, openHistory }: any) => {
+export const ModalUploadImg = ({ setOpenHistory, openHistory, accountId }: any) => {
   const [dragging, setDragging] = useState(false)
-  const [image, setImage] = useState(null)
+  const [image, setImage] = useState<null | string>(null)
+  const [file, setFile] = useState<any>()
+  const { uploadInformationDocument } = useUploadInformationDocument()
 
   const handleDragStart = () => {
     setDragging(true)
@@ -23,19 +26,31 @@ export const ModalUploadImg = ({ setOpenHistory, openHistory }: any) => {
   const handleDrop = (event: any) => {
     event.preventDefault()
     setDragging(false)
-
-    const file = event.dataTransfer.files[0]
+    const fileUpload = event.dataTransfer.files[0]
+    setFile(fileUpload)
     const reader = new FileReader()
-
     reader.onload = (e: any) => {
       setImage(e.target.result)
     }
-
-    reader.readAsDataURL(file)
+    reader.readAsDataURL(fileUpload)
   }
 
   const handleDragOver = (event: any) => {
     event.preventDefault()
+  }
+
+  const handleSaveImage = async () => {
+    await uploadInformationDocument({
+      idAccount: accountId,
+      idCDocto: 3, //TODO
+      docto: {
+        type: image?.toString().split(',')[0].split(';')[0].split(':')[1] || 'image/jpeg',
+        name: file.name,
+        base64: image?.toString().split(',')[1] || ''
+      },
+      name: file.name
+    })
+    setOpenHistory(false)
   }
 
   return (
@@ -83,12 +98,7 @@ export const ModalUploadImg = ({ setOpenHistory, openHistory }: any) => {
             <p className='txt' style={{ marginBottom: '60px' }}>
               Image must not exceed 5 MB.
             </p>
-            <Button
-              variant='contained'
-              sx={{ marginBottom: '0' }}
-              onClick={() => console.log('hola')}
-              disabled={dragging}
-            >
+            <Button variant='contained' sx={{ marginBottom: '0' }} onClick={handleSaveImage} disabled={dragging}>
               DONE
             </Button>
           </FormContainerUpload>

@@ -1,4 +1,5 @@
 // import { useGetAllEndorsementTypes } from '@/hooks/accounts/endorsementType/getAllEndorsementTypes.tsx'
+import { useGetDoctosByIdAccountAndIdDocumentType } from '@/hooks/accounts/information/useGetFilesByType'
 import { ContainerMobileBound } from '@/styled-components/accounts/Security.styled'
 import { Box, Button, Card, ListItemIcon, ListItemText, Menu, MenuItem, Modal, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
@@ -35,14 +36,28 @@ interface FormHeaderProps {
 
 //Pending types
 
-const ModalUploadImage = () => {
+const ModalUploadImage = ({ accountId }: any) => {
   const [open, setOpen] = useState(false)
   const [image, setImage] = useState('')
   const [imagePreview, setImagePreview] = useState('')
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const [modalUpload, setModalUpload] = useState(false)
   const [modalTxt, setModalTxt] = useState(false)
+  const [logo, setLogo] = useState<undefined | string>(undefined)
+
+  //hooks
+  const { setAccountDocumentFilters, doctos } = useGetDoctosByIdAccountAndIdDocumentType()
+
   const openMenu = Boolean(anchorEl)
+
+  useEffect(() => {
+    accountId && setAccountDocumentFilters({ idAccount: accountId, idCDocto: 3 }) //TODO change the id
+  }, [accountId])
+
+  useEffect(() => {
+    doctos && setLogo(doctos[0]?.url)
+  }, [doctos])
+
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget)
   }
@@ -92,8 +107,19 @@ const ModalUploadImage = () => {
           onClick={handleClick}
         >
           <div className='header-menu'>
-            <Icon icon='ic:baseline-file-upload' style={{ display: 'block', margin: 'auto' }} fontSize={20} />
-            <span style={{ display: 'block' }}>Logo</span>
+            {!logo ? (
+              <>
+                <Icon icon='ic:baseline-file-upload' style={{ display: 'block', margin: 'auto' }} fontSize={20} />
+                <span style={{ display: 'block' }}>Logo</span>
+              </>
+            ) : (
+              <img
+                src={logo}
+                alt='Dragged'
+                className='dragged-image'
+                style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+              />
+            )}
           </div>
         </Button>
         <Menu
@@ -136,7 +162,7 @@ const ModalUploadImage = () => {
         </Box>
       </Modal>
       <ModalTxtImg setOpenHistory={setModalTxt} openHistory={modalTxt} />
-      <ModalUploadImg setOpenHistory={setModalUpload} openHistory={modalUpload} />
+      <ModalUploadImg setOpenHistory={setModalUpload} openHistory={modalUpload} accountId={accountId} />
     </>
   )
 }
@@ -225,7 +251,7 @@ const FormHeader = ({
             {!isNewAccount && (
               <div className='form-header-sections'>
                 <div className='form-header-info-profile-container'>
-                  <ModalUploadImage />
+                  <ModalUploadImage accountId={account?.id} />
                   <div className='form-header-info-profile-txt-container'>
                     <span className='form-header-info-profile-txt-title'>{account?.basicInfo?.insured}</span>
                     <span className='form-header-info-profile-num'>#{account?.id}</span>
