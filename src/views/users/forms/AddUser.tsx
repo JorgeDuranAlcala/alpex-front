@@ -129,8 +129,6 @@ const AddUser = ({ selectUser, title, subTitle, handleView }: IAddUser) => {
   const { setUserPut, user: userEdited } = useEditUser()
 
   const { company } = useGetAllCompanies()
-  console.log({ error })
-  console.log('Error-->', error?.message)
 
   const { roles } = useGetAllRoles()
 
@@ -159,27 +157,6 @@ const AddUser = ({ selectUser, title, subTitle, handleView }: IAddUser) => {
   const [informativeIdRole, setInformativeIdRole] = useState<any>('')
   const submitUserTypeRef = useRef<TUIUserNotificationTypes | null>(null)
 
-  // const [selectCompany, setSelectCompany] = useState<ReinsuranceCompanyDto | undefined | string>()
-  // const flagCompany = true
-
-  // const [selectRol, setSelectRol] = useState<RolesCreateUser | undefined | string>()
-  // const [selectDualRol, setSelectDualRol] = useState<RolesCreateUser | undefined | string>()
-
-  console.log(usersReducer)
-
-  console.log({ idCompany })
-  console.log({ selectedCountry })
-  console.log({ idRole })
-  console.log({ informativeIdRole })
-  console.log({ useWatchCompany })
-  console.log({ useWatchRole })
-  console.log({ useWatchDualRole })
-
-  // console.log({ selectRol })
-  // console.log({ selectDualRol })
-  // console.log({ selectCompany })
-
-  // const [email, setEmail] = useState<string>('')
   const [errorsTextEmail, setErrorsTextEmail] = useState<any>({
     fieldRequired: '',
     validEmail: '',
@@ -194,14 +171,7 @@ const AddUser = ({ selectUser, title, subTitle, handleView }: IAddUser) => {
   })
 
   const onSubmit = (data: any) => {
-    // console.log('se hace algo acá, pero no entra', data, selectUser)
-    // console.log('onSubmit', data);
-
-    // return;
-
     if (selectUser) {
-      // console.log('se hace algo', idCompany)
-
       const dataToSend: UsersPutDto = {
         id: usersReducer.current?.id || 1,
         name: data.name || '',
@@ -212,24 +182,22 @@ const AddUser = ({ selectUser, title, subTitle, handleView }: IAddUser) => {
         roles:
           parseInt(idRole) && parseInt(informativeIdRole)
             ? [
-              {
-                id: parseInt(idRole)
-              },
-              {
-                id: parseInt(informativeIdRole)
-              }
-            ]
+                {
+                  id: parseInt(idRole)
+                },
+                {
+                  id: parseInt(informativeIdRole)
+                }
+              ]
             : parseInt(idRole) && !parseInt(informativeIdRole)
-              ? [
+            ? [
                 {
                   id: parseInt(idRole)
                 }
               ]
-              : [],
+            : [],
         areaCode: selectedCountry?.phone || ''
       }
-
-      console.log('Esto se envía:', dataToSend)
 
       submitUserTypeRef.current = 'edited'
       setUserPut(dataToSend)
@@ -247,20 +215,20 @@ const AddUser = ({ selectUser, title, subTitle, handleView }: IAddUser) => {
         roles:
           parseInt(useWatchRole) && parseInt(useWatchDualRole)
             ? [
-              {
-                id: parseInt(useWatchRole)
-              },
-              {
-                id: parseInt(useWatchDualRole)
-              }
-            ]
+                {
+                  id: parseInt(useWatchRole)
+                },
+                {
+                  id: parseInt(useWatchDualRole)
+                }
+              ]
             : parseInt(useWatchRole) && !parseInt(useWatchDualRole)
-              ? [
+            ? [
                 {
                   id: parseInt(useWatchRole)
                 }
               ]
-              : [],
+            : [],
         areaCode: selectedCountry?.phone || ''
       }
 
@@ -296,8 +264,6 @@ const AddUser = ({ selectUser, title, subTitle, handleView }: IAddUser) => {
       setTimeout(() => {
         dispatch(fetchAccounts(usersReducer))
       }, 100)
-
-      // reset({ ...initialForm })
     }
   }
 
@@ -314,10 +280,6 @@ const AddUser = ({ selectUser, title, subTitle, handleView }: IAddUser) => {
       setErrorsTextEmail({ ...errorsTextEmail, fieldRequired: ErrorsEmailText.fieldRequired })
     }
   }
-
-  // const handleChangeEmail = (event: ChangeEvent<HTMLInputElement>) => {
-  //   setEmail(event.target.value)
-  // }
 
   const handleBlur: FocusEventHandler<HTMLInputElement> = (event: FocusEvent<HTMLInputElement>) => {
     const input = event.target.value
@@ -462,17 +424,6 @@ const AddUser = ({ selectUser, title, subTitle, handleView }: IAddUser) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userEdited])
 
-  // useEffect(() => {
-
-  // if (open) {
-  //   document.body.classList.add('alertUser')
-  // } else {
-  //   document.body.classList.remove('alertUser')
-  // }
-  // }, [open])
-
-  // console.log({ open })
-
   useEffect(() => {
     const reducersCompany = usersReducer?.current?.idCompany?.id
     const companySelect = company?.find(c => c.id === reducersCompany)
@@ -487,13 +438,6 @@ const AddUser = ({ selectUser, title, subTitle, handleView }: IAddUser) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectUser, idCompany])
 
-  // useEffect(() => {
-  //   if (selectUser) {
-  //     setIdCompany(useWatchCompany)
-  //     setIdRole(useWatchRole)
-  //   }
-  // }, [selectUser, useWatchCompany, useWatchRole])
-
   useEffect(() => {
     if (selectUser) {
       setIdCompany(useWatchCompany)
@@ -501,23 +445,25 @@ const AddUser = ({ selectUser, title, subTitle, handleView }: IAddUser) => {
   }, [selectUser, useWatchCompany])
 
   useEffect(() => {
-    const reducersRol = usersReducer?.current?.roles[0]?.id
-    const rolSelect = roles?.find(rol => rol.id === reducersRol)
-    setIdRole(rolSelect?.id.toString())
+    const reducersRole = usersReducer?.current?.roles
+
+    if (reducersRole && reducersRole.length > 0) {
+      const existsRoleAdminIndex = reducersRole.findIndex(roleUser => roleUser.role === 'admin')
+      if (existsRoleAdminIndex) {
+        setIdRole(reducersRole[existsRoleAdminIndex].id.toString())
+
+        const dualRolSelect = reducersRole?.find((_, index) => index !== existsRoleAdminIndex)
+
+        setInformativeIdRole(dualRolSelect?.id.toString())
+      } else {
+        const reducersRol = usersReducer?.current?.roles[0]?.id
+        const rolSelect = roles?.find(rol => rol.id === reducersRol)
+        setIdRole(rolSelect?.id.toString())
+      }
+    }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [roles, setIdRole])
-
-  useEffect(() => {
-    const reducersDualRol = usersReducer?.current?.roles[1]?.id
-    const dualRolSelect = roles?.find(dualRol => dualRol.id === reducersDualRol)
-    setInformativeIdRole(dualRolSelect?.id.toString())
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [roles, setInformativeIdRole])
-
-  // useEffect(() => {
-  //   dispatch(fetchAccounts(usersReducer))
-  //   //eslint-disable-next-line
-  // }, [usersReducer.filters])
 
   return (
     <>
@@ -737,7 +683,6 @@ const AddUser = ({ selectUser, title, subTitle, handleView }: IAddUser) => {
                       <Controller
                         name='company'
                         control={control}
-
                         rules={{ required: true }}
                         render={({ field: { value, onChange, onBlur } }) => (
                           <>
