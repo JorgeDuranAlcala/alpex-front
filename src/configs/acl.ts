@@ -1,4 +1,4 @@
-import { AbilityBuilder, Ability } from '@casl/ability'
+import { Ability, AbilityBuilder } from '@casl/ability'
 
 export type Subjects = string
 export type Actions = 'manage' | 'create' | 'read' | 'update' | 'delete'
@@ -17,12 +17,45 @@ export type ACLObj = {
  * admin can manage everything and client can just visit ACL page
  */
 const defineRulesFor = (role: string, subject: string) => {
-  const { can, rules } = new AbilityBuilder(AppAbility)
-
+  const { can, cannot, rules } = new AbilityBuilder(AppAbility)
   if (role === 'admin') {
     can('manage', 'all')
-  } else if (role === 'client') {
-    can(['read'], 'acl-page')
+  } else if (role === 'Lead underwriter') {
+    can('manage', 'all')
+    cannot(['delete', 'update', 'create', 'read'], 'catalog')
+    cannot(['delete', 'update', 'create', 'read'], 'user')
+    cannot(['delete', 'update', 'read'], 'accountInformation')
+    cannot(['delete', 'update', 'read'], 'accountSecurity')
+    cannot(['delete', 'update', 'read'], 'accountPaymentWarranty')
+    cannot(['delete', 'update', 'read'], 'accountSublimits')
+    cannot(['delete', 'update', 'read'], 'accountHeader')
+    cannot(['delete', 'update', 'read'], 'accountBasicInfo')
+    cannot(['delete', 'update', 'read'], 'accountSecurityForm')
+    cannot(['delete', 'update', 'read'], 'accountCardInstallement')
+  } else if (role === 'Underwriter') {
+    can('manage', 'all')
+    cannot(['delete', 'update', 'create', 'read'], 'catalog')
+    cannot(['delete', 'update', 'create', 'read'], 'user')
+    cannot(['delete', 'update', 'read'], 'accountInformation')
+    cannot(['delete', 'update', 'read'], 'accountSecurity')
+    cannot(['delete', 'update', 'read'], 'accountPaymentWarranty')
+    cannot(['delete', 'update', 'read'], 'accountSublimits')
+    cannot(['delete', 'update', 'read'], 'accountHeader')
+    cannot(['delete', 'update', 'read'], 'accountBasicInfo')
+    cannot(['delete', 'update', 'read'], 'accountSecurityForm')
+    cannot(['delete', 'update', 'read'], 'accountCardInstallement')
+  } else if (role === 'Technical assistant') {
+    can('manage', 'all')
+    cannot(['delete', 'update', 'create', 'read'], 'catalog')
+    cannot(['delete', 'update', 'create', 'read'], 'user')
+    cannot(['delete', 'update', 'read'], 'accountInformation')
+    cannot(['delete', 'update', 'read'], 'accountSecurity')
+    cannot(['delete', 'update', 'read'], 'accountPaymentWarranty')
+    cannot(['delete', 'update', 'read'], 'accountSublimits')
+    cannot(['delete', 'update', 'read'], 'accountHeader')
+    cannot(['delete', 'update', 'read'], 'accountBasicInfo')
+    cannot(['delete', 'update', 'read'], 'accountSecurityForm')
+    cannot(['delete', 'update', 'read'], 'accountCardInstallement')
   } else {
     can(['read', 'create', 'update', 'delete'], subject)
   }

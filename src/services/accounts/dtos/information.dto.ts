@@ -173,3 +173,16 @@ export interface DeleteDoctoDto {
   idDocto: number
   fileName: string
 }
+
+export interface AccountDocumentFilters {
+  idAccount: number
+  idCDocto: number
+}
+
+export interface DocumentDto {
+  id: number
+  url: string
+  name: string
+  idCDocto: number
+  idAccount: number
+}
