@@ -1,5 +1,5 @@
 import { FormControl, FormHelperText, TextField } from '@mui/material'
-import { useContext } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { NumericFormat } from 'react-number-format'
 import * as yup from 'yup'
 
@@ -21,23 +21,35 @@ export const DynamicComissionAmount = ({
   view
 }: DynamicComissionAmountProps) => {
   const { activeErros, securities, calculateSecurities } = useContext(SecurityContext)
+  const [dynamicComissionAmount, setDynamicComissionAmount] = useState<number>(Number(value))
 
   const handleChangeDynamicComissionAmount = (value: number) => {
-    const tempSecurities = [...securities]
+    const tempSecurities = structuredClone(securities)
+    const percent = operationSecurity.getDynamicComissionPercent(value)
+
     tempSecurities[index] = {
       ...tempSecurities[index],
-      dynamicCommission: operationSecurity.getDynamicComissionPercent(value)
+      dynamicCommission: percent === 101 ? 0 : percent
+    }
+    if (percent === 101 && !isNaN(percent)) {
+      setDynamicComissionAmount(0)
+    } else {
+      setDynamicComissionAmount(value)
     }
     validateForm(tempSecurities[index])
     calculateSecurities(tempSecurities)
   }
+  useEffect(() => {
+    setDynamicComissionAmount(Number(value))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value])
 
   return (
     <FormControl fullWidth sx={{ mb: 2 }}>
       <NumericFormat
         autoFocus
         label='Dynamic comission'
-        value={value}
+        value={String(dynamicComissionAmount)}
         onValueChange={value => {
           handleChangeDynamicComissionAmount(Number(value.floatValue))
         }}

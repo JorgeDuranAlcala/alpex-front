@@ -74,7 +74,9 @@ export class CalculateSecurity {
   }
 
   getBrokerAgePercent(reinsuranceBrokerage: number): number {
-    return (reinsuranceBrokerage / this.security.premiumPerShareAmount) * 100
+    const result = (reinsuranceBrokerage / this.security.premiumPerShareAmount) * 100
+
+    return result > 100 && !isNaN(result) ? 101 : result
   }
 
   getDynamicComissionAmount(): number {
@@ -84,7 +86,9 @@ export class CalculateSecurity {
     return this.security.dynamicCommissionAmount
   }
   getDynamicComissionPercent(dynamicCommission: number): number {
-    return (dynamicCommission * 100) / this.security.premiumPerShareAmount
+    const percent = (dynamicCommission * 100) / this.security.premiumPerShareAmount
+
+    return percent > 100 && !isNaN(percent) ? 101 : percent
   }
   getFrontingFeeAmount(valuePercent: number): number {
     // return (this.security.frontingFee * this.security.premiumPerShareAmount) / 100
