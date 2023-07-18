@@ -1,9 +1,10 @@
 // ** React Imports
-import { ReactNode } from 'react'
+import { ReactNode, useContext } from 'react'
 
 // ** MUI Imports
 import { Theme } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
+import { AbilityContext } from '@/layouts/components/acl/Can'
 
 // ** Layout Imports
 // !Do not remove this Layout import
@@ -47,6 +48,13 @@ const UserLayout = ({ children, contentHeightFixed }: Props) => {
   // ** Hooks
   const { settings, saveSettings } = useSettings()
 
+  const ability = useContext(AbilityContext)
+  const VerticalNavItemsfilter = VerticalNavItems().filter(item => {
+    if (ability?.can('read', item.subject)) {
+      return item
+    }
+  }, [])
+
   // ** Vars for server side navigation
   // const { menuItems: verticalMenuItems } = ServerSideVerticalNavItems()
   // const { menuItems: horizontalMenuItems } = ServerSideHorizontalNavItems()
@@ -73,7 +81,7 @@ const UserLayout = ({ children, contentHeightFixed }: Props) => {
       contentHeightFixed={contentHeightFixed}
       verticalLayoutProps={{
         navMenu: {
-          navItems: VerticalNavItems(),
+          navItems: VerticalNavItemsfilter,
           componentProps: {
             sx: { '& .nav-header': { backgroundColor: '#fff' } }
           }
