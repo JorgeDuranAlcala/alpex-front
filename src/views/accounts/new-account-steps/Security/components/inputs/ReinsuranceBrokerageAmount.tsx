@@ -1,5 +1,5 @@
 import { FormControl, FormHelperText, TextField } from '@mui/material'
-import { useContext } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { NumericFormat } from 'react-number-format'
 import * as yup from 'yup'
 
@@ -20,26 +20,39 @@ export const ReinsuranceBrokerageAmount = ({
   view
 }: ReinsuranceBrokerageAmountProps) => {
   const { activeErros, securities, calculateSecurities } = useContext(SecurityContext)
+  const [reinsuranceBrokerageAmount, setReinsuranceBrokerageAmount] = useState<number>(Number(value))
 
   const handleChangeBrokerAgeAmount = (value: number) => {
-    const tempSecurities = [...securities]
+    const tempSecurities = structuredClone(securities)
+    const percent = operationSecurity.getBrokerAgePercent(value)
     tempSecurities[index] = {
       ...tempSecurities[index],
-      reinsuranceBrokerage: operationSecurity.getBrokerAgePercent(value)
+      reinsuranceBrokerage: percent === 101 ? 0 : percent
     }
-    validateForm(tempSecurities[index])
+
+    if (percent === 101 && !isNaN(percent)) {
+      setReinsuranceBrokerageAmount(0)
+    } else {
+      setReinsuranceBrokerageAmount(value)
+    }
     calculateSecurities(tempSecurities)
+    validateForm(tempSecurities[index])
   }
+  useEffect(() => {
+    setReinsuranceBrokerageAmount(Number(value))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value])
 
   return (
     <FormControl fullWidth sx={{ mb: 2 }}>
       <NumericFormat
         autoFocus
         label='Reinsurance brokerage'
-        value={value}
+        value={String(reinsuranceBrokerageAmount)}
         onValueChange={value => {
           handleChangeBrokerAgeAmount(Number(value.floatValue))
         }}
+        defaultValue={String(reinsuranceBrokerageAmount)}
         prefix={'$'}
         customInput={TextField}
         thousandSeparator=','
