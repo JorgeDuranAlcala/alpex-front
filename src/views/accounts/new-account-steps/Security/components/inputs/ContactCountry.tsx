@@ -14,7 +14,7 @@ export const ContactCountry = ({ value, countries, view }: ContactCountryProps) 
       <Select
         id='outlined-Name'
         label='Contact country'
-        value={value.toString()}
+        value={value ? value.toString() : ''}
         labelId='Contactcountry'
         size='small'
         disabled={true || view === 2}
