@@ -186,13 +186,27 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
 
   const makeCalculates = (installment: InstallmentDto) => {
     const temp = { ...installment }
-    const inceptionDate = account ? new Date(account?.informations[0]?.effectiveDate || '') : null
+    let accountDate = '';
+    if (account) {
+      accountDate = account?.informations[0]?.effectiveDate?.toString().replace('Z', '') || ''
+    }
+    const inceptionDate = accountDate ? new Date(accountDate) : null
+
     const receivedNetPremium =
       account && account.securitiesTotal.length > 0 ? account?.securitiesTotal[0]?.receivedNetPremium : 0
 
     if (inceptionDate) {
       const days = temp.premiumPaymentWarranty * 24 * 60 * 60 * 1000
       temp.settlementDueDate = new Date(inceptionDate.getTime() + days)
+
+      // console.log({
+      //   account: account?.informations[0]?.effectiveDate,
+      //   inceptionDate,
+      //   warranty: temp.premiumPaymentWarranty,
+      //   days,
+      //   settlementDueDate: temp.settlementDueDate
+      // })
+      // debugger;
     }
 
     if (receivedNetPremium) {

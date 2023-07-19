@@ -247,7 +247,9 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
       headerClassName: 'account-column-header',
       renderHeader: ({ colDef }) => <ColumnHeader colDef={colDef} action={handleClickColumnHeader} />,
       renderCell: ({ row }) => (
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>{row.roles[0]?.role || 'W/ role'}</Box>
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          {row.roles.map(rol => rol.role).join(', ') || 'W/ role'}
+        </Box>
       )
     },
     {
