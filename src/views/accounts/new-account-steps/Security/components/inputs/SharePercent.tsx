@@ -55,7 +55,7 @@ export const sharePercent_validations = () =>
 
         return +val > 0
       })
-      .min(0)
+      .moreThan(0)
       .max(100)
       .required('This field is required')
   })
