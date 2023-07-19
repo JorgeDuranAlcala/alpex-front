@@ -53,8 +53,6 @@ export const TaxesPercent = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value])
 
-  // console.log({ isTacesTouxhes: forTaxes.current.isTouched, value })
-
   return (
     <FormControl fullWidth>
       <NumericFormat

@@ -12,8 +12,8 @@ import { CalculateSecurity } from '../../../utils/calculates-securities'
 
 // ! only if we want specific props
 interface TaxesPercentProps extends ISecurityInputProps {
-  security: Security;
-  operationSecurity: CalculateSecurity;
+  security: Security
+  operationSecurity: CalculateSecurity
 }
 
 export const TaxesPercent = ({
@@ -25,23 +25,23 @@ export const TaxesPercent = ({
 
   // operationSecurity,
 
-  security,
+  security
 }: TaxesPercentProps) => {
-
   const { achievedMessageError, checkIsPercentageAchieved } = usePercentageAchieved()
 
-  const dispatch = useAppDispatch();
-
+  const dispatch = useAppDispatch()
 
   const handleChangeTaxesPercent = (value: number) => {
     // taxesAmount: operationSecurity.getTaxesAmount(value)
 
-    dispatch(updateSecuritiesAtIndex({
-      index,
-      security: {
-        taxes: value,
-      } as SecurityDto
-    }))
+    dispatch(
+      updateSecuritiesAtIndex({
+        index,
+        security: {
+          taxes: value
+        } as SecurityDto
+      })
+    )
   }
 
   useEffect(() => {
@@ -59,8 +59,6 @@ export const TaxesPercent = ({
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [security])
-
-  // console.log({ isTacesTouxhes: forTaxes.current.isTouched, value })
 
   return (
     <FormControl fullWidth>

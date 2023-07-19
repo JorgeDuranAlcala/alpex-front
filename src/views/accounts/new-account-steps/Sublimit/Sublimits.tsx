@@ -201,7 +201,6 @@ const Sublimits = ({}: SublimitsProps) => {
       }
     }
 
-    console.log({ update, save })
     Promise.all([updateSublimits(update), saveSublimits(save)])
       .then(values => {
         console.log({ values })
