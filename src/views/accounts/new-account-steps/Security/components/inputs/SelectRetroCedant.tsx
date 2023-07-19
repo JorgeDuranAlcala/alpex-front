@@ -95,7 +95,6 @@ export const selectRetroCedant_validations = ({
         return { id: -0, name: '' }
       })
       .test('', 'This field is required', value => {
-        console.log({ value, frontingFeeEnabled })
         if (!isGross && frontingFeeEnabled) {
           return typeof value === 'object' && value.id !== -0
         }

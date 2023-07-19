@@ -35,7 +35,7 @@ export const DynamicComissionAmount = ({
         ...tempSecurities[index],
         dynamicCommission: percent > 100 ? 0 : percent
       }
-      console.log({ percent })
+
       validateForm(tempSecurities[index])
       calculateSecurities(tempSecurities)
 
