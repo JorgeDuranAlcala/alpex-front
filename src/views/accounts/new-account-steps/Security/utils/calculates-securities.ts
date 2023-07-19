@@ -209,7 +209,6 @@ export class CalculateSecurity {
     if (this.security.isGross) {
       // * is Gross Premium
       const base = (this.security.premiumPerShareAmount * valuePercent) / 100
-      console.log({ isGross: this.security.isGross, base })
 
       return base
     } else {

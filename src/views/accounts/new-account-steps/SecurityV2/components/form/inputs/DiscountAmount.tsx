@@ -12,9 +12,6 @@ interface DiscountAmountProps extends Omit<ISecurityInputProps, 'errorMessage'> 
 }
 
 export const DiscountAmount = ({ discountIndex, value, isDisabled }: DiscountAmountProps) => {
-
-  // console.log({ index })
-
   const { updateDiscountByIndex } = useContext(DiscountsContext)
 
   const handleChangeDiscountAmount = (value: number) => {
