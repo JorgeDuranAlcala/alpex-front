@@ -38,18 +38,7 @@ import { SecondViewProvider } from './components/secondView/SecondViewProvider'
 import { CalculateSecurity } from './utils/calculates-securities'
 
 export const SecurityContext = createContext<SecurityContextDto>({} as SecurityContextDto)
-const initialSecurity = {
-  frontingFeeActive: false,
-  taxesActive: false,
-  isGross: false,
-  discounts: [],
-  share: 0,
-  dynamicCommission: 0,
-  view: 1,
-  reinsuranceBrokerage: 0,
-  taxes: 0,
-  frontingFee: 0
-} as SecurityDto
+
 const Security = ({ onStepChange }: SecurityProps) => {
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
   const [securities, setSecurities] = useState<SecurityDto[]>([])
@@ -85,7 +74,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
   })
   const [companiesSelect] = useState<number[]>([])
 
-  const { account, setAccountId, getAccountById } = useGetAccountById()
+  const { account, setAccountId, getAccountById, accountId } = useGetAccountById()
   const { saveSecurityTotal } = useAddSecurityTotal()
   const { updateSecurityTotal } = useUpdateSecurityTotalById()
 
@@ -101,6 +90,18 @@ const Security = ({ onStepChange }: SecurityProps) => {
     open: false,
     status: 'error'
   })
+  const initialSecurity = {
+    frontingFeeActive: false,
+    taxesActive: false,
+    isGross: false,
+    discounts: [],
+    share: 0,
+    dynamicCommission: 0,
+    view: 1,
+    reinsuranceBrokerage: 0,
+    taxes: 0,
+    frontingFee: 0
+  } as SecurityDto
 
   /**
    *
@@ -284,7 +285,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
       // * Con esta validación no se guardarán los datos de la vista 2
       if (security.view === 2) return
 
-      const mapper = SecurityMapper.securityToSecurityForm(security, accountData)
+      const mapper = SecurityMapper.securityToSecurityForm(security, Number(accountId))
 
       save.push({ ...mapper, view: 1 })
     }
@@ -349,11 +350,11 @@ const Security = ({ onStepChange }: SecurityProps) => {
             icon: <Icon style={{ color: '#FF4D49' }} icon='icon-park-outline:error' />
           })
         })
-      getAccountById(accountData.formsData.form1.id)
+      getAccountById(Number(accountId))
         .then(accounts => {
           calculateSecurities(
             accounts.securities.length > 0
-              ? accounts.securities.map(security => SecurityMapper.securityToSecurityForm(security, accountData))
+              ? accounts.securities.map(security => SecurityMapper.securityToSecurityForm(security, Number(accountId)))
               : [initialSecurity]
           )
         })
@@ -381,26 +382,37 @@ const Security = ({ onStepChange }: SecurityProps) => {
   }
 
   useEffect(() => {
-    if (accountData.formsData.form1.id) {
-      setAccountId(accountData.formsData.form1.id)
-      const data = accountData.formsData.form1.placementStructure as FormInformation
-      setInformation(data)
-    }
+    const idAccountCache = Number(localStorage.getItem('idAccount'))
+
+    setAccountId(idAccountCache)
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [accountData.formsData.form1.id])
+  }, [])
 
   useEffect(() => {
+    if (account?.informations && account?.informations?.length > 0)
+      setInformation({
+        frontingFee: Number(account.informations[0].frontingFee),
+        netPremium: Number(account.informations[0].netPremium),
+        grossPremium: Number(account.informations[0].grossPremium),
+        limit: Number(account.informations[0].limit)
+      })
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [account])
+  useEffect(() => {
     if (information) {
-      if (account?.securities)
+      if (account?.securities) {
         calculateSecurities(
           account.securities.length > 0
-            ? account.securities.map(security => SecurityMapper.securityToSecurityForm(security, accountData))
+            ? account.securities.map(security => SecurityMapper.securityToSecurityForm(security, Number(account.id)))
             : [initialSecurity]
         )
+      }
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [account, information])
+  }, [information])
 
   useEffect(() => {
     if (isNextStep) onStepChange(3)

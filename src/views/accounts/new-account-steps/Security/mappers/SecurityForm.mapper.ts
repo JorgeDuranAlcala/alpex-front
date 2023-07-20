@@ -3,7 +3,6 @@ import { ReinsuranceCompanyBinderDto } from '@/services/catalogs/dtos/Reinsuranc
 import { ReinsuranceCompanyDto } from '@/services/catalogs/dtos/ReinsuranceCompanyDto'
 import { RetroCedantDto } from '@/services/catalogs/dtos/RetroCedantDto'
 import { RetroCedantContactDto } from '@/services/catalogs/dtos/retroCedantContact.dto'
-import { IAccountsState } from '@/types/apps/accountsTypes'
 import { IDiscountInputs } from '../components/discounts/DiscountsContext'
 
 export interface SecurityModel extends SecurityDto {
@@ -42,7 +41,7 @@ export interface SecurityModel extends SecurityDto {
   totalAmountOfDiscounts: number
 }
 export class SecurityMapper {
-  static securityToSecurityForm(security: SecurityDto, accountData: IAccountsState): SecurityModel {
+  static securityToSecurityForm(security: SecurityDto, idAccount: number): SecurityModel {
     return {
       id: security.id,
       premiumPerShare: Number(security.premiumPerShare) || 0,
@@ -67,7 +66,7 @@ export class SecurityMapper {
           ? security.idCReinsuranceCompanyBinder
           : null,
       idEndorsement: security.idEndorsement,
-      idAccount: +accountData.formsData.form1.id,
+      idAccount: idAccount,
       receivedNetPremium: 0,
       distributedNetPremium: 0,
       difference: 0,
