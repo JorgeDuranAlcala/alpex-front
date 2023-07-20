@@ -183,7 +183,6 @@ export class CalculateSecurity {
       // * is Net Premium
 
       const base = (this.security.netPremiumAt100 * this.security.share) / 100
-      console.log({ base })
 
       return (valueAmount / base) * 100
     }

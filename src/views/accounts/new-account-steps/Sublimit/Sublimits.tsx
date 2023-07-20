@@ -12,9 +12,7 @@ import InputLimit from './components/InputLimit/InputLimit'
 import SelectCoverage from './components/SelectCoverage/SelectCoverage'
 import { GenericCard } from './components/SublimitsCards'
 
-import { useUpdateAccountsStatus } from '@/hooks/accounts/status'
 import UserThemeOptions from '@/layouts/UserThemeOptions'
-import CheckIcon from '@mui/icons-material/Check'
 import SaveIcon from '@mui/icons-material/Save'
 import { DisableForm } from '../_commons/DisableForm'
 
@@ -78,7 +76,7 @@ interface SublimitsProps {
   getAccountByIdHeader: (idAccount: number) => void
 }
 
-const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
+const Sublimits = ({}: SublimitsProps) => {
   const [badgeData, setBadgeData] = useState<IAlert>({
     message: '',
     theme: 'success',
@@ -86,12 +84,12 @@ const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
     status: 'error'
   })
 
-  const [formInformationData, setFormInformationData] = useState<any>({})
+  const [, setFormInformationData] = useState<any>({})
   const [subLimits, setSubLimits] = useState<SublimitDto[]>([])
   const [coverageSelected, setCoverageSelected] = useState<CoverageDto[]>([])
 
   //state para lo botones
-  const [disableBoundBtn, setDisableBoundBtn] = useState<boolean>(true)
+  const [, setDisableBoundBtn] = useState<boolean>(true)
   const [disableSaveBtn, setDisableSaveBtn] = useState<boolean>(false)
   const [showErrors, setShowErrors] = useState<boolean>(false)
   const [formErrors, setFormErrors] = useState<boolean[]>([])
@@ -105,7 +103,8 @@ const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
 
   const inter = userThemeConfig.typography?.fontFamilyInter
   const size = userThemeConfig.typography?.size.px14
-  const texButtonColor = userThemeConfig.palette?.buttonText.primary
+
+  // const texButtonColor = userThemeConfig.palette?.buttonText.primary
 
   //hooks para sublimits
   const { saveSublimits } = useAddSublimits()
@@ -113,7 +112,7 @@ const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
   const { deleteSublimits } = useDeleteSublimits()
 
   // ** Custom hooks
-  const { updateAccountsStatus } = useUpdateAccountsStatus()
+  // const { updateAccountsStatus } = useUpdateAccountsStatus()
 
   const handleSelectedCoverage = (coverageSelect: CoverageDto) => {
     setCoverageSelected([...coverageSelected, coverageSelect])
@@ -202,7 +201,6 @@ const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
       }
     }
 
-    console.log({ update, save })
     Promise.all([updateSublimits(update), saveSublimits(save)])
       .then(values => {
         console.log({ values })
@@ -231,37 +229,6 @@ const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
         status: 'error'
       })
     }, 4000)
-  }
-
-  const handleUpdateStatus = async () => {
-    const existError = formErrors.find(error => error)
-    if (!existError) {
-      handleSubmit()
-
-      await updateAccountsStatus({
-        updateStatus: [
-          {
-            idAccount: formInformationData.id,
-            status: 5
-          }
-        ]
-      })
-      getAccountByIdHeader(formInformationData.id)
-      setBadgeData({
-        message: 'Account has been updated',
-        theme: 'success',
-        open: true,
-        status: 'error'
-      })
-      setTimeout(() => {
-        setBadgeData({
-          message: 'updated successfully',
-          theme: 'success',
-          open: false,
-          status: 'error'
-        })
-      }, 50)
-    }
   }
 
   const getAccountData = async () => {
@@ -300,13 +267,10 @@ const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
           </div>
         </Grid>
         <Grid item xs={12} sm={12}>
-
-          <form noValidate autoComplete='on' >
-            <DisableForm
-              isDisabled={account?.status.toLowerCase() === 'bound' ? true : false}
-            >
+          <form noValidate autoComplete='on'>
+            <DisableForm isDisabled={account?.status.toLowerCase() === 'bound' ? true : false}>
               {/* campos header */}
-              <Grid container spacing={5} >
+              <Grid container spacing={5}>
                 <InputLimit account={account} />
                 <SelectCoverage
                   onChangeSelected={handleSelectedCoverage}
@@ -332,7 +296,6 @@ const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
                     </Grid>
                   ))}
               </Grid>
-
             </DisableForm>
           </form>
         </Grid>
@@ -346,18 +309,6 @@ const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
           onClick={handleClickSave}
         >
           <SaveIcon /> &nbsp; Save changes
-        </Button>
-        <Button
-          sx={{
-            fontFamily: inter,
-            letterSpacing: '0.4px',
-            fontSize: userThemeConfig.typography?.size.px15,
-            color: texButtonColor
-          }}
-          disabled={disableBoundBtn}
-          onClick={handleUpdateStatus}
-        >
-          <CheckIcon /> &nbsp; Add bound
         </Button>
       </NextContainer>
     </CardContent>

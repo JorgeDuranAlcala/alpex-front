@@ -42,12 +42,17 @@ import { DiscountDto } from '@/services/accounts/dtos/discount.dto'
 import { useGetAccountById } from '@/hooks/accounts/forms'
 import { DisableForm } from '../_commons/DisableForm'
 
+type ActiveInputs = {
+  basic: boolean
+  allInfo: boolean
+}
+
 type InformationProps = {
   onStepChange: (step: number) => void
   onIsNewAccountChange: (status: boolean) => void
   typeofAccount?: string
   activeEndorsement?: boolean
-  editInfo?: object
+  editInfo?: ActiveInputs
 }
 
 export interface BasicInfoInterface {
@@ -100,7 +105,6 @@ export interface PlacementStructure {
 const Information: React.FC<InformationProps> = ({
   onStepChange,
   onIsNewAccountChange,
-  typeofAccount,
   activeEndorsement,
   editInfo
 }) => {
@@ -121,6 +125,8 @@ const Information: React.FC<InformationProps> = ({
   const [open, setOpen] = useState<boolean>(false)
   const [nextClicked, setNextClicked] = useState<boolean>(false)
   const [saveClicked, setSaveClicked] = useState<boolean>(false)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [endorsement, setEndorsement] = useState<boolean>(false)
   const [badgeData, setBadgeData] = useState<IAlert>({
     message: '',
     theme: 'success',
@@ -650,10 +656,18 @@ const Information: React.FC<InformationProps> = ({
         setSaveClicked(true)
         setMakeSaveValidations(true)
         break
+
       case 'next':
         setNextClicked(true)
         setMakeValidations(true)
         break
+
+      case 'endorsement':
+        setSaveClicked(true)
+        setMakeSaveValidations(true)
+        setEndorsement(true)
+        break
+
       default:
         break
     }
@@ -778,8 +792,6 @@ const Information: React.FC<InformationProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [validationCount, validatedForms])
 
-  // console.log('Esta cuenta es de tipo: ', editInfo)
-
   return (
     <>
       <div className='information' style={{ fontFamily: inter }}>
@@ -787,45 +799,61 @@ const Information: React.FC<InformationProps> = ({
           <CustomAlert {...badgeData} />
         </div>
         <form noValidate autoComplete='on' onSubmit={handleNextStep}>
-          <div className='section'>
-            <DisableForm
+          {editInfo?.basic ? (
+            <div className='section'>
+              <DisableForm isDisabled sg={5000}>
+                <BasicInfo
+                  activeEndorsement={activeEndorsement}
+                  basicInfo={basicInfo}
+                  setBasicInfo={setBasicInfo}
+                  makeValidations={makeValidations}
+                  makeSaveValidations={makeSaveValidations}
+                  onValidationComplete={handleValidationComplete}
+                />
+              </DisableForm>
+            </div>
+          ) : (
+            <div className='section'>
+              <DisableForm sg={5000}>
+                <BasicInfo
+                  activeEndorsement={activeEndorsement}
+                  basicInfo={basicInfo}
+                  setBasicInfo={setBasicInfo}
+                  makeValidations={makeValidations}
+                  makeSaveValidations={makeSaveValidations}
+                  onValidationComplete={handleValidationComplete}
+                />
+              </DisableForm>
+            </div>
+          )}
 
-              // isDisabled={(typeofAccount && typeofAccount === 'bound') ? true : false}
-
-              isDisabled={account?.status.toLowerCase() === 'bound' ? true : false}
-            >
-
-              <BasicInfo
-                editInfo={editInfo}
-                activeEndorsement={activeEndorsement}
-                basicInfo={basicInfo}
-                setBasicInfo={setBasicInfo}
-                makeValidations={makeValidations}
-                makeSaveValidations={makeSaveValidations}
-                onValidationComplete={handleValidationComplete}
-              />
-            </DisableForm>
-          </div>
-
-          <div className='section'>
-            <DisableForm
-
-              // isDisabled={(typeofAccount && typeofAccount === 'bound') ? true : false}
-
-              isDisabled={account?.status.toLowerCase() === 'bound' ? true : false}
-            >
-              <PlacementStructure
-                editInfo={editInfo}
-                placementStructure={placementStructure}
-                setPlacementStructure={setPlacementStructure}
-                onDiscountsChange={handleDiscountsChange}
-                makeValidations={makeValidations}
-                onValidationComplete={handleValidationComplete}
-                triggerSubject={subjectState}
-              />
-
-            </DisableForm>
-          </div>
+          {editInfo?.allInfo ? (
+            <div className='section'>
+              <DisableForm isDisabled sg={5000}>
+                <PlacementStructure
+                  placementStructure={placementStructure}
+                  setPlacementStructure={setPlacementStructure}
+                  onDiscountsChange={handleDiscountsChange}
+                  makeValidations={makeValidations}
+                  onValidationComplete={handleValidationComplete}
+                  triggerSubject={subjectState}
+                />
+              </DisableForm>
+            </div>
+          ) : (
+            <div className='section'>
+              <DisableForm sg={5000}>
+                <PlacementStructure
+                  placementStructure={placementStructure}
+                  setPlacementStructure={setPlacementStructure}
+                  onDiscountsChange={handleDiscountsChange}
+                  makeValidations={makeValidations}
+                  onValidationComplete={handleValidationComplete}
+                  triggerSubject={subjectState}
+                />
+              </DisableForm>
+            </div>
+          )}
 
           <div className='section' style={{ display: 'none' }}>
             <div className='title'>{changeTitle ? 'Submited files' : 'File submit'}</div>
@@ -838,17 +866,17 @@ const Information: React.FC<InformationProps> = ({
             />
           </div>
           <div className='section action-buttons'>
-            {typeofAccount && typeofAccount === 'bound' ? (
+            {account && account?.status === 'BOUND' ? (
               <Button
                 className='btn-save'
-                onClick={() => handleAction('save')}
+                onClick={() => handleAction('endorsement')}
                 variant='contained'
                 disabled={!activeEndorsement}
               >
                 <div className='btn-icon' style={{ marginRight: '8px' }}>
                   <Icon icon='mdi:content-save' />
                 </div>
-                ENDORSEMENT
+                ENDORSE
               </Button>
             ) : (
               <Button

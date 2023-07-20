@@ -1,5 +1,5 @@
 import { FormControl, FormHelperText, TextField } from '@mui/material'
-import { useContext, useEffect, useState } from 'react'
+import { useContext } from 'react'
 import { NumericFormat } from 'react-number-format'
 import * as yup from 'yup'
 
@@ -11,7 +11,9 @@ import { CalculateSecurity } from '../../utils/calculates-securities'
 interface DynamicComissionAmountProps extends ISecurityInputProps {
   operationSecurity: CalculateSecurity
 }
-
+type Timer = ReturnType<typeof setInterval>
+let typingTimer: Timer
+const doneTypingInterval = 900 // Tiempo en milisegundos para considerar que se dejó de escribir
 export const DynamicComissionAmount = ({
   index,
   value,
@@ -21,35 +23,33 @@ export const DynamicComissionAmount = ({
   view
 }: DynamicComissionAmountProps) => {
   const { activeErros, securities, calculateSecurities } = useContext(SecurityContext)
-  const [dynamicComissionAmount, setDynamicComissionAmount] = useState<number>(Number(value))
 
   const handleChangeDynamicComissionAmount = (value: number) => {
-    const tempSecurities = structuredClone(securities)
-    const percent = operationSecurity.getDynamicComissionPercent(value)
+    clearInterval(typingTimer)
+    typingTimer = setInterval(() => {
+      // Código a ejecutar cuando se deja de escribir
+      const tempSecurities = structuredClone(securities)
+      const percent = operationSecurity.getDynamicComissionPercent(value || 0)
 
-    tempSecurities[index] = {
-      ...tempSecurities[index],
-      dynamicCommission: percent === 101 ? 0 : percent
-    }
-    if (percent === 101 && !isNaN(percent)) {
-      setDynamicComissionAmount(0)
-    } else {
-      setDynamicComissionAmount(value)
-    }
-    validateForm(tempSecurities[index])
-    calculateSecurities(tempSecurities)
+      tempSecurities[index] = {
+        ...tempSecurities[index],
+        dynamicCommission: percent > 100 ? 0 : percent
+      }
+
+      validateForm(tempSecurities[index])
+      calculateSecurities(tempSecurities)
+
+      // Limpiar el intervalo
+      clearInterval(typingTimer)
+    }, doneTypingInterval)
   }
-  useEffect(() => {
-    setDynamicComissionAmount(Number(value))
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value])
 
   return (
     <FormControl fullWidth sx={{ mb: 2 }}>
       <NumericFormat
         autoFocus
         label='Dynamic comission'
-        value={String(dynamicComissionAmount)}
+        value={value}
         onValueChange={value => {
           handleChangeDynamicComissionAmount(Number(value.floatValue))
         }}

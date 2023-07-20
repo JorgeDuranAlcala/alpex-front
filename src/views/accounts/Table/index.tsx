@@ -41,7 +41,6 @@ import colors from 'src/views/accounts/colors'
 import fonts from 'src/views/accounts/font'
 import { IAlert } from 'src/views/custom/alerts'
 
-
 export interface IAccount {
   id: string
   status: string
@@ -82,17 +81,12 @@ const Table = ({ status }: IAccountTable) => {
   const dispatch = useAppDispatch()
   const accountsReducer = useAppSelector(state => state.accounts)
 
-  // console.log({ selectAll })
-
   const selectAllOption = accountsReducer.accounts.map(account => account.id)
-
-  // console.log({ selectAllOption })
-  // console.log(accounts.effectiveDate)
 
   // ** Custom Hooks
   //const { accounts, getAccounts } = useAccountTable()
   const { duplicateAccounts } = useAccountTable()
-  const { setBaseLink, setBackButtonProps, addNewTabButton } = useMultiTabButtons();
+  const { setBaseLink, setBackButtonProps, addNewTabButton } = useMultiTabButtons()
 
   // ** Hooks
   const router = useRouter()
@@ -439,9 +433,8 @@ const Table = ({ status }: IAccountTable) => {
 
   console.log('esta cuenta es: ', typeofCount)
 
-
   useEffect(() => {
-    setBaseLink();
+    setBaseLink()
     setBackButtonProps({
       text: 'Back to Accounts',
       link: `/accounts/`,

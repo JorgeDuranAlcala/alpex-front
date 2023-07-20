@@ -12,7 +12,6 @@ export const useAddUser = () => {
     if (!userPost) return
     UserService.addUser(userPost)
       .then(user => {
-        console.log({ user })
         setUser(user)
       })
       .catch(error => {

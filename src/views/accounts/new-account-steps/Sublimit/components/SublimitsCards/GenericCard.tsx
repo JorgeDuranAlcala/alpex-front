@@ -26,17 +26,6 @@ const DONT_SHOW_YES_LUC = [
 const DONT_SHOW_BUSSINES_INTERRUPTION = ['Machinery Breakdown', 'AMIT & SRCC', 'Electronic Equipment']
 const DONT_SHOW_DEDUCTIBLE_MATERIAL_DAMAGE = ['Business  Interruption  Machinery Breakdown', 'Business  Interruption']
 
-// const DONT_SHOW_LOSS = [
-//   'Business  Interruption  Machinery Breakdown',
-//   'Wind',
-//   'Business  Interruption',
-//   'Earthquake',
-//   'Flood',
-//   'Business interruption',
-//   'Fire',
-//   'Terrorism'
-// ]
-
 const GenericCard: React.FC<RenderFormGeneric> = ({
   subLimit,
   handleOnDeleteForm,
@@ -72,7 +61,11 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
     // console.log('no se ejecuta', subLimitParam)
 
     const schema = yup.object().shape({
-      ...inputSublimit_validations({ limit, isNotYesLuc: DONT_SHOW_YES_LUC.includes(subLimitParam.title) }).fields,
+      ...inputSublimit_validations({
+        limit,
+        isNotYesLuc: DONT_SHOW_YES_LUC.includes(subLimitParam.title),
+        luc: subLimitParam.luc
+      }).fields,
       ...validateDeductibleMaterialDamage({ typeDeductible: subLimitParam.typeDeductible }).fields,
       ...validateCoinsurance().fields
     })
@@ -108,11 +101,9 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [subLimit])
 
-  // console.log('error card', errorCard)
-
   return (
     <ContainerCard>
-      <HeaderCard className="sublimits-generic-card-header" sx={{ padding: '5px 10px 5px 26px' }}>
+      <HeaderCard className='sublimits-generic-card-header' sx={{ padding: '5px 10px 5px 26px' }}>
         <Box
           sx={{
             display: 'flex',
@@ -151,14 +142,7 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
             showErrors={showErrors}
           />
         )}
-        {/* {!DONT_SHOW_LOSS.includes(subLimitCard.title) && (
-          <Loss
-            subLimit={subLimitCard}
-            onHandleChangeSubLimit={handleChangeSubLimit}
-            errorCard={errorCard}
-            showErrors={showErrors}
-          />
-        )} */}
+
         {!DONT_SHOW_BUSSINES_INTERRUPTION.includes(subLimitCard.title) && (
           <BusinessInterruption
             subLimit={subLimitCard}

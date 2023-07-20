@@ -26,7 +26,8 @@ export const DynamicComissionPercent = ({
     const tempSecurities = [...securities]
     tempSecurities[index] = {
       ...tempSecurities[index],
-      dynamicCommission: value
+      dynamicCommission: value,
+      dynamicCommissionAmount: 0
     }
 
     validateForm(tempSecurities[index])
@@ -38,7 +39,7 @@ export const DynamicComissionPercent = ({
       <NumericFormat
         autoFocus
         label='Dynamic comission %'
-        value={Number(Number(value).toFixed(2))}
+        value={Number(value)}
         onValueChange={value => {
           handleChangeDynamicComissionPercent(Number(value.floatValue))
         }}
@@ -60,12 +61,13 @@ export const dynamicComissionPercent_validations = () =>
     dynamicCommission: yup
       .number()
       .transform((_, val) => (val === Number(val) ? val : null))
-      .required('This field is required')
+
       .test('', 'This field is required', value => {
         const val = value || 0
 
         return +val > 0
       })
+      .moreThan(0)
 
       .max(100)
   })

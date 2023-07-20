@@ -44,6 +44,7 @@ export interface InformationDto {
   idAccountType: number
   premiumWithTaxes: number
   premiumWithOutDiscounts: number
+  idEndorsement?: number | null
 }
 
 export interface InformationDetailsDto {
@@ -172,4 +173,17 @@ export interface DeleteDoctoDto {
   idAccount: number
   idDocto: number
   fileName: string
+}
+
+export interface AccountDocumentFilters {
+  idAccount: number
+  idCDocto: number
+}
+
+export interface DocumentDto {
+  id: number
+  url: string
+  name: string
+  idCDocto: number
+  idAccount: number
 }

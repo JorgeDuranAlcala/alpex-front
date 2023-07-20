@@ -37,10 +37,11 @@ export const ReinsuranceBrokeragePercent = ({
       <NumericFormat
         autoFocus
         label='Reinsurance brokerage %'
-        value={Number(Number(value).toFixed(2))}
+        value={Number(value).toFixed(2) ?? 0}
         onValueChange={value => {
           handleChangeBrokerRagePercent(Number(value.floatValue))
         }}
+        defaultValue={0}
         suffix={'%'}
         customInput={TextField}
         isAllowed={values => {
@@ -65,6 +66,7 @@ export const reinsuranceBrokeragePercent_validations = ({ isGross }: { isGross: 
 
         return true
       })
+
       .max(100)
   })
 }

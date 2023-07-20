@@ -29,8 +29,8 @@ export interface AddressInfo {
   city: number | string
   state: number | string
   zipCode: string
-  latitude: string
-  longitude: string
+  latitude: string | undefined
+  longitude: string | undefined
 }
 
 interface AddressInfoErrors {
@@ -54,10 +54,13 @@ const FormAddress = () => {
 
   const mapRef = useRef<HTMLDivElement>(null);
   const [marker, setMarker] = useState<google.maps.Marker | null>(null);
-
-  // const [selectedLocation, setSelectedLocation] = useState<google.maps.LatLng | null>(null);
+  const [selectedLocation, setSelectedLocation] = useState<google.maps.LatLng | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [selectedAddress, setSelectedAddress] = useState<string>("");
+  const mapEnabledRef = useRef<boolean>(false);
   const map = useRef<google.maps.Map | null>(null);
   const geocoder = useRef<google.maps.Geocoder | null>(null);
+  const [mapEnabled, setMapEnabled] = useState<boolean>(mapEnabledRef.current);
   const { countries } = useCountryGetAll()
   const [startValidations, setStartValidations] = useState(false)
   const [validateForm, setValidateForm] = useState<boolean>(true)
@@ -104,6 +107,30 @@ const FormAddress = () => {
     }
   }
 
+  const findNameById = (type: string, id: number): string => {
+
+    switch(type){
+      case 'country':
+        const country = countries.find((c) => c.id === id);
+
+        return country ? country.name : '';
+
+      case 'city':
+        const city = countries.find((c) => c.id === id);
+
+        return city ? city.name : '';
+
+      case 'state':
+        const state = countries.find((c) => c.id === id);
+
+        return state ? state.name : '';
+
+      default:
+
+        return '';
+    }
+  };
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     setAddressInfo({ ...addressInfo, [name]: value })
@@ -114,7 +141,6 @@ const FormAddress = () => {
     const target = event.target
     const name = target.name
     const value = target.value
-
     let addressInfoTem = { ...addressInfo }
     addressInfoTem = {
       ...addressInfoTem,
@@ -127,12 +153,25 @@ const FormAddress = () => {
 
   const getErrorMessage = (name: keyof AddressInfoErrors) => {
     let errorMsj = 'This field is required'
-    if(name == 'countryError' || name == 'cityError'|| name == 'stateError')
+    if (name == 'countryError' || name == 'cityError' || name == 'stateError')
       errorMsj = 'Tis action is required'
 
 
     return errors[name] ? errorMsj : ''
   }
+
+  const handleChooseLocation = () => {
+    mapEnabledRef.current = !mapEnabledRef.current;
+    setMapEnabled(mapEnabledRef.current);
+
+  };
+
+  const handleMapClick = (event: google.maps.MapMouseEvent) => {
+    if (mapEnabledRef.current) {
+      const selectedLocation = event.latLng;
+      setSelectedLocation(selectedLocation);
+    }
+  };
 
   useEffect(() => {
     if (startValidations) {
@@ -159,10 +198,8 @@ const FormAddress = () => {
           zoom: 8,
         });
 
-        map.current.addListener("click", (event: google.maps.MapMouseEvent) => {
-          const selectedLocation = event.latLng;
-          setSelectedLocation(selectedLocation);
-        });
+        map.current.addListener("click", handleMapClick);
+
       }
 
       geocoder.current = new google.maps.Geocoder();
@@ -185,14 +222,16 @@ const FormAddress = () => {
         });
 
         map.current.setCenter(location);
-
+        map.current.setZoom(18);
         setMarker(newMarker);
       }
     };
 
     const searchAddress = async () => {
       const { addressLine1, addressLine2, zipCode, country, city, state } = addressInfo;
-      const fullAddress = `${addressLine1} ${addressLine2}, ${city}, ${state} ${zipCode}, ${country}`;
+
+      const countryName = findNameById('country', Number(country))
+      const fullAddress = `${addressLine1} ${addressLine2}, ${city}, ${state} ${zipCode}, ${countryName}`;
 
       if (geocoder.current) {
         geocoder.current.geocode({ address: fullAddress }, (results, status) => {
@@ -205,38 +244,55 @@ const FormAddress = () => {
     };
 
     searchAddress();
-  }, [addressInfo]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    addressInfo.addressLine1,
+    addressInfo.addressLine2,
+    addressInfo.city,
+    addressInfo.country,
+    addressInfo.zipCode,
+    addressInfo.state
+  ]);
 
-  const setSelectedLocation = (selectedLocation: google.maps.LatLng | null) => {
-    if (map.current) {
-      setAddressInfo((prevAddress) => ({
-        ...prevAddress,
-        addressLine1: "",
-        addressLine2: "",
-        postalCode: "",
-        country: "",
-        city: "",
-        state: "",
-      }));
+  useEffect(() => {
+    const updateMarkerOnMap = () => {
+      if (map.current && selectedLocation) {
 
-      if (marker) {
-        marker.setMap(null);
-      }
+        if (marker) {
+          marker.setMap(null);
+        }
 
-      const newMarker = new google.maps.Marker({
-        position: selectedLocation,
-        map: map.current,
-        title: "Selected Location",
-      });
+        const newMarker = new google.maps.Marker({
+          position: selectedLocation,
+          map: map.current,
+          title: "Selected Location",
+        });
 
-      if (selectedLocation) {
-        const center = selectedLocation.toJSON(); // Convertir a LatLngLiteral
+        const center = selectedLocation.toJSON();
         map.current.setCenter(center);
-      }
+        map.current.setZoom(19);
 
-      setMarker(newMarker);
-    }
-  };
+        setMarker(newMarker);
+
+        if (geocoder.current) {
+          geocoder.current.geocode({ location: selectedLocation }, (results, status) => {
+            if (status === google.maps.GeocoderStatus.OK && results && results.length > 0) {
+              const selectedAddress = results[0].formatted_address;
+              setSelectedAddress(selectedAddress);
+            }
+          });
+        }
+      }
+    };
+    setAddressInfo({
+      ...addressInfo,
+      latitude: selectedLocation?.lat().toString(),
+      longitude: selectedLocation?.lng().toString()
+    })
+    updateMarkerOnMap();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedLocation]);
+
 
   return (
     <AddressContainer>
@@ -252,20 +308,22 @@ const FormAddress = () => {
             id='address-line-1'
             name="addressLine1"
             label='Address Line 1'
+            disabled={mapEnabled}
             error={!!errors.addressLine1Error}
             helperText={getErrorMessage('addressLine1Error')}
           />
           <FormControl fullWidth >
-          <TextField
-            sx={{ width: '100%' }}
-            value={addressInfo.addressLine2}
-            onChange={handleInputChange}
-            id='address-line-2'
-            name="addressLine2"
-            label='Address Line 2'
-            error={!!errors.addressLine2Error}
-            helperText={getErrorMessage('addressLine2Error')}
-          />
+            <TextField
+              sx={{ width: '100%' }}
+              value={addressInfo.addressLine2}
+              onChange={handleInputChange}
+              id='address-line-2'
+              name="addressLine2"
+              label='Address Line 2'
+              disabled={mapEnabled}
+              error={!!errors.addressLine2Error}
+              helperText={getErrorMessage('addressLine2Error')}
+            />
           </FormControl>
 
         </div>
@@ -280,6 +338,7 @@ const FormAddress = () => {
               value={String(addressInfo.country)}
               onChange={handleSelectChange}
               labelId='invoice-country'
+              disabled={mapEnabled}
             >
               {countries.length > 0 ? (
                 countries.map(country => {
@@ -309,6 +368,7 @@ const FormAddress = () => {
             name="zipCode"
             label='Zip code'
             onChange={handleInputChange}
+            disabled={mapEnabled}
             error={!!errors.zipCodeError}
             helperText={getErrorMessage('zipCodeError')}
           />
@@ -326,6 +386,7 @@ const FormAddress = () => {
               value={String(addressInfo.city)}
               onChange={handleSelectChange}
               labelId='city'
+              disabled={mapEnabled}
             >
               {countries.length > 0 ? (
                 countries.map(country => {
@@ -358,6 +419,7 @@ const FormAddress = () => {
               value={String(addressInfo.state)}
               onChange={handleSelectChange}
               labelId='city'
+              disabled={mapEnabled}
             >
               {countries.length > 0 ? (
                 countries.map(country => {
@@ -396,6 +458,7 @@ const FormAddress = () => {
               id='standard-basic'
               label='Latitude'
               variant='standard'
+              disabled={true}
             />
             <TextField
               sx={{ maxWidth: '160px', '@media (max-width:900px)': { maxWidth: '100%', width: '100%' } }}
@@ -403,15 +466,20 @@ const FormAddress = () => {
               value={addressInfo.longitude}
               label='Longitude'
               variant='standard'
+              disabled={true}
             />
           </div>
-          <Button variant='outlined' sx={{ padding: '7px 22px', '@media (max-width:900px)': { marginTop: '20px' } }}>
-            Choose location on the map
+          <Button
+          variant='outlined'
+          sx={{ padding: '7px 22px', '@media (max-width:900px)': { marginTop: '20px' } }}
+          onClick={handleChooseLocation}
+          >
+            {mapEnabled ? 'Choose location by address' :'Choose location on the map'}
           </Button>
         </div>
 
         <div style={{ borderRadius: '8px', height: '500px', margin: '20px 0px 60px ' }}>
-        <div ref={mapRef} style={{ width: "100%", minHeight: "500px" }} />
+          <div ref={mapRef} style={{ width: "100%", minHeight: "500px" }} />
         </div>
 
         <ButtonContainer>
@@ -431,7 +499,7 @@ const FormAddress = () => {
             sx={{ maxWidth: '200px', '@media (max-width:900px)': { maxWidth: '100%', width: '100%' } }}
             variant='contained'
             endIcon={<Icon icon='material-symbols:check' />}
-            onClick={()=>{
+            onClick={() => {
               setStartValidations(true)
             }}
           >
@@ -453,7 +521,6 @@ export const EditMap = () => {
   useEffect(() => {
     setTimeout(() => {
       setValue(2)
-      console.log('hola')
     }, 1000)
   }, [])
 
