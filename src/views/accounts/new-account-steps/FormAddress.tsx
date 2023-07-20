@@ -290,6 +290,7 @@ const FormAddress = () => {
       longitude: selectedLocation?.lng().toString()
     })
     updateMarkerOnMap();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedLocation]);
 
 

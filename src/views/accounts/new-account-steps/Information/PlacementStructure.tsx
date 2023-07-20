@@ -1007,6 +1007,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
 
                 return (floatValue! >= 0 && floatValue! <= 100) || floatValue === undefined
               }}
+              // eslint-disable-next-line lines-around-comment
               // onValueChange={value => {
               //   if (value.floatValue) {
               //     calculate('taxesP', value.floatValue)
@@ -1108,6 +1109,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
 
                 return (floatValue! >= 0 && floatValue! <= 100) || floatValue === undefined
               }}
+              // eslint-disable-next-line lines-around-comment
               // onValueChange={value => {
               //   if (value.floatValue) {
               //     calculate('frontingFeeP', value.floatValue)
@@ -1204,6 +1206,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
 
                   return (floatValue! >= 0 && floatValue! <= 100) || floatValue === undefined
                 }}
+                // eslint-disable-next-line lines-around-comment
                 // onValueChange={value => {
                 //   if (value.floatValue) {
                 //     const updatedDiscount = { ...discountItem, percentage: value.floatValue }
