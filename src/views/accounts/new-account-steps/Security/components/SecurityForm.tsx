@@ -228,10 +228,12 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
           }
         }
       }
+    localSecuritiesTemp.push(tempSecurities[index])
 
     if (localSecuritiesTemp.length === tempSecurities.length || idCompany) {
       validateForm(tempSecurities[index])
       calculateSecurities(idCompany !== 0 ? tempSecurities : localSecuritiesTemp)
+
       localSecuritiesTemp = []
     }
   }
