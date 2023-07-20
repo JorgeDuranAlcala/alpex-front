@@ -218,12 +218,6 @@ const FormHeader = ({
   }, [account])
 
   useEffect(() => {
-    if (accountDetails !== undefined && setTypeofAccount) {
-      setTypeofAccount(accountDetails?.status)
-    }
-  }, [status])
-
-  useEffect(() => {
     accountDetails && setStatus(accountDetails.status)
   }, [accountDetails])
 

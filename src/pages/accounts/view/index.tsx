@@ -40,12 +40,13 @@ const NewAccount = () => {
   const router = useRouter()
   const dispatch = useAppDispatch()
 
-  //hooks header
+  // ** Hooks header
   const { account: accountDetails, setAccountId, getAccountById } = useGetAccountById()
 
   // const { account, setAccountId } = useGetAccountById()
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [disableComments, setDisableComments] = useState(false)
+  // const [dataForEndorsement, setDataForEndorsement] = useState()
+  const [disableComments] = useState(false)
   const [isNewAccount, setIsNewAccount] = useState<boolean>(true)
   const [activeStep, setActiveStep] = useState(1)
 
@@ -58,22 +59,21 @@ const NewAccount = () => {
   //Todo:  Une a los dos active inputs
   const [activeIntpus, setActiveInputs] = useState({ basic: false, allInfo: false })
 
-  //* Este estado se encarga de definir el tipo de cuenta
-  const [typeofAccount, setTypeofAccount] = useState('')
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  // Esta función se encarga de comunicar el header con el contenido de los forms
   const activeInputs = () => {
-    if (typeofAccount !== 'BOUND') {
+    // Para todos los tipos de cuenta excepto |BOUND|, en este caso siempre estarán activados
+    if (accountDetails?.status.toLowerCase() !== 'bound') {
+      setActiveInputs({ ...activeIntpus, allInfo: false, basic: false })
+    }
+
+    // Para las cuentas de tipo |BOUND|, esto es para cuando ingresas a tu cuenta |SIN ACTIVAR EL ENDORSEMENT|
+    if (accountDetails?.status.toLowerCase() === 'bound' && !activeEndorsement) {
       setActiveInputs({ ...activeIntpus, allInfo: true, basic: true })
     }
-    if (activeEndorsement) {
-      // console.log('!!!Esta cuenta es de tipo: ')
-      setActiveInputs({ ...activeIntpus, basic: true, allInfo: false })
-    }
-    if (typeofAccount === 'BOUND' && !activeEndorsement) {
-      // console.log('!!!Esta cuenta es de tipo: ', typeofAccount)
 
-      setActiveInputs({ ...activeIntpus, basic: false, allInfo: false })
+    // Para las cuentas de tipo |BOUND| -> |ENDORSEMENT ACTIVADO|
+    if (accountDetails?.status.toLowerCase() === 'bound' && activeEndorsement) {
+      setActiveInputs({ ...activeIntpus, allInfo: true, basic: false })
     }
   }
 
@@ -93,7 +93,6 @@ const NewAccount = () => {
           <Information
             editInfo={activeIntpus}
             activeEndorsement={activeEndorsement}
-            typeofAccount={typeofAccount}
             onStepChange={handleStepChange}
             onIsNewAccountChange={handleIsNewAccountChange}
           />
@@ -121,7 +120,6 @@ const NewAccount = () => {
 
     const handleRouteChange = (url: string) => {
       if (url !== '/accounts/new-account') {
-        // console.log('change')
         handleExit()
       }
     }
@@ -134,11 +132,12 @@ const NewAccount = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, router.events])
 
-  // console.log('el endorsement se activó: ', activeEndorsement, editInfo)
   useEffect(() => {
     activeInputs()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [editInfo, activeEndorsement, typeofAccount])
+  }, [editInfo, activeEndorsement, accountDetails?.status])
+
+  // console.log('se cambió el account', dataForEndorsement)
 
   return (
     <AccountsTableContextProvider>
@@ -146,7 +145,6 @@ const NewAccount = () => {
         {activeStep == 1 && isNewAccount ? (
           <FormHeader
             isNewAccount
-            setTypeofAccount={setTypeofAccount}
             setActiveEndorsement={setActiveEndorsement}
             setEditInfo={setEditInfo}
             accountDetails={accountDetails}
@@ -154,7 +152,6 @@ const NewAccount = () => {
           />
         ) : (
           <FormHeader
-            setTypeofAccount={setTypeofAccount}
             setActiveEndorsement={setActiveEndorsement}
             setEditInfo={setEditInfo}
             accountDetails={accountDetails}

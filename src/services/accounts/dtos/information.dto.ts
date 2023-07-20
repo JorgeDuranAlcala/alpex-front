@@ -44,6 +44,7 @@ export interface InformationDto {
   idAccountType: number
   premiumWithTaxes: number
   premiumWithOutDiscounts: number
+  idEndorsement?: number | null
 }
 
 export interface InformationDetailsDto {
