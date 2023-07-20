@@ -51,7 +51,6 @@ type InformationProps = {
   onStepChange: (step: number) => void
   onIsNewAccountChange: (status: boolean) => void
   typeofAccount?: string
-  activeEndorsement?: boolean
   disableSectionCtrl?: InformationSectionsInt
 }
 
@@ -102,12 +101,7 @@ export interface PlacementStructure {
   typeOfLimit: string | number | null
 }
 
-const Information: React.FC<InformationProps> = ({
-  onStepChange,
-  onIsNewAccountChange,
-  activeEndorsement,
-  disableSectionCtrl
-}) => {
+const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountChange, disableSectionCtrl }) => {
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
   const [subjectState] = useState<Subject<void>>(new Subject())
   const inter = userThemeConfig.typography?.fontFamilyInter
@@ -142,6 +136,8 @@ const Information: React.FC<InformationProps> = ({
   //store
   const idAccount = useAppSelector(state => state.accounts?.formsData?.form1?.id)
   const lastForm1Information = useAppSelector(state => state.accounts?.formsData?.form1)
+  const activeEndorsement = useAppSelector(state => state.endorsement.data.active)
+
   const [fileUrls, setFileUrls] = useState<string[]>([])
 
   // ** Custom Hooks

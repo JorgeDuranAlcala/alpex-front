@@ -11,6 +11,7 @@ import brokerContacts from 'src/store/apps/catalogs/brokerContacts'
 import brokers from 'src/store/apps/catalogs/brokers'
 import chat from 'src/store/apps/chat'
 import email from 'src/store/apps/email'
+import endorsement from 'src/store/apps/endorsement'
 import invoice from 'src/store/apps/invoice'
 import permissions from 'src/store/apps/permissions'
 import user from 'src/store/apps/user'
@@ -18,7 +19,6 @@ import users from 'src/store/apps/users'
 import multiTabButtonsSlice from '../layouts/components/multiTabButtons/store/MultiTabButtonSlice'
 import securitySlice from '../views/accounts/new-account-steps/SecurityV2/store/securitySlice'
 import uiUserSlice from './apps/user/uiUserSlice'
-
 
 export const store = configureStore({
   reducer: {
@@ -35,7 +35,8 @@ export const store = configureStore({
     brokerContacts,
     alertBadgeSecuritySlice,
     securitySlice,
-    multiTabButtonsSlice
+    multiTabButtonsSlice,
+    endorsement
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({

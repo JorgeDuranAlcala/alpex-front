@@ -306,11 +306,7 @@ const FormHeader = ({
                   </span>
                 </div>
                 {accountDetails && accountDetails?.idAccountStatus === 5 ? ( //TODO
-                  <ActionsHeaderBound
-                    setActiveEndorsement={setActiveEndorsement}
-                    accountStatus='BOUND'
-                    sideHeader={true}
-                  />
+                  <ActionsHeaderBound accountStatus='BOUND' sideHeader={true} />
                 ) : (
                   <ActionsHeader
                     accountId={account?.id}
