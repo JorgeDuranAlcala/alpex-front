@@ -16,6 +16,8 @@ interface IActionsHeaderProps {
   accountStatus: string
   sideHeader: boolean
   setActiveEndorsement?: any
+  setDataForEndorsement?: any
+  dataForEndorsement?: any
 }
 
 interface StatusHistory {

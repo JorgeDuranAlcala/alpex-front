@@ -11,6 +11,7 @@ export interface ResponseGetAccount {
   id: number
   idAccountStatus: number
   status: string
+  idAccountType: number
   informations: InformationDetailsDto[] //InformationDto[] //
   securities: SecurityDto[]
   securitiesTotal: SecurityTotalDto[]
