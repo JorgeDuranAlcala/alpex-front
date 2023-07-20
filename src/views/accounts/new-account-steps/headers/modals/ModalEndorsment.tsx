@@ -1,9 +1,7 @@
 import { useGetAllEndorsementTypes } from '@/hooks/catalogs/endorsementType/getAllEndorsementTypes'
-import { useFindEndorsementsByIdAccount } from '@/hooks/endorsement'
-import { useAppSelector } from '@/store'
 import CloseIcon from '@mui/icons-material/Close'
 import { Box, Button, FormControlLabel, Modal, Radio, RadioGroup, TextField, styled } from '@mui/material'
-import { useEffect } from 'react'
+import { useState } from 'react'
 import Icon from 'src/@core/components/icon'
 import {
   ButtonClose,
@@ -38,15 +36,8 @@ export const ActionsHeaderBoundModal = ({
   setActiveEndorsement
 }: any) => {
   const { endorsementTypes } = useGetAllEndorsementTypes()
-  const account = useAppSelector(state => state.accounts?.formsData?.form1)
-  const { endorsements, setIdAccount } = useFindEndorsementsByIdAccount()
 
-  useEffect(() => {
-    setIdAccount(account?.id)
-    /* eslint-disable react-hooks/exhaustive-deps */
-  }, [])
-
-  console.log('Este es el historial de endorsements: ', endorsements)
+  const [endorsementReason, setEndorsementReason] = useState('')
 
   return (
     <div className='header-btns'>
@@ -92,8 +83,6 @@ export const ActionsHeaderBoundModal = ({
               >
                 {endorsementTypes &&
                   endorsementTypes?.map(item => {
-                    // console.log(item)
-
                     return (
                       <FormControlLabel
                         sx={{ height: '54px' }}
@@ -107,7 +96,7 @@ export const ActionsHeaderBoundModal = ({
               </RadioGroup>
             </form>
           </FormContainer>
-          {value === 'Informative' && (
+          {value !== 'Cancellation' && value !== '' && (
             <TextField
               id='standard-multiline-static'
               label='Reason for Endorsement'
@@ -115,6 +104,8 @@ export const ActionsHeaderBoundModal = ({
               variant='standard'
               sx={{ width: '100%', marginBottom: '40px', marginTop: '10px' }}
               helperText='This note will be saved in Endorsement History.'
+              value={endorsementReason}
+              onChange={e => setEndorsementReason(e.target.value)}
             />
           )}
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '16px', marginTop: '40px' }}>
