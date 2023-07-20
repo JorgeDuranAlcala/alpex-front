@@ -26,8 +26,7 @@ export const DynamicComissionPercent = ({
     const tempSecurities = [...securities]
     tempSecurities[index] = {
       ...tempSecurities[index],
-      dynamicCommission: value,
-      dynamicCommissionAmount: 0
+      dynamicCommission: value
     }
 
     validateForm(tempSecurities[index])
