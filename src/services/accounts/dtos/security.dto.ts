@@ -47,6 +47,8 @@ export interface FormInformation {
   netPremium: number
   grossPremium: number
   limit: number
+  frontingFeeP?: number
+  taxesP?: number
 }
 
 // export interface FormInformationPlacementStructure {

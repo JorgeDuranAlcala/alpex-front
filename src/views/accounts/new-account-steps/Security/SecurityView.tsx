@@ -70,7 +70,9 @@ const Security = ({ onStepChange }: SecurityProps) => {
     frontingFee: 0,
     netPremium: 0,
     grossPremium: 0,
-    limit: 0
+    limit: 0,
+    taxesP: 0,
+    frontingFeeP: 0
   })
   const [companiesSelect] = useState<number[]>([])
 
@@ -395,7 +397,9 @@ const Security = ({ onStepChange }: SecurityProps) => {
         frontingFee: Number(account.informations[0].frontingFee),
         netPremium: Number(account.informations[0].netPremium),
         grossPremium: Number(account.informations[0].grossPremium),
-        limit: Number(account.informations[0].limit)
+        limit: Number(account.informations[0].limit),
+        taxesP: Number(account.informations[0].taxesTotal),
+        frontingFeeP: Number(account.informations[0].frontingFeeTotal)
       })
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
