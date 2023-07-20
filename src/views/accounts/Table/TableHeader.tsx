@@ -69,12 +69,10 @@ const TableHeader: React.FC<ITableHeader> = ({
   setSelectAllFlag,
   setSelectedRows
 }) => {
-  console.log({ selectedRows })
-
   // ** Custom Hooks
   const router = useRouter()
   const { deleteAccounts, changeStatusAccounts } = useAccountTable()
-  const { addNewTabButton } = useMultiTabButtons();
+  const { addNewTabButton } = useMultiTabButtons()
 
   const dispatch = useAppDispatch()
   const accountsReducer = useAppSelector(state => state.accounts)
@@ -229,7 +227,7 @@ const TableHeader: React.FC<ITableHeader> = ({
       action: 'Add Account'
     })
 
-    router.push('/accounts/new-account');
+    router.push('/accounts/new-account')
     addNewTabButton({
       text: 'New Account',
       link: `/accounts/new-account`,
