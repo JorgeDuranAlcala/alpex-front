@@ -125,6 +125,7 @@ const Information: React.FC<InformationProps> = ({
   const [open, setOpen] = useState<boolean>(false)
   const [nextClicked, setNextClicked] = useState<boolean>(false)
   const [saveClicked, setSaveClicked] = useState<boolean>(false)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [endorsement, setEndorsement] = useState<boolean>(false)
   const [badgeData, setBadgeData] = useState<IAlert>({
     message: '',
