@@ -543,6 +543,10 @@
     width: 100%;
   }
 
+  .cols-basic-info {
+    width: 462px !important;
+  }
+
   .information .MuiButton-root {
     width: 100%;
   }
@@ -564,6 +568,12 @@
   }
 }
 
+@media (max-width: 500px) {
+  .cols-basic-info {
+    width: 400px !important;
+  }
+}
+
 @media (max-width: 450px) {
   .uploaded-files {
     justify-content: center;
@@ -571,6 +581,15 @@
 
   .upload-btn .file-details {
     width: 98%;
+  }
+  .cols-basic-info {
+    width: 350px !important;
+  }
+}
+
+@media (max-width: 400px) {
+  .cols-basic-info {
+    width: 280px !important;
   }
 }
 
@@ -976,12 +995,12 @@
   flex-grow: 0;
 }
 
-.react-datepicker>.react-datepicker__navigation.react-datepicker__navigation--next--with-time {
+.react-datepicker > .react-datepicker__navigation.react-datepicker__navigation--next--with-time {
   right: 127px;
   display: none;
 }
 
-.react-datepicker>.react-datepicker__navigation.react-datepicker__navigation--previous {
+.react-datepicker > .react-datepicker__navigation.react-datepicker__navigation--previous {
   width: 24px;
   height: 24px;
   border: none;

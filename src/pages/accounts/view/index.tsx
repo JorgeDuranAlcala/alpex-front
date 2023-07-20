@@ -9,7 +9,7 @@ import { useAppDispatch } from '@/store'
 import { useRouter } from 'next/router'
 
 // ** Custom Components Imports
-import Information from 'src/views/accounts/new-account-steps/Information/Information'
+import Information, { InformationSectionsInt } from 'src/views/accounts/new-account-steps/Information/Information'
 
 import PaymentWarranty from 'src/views/accounts/new-account-steps/PaymentWarranty'
 import Security from 'src/views/accounts/new-account-steps/Security/SecurityView'
@@ -30,6 +30,10 @@ import { AccountsTableContextProvider } from '@/context/accounts/Table/reducer'
 import { useGetAccountById } from '@/hooks/accounts/forms'
 import Sublimits from '@/views/accounts/new-account-steps/Sublimit/Sublimits'
 import Icon from 'src/@core/components/icon'
+
+export interface AllFormsInterface {
+  information: InformationSectionsInt
+}
 
 // import UserList from 'src/pages/apps/user/list'
 
@@ -57,23 +61,28 @@ const NewAccount = () => {
   const [editInfo, setEditInfo] = useState(false)
 
   //Todo:  Une a los dos active inputs
-  const [activeIntpus, setActiveInputs] = useState({ basic: false, allInfo: false })
+  const [disableFormsSections, setDisableFormsSections] = useState<AllFormsInterface>({
+    information: { basicInfo: false, placementStructure: false }
+  })
 
   // Esta función se encarga de comunicar el header con el contenido de los forms
   const activeInputs = () => {
     // Para todos los tipos de cuenta excepto |BOUND|, en este caso siempre estarán activados
     if (accountDetails?.status.toLowerCase() !== 'bound') {
-      setActiveInputs({ ...activeIntpus, allInfo: false, basic: false })
+      setDisableFormsSections({ ...disableFormsSections, information: { basicInfo: false, placementStructure: false } })
     }
 
     // Para las cuentas de tipo |BOUND|, esto es para cuando ingresas a tu cuenta |SIN ACTIVAR EL ENDORSEMENT|
     if (accountDetails?.status.toLowerCase() === 'bound' && !activeEndorsement) {
-      setActiveInputs({ ...activeIntpus, allInfo: true, basic: true })
+      setDisableFormsSections({ ...disableFormsSections, information: { basicInfo: true, placementStructure: true } })
     }
 
     // Para las cuentas de tipo |BOUND| -> |ENDORSEMENT ACTIVADO|
     if (accountDetails?.status.toLowerCase() === 'bound' && activeEndorsement) {
-      setActiveInputs({ ...activeIntpus, allInfo: true, basic: false })
+      setDisableFormsSections({
+        ...disableFormsSections,
+        information: { basicInfo: false, placementStructure: true }
+      })
     }
   }
 
@@ -91,7 +100,7 @@ const NewAccount = () => {
       case 1:
         return (
           <Information
-            editInfo={activeIntpus}
+            disableSectionCtrl={disableFormsSections.information}
             activeEndorsement={activeEndorsement}
             onStepChange={handleStepChange}
             onIsNewAccountChange={handleIsNewAccountChange}

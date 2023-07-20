@@ -431,8 +431,6 @@ const Table = ({ status }: IAccountTable) => {
     })
   }
 
-  console.log('esta cuenta es: ', typeofCount)
-
   useEffect(() => {
     setBaseLink()
     setBackButtonProps({
