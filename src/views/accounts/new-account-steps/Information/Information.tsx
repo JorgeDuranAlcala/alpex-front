@@ -42,9 +42,9 @@ import { DiscountDto } from '@/services/accounts/dtos/discount.dto'
 import { useGetAccountById } from '@/hooks/accounts/forms'
 import { DisableForm } from '../_commons/DisableForm'
 
-type ActiveInputs = {
-  basic: boolean
-  allInfo: boolean
+export interface InformationSectionsInt {
+  basicInfo: boolean
+  placementStructure: boolean
 }
 
 type InformationProps = {
@@ -52,7 +52,7 @@ type InformationProps = {
   onIsNewAccountChange: (status: boolean) => void
   typeofAccount?: string
   activeEndorsement?: boolean
-  editInfo?: ActiveInputs
+  disableSectionCtrl?: InformationSectionsInt
 }
 
 export interface BasicInfoInterface {
@@ -106,7 +106,7 @@ const Information: React.FC<InformationProps> = ({
   onStepChange,
   onIsNewAccountChange,
   activeEndorsement,
-  editInfo
+  disableSectionCtrl
 }) => {
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
   const [subjectState] = useState<Subject<void>>(new Subject())
@@ -799,11 +799,10 @@ const Information: React.FC<InformationProps> = ({
           <CustomAlert {...badgeData} />
         </div>
         <form noValidate autoComplete='on' onSubmit={handleNextStep}>
-          {editInfo?.basic ? (
+          {disableSectionCtrl?.basicInfo ? (
             <div className='section'>
               <DisableForm isDisabled sg={5000}>
                 <BasicInfo
-                  activeEndorsement={activeEndorsement}
                   basicInfo={basicInfo}
                   setBasicInfo={setBasicInfo}
                   makeValidations={makeValidations}
@@ -816,7 +815,6 @@ const Information: React.FC<InformationProps> = ({
             <div className='section'>
               <DisableForm sg={5000}>
                 <BasicInfo
-                  activeEndorsement={activeEndorsement}
                   basicInfo={basicInfo}
                   setBasicInfo={setBasicInfo}
                   makeValidations={makeValidations}
@@ -827,7 +825,7 @@ const Information: React.FC<InformationProps> = ({
             </div>
           )}
 
-          {editInfo?.allInfo ? (
+          {disableSectionCtrl?.placementStructure ? (
             <div className='section'>
               <DisableForm isDisabled sg={5000}>
                 <PlacementStructure
