@@ -4,8 +4,8 @@ import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import { DataGrid, GridColumns } from '@mui/x-data-grid'
 
-import ButtonFilter from 'src/pages/components/button-filter'
-import CustomModal from 'src/pages/components/modal'
+import ButtonFilter from '@components/button-filter'
+import CustomModal from '@components/modals/modal-alpex'
 
 import CustomPagination from 'src/views/accounts/Table/CustomPagination'
 import colors from 'src/views/accounts/colors'
