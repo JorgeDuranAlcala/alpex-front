@@ -53,14 +53,13 @@ const statusHistory: StatusHistory[] = [
   }
 ]
 
-const ActionsHeaderBound: React.FC<IActionsHeaderProps> = ({ accountStatus, sideHeader, setActiveEndorsement }) => {
+const ActionsHeaderBound: React.FC<IActionsHeaderProps> = ({ accountStatus, sideHeader }) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [status, setStatus] = useState({})
   const [uneditableAccount, setUneditableAccount] = useState(false)
   const [openEndorsment, setOpenEndorsment] = useState(false)
   const [openHistory, setOpenHistory] = useState(false)
   const [cancellEndorsment, setCancellEndorsment] = useState(false)
-  const [value, setValue] = useState('')
 
   // Notifications
   const [badgeData, setBadgeData] = useState<IAlert>({
@@ -85,10 +84,6 @@ const ActionsHeaderBound: React.FC<IActionsHeaderProps> = ({ accountStatus, side
   //   console.log('English Download')
   //   setShowPrintOptions(false)
   // }
-
-  const handleRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setValue((event.target as HTMLInputElement).value)
-  }
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -189,18 +184,13 @@ const ActionsHeaderBound: React.FC<IActionsHeaderProps> = ({ accountStatus, side
               uneditableAccount={uneditableAccount}
               openHistory={openHistory}
               handleSubmit={handleSubmit}
-              value={value}
-              handleRadioChange={handleRadioChange}
               setCancellEndorsment={setCancellEndorsment}
-              setActiveEndorsement={setActiveEndorsement}
             />
             {/* ESTE ES EL MODAL QUE SE DESPLIEGA CUANDO SE VA POR LA RUTA DE CANCELACIÓN */}
             <ActionsHeaderBoundModalCancel
               setOpenHistory={setCancellEndorsment}
               openHistory={cancellEndorsment}
               cancel={setOpenHistory}
-              uneditableAccount={uneditableAccount}
-              value={value}
               setCancellEndorsment={setCancellEndorsment}
             />
 
