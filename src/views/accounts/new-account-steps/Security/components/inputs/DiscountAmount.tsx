@@ -27,10 +27,11 @@ export const DiscountAmount = ({ discountIndex, value, operationSecurity, view, 
       const percent = operationSecurity.getDiscountPercent(value || 0)
 
       securitiesTemp[index].discounts[discountIndex] = {
-        ...securitiesTemp[index].discounts[discountIndex],
         percentage: percent > 100 ? 0 : percent,
+        amount: value,
         active: true
       }
+
       calculateSecurities(securitiesTemp)
       clearInterval(typingTimer)
     }, doneTypingInterval)

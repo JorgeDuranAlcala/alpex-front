@@ -37,7 +37,7 @@ export const ReinsuranceBrokeragePercent = ({
       <NumericFormat
         autoFocus
         label='Reinsurance brokerage %'
-        value={Number(value).toFixed(2) ?? 0}
+        value={Number(value) ?? 0}
         onValueChange={value => {
           handleChangeBrokerRagePercent(Number(value.floatValue))
         }}
