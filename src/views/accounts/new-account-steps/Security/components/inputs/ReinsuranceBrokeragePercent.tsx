@@ -66,7 +66,7 @@ export const reinsuranceBrokeragePercent_validations = ({ isGross }: { isGross: 
 
         return true
       })
-      .moreThan(0)
+
       .max(100)
   })
 }
