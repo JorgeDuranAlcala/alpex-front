@@ -465,6 +465,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               onChange={handleSelectChange}
               labelId='invoice-country'
               disabled={!editInfo.basic}
+              MenuProps={{ disableScrollLock: false }}
             >
               {countries.length > 0 ? (
                 countries.map(country => {
@@ -522,7 +523,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
           </FormControl>
         </div>
 
-        <div className='form-col'>
+        <div className='form-col cols-basic-info'>
           <div className='title'>Broker</div>
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }} error={errors.brokerError}>
             <InputLabel>Select Broker</InputLabel>
