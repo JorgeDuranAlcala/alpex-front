@@ -163,11 +163,10 @@ export class CalculateSecurity {
     // return (taxes / this.security.premiumPerShareAmount) * 100
     if (this.security.isGross) {
       // * is Gross Premium
-      const result = new Decimal(this.security.grossPremiumPerShare)
-        .sub(this.security.reinsuranceBrokerage)
-        .div(taxes)
-        .mul(100)
-        .toNumber()
+
+      let result = new Decimal(this.security.grossPremiumPerShare).sub(this.security.brokerAgeAmount).toNumber()
+
+      result = new Decimal(taxes).div(result).mul(100).toNumber()
 
       return result
     } else {
@@ -212,7 +211,7 @@ export class CalculateSecurity {
   getDiscountPercent(valueAmount: number): number {
     if (this.security.isGross) {
       // * is Gross Premium
-      const base = new Decimal(this.security.premiumPerShareAmount).div(valueAmount).mul(100).toNumber()
+      const base = new Decimal(valueAmount).div(this.security.premiumPerShareAmount).mul(100).toNumber()
 
       return base
     } else {

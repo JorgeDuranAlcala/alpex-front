@@ -58,7 +58,7 @@ export const TaxesPercent = ({
       <NumericFormat
         autoFocus
         label='Taxes %'
-        value={Number(Number(value).toFixed(2))}
+        value={value}
         onChange={e => {
           handleChangeTaxesPercent(Number(e.target.value.replace('%', '')))
         }}
