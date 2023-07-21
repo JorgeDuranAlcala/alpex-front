@@ -449,7 +449,8 @@ const AddUser = ({ selectUser, title, subTitle, handleView }: IAddUser) => {
 
     if (reducersRole && reducersRole.length > 0) {
       const existsRoleAdminIndex = reducersRole.findIndex(roleUser => roleUser.role === 'admin')
-      if (existsRoleAdminIndex) {
+
+      if (existsRoleAdminIndex !== -1) {
         setIdRole(reducersRole[existsRoleAdminIndex].id.toString())
 
         const dualRolSelect = reducersRole?.find((_, index) => index !== existsRoleAdminIndex)
