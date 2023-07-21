@@ -353,12 +353,13 @@ const Security = ({ onStepChange }: SecurityProps) => {
           })
         })
       getAccountById(Number(accountId))
-        .then(accounts => {
-          calculateSecurities(
-            accounts.securities.length > 0
-              ? accounts.securities.map(security => SecurityMapper.securityToSecurityForm(security, Number(accountId)))
-              : [initialSecurity]
-          )
+        .then(() => {
+          // calculateSecurities(
+          //   accounts.securities.length > 0
+          //     ? accounts.securities.map(security => SecurityMapper.securityToSecurityForm(security, Number(accountId)))
+          //     : [initialSecurity]
+          // )
+          calculateSecurities(securities)
         })
         .catch((error: Error) => {
           console.log(error)
