@@ -12,7 +12,7 @@ interface ReinsuranceBrokerageAmountProps extends ISecurityInputProps {
 }
 type Timer = ReturnType<typeof setInterval>
 let typingTimer: Timer
-const doneTypingInterval = 900 // Tiempo en milisegundos para considerar que se dejó de escribir
+const doneTypingInterval = 1900 // Tiempo en milisegundos para considerar que se dejó de escribir
 export const ReinsuranceBrokerageAmount = ({
   index,
   value,
@@ -30,7 +30,9 @@ export const ReinsuranceBrokerageAmount = ({
       const percent = operationSecurity.getBrokerAgePercent(value || 0)
       tempSecurities[index] = {
         ...tempSecurities[index],
-        reinsuranceBrokerage: percent > 100 ? 0 : percent
+        reinsuranceBrokerage: percent > 100 ? 0 : percent,
+        brokerAgeAmount: value,
+        isChangeBrokerAgeAmount: true
       }
 
       calculateSecurities(tempSecurities)

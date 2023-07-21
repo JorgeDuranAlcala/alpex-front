@@ -12,7 +12,9 @@ interface TaxesAmountProps extends ISecurityInputProps {
   operationSecurity: CalculateSecurity
   isDisabled: boolean
 }
-
+type Timer = ReturnType<typeof setInterval>
+let typingTimer: Timer
+const doneTypingInterval = 1900 // Tiempo en milisegundos para considerar que se dejó de escribir
 export const TaxesAmount = ({
   index,
   value,
@@ -25,15 +27,23 @@ export const TaxesAmount = ({
   const { activeErros, securities, calculateSecurities } = useContext(SecurityContext)
 
   const handleChangeTaxesAmount = (value: number) => {
-    const tempSecurities = [...securities]
-    const percent = operationSecurity.getTaxesPercent(value || 0)
-    tempSecurities[index] = {
-      ...tempSecurities[index],
+    clearInterval(typingTimer)
+    typingTimer = setInterval(() => {
+      // Código a ejecutar cuando se deja de escribir
+      const tempSecurities = [...securities]
+      const percent = operationSecurity.getTaxesPercent(value || 0)
+      tempSecurities[index] = {
+        ...tempSecurities[index],
+        taxes: percent > 100 ? 0 : percent,
+        taxesAmount: value,
+        isChangeTaxesAmount: true
+      }
+      validateForm(tempSecurities[index])
+      calculateSecurities(tempSecurities)
 
-      taxes: percent > 100 ? 0 : percent
-    }
-    validateForm(tempSecurities[index])
-    calculateSecurities(tempSecurities)
+      // Limpiar el intervalo
+      clearInterval(typingTimer)
+    }, doneTypingInterval)
   }
 
   return (

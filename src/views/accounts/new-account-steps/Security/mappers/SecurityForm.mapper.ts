@@ -39,6 +39,10 @@ export interface SecurityModel extends SecurityDto {
   view: number
   isGross: boolean
   totalAmountOfDiscounts: number
+  isChangeBrokerAgeAmount: boolean
+  isChangeFrontingFeeAmount: boolean
+  isChangeTaxesAmount: boolean
+  isChangeDynamicCommissionAmount: boolean
 }
 export class SecurityMapper {
   static securityToSecurityForm(security: SecurityDto, idAccount: number): SecurityModel {
@@ -75,6 +79,7 @@ export class SecurityMapper {
         security.discounts.map(discount => ({
           percentage: Number(discount.percentage) || 0,
           amount: Number(discount.amount) || 0,
+          isChangeAmount: false,
           active: discount.active
         })),
       shareAmount: Number(security.shareAmount) || 0,
@@ -89,7 +94,11 @@ export class SecurityMapper {
       view: security.view,
       isGross: security.isGross,
       totalAmountOfDiscounts: Number(security.totalAmountOfDiscounts) || 0,
-      recievedNetPremium: 0
+      recievedNetPremium: 0,
+      isChangeBrokerAgeAmount: false,
+      isChangeFrontingFeeAmount: false,
+      isChangeTaxesAmount: false,
+      isChangeDynamicCommissionAmount: false
     }
   }
 }

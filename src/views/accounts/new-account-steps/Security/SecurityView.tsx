@@ -102,7 +102,11 @@ const Security = ({ onStepChange }: SecurityProps) => {
     view: 1,
     reinsuranceBrokerage: 0,
     taxes: 0,
-    frontingFee: 0
+    frontingFee: 0,
+    isChangeBrokerAgeAmount: false,
+    isChangeFrontingFeeAmount: false,
+    isChangeTaxesAmount: false,
+    isChangeDynamicCommissionAmount: false
   } as SecurityDto
 
   /**
@@ -116,9 +120,9 @@ const Security = ({ onStepChange }: SecurityProps) => {
     for (const security of securitiesParam) {
       const operationSecurity: CalculateSecurity = new CalculateSecurity().setInformation(information).setSecurity({
         ...security,
-        reinsuranceBrokerage: Number(security.reinsuranceBrokerage) || 0,
-        dynamicCommission: Number(security.dynamicCommission) || 0,
-        share: Number(security.share) || 0
+        reinsuranceBrokerage: security.reinsuranceBrokerage || 0,
+        dynamicCommission: security.dynamicCommission || 0,
+        share: security.share || 0
       })
 
       if (security?.idCReinsuranceCompany?.id) companiesSelect.push(security.idCReinsuranceCompany.id)
@@ -132,7 +136,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
       //este campo necesita grossPremiumPerShare,brokerAgeAmount,taxes,netPremiumAt100,share
 
       if (!security.isGross) {
-        security.taxesAmount = operationSecurity.getTaxesAmount(security.taxes) || 0
+        if (!security.isChangeTaxesAmount) security.taxesAmount = operationSecurity.getTaxesAmount(security.taxes) || 0
         const tempDiscountList = []
         if (security?.discounts) {
           security.totalAmountOfDiscounts = 0
@@ -142,7 +146,8 @@ const Security = ({ onStepChange }: SecurityProps) => {
             tempDiscount.percentage = Number(discount.percentage)
 
             //este campo necesita: premiumPerShareAmount,netPremiumAt100
-            tempDiscount.amount = operationSecurity.getDiscountAmount(Number(tempDiscount.percentage))
+            if (!discount.isChangeAmount)
+              tempDiscount.amount = operationSecurity.getDiscountAmount(Number(tempDiscount.percentage))
             security.totalAmountOfDiscounts += tempDiscount.amount
             tempDiscountList.push(tempDiscount)
           }
@@ -156,15 +161,16 @@ const Security = ({ onStepChange }: SecurityProps) => {
       security.premiumPerShareAmount = operationSecurity.getPremierPerShare() || 0
 
       //campos que necesitan el premiumPerShareAmount
-      security.dynamicCommissionAmount = operationSecurity.getDynamicComissionAmount() || 0
+      if (!security.isChangeDynamicCommissionAmount)
+        security.dynamicCommissionAmount = operationSecurity.getDynamicComissionAmount() || 0
 
       //este campo necesita reinsuranceBrokerage,premiumPerShareAmount
-      security.brokerAgeAmount = operationSecurity.getBrokerAge() || 0
+      if (!security.isChangeBrokerAgeAmount) security.brokerAgeAmount = operationSecurity.getBrokerAge() || 0
 
       //este campo necesita premiumPerShareAmount
       security.frontingFeeAmount = operationSecurity.getFrontingFeeAmount(security.frontingFee) || 0
       if (security.isGross) {
-        security.taxesAmount = operationSecurity.getTaxesAmount(security.taxes) || 0
+        if (!security.isChangeTaxesAmount) security.taxesAmount = operationSecurity.getTaxesAmount(security.taxes) || 0
         const tempDiscountList = []
         if (security?.discounts) {
           security.totalAmountOfDiscounts = 0
@@ -173,7 +179,8 @@ const Security = ({ onStepChange }: SecurityProps) => {
             tempDiscount.percentage = Number(discount.percentage)
 
             //este campo necesita: premiumPerShareAmount,netPremiumAt100
-            tempDiscount.amount = operationSecurity.getDiscountAmount(Number(tempDiscount.percentage))
+            if (!discount.isChangeAmount)
+              tempDiscount.amount = operationSecurity.getDiscountAmount(Number(tempDiscount.percentage))
             security.totalAmountOfDiscounts += tempDiscount.amount
             tempDiscountList.push(tempDiscount)
           }
@@ -331,8 +338,8 @@ const Security = ({ onStepChange }: SecurityProps) => {
 
     if (save.length > 0) {
       await saveSecurities({ idAccount: +accountData.formsData.form1.id, securities: save })
-        .then(async response => {
-          response && response.length > 0 && calculateSecurities(response)
+        .then(() => {
+          // response && response.length > 0 && calculateSecurities(response)
           update.length === 0 &&
             setBadgeData({
               message: 'THE INFORMATION HAS BEEN SAVED',
@@ -353,13 +360,12 @@ const Security = ({ onStepChange }: SecurityProps) => {
           })
         })
       getAccountById(Number(accountId))
-        .then(() => {
-          // calculateSecurities(
-          //   accounts.securities.length > 0
-          //     ? accounts.securities.map(security => SecurityMapper.securityToSecurityForm(security, Number(accountId)))
-          //     : [initialSecurity]
-          // )
-          calculateSecurities(securities)
+        .then(accounts => {
+          calculateSecurities(
+            accounts.securities.length > 0
+              ? accounts.securities.map(security => SecurityMapper.securityToSecurityForm(security, Number(accountId)))
+              : [initialSecurity]
+          )
         })
         .catch((error: Error) => {
           console.log(error)

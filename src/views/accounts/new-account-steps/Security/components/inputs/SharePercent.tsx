@@ -17,7 +17,11 @@ export const SharePercent = ({ index, value, errorMessage, validateForm, view }:
     const tempSecurities = [...securities]
     tempSecurities[index] = {
       ...tempSecurities[index],
-      share: value
+      share: value,
+      isChangeBrokerAgeAmount: false,
+      isChangeFrontingFeeAmount: false,
+      isChangeTaxesAmount: false,
+      isChangeDynamicCommissionAmount: false
     }
     validateForm(tempSecurities[index])
     calculateSecurities(tempSecurities)

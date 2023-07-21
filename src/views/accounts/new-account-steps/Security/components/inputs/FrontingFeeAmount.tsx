@@ -11,7 +11,9 @@ interface FrontingFeeAmountProps extends ISecurityInputProps {
   operationSecurity: CalculateSecurity
   isDisabled: boolean
 }
-
+type Timer = ReturnType<typeof setInterval>
+let typingTimer: Timer
+const doneTypingInterval = 1900 // Tiempo en milisegundos para considerar que se dejó de escribir
 export const FrontingFeeAmount = ({
   index,
   value,
@@ -24,15 +26,22 @@ export const FrontingFeeAmount = ({
   const { activeErros, securities, calculateSecurities } = useContext(SecurityContext)
 
   const handleChangeFrontingFeeAmount = (value: number) => {
-    const tempSecurities = [...securities]
-    tempSecurities[index] = {
-      ...tempSecurities[index],
+    clearInterval(typingTimer)
+    typingTimer = setInterval(() => {
+      const tempSecurities = [...securities]
+      tempSecurities[index] = {
+        ...tempSecurities[index],
 
-      frontingFee: operationSecurity.getFrontingFeePercent(value),
-      frontingFeeAmount: value
-    }
-    validateForm(tempSecurities[index])
-    calculateSecurities(tempSecurities)
+        frontingFee: operationSecurity.getFrontingFeePercent(value),
+        frontingFeeAmount: value,
+        isChangeFrontingFeeAmount: true
+      }
+      validateForm(tempSecurities[index])
+      calculateSecurities(tempSecurities)
+
+      // Limpiar el intervalo
+      clearInterval(typingTimer)
+    }, doneTypingInterval)
   }
 
   return (

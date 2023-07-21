@@ -26,7 +26,8 @@ export const ReinsuranceBrokeragePercent = ({
     const tempSecurities = [...securities]
     tempSecurities[index] = {
       ...tempSecurities[index],
-      reinsuranceBrokerage: value
+      reinsuranceBrokerage: value,
+      isChangeBrokerAgeAmount: false
     }
     validateForm(tempSecurities[index])
     calculateSecurities(tempSecurities)
