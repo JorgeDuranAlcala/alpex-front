@@ -28,7 +28,7 @@ export const SharePercent = ({ index, value, errorMessage, validateForm, view }:
       <NumericFormat
         autoFocus
         label='Share %'
-        value={Number(Number(value).toFixed(2))}
+        value={value}
         onValueChange={value => {
           handleChangeSharePercent(Number(value.floatValue))
         }}

@@ -15,7 +15,7 @@ interface DiscountAmountProps extends Omit<ISecurityInputProps, 'errorMessage'> 
 }
 type Timer = ReturnType<typeof setInterval>
 let typingTimer: Timer
-const doneTypingInterval = 900 // Tiempo en milisegundos para considerar que se dejó de escribir
+const doneTypingInterval = 700 // Tiempo en milisegundos para considerar que se dejó de escribir
 export const DiscountAmount = ({ discountIndex, value, operationSecurity, view, index }: DiscountAmountProps) => {
   const { securities, calculateSecurities } = useContext(SecurityContext)
 
@@ -27,8 +27,8 @@ export const DiscountAmount = ({ discountIndex, value, operationSecurity, view, 
       const percent = operationSecurity.getDiscountPercent(value || 0)
 
       securitiesTemp[index].discounts[discountIndex] = {
+        ...securitiesTemp[index].discounts[discountIndex],
         percentage: percent > 100 ? 0 : percent,
-        amount: value,
         active: true
       }
 
