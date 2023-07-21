@@ -33,7 +33,8 @@ export const DiscountPercent = ({
     securitiesTemp[index].discounts[discountIndex] = {
       percentage: value,
       amount: operationSecurity.getDiscountAmount(value),
-      active: true
+      active: true,
+      isChangeAmount: false
     }
     calculateSecurities(securitiesTemp)
   }

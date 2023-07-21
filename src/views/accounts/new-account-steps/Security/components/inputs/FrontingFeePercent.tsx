@@ -32,7 +32,8 @@ export const FrontingFeePercent = ({
     const tempSecurities = securities ? [...securities] : []
     tempSecurities[index] = {
       ...tempSecurities[index],
-      frontingFee: value
+      frontingFee: value,
+      isChangeFrontingFeeAmount: false
     }
     calculateSecurities(tempSecurities)
     validateForm(tempSecurities[index])

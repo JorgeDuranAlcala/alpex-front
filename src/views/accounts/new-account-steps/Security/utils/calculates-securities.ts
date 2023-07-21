@@ -1,5 +1,5 @@
 import { FormInformation, SecurityDto } from '@/services/accounts/dtos/security.dto'
-import Decimal from 'decimal.js'
+import { Decimal } from 'decimal.js'
 
 export type ResultSecurities = {
   recievedNetPremium: number
@@ -123,10 +123,9 @@ export class CalculateSecurity {
     // return (frontingFee / this.security.premiumPerShareAmount) * 100
     if (this.security.isGross) {
       // * is Gross Premium
-      return new Decimal(valueAmount).div(this.security.premiumPerShareAmount).mul(100).toNumber()
+      return new Decimal(valueAmount).mul(100).div(this.security.premiumPerShareAmount).toNumber()
     } else {
       // * is Net Premium
-
       return new Decimal(valueAmount).div(this.security.premiumPerShareAmount).mul(100).toNumber()
     }
   }
