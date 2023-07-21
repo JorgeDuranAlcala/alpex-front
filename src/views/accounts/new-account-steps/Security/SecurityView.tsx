@@ -256,7 +256,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
   }
 
   const addNewForm = () => {
-    const tempSecurities = [...securities]
+    const tempSecurities = structuredClone(securities)
     tempSecurities.push(initialSecurity)
 
     calculateSecurities(tempSecurities)
