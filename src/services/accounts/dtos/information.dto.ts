@@ -71,13 +71,13 @@ export interface InformationDetailsDto {
   netPremium: number | string
   grossPremium: number
   idAccount: number
-  idCountry: number
-  idBroker: number
+  idCountry: Country
+  idBroker: Broker
   idBrokerContact: number | null
   brokerContactEmail: string
   brokerContactPhone: string
   brokerContactCountry: string
-  idCedant: number
+  idCedant: Cedant
   idCedantContact: number | null
   cedantContactEmail: string
   cedantContactPhone: string
@@ -85,7 +85,7 @@ export interface InformationDetailsDto {
   idLineOfBussines: LineOfBussines
   idTypeOfLimit: number | null
   idEconomicSector: number | null
-  idRiskActivity: number
+  idRiskActivity: RiskActivity
   idLeadUnderwriter: number | null | string
   idUnderwriter: number | null | string
   idTechnicalAssistant: number | null | string
@@ -98,6 +98,32 @@ export interface InformationDetailsDto {
 interface LineOfBussines {
   id: number
   lineOfBussines: string
+}
+
+interface Broker {
+  id: number
+  alias: string
+  name: string
+}
+
+interface Cedant {
+  id: number
+  alias: string
+  name: string
+}
+
+interface Country {
+  id: number
+  currency: string
+  name: string
+}
+
+interface RiskActivity {
+  id: number
+  class: number
+  industryCode: number
+  occupancy: string
+  riskActivity: string
 }
 
 export interface InformationResponse {

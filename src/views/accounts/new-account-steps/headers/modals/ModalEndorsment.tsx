@@ -13,7 +13,7 @@ import {
 
 // ** Redux
 import { useAppDispatch, useAppSelector } from 'src/store'
-import { updateEndorsement } from 'src/store/apps/endorsement'
+import { fetchAccountById, updateEndorsement } from 'src/store/apps/endorsement'
 
 const ButtonIcon = styled(Button)({
   boxShadow: 'none',
@@ -44,7 +44,7 @@ export const ActionsHeaderBoundModal = ({
     idEndorsementType: 0
   })
 
-  const dispatch = useAppDispatch()
+  const dispatchRedux = useAppDispatch()
 
   return (
     <div className='header-btns'>
@@ -145,12 +145,13 @@ export const ActionsHeaderBoundModal = ({
                   setCancellEndorsment(true)
                 }
                 setOpenHistory(false)
-                dispatch(
+                dispatchRedux(
                   updateEndorsement({
                     ...createdEndorsement,
-                    active: true
+                    init: true
                   })
                 )
+                dispatchRedux(fetchAccountById())
               }}
             >
               NEXT

@@ -11,6 +11,7 @@ export interface EndorsementDto {
   createdAt?: Date
   updatedAt?: Date
   active?: boolean
+  init: boolean
   information: DeepPartial<InformationDto>
   installments: InstallmentDto[]
   sublimits: SublimitDto[]
