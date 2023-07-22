@@ -333,6 +333,16 @@
   color: rgba(76, 78, 100, 0.26);
 }
 
+.information .action-buttons .btn-endorsement.MuiButton-root {
+  background-color: #2349c6;
+  margin-right: 10px;
+}
+
+.information .action-buttons .btn-endorsement.MuiButton-root.Mui-disabled {
+  background-color: rgba(76, 78, 100, 0.12);
+  margin-right: 10px;
+}
+
 .information .action-buttons .btn-save.MuiButton-root {
   background-color: #64c623;
   margin-right: 10px;

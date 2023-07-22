@@ -40,6 +40,7 @@ import { formatInformationDoctos, getFileFromUrl } from '@/utils/formatDoctos'
 import { DiscountDto } from '@/services/accounts/dtos/discount.dto'
 
 import { useGetAccountById } from '@/hooks/accounts/forms'
+import { useAddEndorsement } from '@/hooks/endorsement/useAdd'
 import { DisableForm } from '../_commons/DisableForm'
 
 export interface InformationSectionsInt {
@@ -119,8 +120,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   const [open, setOpen] = useState<boolean>(false)
   const [nextClicked, setNextClicked] = useState<boolean>(false)
   const [saveClicked, setSaveClicked] = useState<boolean>(false)
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [endorsement, setEndorsement] = useState<boolean>(false)
+
   const [badgeData, setBadgeData] = useState<IAlert>({
     message: '',
     theme: 'success',
@@ -136,7 +136,8 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   //store
   const idAccount = useAppSelector(state => state.accounts?.formsData?.form1?.id)
   const lastForm1Information = useAppSelector(state => state.accounts?.formsData?.form1)
-  const activeEndorsement = useAppSelector(state => state.endorsement.data.active)
+  const activeEndorsement = useAppSelector(state => state.endorsement.data.init)
+  const endorsementData = useAppSelector(state => state.endorsement.data)
 
   const [fileUrls, setFileUrls] = useState<string[]>([])
 
@@ -149,6 +150,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   const { deleteInformationDocument } = useDeleteInformationDocument()
   const { addDiscounts } = useAddDiscounts()
   const { UpdateDiscounts } = useUpdateDiscounts()
+  const { addEndorsement } = useAddEndorsement()
 
   const { account, setAccountId } = useGetAccountById()
 
@@ -644,6 +646,42 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
     }
   }
 
+  const handleEndorsement = async () => {
+    if (endorsementData.type?.toLowerCase() === 'informative') {
+      const res = await addEndorsement({
+        ...endorsementData,
+        information: {
+          ...endorsementData.information,
+          insured: basicInfo.insured,
+          idCountry: Number(basicInfo.country),
+          idBroker: Number(basicInfo.broker),
+          idBrokerContact: Number(basicInfo.brokerContact),
+          brokerContactEmail: basicInfo.brokerContactEmail,
+          brokerContactPhone: basicInfo.brokerContactPhone,
+          brokerContactCountry: basicInfo.brokerContactCountry,
+          idCedant: Number(basicInfo.cedant),
+          idCedantContact: Number(basicInfo.cedantContact),
+          cedantContactEmail: basicInfo.cedantContactEmail,
+          cedantContactPhone: basicInfo.cedantContactPhone,
+          cedantContactCountry: basicInfo.cedantContactCountry,
+          idLineOfBussines: Number(basicInfo.lineOfBusiness),
+          idRiskActivity: Number(basicInfo.industryCode),
+          receptionDate: formatUTC(basicInfo.receptionDate),
+          effectiveDate: formatUTC(basicInfo.effectiveDate),
+          expirationDate: formatUTC(basicInfo.expirationDate),
+          idLeadUnderwriter: Number(basicInfo.leadUnderwriter) === 0 ? null : Number(basicInfo.leadUnderwriter),
+          idTechnicalAssistant:
+            Number(basicInfo.technicalAssistant) === 0 ? null : Number(basicInfo.technicalAssistant),
+          idUnderwriter: Number(basicInfo.underwriter) === 0 ? null : Number(basicInfo.underwriter),
+          riskClass: Number(basicInfo.riskClass),
+          idAccountType: Number(basicInfo.idAccountType),
+          idEconomicSector: Number(basicInfo.economicSector) || null
+        }
+      })
+      console.log(res)
+    }
+  }
+
   const handleAction = (action: string) => {
     setValidationCount(0)
     setValidatedForms(0)
@@ -659,9 +697,8 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
         break
 
       case 'endorsement':
-        setSaveClicked(true)
         setMakeSaveValidations(true)
-        setEndorsement(true)
+        handleEndorsement()
         break
 
       default:
@@ -771,12 +808,6 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
         setOpen(true)
         setNextClicked(false)
       }
-
-      // if (saveClicked) {
-      //   setDisableSave(true)
-      //   handleSaveInformation()
-      //   setSaveClicked(false)
-      // }
     } else {
       setAllValidated(false)
       if (nextClicked) {
@@ -862,13 +893,13 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
           <div className='section action-buttons'>
             {account && account?.status === 'BOUND' ? (
               <Button
-                className='btn-save'
+                className='btn-endorsement'
                 onClick={() => handleAction('endorsement')}
                 variant='contained'
                 disabled={!activeEndorsement}
               >
                 <div className='btn-icon' style={{ marginRight: '8px' }}>
-                  <Icon icon='mdi:content-save' />
+                  <Icon icon='material-symbols:approval-outline' />
                 </div>
                 ENDORSE
               </Button>
