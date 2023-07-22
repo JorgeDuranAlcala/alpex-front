@@ -31,7 +31,6 @@ export const FrontingFeeAmount = ({
       const tempSecurities = [...securities]
       tempSecurities[index] = {
         ...tempSecurities[index],
-
         frontingFee: operationSecurity.getFrontingFeePercent(value),
         frontingFeeAmount: value,
         isChangeFrontingFeeAmount: true
