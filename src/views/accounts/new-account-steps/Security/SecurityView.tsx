@@ -168,7 +168,8 @@ const Security = ({ onStepChange }: SecurityProps) => {
       if (!security.isChangeBrokerAgeAmount) security.brokerAgeAmount = operationSecurity.getBrokerAge() || 0
 
       //este campo necesita premiumPerShareAmount
-      security.frontingFeeAmount = operationSecurity.getFrontingFeeAmount(security.frontingFee) || 0
+      if (!security.isChangeFrontingFeeAmount)
+        security.frontingFeeAmount = operationSecurity.getFrontingFeeAmount(security.frontingFee) || 0
       if (security.isGross) {
         if (!security.isChangeTaxesAmount) security.taxesAmount = operationSecurity.getTaxesAmount(security.taxes) || 0
         const tempDiscountList = []
@@ -197,7 +198,14 @@ const Security = ({ onStepChange }: SecurityProps) => {
        */
       security.netReinsurancePremium = operationSecurity.getNetReinsurancePremium() || 0
 
-      tempSecurities.push({ ...security })
+      tempSecurities.push({
+        ...security,
+        isChangeBrokerAgeAmount: false,
+        isChangeFrontingFeeAmount: false,
+        isChangeTaxesAmount: false,
+        isChangeDynamicCommissionAmount: false,
+        discounts: security.discounts.map(discount => ({ ...discount, isChangeAmount: false }))
+      })
     }
 
     return tempSecurities
