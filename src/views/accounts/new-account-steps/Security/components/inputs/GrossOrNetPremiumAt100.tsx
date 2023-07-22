@@ -36,7 +36,11 @@ export const GrossOrNetPremiumAt100 = ({
     const tempSecurities = [...securities]
     tempSecurities[index] = {
       ...tempSecurities[index],
-      netPremiumAt100: value
+      netPremiumAt100: value,
+      isChangeBrokerAgeAmount: false,
+      isChangeFrontingFeeAmount: false,
+      isChangeTaxesAmount: false,
+      isChangeDynamicCommissionAmount: false
     }
     validateForm(tempSecurities[index])
     calculateSecurities(tempSecurities)

@@ -27,7 +27,11 @@ export const GrossPremiumPerShareAmount = ({
     const tempSecurities = [...securities]
     tempSecurities[index] = {
       ...tempSecurities[index],
-      grossPremiumPerShare: value
+      grossPremiumPerShare: value,
+      isChangeBrokerAgeAmount: false,
+      isChangeFrontingFeeAmount: false,
+      isChangeTaxesAmount: false,
+      isChangeDynamicCommissionAmount: false
     }
     validateForm(tempSecurities[index])
   }

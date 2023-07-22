@@ -29,7 +29,9 @@ export const DiscountAmount = ({ discountIndex, value, operationSecurity, view, 
       securitiesTemp[index].discounts[discountIndex] = {
         ...securitiesTemp[index].discounts[discountIndex],
         percentage: percent > 100 ? 0 : percent,
-        active: true
+        active: true,
+        amount: value,
+        isChangeAmount: true
       }
 
       calculateSecurities(securitiesTemp)
