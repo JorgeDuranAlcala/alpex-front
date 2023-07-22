@@ -15,7 +15,8 @@ export const DiscountsProvider = ({ children }: { children: ReactNode }) => {
         {
           active: true,
           percentage: 0,
-          amount: 0
+          amount: 0,
+          isChangeAmount: false
         }
       ])
   }
