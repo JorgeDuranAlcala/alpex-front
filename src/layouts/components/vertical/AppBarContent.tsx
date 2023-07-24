@@ -1,6 +1,6 @@
 // ** MUI Imports
 // import ListIcon from '@mui/icons-material/List'
-import ChatBot from '@/pages/widgetChat'
+// import ChatBot from '@/pages/widgetChat'
 import Box from '@mui/material/Box'
 import IconButton from '@mui/material/IconButton'
 
@@ -166,7 +166,7 @@ const AppBarContent = (props: Props) => {
           <UserDropdown settings={settings} />
         </Box>
       </Box>
-      <ChatBot />
+      {/* <ChatBot /> */}
     </>
   )
 }
