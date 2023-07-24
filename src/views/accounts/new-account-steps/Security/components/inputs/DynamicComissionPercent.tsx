@@ -40,8 +40,8 @@ export const DynamicComissionPercent = ({
         autoFocus
         label='Dynamic comission %'
         value={Number(value)}
-        onValueChange={value => {
-          handleChangeDynamicComissionPercent(Number(value.floatValue))
+        onValueChange={(values, sourceInfo) => {
+          if (sourceInfo.event) handleChangeDynamicComissionPercent(Number(values.floatValue))
         }}
         suffix={'%'}
         customInput={TextField}

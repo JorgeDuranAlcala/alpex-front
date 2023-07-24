@@ -34,8 +34,8 @@ export const SharePercent = ({ index, value, errorMessage, validateForm, view }:
         autoFocus
         label='Share %'
         value={value}
-        onValueChange={value => {
-          handleChangeSharePercent(Number(value.floatValue))
+        onValueChange={(values, sourceInfo) => {
+          if (sourceInfo.event) handleChangeSharePercent(Number(values.floatValue))
         }}
         suffix={'%'}
         customInput={TextField}

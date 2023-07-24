@@ -39,8 +39,8 @@ export const ReinsuranceBrokeragePercent = ({
         autoFocus
         label='Reinsurance brokerage %'
         value={Number(value) ?? 0}
-        onValueChange={value => {
-          handleChangeBrokerRagePercent(Number(value.floatValue))
+        onValueChange={(values, sourceInfo) => {
+          if (sourceInfo.event) handleChangeBrokerRagePercent(Number(values.floatValue))
         }}
         defaultValue={0}
         suffix={'%'}
