@@ -3,6 +3,7 @@ import { ReinsuranceCompanyBinderDto } from '@/services/catalogs/dtos/Reinsuranc
 import { ReinsuranceCompanyDto } from '@/services/catalogs/dtos/ReinsuranceCompanyDto'
 import { RetroCedantDto } from '@/services/catalogs/dtos/RetroCedantDto'
 import { RetroCedantContactDto } from '@/services/catalogs/dtos/retroCedantContact.dto'
+import Decimal from 'decimal.js'
 import { IDiscountInputs } from '../components/discounts/DiscountsContext'
 
 export interface SecurityModel extends SecurityDto {
@@ -48,15 +49,15 @@ export class SecurityMapper {
   static securityToSecurityForm(security: SecurityDto, idAccount: number): SecurityModel {
     return {
       id: security.id,
-      premiumPerShare: Number(security.premiumPerShare) || 0,
-      netPremiumAt100: Number(security.netPremiumAt100) || 0,
-      share: Number(security.share) || 0,
+      premiumPerShare: new Decimal(+security.premiumPerShare).toNumber() || 0,
+      netPremiumAt100: new Decimal(+security.netPremiumAt100).toNumber() || 0,
+      share: new Decimal(+security.share).toNumber() || 0,
       frontingFeeActive: security.frontingFeeActive,
-      dynamicCommission: Number(security.dynamicCommission) || 0,
-      frontingFee: Number(security.frontingFee) || 0,
-      netReinsurancePremium: Number(security.netReinsurancePremium),
-      taxes: Number(security.taxes) || 0,
-      reinsuranceBrokerage: Number(security.reinsuranceBrokerage) || 0,
+      dynamicCommission: new Decimal(+security.dynamicCommission).toNumber() || 0,
+      frontingFee: new Decimal(+security.frontingFee).toNumber() || 0,
+      netReinsurancePremium: new Decimal(+security.netReinsurancePremium).toNumber(),
+      taxes: new Decimal(+security.taxes).toNumber() || 0,
+      reinsuranceBrokerage: new Decimal(+security.reinsuranceBrokerage).toNumber() || 0,
       active: true,
       idCReinsuranceCompany: security.idCReinsuranceCompany,
       idCRetroCedant:
@@ -77,28 +78,28 @@ export class SecurityMapper {
       discounts:
         security.discounts &&
         security.discounts.map(discount => ({
-          percentage: Number(discount.percentage) || 0,
-          amount: Number(discount.amount) || 0,
-          isChangeAmount: false,
+          percentage: new Decimal(+discount.percentage).toNumber() || 0,
+          amount: new Decimal(+discount.amount).toNumber() || 0,
+          isChangeAmount: discount?.amount ? true : false,
           active: discount.active
         })),
-      shareAmount: Number(security.shareAmount) || 0,
-      premiumPerShareAmount: Number(security.premiumPerShareAmount) || 0,
+      shareAmount: new Decimal(+security.shareAmount).toNumber() || 0,
+      premiumPerShareAmount: new Decimal(+security.premiumPerShareAmount).toNumber() || 0,
       taxesActive: security.taxesActive,
-      dynamicCommissionAmount: Number(security.dynamicCommissionAmount) || 0,
-      frontingFeeAmount: Number(security.frontingFeeAmount) || 0,
-      grossPremiumPerShare: Number(security.grossPremiumPerShare) || 0,
-      taxesAmount: Number(security.taxesAmount) || 0,
-      brokerAgeAmount: Number(security.brokerAgeAmount) || 0,
+      dynamicCommissionAmount: new Decimal(+security.dynamicCommissionAmount).toNumber() || 0,
+      frontingFeeAmount: new Decimal(+security.frontingFeeAmount).toNumber() || 0,
+      grossPremiumPerShare: new Decimal(+security.grossPremiumPerShare).toNumber() || 0,
+      taxesAmount: new Decimal(+security.taxesAmount).toNumber() || 0,
+      brokerAgeAmount: new Decimal(+security.brokerAgeAmount).toNumber() || 0,
       consecutive: security.consecutive,
       view: security.view,
       isGross: security.isGross,
-      totalAmountOfDiscounts: Number(security.totalAmountOfDiscounts) || 0,
+      totalAmountOfDiscounts: new Decimal(+security.totalAmountOfDiscounts).toNumber() || 0,
       recievedNetPremium: 0,
-      isChangeBrokerAgeAmount: false,
-      isChangeFrontingFeeAmount: false,
-      isChangeTaxesAmount: false,
-      isChangeDynamicCommissionAmount: false
+      isChangeBrokerAgeAmount: security.brokerAgeAmount ? true : false,
+      isChangeFrontingFeeAmount: security.frontingFeeAmount ? true : false,
+      isChangeTaxesAmount: security.taxesAmount ? true : false,
+      isChangeDynamicCommissionAmount: security.dynamicCommissionAmount ? true : false
     }
   }
 }
