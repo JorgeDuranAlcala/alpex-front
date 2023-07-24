@@ -1,7 +1,8 @@
 import { useGetAllEndorsementTypes } from '@/hooks/catalogs/endorsementType/getAllEndorsementTypes'
 import CloseIcon from '@mui/icons-material/Close'
 import { Box, Button, FormControlLabel, Modal, Radio, RadioGroup, TextField, styled } from '@mui/material'
-import { useState } from 'react'
+import { useState, useContext } from 'react'
+import { AbilityContext } from '@/layouts/components/acl/Can'
 import Icon from 'src/@core/components/icon'
 import {
   ButtonClose,
@@ -31,12 +32,16 @@ const ButtonIcon = styled(Button)({
 
 export const ActionsHeaderBoundModal = ({
   setOpenHistory,
-  uneditableAccount,
+
+  // uneditableAccount,
   openHistory,
   handleSubmit,
   setCancellEndorsment
 }: any) => {
   const { endorsementTypes } = useGetAllEndorsementTypes()
+
+  const ability = useContext(AbilityContext)
+  const [generateEndt] = useState(ability?.cannot('update', 'accountGenerateEndt'))
 
   const [createdEndorsement, setCreatedEndorsement] = useState({
     type: '',
@@ -53,7 +58,7 @@ export const ActionsHeaderBoundModal = ({
           setOpenHistory(true)
         }}
         title='GENERATE ENDT.'
-        disabled={uneditableAccount}
+        disabled={generateEndt}
       >
         <Icon icon='material-symbols:approval-outline' />
       </ButtonIcon>

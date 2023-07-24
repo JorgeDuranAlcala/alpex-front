@@ -21,7 +21,8 @@ export const SharePercent = ({ index, value, errorMessage, validateForm, view }:
       isChangeBrokerAgeAmount: false,
       isChangeFrontingFeeAmount: false,
       isChangeTaxesAmount: false,
-      isChangeDynamicCommissionAmount: false
+      isChangeDynamicCommissionAmount: false,
+      discounts: tempSecurities[index].discounts.map(discount => ({ ...discount, isChangeAmount: false }))
     }
     validateForm(tempSecurities[index])
     calculateSecurities(tempSecurities)
@@ -33,8 +34,8 @@ export const SharePercent = ({ index, value, errorMessage, validateForm, view }:
         autoFocus
         label='Share %'
         value={value}
-        onValueChange={value => {
-          handleChangeSharePercent(Number(value.floatValue))
+        onValueChange={(values, sourceInfo) => {
+          if (sourceInfo.event) handleChangeSharePercent(Number(values.floatValue))
         }}
         suffix={'%'}
         customInput={TextField}

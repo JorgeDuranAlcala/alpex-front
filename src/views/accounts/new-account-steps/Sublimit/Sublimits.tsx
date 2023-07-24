@@ -7,13 +7,16 @@ import { NextContainer } from '@/styles/Forms/Sublimits'
 import CustomAlert, { IAlert } from '@/views/custom/alerts'
 import { Button, CardContent, Grid } from '@mui/material'
 import Typography from '@mui/material/Typography'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useContext } from 'react'
+import { AbilityContext } from '@/layouts/components/acl/Can'
 import InputLimit from './components/InputLimit/InputLimit'
 import SelectCoverage from './components/SelectCoverage/SelectCoverage'
 import { GenericCard } from './components/SublimitsCards'
 
+import { useUpdateAccountsStatus } from '@/hooks/accounts/status'
 import UserThemeOptions from '@/layouts/UserThemeOptions'
 import SaveIcon from '@mui/icons-material/Save'
+import CheckIcon from '@mui/icons-material/Check'
 import { DisableForm } from '../_commons/DisableForm'
 
 const initialValues: SublimitDto = {
@@ -76,7 +79,7 @@ interface SublimitsProps {
   getAccountByIdHeader: (idAccount: number) => void
 }
 
-const Sublimits = ({}: SublimitsProps) => {
+const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
   const [badgeData, setBadgeData] = useState<IAlert>({
     message: '',
     theme: 'success',
@@ -84,12 +87,13 @@ const Sublimits = ({}: SublimitsProps) => {
     status: 'error'
   })
 
-  const [, setFormInformationData] = useState<any>({})
+  const [formInformationData, setFormInformationData] = useState<any>({})
   const [subLimits, setSubLimits] = useState<SublimitDto[]>([])
   const [coverageSelected, setCoverageSelected] = useState<CoverageDto[]>([])
+  const ability = useContext(AbilityContext)
 
   //state para lo botones
-  const [, setDisableBoundBtn] = useState<boolean>(true)
+  const [disableBoundBtn, setDisableBoundBtn] = useState(ability?.cannot('update', 'accountSublimits'))
   const [disableSaveBtn, setDisableSaveBtn] = useState<boolean>(false)
   const [showErrors, setShowErrors] = useState<boolean>(false)
   const [formErrors, setFormErrors] = useState<boolean[]>([])
@@ -104,7 +108,7 @@ const Sublimits = ({}: SublimitsProps) => {
   const inter = userThemeConfig.typography?.fontFamilyInter
   const size = userThemeConfig.typography?.size.px14
 
-  // const texButtonColor = userThemeConfig.palette?.buttonText.primary
+  const texButtonColor = userThemeConfig.palette?.buttonText.primary
 
   //hooks para sublimits
   const { saveSublimits } = useAddSublimits()
@@ -112,7 +116,7 @@ const Sublimits = ({}: SublimitsProps) => {
   const { deleteSublimits } = useDeleteSublimits()
 
   // ** Custom hooks
-  // const { updateAccountsStatus } = useUpdateAccountsStatus()
+  const { updateAccountsStatus } = useUpdateAccountsStatus()
 
   const handleSelectedCoverage = (coverageSelect: CoverageDto) => {
     setCoverageSelected([...coverageSelected, coverageSelect])
@@ -231,6 +235,37 @@ const Sublimits = ({}: SublimitsProps) => {
     }, 4000)
   }
 
+  const handleUpdateStatus = async () => {
+    const existError = formErrors.find(error => error)
+    if (!existError) {
+      handleSubmit()
+
+      await updateAccountsStatus({
+        updateStatus: [
+          {
+            idAccount: formInformationData.id,
+            status: 5
+          }
+        ]
+      })
+      getAccountByIdHeader(formInformationData.id)
+      setBadgeData({
+        message: 'Account has been updated',
+        theme: 'success',
+        open: true,
+        status: 'error'
+      })
+      setTimeout(() => {
+        setBadgeData({
+          message: 'updated successfully',
+          theme: 'success',
+          open: false,
+          status: 'error'
+        })
+      }, 50)
+    }
+  }
+
   const getAccountData = async () => {
     const idAccountCache = Number(localStorage.getItem('idAccount'))
     setAccountId(idAccountCache)
@@ -309,6 +344,18 @@ const Sublimits = ({}: SublimitsProps) => {
           onClick={handleClickSave}
         >
           <SaveIcon /> &nbsp; Save changes
+        </Button>
+        <Button
+          sx={{
+            fontFamily: inter,
+            letterSpacing: '0.4px',
+            fontSize: userThemeConfig.typography?.size.px15,
+            color: texButtonColor
+          }}
+          disabled={disableBoundBtn}
+          onClick={handleUpdateStatus}
+        >
+          <CheckIcon /> &nbsp; Add bound
         </Button>
       </NextContainer>
     </CardContent>

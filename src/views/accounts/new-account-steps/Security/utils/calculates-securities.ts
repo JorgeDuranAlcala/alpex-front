@@ -254,20 +254,22 @@ export class CalculateSecurity {
       // sharePercent += security.isGross ? 0 : security.share
       premiumPerShareAmountNet += security.isGross ? 0 : security.premiumPerShareAmount
       premiumPerShareAmountGros += security.isGross ? security.premiumPerShareAmount : 0
-      taxesGros += security.isGross ? security.taxesAmount : 0
-      brokerageReinsuranceGross += security.isGross ? security.brokerAgeAmount : 0
-      distributedNetPremium +=
-        security.netReinsurancePremium + security.dynamicCommissionAmount + security.frontingFeeAmount ?? 0
-      discountAmountGros += security.isGross ? security.totalAmountOfDiscounts : 0
+      taxesGros += security.isGross ? new Decimal(security.taxesAmount).toNumber() : 0
+      brokerageReinsuranceGross += security.isGross ? new Decimal(security.brokerAgeAmount).toNumber() : 0
+      distributedNetPremium += new Decimal(security.netReinsurancePremium)
+        .add(security.dynamicCommissionAmount)
+        .add(security.frontingFeeAmount ?? 0)
+        .toNumber()
+      discountAmountGros += security.isGross ? new Decimal(security.totalAmountOfDiscounts).toNumber() : 0
     }
 
     if (resultSecuritiesOriginal.distribuitedNetPremium > 0) {
       distributedNetPremium = resultSecuritiesOriginal.distribuitedNetPremium
     }
 
-    const recievedNetPremium =
-      premiumPerShareAmountNet +
-      (premiumPerShareAmountGros - taxesGros - brokerageReinsuranceGross - discountAmountGros)
+    const recievedNetPremium = new Decimal(premiumPerShareAmountNet)
+      .add(new Decimal(premiumPerShareAmountGros).sub(taxesGros).sub(brokerageReinsuranceGross).sub(discountAmountGros))
+      .toNumber()
     const diference = Math.abs(recievedNetPremium - distributedNetPremium)
 
     return {
