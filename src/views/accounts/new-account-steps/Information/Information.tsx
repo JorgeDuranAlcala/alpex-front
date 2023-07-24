@@ -40,6 +40,8 @@ import { formatInformationDoctos, getFileFromUrl } from '@/utils/formatDoctos'
 import { DiscountDto } from '@/services/accounts/dtos/discount.dto'
 
 import { useGetAccountById } from '@/hooks/accounts/forms'
+
+import useFormStep_updateInformation from '@/hooks/accounts/forms/stepForms/update/useFormStep_updateInformation'
 import { DisableForm } from '../_commons/DisableForm'
 
 type ActiveInputs = {
@@ -792,6 +794,16 @@ const Information: React.FC<InformationProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [validationCount, validatedForms])
 
+
+  // * INIT -  Actualizar los datos del formulario en Redux + + + + + + + + + + + + + +
+
+  const {
+    handleCanUpdateBasicInfoData,
+    handleCanUpdatePlacementStructureData,
+  } = useFormStep_updateInformation({ idAccount, basicInfo, placementStructure, discounts })
+
+  // * END -  Actualizar los datos del formulario en Redux + + + + + + + + + + + + + +
+
   return (
     <>
       <div className='information' style={{ fontFamily: inter }}>
@@ -800,7 +812,7 @@ const Information: React.FC<InformationProps> = ({
         </div>
         <form noValidate autoComplete='on' onSubmit={handleNextStep}>
           {editInfo?.basic ? (
-            <div className='section'>
+            <div className='section' onClick={handleCanUpdateBasicInfoData}>
               <DisableForm isDisabled sg={5000}>
                 <BasicInfo
                   activeEndorsement={activeEndorsement}
@@ -813,7 +825,7 @@ const Information: React.FC<InformationProps> = ({
               </DisableForm>
             </div>
           ) : (
-            <div className='section'>
+            <div className='section' onClick={handleCanUpdateBasicInfoData}>
               <DisableForm sg={5000}>
                 <BasicInfo
                   activeEndorsement={activeEndorsement}
@@ -828,7 +840,7 @@ const Information: React.FC<InformationProps> = ({
           )}
 
           {editInfo?.allInfo ? (
-            <div className='section'>
+            <div className='section' onClick={handleCanUpdatePlacementStructureData}>
               <DisableForm isDisabled sg={5000}>
                 <PlacementStructure
                   placementStructure={placementStructure}
@@ -841,7 +853,7 @@ const Information: React.FC<InformationProps> = ({
               </DisableForm>
             </div>
           ) : (
-            <div className='section'>
+            <div className='section' onClick={handleCanUpdatePlacementStructureData}>
               <DisableForm sg={5000}>
                 <PlacementStructure
                   placementStructure={placementStructure}

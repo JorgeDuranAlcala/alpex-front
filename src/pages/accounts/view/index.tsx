@@ -35,6 +35,8 @@ import Icon from 'src/@core/components/icon'
 
 // import InvoiceAdd from 'src/pages/apps/invoice/add'
 
+import { CheckStepForm } from '@/views/accounts/ChangeStepForm'
+
 const NewAccount = () => {
   // ** Hooks
   const router = useRouter()
@@ -42,6 +44,7 @@ const NewAccount = () => {
 
   // ** Hooks header
   const { account: accountDetails, setAccountId, getAccountById } = useGetAccountById()
+
 
   // const { account, setAccountId } = useGetAccountById()
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -85,6 +88,8 @@ const NewAccount = () => {
   const handleIsNewAccountChange = (status: boolean) => {
     setIsNewAccount(status)
   }
+
+
 
   const StepForm = ({ step }: { step: number }) => {
     switch (step) {
@@ -139,6 +144,9 @@ const NewAccount = () => {
 
   // console.log('se cambió el account', dataForEndorsement)
 
+  // ** Hook - Recuperar Step guardado en Redux
+  // useFormStep_recuperateStep();
+
   return (
     <AccountsTableContextProvider>
       <Grid className='new-account' item xs={12}>
@@ -161,7 +169,14 @@ const NewAccount = () => {
         <div style={{ display: 'flex', flexDirection: 'row', gap: '16px' }}>
           <Card>
             <NewAccountStepper changeStep={activeStep} onStepChange={handleStepChange} />
-            <StepForm step={activeStep} />
+            <CheckStepForm
+              step={activeStep}
+              changeStep={handleStepChange}
+            >
+              {({ step }) => (
+                <StepForm step={step} />
+              )}
+            </CheckStepForm>
           </Card>
           <div style={{ display: 'none' }}>
             <MenuForm />
@@ -178,4 +193,5 @@ const NewAccount = () => {
   )
 }
 
-export default NewAccount
+export default NewAccount;
+

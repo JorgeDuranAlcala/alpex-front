@@ -6,6 +6,7 @@ import { useSelector } from 'react-redux'
 import alertBadgeSecuritySlice from '@/views/accounts/new-account-steps/SecurityV2/store/alertBadgeSecuritySlice'
 import { TypedUseSelectorHook, useDispatch } from 'react-redux'
 import accounts from 'src/store/apps/accounts'
+import stepFormSlice from 'src/store/apps/accounts/stepFormsSlice'
 import calendar from 'src/store/apps/calendar'
 import brokerContacts from 'src/store/apps/catalogs/brokerContacts'
 import brokers from 'src/store/apps/catalogs/brokers'
@@ -35,7 +36,8 @@ export const store = configureStore({
     brokerContacts,
     alertBadgeSecuritySlice,
     securitySlice,
-    multiTabButtonsSlice
+    multiTabButtonsSlice,
+    stepFormSlice
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
