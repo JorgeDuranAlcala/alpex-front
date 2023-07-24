@@ -87,8 +87,8 @@ export const GrossOrNetPremiumAt100 = ({
         autoFocus
         label={isGross ? `Gross premium at %100 ` : 'Net premium at %100'}
         value={value}
-        onValueChange={value => {
-          handleChangeBaseAmount(Number(value.floatValue))
+        onValueChange={(values, sourceInfo) => {
+          if (sourceInfo.event) handleChangeBaseAmount(Number(values.floatValue))
         }}
         onClick={handleClick}
         prefix={'$'}

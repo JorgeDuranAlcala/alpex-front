@@ -165,6 +165,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
         security.dynamicCommissionAmount = operationSecurity.getDynamicComissionAmount() || 0
 
       //este campo necesita reinsuranceBrokerage,premiumPerShareAmount
+      console.log({ isChangeBrokerAgeAmount: security.isChangeBrokerAgeAmount })
       if (!security.isChangeBrokerAgeAmount) security.brokerAgeAmount = operationSecurity.getBrokerAge() || 0
 
       //este campo necesita premiumPerShareAmount
@@ -199,12 +200,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
       security.netReinsurancePremium = operationSecurity.getNetReinsurancePremium() || 0
 
       tempSecurities.push({
-        ...security,
-        isChangeBrokerAgeAmount: false,
-        isChangeFrontingFeeAmount: false,
-        isChangeTaxesAmount: false,
-        isChangeDynamicCommissionAmount: false,
-        discounts: security.discounts.map(discount => ({ ...discount, isChangeAmount: false }))
+        ...security
       })
     }
 

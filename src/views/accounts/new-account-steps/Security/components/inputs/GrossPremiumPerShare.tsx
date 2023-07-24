@@ -43,8 +43,8 @@ export const GrossPremiumPerShareAmount = ({
         autoFocus
         label='Gross Premium per share'
         value={value}
-        onValueChange={value => {
-          handleChangeGrossPremiumPerShareAmount(Number(value.floatValue))
+        onValueChange={(values, sourceInfo) => {
+          if (sourceInfo.event) handleChangeGrossPremiumPerShareAmount(Number(values.floatValue))
         }}
         prefix={'$'}
         customInput={TextField}
