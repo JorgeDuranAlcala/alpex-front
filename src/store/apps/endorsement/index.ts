@@ -62,7 +62,9 @@ export const appEndorsement = createSlice({
           idCountry: information?.idCountry?.id,
           idBroker: information?.idBroker?.id,
           idCedant: information?.idCedant?.id,
-          idRiskActivity: information?.idRiskActivity?.id
+          idRiskActivity: information?.idRiskActivity?.id,
+          idTypeOfLimit: information?.idTypeOfLimit?.id,
+          idCurrency: information?.idCurrency?.id
         }
 
         state.data.securities = securities.map(security => {
@@ -81,6 +83,7 @@ export const appEndorsement = createSlice({
             distributedNetPremium: Number(security.distributedNetPremium),
             difference: Number(security.difference),
             grossPremiumPerShare: Number(security.grossPremiumPerShare),
+            consecutive: Number(security.consecutive),
             discounts:
               securityDiscounts.length > 0
                 ? securityDiscounts.map(securityDiscount => {

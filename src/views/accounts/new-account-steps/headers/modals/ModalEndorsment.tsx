@@ -1,8 +1,8 @@
 import { useGetAllEndorsementTypes } from '@/hooks/catalogs/endorsementType/getAllEndorsementTypes'
+import { AbilityContext } from '@/layouts/components/acl/Can'
 import CloseIcon from '@mui/icons-material/Close'
 import { Box, Button, FormControlLabel, Modal, Radio, RadioGroup, TextField, styled } from '@mui/material'
-import { useState, useContext } from 'react'
-import { AbilityContext } from '@/layouts/components/acl/Can'
+import { useContext, useState } from 'react'
 import Icon from 'src/@core/components/icon'
 import {
   ButtonClose,
@@ -117,7 +117,7 @@ export const ActionsHeaderBoundModal = ({
               </RadioGroup>
             </form>
           </FormContainer>
-          {createdEndorsement.type !== 'Cancellation' && createdEndorsement.type !== '' && (
+          {createdEndorsement.type !== '' && (
             <TextField
               id='standard-multiline-static'
               label='Reason for Endorsement'
@@ -158,6 +158,7 @@ export const ActionsHeaderBoundModal = ({
                 )
                 dispatchRedux(fetchAccountById())
               }}
+              disabled={!createdEndorsement.reason}
             >
               NEXT
             </Button>

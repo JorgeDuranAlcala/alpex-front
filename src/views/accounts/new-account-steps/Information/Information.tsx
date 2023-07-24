@@ -648,7 +648,18 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
 
   const handleEndorsement = async () => {
     if (endorsementData.type?.toLowerCase() === 'informative') {
-      const res = await addEndorsement({
+      setBadgeData({
+        message: `ENDORSING`,
+        status: 'secondary',
+        open: true,
+        icon: <CircularProgress size={20} color='secondary' />,
+        backgroundColor: '#828597',
+        theme: 'info',
+        disableAutoHide: true
+      })
+      await delayMs(1000)
+
+      const newEndorsementData = {
         ...endorsementData,
         information: {
           ...endorsementData.information,
@@ -677,8 +688,46 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
           idAccountType: Number(basicInfo.idAccountType),
           idEconomicSector: Number(basicInfo.economicSector) || null
         }
+      }
+
+      const res = await addEndorsement(newEndorsementData)
+
+      if (!res) {
+        setBadgeData({
+          message: `ENDORSEMENT ERROR`,
+          theme: 'error',
+          open: true,
+          status: 'error',
+          icon: (
+            <Icon
+              style={{
+                color: '#FF4D49',
+                marginTop: '-1px'
+              }}
+              icon='jam:alert'
+            />
+          ),
+          disableAutoHide: true
+        })
+      } else {
+        setBadgeData({
+          message: `ENDT. GENERATED`,
+          status: 'success',
+          open: true,
+          icon: <Icon icon='ic:baseline-check-circle' />,
+          theme: 'success',
+          disableAutoHide: true
+        })
+      }
+
+      await delayMs(1500)
+
+      setBadgeData({
+        message: '',
+        status: undefined,
+        icon: undefined,
+        open: false
       })
-      console.log(res)
     }
   }
 
