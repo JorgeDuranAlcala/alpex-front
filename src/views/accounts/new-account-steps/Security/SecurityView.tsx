@@ -220,6 +220,11 @@ const Security = ({ onStepChange }: SecurityProps) => {
         securitiesView2.push({
           ...seconSecurity,
           netPremiumAt100: seconSecurity.isGross ? information.grossPremium : information.netPremium,
+          isChangeBrokerAgeAmount: false,
+          isChangeFrontingFeeAmount: false,
+          isChangeTaxesAmount: false,
+          isChangeDynamicCommissionAmount: false,
+          discounts: seconSecurity.discounts.map(discount => ({ ...discount, isChangeAmount: false })),
           view: currentView === 3 ? 1 : 2
         })
       }
