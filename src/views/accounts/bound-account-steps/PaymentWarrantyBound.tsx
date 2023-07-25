@@ -91,7 +91,6 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
 
   const inter = userThemeConfig.typography?.fontFamilyInter
-  const size = userThemeConfig.typography?.size.px14
   const texButtonColor = userThemeConfig.palette?.buttonText.primary
   const [installmentsList, setInstallmentList] = useState<InstallmentDto[]>([])
   const [initialInstallmentList, setInitialInstallmentList] = useState<InstallmentDto[]>([])
@@ -102,6 +101,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
   const [daysFirst, setDaysFirst] = useState<number>()
   const [open, setOpen] = useState<boolean>(false)
   const [isChange, setIsChange] = useState<boolean>(false)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [disableSaveBtn, setDisableSaveBtn] = useState<boolean>(false)
   const [error, setError] = useState<InstallmentErrors>({
     errorFieldRequired: false,
@@ -265,6 +265,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const saveInstallments = async () => {
     setDisableSaveBtn(true)
     if (isChange) {

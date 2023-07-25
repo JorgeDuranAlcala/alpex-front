@@ -15,7 +15,6 @@ import { useContext, useEffect, useState } from 'react'
 import Icon from 'src/@core/components/icon'
 
 import { useUpdateAccountsStatus } from '@/hooks/accounts/status'
-import UserThemeOptions from '@/layouts/UserThemeOptions'
 import { DisableForm } from '@/views/accounts/new-account-steps/_commons/DisableForm'
 
 const initialValues: SublimitDto = {
@@ -93,22 +92,16 @@ const Sublimits = ({ getAccountByIdHeader, onStepChange }: SublimitsProps) => {
   const ability = useContext(AbilityContext)
 
   //state para lo botones
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [disableBoundBtn, setDisableBoundBtn] = useState(ability?.cannot('update', 'accountSublimits'))
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [disableSaveBtn, setDisableSaveBtn] = useState<boolean>(false)
   const [showErrors, setShowErrors] = useState<boolean>(false)
   const [formErrors, setFormErrors] = useState<boolean[]>([])
   const { account, setAccountId, getAccountById } = useGetAccountById()
 
-  //** REDUX
+  // Redux
   const accountData = useAppSelector(state => state.accounts)
-
-  //theme
-  const userThemeConfig: any = Object.assign({}, UserThemeOptions())
-
-  const inter = userThemeConfig.typography?.fontFamilyInter
-  const size = userThemeConfig.typography?.size.px14
-
-  const texButtonColor = userThemeConfig.palette?.buttonText.primary
 
   //hooks para sublimits
   const { saveSublimits } = useAddSublimits()
@@ -176,6 +169,7 @@ const Sublimits = ({ getAccountByIdHeader, onStepChange }: SublimitsProps) => {
     onStepChange(5)
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleClickSave = () => {
     const existError = formErrors.find(error => error)
     if (!existError && subLimits.length > 0) {
@@ -240,6 +234,7 @@ const Sublimits = ({ getAccountByIdHeader, onStepChange }: SublimitsProps) => {
     }, 4000)
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleUpdateStatus = async () => {
     const existError = formErrors.find(error => error)
     if (!existError) {
