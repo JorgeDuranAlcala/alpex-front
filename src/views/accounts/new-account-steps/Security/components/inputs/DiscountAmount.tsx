@@ -33,7 +33,7 @@ export const DiscountAmount = ({ discountIndex, value, operationSecurity, view, 
         amount: value,
         isChangeAmount: true
       }
-
+      securitiesTemp[index].isChangeDynamicCommissionAmount = false
       calculateSecurities(securitiesTemp)
       clearInterval(typingTimer)
     }, doneTypingInterval)
