@@ -22,7 +22,12 @@ export const PremiumPerShareAmount = ({
     const tempSecurities = [...securities]
     tempSecurities[index] = {
       ...tempSecurities[index],
-      premiumPerShareAmount: value
+      premiumPerShareAmount: value,
+      isChangeBrokerAgeAmount: false,
+      isChangeFrontingFeeAmount: false,
+      isChangeTaxesAmount: false,
+      isChangeDynamicCommissionAmount: false,
+      discounts: tempSecurities[index].discounts.map(discount => ({ ...discount, isChangeAmount: false }))
     }
     validateForm(tempSecurities[index])
 

@@ -52,6 +52,11 @@ const navigation = (): VerticalNavItemsType => {
       icon: 'ic:baseline-payments',
       children: [
         {
+          title: 'Installments',
+          icon: 'ic:assignment-turned-in',
+          path: '/installments'
+        },
+        {
           title: 'List',
           path: '/menuForm'
         },
@@ -110,7 +115,7 @@ const navigation = (): VerticalNavItemsType => {
       title: 'Users',
       icon: 'mdi:user-group',
       path: '/users',
-      subject: 'user',
+      subject: 'user'
     },
     {
       title: 'Catalogues',

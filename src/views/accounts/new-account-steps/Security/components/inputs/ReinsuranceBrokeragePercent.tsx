@@ -26,7 +26,8 @@ export const ReinsuranceBrokeragePercent = ({
     const tempSecurities = [...securities]
     tempSecurities[index] = {
       ...tempSecurities[index],
-      reinsuranceBrokerage: value
+      reinsuranceBrokerage: value,
+      isChangeBrokerAgeAmount: false
     }
     validateForm(tempSecurities[index])
     calculateSecurities(tempSecurities)
@@ -37,9 +38,9 @@ export const ReinsuranceBrokeragePercent = ({
       <NumericFormat
         autoFocus
         label='Reinsurance brokerage %'
-        value={Number(value).toFixed(2) ?? 0}
-        onValueChange={value => {
-          handleChangeBrokerRagePercent(Number(value.floatValue))
+        value={Number(value) ?? 0}
+        onValueChange={(values, sourceInfo) => {
+          if (sourceInfo.event) handleChangeBrokerRagePercent(Number(values.floatValue))
         }}
         defaultValue={0}
         suffix={'%'}
@@ -66,7 +67,7 @@ export const reinsuranceBrokeragePercent_validations = ({ isGross }: { isGross: 
 
         return true
       })
-      .moreThan(0)
+
       .max(100)
   })
 }

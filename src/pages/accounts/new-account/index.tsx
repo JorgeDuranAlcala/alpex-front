@@ -68,13 +68,7 @@ const NewAccount = () => {
   const StepForm = ({ step }: { step: number }) => {
     switch (step) {
       case 1:
-        return (
-          <Information
-            editInfo={{ basic: true, allInfo: true }}
-            onStepChange={handleStepChange}
-            onIsNewAccountChange={handleIsNewAccountChange}
-          />
-        )
+        return <Information onStepChange={handleStepChange} onIsNewAccountChange={handleIsNewAccountChange} />
       case 2:
         return <Security onStepChange={handleStepChange} />
       case 3:
@@ -160,8 +154,8 @@ const NewAccount = () => {
     <AccountsTableContextProvider>
       <Grid className='new-account' item xs={12}>
         {/* "ActionsHeader" component receives the initial status of the
-      account and in order to use it as a "side header" (forms 2 to 4),
-      it is necessary to send the boolean variable "sideHeader = true". */}
+          account and in order to use it as a "side header" (forms 2 to 4),
+          it is necessary to send the boolean variable "sideHeader = true". */}
         {/* {activeStep == 1 && isNewAccount ? <ActionsHeader accountStatus='PENDING' sideHeader={false} /> : <FormHeader />} */}
         {activeStep == 1 && isNewAccount ? (
           <FormHeader isNewAccount accountDetails={accountDetails} setAccountId={setAccountId} />

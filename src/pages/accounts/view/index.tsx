@@ -5,11 +5,10 @@ import Card from '@mui/material/Card'
 import Grid from '@mui/material/Grid'
 
 // ** Next Import
-import { useAppDispatch } from '@/store'
 import { useRouter } from 'next/router'
 
 // ** Custom Components Imports
-import Information from 'src/views/accounts/new-account-steps/Information/Information'
+import Information, { InformationSectionsInt } from 'src/views/accounts/new-account-steps/Information/Information'
 
 import PaymentWarranty from 'src/views/accounts/new-account-steps/PaymentWarranty'
 import Security from 'src/views/accounts/new-account-steps/Security/SecurityView'
@@ -31,6 +30,14 @@ import { useGetAccountById } from '@/hooks/accounts/forms'
 import Sublimits from '@/views/accounts/new-account-steps/Sublimit/Sublimits'
 import Icon from 'src/@core/components/icon'
 
+// ** Redux
+import { useAppDispatch, useAppSelector } from 'src/store'
+import { resetEndorsement } from 'src/store/apps/endorsement'
+
+export interface AllFormsInterface {
+  information: InformationSectionsInt
+}
+
 // import UserList from 'src/pages/apps/user/list'
 
 // import InvoiceAdd from 'src/pages/apps/invoice/add'
@@ -38,48 +45,55 @@ import Icon from 'src/@core/components/icon'
 const NewAccount = () => {
   // ** Hooks
   const router = useRouter()
-  const dispatch = useAppDispatch()
 
-  //hooks header
+  // ** Redux
+  const dispatch = useAppDispatch()
+  const endorsementData = useAppSelector(state => state.endorsement.data)
+
+  // ** Custom Hooks
   const { account: accountDetails, setAccountId, getAccountById } = useGetAccountById()
 
-  // const { account, setAccountId } = useGetAccountById()
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [disableComments, setDisableComments] = useState(false)
+  const [disableComments] = useState(false)
   const [isNewAccount, setIsNewAccount] = useState<boolean>(true)
   const [activeStep, setActiveStep] = useState(1)
 
-  //!: Este estado se encarga de activar el endorsement del componente
-  const [activeEndorsement, setActiveEndorsement] = useState(false)
-
-  //!:  Este estado se encarga de activar el editar info en los forms
+  // Estado se encarga de activar el editar info en los forms
   const [editInfo, setEditInfo] = useState(false)
+  const [disableFormsSections, setDisableFormsSections] = useState<AllFormsInterface>({
+    information: { basicInfo: false, placementStructure: false }
+  })
 
-  //Todo:  Une a los dos active inputs
-  const [activeIntpus, setActiveInputs] = useState({ basic: false, allInfo: false })
-
-  //* Este estado se encarga de definir el tipo de cuenta
-  const [typeofAccount, setTypeofAccount] = useState('')
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  // Esta función se encarga de comunicar el header con el contenido de los forms
   const activeInputs = () => {
-    if (typeofAccount !== 'BOUND') {
-      setActiveInputs({ ...activeIntpus, allInfo: true, basic: true })
+    // Para todos los tipos de cuenta excepto |BOUND|, en este caso siempre estarán activados
+    if (accountDetails?.status.toLowerCase() !== 'bound') {
+      setDisableFormsSections({ ...disableFormsSections, information: { basicInfo: false, placementStructure: false } })
     }
-    if (activeEndorsement) {
-      // console.log('!!!Esta cuenta es de tipo: ')
-      setActiveInputs({ ...activeIntpus, basic: true, allInfo: false })
-    }
-    if (typeofAccount === 'BOUND' && !activeEndorsement) {
-      // console.log('!!!Esta cuenta es de tipo: ', typeofAccount)
 
-      setActiveInputs({ ...activeIntpus, basic: false, allInfo: false })
+    // Para las cuentas de tipo |BOUND|, esto es para cuando ingresas a tu cuenta |SIN ACTIVAR EL ENDORSEMENT|
+    if (accountDetails?.status.toLowerCase() === 'bound' && !endorsementData.init) {
+      setDisableFormsSections({ ...disableFormsSections, information: { basicInfo: true, placementStructure: true } })
+    }
+
+    // Para las cuentas de tipo |BOUND| -> |ENDORSEMENT ACTIVADO|
+    if (accountDetails?.status.toLowerCase() === 'bound' && endorsementData.init && endorsementData.type) {
+      const endorsementType = endorsementData.type.toLowerCase()
+      if (endorsementType === 'informative') {
+        setDisableFormsSections({
+          ...disableFormsSections,
+          information: { basicInfo: false, placementStructure: true }
+        })
+      } else if (endorsementType === 'increase' || endorsementType === 'decrease') {
+        setDisableFormsSections({
+          ...disableFormsSections,
+          information: { basicInfo: true, placementStructure: false }
+        })
+      }
     }
   }
 
   const handleStepChange = (step: number) => {
     setActiveStep(step)
-    console.log(step)
   }
 
   const handleIsNewAccountChange = (status: boolean) => {
@@ -91,9 +105,7 @@ const NewAccount = () => {
       case 1:
         return (
           <Information
-            editInfo={activeIntpus}
-            activeEndorsement={activeEndorsement}
-            typeofAccount={typeofAccount}
+            disableSectionCtrl={disableFormsSections.information}
             onStepChange={handleStepChange}
             onIsNewAccountChange={handleIsNewAccountChange}
           />
@@ -117,11 +129,11 @@ const NewAccount = () => {
     const handleExit = () => {
       localStorage.removeItem('idAccount')
       dispatch(updateFormsData({ form1: { id: null } }))
+      dispatch(resetEndorsement())
     }
 
     const handleRouteChange = (url: string) => {
       if (url !== '/accounts/new-account') {
-        // console.log('change')
         handleExit()
       }
     }
@@ -134,11 +146,10 @@ const NewAccount = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, router.events])
 
-  // console.log('el endorsement se activó: ', activeEndorsement, editInfo)
   useEffect(() => {
     activeInputs()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [editInfo, activeEndorsement, typeofAccount])
+  }, [editInfo, accountDetails?.status, endorsementData.type])
 
   return (
     <AccountsTableContextProvider>
@@ -146,20 +157,12 @@ const NewAccount = () => {
         {activeStep == 1 && isNewAccount ? (
           <FormHeader
             isNewAccount
-            setTypeofAccount={setTypeofAccount}
-            setActiveEndorsement={setActiveEndorsement}
             setEditInfo={setEditInfo}
             accountDetails={accountDetails}
             setAccountId={setAccountId}
           />
         ) : (
-          <FormHeader
-            setTypeofAccount={setTypeofAccount}
-            setActiveEndorsement={setActiveEndorsement}
-            setEditInfo={setEditInfo}
-            accountDetails={accountDetails}
-            setAccountId={setAccountId}
-          />
+          <FormHeader setEditInfo={setEditInfo} accountDetails={accountDetails} setAccountId={setAccountId} />
         )}
         <div style={{ display: 'flex', flexDirection: 'row', gap: '16px' }}>
           <Card>

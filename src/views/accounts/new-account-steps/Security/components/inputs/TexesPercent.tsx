@@ -31,7 +31,8 @@ export const TaxesPercent = ({
     const tempSecurities = [...securities]
     tempSecurities[index] = {
       ...tempSecurities[index],
-      taxes: value
+      taxes: value,
+      isChangeTaxesAmount: false
     }
     validateForm(tempSecurities[index])
     calculateSecurities(tempSecurities)
@@ -58,7 +59,7 @@ export const TaxesPercent = ({
       <NumericFormat
         autoFocus
         label='Taxes %'
-        value={Number(Number(value).toFixed(2))}
+        value={value}
         onChange={e => {
           handleChangeTaxesPercent(Number(e.target.value.replace('%', '')))
         }}

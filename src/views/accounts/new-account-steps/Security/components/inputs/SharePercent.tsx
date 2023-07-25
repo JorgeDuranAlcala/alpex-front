@@ -17,7 +17,12 @@ export const SharePercent = ({ index, value, errorMessage, validateForm, view }:
     const tempSecurities = [...securities]
     tempSecurities[index] = {
       ...tempSecurities[index],
-      share: value
+      share: value,
+      isChangeBrokerAgeAmount: false,
+      isChangeFrontingFeeAmount: false,
+      isChangeTaxesAmount: false,
+      isChangeDynamicCommissionAmount: false,
+      discounts: tempSecurities[index].discounts.map(discount => ({ ...discount, isChangeAmount: false }))
     }
     validateForm(tempSecurities[index])
     calculateSecurities(tempSecurities)
@@ -28,9 +33,9 @@ export const SharePercent = ({ index, value, errorMessage, validateForm, view }:
       <NumericFormat
         autoFocus
         label='Share %'
-        value={Number(Number(value).toFixed(2))}
-        onValueChange={value => {
-          handleChangeSharePercent(Number(value.floatValue))
+        value={value}
+        onValueChange={(values, sourceInfo) => {
+          if (sourceInfo.event) handleChangeSharePercent(Number(values.floatValue))
         }}
         suffix={'%'}
         customInput={TextField}

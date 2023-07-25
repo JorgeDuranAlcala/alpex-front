@@ -15,14 +15,18 @@ export interface SecurityDto {
   taxesActive: boolean
   dynamicCommission: number
   dynamicCommissionAmount: number
+  isChangeDynamicCommissionAmount: boolean
   frontingFee: number
   frontingFeeAmount: number
+  isChangeFrontingFeeAmount: boolean
   grossPremiumPerShare: number
   netReinsurancePremium: number
   taxes: number
   taxesAmount: number
+  isChangeTaxesAmount: boolean
   reinsuranceBrokerage: number
   brokerAgeAmount: number
+  isChangeBrokerAgeAmount: boolean
   receivedNetPremium: number
   distributedNetPremium: number
   difference: number
@@ -47,6 +51,8 @@ export interface FormInformation {
   netPremium: number
   grossPremium: number
   limit: number
+  frontingFeeP?: number
+  taxesP?: number
 }
 
 // export interface FormInformationPlacementStructure {

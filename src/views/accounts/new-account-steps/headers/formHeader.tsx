@@ -218,12 +218,6 @@ const FormHeader = ({
   }, [account])
 
   useEffect(() => {
-    if (accountDetails !== undefined && setTypeofAccount) {
-      setTypeofAccount(accountDetails?.status)
-    }
-  }, [status])
-
-  useEffect(() => {
     accountDetails && setStatus(accountDetails.status)
   }, [accountDetails])
 
@@ -276,9 +270,9 @@ const FormHeader = ({
                 <div className='form-secondContainer-first' style={{ marginRight: '20px' }}>
                   <span className='form-secondContainer-header-title'>Status</span>
                   {status !== '' && accountDetails?.status && (
-                    <StatusSelect margin={0} initialStatus={accountDetails?.status} setSelectedStatus={setStatus} />
+                    <StatusSelect accountDetails={accountDetails} margin={0} initialStatus={accountDetails?.status} setSelectedStatus={setStatus} />
                   )}
-                  {isNewAccount && <StatusSelect margin={0} initialStatus='PENDING' setSelectedStatus={setStatus} />}
+                  {isNewAccount && <StatusSelect accountDetails={accountDetails} margin={0} initialStatus='PENDING' setSelectedStatus={setStatus} />}
                 </div>
 
                 <div className='form-secondContainer-third'>
@@ -312,11 +306,7 @@ const FormHeader = ({
                   </span>
                 </div>
                 {accountDetails && accountDetails?.idAccountStatus === 5 ? ( //TODO
-                  <ActionsHeaderBound
-                    setActiveEndorsement={setActiveEndorsement}
-                    accountStatus='BOUND'
-                    sideHeader={true}
-                  />
+                  <ActionsHeaderBound accountStatus='BOUND' sideHeader={true} />
                 ) : (
                   <ActionsHeader
                     accountId={account?.id}

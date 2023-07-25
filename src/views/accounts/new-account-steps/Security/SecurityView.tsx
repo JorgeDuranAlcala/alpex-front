@@ -38,18 +38,7 @@ import { SecondViewProvider } from './components/secondView/SecondViewProvider'
 import { CalculateSecurity } from './utils/calculates-securities'
 
 export const SecurityContext = createContext<SecurityContextDto>({} as SecurityContextDto)
-const initialSecurity = {
-  frontingFeeActive: false,
-  taxesActive: false,
-  isGross: false,
-  discounts: [],
-  share: 0,
-  dynamicCommission: 0,
-  view: 1,
-  reinsuranceBrokerage: 0,
-  taxes: 0,
-  frontingFee: 0
-} as SecurityDto
+
 const Security = ({ onStepChange }: SecurityProps) => {
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
   const [securities, setSecurities] = useState<SecurityDto[]>([])
@@ -81,11 +70,13 @@ const Security = ({ onStepChange }: SecurityProps) => {
     frontingFee: 0,
     netPremium: 0,
     grossPremium: 0,
-    limit: 0
+    limit: 0,
+    taxesP: 0,
+    frontingFeeP: 0
   })
   const [companiesSelect] = useState<number[]>([])
 
-  const { account, setAccountId, getAccountById } = useGetAccountById()
+  const { account, setAccountId, getAccountById, accountId } = useGetAccountById()
   const { saveSecurityTotal } = useAddSecurityTotal()
   const { updateSecurityTotal } = useUpdateSecurityTotalById()
 
@@ -101,6 +92,22 @@ const Security = ({ onStepChange }: SecurityProps) => {
     open: false,
     status: 'error'
   })
+  const initialSecurity = {
+    frontingFeeActive: false,
+    taxesActive: false,
+    isGross: false,
+    discounts: [],
+    share: 0,
+    dynamicCommission: 0,
+    view: 1,
+    reinsuranceBrokerage: 0,
+    taxes: 0,
+    frontingFee: 0,
+    isChangeBrokerAgeAmount: false,
+    isChangeFrontingFeeAmount: false,
+    isChangeTaxesAmount: false,
+    isChangeDynamicCommissionAmount: false
+  } as SecurityDto
 
   /**
    *
@@ -113,9 +120,9 @@ const Security = ({ onStepChange }: SecurityProps) => {
     for (const security of securitiesParam) {
       const operationSecurity: CalculateSecurity = new CalculateSecurity().setInformation(information).setSecurity({
         ...security,
-        reinsuranceBrokerage: Number(security.reinsuranceBrokerage) || 0,
-        dynamicCommission: Number(security.dynamicCommission) || 0,
-        share: Number(security.share) || 0
+        reinsuranceBrokerage: security.reinsuranceBrokerage || 0,
+        dynamicCommission: security.dynamicCommission || 0,
+        share: security.share || 0
       })
 
       if (security?.idCReinsuranceCompany?.id) companiesSelect.push(security.idCReinsuranceCompany.id)
@@ -129,17 +136,18 @@ const Security = ({ onStepChange }: SecurityProps) => {
       //este campo necesita grossPremiumPerShare,brokerAgeAmount,taxes,netPremiumAt100,share
 
       if (!security.isGross) {
-        security.taxesAmount = operationSecurity.getTaxesAmount(security.taxes) || 0
+        if (!security.isChangeTaxesAmount) security.taxesAmount = operationSecurity.getTaxesAmount(security.taxes) || 0
         const tempDiscountList = []
         if (security?.discounts) {
           security.totalAmountOfDiscounts = 0
           for (const discount of security?.discounts) {
             const tempDiscount = { ...discount }
 
-            tempDiscount.percentage = Number(discount.percentage)
-
             //este campo necesita: premiumPerShareAmount,netPremiumAt100
-            tempDiscount.amount = operationSecurity.getDiscountAmount(Number(tempDiscount.percentage))
+            if (!discount.isChangeAmount) {
+              tempDiscount.percentage = Number(discount.percentage)
+              tempDiscount.amount = operationSecurity.getDiscountAmount(Number(tempDiscount.percentage))
+            }
             security.totalAmountOfDiscounts += tempDiscount.amount
             tempDiscountList.push(tempDiscount)
           }
@@ -153,24 +161,30 @@ const Security = ({ onStepChange }: SecurityProps) => {
       security.premiumPerShareAmount = operationSecurity.getPremierPerShare() || 0
 
       //campos que necesitan el premiumPerShareAmount
-      security.dynamicCommissionAmount = operationSecurity.getDynamicComissionAmount() || 0
+      if (!security.isChangeDynamicCommissionAmount)
+        security.dynamicCommissionAmount = operationSecurity.getDynamicComissionAmount() || 0
 
       //este campo necesita reinsuranceBrokerage,premiumPerShareAmount
-      security.brokerAgeAmount = operationSecurity.getBrokerAge() || 0
+
+      if (!security.isChangeBrokerAgeAmount) security.brokerAgeAmount = operationSecurity.getBrokerAge() || 0
 
       //este campo necesita premiumPerShareAmount
-      security.frontingFeeAmount = operationSecurity.getFrontingFeeAmount(security.frontingFee) || 0
+      if (!security.isChangeFrontingFeeAmount)
+        security.frontingFeeAmount = operationSecurity.getFrontingFeeAmount(security.frontingFee) || 0
       if (security.isGross) {
-        security.taxesAmount = operationSecurity.getTaxesAmount(security.taxes) || 0
+        if (!security.isChangeTaxesAmount) security.taxesAmount = operationSecurity.getTaxesAmount(security.taxes) || 0
         const tempDiscountList = []
         if (security?.discounts) {
           security.totalAmountOfDiscounts = 0
           for (const discount of security?.discounts) {
             const tempDiscount = { ...discount }
-            tempDiscount.percentage = Number(discount.percentage)
 
             //este campo necesita: premiumPerShareAmount,netPremiumAt100
-            tempDiscount.amount = operationSecurity.getDiscountAmount(Number(tempDiscount.percentage))
+            if (!discount.isChangeAmount) {
+              tempDiscount.percentage = Number(discount.percentage)
+              tempDiscount.amount = operationSecurity.getDiscountAmount(Number(tempDiscount.percentage))
+            }
+
             security.totalAmountOfDiscounts += tempDiscount.amount
             tempDiscountList.push(tempDiscount)
           }
@@ -187,7 +201,9 @@ const Security = ({ onStepChange }: SecurityProps) => {
        */
       security.netReinsurancePremium = operationSecurity.getNetReinsurancePremium() || 0
 
-      tempSecurities.push({ ...security })
+      tempSecurities.push({
+        ...security
+      })
     }
 
     return tempSecurities
@@ -206,6 +222,11 @@ const Security = ({ onStepChange }: SecurityProps) => {
         securitiesView2.push({
           ...seconSecurity,
           netPremiumAt100: seconSecurity.isGross ? information.grossPremium : information.netPremium,
+          isChangeBrokerAgeAmount: false,
+          isChangeFrontingFeeAmount: false,
+          isChangeTaxesAmount: false,
+          isChangeDynamicCommissionAmount: false,
+          discounts: seconSecurity.discounts.map(discount => ({ ...discount, isChangeAmount: false })),
           view: currentView === 3 ? 1 : 2
         })
       }
@@ -253,7 +274,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
   }
 
   const addNewForm = () => {
-    const tempSecurities = [...securities]
+    const tempSecurities = structuredClone(securities)
     tempSecurities.push(initialSecurity)
 
     calculateSecurities(tempSecurities)
@@ -284,7 +305,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
       // * Con esta validación no se guardarán los datos de la vista 2
       if (security.view === 2) return
 
-      const mapper = SecurityMapper.securityToSecurityForm(security, accountData)
+      const mapper = SecurityMapper.securityToSecurityForm(security, Number(accountId))
 
       save.push({ ...mapper, view: 1 })
     }
@@ -328,8 +349,8 @@ const Security = ({ onStepChange }: SecurityProps) => {
 
     if (save.length > 0) {
       await saveSecurities({ idAccount: +accountData.formsData.form1.id, securities: save })
-        .then(async response => {
-          response && response.length > 0 && calculateSecurities(response)
+        .then(() => {
+          // response && response.length > 0 && calculateSecurities(response)
           update.length === 0 &&
             setBadgeData({
               message: 'THE INFORMATION HAS BEEN SAVED',
@@ -349,11 +370,11 @@ const Security = ({ onStepChange }: SecurityProps) => {
             icon: <Icon style={{ color: '#FF4D49' }} icon='icon-park-outline:error' />
           })
         })
-      getAccountById(accountData.formsData.form1.id)
+      getAccountById(Number(accountId))
         .then(accounts => {
           calculateSecurities(
             accounts.securities.length > 0
-              ? accounts.securities.map(security => SecurityMapper.securityToSecurityForm(security, accountData))
+              ? accounts.securities.map(security => SecurityMapper.securityToSecurityForm(security, Number(accountId)))
               : [initialSecurity]
           )
         })
@@ -381,26 +402,39 @@ const Security = ({ onStepChange }: SecurityProps) => {
   }
 
   useEffect(() => {
-    if (accountData.formsData.form1.id) {
-      setAccountId(accountData.formsData.form1.id)
-      const data = accountData.formsData.form1.placementStructure as FormInformation
-      setInformation(data)
-    }
+    const idAccountCache = Number(localStorage.getItem('idAccount'))
+
+    setAccountId(idAccountCache)
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [accountData.formsData.form1.id])
+  }, [])
 
   useEffect(() => {
+    if (account?.informations && account?.informations?.length > 0)
+      setInformation({
+        frontingFee: Number(account.informations[0].frontingFee),
+        netPremium: Number(account.informations[0].netPremium),
+        grossPremium: Number(account.informations[0].grossPremium),
+        limit: Number(account.informations[0].limit),
+        taxesP: Number(account.informations[0].taxesTotal),
+        frontingFeeP: Number(account.informations[0].frontingFeeTotal)
+      })
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [account])
+  useEffect(() => {
     if (information) {
-      if (account?.securities)
+      if (account?.securities) {
         calculateSecurities(
           account.securities.length > 0
-            ? account.securities.map(security => SecurityMapper.securityToSecurityForm(security, accountData))
+            ? account.securities.map(security => SecurityMapper.securityToSecurityForm(security, Number(account.id)))
             : [initialSecurity]
         )
+      }
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [account, information])
+  }, [information])
 
   useEffect(() => {
     if (isNextStep) onStepChange(3)
