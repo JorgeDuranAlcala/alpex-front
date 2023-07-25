@@ -31,8 +31,8 @@ export const SwitchFrontingFee = ({
       frontingFee: !isChecked ? tempSecurities[index].frontingFee : 0,
       frontingFeeAmount: !isChecked ? tempSecurities[index].frontingFeeAmount : 0
     }
-    setFrontingFeeEnabled(() => !isChecked)
     validateForm(tempSecurities[index])
+    setFrontingFeeEnabled(() => !isChecked)
     calculateSecurities(tempSecurities)
   }
 
