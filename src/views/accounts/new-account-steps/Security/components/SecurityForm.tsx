@@ -167,7 +167,6 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
             [error.path]: error.message
           }
         }
-
         errorsTemp[index] = true
         setErrorsSecurity(data)
       })
