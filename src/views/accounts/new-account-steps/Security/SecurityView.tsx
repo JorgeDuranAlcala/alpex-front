@@ -117,7 +117,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
   const getSecuritiesCalculate = (securitiesParam: SecurityDto[]): SecurityDto[] => {
     const tempSecurities: SecurityDto[] = []
 
-    for (const security of securitiesParam) {
+    for (const security of structuredClone(securitiesParam)) {
       const operationSecurity: CalculateSecurity = new CalculateSecurity().setInformation(information).setSecurity({
         ...security,
         reinsuranceBrokerage: security.reinsuranceBrokerage || 0,
@@ -136,7 +136,9 @@ const Security = ({ onStepChange }: SecurityProps) => {
       //este campo necesita grossPremiumPerShare,brokerAgeAmount,taxes,netPremiumAt100,share
 
       if (!security.isGross) {
-        if (!security.isChangeTaxesAmount) security.taxesAmount = operationSecurity.getTaxesAmount(security.taxes) || 0
+        if (!security.isChangeTaxesAmount) {
+          security.taxesAmount = operationSecurity.getTaxesAmount(security.taxes) || 0
+        }
         const tempDiscountList = []
         if (security?.discounts) {
           security.totalAmountOfDiscounts = 0
@@ -214,11 +216,12 @@ const Security = ({ onStepChange }: SecurityProps) => {
       companiesSelect.splice(0, companiesSelect.length)
 
       //hace el calculo de securities de la primer vista es decir cuando el current view este en 0 o en 1
-      const tempSecurities = getSecuritiesCalculate(securitiesParam)
+
+      const tempSecurities = getSecuritiesCalculate(structuredClone(securitiesParam))
 
       // este estara siempre haciendo los calculos independiente si la vista ya halla cambiado es decir sea 0,1,2,3
       const securitiesView2: SecurityDto[] = []
-      for (const seconSecurity of securitiesParam) {
+      for (const seconSecurity of structuredClone(securitiesParam)) {
         securitiesView2.push({
           ...seconSecurity,
           netPremiumAt100: seconSecurity.isGross ? information.grossPremium : information.netPremium,
@@ -312,7 +315,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
 
     if (!allFormData.id) {
       //TODO REVISAR SI PUEDE TRABAJAR CON PROMISE ALl
-      console.log({ allFormData, save: true })
+
       await saveSecurityTotal([
         {
           receivedNetPremium: +allFormData.recievedNetPremium,
