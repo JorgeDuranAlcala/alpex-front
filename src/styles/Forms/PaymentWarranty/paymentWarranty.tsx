@@ -41,6 +41,7 @@ const NextContainer = styled('div')({
   justifyContent: 'flex-end',
   anim: 'center',
   padding: '8px 0px',
+  margin: '10px 14px',
   width: '100%',
   height: '58px'
 })

@@ -75,7 +75,6 @@ const Table = ({ status }: IAccountTable) => {
     status: undefined,
     icon: undefined
   })
-  const [typeofCount, settypeofCount] = useState('')
 
   // **Reducers
   const dispatch = useAppDispatch()
@@ -140,7 +139,6 @@ const Table = ({ status }: IAccountTable) => {
     }
 
     setAccounts(formatedRows || [])
-    settypeofCount(formatedRows[0]?.status)
     //eslint-disable-next-line
   }, [accountsReducer])
 
@@ -423,10 +421,10 @@ const Table = ({ status }: IAccountTable) => {
     )
 
     localStorage.setItem('idAccount', String(id))
-    router.push(`/accounts/view/?&${typeofCount}/?&id=${id}`)
+    router.push(`/accounts/created-account/?&idAccount=${id}`)
     addNewTabButton({
       text: id.toString(),
-      link: `/accounts/view/?&${typeofCount}/?&id=${id}`,
+      link: `/accounts/created-account/?&idAccount=${id}`,
       isActive: true
     })
   }
