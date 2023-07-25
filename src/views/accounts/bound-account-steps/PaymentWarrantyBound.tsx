@@ -1,6 +1,5 @@
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
-import SaveIcon from '@mui/icons-material/Save'
 import {
   Button,
   CircularProgress,
@@ -39,11 +38,11 @@ import * as yup from 'yup'
 import { useGetAccountById } from '@/hooks/accounts/forms'
 import { ButtonClose, HeaderTitleModal } from '@/styles/modal/modal.styled'
 import { delayMs } from '@/utils/formatDates'
+import { DisableForm } from '@/views/accounts/new-account-steps/_commons/DisableForm'
 import CustomAlert, { IAlert } from '@/views/custom/alerts'
 import { Icon } from '@iconify/react'
 import { NumericFormat } from 'react-number-format'
 import { InstallmentDto } from 'src/services/accounts/dtos/installments.dto'
-import { DisableForm } from './_commons/DisableForm'
 
 interface InstallmentErrors {
   errorFieldRequired: boolean
@@ -92,7 +91,6 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
 
   const inter = userThemeConfig.typography?.fontFamilyInter
-  const size = userThemeConfig.typography?.size.px14
   const texButtonColor = userThemeConfig.palette?.buttonText.primary
   const [installmentsList, setInstallmentList] = useState<InstallmentDto[]>([])
   const [initialInstallmentList, setInitialInstallmentList] = useState<InstallmentDto[]>([])
@@ -103,6 +101,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
   const [daysFirst, setDaysFirst] = useState<number>()
   const [open, setOpen] = useState<boolean>(false)
   const [isChange, setIsChange] = useState<boolean>(false)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [disableSaveBtn, setDisableSaveBtn] = useState<boolean>(false)
   const [error, setError] = useState<InstallmentErrors>({
     errorFieldRequired: false,
@@ -266,6 +265,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const saveInstallments = async () => {
     setDisableSaveBtn(true)
     if (isChange) {
@@ -306,7 +306,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
   const nextStep = () => {
     validations()
     if (onStepChange) {
-      saveInstallments()
+      // saveInstallments()
       onStepChange(4)
     }
   }
@@ -475,15 +475,6 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
         </DisableForm>
       </GeneralContainer>
       <NextContainer>
-        <Button
-          variant='contained'
-          color='success'
-          sx={{ mr: 2, fontFamily: inter, fontSize: size, letterSpacing: '0.4px' }}
-          disabled={disableSaveBtn || account?.status.toLowerCase() === 'bound' ? true : false}
-          onClick={saveInstallments}
-        >
-          <SaveIcon /> &nbsp; Save changes
-        </Button>
         <Button
           sx={{
             fontFamily: inter,
