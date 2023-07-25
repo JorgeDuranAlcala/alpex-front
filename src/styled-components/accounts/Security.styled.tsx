@@ -66,6 +66,14 @@ export const ContainerMobileBound = styled('div')({
     lineHeight: '20px',
     letterSpacing: '.15px',
     marginBottom: '12px'
+  },
+  '.subtitle-installment': {
+    color: '#4D5062DE',
+    fontSize: '14px',
+    fontWeight: '400',
+    lineHeight: '20px',
+    letterSpacing: '.15px',
+    marginBottom: '12px'
   }
 })
 

@@ -1,0 +1,25 @@
+.container-padd {
+  padding: 20px;
+}
+
+.title-installment {
+  font-size: 20px;
+  line-height: 32px;
+  font-weight: 500;
+  font-family: Inter;
+  color: #4d5062de;
+}
+
+.wrapper-installments {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  margin: 20px 0;
+  @media (max-width: 610px) {
+    flex-wrap: wrap;
+  }
+}
+
+.width-full {
+  width: 100%;
+}
