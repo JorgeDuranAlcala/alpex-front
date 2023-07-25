@@ -143,11 +143,11 @@ const Security = ({ onStepChange }: SecurityProps) => {
           for (const discount of security?.discounts) {
             const tempDiscount = { ...discount }
 
-            tempDiscount.percentage = Number(discount.percentage)
-
             //este campo necesita: premiumPerShareAmount,netPremiumAt100
-            if (!discount.isChangeAmount)
+            if (!discount.isChangeAmount) {
+              tempDiscount.percentage = Number(discount.percentage)
               tempDiscount.amount = operationSecurity.getDiscountAmount(Number(tempDiscount.percentage))
+            }
             security.totalAmountOfDiscounts += tempDiscount.amount
             tempDiscountList.push(tempDiscount)
           }
@@ -165,7 +165,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
         security.dynamicCommissionAmount = operationSecurity.getDynamicComissionAmount() || 0
 
       //este campo necesita reinsuranceBrokerage,premiumPerShareAmount
-      console.log({ isChangeBrokerAgeAmount: security.isChangeBrokerAgeAmount })
+
       if (!security.isChangeBrokerAgeAmount) security.brokerAgeAmount = operationSecurity.getBrokerAge() || 0
 
       //este campo necesita premiumPerShareAmount
@@ -178,11 +178,13 @@ const Security = ({ onStepChange }: SecurityProps) => {
           security.totalAmountOfDiscounts = 0
           for (const discount of security?.discounts) {
             const tempDiscount = { ...discount }
-            tempDiscount.percentage = Number(discount.percentage)
 
             //este campo necesita: premiumPerShareAmount,netPremiumAt100
-            if (!discount.isChangeAmount)
+            if (!discount.isChangeAmount) {
+              tempDiscount.percentage = Number(discount.percentage)
               tempDiscount.amount = operationSecurity.getDiscountAmount(Number(tempDiscount.percentage))
+            }
+
             security.totalAmountOfDiscounts += tempDiscount.amount
             tempDiscountList.push(tempDiscount)
           }
@@ -220,6 +222,11 @@ const Security = ({ onStepChange }: SecurityProps) => {
         securitiesView2.push({
           ...seconSecurity,
           netPremiumAt100: seconSecurity.isGross ? information.grossPremium : information.netPremium,
+          isChangeBrokerAgeAmount: false,
+          isChangeFrontingFeeAmount: false,
+          isChangeTaxesAmount: false,
+          isChangeDynamicCommissionAmount: false,
+          discounts: seconSecurity.discounts.map(discount => ({ ...discount, isChangeAmount: false })),
           view: currentView === 3 ? 1 : 2
         })
       }

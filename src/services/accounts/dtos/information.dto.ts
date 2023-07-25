@@ -35,6 +35,7 @@ export interface InformationDto {
   cedantContactCountry: string
   idLineOfBussines: number
   idTypeOfLimit: number | null
+  idCurrency?: number | null
   idEconomicSector: number | null
   idRiskActivity: number
   idLeadUnderwriter: number | null | string
@@ -70,29 +71,30 @@ export interface InformationDetailsDto {
   exchangeRate: number
   netPremium: number | string
   grossPremium: number
-  idAccount: number
-  idCountry: Country
-  idBroker: Broker
-  idBrokerContact: number | null
   brokerContactEmail: string
   brokerContactPhone: string
   brokerContactCountry: string
-  idCedant: Cedant
-  idCedantContact: number | null
   cedantContactEmail: string
   cedantContactPhone: string
   cedantContactCountry: string
+  updatedAt?: number | null | string | any
+  premiumWithTaxes: number
+  premiumWithOutDiscounts: number
+  idAccount: number
+  idCurrency: Currency
+  idCountry: Country
+  idBroker: Broker
+  idBrokerContact: number | null
+  idCedant: Cedant
+  idCedantContact: number | null
   idLineOfBussines: LineOfBussines
-  idTypeOfLimit: number | null
+  idTypeOfLimit: TypeOfLimit
   idEconomicSector: number | null
   idRiskActivity: RiskActivity
   idLeadUnderwriter: number | null | string
   idUnderwriter: number | null | string
   idTechnicalAssistant: number | null | string
-  updatedAt?: number | null | string | any
   idAccountType: number
-  premiumWithTaxes: number
-  premiumWithOutDiscounts: number
 }
 
 interface LineOfBussines {
@@ -112,10 +114,23 @@ interface Cedant {
   name: string
 }
 
+interface TypeOfLimit {
+  id: number
+  alias: string
+  name: string
+}
+
 interface Country {
   id: number
   currency: string
   name: string
+}
+
+interface Currency {
+  id: number
+  code: string
+  name: string
+  country: string
 }
 
 interface RiskActivity {

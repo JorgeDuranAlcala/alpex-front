@@ -1,8 +1,7 @@
 import { useGetAllEndorsementTypes } from '@/hooks/catalogs/endorsementType/getAllEndorsementTypes'
-import { AbilityContext } from '@/layouts/components/acl/Can'
 import CloseIcon from '@mui/icons-material/Close'
 import { Box, Button, FormControlLabel, Modal, Radio, RadioGroup, TextField, styled } from '@mui/material'
-import { useContext, useState } from 'react'
+import { useState } from 'react'
 import Icon from 'src/@core/components/icon'
 import {
   ButtonClose,
@@ -14,7 +13,7 @@ import {
 
 // ** Redux
 import { useAppDispatch, useAppSelector } from 'src/store'
-import { fetchAccountById, updateEndorsement } from 'src/store/apps/endorsement'
+import { updateEndorsement } from 'src/store/apps/endorsement'
 
 const ButtonIcon = styled(Button)({
   boxShadow: 'none',
@@ -32,16 +31,12 @@ const ButtonIcon = styled(Button)({
 
 export const ActionsHeaderBoundModal = ({
   setOpenHistory,
-
-  // uneditableAccount,
+  uneditableAccount,
   openHistory,
   handleSubmit,
   setCancellEndorsment
 }: any) => {
   const { endorsementTypes } = useGetAllEndorsementTypes()
-
-  const ability = useContext(AbilityContext)
-  const [generateEndt] = useState(ability?.cannot('update', 'accountGenerateEndt'))
 
   const [createdEndorsement, setCreatedEndorsement] = useState({
     type: '',
@@ -49,7 +44,7 @@ export const ActionsHeaderBoundModal = ({
     idEndorsementType: 0
   })
 
-  const dispatchRedux = useAppDispatch()
+  const dispatch = useAppDispatch()
 
   return (
     <div className='header-btns'>
@@ -58,7 +53,7 @@ export const ActionsHeaderBoundModal = ({
           setOpenHistory(true)
         }}
         title='GENERATE ENDT.'
-        disabled={generateEndt}
+        disabled={uneditableAccount}
       >
         <Icon icon='material-symbols:approval-outline' />
       </ButtonIcon>
@@ -117,7 +112,7 @@ export const ActionsHeaderBoundModal = ({
               </RadioGroup>
             </form>
           </FormContainer>
-          {createdEndorsement.type !== '' && (
+          {createdEndorsement.type !== 'Cancellation' && createdEndorsement.type !== '' && (
             <TextField
               id='standard-multiline-static'
               label='Reason for Endorsement'
@@ -150,15 +145,13 @@ export const ActionsHeaderBoundModal = ({
                   setCancellEndorsment(true)
                 }
                 setOpenHistory(false)
-                dispatchRedux(
+                dispatch(
                   updateEndorsement({
                     ...createdEndorsement,
-                    init: true
+                    active: true
                   })
                 )
-                dispatchRedux(fetchAccountById())
               }}
-              disabled={!createdEndorsement.reason}
             >
               NEXT
             </Button>

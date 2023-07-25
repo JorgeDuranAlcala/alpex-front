@@ -225,7 +225,10 @@ export class CalculateSecurity {
   getDiscountAmount(valuePercent: number): number {
     if (this.security.isGross) {
       // * is Gross Premium
-      const base = new Decimal(this.security.premiumPerShareAmount).mul(valuePercent).div(100).toNumber()
+      const base = new Decimal(new Decimal(this.security.premiumPerShareAmount))
+        .mul(new Decimal(valuePercent))
+        .div(100)
+        .toNumber()
 
       return base
     } else {

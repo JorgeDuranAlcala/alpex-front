@@ -32,7 +32,8 @@ export const TaxesPercent = ({
     tempSecurities[index] = {
       ...tempSecurities[index],
       taxes: value,
-      isChangeTaxesAmount: false
+      isChangeTaxesAmount: false,
+      isChangeDynamicCommissionAmount: false
     }
     validateForm(tempSecurities[index])
     calculateSecurities(tempSecurities)

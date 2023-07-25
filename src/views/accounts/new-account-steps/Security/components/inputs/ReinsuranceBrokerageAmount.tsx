@@ -35,8 +35,8 @@ export const ReinsuranceBrokerageAmount = ({
         isChangeBrokerAgeAmount: true
       }
 
-      calculateSecurities(tempSecurities)
       validateForm(tempSecurities[index])
+      calculateSecurities(tempSecurities)
 
       // Limpiar el intervalo
       clearInterval(typingTimer)
