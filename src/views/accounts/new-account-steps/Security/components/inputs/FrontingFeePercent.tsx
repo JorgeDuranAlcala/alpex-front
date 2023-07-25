@@ -35,8 +35,8 @@ export const FrontingFeePercent = ({
       frontingFee: value,
       isChangeFrontingFeeAmount: false
     }
-    calculateSecurities(tempSecurities)
     validateForm(tempSecurities[index])
+    calculateSecurities(tempSecurities)
   }
 
   useEffect(() => {

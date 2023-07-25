@@ -38,8 +38,8 @@ export const SelectRetroCedant = ({
         idCRetroCedantContact: {} as RetroCedantContactDto
       }
       validateForm(tempSecurities[index])
-      calculateSecurities(tempSecurities)
       setIdRetroCedant(retroCedant.id)
+      calculateSecurities(tempSecurities)
     }
   }
 
@@ -96,7 +96,7 @@ export const selectRetroCedant_validations = ({
       })
       .test('', 'This field is required', value => {
         if (!isGross && frontingFeeEnabled) {
-          return typeof value === 'object' && value.id !== -0
+          return typeof value === 'object' && value.id && value.id !== -0
         }
 
         return true
