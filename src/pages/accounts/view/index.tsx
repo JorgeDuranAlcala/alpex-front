@@ -50,20 +50,15 @@ const NewAccount = () => {
   const dispatch = useAppDispatch()
   const endorsementData = useAppSelector(state => state.endorsement.data)
 
-  // ** Hooks header
+  // ** Custom Hooks
   const { account: accountDetails, setAccountId, getAccountById } = useGetAccountById()
 
-  // const { account, setAccountId } = useGetAccountById()
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  // const [dataForEndorsement, setDataForEndorsement] = useState()
   const [disableComments] = useState(false)
   const [isNewAccount, setIsNewAccount] = useState<boolean>(true)
   const [activeStep, setActiveStep] = useState(1)
 
   // Estado se encarga de activar el editar info en los forms
   const [editInfo, setEditInfo] = useState(false)
-
-  //Todo:  Une a los dos active inputs
   const [disableFormsSections, setDisableFormsSections] = useState<AllFormsInterface>({
     information: { basicInfo: false, placementStructure: false }
   })
@@ -76,43 +71,29 @@ const NewAccount = () => {
     }
 
     // Para las cuentas de tipo |BOUND|, esto es para cuando ingresas a tu cuenta |SIN ACTIVAR EL ENDORSEMENT|
-    if (accountDetails?.status.toLowerCase() === 'bound' && !endorsementData.active) {
+    if (accountDetails?.status.toLowerCase() === 'bound' && !endorsementData.init) {
       setDisableFormsSections({ ...disableFormsSections, information: { basicInfo: true, placementStructure: true } })
     }
 
     // Para las cuentas de tipo |BOUND| -> |ENDORSEMENT ACTIVADO|
-    if (accountDetails?.status.toLowerCase() === 'bound' && endorsementData.active && endorsementData.type) {
-      switch (endorsementData.type.toLowerCase()) {
-        case 'informative':
-          setDisableFormsSections({
-            ...disableFormsSections,
-            information: { basicInfo: false, placementStructure: true }
-          })
-          break
-
-        case 'increase':
-          setDisableFormsSections({
-            ...disableFormsSections,
-            information: { basicInfo: true, placementStructure: false }
-          })
-          break
-
-        case 'decrease':
-          setDisableFormsSections({
-            ...disableFormsSections,
-            information: { basicInfo: true, placementStructure: false }
-          })
-          break
-
-        default:
-          break
+    if (accountDetails?.status.toLowerCase() === 'bound' && endorsementData.init && endorsementData.type) {
+      const endorsementType = endorsementData.type.toLowerCase()
+      if (endorsementType === 'informative') {
+        setDisableFormsSections({
+          ...disableFormsSections,
+          information: { basicInfo: false, placementStructure: true }
+        })
+      } else if (endorsementType === 'increase' || endorsementType === 'decrease') {
+        setDisableFormsSections({
+          ...disableFormsSections,
+          information: { basicInfo: true, placementStructure: false }
+        })
       }
     }
   }
 
   const handleStepChange = (step: number) => {
     setActiveStep(step)
-    console.log(step)
   }
 
   const handleIsNewAccountChange = (status: boolean) => {

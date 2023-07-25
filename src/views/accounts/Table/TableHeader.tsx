@@ -1,6 +1,7 @@
 // ** React Imports
 import { useRouter } from 'next/router'
-import { useState } from 'react'
+import { useState, useContext } from 'react'
+import { AbilityContext } from '@/layouts/components/acl/Can'
 
 // ** MUI Imports
 import { Grid, styled } from '@mui/material'
@@ -88,6 +89,8 @@ const TableHeader: React.FC<ITableHeader> = ({
   const [textChangeStatusModal, setTextChangeStatusModal] = useState('')
   const [changeStatusTo, setChangeStatusTo] = useState<EStatus | null>(null)
   const [value, setValue] = useState<string>('')
+  const ability = useContext(AbilityContext)
+  const [disableForm] = useState(ability?.cannot('update', 'selectHeaderBound'))
 
   // useEffect(() => {
   //   setSelectAll(selectAllOption)
@@ -293,7 +296,7 @@ const TableHeader: React.FC<ITableHeader> = ({
                   horizontal: 'right'
                 }}
               >
-                <MenuItem onClick={() => HandleChangeStatus(EStatus.PENDING)}>{EStatusString.PENDING}</MenuItem>
+                <MenuItem disabled={disableForm} onClick={() => HandleChangeStatus(EStatus.PENDING)}>{EStatusString.PENDING}</MenuItem>
                 <MenuItem onClick={() => HandleChangeStatus(EStatus.NOT_MATERIALIZED)}>
                   {EStatusString.NOT_MATERIALIZED}
                 </MenuItem>
@@ -301,7 +304,7 @@ const TableHeader: React.FC<ITableHeader> = ({
                   {EStatusString.NOT_TAKEN_UP}
                 </MenuItem>
                 <MenuItem onClick={() => HandleChangeStatus(EStatus.DECLINED)}>{EStatusString.DECLINED}</MenuItem>
-                <MenuItem onClick={() => HandleChangeStatus(EStatus.BOUND)}>{EStatusString.BOUND}</MenuItem>
+                <MenuItem disabled={disableForm} onClick={() => HandleChangeStatus(EStatus.BOUND)}>{EStatusString.BOUND}</MenuItem>
               </Menu>
             </MenuItem>
             <MenuItem value={EActions.DOWNLOAD_BORDEREAUX} sx={{ minWidth: '172px', display: 'flex', gap: '5%' }}>

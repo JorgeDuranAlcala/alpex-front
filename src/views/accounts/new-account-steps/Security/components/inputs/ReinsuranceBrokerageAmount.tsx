@@ -12,7 +12,7 @@ interface ReinsuranceBrokerageAmountProps extends ISecurityInputProps {
 }
 type Timer = ReturnType<typeof setInterval>
 let typingTimer: Timer
-const doneTypingInterval = 1900 // Tiempo en milisegundos para considerar que se dejó de escribir
+const doneTypingInterval = 1700 // Tiempo en milisegundos para considerar que se dejó de escribir
 export const ReinsuranceBrokerageAmount = ({
   index,
   value,
@@ -35,8 +35,8 @@ export const ReinsuranceBrokerageAmount = ({
         isChangeBrokerAgeAmount: true
       }
 
-      calculateSecurities(tempSecurities)
       validateForm(tempSecurities[index])
+      calculateSecurities(tempSecurities)
 
       // Limpiar el intervalo
       clearInterval(typingTimer)
@@ -49,8 +49,8 @@ export const ReinsuranceBrokerageAmount = ({
         autoFocus
         label='Reinsurance brokerage'
         value={value}
-        onValueChange={value => {
-          handleChangeBrokerAgeAmount(Number(value.floatValue))
+        onValueChange={(values, sourceInfo) => {
+          if (sourceInfo.event) handleChangeBrokerAgeAmount(Number(values.floatValue))
         }}
         prefix={'$'}
         customInput={TextField}

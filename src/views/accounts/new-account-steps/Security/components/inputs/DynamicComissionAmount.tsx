@@ -13,7 +13,7 @@ interface DynamicComissionAmountProps extends ISecurityInputProps {
 }
 type Timer = ReturnType<typeof setInterval>
 let typingTimer: Timer
-const doneTypingInterval = 1900 // Tiempo en milisegundos para considerar que se dejó de escribir
+const doneTypingInterval = 1700 // Tiempo en milisegundos para considerar que se dejó de escribir
 export const DynamicComissionAmount = ({
   index,
   value,
@@ -52,8 +52,8 @@ export const DynamicComissionAmount = ({
         autoFocus
         label='Dynamic comission'
         value={value}
-        onValueChange={value => {
-          handleChangeDynamicComissionAmount(Number(value.floatValue))
+        onValueChange={(values, sourceInfo) => {
+          if (sourceInfo.event) handleChangeDynamicComissionAmount(Number(values.floatValue))
         }}
         prefix={'$'}
         customInput={TextField}

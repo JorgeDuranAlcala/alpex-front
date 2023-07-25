@@ -48,11 +48,12 @@ export const ReinsuranceCompany = ({
         isChangeBrokerAgeAmount: false,
         isChangeFrontingFeeAmount: false,
         isChangeTaxesAmount: false,
-        isChangeDynamicCommissionAmount: false
+        isChangeDynamicCommissionAmount: false,
+        discounts: tempSecurities[index].discounts.map(discount => ({ ...discount, isChangeAmount: false }))
       }
 
-      calculateSecurities(tempSecurities)
       validateForm(tempSecurities[index])
+      calculateSecurities(tempSecurities)
       setIsGross(() => avaliableCompanies.special)
     }
   }

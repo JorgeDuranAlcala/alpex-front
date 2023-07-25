@@ -35,6 +35,7 @@ export interface InformationDto {
   cedantContactCountry: string
   idLineOfBussines: number
   idTypeOfLimit: number | null
+  idCurrency?: number | null
   idEconomicSector: number | null
   idRiskActivity: number
   idLeadUnderwriter: number | null | string
@@ -70,34 +71,74 @@ export interface InformationDetailsDto {
   exchangeRate: number
   netPremium: number | string
   grossPremium: number
-  idAccount: number
-  idCountry: number
-  idBroker: number
-  idBrokerContact: number | null
   brokerContactEmail: string
   brokerContactPhone: string
   brokerContactCountry: string
-  idCedant: number
-  idCedantContact: number | null
   cedantContactEmail: string
   cedantContactPhone: string
   cedantContactCountry: string
+  updatedAt?: number | null | string | any
+  premiumWithTaxes: number
+  premiumWithOutDiscounts: number
+  idAccount: number
+  idCurrency: Currency
+  idCountry: Country
+  idBroker: Broker
+  idBrokerContact: number | null
+  idCedant: Cedant
+  idCedantContact: number | null
   idLineOfBussines: LineOfBussines
-  idTypeOfLimit: number | null
+  idTypeOfLimit: TypeOfLimit
   idEconomicSector: number | null
-  idRiskActivity: number
+  idRiskActivity: RiskActivity
   idLeadUnderwriter: number | null | string
   idUnderwriter: number | null | string
   idTechnicalAssistant: number | null | string
-  updatedAt?: number | null | string | any
   idAccountType: number
-  premiumWithTaxes: number
-  premiumWithOutDiscounts: number
 }
 
 interface LineOfBussines {
   id: number
   lineOfBussines: string
+}
+
+interface Broker {
+  id: number
+  alias: string
+  name: string
+}
+
+interface Cedant {
+  id: number
+  alias: string
+  name: string
+}
+
+interface TypeOfLimit {
+  id: number
+  alias: string
+  name: string
+}
+
+interface Country {
+  id: number
+  currency: string
+  name: string
+}
+
+interface Currency {
+  id: number
+  code: string
+  name: string
+  country: string
+}
+
+interface RiskActivity {
+  id: number
+  class: number
+  industryCode: number
+  occupancy: string
+  riskActivity: string
 }
 
 export interface InformationResponse {
