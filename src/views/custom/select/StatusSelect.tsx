@@ -3,6 +3,7 @@ import MenuItem from '@mui/material/MenuItem'
 import Select, { SelectChangeEvent } from '@mui/material/Select'
 import { useEffect, useState } from 'react'
 import Status from 'src/views/accounts/Table/Status'
+import { useAuth } from 'src/hooks/useAuth'
 
 interface StatusSelect {
   setSelectedStatus: React.Dispatch<React.SetStateAction<any>>
@@ -43,11 +44,12 @@ const statusArray = [
   }
 ]
 
-export default function StatusSelect({ setSelectedStatus, initialStatus, margin = 1 }: any) {
+export default function StatusSelect({ accountDetails, setSelectedStatus, initialStatus, margin = 1 }: any) {
   //eslint-disable-next-line
   const [value, setValue] = useState<string | null>(null)
   const [status, setStatus] = useState(initialStatus)
-
+  const [statusArrayTemp, setStatusArrayTemp] = useState(statusArray)
+  const auth = useAuth()
   const handleChange = (event: SelectChangeEvent) => {
     setStatus(event.target.value)
     setSelectedStatus(statusArray.find(stat => stat.label === event.target.value))
@@ -56,6 +58,46 @@ export default function StatusSelect({ setSelectedStatus, initialStatus, margin 
     setSelectedStatus(statusArray.find(stat => stat.label === value))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value])
+
+  useEffect(() => {
+    if (accountDetails?.status == 'PENDING') {
+      if (auth?.user?.role == 'Underwriter') {
+        const statusArrayFilter = statusArray.filter(item => {
+          if (item.label != 'Bound') {
+            return item
+          }
+        }, [])
+        setStatusArrayTemp(statusArrayFilter)
+      }
+    } else if (accountDetails?.status == 'BOUND') {
+      if (auth?.user?.role == 'Underwriter') {
+        const statusArrayFilter = statusArray.filter(item => {
+          if (item.label == 'Bound') {
+            return item
+          }
+          
+        }, [])
+        setStatusArrayTemp(statusArrayFilter)
+      } else if (auth?.user?.role == 'Lead underwriter' || auth?.user?.role == 'Technical assistant') {
+        if(accountDetails?.endorsements > 0){
+          const statusArrayFilter = statusArray.filter(item => {
+            if (item.label == 'Bound') {
+              return item
+            }
+          }, [])  
+          setStatusArrayTemp(statusArrayFilter)
+        }else{
+          const statusArrayFilter = statusArray.filter(item => {
+            if (item.label == 'Bound' || item.label == 'Pending') {
+              return item
+            }
+          }, [])
+          setStatusArrayTemp(statusArrayFilter)
+        }
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [accountDetails])
 
   useEffect(() => {
     setStatus(initialStatus)
@@ -82,9 +124,9 @@ export default function StatusSelect({ setSelectedStatus, initialStatus, margin 
           value={status}
           onChange={handleChange}
         >
-          {statusArray.map(stat => (
+          {statusArrayTemp.map(stat => (
             <MenuItem key={stat.value} value={stat.value}>
-              <Status status={statusArray.find(statObj => stat.value === statObj.value)!.status} />
+              <Status status={statusArrayTemp.find(statObj => stat.value === statObj.value)!.status} />
             </MenuItem>
           ))}
         </Select>

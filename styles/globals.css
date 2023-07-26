@@ -25,3 +25,8 @@ code:not([class*='language-']):after {
 code[class*='language-'] {
   padding: 0;
 }
+
+.MuiListItemIcon-root svg {
+  font-size: 1.5rem !important;
+  display: inline-flex !important;
+}

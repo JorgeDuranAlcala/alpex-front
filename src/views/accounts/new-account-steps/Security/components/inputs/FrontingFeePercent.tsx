@@ -32,10 +32,11 @@ export const FrontingFeePercent = ({
     const tempSecurities = securities ? [...securities] : []
     tempSecurities[index] = {
       ...tempSecurities[index],
-      frontingFee: value
+      frontingFee: value,
+      isChangeFrontingFeeAmount: false
     }
-    calculateSecurities(tempSecurities)
     validateForm(tempSecurities[index])
+    calculateSecurities(tempSecurities)
   }
 
   useEffect(() => {
@@ -61,7 +62,7 @@ export const FrontingFeePercent = ({
       <NumericFormat
         autoFocus
         label='Fronting fee %'
-        value={String(Number(value).toFixed(2))}
+        value={value}
         onChange={e => {
           handleChangeFrontingFeePercent(Number(e.target.value.replace('%', '')))
         }}

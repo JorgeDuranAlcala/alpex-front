@@ -3,7 +3,7 @@ import { configureStore } from '@reduxjs/toolkit'
 import { useSelector } from 'react-redux'
 
 // ** Reducers
-import alertBadgeSecuritySlice from '@/views/accounts/new-account-steps/SecurityV2/store/alertBadgeSecuritySlice'
+
 import { TypedUseSelectorHook, useDispatch } from 'react-redux'
 import accounts from 'src/store/apps/accounts'
 import stepFormSlice from 'src/store/apps/accounts/stepFormsSlice'
@@ -12,14 +12,14 @@ import brokerContacts from 'src/store/apps/catalogs/brokerContacts'
 import brokers from 'src/store/apps/catalogs/brokers'
 import chat from 'src/store/apps/chat'
 import email from 'src/store/apps/email'
+import endorsement from 'src/store/apps/endorsement'
 import invoice from 'src/store/apps/invoice'
 import permissions from 'src/store/apps/permissions'
 import user from 'src/store/apps/user'
 import users from 'src/store/apps/users'
 import multiTabButtonsSlice from '../layouts/components/multiTabButtons/store/MultiTabButtonSlice'
-import securitySlice from '../views/accounts/new-account-steps/SecurityV2/store/securitySlice'
-import uiUserSlice from './apps/user/uiUserSlice'
 
+import uiUserSlice from './apps/user/uiUserSlice'
 
 export const store = configureStore({
   reducer: {
@@ -34,10 +34,10 @@ export const store = configureStore({
     users,
     brokers,
     brokerContacts,
-    alertBadgeSecuritySlice,
-    securitySlice,
+
     multiTabButtonsSlice,
-    stepFormSlice
+    stepFormSlice,
+    endorsement
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({

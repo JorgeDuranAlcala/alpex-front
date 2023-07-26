@@ -510,7 +510,6 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
   }
 
   const calculateDiscount = (index: number, newDiscount: DiscountInputs) => {
-    console.log(newDiscount)
     const total = typeof grossPremium == 'number' ? grossPremium : 0
     let updatedDiscountInput: DiscountInputs = newDiscount
     let updatedDiscount: DiscountDto = {
@@ -521,16 +520,13 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
     }
 
     if (typeof newDiscount.percentage == 'number') {
-      console.log('number')
       const amount = (newDiscount.percentage / 100) * total
       updatedDiscountInput = { ...newDiscount, amount }
       updatedDiscount = { ...updatedDiscount, amount }
     } else {
-      console.log('vacio')
       updatedDiscountInput = { ...newDiscount, amount: 0 }
       updatedDiscount = { ...updatedDiscount, amount: 0 }
     }
-    console.log(updatedDiscountInput)
     setDiscount(updatedDiscountInput)
 
     setDiscounts(state => {
@@ -652,12 +648,6 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
     calculate()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [discount, discountCounter])
-
-  React.useEffect(() => {
-    console.log('discount Inputs cambio')
-    console.log(discountInputs)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [discountInputs])
 
   React.useEffect(() => {
     setTotalDiscountsError(discountValidation)

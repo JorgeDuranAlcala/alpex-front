@@ -333,6 +333,16 @@
   color: rgba(76, 78, 100, 0.26);
 }
 
+.information .action-buttons .btn-endorsement.MuiButton-root {
+  background-color: #2349c6;
+  margin-right: 10px;
+}
+
+.information .action-buttons .btn-endorsement.MuiButton-root.Mui-disabled {
+  background-color: rgba(76, 78, 100, 0.12);
+  margin-right: 10px;
+}
+
 .information .action-buttons .btn-save.MuiButton-root {
   background-color: #64c623;
   margin-right: 10px;
@@ -543,6 +553,10 @@
     width: 100%;
   }
 
+  .cols-basic-info {
+    width: 462px !important;
+  }
+
   .information .MuiButton-root {
     width: 100%;
   }
@@ -564,6 +578,12 @@
   }
 }
 
+@media (max-width: 500px) {
+  .cols-basic-info {
+    width: 400px !important;
+  }
+}
+
 @media (max-width: 450px) {
   .uploaded-files {
     justify-content: center;
@@ -571,6 +591,15 @@
 
   .upload-btn .file-details {
     width: 98%;
+  }
+  .cols-basic-info {
+    width: 350px !important;
+  }
+}
+
+@media (max-width: 400px) {
+  .cols-basic-info {
+    width: 280px !important;
   }
 }
 
@@ -693,6 +722,7 @@
   background-color: rgba(247, 247, 249, 1);
   color: rgba(77, 80, 98, 0.68);
   margin-right: 10px;
+  cursor: pointer;
 }
 
 .steps .step .step-name {
@@ -976,12 +1006,12 @@
   flex-grow: 0;
 }
 
-.react-datepicker>.react-datepicker__navigation.react-datepicker__navigation--next--with-time {
+.react-datepicker > .react-datepicker__navigation.react-datepicker__navigation--next--with-time {
   right: 127px;
   display: none;
 }
 
-.react-datepicker>.react-datepicker__navigation.react-datepicker__navigation--previous {
+.react-datepicker > .react-datepicker__navigation.react-datepicker__navigation--previous {
   width: 24px;
   height: 24px;
   border: none;

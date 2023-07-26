@@ -71,7 +71,9 @@ const Security = ({ onStepChange }: SecurityProps) => {
     frontingFee: 0,
     netPremium: 0,
     grossPremium: 0,
-    limit: 0
+    limit: 0,
+    taxesP: 0,
+    frontingFeeP: 0
   })
   const [companiesSelect] = useState<number[]>([])
 
@@ -101,7 +103,11 @@ const Security = ({ onStepChange }: SecurityProps) => {
     view: 1,
     reinsuranceBrokerage: 0,
     taxes: 0,
-    frontingFee: 0
+    frontingFee: 0,
+    isChangeBrokerAgeAmount: false,
+    isChangeFrontingFeeAmount: false,
+    isChangeTaxesAmount: false,
+    isChangeDynamicCommissionAmount: false
   } as SecurityDto
 
   /**
@@ -112,12 +118,12 @@ const Security = ({ onStepChange }: SecurityProps) => {
   const getSecuritiesCalculate = (securitiesParam: SecurityDto[]): SecurityDto[] => {
     const tempSecurities: SecurityDto[] = []
 
-    for (const security of securitiesParam) {
+    for (const security of structuredClone(securitiesParam)) {
       const operationSecurity: CalculateSecurity = new CalculateSecurity().setInformation(information).setSecurity({
         ...security,
-        reinsuranceBrokerage: Number(security.reinsuranceBrokerage) || 0,
-        dynamicCommission: Number(security.dynamicCommission) || 0,
-        share: Number(security.share) || 0
+        reinsuranceBrokerage: security.reinsuranceBrokerage || 0,
+        dynamicCommission: security.dynamicCommission || 0,
+        share: security.share || 0
       })
 
       if (security?.idCReinsuranceCompany?.id) companiesSelect.push(security.idCReinsuranceCompany.id)
@@ -131,17 +137,20 @@ const Security = ({ onStepChange }: SecurityProps) => {
       //este campo necesita grossPremiumPerShare,brokerAgeAmount,taxes,netPremiumAt100,share
 
       if (!security.isGross) {
-        security.taxesAmount = operationSecurity.getTaxesAmount(security.taxes) || 0
+        if (!security.isChangeTaxesAmount) {
+          security.taxesAmount = operationSecurity.getTaxesAmount(security.taxes) || 0
+        }
         const tempDiscountList = []
         if (security?.discounts) {
           security.totalAmountOfDiscounts = 0
           for (const discount of security?.discounts) {
             const tempDiscount = { ...discount }
 
-            tempDiscount.percentage = Number(discount.percentage)
-
             //este campo necesita: premiumPerShareAmount,netPremiumAt100
-            tempDiscount.amount = operationSecurity.getDiscountAmount(Number(tempDiscount.percentage))
+            if (!discount.isChangeAmount) {
+              tempDiscount.percentage = Number(discount.percentage)
+              tempDiscount.amount = operationSecurity.getDiscountAmount(Number(tempDiscount.percentage))
+            }
             security.totalAmountOfDiscounts += tempDiscount.amount
             tempDiscountList.push(tempDiscount)
           }
@@ -155,24 +164,30 @@ const Security = ({ onStepChange }: SecurityProps) => {
       security.premiumPerShareAmount = operationSecurity.getPremierPerShare() || 0
 
       //campos que necesitan el premiumPerShareAmount
-      security.dynamicCommissionAmount = operationSecurity.getDynamicComissionAmount() || 0
+      if (!security.isChangeDynamicCommissionAmount)
+        security.dynamicCommissionAmount = operationSecurity.getDynamicComissionAmount() || 0
 
       //este campo necesita reinsuranceBrokerage,premiumPerShareAmount
-      security.brokerAgeAmount = operationSecurity.getBrokerAge() || 0
+
+      if (!security.isChangeBrokerAgeAmount) security.brokerAgeAmount = operationSecurity.getBrokerAge() || 0
 
       //este campo necesita premiumPerShareAmount
-      security.frontingFeeAmount = operationSecurity.getFrontingFeeAmount(security.frontingFee) || 0
+      if (!security.isChangeFrontingFeeAmount)
+        security.frontingFeeAmount = operationSecurity.getFrontingFeeAmount(security.frontingFee) || 0
       if (security.isGross) {
-        security.taxesAmount = operationSecurity.getTaxesAmount(security.taxes) || 0
+        if (!security.isChangeTaxesAmount) security.taxesAmount = operationSecurity.getTaxesAmount(security.taxes) || 0
         const tempDiscountList = []
         if (security?.discounts) {
           security.totalAmountOfDiscounts = 0
           for (const discount of security?.discounts) {
             const tempDiscount = { ...discount }
-            tempDiscount.percentage = Number(discount.percentage)
 
             //este campo necesita: premiumPerShareAmount,netPremiumAt100
-            tempDiscount.amount = operationSecurity.getDiscountAmount(Number(tempDiscount.percentage))
+            if (!discount.isChangeAmount) {
+              tempDiscount.percentage = Number(discount.percentage)
+              tempDiscount.amount = operationSecurity.getDiscountAmount(Number(tempDiscount.percentage))
+            }
+
             security.totalAmountOfDiscounts += tempDiscount.amount
             tempDiscountList.push(tempDiscount)
           }
@@ -189,7 +204,9 @@ const Security = ({ onStepChange }: SecurityProps) => {
        */
       security.netReinsurancePremium = operationSecurity.getNetReinsurancePremium() || 0
 
-      tempSecurities.push({ ...security })
+      tempSecurities.push({
+        ...security
+      })
     }
 
     return tempSecurities
@@ -200,14 +217,20 @@ const Security = ({ onStepChange }: SecurityProps) => {
       companiesSelect.splice(0, companiesSelect.length)
 
       //hace el calculo de securities de la primer vista es decir cuando el current view este en 0 o en 1
-      const tempSecurities = getSecuritiesCalculate(securitiesParam)
+
+      const tempSecurities = getSecuritiesCalculate(structuredClone(securitiesParam))
 
       // este estara siempre haciendo los calculos independiente si la vista ya halla cambiado es decir sea 0,1,2,3
       const securitiesView2: SecurityDto[] = []
-      for (const seconSecurity of securitiesParam) {
+      for (const seconSecurity of structuredClone(securitiesParam)) {
         securitiesView2.push({
           ...seconSecurity,
           netPremiumAt100: seconSecurity.isGross ? information.grossPremium : information.netPremium,
+          isChangeBrokerAgeAmount: false,
+          isChangeFrontingFeeAmount: false,
+          isChangeTaxesAmount: false,
+          isChangeDynamicCommissionAmount: false,
+          discounts: seconSecurity.discounts.map(discount => ({ ...discount, isChangeAmount: false })),
           view: currentView === 3 ? 1 : 2
         })
       }
@@ -255,7 +278,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
   }
 
   const addNewForm = () => {
-    const tempSecurities = [...securities]
+    const tempSecurities = structuredClone(securities)
     tempSecurities.push(initialSecurity)
 
     calculateSecurities(tempSecurities)
@@ -293,7 +316,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
 
     if (!allFormData.id) {
       //TODO REVISAR SI PUEDE TRABAJAR CON PROMISE ALl
-      console.log({ allFormData, save: true })
+
       await saveSecurityTotal([
         {
           receivedNetPremium: +allFormData.recievedNetPremium,
@@ -330,8 +353,8 @@ const Security = ({ onStepChange }: SecurityProps) => {
 
     if (save.length > 0) {
       await saveSecurities({ idAccount: +accountData.formsData.form1.id, securities: save })
-        .then(async response => {
-          response && response.length > 0 && calculateSecurities(response)
+        .then(() => {
+          // response && response.length > 0 && calculateSecurities(response)
           update.length === 0 &&
             setBadgeData({
               message: 'THE INFORMATION HAS BEEN SAVED',
@@ -396,7 +419,9 @@ const Security = ({ onStepChange }: SecurityProps) => {
         frontingFee: Number(account.informations[0].frontingFee),
         netPremium: Number(account.informations[0].netPremium),
         grossPremium: Number(account.informations[0].grossPremium),
-        limit: Number(account.informations[0].limit)
+        limit: Number(account.informations[0].limit),
+        taxesP: Number(account.informations[0].taxesTotal),
+        frontingFeeP: Number(account.informations[0].frontingFeeTotal)
       })
 
     // eslint-disable-next-line react-hooks/exhaustive-deps

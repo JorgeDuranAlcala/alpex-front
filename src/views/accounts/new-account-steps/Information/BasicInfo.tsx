@@ -110,7 +110,6 @@ type BasicInfoProps = {
   setBasicInfo: React.Dispatch<React.SetStateAction<BasicInfoType>>
   makeValidations: boolean
   makeSaveValidations: boolean
-  activeEndorsement?: boolean
   onValidationComplete: (valid: boolean, formName: string) => void
 }
 
@@ -460,6 +459,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               value={String(basicInfo.country)}
               onChange={handleSelectChange}
               labelId='invoice-country'
+              MenuProps={{ disableScrollLock: false }}
             >
               {countries.length > 0 ? (
                 countries.map(country => {
@@ -516,7 +516,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
           </FormControl>
         </div>
 
-        <div className='form-col'>
+        <div className='form-col cols-basic-info'>
           <div className='title'>Broker</div>
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }} error={errors.brokerError}>
             <InputLabel>Select Broker</InputLabel>
