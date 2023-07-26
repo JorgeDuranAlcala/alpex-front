@@ -76,9 +76,10 @@ export const initialErrorValues: FormErrors = {
 interface SublimitsProps {
   getAccountByIdHeader: (idAccount: number) => void
   onStepChange: (step: number) => void
+  disableSectionCtrl?: boolean
 }
 
-const Sublimits = ({ getAccountByIdHeader, onStepChange }: SublimitsProps) => {
+const Sublimits = ({ getAccountByIdHeader, onStepChange, disableSectionCtrl }: SublimitsProps) => {
   const [badgeData, setBadgeData] = useState<IAlert>({
     message: '',
     theme: 'success',
@@ -303,7 +304,7 @@ const Sublimits = ({ getAccountByIdHeader, onStepChange }: SublimitsProps) => {
         </Grid>
         <Grid item xs={12} sm={12}>
           <form noValidate autoComplete='on'>
-            <DisableForm isDisabled={account?.status.toLowerCase() === 'bound' ? true : false}>
+            <DisableForm isDisabled={disableSectionCtrl}>
               {/* campos header */}
               <Grid container spacing={5}>
                 <InputLimit account={account} />

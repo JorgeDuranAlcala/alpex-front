@@ -45,7 +45,7 @@ import { CalculateSecurity } from './utils/calculates-securities'
 
 export const SecurityContext = createContext<SecurityContextDto>({} as SecurityContextDto)
 
-const Security = ({ onStepChange }: SecurityProps) => {
+const Security = ({ onStepChange, disableSectionCtrl }: SecurityProps) => {
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
   const [securities, setSecurities] = useState<SecurityDto[]>([])
 
@@ -451,10 +451,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
               {securities.length > 0 &&
                 securities.map((security, index) => {
                   return (
-                    <DisableForm
-                      key={`${index}-${security?.id}`}
-                      isDisabled={account?.status.toLowerCase() === 'bound' ? true : false}
-                    >
+                    <DisableForm key={`${index}-${security?.id}`} isDisabled={disableSectionCtrl}>
                       <FormSection
                         security={currentView === 2 ? securitiesSecondView[index] : security}
                         index={index}

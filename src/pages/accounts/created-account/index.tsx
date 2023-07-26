@@ -45,6 +45,10 @@ import Icon from 'src/@core/components/icon'
 
 export interface AllFormsInterface {
   information: InformationSectionsInt
+  security: boolean
+  paymentWarranty: boolean
+  sublimits: boolean
+  sov: boolean
 }
 
 const CreatedAccount = () => {
@@ -65,18 +69,36 @@ const CreatedAccount = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isNewAccount, setIsNewAccount] = useState<boolean>(true)
   const [disableFormsSections, setDisableFormsSections] = useState<AllFormsInterface>({
-    information: { basicInfo: false, placementStructure: false }
+    information: { basicInfo: false, placementStructure: false },
+    security: false,
+    paymentWarranty: false,
+    sublimits: false,
+    sov: false
   })
 
   const enableInputsCtrl = () => {
     // Para todos los tipos de cuenta excepto |BOUND|, en este caso siempre estarán activados
     if (accountDetails?.status.toLowerCase() !== 'bound') {
-      setDisableFormsSections({ ...disableFormsSections, information: { basicInfo: false, placementStructure: false } })
+      setDisableFormsSections({
+        ...disableFormsSections,
+        information: { basicInfo: false, placementStructure: false },
+        security: false,
+        paymentWarranty: false,
+        sublimits: false,
+        sov: false
+      })
     }
 
     // Para las cuentas de tipo |BOUND|, esto es para cuando ingresas a tu cuenta |SIN ACTIVAR EL ENDORSEMENT|
     if (accountDetails?.status.toLowerCase() === 'bound' && !endorsementData.init) {
-      setDisableFormsSections({ ...disableFormsSections, information: { basicInfo: true, placementStructure: true } })
+      setDisableFormsSections({
+        ...disableFormsSections,
+        information: { basicInfo: true, placementStructure: true },
+        security: true,
+        paymentWarranty: true,
+        sublimits: true,
+        sov: true
+      })
     }
 
     // Para las cuentas de tipo |BOUND| -> |ENDORSEMENT ACTIVADO|
@@ -85,12 +107,20 @@ const CreatedAccount = () => {
       if (endorsementType === 'informative') {
         setDisableFormsSections({
           ...disableFormsSections,
-          information: { basicInfo: false, placementStructure: true }
+          information: { basicInfo: false, placementStructure: true },
+          security: true,
+          paymentWarranty: true,
+          sublimits: true,
+          sov: true
         })
       } else if (endorsementType === 'increase' || endorsementType === 'decrease') {
         setDisableFormsSections({
           ...disableFormsSections,
-          information: { basicInfo: true, placementStructure: false }
+          information: { basicInfo: true, placementStructure: false },
+          security: false,
+          paymentWarranty: false,
+          sublimits: false,
+          sov: false
         })
       }
     }
@@ -150,13 +180,24 @@ const CreatedAccount = () => {
           <InformationBound disableSectionCtrl={disableFormsSections.information} onStepChange={handleStepChange} />
         )
       case 2:
-        return <SecurityBound onStepChange={handleStepChange} />
+        return <SecurityBound onStepChange={handleStepChange} disableSectionCtrl={disableFormsSections.security} />
       case 3:
-        return <PaymentWarrantyBound onStepChange={handleStepChange} />
+        return (
+          <PaymentWarrantyBound
+            onStepChange={handleStepChange}
+            disableSectionCtrl={disableFormsSections.paymentWarranty}
+          />
+        )
       case 4:
-        return <SublimitsBound onStepChange={handleStepChange} getAccountByIdHeader={getAccountById} />
+        return (
+          <SublimitsBound
+            onStepChange={handleStepChange}
+            getAccountByIdHeader={getAccountById}
+            disableSectionCtrl={disableFormsSections.sublimits}
+          />
+        )
       case 5:
-        return <FormAddressBound />
+        return <FormAddressBound disableSectionCtrl={disableFormsSections.sov} />
       default:
         return <></>
     }
