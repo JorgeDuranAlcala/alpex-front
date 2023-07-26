@@ -13,6 +13,9 @@ import { GoogleMap, MarkerF, useLoadScript } from '@react-google-maps/api'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import Icon from 'src/@core/components/icon'
 
+// ** Utils
+import { DisableForm } from 'src/views/accounts/new-account-steps/_commons/DisableForm'
+
 export interface AddressInfo {
   addressLine1: string
   addressLine2: string
@@ -33,7 +36,11 @@ interface AddressInfoErrors {
   zipCodeError: boolean
 }
 
-const FormAddress = () => {
+type FormAddressProps = {
+  disableSectionCtrl?: boolean
+}
+
+const FormAddress: React.FC<FormAddressProps> = ({ disableSectionCtrl }) => {
   const mapRef = useRef<HTMLDivElement>(null)
   const [marker, setMarker] = useState<google.maps.Marker | null>(null)
   const [selectedLocation, setSelectedLocation] = useState<google.maps.LatLng | null>(null)
@@ -246,142 +253,146 @@ const FormAddress = () => {
   return (
     <AddressContainer>
       <h1 className='title'>Address</h1>
-      <FormContainer>
-        <div className='containerInputs'>
-          {' '}
-          <div style={{ width: '100%' }}>
-            <AutocompleteAddress setAddress={setAddress}>
+      <DisableForm isDisabled={disableSectionCtrl}>
+        <FormContainer>
+          <div className='containerInputs'>
+            {' '}
+            <div style={{ width: '100%' }}>
+              <AutocompleteAddress setAddress={setAddress}>
+                <TextField
+                  sx={{ width: '100%' }}
+                  value={address.address && address.address}
+                  defaultValue=''
+                  onChange={({ target }) => {
+                    setAddress({
+                      ...address,
+                      address: target.value
+                    })
+                  }}
+                  id='address-line-1'
+                  name='addressLine1'
+                  label='Address Line 1'
+                  disabled={mapEnabled}
+                  error={!!errors.addressLine1Error}
+                  helperText={getErrorMessage('addressLine1Error')}
+                />
+              </AutocompleteAddress>
+            </div>
+            {/* <FormControl fullWidth>
               <TextField
                 sx={{ width: '100%' }}
-                value={address.address && address.address}
-                defaultValue=''
-                onChange={({ target }) => {
-                  setAddress({
-                    ...address,
-                    address: target.value
-                  })
-                }}
-                id='address-line-1'
-                name='addressLine1'
-                label='Address Line 1'
+                value={addressInfo.addressLine2}
+                onChange={handleInputChange}
+                id='address-line-2'
+                name='addressLine2'
+                label='Address Line 2'
                 disabled={mapEnabled}
-                error={!!errors.addressLine1Error}
-                helperText={getErrorMessage('addressLine1Error')}
+                error={!!errors.addressLine2Error}
+                helperText={getErrorMessage('addressLine2Error')}
               />
-            </AutocompleteAddress>
+            </FormControl> */}
           </div>
-          {/* <FormControl fullWidth>
+          <div className='containerInputs'>
             <TextField
               sx={{ width: '100%' }}
-              value={addressInfo.addressLine2}
-              onChange={handleInputChange}
-              id='address-line-2'
-              name='addressLine2'
-              label='Address Line 2'
+              value={address.country}
+              defaultValue=''
+              label='Country'
               disabled={mapEnabled}
-              error={!!errors.addressLine2Error}
-              helperText={getErrorMessage('addressLine2Error')}
+              error={!!errors.countryError}
+              helperText={getErrorMessage('countryError')}
             />
-          </FormControl> */}
-        </div>
-        <div className='containerInputs'>
-          <TextField
-            sx={{ width: '100%' }}
-            value={address.country}
-            defaultValue=''
-            label='Country'
-            disabled={mapEnabled}
-            error={!!errors.countryError}
-            helperText={getErrorMessage('countryError')}
-          />
-          <TextField
-            sx={{ width: '100%' }}
-            value={address.postalCode}
-            id='zip-code'
-            name='zipCode'
-            label='Zip code'
-            onChange={handleInputChange}
-            disabled={mapEnabled}
-            error={!!errors.zipCodeError}
-            helperText={getErrorMessage('zipCodeError')}
-          />
-        </div>
-        <div className='containerInputs'>
-          {' '}
-          <TextField
-            sx={{ width: '100%' }}
-            value={address.city}
-            defaultValue=''
-            label='City'
-            disabled={mapEnabled}
-            error={!!errors.cityError}
-            helperText={getErrorMessage('cityError')}
-          />
-          <TextField
-            sx={{ width: '100%' }}
-            value={address.state}
-            defaultValue=''
-            label='State / Province'
-            disabled={mapEnabled}
-            error={!!errors.stateError}
-            helperText={getErrorMessage('stateError')}
-          />
-        </div>
-      </FormContainer>
+            <TextField
+              sx={{ width: '100%' }}
+              value={address.postalCode}
+              id='zip-code'
+              name='zipCode'
+              label='Zip code'
+              onChange={handleInputChange}
+              disabled={mapEnabled}
+              error={!!errors.zipCodeError}
+              helperText={getErrorMessage('zipCodeError')}
+            />
+          </div>
+          <div className='containerInputs'>
+            {' '}
+            <TextField
+              sx={{ width: '100%' }}
+              value={address.city}
+              defaultValue=''
+              label='City'
+              disabled={mapEnabled}
+              error={!!errors.cityError}
+              helperText={getErrorMessage('cityError')}
+            />
+            <TextField
+              sx={{ width: '100%' }}
+              value={address.state}
+              defaultValue=''
+              label='State / Province'
+              disabled={mapEnabled}
+              error={!!errors.stateError}
+              helperText={getErrorMessage('stateError')}
+            />
+          </div>
+        </FormContainer>
+      </DisableForm>
       <h1 className='title' style={{ marginTop: '40px', marginBottom: '32px' }}>
         Map
       </h1>
       <h2 className='subtitle'>GPS Coordinates</h2>
 
-      <MapContainer>
-        <div className='containerCoordinates'>
-          <div className='inputsCoordinates'>
-            <TextField
-              sx={{ maxWidth: '160px', '@media (max-width:900px)': { maxWidth: '100%', width: '100%' } }}
-              value={addressInfo.latitude}
-              id='standard-basic'
-              label='Latitude'
-              variant='standard'
-              disabled={true}
-            />
-            <TextField
-              sx={{ maxWidth: '160px', '@media (max-width:900px)': { maxWidth: '100%', width: '100%' } }}
-              id='standard-basic'
-              value={addressInfo.longitude}
-              label='Longitude'
-              variant='standard'
-              disabled={true}
-            />
-          </div>
-          <Button
-            variant='outlined'
-            sx={{ padding: '7px 22px', '@media (max-width:900px)': { marginTop: '20px' } }}
-            onClick={handleChooseLocation}
-          >
-            {mapEnabled ? 'Choose location by address' : 'Choose location on the map'}
-          </Button>
-        </div>
-
-        <div style={{ borderRadius: '8px', height: '500px', margin: '20px 0px 60px ' }}>
-          <div ref={mapRef} style={{ width: '100%', minHeight: '500px' }} />
-        </div>
-
-        <ButtonContainer>
-          <Button
-            className='btn-endorsement'
-            onClick={() => {
-              setStartValidations(true)
-            }}
-            variant='contained'
-            disabled={true}
-          >
-            <div className='btn-icon' style={{ marginRight: '8px' }}>
-              <Icon icon='material-symbols:approval-outline' />
+      <DisableForm isDisabled={disableSectionCtrl}>
+        <MapContainer>
+          <div className='containerCoordinates'>
+            <div className='inputsCoordinates'>
+              <TextField
+                sx={{ maxWidth: '160px', '@media (max-width:900px)': { maxWidth: '100%', width: '100%' } }}
+                value={addressInfo.latitude}
+                id='standard-basic'
+                label='Latitude'
+                variant='standard'
+                disabled={true}
+              />
+              <TextField
+                sx={{ maxWidth: '160px', '@media (max-width:900px)': { maxWidth: '100%', width: '100%' } }}
+                id='standard-basic'
+                value={addressInfo.longitude}
+                label='Longitude'
+                variant='standard'
+                disabled={true}
+              />
             </div>
-            ENDORSE
-          </Button>
-        </ButtonContainer>
-      </MapContainer>
+            <Button
+              variant='outlined'
+              sx={{ padding: '7px 22px', '@media (max-width:900px)': { marginTop: '20px' } }}
+              onClick={handleChooseLocation}
+            >
+              {mapEnabled ? 'Choose location by address' : 'Choose location on the map'}
+            </Button>
+          </div>
+
+          <div style={{ borderRadius: '8px', height: '500px', margin: '20px 0px 60px ' }}>
+            <div ref={mapRef} style={{ width: '100%', minHeight: '500px' }} />
+          </div>
+
+          <ButtonContainer>
+            <Button
+              className='btn-endorsement'
+              onClick={() => {
+                setStartValidations(true)
+              }}
+              variant='contained'
+              disabled={true}
+            >
+              <div className='btn-icon' style={{ marginRight: '8px' }}>
+                <Icon icon='material-symbols:approval-outline' />
+              </div>
+              ENDORSE
+            </Button>
+          </ButtonContainer>
+        </MapContainer>
+      </DisableForm>
     </AddressContainer>
   )
 }

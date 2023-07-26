@@ -58,6 +58,7 @@ interface PickerProps {
 
 type InformationProps = {
   onStepChange?: (step: number) => void
+  disableSectionCtrl?: boolean
 }
 
 const schema = yup.object().shape({
@@ -87,7 +88,7 @@ const CustomInput = forwardRef(({ ...props }: PickerProps, ref: ForwardedRef<HTM
 type Timer = ReturnType<typeof setInterval>
 let typingTimer: Timer
 const doneTypingInterval = 1500 // Tiempo en milisegundos para considerar que se dejó de escribir
-const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
+const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange, disableSectionCtrl }) => {
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
 
   const inter = userThemeConfig.typography?.fontFamilyInter
@@ -385,7 +386,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
         <TitleContainer>
           <Typography variant='h5'>Payment warranty</Typography>
 
-          <DisableForm isDisabled={account?.status.toLowerCase() === 'bound' ? true : false}>
+          <DisableForm isDisabled={disableSectionCtrl}>
             <InputsContainer>
               <Grid container spacing={{ xs: 2, sm: 5, md: 5 }} rowSpacing={4} columns={12}>
                 <Grid item xs={12} sm={6} md={4}>
@@ -451,7 +452,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
             </InputsContainer>
           </DisableForm>
         </TitleContainer>
-        <DisableForm isDisabled={account?.status.toLowerCase() === 'bound' ? true : false}>
+        <DisableForm isDisabled={disableSectionCtrl}>
           <Grid container spacing={2}>
             {installmentsList.map((installment, index) => (
               <CardInstallment
