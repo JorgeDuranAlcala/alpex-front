@@ -152,7 +152,53 @@ const navigation = (): VerticalNavItemsType => {
           title: 'Add'
         }
       ]
-    }
+    },
+    {
+      title: 'Dynamic Data',
+      icon:'custom:dynamic-data',
+      children: [
+        {
+          title: 'Dashboard',
+          icon: 'ic:baseline-dashboard',
+          path: '/dynamic-data/dashboard'
+        },
+        {
+          title: 'Property listing',
+          icon: 'ic:baseline-list',
+          path: '/dynamic-data/property-listing'
+        },
+        {
+          title: 'Maps',
+          icon: 'ic:round-map',
+          children: [
+            {
+              title: 'Properties',
+              icon: 'ic:round-location-city',
+              path: '/dynamic-data/maps/map-properties'
+            },
+            {
+              title: 'VALFIS',
+              icon: 'ic:baseline-attach-money',
+              path: '/dynamic-data/maps/map-valfis'
+            },
+            {
+              title: 'ZONACRESTA',
+              icon: 'ic:round-location-on',
+              path: '/dynamic-data/maps/map-zonacresta'
+            },
+            {
+              title: 'Earthquakes',
+              icon: 'ic:baseline-warning-amber',
+              path: '/dynamic-data/maps/map-earthquakes'
+            },
+            {
+              title: 'Hurricanes',
+              icon: 'ic:baseline-waves',
+            },
+          ]
+        }
+      ]
+    },
 
     /***********************************************************************************************************************/
     /*{
