@@ -50,7 +50,7 @@ export class CalculateSecurity {
       const result = new Decimal(this.security.netPremiumAt100)
         .mul(this.security.share)
         .div(100)
-        .sub(this.getTaxesAmount())
+        .sub(this.security.taxesAmount || 0)
         .sub(this.security.totalAmountOfDiscounts || 0)
         .toNumber()
 
