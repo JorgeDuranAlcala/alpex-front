@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 
+import { DiscountDto } from '@/services/accounts/dtos/discount.dto'
 import { InformationDetailsDto } from '@/services/accounts/dtos/information.dto'
 import { InstallmentDto } from '@/services/accounts/dtos/installments.dto'
 import { SecurityDto } from '@/services/accounts/dtos/security.dto'
@@ -13,6 +14,7 @@ export interface ResponseGetAccount {
   status: string
   idAccountType: number
   informations: InformationDetailsDto[] //InformationDto[] //
+  discounts: DiscountDto[]
   securities: SecurityDto[]
   securitiesTotal: SecurityTotalDto[]
   installments: InstallmentDto[]
