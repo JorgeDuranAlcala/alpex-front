@@ -33,6 +33,7 @@ export const useGetAccountById = () => {
   const [accountId, setAccountId] = useState<number | null>(null)
 
   const getAccountById = async (idAccount: number): Promise<ResponseGetAccount> => {
+    console.log('getAccountById', idAccount)
     const getAccount = await AccountServices.getAccountById(idAccount)
     if (getAccount) {
       const idAccountStatus: number = getAccount.idAccountStatus as number
@@ -46,6 +47,8 @@ export const useGetAccountById = () => {
 
   useEffect(() => {
     if (accountId) {
+
+      console.log('useGetAccountById', accountId)
       AccountServices.getAccountById(accountId)
         .then(accounts => {
           if (accounts) {

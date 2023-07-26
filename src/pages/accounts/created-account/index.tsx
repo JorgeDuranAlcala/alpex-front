@@ -23,6 +23,8 @@ import PaymentWarranty from 'src/views/accounts/new-account-steps/PaymentWarrant
 import Security from 'src/views/accounts/new-account-steps/Security/SecurityView'
 import FormHeader from 'src/views/accounts/new-account-steps/headers/formHeader'
 
+import ChangeStepForm from 'src/views/accounts/ChangeStepForm'
+
 // ** Components
 import MenuForm from '@/pages/menuForm'
 import BoundAccountStepper from '@/views/components/bound-account/BoundAccountStepper'
@@ -41,6 +43,7 @@ import { AccountsTableContextProvider } from '@/context/accounts/Table/reducer'
 import { useGetAccountById } from '@/hooks/accounts/forms'
 
 // ** Core
+import { stepForms_updateStep } from '@/store/apps/accounts/stepFormsSlice'
 import Icon from 'src/@core/components/icon'
 
 export interface AllFormsInterface {
@@ -61,6 +64,7 @@ const CreatedAccount = () => {
 
   // Custom Hooks
   const { account: accountDetails, setAccountId, getAccountById } = useGetAccountById()
+  console.log({ accountDetails })
 
   // States
   const [disableComments] = useState(false)
@@ -128,6 +132,11 @@ const CreatedAccount = () => {
 
   const handleStepChange = (step: number) => {
     setActiveStep(step)
+
+    dispatch(stepForms_updateStep({
+      id: accountDetails?.id || 'new account',
+      data: step,
+    }))
   }
 
   const handleIsNewAccountChange = (status: boolean) => {
@@ -234,10 +243,17 @@ const CreatedAccount = () => {
       <Grid className='new-account' item xs={12}>
         <FormHeader setEditInfo={setEditInfo} accountDetails={accountDetails} setAccountId={setAccountId} />
         <div style={{ display: 'flex', flexDirection: 'row', gap: '16px' }}>
-          <Card>
-            {selectAccountStepper()}
-            {selectStepForm()}
-          </Card>
+          <ChangeStepForm
+            accountId={accountDetails?.id || null}
+            changeAccountId={setAccountId}
+            step={activeStep}
+            changeStep={handleStepChange}
+          >
+            <Card>
+              {selectAccountStepper()}
+              {selectStepForm()}
+            </Card>
+          </ChangeStepForm>
           <div style={{ display: 'none' }}>
             <MenuForm />
           </div>

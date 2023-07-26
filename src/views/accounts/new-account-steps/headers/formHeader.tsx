@@ -2,7 +2,7 @@
 import { useGetDoctosByIdAccountAndIdDocumentType } from '@/hooks/accounts/information/useGetFilesByType'
 import { ContainerMobileBound } from '@/styled-components/accounts/Security.styled'
 import { Box, Button, Card, ListItemIcon, ListItemText, Menu, MenuItem, Modal, Typography } from '@mui/material'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Icon from 'src/@core/components/icon'
 import { useAppSelector } from 'src/store'
 import StatusSelect from 'src/views/custom/select/StatusSelect'
@@ -177,6 +177,7 @@ const FormHeader = ({
 }: FormHeaderProps) => {
   const [status, setStatus] = useState('')
   const account = useAppSelector(state => state.accounts?.formsData?.form1)
+  const lastAccountId = useRef<number | null>(null)
 
   const formaterAmount = (amount: number) => {
     if (amount) {
@@ -214,11 +215,36 @@ const FormHeader = ({
   }
 
   useEffect(() => {
-    account && setAccountId(account.id)
-  }, [account])
+    console.log('formHeader account', account);
+
+    const accountId = account?.id || accountDetails?.id;
+    console.log('formHeader accountId', {
+      idFromAccout: account?.id,
+      idFromAccountDetails: accountDetails?.id,
+      accountId: accountId,
+    });
+
+    if (accountId) {
+      console.log('formHeader lastAccountId', {
+        lastAccountId: lastAccountId.current,
+        accountId: accountId
+      })
+      if (lastAccountId.current !== accountId) {
+        lastAccountId.current = accountId
+        console.log('formHeader setAccountId', accountId)
+        setAccountId(accountId)
+      }
+
+      // isAccountSetted.current = true
+    }
+
+    // account && setAccountId(account.id)
+  }, [account, accountDetails])
 
   useEffect(() => {
+    console.log('accountDetails Effect', accountDetails)
     accountDetails && setStatus(accountDetails.status)
+
   }, [accountDetails])
 
   return (

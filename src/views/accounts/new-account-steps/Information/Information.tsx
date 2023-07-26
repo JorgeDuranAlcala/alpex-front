@@ -843,6 +843,9 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   }, [userFileToDelete])
 
   useEffect(() => {
+    // const idAccountCache = Number(localStorage.getItem('idAccount'))
+    // console.log('idAccount', idAccount, idAccountCache)
+
     if (idAccount) {
       setDataInformation()
 
