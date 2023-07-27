@@ -40,7 +40,7 @@ const ProportionInvestment = () => {
               size={60}
               value={investedPercentage}
               thickness={5}
-              color='primary'
+              color='warning'
               variant='determinate'
               sx={{ '& .MuiCircularProgress-circle': { strokeWidth: 4, strokeLinecap: 'round' } }}
             />
@@ -52,7 +52,7 @@ const ProportionInvestment = () => {
                 left: '50%',
                 display: 'flex',
                 position: 'absolute',
-                color: 'primary.main'
+                color: '#FFB446'
               }}
             >
               <Icon icon='mdi:currency-usd-off' fontSize={20} />
@@ -87,11 +87,11 @@ const ProportionInvestment = () => {
               size={60}
               thickness={5}
               value={avaliablePercentage}
-              color='warning'
+              color='success'
               variant='determinate'
               sx={{ '& .MuiCircularProgress-circle': { strokeWidth: 4, strokeLinecap: 'round' } }}
             />
-            <Box sx={{ mt: -3, ml: -2.5, position: 'absolute', top: '50%', left: '50%', color: 'warning.main' }}>
+            <Box sx={{ mt: -3, ml: -2.5, position: 'absolute', top: '50%', left: '50%', color: 'success.main' }}>
               <Icon icon='mdi:currency-usd' fontSize={20} />
             </Box>
           </Box>

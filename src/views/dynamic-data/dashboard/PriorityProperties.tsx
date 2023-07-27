@@ -30,8 +30,8 @@ import { IProperty } from '@/services/dynamic-data/dtos/dashboard.dto'
 export enum EFieldColumn {
   PROPERTY_ID = 'id',
   VALFIS = 'valfis',
-  CVE_ENT = 'cveEnt',
-  CVE_MUN = 'cveMun',
+  NOM_ENT = 'nomEnt',
+  NOM_MUN = 'nomMun',
   TYPE = 'type',
   ZONACRESTA = 'zonacresta'
 }
@@ -43,48 +43,48 @@ const PriorityProperties = () => {
     {
       id: "06003_1",
       valfis: "000,000,000.00",
-      cveEnt:"9",
-      cveMun:"14",
+      nomEnt:"9",
+      nomMun:"14",
       type:"Propiedad Federal",
       zonacresta: "10"
     },
     {
       id: "06003_1",
       valfis: "000,000,000.00",
-      cveEnt:"9",
-      cveMun:"14",
+      nomEnt:"9",
+      nomMun:"14",
       type:"Propiedad Federal",
       zonacresta: "10"
     },
     {
       id: "06003_1",
       valfis: "000,000,000.00",
-      cveEnt:"9",
-      cveMun:"14",
+      nomEnt:"9",
+      nomMun:"14",
       type:"Propiedad Federal",
       zonacresta: "10"
     },
     {
       id: "06003_1",
       valfis: "000,000,000.00",
-      cveEnt:"9",
-      cveMun:"14",
+      nomEnt:"9",
+      nomMun:"14",
       type:"Propiedad Federal",
       zonacresta: "10"
     },
     {
       id: "06003_1",
       valfis: "000,000,000.00",
-      cveEnt:"9",
-      cveMun:"14",
+      nomEnt:"9",
+      nomMun:"14",
       type:"Propiedad Federal",
       zonacresta: "10"
     },
     {
       id: "06003_1",
       valfis: "000,000,000.00",
-      cveEnt:"9",
-      cveMun:"14",
+      nomEnt:"9",
+      nomMun:"14",
       type:"Propiedad Federal",
       zonacresta: "10"
     }
@@ -158,8 +158,8 @@ const seeMore = ()=>{
     },
     {
       flex: 0.1,
-      field: EFieldColumn.CVE_ENT,
-      headerName: 'CVE_ENT',
+      field: EFieldColumn.NOM_ENT,
+      headerName: 'NOM_ENT',
       minWidth: 50,
       maxWidth: 90,
       type: 'string',
@@ -173,15 +173,15 @@ const seeMore = ()=>{
           sx={{ color: colors.text.primary, fontWeight: 500, fontSize: fonts.size.px14, fontFamily: fonts.inter }}
         >
           <Link sx={{ color: colors.text.primary }} href='#'>
-            {row.cveEnt}
+            {row.nomEnt}
           </Link>
         </Typography>
       )
     },
     {
       flex: 0.1,
-      field: EFieldColumn.CVE_MUN,
-      headerName: 'CVE_MUN',
+      field: EFieldColumn.NOM_MUN,
+      headerName: 'NOM_MUN',
       minWidth: 50,
       maxWidth: 90,
       type: 'string',
@@ -194,7 +194,7 @@ const seeMore = ()=>{
       ),
       renderCell: ({ row }) => (
         <Typography sx={{ color: colors.text.secondary, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
-          {row.cveMun}
+          {row.nomMun}
         </Typography>
       )
     },
