@@ -191,13 +191,7 @@ const CreatedAccount = () => {
           />
         )
       case 4:
-        return (
-          <SublimitsBound
-            onStepChange={handleStepChange}
-            getAccountByIdHeader={getAccountById}
-            disableSectionCtrl={disableFormsSections.sublimits}
-          />
-        )
+        return <SublimitsBound onStepChange={handleStepChange} disableSectionCtrl={disableFormsSections.sublimits} />
       case 5:
         return <FormAddressBound disableSectionCtrl={disableFormsSections.sov} />
       default:

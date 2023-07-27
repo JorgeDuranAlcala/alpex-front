@@ -1,26 +1,32 @@
+import { ForwardedRef, forwardRef, useEffect, useState } from 'react'
+import { default as DatePicker } from 'react-datepicker'
+
+// ** MUI Imports
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
+import CloseIcon from '@mui/icons-material/Close'
 import {
+  Box,
   Button,
-  CircularProgress,
   FormHelperText,
   Grid,
   InputAdornment,
+  Modal,
   SxProps,
   TextField,
   Theme,
   Typography
 } from '@mui/material'
-import { ForwardedRef, forwardRef, useEffect, useState } from 'react'
 
-import { default as DatePicker } from 'react-datepicker'
-
-// import Icon from 'src/@core/components/icon'
-
-import CloseIcon from '@mui/icons-material/Close'
-import { Box, Modal } from '@mui/material'
-
+// ** Config
 import UserThemeOptions from 'src/layouts/UserThemeOptions'
+
+// ** Redux
+import { useAppDispatch, useAppSelector } from 'src/store'
+import { updateEndorsement } from 'src/store/apps/endorsement'
+
+// ** Components
+import { NumericFormat } from 'react-number-format'
 import CardInstallment from 'src/layouts/components/CardInstallment'
 import {
   GeneralContainer,
@@ -29,20 +35,18 @@ import {
   TitleContainer
 } from 'src/styles/Forms/PaymentWarranty/paymentWarranty'
 
-//hooks
-import { useAddInstallments, useDeleteInstallments } from 'src/hooks/accounts/installments'
-import { useAppSelector } from 'src/store'
+// ** Custom Hooks
+import { useGetAccountById } from '@/hooks/accounts/forms'
 import * as yup from 'yup'
 
-//dtos
-import { useGetAccountById } from '@/hooks/accounts/forms'
-import { ButtonClose, HeaderTitleModal } from '@/styles/modal/modal.styled'
-import { delayMs } from '@/utils/formatDates'
-import { DisableForm } from '@/views/accounts/new-account-steps/_commons/DisableForm'
-import CustomAlert, { IAlert } from '@/views/custom/alerts'
-import { Icon } from '@iconify/react'
-import { NumericFormat } from 'react-number-format'
+// ** Dtos
 import { InstallmentDto } from 'src/services/accounts/dtos/installments.dto'
+
+// ** Styles
+import { ButtonClose, HeaderTitleModal } from '@/styles/modal/modal.styled'
+
+// ** Utils
+import { DisableForm } from '@/views/accounts/new-account-steps/_commons/DisableForm'
 
 interface InstallmentErrors {
   errorFieldRequired: boolean
@@ -94,16 +98,12 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange, disableSect
   const inter = userThemeConfig.typography?.fontFamilyInter
   const texButtonColor = userThemeConfig.palette?.buttonText.primary
   const [installmentsList, setInstallmentList] = useState<InstallmentDto[]>([])
-  const [initialInstallmentList, setInitialInstallmentList] = useState<InstallmentDto[]>([])
 
   const [check, setCheck] = useState<boolean>(false)
   const [count, setCount] = useState<number>()
   const [btnNext, setBtnNext] = useState<boolean>(false)
   const [daysFirst, setDaysFirst] = useState<number>()
   const [open, setOpen] = useState<boolean>(false)
-  const [isChange, setIsChange] = useState<boolean>(false)
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [disableSaveBtn, setDisableSaveBtn] = useState<boolean>(false)
   const [error, setError] = useState<InstallmentErrors>({
     errorFieldRequired: false,
     erorrRangeInstallments: false,
@@ -111,19 +111,13 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange, disableSect
     error100Percent: false
   })
 
-  const { addInstallments } = useAddInstallments()
-  const accountData = useAppSelector(state => state.accounts)
-  const idAccount = accountData?.formsData?.form1?.id
-  const { account, setAccountId } = useGetAccountById()
-  const { deleteInstallments } = useDeleteInstallments()
-  const newAccount = account
+  // Redux
+  const idAccount = useAppSelector(state => state.accounts?.formsData?.form1?.id)
+  const endorsementData = useAppSelector(state => state.endorsement.data)
+  const dispatch = useAppDispatch()
 
-  const [badgeData, setBadgeData] = useState<IAlert>({
-    message: '',
-    theme: 'success',
-    open: false,
-    status: 'error'
-  })
+  // Custom hooks
+  const { account: accountData, setAccountId, setAccount } = useGetAccountById()
 
   const handleNumericInputChange = (count: number | undefined) => {
     clearInterval(typingTimer)
@@ -134,8 +128,6 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange, disableSect
       setCount(count)
       if (!count || count === 0 || count > 12) {
         setInstallmentList([])
-
-        setIsChange(true)
 
         setError({
           ...error,
@@ -155,8 +147,8 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange, disableSect
         balanceDue: 0,
         paymentPercentage: fixedPercentage,
         premiumPaymentWarranty: 0,
-        settlementDueDate: account ? new Date(account?.informations[0]?.effectiveDate || '') : new Date(),
-        idAccount: account ? idAccount : Number(localStorage.getItem('idAccount')),
+        settlementDueDate: accountData ? new Date(accountData?.informations[0]?.effectiveDate || '') : new Date(),
+        idAccount: accountData ? idAccount : Number(localStorage.getItem('idAccount')),
         id: 0
       }
       for (let i = 0; i < count; i++) {
@@ -171,7 +163,6 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange, disableSect
 
       setInstallmentList(installmentsTemp)
 
-      setIsChange(true)
       setError({
         ...error,
         erorrRangeInstallments: false,
@@ -187,26 +178,17 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange, disableSect
   const makeCalculates = (installment: InstallmentDto) => {
     const temp = { ...installment }
     let accountDate = ''
-    if (account) {
-      accountDate = account?.informations[0]?.effectiveDate?.toString().replace('Z', '') || ''
+    if (accountData) {
+      accountDate = accountData?.informations[0]?.effectiveDate?.toString().replace('Z', '') || ''
     }
     const inceptionDate = accountDate ? new Date(accountDate) : null
 
     const receivedNetPremium =
-      account && account.securitiesTotal.length > 0 ? account?.securitiesTotal[0]?.receivedNetPremium : 0
+      accountData && accountData.securitiesTotal.length > 0 ? accountData?.securitiesTotal[0]?.receivedNetPremium : 0
 
     if (inceptionDate) {
       const days = temp.premiumPaymentWarranty * 24 * 60 * 60 * 1000
       temp.settlementDueDate = new Date(inceptionDate.getTime() + days)
-
-      // console.log({
-      //   account: account?.informations[0]?.effectiveDate,
-      //   inceptionDate,
-      //   warranty: temp.premiumPaymentWarranty,
-      //   days,
-      //   settlementDueDate: temp.settlementDueDate
-      // })
-      // debugger;
     }
 
     if (receivedNetPremium) {
@@ -225,7 +207,6 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange, disableSect
     setInstallmentList(installmentsLisTemp)
     setDaysFirst(installmentsLisTemp[0].premiumPaymentWarranty)
 
-    setIsChange(true)
     setCheck(false)
   }
 
@@ -266,48 +247,18 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange, disableSect
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const saveInstallments = async () => {
-    setDisableSaveBtn(true)
-    if (isChange) {
-      setBadgeData({
-        message: `SAVING INSTALLMENTS`,
-        status: 'secondary',
-        open: true,
-        icon: <CircularProgress size={20} color='secondary' />,
-        backgroundColor: '#828597',
-        theme: 'info',
-        disableAutoHide: true
-      })
-      await deleteInstallments(initialInstallmentList)
-      const newInitialInstallments = await addInstallments(installmentsList)
-      setIsChange(false)
-      setInitialInstallmentList(newInitialInstallments)
-
-      await delayMs(1000)
-      setBadgeData({
-        message: `SAVED SUCCESSFULLY`,
-        status: 'success',
-        theme: 'success',
-        open: true,
-        icon: <Icon icon='ic:baseline-check-circle' />,
-        disableAutoHide: true
-      })
-      await delayMs(1500)
-      setBadgeData({
-        message: '',
-        status: undefined,
-        icon: undefined,
-        open: false
-      })
+    const newEndorsementData = {
+      ...endorsementData,
+      installments: installmentsList
     }
-    setDisableSaveBtn(false)
+    dispatch(updateEndorsement(newEndorsementData))
   }
 
   const nextStep = () => {
     validations()
     if (onStepChange) {
-      // saveInstallments()
+      saveInstallments()
       onStepChange(4)
     }
   }
@@ -341,37 +292,71 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange, disableSect
         return temp
       })
     }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [daysFirst])
 
   useEffect(() => {
-    idAccount && setAccountId(idAccount)
+    if (idAccount && !endorsementData.initialized) {
+      setAccountId(idAccount)
+    } else if (endorsementData) {
+      setAccount({
+        id: Number(endorsementData.idAccount),
+        status: '',
+        discounts: endorsementData.discounts,
+        idAccountStatus: 0,
+        idAccountType: 0,
+        informations: [
+          {
+            ...endorsementData.information,
+            idLineOfBussines: {},
+            idCountry: {},
+            idBroker: {},
+            idCedant: {},
+            idRiskActivity: {},
+            idTypeOfLimit: {},
+            idCurrency: {},
+            idBrokerContact: {},
+            idCedantContact: {},
+            idEconomicSector: {},
+            idLeadUnderwriter: {},
+            idTechnicalAssistant: {},
+            idUnderwriter: {}
+          }
+        ],
+        installments: endorsementData.installments,
+        securities: endorsementData.securities,
+        securitiesTotal: endorsementData.securitiesTotal,
+        sublimits: endorsementData.sublimits
+      })
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [idAccount, setAccountId])
 
   useEffect(() => {
-    if (account && account.installments.length > 0) {
-      setCount(account.installments.length)
-      const installments = [...account.installments]
-      for (const item of installments) {
-        item.settlementDueDate = new Date(item.settlementDueDate + 'T00:00:00.678Z')
-        item.idAccount = account ? idAccount : Number(localStorage.getItem('idAccount'))
-      }
+    if (accountData && accountData.installments.length > 0) {
+      setCount(accountData.installments.length)
+      const installments = [...accountData.installments]
+
+      if (!endorsementData.initialized)
+        for (const item of installments) {
+          item.settlementDueDate = new Date(item.settlementDueDate + 'T00:00:00.678Z')
+          item.idAccount = accountData ? idAccount : Number(localStorage.getItem('idAccount'))
+        }
 
       setInstallmentList([...installments])
-      setInitialInstallmentList([...installments])
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    if (newAccount && !check) {
+
+    if (accountData && !check) {
       setCheck(true)
-      const corte = new String(newAccount!.informations[0].effectiveDate!)
+      const corte = new String(accountData!.informations[0].effectiveDate!)
       const corte2 = Date.parse(corte.substring(0, 10))
       const fecha = new Date(corte2)
       fecha.setMinutes(fecha.getMinutes() + fecha.getTimezoneOffset())
-      newAccount!.informations[0].effectiveDate = fecha
+      accountData!.informations[0].effectiveDate = fecha
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [account, newAccount, idAccount])
+  }, [accountData, idAccount])
 
   //todo probar en un momento
   useEffect(() => {
@@ -381,7 +366,6 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange, disableSect
 
   return (
     <Grid container xs={12} sm={12}>
-      <CustomAlert {...badgeData} />
       <GeneralContainer>
         <TitleContainer>
           <Typography variant='h5'>Payment warranty</Typography>
@@ -392,8 +376,8 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange, disableSect
                 <Grid item xs={12} sm={6} md={4}>
                   <DatePicker
                     selected={
-                      newAccount?.informations[0]?.effectiveDate
-                        ? new Date(newAccount?.informations[0]?.effectiveDate)
+                      accountData?.informations[0]?.effectiveDate
+                        ? new Date(accountData?.informations[0]?.effectiveDate)
                         : null
                     }
                     shouldCloseOnSelect
@@ -419,7 +403,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange, disableSect
                     label='Dynamic net premium'
                     multiline
                     variant='outlined'
-                    value={account ? account?.securitiesTotal[0]?.receivedNetPremium : ' '}
+                    value={accountData ? accountData?.securitiesTotal[0]?.receivedNetPremium : ' '}
                     disabled={true}
                   />
                 </Grid>
@@ -461,11 +445,11 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange, disableSect
                 daysFirst={installment.premiumPaymentWarranty || 0}
                 onChangeList={handleItemChange}
                 globalInfo={{
-                  receivedNetPremium: account ? account?.securitiesTotal[0]?.receivedNetPremium : 0,
-                  inceptionDate: account?.informations[0]?.effectiveDate
-                    ? new Date(account.informations[0].effectiveDate)
+                  receivedNetPremium: accountData ? accountData?.securitiesTotal[0]?.receivedNetPremium : 0,
+                  inceptionDate: accountData?.informations[0]?.effectiveDate
+                    ? new Date(accountData.informations[0].effectiveDate)
                     : null,
-                  idAccount: account ? idAccount : ''
+                  idAccount: accountData ? idAccount : ''
                 }}
                 count={count}
                 key={index}
