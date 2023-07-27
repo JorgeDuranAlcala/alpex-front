@@ -98,7 +98,8 @@ const InputSubLimitCoverage: React.FC<InputSubLimitCoverageProps> = ({
               isAllowed={values => {
                 const { floatValue } = values
                 const upLimit = +limit
-                if ((floatValue! >= 0 && floatValue! <= upLimit) || floatValue === undefined) {
+
+                if ((floatValue! >= 0 && (floatValue! <= upLimit || floatValue! >= upLimit)) || floatValue === undefined) {
                   return true
                 }
 
@@ -180,9 +181,9 @@ export const inputSublimit_validations = ({
       .test('', 'This field is required', value => {
         const val = value || 0
 
-        if (luc && val >= 0 && +val <= limit && !isNotYesLuc) return true
+        if (luc && val >= 0 && (+val >= limit || +val <= limit) && !isNotYesLuc) return true      
 
-        return +val <= limit && +val > 0
+        return (+val >= limit || +val <= limit) && +val > 0
       })
       .required('This field is required'),
     yes: yup
