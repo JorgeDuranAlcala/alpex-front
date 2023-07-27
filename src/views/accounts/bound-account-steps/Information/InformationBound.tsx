@@ -28,6 +28,7 @@ import { Subject } from 'rxjs'
 import Icon from 'src/@core/components/icon'
 
 // ** Redux
+import { updateEndorsement } from '@/store/apps/endorsement'
 import { useAppDispatch, useAppSelector } from 'src/store'
 import { updateFormsData } from 'src/store/apps/accounts'
 
@@ -42,8 +43,6 @@ import { getFileFromUrl } from '@/utils/formatDoctos'
 import { DiscountDto } from '@/services/accounts/dtos/discount.dto'
 
 // ** Utils
-import { useGetDiscountByIdAccount } from '@/hooks/accounts/discount'
-import { updateEndorsement } from '@/store/apps/endorsement'
 import CustomAlert, { IAlert } from '@/views/custom/alerts'
 import { DisableForm } from 'src/views/accounts/new-account-steps/_commons/DisableForm'
 
@@ -154,7 +153,6 @@ const InformationBound: React.FC<InformationProps> = ({ onStepChange, disableSec
   // const { addDiscounts } = useAddDiscounts()
   // const { UpdateDiscounts } = useUpdateDiscounts()
   const { addEndorsement } = useAddEndorsement()
-  const { getDiscounts } = useGetDiscountByIdAccount()
 
   const [basicInfo, setBasicInfo] = useState<BasicInfoInterface>({
     insured: '',
@@ -205,14 +203,11 @@ const InformationBound: React.FC<InformationProps> = ({ onStepChange, disableSec
 
   const setDataInformation = async () => {
     let information
-    let tempDiscounts
 
     if (endorsementData.initialized) {
       information = endorsementData.information
-      tempDiscounts = endorsementData.discounts
     } else {
       information = await getInformaByIdAccount(idAccount)
-      tempDiscounts = await getDiscounts(idAccount)
     }
 
     if (!information) return
@@ -266,10 +261,6 @@ const InformationBound: React.FC<InformationProps> = ({ onStepChange, disableSec
 
     setBasicInfo(obBasicInfo)
     setPlacementStructure(obPlacementStructure)
-    if (tempDiscounts) {
-      console.log('Los caca', tempDiscounts)
-      setDiscounts(tempDiscounts)
-    }
     dispatch(
       updateFormsData({
         form1: { basicInfo: obBasicInfo, placementStructure: obPlacementStructure, userFile, id: idAccount }

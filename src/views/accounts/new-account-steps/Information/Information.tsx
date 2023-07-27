@@ -111,7 +111,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   const [changeTitle, setChangeTitle] = useState(false)
   const [discounts, setDiscounts] = useState<DiscountDto[]>([])
 
-  //Validaciones
+  // Validaciones
   const [allValidated, setAllValidated] = useState(false)
   const [validationCount, setValidationCount] = useState(0)
   const [validatedForms, setValidatedForms] = useState(0)
@@ -132,13 +132,13 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   const [userFile, setUserFile] = useState<File[]>([])
   const [userFileToDelete, setUserFileToDelete] = useState<File>()
 
-  //store
+  // Store
   const idAccount = useAppSelector(state => state.accounts?.formsData?.form1?.id)
   const lastForm1Information = useAppSelector(state => state.accounts?.formsData?.form1)
 
   const [fileUrls, setFileUrls] = useState<string[]>([])
 
-  // ** Custom Hooks
+  // Custom Hooks
   const { getInformaByIdAccount } = useFindInformationByIdAccount()
   const { addInformation } = useAddInformation()
   const { updateInformationByIdAccount } = useUpdateInformationByIdAccount()
@@ -781,59 +781,30 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
           <CustomAlert {...badgeData} />
         </div>
         <form noValidate autoComplete='on' onSubmit={handleNextStep}>
-          {disableSectionCtrl?.basicInfo ? (
-            <div className='section'>
-              <DisableForm isDisabled sg={5000}>
-                <BasicInfo
-                  basicInfo={basicInfo}
-                  setBasicInfo={setBasicInfo}
-                  makeValidations={makeValidations}
-                  makeSaveValidations={makeSaveValidations}
-                  onValidationComplete={handleValidationComplete}
-                />
-              </DisableForm>
-            </div>
-          ) : (
-            <div className='section'>
-              <DisableForm sg={5000}>
-                <BasicInfo
-                  basicInfo={basicInfo}
-                  setBasicInfo={setBasicInfo}
-                  makeValidations={makeValidations}
-                  makeSaveValidations={makeSaveValidations}
-                  onValidationComplete={handleValidationComplete}
-                />
-              </DisableForm>
-            </div>
-          )}
+          <div className='section'>
+            <DisableForm isDisabled={disableSectionCtrl?.basicInfo} sg={5000}>
+              <BasicInfo
+                basicInfo={basicInfo}
+                setBasicInfo={setBasicInfo}
+                makeValidations={makeValidations}
+                makeSaveValidations={makeSaveValidations}
+                onValidationComplete={handleValidationComplete}
+              />
+            </DisableForm>
+          </div>
 
-          {disableSectionCtrl?.placementStructure ? (
-            <div className='section'>
-              <DisableForm isDisabled sg={5000}>
-                <PlacementStructure
-                  placementStructure={placementStructure}
-                  setPlacementStructure={setPlacementStructure}
-                  onDiscountsChange={handleDiscountsChange}
-                  makeValidations={makeValidations}
-                  onValidationComplete={handleValidationComplete}
-                  triggerSubject={subjectState}
-                />
-              </DisableForm>
-            </div>
-          ) : (
-            <div className='section'>
-              <DisableForm sg={5000}>
-                <PlacementStructure
-                  placementStructure={placementStructure}
-                  setPlacementStructure={setPlacementStructure}
-                  onDiscountsChange={handleDiscountsChange}
-                  makeValidations={makeValidations}
-                  onValidationComplete={handleValidationComplete}
-                  triggerSubject={subjectState}
-                />
-              </DisableForm>
-            </div>
-          )}
+          <div className='section'>
+            <DisableForm isDisabled={disableSectionCtrl?.placementStructure} sg={5000}>
+              <PlacementStructure
+                placementStructure={placementStructure}
+                setPlacementStructure={setPlacementStructure}
+                onDiscountsChange={handleDiscountsChange}
+                makeValidations={makeValidations}
+                onValidationComplete={handleValidationComplete}
+                triggerSubject={subjectState}
+              />
+            </DisableForm>
+          </div>
 
           <div className='section' style={{ display: 'none' }}>
             <div className='title'>{changeTitle ? 'Submited files' : 'File submit'}</div>

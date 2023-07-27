@@ -1,13 +1,12 @@
 'use client'
-
 import React, { useEffect, useState } from 'react'
 
-//Hooks
-import { useDeleteDiscountsById, useGetDiscountByIdAccount } from '@/hooks/accounts/discount'
+// ** Custom Hooks
+import { useGetDiscountByIdAccount } from '@/hooks/accounts/discount'
 import { useGetAllCurrencies } from 'src/hooks/catalogs/currency'
 import { useGetAllTypeOfLimit } from 'src/hooks/catalogs/typeOfLimit'
 
-// // ** MUI Imports
+// ** MUI Imports
 import Button from '@mui/material/Button'
 import FormControl from '@mui/material/FormControl'
 import FormHelperText from '@mui/material/FormHelperText'
@@ -17,15 +16,14 @@ import Select, { SelectChangeEvent } from '@mui/material/Select'
 import Switch from '@mui/material/Switch'
 import TextField from '@mui/material/TextField'
 
-//Icon imports
+// ** Icon imports
 import Icon from 'src/@core/components/icon'
 
 // ** Third Party Imports
 import { useExchangePair } from '@/hooks/exchange-rate/useExchangePair'
 import { NumericFormat } from 'react-number-format'
 
-// dtos
-
+// ** Dtos
 import { DiscountDto } from '@/services/accounts/dtos/discount.dto'
 import { useAppSelector } from '@/store'
 import { Subject } from 'rxjs'
@@ -101,7 +99,7 @@ export type PlacementStructureProps = {
   triggerSubject: Subject<void>
 }
 
-const PlacementStructure: React.FC<PlacementStructureProps> = ({
+const PlacementStructureBound: React.FC<PlacementStructureProps> = ({
   placementStructure,
   setPlacementStructure,
   makeValidations,
@@ -121,9 +119,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
   const [taxesP, setTaxesP] = useState<number | string>()
   const [frontingFeeP, setFrontingFeeP] = useState<number | string>()
   const [netPremium, setNetPremium] = useState<number>()
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [netPremiumWithTaxes, setNetPremiumWithTaxes] = useState<number>()
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [netPremiumWithoutDiscounts, setNetPremiumWithoutDiscounts] = useState<number>()
   const [grossPremium, setGrossPremium] = useState<number | string>(placementStructure.grossPremium)
   const [reinsuranceBrokerage, setReinsuranceBrokerage] = useState<number | string>()
@@ -145,9 +141,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
 
   const { discounts, getDiscounts, setDiscounts } = useGetDiscountByIdAccount()
   const [discountInputs, setDiscountInputs] = useState<DiscountInputs[]>([])
-  const { deleteDiscountsById } = useDeleteDiscountsById()
 
-  // const [valid, setValid] = useState(false)
   const [singleValidation, setSingleValidation] = useState(false)
   const [errors, setErrors] = useState<PlacementStructureErrors>({
     currencyError: false,
@@ -170,13 +164,11 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
   const setDiscountsData = async () => {
     if (endorsementData.initialized) {
       const discountRes = endorsementData.discounts
-      console.log('Los discounts redux', discountRes)
       setDiscounts(discountRes)
       setDiscountInputs(discountRes)
     } else {
       const idAccountCache = Number(localStorage.getItem('idAccount'))
       const discountRes = await getDiscounts(idAccountCache)
-      console.log('Los discounts originales', discountRes)
       setDiscounts(discountRes)
       setDiscountInputs(discountRes)
     }
@@ -237,8 +229,6 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
           reinsuranceBrokerageTemp = value
           const result = (reinsuranceBrokeragec * 100) / grossPremiumc
 
-          // console.log({ result, reinsuranceBrokerageTemp })
-          // debugger;
           reinsuranceBrokeragePc = isFinite(result) ? result : 0
           reinsuranceBrokeragePTemp = isFinite(result) ? result : 0
         } else {
@@ -374,10 +364,6 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
     setNetPremiumWithTaxes(netPremiumWithTaxesc)
     setNetPremium(netPremiumc)
 
-    // if (discounts.length > 0) {
-    //   setTotalDiscountsError(discountValidation)
-    // }
-
     setPlacementStructure({
       ...placementStructure,
       reinsuranceBrokerageP: reinsuranceBrokeragePc ?? 0,
@@ -453,7 +439,6 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
   }
 
   const deleteDiscount = async (index: number) => {
-    const discountToDelete = discounts[index].id
     const newDiscounts = [...discounts]
     const newDiscountInput = [...discountInputs]
     newDiscounts.splice(index, 1)
@@ -480,10 +465,6 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
     if (index === discounts.length - 1) {
       // Si se eliminó el último descuento, actualizamos el estado "discount" para mostrar el último descuento en el formulario
       setDiscount(updatedDiscountInputs[index - 1] || { id: 0, percentage: 0, amount: 0, idAccount: 0 })
-    }
-
-    if (discountToDelete) {
-      await deleteDiscountsById(discountToDelete)
     }
   }
 
@@ -585,7 +566,9 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
           newDiscountErrors.push(index)
         }
       })
-      setDiscountsErrorsIndex(newDiscountErrors) // setea un arreglo de los discounts con error
+
+      // setea un arreglo de los discounts con error
+      setDiscountsErrorsIndex(newDiscountErrors)
     }
 
     setErrors(newErrors)
@@ -635,8 +618,6 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
     setFrontingFeeP(placementStructure.frontingFeeP)
     setReinsuranceBrokerageP(placementStructure.reinsuranceBrokerageP)
     setReinsuranceBrokerage(placementStructure.reinsuranceBrokerage)
-
-    // setNetPremium(placementStructure.netPremium)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [placementStructure.grossPremium])
 
@@ -651,29 +632,30 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [exchangeRate])
 
-  React.useEffect(() => {
+  useEffect(() => {
     onDiscountsChange(discounts)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [discounts])
-  React.useEffect(() => {
+
+  useEffect(() => {
     setTotalDiscountsError(discountValidation)
     calculate()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [discount, discountCounter])
 
-  React.useEffect(() => {
+  useEffect(() => {
     setTotalDiscountsError(discountValidation)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [taxesP, taxes, frontingFee, frontingFeeP, grossPremium])
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (singleValidation) {
       validations()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [placementStructure, setPlacementStructure])
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (makeValidations) {
       validations()
       setSingleValidation(true)
@@ -681,7 +663,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [makeValidations])
 
-  React.useEffect(() => {
+  useEffect(() => {
     const idAccountCache = Number(localStorage.getItem('idAccount'))
     if (idAccountCache) {
       setDiscountsData()
@@ -690,7 +672,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
   }, [])
 
   //Controla la carga inicial de los checkBox
-  React.useEffect(() => {
+  useEffect(() => {
     if (placementStructure.typeOfLimit !== 0) {
       const taxesCheck = placementStructure.taxesP === 0 ? false : true
       const frontingFeeCheck = placementStructure.frontingFeeP === 0 ? false : true
@@ -812,16 +794,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               }}
               onChange={(e: any) => {
                 const value = Number(e.target.value.replace('%', ''))
-
-                // console.log(value)
                 calculate('reinsuranceBrokerageP', value)
-
-                // if (!!(value % 1)) {
-                //   console.log('isFLoat')
-                //   calculate('reinsuranceBrokerageP', value)
-                // } else {
-                //   calculate('reinsuranceBrokerageP', '')
-                // }
               }}
               error={errors.reinsuranceBrokeragePError}
               helperText={getErrorMessage('reinsuranceBrokeragePError')}
@@ -1009,14 +982,6 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
 
                 return (floatValue! >= 0 && floatValue! <= 100) || floatValue === undefined
               }}
-              // eslint-disable-next-line lines-around-comment
-              // onValueChange={value => {
-              //   if (value.floatValue) {
-              //     calculate('taxesP', value.floatValue)
-              //   } else {
-              //     calculate('taxesP', '')
-              //   }
-              // }}
               onChange={e => {
                 const value = Number(e.target.value.replace('%', ''))
                 calculate('taxesP', value)
@@ -1111,14 +1076,6 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
 
                 return (floatValue! >= 0 && floatValue! <= 100) || floatValue === undefined
               }}
-              // eslint-disable-next-line lines-around-comment
-              // onValueChange={value => {
-              //   if (value.floatValue) {
-              //     calculate('frontingFeeP', value.floatValue)
-              //   } else {
-              //     calculate('frontingFeeP', '')
-              //   }
-              // }}
               onChange={e => {
                 const value = Number(e.target.value.replace('%', ''))
                 calculate('frontingFeeP', value)
@@ -1208,16 +1165,6 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
 
                   return (floatValue! >= 0 && floatValue! <= 100) || floatValue === undefined
                 }}
-                // eslint-disable-next-line lines-around-comment
-                // onValueChange={value => {
-                //   if (value.floatValue) {
-                //     const updatedDiscount = { ...discountItem, percentage: value.floatValue }
-                //     calculateDiscount(index, updatedDiscount)
-                //   } else {
-                //     calculateDiscount(index, { ...discountItem, percentage: '' })
-                //   }
-                // }}
-
                 onChange={e => {
                   const value = Number(e.target.value.replace('%', ''))
                   const updatedDiscount = { ...discountItem, percentage: value }
@@ -1351,4 +1298,4 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
     </>
   )
 }
-export default PlacementStructure
+export default PlacementStructureBound

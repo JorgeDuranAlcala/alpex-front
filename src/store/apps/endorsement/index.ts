@@ -75,7 +75,13 @@ export const appEndorsement = createSlice({
           idUnderwriter: information?.idUnderwriter?.id
         }
 
-        state.data.discounts = discounts
+        state.data.discounts = discounts.map(disccount => {
+          return {
+            ...disccount,
+            percentage: Number(disccount.percentage),
+            amount: Number(disccount.amount)
+          }
+        })
 
         state.data.securities = securities.map(security => {
           const securityDiscounts = security.discounts
@@ -110,7 +116,7 @@ export const appEndorsement = createSlice({
         state.data.securitiesTotal = securitiesTotal.map(securityTotal => {
           return {
             ...securityTotal,
-            receivedNetPremium: Number(securityTotal.distributedNetPremium),
+            receivedNetPremium: Number(securityTotal.receivedNetPremium),
             distributedNetPremium: Number(securityTotal.distributedNetPremium),
             difference: Number(securityTotal.difference)
           }
@@ -119,7 +125,8 @@ export const appEndorsement = createSlice({
         state.data.installments = installments.map(installment => {
           return {
             ...installment,
-            balanceDue: Number(installment.balanceDue)
+            balanceDue: Number(installment.balanceDue),
+            settlementDueDate: new Date(installment.settlementDueDate + 'T00:00:00.678Z')
           }
         })
 
