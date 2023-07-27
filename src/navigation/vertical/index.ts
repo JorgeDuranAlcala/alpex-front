@@ -57,6 +57,11 @@ const navigation = (): VerticalNavItemsType => {
           path: '/installments'
         },
         {
+          title: 'Brocker Tracker',
+          icon: 'mdi:text-search',
+          path: '/broker-tracker'
+        },
+        {
           title: 'List',
           path: '/menuForm'
         },
