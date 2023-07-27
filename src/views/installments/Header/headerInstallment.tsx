@@ -1,11 +1,13 @@
 // import { useGetAllEndorsementTypes } from '@/hooks/accounts/endorsementType/getAllEndorsementTypes.tsx'
 import { useGetDoctosByIdAccountAndIdDocumentType } from '@/hooks/accounts/information/useGetFilesByType'
 import { ContainerMobileBound } from '@/styled-components/accounts/Security.styled'
+import ActionsHeader2 from '@/views/accounts/new-account-steps/headers/ActionsHeader'
+import StatusSelect from '@/views/custom/select/StatusSelect'
 import { Box, Button, Card, ListItemIcon, ListItemText, Menu, MenuItem, Modal, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
 import Icon from 'src/@core/components/icon'
 import { useAppSelector } from 'src/store'
-import StatusSelect from 'src/views/custom/select/StatusSelect'
+import StatusInstallment from '../components/StatusInstallment'
 import ActionsHeader from './ActionsHeader'
 import { ModalTxtImg } from './modals/ModalTxtImg'
 import { ModalUploadImg } from './modals/ModalUploadImg'
@@ -31,6 +33,7 @@ interface InstallmentHeaderProps {
   setTypeofAccount?: any
   accountDetails: any
   setAccountId: any
+  isDataSheet?: boolean
 }
 
 //Pending types
@@ -173,7 +176,8 @@ const InstallmentHeader = ({
   setTypeofAccount,
   setEditInfo,
   accountDetails,
-  setAccountId
+  setAccountId,
+  isDataSheet
 }: InstallmentHeaderProps) => {
   const [status, setStatus] = useState('')
   const account = useAppSelector(state => state.accounts?.formsData?.form1)
@@ -279,54 +283,76 @@ const InstallmentHeader = ({
             {/* Container first */}
             {/* Container second */}
             <div className='form-secondContainer-wrapper'>
-              <div className='form-secondContainer-wrapper-first-side'>
-                <div className='form-secondContainer-first' style={{ marginRight: '20px' }}>
+              <div className='form-secondContainer-wrapper-first-side installments-wrapper'>
+                <div className='form-secondContainer-second'>
                   <span className='form-secondContainer-header-title'>Status</span>
-                  {status !== '' && accountDetails?.status && (
-                    <StatusSelect margin={0} initialStatus={accountDetails?.status} setSelectedStatus={setStatus} />
+                  {isDataSheet ? (
+                    <StatusSelect margin={0} initialStatus='PENDING' setSelectedStatus={setStatus} />
+                  ) : (
+                    <StatusInstallment status={'Pending'} />
                   )}
-                  {isNewAccount && <StatusSelect margin={0} initialStatus='PENDING' setSelectedStatus={setStatus} />}
                 </div>
-
-                <div className='form-secondContainer-second'>
-                  <span className='form-secondContainer-header-title'>Broker Name</span>
-                  <span className='form-secondContainer-header-subtitle'>Broker Name</span>
-                </div>
-                {/* <div className='form-secondContainer-third'>
-                  <span className='form-header-money-data-date'>
-                    Last update: {accountDetails && formatDateFromUTC(accountDetails?.informations[0]?.updatedAt)}
-                  </span>
-                </div> */}
-                <div className='form-secondContainer-second'>
-                  <span className='form-secondContainer-header-title'>Line of Business</span>
-                  <span className='form-secondContainer-header-subtitle'>Line of Business</span>
-                </div>
-                <div className='form-secondContainer-second'>
-                  <span className='form-secondContainer-header-title'>Next Due Date</span>
-                  <span className='form-secondContainer-header-subtitle'>10 / 01 / 2023</span>
-                </div>
-                <div className='form-secondContainer-second'>
-                  <span className='form-secondContainer-header-title'>Next Balance Date</span>
-                  <span className='form-secondContainer-header-subtitle'>$100,000 USD</span>
-                </div>
-                <div className='form-secondContainer-second'>
-                  <span className='form-secondContainer-header-title'>Installments</span>
-                  <span className='form-secondContainer-header-subtitle'>1/4</span>
-                </div>
-                <div className='form-secondContainer-second'>
-                  <span className='form-secondContainer-header-title'>Balance</span>
-                  <span className='form-secondContainer-header-subtitle'>$0 USD</span>
-                </div>
+                {isDataSheet ? (
+                  <>
+                    <div className='form-secondContainer-second'>
+                      <span className='form-secondContainer-header-title'>Line of Business</span>
+                      <span className='form-secondContainer-header-subtitle'>Line of Business</span>
+                    </div>
+                    <div className='form-secondContainer-second'>
+                      <span className='form-secondContainer-header-title'>Reception Date</span>
+                      <span className='form-secondContainer-header-subtitle'>13 / 03 / 2023</span>
+                    </div>
+                    <div className='form-secondContainer-second'>
+                      <div className='actions-header'>
+                        <ActionsHeader2
+                          accountId={account?.id}
+                          setEditInfo={setEditInfo}
+                          accountStatus='PENDING'
+                          sideHeader={true}
+                        />
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className='form-secondContainer-second'>
+                      <span className='form-secondContainer-header-title'>Broker Name</span>
+                      <span className='form-secondContainer-header-subtitle'>Broker Name</span>
+                    </div>
+                    <div className='form-secondContainer-second'>
+                      <span className='form-secondContainer-header-title'>Line of Business</span>
+                      <span className='form-secondContainer-header-subtitle'>Line of Business</span>
+                    </div>
+                    <div className='form-secondContainer-second'>
+                      <span className='form-secondContainer-header-title'>Next Due Date</span>
+                      <span className='form-secondContainer-header-subtitle'>10 / 01 / 2023</span>
+                    </div>
+                    <div className='form-secondContainer-second'>
+                      <span className='form-secondContainer-header-title'>Next Balance Date</span>
+                      <span className='form-secondContainer-header-subtitle'>$100,000 USD</span>
+                    </div>
+                    <div className='form-secondContainer-second'>
+                      <span className='form-secondContainer-header-title'>Installments</span>
+                      <span className='form-secondContainer-header-subtitle'>1/4</span>
+                    </div>
+                    <div className='form-secondContainer-second'>
+                      <span className='form-secondContainer-header-title'>Balance</span>
+                      <span className='form-secondContainer-header-subtitle'>$0 USD</span>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
-            <div className='actions-header'>
-              <ActionsHeader
-                accountId={account?.id}
-                setEditInfo={setEditInfo}
-                accountStatus='PENDING'
-                sideHeader={true}
-              />
-            </div>
+            {!isDataSheet ? (
+              <div className='actions-header'>
+                <ActionsHeader
+                  accountId={account?.id}
+                  setEditInfo={setEditInfo}
+                  accountStatus='PENDING'
+                  sideHeader={true}
+                />
+              </div>
+            ) : null}
             {/* Container second */}
           </div>
         </div>
