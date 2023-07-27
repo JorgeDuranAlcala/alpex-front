@@ -1,3 +1,4 @@
+import { DiscountDto } from '@/services/accounts/dtos/discount.dto'
 import { InformationDto } from '@/services/accounts/dtos/information.dto'
 import { InstallmentDto } from '@/services/accounts/dtos/installments.dto'
 import { SecurityDto } from '@/services/accounts/dtos/security.dto'
@@ -11,8 +12,9 @@ export interface EndorsementDto {
   createdAt?: Date
   updatedAt?: Date
   active?: boolean
-  init: boolean
+  initialized: boolean
   information: DeepPartial<InformationDto>
+  discounts: DiscountDto[]
   installments: InstallmentDto[]
   sublimits: SublimitDto[]
   securities: SecurityDto[]

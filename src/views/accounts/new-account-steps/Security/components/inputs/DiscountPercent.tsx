@@ -36,6 +36,7 @@ export const DiscountPercent = ({
       active: true,
       isChangeAmount: false
     }
+    securitiesTemp[index].isChangeDynamicCommissionAmount = false
     calculateSecurities(securitiesTemp)
   }
 

@@ -8,12 +8,13 @@ import { IEndorsementState } from '@/types/apps/endorsementTypes'
 
 const initialState: IEndorsementState = {
   data: {
-    init: false,
+    initialized: false,
     reason: '',
     type: '',
     idEndorsementType: 0,
     idAccount: 0,
     information: {},
+    discounts: [],
     securities: [],
     securitiesTotal: [],
     installments: [],
@@ -48,6 +49,7 @@ export const appEndorsement = createSlice({
       const accountData = action.payload
       if (accountData) {
         const information = accountData.informations[accountData.informations.length - 1]
+        const discounts = accountData.discounts
         const securities = accountData.securities
         const securitiesTotal = accountData.securitiesTotal
         const installments = accountData.installments
@@ -64,8 +66,22 @@ export const appEndorsement = createSlice({
           idCedant: information?.idCedant?.id,
           idRiskActivity: information?.idRiskActivity?.id,
           idTypeOfLimit: information?.idTypeOfLimit?.id,
-          idCurrency: information?.idCurrency?.id
+          idCurrency: information?.idCurrency?.id,
+          idBrokerContact: information?.idBrokerContact?.id,
+          idCedantContact: information?.idCedantContact?.id,
+          idEconomicSector: information?.idEconomicSector?.id,
+          idLeadUnderwriter: information?.idLeadUnderwriter?.id,
+          idTechnicalAssistant: information?.idTechnicalAssistant?.id,
+          idUnderwriter: information?.idUnderwriter?.id
         }
+
+        state.data.discounts = discounts.map(disccount => {
+          return {
+            ...disccount,
+            percentage: Number(disccount.percentage),
+            amount: Number(disccount.amount)
+          }
+        })
 
         state.data.securities = securities.map(security => {
           const securityDiscounts = security.discounts
@@ -96,20 +112,24 @@ export const appEndorsement = createSlice({
                 : []
           }
         })
+
         state.data.securitiesTotal = securitiesTotal.map(securityTotal => {
           return {
             ...securityTotal,
-            receivedNetPremium: Number(securityTotal.distributedNetPremium),
+            receivedNetPremium: Number(securityTotal.receivedNetPremium),
             distributedNetPremium: Number(securityTotal.distributedNetPremium),
             difference: Number(securityTotal.difference)
           }
         })
+
         state.data.installments = installments.map(installment => {
           return {
             ...installment,
-            balanceDue: Number(installment.balanceDue)
+            balanceDue: Number(installment.balanceDue),
+            settlementDueDate: new Date(installment.settlementDueDate + 'T00:00:00.678Z')
           }
         })
+
         state.data.sublimits = sublimits
       }
     })
@@ -117,6 +137,7 @@ export const appEndorsement = createSlice({
       state.data = {
         ...state.data,
         information: {},
+        discounts: [],
         securities: [],
         securitiesTotal: [],
         installments: [],

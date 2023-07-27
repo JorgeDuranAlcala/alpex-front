@@ -722,6 +722,7 @@
   background-color: rgba(247, 247, 249, 1);
   color: rgba(77, 80, 98, 0.68);
   margin-right: 10px;
+  cursor: pointer;
 }
 
 .steps .step .step-name {

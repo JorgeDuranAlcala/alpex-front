@@ -13,4 +13,9 @@ const AddBroker = () => {
   )
 }
 
+AddBroker.acl = {
+  action: 'read',
+  subject: 'catalog'
+}
+
 export default AddBroker

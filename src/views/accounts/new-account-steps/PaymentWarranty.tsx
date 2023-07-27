@@ -369,6 +369,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
       fecha.setMinutes(fecha.getMinutes() + fecha.getTimezoneOffset())
       newAccount!.informations[0].effectiveDate = fecha
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [account, newAccount, idAccount])
 
   //todo probar en un momento

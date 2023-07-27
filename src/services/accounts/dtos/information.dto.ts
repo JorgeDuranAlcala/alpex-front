@@ -83,17 +83,17 @@ export interface InformationDetailsDto {
   idAccount: number
   idCurrency: Currency
   idCountry: Country
-  idBroker: Broker
-  idBrokerContact: number | null
-  idCedant: Cedant
-  idCedantContact: number | null
+  idBroker: CommonCatalog
+  idBrokerContact: CommonContact
+  idCedant: CommonCatalog
+  idCedantContact: CommonContact
   idLineOfBussines: LineOfBussines
-  idTypeOfLimit: TypeOfLimit
-  idEconomicSector: number | null
+  idTypeOfLimit: CommonCatalog
+  idEconomicSector: EconomicSector
   idRiskActivity: RiskActivity
-  idLeadUnderwriter: number | null | string
-  idUnderwriter: number | null | string
-  idTechnicalAssistant: number | null | string
+  idLeadUnderwriter: CommonUser
+  idUnderwriter: CommonUser
+  idTechnicalAssistant: CommonUser
   idAccountType: number
 }
 
@@ -102,22 +102,34 @@ interface LineOfBussines {
   lineOfBussines: string
 }
 
-interface Broker {
+interface CommonCatalog {
   id: number
   alias: string
   name: string
 }
 
-interface Cedant {
+interface CommonContact {
   id: number
-  alias: string
   name: string
+  email: string
+  phone: string
 }
 
-interface TypeOfLimit {
+interface EconomicSector {
   id: number
-  alias: string
+  sector: string
+}
+
+interface CommonUser {
+  id: number
   name: string
+  areaCode: string
+  phone: string
+  surname: string
+  username: string
+  secondSurname: string
+  email: string
+  password: string
 }
 
 interface Country {
