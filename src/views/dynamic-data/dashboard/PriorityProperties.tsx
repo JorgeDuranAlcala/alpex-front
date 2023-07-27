@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react'
 
 // ** MUI Imports
+import { Button } from '@mui/material'
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
 import Typography from '@mui/material/Typography'
@@ -10,7 +11,7 @@ import { DataGrid, GRID_CHECKBOX_SELECTION_COL_DEF, GridColumns } from '@mui/x-d
 // ** Icon Imports
 
 // ** Next Import
-// import { useRouter } from 'next/router'
+import { useRouter } from 'next/router'
 
 // ** Custom Components Imports
 import ColumnHeader from './TableColumnHeader'
@@ -22,14 +23,9 @@ import { Link } from '@mui/material'
 import colors from 'src/views/accounts/colors'
 import fonts from 'src/views/accounts/font'
 
-export interface IProperty {
-  id: string
-  valfis: string
-  cveEnt: string
-  cveMun: string
-  type: string
-  zonacresta: string
-}
+//** Dto imports */
+
+import { IProperty } from '@/services/dynamic-data/dtos/dashboard.dto'
 
 export enum EFieldColumn {
   PROPERTY_ID = 'id',
@@ -95,7 +91,7 @@ const PriorityProperties = () => {
   ]
 
   // ** Hooks
-  // const router = useRouter()
+  const router = useRouter()
 
   useEffect(() => {
     setLoading(true);
@@ -106,6 +102,9 @@ const PriorityProperties = () => {
     return () => clearTimeout(timer);
   }, []);
 
+const seeMore = ()=>{
+  router.push(`/dynamic-data/property-listing/`)
+}
 
   const column: GridColumns<IProperty> = [
     {
@@ -259,6 +258,11 @@ const PriorityProperties = () => {
         className={'properties-datagrid'}
 
       />
+       <div className="see-more-section">
+      <Button className='add-btn' onClick={seeMore}>
+          See more
+      </Button>
+      </div>
   </Card>
 
   )
