@@ -1,20 +1,28 @@
+import { useEffect, useState } from 'react'
+
+// ** Custom Hooks
 import { useGetAccountById } from '@/hooks/accounts/forms'
-import { useAddSublimits, useDeleteSublimits, useUpdateSublimits } from '@/hooks/accounts/sublimit'
-import { AbilityContext } from '@/layouts/components/acl/Can'
+
+// ** Dtos
 import { SublimitDto } from '@/services/accounts/dtos/sublimit.dto'
 import { CoverageDto } from '@/services/catalogs/dtos/coverage.dto'
-import { useAppSelector } from '@/store'
+
+// ** Components
 import { NextContainer } from '@/styles/Forms/Sublimits'
 import InputLimit from '@/views/accounts/new-account-steps/Sublimit/components/InputLimit/InputLimit'
 import SelectCoverage from '@/views/accounts/new-account-steps/Sublimit/components/SelectCoverage/SelectCoverage'
 import { GenericCard } from '@/views/accounts/new-account-steps/Sublimit/components/SublimitsCards'
-import CustomAlert, { IAlert } from '@/views/custom/alerts'
+
+// ** Redux
+import { useAppDispatch, useAppSelector } from '@/store'
+import { updateEndorsement } from '@/store/apps/endorsement'
+
+// ** MUI Imports
 import { Button, CardContent, Grid } from '@mui/material'
 import Typography from '@mui/material/Typography'
-import { useContext, useEffect, useState } from 'react'
 import Icon from 'src/@core/components/icon'
 
-import { useUpdateAccountsStatus } from '@/hooks/accounts/status'
+// ** Utils
 import { DisableForm } from '@/views/accounts/new-account-steps/_commons/DisableForm'
 
 const initialValues: SublimitDto = {
@@ -74,43 +82,24 @@ export const initialErrorValues: FormErrors = {
 }
 
 interface SublimitsProps {
-  getAccountByIdHeader: (idAccount: number) => void
   onStepChange: (step: number) => void
   disableSectionCtrl?: boolean
 }
 
-const Sublimits = ({ getAccountByIdHeader, onStepChange, disableSectionCtrl }: SublimitsProps) => {
-  const [badgeData, setBadgeData] = useState<IAlert>({
-    message: '',
-    theme: 'success',
-    open: false,
-    status: 'error'
-  })
-
-  const [formInformationData, setFormInformationData] = useState<any>({})
+const Sublimits = ({ onStepChange, disableSectionCtrl }: SublimitsProps) => {
   const [subLimits, setSubLimits] = useState<SublimitDto[]>([])
   const [coverageSelected, setCoverageSelected] = useState<CoverageDto[]>([])
-  const ability = useContext(AbilityContext)
 
-  //state para lo botones
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [disableBoundBtn, setDisableBoundBtn] = useState(ability?.cannot('update', 'accountSublimits'))
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [disableSaveBtn, setDisableSaveBtn] = useState<boolean>(false)
   const [showErrors, setShowErrors] = useState<boolean>(false)
   const [formErrors, setFormErrors] = useState<boolean[]>([])
-  const { account, setAccountId, getAccountById } = useGetAccountById()
 
   // Redux
-  const accountData = useAppSelector(state => state.accounts)
+  const accountDataRedux = useAppSelector(state => state.accounts)
+  const endorsementData = useAppSelector(state => state.endorsement.data)
+  const dispatch = useAppDispatch()
 
-  //hooks para sublimits
-  const { saveSublimits } = useAddSublimits()
-  const { updateSublimits } = useUpdateSublimits()
-  const { deleteSublimits } = useDeleteSublimits()
-
-  // ** Custom hooks
-  const { updateAccountsStatus } = useUpdateAccountsStatus()
+  // Custom hooks
+  const { account, setAccountId, setAccount } = useGetAccountById()
 
   const handleSelectedCoverage = (coverageSelect: CoverageDto) => {
     setCoverageSelected([...coverageSelected, coverageSelect])
@@ -143,11 +132,6 @@ const Sublimits = ({ getAccountByIdHeader, onStepChange, disableSectionCtrl }: S
     const sublimit = subLimits[index]
     const coverageDelete = coverageSelected.filter(cov => cov.coverage !== sublimit.title)
 
-    /**
-     * Hace el borrado de la base de datos directamente
-     */
-    await deleteSublimits([sublimit])
-
     setSubLimits(state => {
       const newState = state.filter((sub, i) => index !== i)
 
@@ -167,140 +151,88 @@ const Sublimits = ({ getAccountByIdHeader, onStepChange, disableSectionCtrl }: S
 
   //Evento que controla el evento de continuar
   const handleNextStep = async () => {
-    onStepChange(5)
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleClickSave = () => {
     const existError = formErrors.find(error => error)
     if (!existError && subLimits.length > 0) {
       handleSubmit()
+      onStepChange(5)
     } else {
       setShowErrors(true)
     }
   }
 
   const handleSubmit = async () => {
-    setDisableBoundBtn(true)
-    setDisableSaveBtn(true)
     const save: Partial<SublimitDto>[] = []
-    const update: Partial<SublimitDto>[] = []
     for (const subLimit of subLimits) {
       // * Cuando hay un cambio en el componente DeductibleMaterialDamage,
       // * desaparece el campo idCDeductiblePer, si no hay un cambio
       // * lo deja en 0, entonces cuando venga en 0, lo elimino
 
-      // * Se elimina el campo title porque no existe en la base de datos,
-      // * ya hay otro llamado "coverage" el cuál contiene el título de la card
       const tempSubmit = {
         ...subLimit,
-        ...(subLimit?.idCDeductiblePer === 0 ? { idCDeductiblePer: null } : null),
-        ...(subLimit?.title ? { title: undefined } : null)
+        ...(subLimit?.idCDeductiblePer === 0 ? { idCDeductiblePer: null } : null)
       }
 
-      if (subLimit.id) {
-        update.push(tempSubmit)
-      } else {
-        save.push(tempSubmit)
-      }
+      save.push(tempSubmit)
     }
 
-    Promise.all([updateSublimits(update), saveSublimits(save)])
-      .then(values => {
-        console.log({ values })
-        setBadgeData({
-          message: 'THE INFORMATION HAS BEEN SAVED',
-          theme: 'success',
-          open: true,
-          status: 'error'
-        })
-
-        getAccountData().then(console.log)
-        setDisableBoundBtn(false)
-        setDisableSaveBtn(false)
-      })
-      .catch(reason => {
-        console.log({ reason })
-        setDisableBoundBtn(false)
-        setDisableSaveBtn(false)
-      })
-
-    setTimeout(() => {
-      setBadgeData({
-        message: '',
-        theme: 'success',
-        open: false,
-        status: 'error'
-      })
-    }, 4000)
+    const newEndorsementData = {
+      ...endorsementData,
+      sublimits: save
+    }
+    dispatch(updateEndorsement(newEndorsementData))
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleUpdateStatus = async () => {
-    const existError = formErrors.find(error => error)
-    if (!existError) {
-      handleSubmit()
-
-      await updateAccountsStatus({
-        updateStatus: [
+  useEffect(() => {
+    if (accountDataRedux.formsData.form1?.id && !endorsementData.initialized) {
+      setAccountId(accountDataRedux.formsData.form1.id)
+    } else {
+      setAccount({
+        id: Number(endorsementData.idAccount),
+        status: '',
+        discounts: endorsementData.discounts,
+        idAccountStatus: 0,
+        idAccountType: 0,
+        informations: [
           {
-            idAccount: formInformationData.id,
-            status: 5
+            ...endorsementData.information,
+            idLineOfBussines: {},
+            idCountry: {},
+            idBroker: {},
+            idCedant: {},
+            idRiskActivity: {},
+            idTypeOfLimit: {},
+            idCurrency: {},
+            idBrokerContact: {},
+            idCedantContact: {},
+            idEconomicSector: {},
+            idLeadUnderwriter: {},
+            idTechnicalAssistant: {},
+            idUnderwriter: {}
           }
-        ]
+        ],
+        installments: endorsementData.installments,
+        securities: endorsementData.securities,
+        securitiesTotal: endorsementData.securitiesTotal,
+        sublimits: endorsementData.sublimits
       })
-      getAccountByIdHeader(formInformationData.id)
-      setBadgeData({
-        message: 'Account has been updated',
-        theme: 'success',
-        open: true,
-        status: 'error'
-      })
-      setTimeout(() => {
-        setBadgeData({
-          message: 'updated successfully',
-          theme: 'success',
-          open: false,
-          status: 'error'
-        })
-      }, 50)
     }
-  }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [accountDataRedux, setAccountId])
 
-  const getAccountData = async () => {
-    const idAccountCache = Number(localStorage.getItem('idAccount'))
-    setAccountId(idAccountCache)
-    const accountData = await getAccountById(idAccountCache)
-
-    if (accountData && accountData.sublimits.length > 0) {
-      setSubLimits([...accountData.sublimits])
+  useEffect(() => {
+    if (account && account.sublimits.length > 0) {
+      setSubLimits([...account.sublimits])
 
       formErrors.push(false)
     }
-  }
-
-  useEffect(() => {
-    if (accountData.formsData.form1?.id) {
-      setAccountId(accountData.formsData.form1.id)
-      setFormInformationData(accountData.formsData.form1)
-    }
-  }, [accountData, setAccountId])
-
-  useEffect(() => {
-    getAccountData()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-  console.log({ subLimits })
+  }, [account])
 
   return (
     <CardContent>
       <Grid container spacing={5}>
         <Grid item xs={12} sm={12}>
           <Typography variant='h5'>Sublimits</Typography>
-
-          <div style={{ width: 'fit-content', float: 'right', alignSelf: 'end' }}>
-            <CustomAlert {...badgeData} />
-          </div>
         </Grid>
         <Grid item xs={12} sm={12}>
           <form noValidate autoComplete='on'>
