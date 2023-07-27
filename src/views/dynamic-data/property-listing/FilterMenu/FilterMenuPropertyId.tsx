@@ -1,5 +1,5 @@
 // ** React Imports
-import { useRef } from 'react'
+// import { useRef } from 'react'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -8,32 +8,35 @@ import InputAdornment from '@mui/material/InputAdornment'
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
-import { useAppDispatch } from 'src/store'
-import { deleteAccountFilter, handleAccountFilter } from 'src/store/apps/accounts'
+
+// import { useAppDispatch } from 'src/store'
+// import { deleteAccountFilter, handleAccountFilter } from 'src/store/apps/accounts'
 import fonts from '../font'
 
 const FilterMenuPropertyId = () => {
-  const dispatch = useAppDispatch();
-  const searchTimeOutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // const dispatch = useAppDispatch();
+  // const searchTimeOutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
 
 
   const handleOnChangeSearch = (value: string) => {
-    if (searchTimeOutRef.current) {
+    console.log(value)
 
-      clearTimeout(searchTimeOutRef.current);
-    }
-    searchTimeOutRef.current = setTimeout(() => {
-      if (value === '') dispatch(deleteAccountFilter('idAccount'))
-      else
-        dispatch(
-          handleAccountFilter({
-            type: 'idAccount',
-            value: `${value}`,
-            text: `${value}`
-          })
-        )
-    }, 500);
+    // if (searchTimeOutRef.current) {
+
+    //   clearTimeout(searchTimeOutRef.current);
+    // }
+    // searchTimeOutRef.current = setTimeout(() => {
+    //   if (value === '') dispatch(deleteAccountFilter('idAccount'))
+    //   else
+    //     dispatch(
+    //       handleAccountFilter({
+    //         type: 'idAccount',
+    //         value: `${value}`,
+    //         text: `${value}`
+    //       })
+    //     )
+    // }, 500);
   }
 
   return (

@@ -1,11 +1,12 @@
 // ** MUI Imports
-import { useGetAllLineOfBussines } from '@/hooks/catalogs/lineOfBussines'
+// import { useGetAllLineOfBussines } from '@/hooks/catalogs/lineOfBussines'
 import Box from '@mui/material/Box'
 import ListItemText from '@mui/material/ListItemText'
 import MenuItem from '@mui/material/MenuItem'
 import Typography from '@mui/material/Typography'
-import { useAppDispatch } from 'src/store'
-import { handleAccountFilter } from 'src/store/apps/accounts'
+
+// import { useAppDispatch } from 'src/store'
+// import { handleAccountFilter } from 'src/store/apps/accounts'
 
 // ** Icon Imports
 
@@ -21,21 +22,24 @@ import fonts from 'src/views/accounts/font'
 }*/
 
 interface IFilterMenuLobOptionProps {
-  lob: string
+  name: string
   id: number
   handleClose?: () => void
 }
 
-const FilterMenuOption: React.FC<IFilterMenuLobOptionProps> = ({ lob, id }) => {
-  const dispatch = useAppDispatch()
+const FilterMenuOption: React.FC<IFilterMenuLobOptionProps> = ({ name, id }) => {
+  // const dispatch = useAppDispatch()
   const handleClick = () => {
-    dispatch(
-      handleAccountFilter({
-        type: 'idLineOfBusiness',
-        value: id,
-        text: lob
-      })
-    )
+    console.log(name)
+    console.log(id)
+
+    // dispatch(
+    //   handleAccountFilter({
+    //     type: 'idLineOfBusiness',
+    //     value: id,
+    //     text: lob
+    //   })
+    // )
   }
 
   return (
@@ -50,7 +54,7 @@ const FilterMenuOption: React.FC<IFilterMenuLobOptionProps> = ({ lob, id }) => {
               textTransform: 'capitalize'
             }}
           >
-            {lob}
+            {name}
           </Typography>
         </ListItemText>
       </MenuItem>
@@ -59,19 +63,44 @@ const FilterMenuOption: React.FC<IFilterMenuLobOptionProps> = ({ lob, id }) => {
 }
 
 const FilterMenuZonacresta = ({}) => {
-  const { lineOfBussines } = useGetAllLineOfBussines()
+  const zonacrestaList = [
+    {
+      id: 1,
+      name: "1"
+    },
+    {
+      id: 2,
+      name: "2"
+    },
+    {
+      id: 3,
+      name: "3"
+    },
+    {
+      id: 4,
+      name: "4"
+    },
+    {
+      id: 5,
+      name: "5"
+    },
+    {
+      id: 6,
+      name: "6"
+    },
+  ]
 
   return (
     <>
       <Box component={'li'} sx={{ padding: '10px 10px', display: 'block', width: '100%', borderRadius: '0' }}>
         <Box sx={{ display: 'flex' }}>
           <Typography sx={{ color: colors.text.secondary, fontSize: fonts.size.px12, fontFamily: fonts.inter }}>
-            Line of Business
+            Zonacresta
           </Typography>
         </Box>
       </Box>
-      {lineOfBussines.map(lob => (
-        <FilterMenuOption key={lob.id} id={lob.id} lob={lob.lineOfBussines} />
+      {zonacrestaList.map(zonacresta => (
+        <FilterMenuOption key={zonacresta.id} id={zonacresta.id} name={zonacresta.name} />
       ))}
       {/* <FilterMenuLobOption lob={ELobString.FINANCIAL_LINES} />
       <FilterMenuLobOption lob={ELobString.OTHER} />

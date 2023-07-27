@@ -16,10 +16,15 @@ const CustomPagination = () => {
     dispatch(fetchAccounts(value))
   }
 
-  const page = parseInt(accountsReducer.info.page.toString())
-  const pageCount = parseInt(accountsReducer.info.pages.toString())
-  const pageSize = parseInt(accountsReducer.info.take.toString())
-  const rowCount = parseInt(accountsReducer.info.count.toString())
+  // const page = parseInt(accountsReducer.info.page.toString())
+  // const pageCount = parseInt(accountsReducer.info.pages.toString())
+  // const pageSize = parseInt(accountsReducer.info.take.toString())
+  // const rowCount = parseInt(accountsReducer.info.count.toString())
+
+  const page = 1
+  const pageCount = 1
+  const pageSize = 10
+  const rowCount = 10
 
   return (
     <>

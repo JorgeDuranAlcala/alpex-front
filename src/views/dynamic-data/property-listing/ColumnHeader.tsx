@@ -13,9 +13,9 @@ import { useAppSelector } from 'src/store'
 import Icon from 'src/@core/components/icon'
 
 // ** Custom utilities
-import FilterMenu from 'src/views/accounts/Table/FilterMenu'
 import colors from 'src/views/accounts/colors'
 import fonts from 'src/views/accounts/font'
+import FilterMenu from 'src/views/dynamic-data/property-listing/FilterMenu'
 import { EFieldColumn } from '.'
 
 interface IColunmHeader {
@@ -39,12 +39,12 @@ const ColumnHeader: React.FC<IColunmHeader> = ({ colDef, action, showIcon = true
 
   const activeButton = filterActive.map(f => f?.type)
 
-  const buttonIdAccount = activeButton?.find(active => active === 'idAccount')
-  const buttonStatus = activeButton?.find(active => active === 'status')
-  const buttonInsured = activeButton?.find(active => active === 'insured')
-  const buttonIdLineOfBusiness = activeButton?.find(active => active === 'idLineOfBusiness')
-  const buttoneffectiveDate = activeButton?.find(active => active === 'effectiveDate')
-  const buttonexpirationDate = activeButton?.find(active => active === 'expirationDate')
+  const buttonIdProperty = activeButton?.find(active => active === 'idProperty')
+  const buttonValfis = activeButton?.find(active => active === 'valfis')
+  const buttonNomEnt = activeButton?.find(active => active === 'nomEnt')
+  const buttonNomMun = activeButton?.find(active => active === 'nomMun')
+  const buttonTypology = activeButton?.find(active => active === 'typology')
+  const buttonZonacresta = activeButton?.find(active => active === 'zonacresta')
 
   const handleClose = () => {
     setAnchorEl(null)
@@ -61,7 +61,7 @@ const ColumnHeader: React.FC<IColunmHeader> = ({ colDef, action, showIcon = true
 
     const { width } = accountColumnHeader.getBoundingClientRect()
 
-    if (field === EFieldColumn.PROPERTY_ID || field === EFieldColumn.TYPE || field === EFieldColumn.TYPOLOGY ) {
+    if (field === EFieldColumn.PROPERTY_ID || field === EFieldColumn.VALFIS || field === EFieldColumn.TYPOLOGY ) {
       setWidthMenu(450)
     } else {
       setWidthMenu(width)
@@ -83,33 +83,33 @@ const ColumnHeader: React.FC<IColunmHeader> = ({ colDef, action, showIcon = true
       </Typography>
       {showIcon && (
         <IconButton size='small' onClick={handleOnClick}>
-          {type === 'idAccount' ? (
+          {type === 'idProperty' ? (
             <Icon
               icon='mdi:filter-variant'
               fontSize={20}
-              color={buttonIdAccount === 'idAccount' ? '#2535A8' : undefined}
+              color={buttonIdProperty === 'idAccount' ? '#2535A8' : undefined}
             />
-          ) : type === 'status' ? (
-            <Icon icon='mdi:filter-variant' fontSize={20} color={buttonStatus === 'status' ? '#2535A8' : undefined} />
-          ) : type === 'insured' ? (
-            <Icon icon='mdi:filter-variant' fontSize={20} color={buttonInsured === 'insured' ? '#2535A8' : undefined} />
-          ) : type === 'idLineOfBusiness' ? (
+          ) : type === 'valfis' ? (
+            <Icon icon='mdi:filter-variant' fontSize={20} color={buttonValfis === 'valfis' ? '#2535A8' : undefined} />
+          ) : type === 'nomEnt' ? (
+            <Icon icon='mdi:filter-variant' fontSize={20} color={buttonNomEnt === 'nomEnt' ? '#2535A8' : undefined} />
+          ) : type === 'nomMun' ? (
             <Icon
               icon='mdi:filter-variant'
               fontSize={20}
-              color={buttonIdLineOfBusiness === 'idLineOfBusiness' ? '#2535A8' : undefined}
+              color={buttonNomMun === 'nomMun' ? '#2535A8' : undefined}
             />
-          ) : type === 'effectiveDate' ? (
+          ) : type === 'typology' ? (
             <Icon
               icon='mdi:filter-variant'
               fontSize={20}
-              color={buttoneffectiveDate === 'effectiveDate' ? '#2535A8' : undefined}
+              color={buttonTypology === 'typology' ? '#2535A8' : undefined}
             />
-          ) : type === 'expirationDate' ? (
+          ) : type === 'zonacresta' ? (
             <Icon
               icon='mdi:filter-variant'
               fontSize={20}
-              color={buttonexpirationDate === 'expirationDate' ? '#2535A8' : undefined}
+              color={buttonZonacresta === 'zonacresta' ? '#2535A8' : undefined}
             />
           ) : null}
         </IconButton>

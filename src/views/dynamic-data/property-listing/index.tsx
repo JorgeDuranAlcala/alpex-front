@@ -151,7 +151,7 @@ const PropertyListingTable = ({ status }: IAccountTable) => {
       sortable: false,
       headerClassName: 'properties-table-header',
       renderHeader: ({ colDef }) => (
-        <ColumnHeader colDef={colDef} action={handleClickColumnHeader} type={'idAccount'} />
+        <ColumnHeader colDef={colDef} action={handleClickColumnHeader} type={'idProperty'} />
       ),
       renderCell: ({ row }) => (
         <Typography sx={{ color: colors.primary.main, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
@@ -180,7 +180,7 @@ const PropertyListingTable = ({ status }: IAccountTable) => {
         <ColumnHeader
           colDef={colDef}
           action={status === undefined ? handleClickColumnHeader : undefined}
-          type={'status'}
+          type={'valfis'}
         />
       ),
       renderCell: ({ row }) => (
@@ -199,7 +199,7 @@ const PropertyListingTable = ({ status }: IAccountTable) => {
       disableColumnMenu: true,
       sortable: false,
       headerClassName: 'properties-table-header',
-      renderHeader: ({ colDef }) => <ColumnHeader colDef={colDef} action={handleClickColumnHeader} type='cve-ent' />,
+      renderHeader: ({ colDef }) => <ColumnHeader colDef={colDef} action={handleClickColumnHeader} type='nomEnt' />,
       renderCell: ({ row }) => (
         <Typography
           sx={{ color: colors.text.primary, fontWeight: 500, fontSize: fonts.size.px14, fontFamily: fonts.inter }}
@@ -221,7 +221,7 @@ const PropertyListingTable = ({ status }: IAccountTable) => {
       sortable: false,
       headerClassName: 'properties-table-header',
       renderHeader: ({ colDef }) => (
-        <ColumnHeader colDef={colDef} action={handleClickColumnHeader} type='cve-mun' />
+        <ColumnHeader colDef={colDef} action={handleClickColumnHeader} type='nomMun' />
       ),
       renderCell: ({ row }) => (
         <Typography sx={{ color: colors.text.secondary, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
