@@ -118,6 +118,8 @@ const Security = ({ onStepChange }: SecurityProps) => {
     const tempSecurities: SecurityDto[] = []
 
     for (const security of structuredClone(securitiesParam)) {
+      if (!security.frontingFeeActive && security.frontingFee > 0) security.frontingFeeActive = true
+      if (!security.taxesActive && security.taxes > 0) security.taxesActive = true
       const operationSecurity: CalculateSecurity = new CalculateSecurity().setInformation(information).setSecurity({
         ...security,
         reinsuranceBrokerage: security.reinsuranceBrokerage || 0,
