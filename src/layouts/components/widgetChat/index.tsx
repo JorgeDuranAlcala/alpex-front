@@ -19,7 +19,8 @@ const WidgetChat = () => {
   useEffect(() => {
     const userAgent = window.navigator.userAgent
     const iphone = /iP(hone|od|ad)/.test(userAgent)
-    console.log('Iphone', iphone)
+
+    // console.log('Iphone', iphone)
     const divChat = document.getElementById('chatbotDiv')
     if (iphone && divChat !== null) {
       divChat.classList.add('isIphone')

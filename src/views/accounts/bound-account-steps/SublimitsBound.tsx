@@ -25,6 +25,9 @@ import Icon from 'src/@core/components/icon'
 // ** Utils
 import { DisableForm } from '@/views/accounts/new-account-steps/_commons/DisableForm'
 
+// ** Nextjs
+import { useRouter } from 'next/router'
+
 const initialValues: SublimitDto = {
   id: undefined,
   sublimit: 0,
@@ -87,6 +90,9 @@ interface SublimitsProps {
 }
 
 const Sublimits = ({ onStepChange, disableSectionCtrl }: SublimitsProps) => {
+  const router = useRouter()
+  const idAccountRouter = Number(router?.query?.idAccount)
+
   const [subLimits, setSubLimits] = useState<SublimitDto[]>([])
   const [coverageSelected, setCoverageSelected] = useState<CoverageDto[]>([])
 
@@ -94,7 +100,6 @@ const Sublimits = ({ onStepChange, disableSectionCtrl }: SublimitsProps) => {
   const [formErrors, setFormErrors] = useState<boolean[]>([])
 
   // Redux
-  const accountDataRedux = useAppSelector(state => state.accounts)
   const endorsementData = useAppSelector(state => state.endorsement.data)
   const dispatch = useAppDispatch()
 
@@ -107,7 +112,6 @@ const Sublimits = ({ onStepChange, disableSectionCtrl }: SublimitsProps) => {
 
   const handleToggle = (value: number, label: string) => {
     try {
-      const idAccountCache = Number(localStorage.getItem('idAccount'))
       const subLimitsTemp = subLimits.find(sublimit => sublimit.title === label)
 
       if (!subLimitsTemp) {
@@ -118,7 +122,7 @@ const Sublimits = ({ onStepChange, disableSectionCtrl }: SublimitsProps) => {
             ...initialValues,
             title: label,
             idCCoverage: value,
-            idAccount: account ? account?.id : idAccountCache
+            idAccount: account ? account?.id : idAccountRouter
           }
         ])
         formErrors.push(false)
@@ -153,14 +157,15 @@ const Sublimits = ({ onStepChange, disableSectionCtrl }: SublimitsProps) => {
   const handleNextStep = async () => {
     const existError = formErrors.find(error => error)
     if (!existError && subLimits.length > 0) {
-      handleSubmit()
+      handleSaveSubmit()
       onStepChange(5)
     } else {
       setShowErrors(true)
     }
   }
 
-  const handleSubmit = async () => {
+  const handleSaveSubmit = async () => {
+    if (!endorsementData.initialized) return
     const save: Partial<SublimitDto>[] = []
     for (const subLimit of subLimits) {
       // * Cuando hay un cambio en el componente DeductibleMaterialDamage,
@@ -183,11 +188,11 @@ const Sublimits = ({ onStepChange, disableSectionCtrl }: SublimitsProps) => {
   }
 
   useEffect(() => {
-    if (accountDataRedux.formsData.form1?.id && !endorsementData.initialized) {
-      setAccountId(accountDataRedux.formsData.form1.id)
+    if (idAccountRouter && !endorsementData.initialized) {
+      setAccountId(idAccountRouter)
     } else {
       setAccount({
-        id: Number(endorsementData.idAccount),
+        id: idAccountRouter,
         status: '',
         discounts: endorsementData.discounts,
         idAccountStatus: 0,
@@ -217,7 +222,7 @@ const Sublimits = ({ onStepChange, disableSectionCtrl }: SublimitsProps) => {
       })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [accountDataRedux, setAccountId])
+  }, [idAccountRouter, setAccountId])
 
   useEffect(() => {
     if (account && account.sublimits.length > 0) {
@@ -236,7 +241,7 @@ const Sublimits = ({ onStepChange, disableSectionCtrl }: SublimitsProps) => {
         </Grid>
         <Grid item xs={12} sm={12}>
           <form noValidate autoComplete='on'>
-            <DisableForm isDisabled={disableSectionCtrl}>
+            <DisableForm isDisabled={disableSectionCtrl} sg={2000}>
               {/* campos header */}
               <Grid container spacing={5}>
                 <InputLimit account={account} />
