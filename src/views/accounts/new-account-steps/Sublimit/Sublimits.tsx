@@ -1,5 +1,6 @@
 import { useGetAccountById } from '@/hooks/accounts/forms'
 import { useAddSublimits, useDeleteSublimits, useUpdateSublimits } from '@/hooks/accounts/sublimit'
+import { AbilityContext } from '@/layouts/components/acl/Can'
 import { SublimitDto } from '@/services/accounts/dtos/sublimit.dto'
 import { CoverageDto } from '@/services/catalogs/dtos/coverage.dto'
 import { useAppSelector } from '@/store'
@@ -7,8 +8,7 @@ import { NextContainer } from '@/styles/Forms/Sublimits'
 import CustomAlert, { IAlert } from '@/views/custom/alerts'
 import { Button, CardContent, Grid } from '@mui/material'
 import Typography from '@mui/material/Typography'
-import { useEffect, useState, useContext } from 'react'
-import { AbilityContext } from '@/layouts/components/acl/Can'
+import { useContext, useEffect, useState } from 'react'
 import InputLimit from './components/InputLimit/InputLimit'
 import SelectCoverage from './components/SelectCoverage/SelectCoverage'
 import { GenericCard } from './components/SublimitsCards'
@@ -16,7 +16,6 @@ import { GenericCard } from './components/SublimitsCards'
 import { useUpdateAccountsStatus } from '@/hooks/accounts/status'
 import UserThemeOptions from '@/layouts/UserThemeOptions'
 import SaveIcon from '@mui/icons-material/Save'
-import CheckIcon from '@mui/icons-material/Check'
 import { DisableForm } from '../_commons/DisableForm'
 
 const initialValues: SublimitDto = {
@@ -345,7 +344,7 @@ const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
         >
           <SaveIcon /> &nbsp; Save changes
         </Button>
-        <Button
+        {/* <Button
           sx={{
             fontFamily: inter,
             letterSpacing: '0.4px',
@@ -356,7 +355,7 @@ const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
           onClick={handleUpdateStatus}
         >
           <CheckIcon /> &nbsp; Add bound
-        </Button>
+        </Button> */}
       </NextContainer>
     </CardContent>
   )
