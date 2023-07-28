@@ -231,9 +231,9 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
 
     localSecuritiesTemp.push(tempSecurities[index])
 
-    if (localSecuritiesTemp.length === tempSecurities.length || idCompany) {
-      validateForm(tempSecurities[index])
-
+    // todo: regresar esta validacion si hay error al mostrar el fronting fee y taxes
+    //localSecuritiesTemp.length === tempSecurities.length ||
+    if (idCompany !== 0) {
       calculateSecurities(tempSecurities)
 
       localSecuritiesTemp = []
