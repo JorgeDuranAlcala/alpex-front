@@ -7,16 +7,17 @@ import IconButton from '@mui/material/IconButton'
 import Menu from '@mui/material/Menu'
 import Typography from '@mui/material/Typography'
 import { GridStateColDef } from '@mui/x-data-grid/models/colDef'
-import { useAppSelector } from 'src/store'
+
+// import { useAppSelector } from 'src/store'
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
 
 // ** Custom utilities
-import colors from 'src/views/accounts/colors'
-import fonts from 'src/views/accounts/font'
 import FilterMenu from 'src/views/dynamic-data/property-listing/FilterMenu'
 import { EFieldColumn } from '.'
+import colors from './colors'
+import fonts from './font'
 
 interface IColunmHeader {
   colDef: GridStateColDef
@@ -28,8 +29,9 @@ interface IColunmHeader {
 const ColumnHeader: React.FC<IColunmHeader> = ({ colDef, action, showIcon = true, type }) => {
   // ** Props
   const { headerName, field } = colDef
-  const accountsReducer = useAppSelector(state => state.accounts)
-  const filterActive = accountsReducer?.filters
+
+  // const accountsReducer = useAppSelector(state => state.accounts)
+  // const filterActive = accountsReducer?.filters
 
   // ** State
   const [anchorEl, setAnchorEl] = useState(null)
@@ -37,14 +39,21 @@ const ColumnHeader: React.FC<IColunmHeader> = ({ colDef, action, showIcon = true
   const [widthMenu, setWidthMenu] = useState(0)
   const columnHeaderRef = useRef(null)
 
-  const activeButton = filterActive.map(f => f?.type)
+  // const activeButton = filterActive.map(f => f?.type)
 
-  const buttonIdProperty = activeButton?.find(active => active === 'idProperty')
-  const buttonValfis = activeButton?.find(active => active === 'valfis')
-  const buttonNomEnt = activeButton?.find(active => active === 'nomEnt')
-  const buttonNomMun = activeButton?.find(active => active === 'nomMun')
-  const buttonTypology = activeButton?.find(active => active === 'typology')
-  const buttonZonacresta = activeButton?.find(active => active === 'zonacresta')
+  // const buttonIdProperty = activeButton?.find(active => active === 'idProperty')
+  // const buttonValfis = activeButton?.find(active => active === 'valfis')
+  // const buttonNomEnt = activeButton?.find(active => active === 'nomEnt')
+  // const buttonNomMun = activeButton?.find(active => active === 'nomMun')
+  // const buttonTypology = activeButton?.find(active => active === 'typology')
+  // const buttonZonacresta = activeButton?.find(active => active === 'zonacresta')
+
+  const buttonIdProperty =  'idProperty'
+  const buttonValfis =  'valfis'
+  const buttonNomEnt =  'nomEnt'
+  const buttonNomMun =  'nomMun'
+  const buttonTypology =  'typology'
+  const buttonZonacresta =  'zonacresta'
 
   const handleClose = () => {
     setAnchorEl(null)
@@ -87,7 +96,7 @@ const ColumnHeader: React.FC<IColunmHeader> = ({ colDef, action, showIcon = true
             <Icon
               icon='mdi:filter-variant'
               fontSize={20}
-              color={buttonIdProperty === 'idAccount' ? '#2535A8' : undefined}
+              color={buttonIdProperty === 'idProperty' ? '#2535A8' : undefined}
             />
           ) : type === 'valfis' ? (
             <Icon icon='mdi:filter-variant' fontSize={20} color={buttonValfis === 'valfis' ? '#2535A8' : undefined} />

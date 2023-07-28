@@ -1,19 +1,17 @@
 // ** MUI Imports
-import { useAppDispatch, useAppSelector } from '@/store'
+// import { useAppDispatch, useAppSelector } from '@/store'
 import Pagination from '@mui/material/Pagination'
 import Typography from '@mui/material/Typography'
-import { fetchAccounts } from 'src/store/apps/accounts'
+
+// import { fetchAccounts } from 'src/store/apps/accounts'
 
 const CustomPagination = () => {
-  const accountsReducer = useAppSelector(state => state.accounts)
-  const dispatch = useAppDispatch()
+  // const accountsReducer = useAppSelector(state => state.accounts)
+  // const dispatch = useAppDispatch()
 
   const handleDispatch = (e: any, value: number) => {
-    accountsReducer
-
-    //dispatch(fetchAccounts({ ...accountsReducer, info: { ...accountsReducer.info, page: value } }))
-
-    dispatch(fetchAccounts(value))
+    console.log("nextPage")
+    console.log(value)
   }
 
   // const page = parseInt(accountsReducer.info.page.toString())

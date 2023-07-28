@@ -10,10 +10,10 @@ import Button from '@mui/material/Button'
 import Icon from 'src/@core/components/icon'
 
 // ** Custom Hooks imports
-import Chip from 'src/@core/components/mui/chip'
-import { useAppDispatch, useAppSelector } from 'src/store'
-import { deleteAccountFilter } from 'src/store/apps/accounts'
-import { IFilters } from 'src/types/apps/accountsTypes'
+// import Chip from 'src/@core/components/mui/chip'
+// import { useAppDispatch, useAppSelector } from 'src/store'
+// import { deleteAccountFilter } from 'src/store/apps/accounts'
+// import { IFilters } from 'src/types/apps/accountsTypes'
 import CustomAlert, { IAlert } from 'src/views/custom/alerts'
 
 const DownloadButton = styled(Button)(({ theme }) => ({
@@ -40,14 +40,14 @@ const TableHeader: React.FC<ITableHeader> = ({
   badgeData,
 }) => {
   // ** Custom Hooks
-  const dispatch = useAppDispatch()
-  const accountsReducer = useAppSelector(state => state.accounts)
+  // const dispatch = useAppDispatch()
+  // const accountsReducer = useAppSelector(state => state.accounts)
 
   // ** State
 
-  const handleDelete = (filter: IFilters) => {
-    dispatch(deleteAccountFilter(filter.type))
-  }
+  // const handleDelete = (filter: IFilters) => {
+  //   dispatch(deleteAccountFilter(filter.type))
+  // }
 
   const handleDownload = () => {
     console.log('download')
@@ -71,13 +71,13 @@ const TableHeader: React.FC<ITableHeader> = ({
         sx={{
           display: 'flex',
           alignItems: 'center',
-          justifyContent: accountsReducer.filters.length === 0 ? 'space-between' : null
+          justifyContent: 'space-between' // justifyContent: accountsReducer.filters.length === 0 ? 'space-between' : null
         }}
       >
         <Grid item xs={12} sm={3} md={2}>
 
         </Grid>
-        {accountsReducer.filters.length === 0 ? null : (
+        {/* {accountsReducer.filters.length === 0 ? null : (
           <Grid item xs={12} sm={5} md={7} sx={{ height: 'auto' }}>
             {accountsReducer.filters.map((filter, index) =>
               filter.unDeleteable ? (
@@ -113,7 +113,7 @@ const TableHeader: React.FC<ITableHeader> = ({
               )
             )}
           </Grid>
-        )}
+        )} */}
         <Grid item xs={12} sm={4} md={3}>
           {!false ? (
             <Box sx={{ width: '100%', display: 'flex', justifyContent: 'flex-end' }}>

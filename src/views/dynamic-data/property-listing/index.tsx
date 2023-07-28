@@ -8,7 +8,6 @@ import { DataGrid, GRID_CHECKBOX_SELECTION_COL_DEF, GridColumns } from '@mui/x-d
 
 
 // ** Custom Hooks imports
-import { useMultiTabButtons } from '@/layouts/components/multiTabButtons/hooks/useMultiTabButtons'
 
 // ** Custom Components Imports
 import ColumnHeader from './ColumnHeader'
@@ -18,10 +17,7 @@ import TableHeader from './TableHeader'
 // ** Custom utilities
 
 import { Link } from '@mui/material'
-import { useAppDispatch } from 'src/store'
-import {
-  updateFormsData
-} from 'src/store/apps/accounts'
+
 import colors from 'src/views/accounts/colors'
 import fonts from 'src/views/accounts/font'
 import { IAlert } from 'src/views/custom/alerts'
@@ -49,27 +45,16 @@ interface IAccountTable {
 const PropertyListingTable = ({ status }: IAccountTable) => {
   // ** State
   const [loading, setLoading] = useState<any>([])
+
   const badgeData: IAlert ={
     message: '',
     status: undefined,
     icon: undefined
   }
 
-  // **Reducers
-  const dispatch = useAppDispatch()
-
-  // const accountsReducer = useAppSelector(state => state.accounts)
-
-  // ** Custom Hooks
-
-  const { setBaseLink, setBackButtonProps } = useMultiTabButtons()
-
-
   const handleClickColumnHeader = (field: string) => {
     alert(field)
   }
-
-
 
   const properties: IProperty[] = [
     {
@@ -158,7 +143,7 @@ const PropertyListingTable = ({ status }: IAccountTable) => {
           <Link
             sx={{ cursor: 'pointer' }}
             onClick={() => {
-              onEdit(+row.id)
+              console.log("details")
             }}
           >{`#${row.id}`}</Link>
         </Typography>
@@ -325,29 +310,6 @@ const PropertyListingTable = ({ status }: IAccountTable) => {
 
     return () => clearTimeout(timer);
   }, []);
-
-  const onEdit = async (id: number) => {
-    dispatch(
-      updateFormsData({
-        form1: {
-          basicInfo: {},
-          placementStructure: {},
-          userFile: {},
-          id
-        }
-      })
-    )
-
-  }
-
-  useEffect(() => {
-    setBaseLink()
-    setBackButtonProps({
-      text: 'Back to Accounts',
-      link: `/accounts/`,
-      isShow: false
-    })
-  }, [setBaseLink, setBackButtonProps])
 
   return (
     <>
