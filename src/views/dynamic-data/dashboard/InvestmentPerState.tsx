@@ -5,21 +5,40 @@ import CardHeader from '@mui/material/CardHeader'
 import { useTheme } from '@mui/material/styles'
 
 // ** Third Party Imports
+import ReactApexcharts from '@/@core/components/react-apexcharts'
 import { ApexOptions } from 'apexcharts'
 
 // ** Custom Components Imports
 import OptionsMenu from 'src/@core/components/option-menu'
-import ReactApexcharts from 'src/@core/components/react-apexcharts'
 
 // ** Util Import
-import { InvestmentPerStateDto } from '@/services/dynamic-data/dtos/dashboard.dto'
 import { hexToRGBA } from 'src/@core/utils/hex-to-rgba'
 
+// ** Import services
+//  import dashboardMockService from '@/services/dynamic-data/dashboard.mock-service'
 
+//Dto imports
+  import { InvestmentPerStateDto } from '@/services/dynamic-data/dtos/dashboard.dto'
+
+// import { useEffect } from 'react'
 
 const InvestmentPerState = () => {
   // ** Hook
   const theme = useTheme()
+
+  // const [seriess, setSeriess] = useState<
+  //  [{
+  //     name: string,
+  //     data: number[]
+  //   }]
+  // >()
+  // const [infos, setInfos] = useState<{totalBuildings: string | number, categories: string[] }>()
+
+  // const info = await dashboardMockService.getInvestmentPerState()
+
+  // console.log("info")
+  // console.log(info)
+
 
   const info: InvestmentPerStateDto ={
     totalBuildings: '142,000',
@@ -27,7 +46,6 @@ const InvestmentPerState = () => {
     data: [14165, 12859, 10375, 8567, 6880],
     categories: ['CX','NL','YU','EM','PU']
   }
-
   const series = [
     {
       name: info.name,
@@ -96,7 +114,7 @@ const InvestmentPerState = () => {
     xaxis: {
       axisTicks: { show: false },
       axisBorder: { show: false },
-      categories: info.categories,
+      categories: info?.categories,
       labels: {
         formatter: val => `${Number(val) / 1000}k`,
         style: {
@@ -116,6 +134,18 @@ const InvestmentPerState = () => {
       }
     }
   }
+
+  // useEffect(() => {
+
+  //   const getData = async()=>{
+  //     const result = await dashboardMockService.getInvestmentPerState()
+
+  //     setSeriess(() => [{name: result.name, data: result.data}] )
+  //     setInfos({totalBuildings: result.totalBuildings, categories: result.categories})
+  //   }
+
+  //   getData()
+  // }, [])
 
   return (
     <Card>

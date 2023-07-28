@@ -2,19 +2,17 @@
 import { useEffect, useState } from 'react'
 
 // ** MUI Imports
-import { Button } from '@mui/material'
 import Box from '@mui/material/Box'
-import Card from '@mui/material/Card'
 import Typography from '@mui/material/Typography'
 import { DataGrid, GRID_CHECKBOX_SELECTION_COL_DEF, GridColumns } from '@mui/x-data-grid'
 
-// ** Icon Imports
 
-// ** Next Import
-import { useRouter } from 'next/router'
+// ** Custom Hooks imports
 
 // ** Custom Components Imports
-import ColumnHeader from './TableColumnHeader'
+import ColumnHeader from './ColumnHeader'
+import CustomPagination from './CustomPagination'
+import TableHeader from './TableHeader'
 
 // ** Custom utilities
 
@@ -22,10 +20,12 @@ import { Link } from '@mui/material'
 
 import colors from 'src/views/accounts/colors'
 import fonts from 'src/views/accounts/font'
+import { IAlert } from 'src/views/custom/alerts'
 
-//** Dto imports */
+// ** Dto imports
+import { IProperty } from '@/services/dynamic-data/dtos/propertyListing.dto'
 
-import { IProperty } from '@/services/dynamic-data/dtos/dashboard.dto'
+
 
 export enum EFieldColumn {
   PROPERTY_ID = 'id',
@@ -33,12 +33,29 @@ export enum EFieldColumn {
   NOM_ENT = 'nomEnt',
   NOM_MUN = 'nomMun',
   TYPE = 'type',
+  TYPOLOGY = 'typology',
+  SURFACE = 'surface',
   ZONACRESTA = 'zonacresta'
 }
 
-const PriorityProperties = () => {
+interface IAccountTable {
+  status?: string
+}
+
+const PropertyListingTable = ({ status }: IAccountTable) => {
   // ** State
-  const [loading, setLoading] = useState<boolean>(false)
+  const [loading, setLoading] = useState<any>([])
+
+  const badgeData: IAlert ={
+    message: '',
+    status: undefined,
+    icon: undefined
+  }
+
+  const handleClickColumnHeader = (field: string) => {
+    alert(field)
+  }
+
   const properties: IProperty[] = [
     {
       id: "06003_1",
@@ -46,76 +63,72 @@ const PriorityProperties = () => {
       nomEnt:"9",
       nomMun:"14",
       type:"Propiedad Federal",
+      typology: 'Oficinas en General',
+      surface: '26,356.09 m2',
       zonacresta: "10"
     },
     {
-      id: "06003_1",
+      id: "06003_2",
       valfis: "000,000,000.00",
       nomEnt:"9",
       nomMun:"14",
       type:"Propiedad Federal",
+      typology: 'Oficinas en General',
+      surface: '26,356.09 m2',
       zonacresta: "10"
     },
     {
-      id: "06003_1",
+      id: "06003_3",
       valfis: "000,000,000.00",
       nomEnt:"9",
       nomMun:"14",
       type:"Propiedad Federal",
+      typology: 'Oficinas en General',
+      surface: '26,356.09 m2',
       zonacresta: "10"
     },
     {
-      id: "06003_1",
+      id: "06003_4",
       valfis: "000,000,000.00",
       nomEnt:"9",
       nomMun:"14",
       type:"Propiedad Federal",
+      typology: 'Oficinas en General',
+      surface: '26,356.09 m2',
       zonacresta: "10"
     },
     {
-      id: "06003_1",
+      id: "06003_5",
       valfis: "000,000,000.00",
       nomEnt:"9",
       nomMun:"14",
       type:"Propiedad Federal",
+      typology: 'Oficinas en General',
+      surface: '26,356.09 m2',
       zonacresta: "10"
     },
     {
-      id: "06003_1",
+      id: "06003_6",
       valfis: "000,000,000.00",
       nomEnt:"9",
       nomMun:"14",
       type:"Propiedad Federal",
+      typology: 'Oficinas en General',
+      surface: '26,356.09 m2',
       zonacresta: "10"
     }
   ]
 
-  // ** Hooks
-  const router = useRouter()
-
-  useEffect(() => {
-    setLoading(true);
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 5000);
-
-    return () => clearTimeout(timer);
-  }, []);
-
-const seeMore = ()=>{
-  router.push(`/dynamic-data/property-listing/`)
-}
-
   const column: GridColumns<IProperty> = [
     {
       ...GRID_CHECKBOX_SELECTION_COL_DEF,
-      headerClassName: 'properties-table-header'
+      headerClassName: 'account-column-header-checkbox'
     },
     {
       flex: 0.1,
       field: EFieldColumn.PROPERTY_ID,
       headerName: 'ID',
-      minWidth: 50,
+      minWidth: 150,
       maxWidth: 150,
       type: 'string',
       align: 'left',
@@ -123,13 +136,14 @@ const seeMore = ()=>{
       sortable: false,
       headerClassName: 'properties-table-header',
       renderHeader: ({ colDef }) => (
-        <ColumnHeader colDef={colDef} />
+        <ColumnHeader colDef={colDef} action={handleClickColumnHeader} type={'idProperty'} />
       ),
       renderCell: ({ row }) => (
         <Typography sx={{ color: colors.primary.main, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
           <Link
+            sx={{ cursor: 'pointer' }}
             onClick={() => {
-              console.log("id clicked")
+              console.log("details")
             }}
           >{`#${row.id}`}</Link>
         </Typography>
@@ -139,7 +153,7 @@ const seeMore = ()=>{
       flex: 0.1,
       field: EFieldColumn.VALFIS,
       headerName: 'VALFIS',
-      minWidth: 130,
+      minWidth: 150,
       maxWidth: 150,
       type: 'string',
       align: 'left',
@@ -148,11 +162,15 @@ const seeMore = ()=>{
       sortable: false,
       headerClassName: 'properties-table-header',
       renderHeader: ({ colDef }) => (
-        <ColumnHeader colDef={colDef}/>
+        <ColumnHeader
+          colDef={colDef}
+          action={status === undefined ? handleClickColumnHeader : undefined}
+          type={'valfis'}
+        />
       ),
       renderCell: ({ row }) => (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          ${row.valfis}
+          {row.valfis}
         </Box>
       )
     },
@@ -160,14 +178,13 @@ const seeMore = ()=>{
       flex: 0.1,
       field: EFieldColumn.NOM_ENT,
       headerName: 'NOM_ENT',
-      minWidth: 50,
-      maxWidth: 90,
+      minWidth: 185,
       type: 'string',
       align: 'left',
       disableColumnMenu: true,
       sortable: false,
       headerClassName: 'properties-table-header',
-      renderHeader: ({ colDef }) => <ColumnHeader colDef={colDef} />,
+      renderHeader: ({ colDef }) => <ColumnHeader colDef={colDef} action={handleClickColumnHeader} type='nomEnt' />,
       renderCell: ({ row }) => (
         <Typography
           sx={{ color: colors.text.primary, fontWeight: 500, fontSize: fonts.size.px14, fontFamily: fonts.inter }}
@@ -182,15 +199,14 @@ const seeMore = ()=>{
       flex: 0.1,
       field: EFieldColumn.NOM_MUN,
       headerName: 'NOM_MUN',
-      minWidth: 50,
-      maxWidth: 90,
+      minWidth: 170,
       type: 'string',
       align: 'left',
       disableColumnMenu: true,
       sortable: false,
       headerClassName: 'properties-table-header',
       renderHeader: ({ colDef }) => (
-        <ColumnHeader colDef={colDef}   />
+        <ColumnHeader colDef={colDef} action={handleClickColumnHeader} type='nomMun' />
       ),
       renderCell: ({ row }) => (
         <Typography sx={{ color: colors.text.secondary, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
@@ -202,17 +218,16 @@ const seeMore = ()=>{
       flex: 0.1,
       field: EFieldColumn.TYPE,
       headerName: 'TYPE',
-      minWidth: 150,
+      minWidth: 165,
       type: 'string',
       align: 'left',
       disableColumnMenu: true,
       sortable: false,
       headerClassName: 'properties-table-header',
       renderHeader: ({ colDef }) => (
-        <ColumnHeader colDef={colDef} />
+        <ColumnHeader colDef={colDef} action={handleClickColumnHeader} type='type' />
       ),
       renderCell: ({ row }) => {
-
         return (
           <Typography sx={{ color: colors.text.secondary, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
             {row.type}
@@ -222,16 +237,58 @@ const seeMore = ()=>{
     },
     {
       flex: 0.1,
-      field: EFieldColumn.ZONACRESTA,
-      headerName: 'ZONACRESTA',
-      minWidth: 120,
+      field: EFieldColumn.TYPOLOGY,
+      headerName: 'TYPOLOGY',
+      minWidth: 165,
       type: 'string',
       align: 'left',
       disableColumnMenu: true,
       sortable: false,
-      headerClassName: 'account-column-header',
+      headerClassName: 'properties-table-header',
       renderHeader: ({ colDef }) => (
-        <ColumnHeader colDef={colDef} />
+        <ColumnHeader colDef={colDef} action={handleClickColumnHeader} type='typology' />
+      ),
+      renderCell: ({ row }) => {
+        return (
+          <Typography sx={{ color: colors.text.secondary, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
+            {row.typology}
+          </Typography>
+        )
+      }
+    },
+    {
+      flex: 0.1,
+      field: EFieldColumn.SURFACE,
+      headerName: 'SURFACE',
+      minWidth: 165,
+      type: 'string',
+      align: 'left',
+      disableColumnMenu: true,
+      sortable: false,
+      headerClassName: 'properties-table-header',
+      renderHeader: ({ colDef }) => (
+        <ColumnHeader colDef={colDef} action={handleClickColumnHeader} type='surface' />
+      ),
+      renderCell: ({ row }) => {
+        return (
+          <Typography sx={{ color: colors.text.secondary, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
+            {row.surface}
+          </Typography>
+        )
+      }
+    },
+    {
+      flex: 0.1,
+      field: EFieldColumn.ZONACRESTA,
+      headerName: 'ZONACRESTA',
+      minWidth: 170,
+      type: 'string',
+      align: 'left',
+      disableColumnMenu: true,
+      sortable: false,
+      headerClassName: 'properties-table-header',
+      renderHeader: ({ colDef }) => (
+        <ColumnHeader colDef={colDef} action={handleClickColumnHeader} type='zonacresta' />
       ),
       renderCell: ({ row }) => {
 
@@ -242,30 +299,38 @@ const seeMore = ()=>{
         )
       }
     },
+
   ]
 
-  return (
+  useEffect(() => {
+    setLoading(true);
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 2000);
 
-    <Card>
-    <DataGrid
+    return () => clearTimeout(timer);
+  }, []);
+
+  return (
+    <>
+      <TableHeader
+        badgeData={badgeData}
+      />
+      <DataGrid
         loading={loading}
         autoHeight
         disableSelectionOnClick
         rows={properties}
         columns={column}
-        pagination={undefined}
+        pagination
         pageSize={10}
+        components={{
+          Pagination: CustomPagination
+        }}
         className={'properties-datagrid'}
-
       />
-       <div className="see-more-section">
-      <Button className='add-btn' onClick={seeMore}>
-          See more
-      </Button>
-      </div>
-  </Card>
-
+    </>
   )
 }
 
-export default PriorityProperties
+export default PropertyListingTable

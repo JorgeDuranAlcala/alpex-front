@@ -24,4 +24,11 @@ export interface InvestmentPerStateDto {
   categories: string[]
 }
 
-
+export interface IProperty {
+  id: string
+  valfis: string
+  nomEnt: string
+  nomMun: string
+  type: string
+  zonacresta: string
+}

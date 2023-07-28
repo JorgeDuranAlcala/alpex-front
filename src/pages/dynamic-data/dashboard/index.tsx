@@ -20,8 +20,6 @@ const DynamicDataDashboard = () => {
         <Grid container spacing={6} className='match-height'>
           <Grid item xs={12} md={4}>
             <Grid container spacing={6}>
-
-
               <Grid item xs={12}>
                 <TotalInvestment />
               </Grid>
@@ -49,11 +47,9 @@ const DynamicDataDashboard = () => {
             </Grid>
 
           </Grid>
-
-
-
         </Grid>
       </ApexChartWrapper>
+     
     </Container>
   )
 }
