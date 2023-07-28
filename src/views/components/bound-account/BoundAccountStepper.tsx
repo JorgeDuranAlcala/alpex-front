@@ -17,12 +17,13 @@ interface StepperProps {
 
 interface ModalProps {
   openModal: boolean
+  selectedStep?: number
   text?: string
   onCloseModal: (close: boolean) => void
   onStepBack: () => void
 }
 
-const StepModal: React.FC<ModalProps> = ({ openModal, onCloseModal, onStepBack, text }) => {
+const StepModal: React.FC<ModalProps> = ({ openModal, selectedStep, onCloseModal, onStepBack, text }) => {
   const [open, setOpen] = useState<boolean>(false)
 
   const handleClose = () => {
@@ -39,15 +40,20 @@ const StepModal: React.FC<ModalProps> = ({ openModal, onCloseModal, onStepBack, 
   return (
     <>
       <Modal className='stepper-modal' open={open} onClose={handleClose}>
-        <Box className='modal-wrapper' style={{ width: '30%' }}>
+        <Box className='modal-wrapper' style={{ width: '25%' }}>
           <HeaderTitleModal>
-            <Typography variant='h6'>Change step?</Typography>
+            <Typography variant='h6'>Changing to step {selectedStep}</Typography>
             <ButtonClose onClick={handleClose}>
               <CloseIcon />
             </ButtonClose>
           </HeaderTitleModal>
           <div className='stepper-modal-text'>{text}</div>
-          <Button className='stepper-modal-btn' variant='contained' onClick={onStepBack}>
+          <Button
+            className='stepper-modal-btn'
+            variant='contained'
+            onClick={onStepBack}
+            style={{ marginBottom: '15px' }}
+          >
             CONTINUE
           </Button>
           <Button className='close-modal stepper-modal-btn' onClick={handleClose}>
@@ -114,6 +120,7 @@ const BoundAccountStepper = ({ changeStep = 1, onStepChange }: StepperProps) => 
             setOpenModal(false)
           }}
           onStepBack={stepBack}
+          selectedStep={selectedStep}
         />
       </div>
     </>

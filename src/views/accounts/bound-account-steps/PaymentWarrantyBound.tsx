@@ -48,6 +48,9 @@ import { ButtonClose, HeaderTitleModal } from '@/styles/modal/modal.styled'
 // ** Utils
 import { DisableForm } from '@/views/accounts/new-account-steps/_commons/DisableForm'
 
+// ** Nextjs
+import { useRouter } from 'next/router'
+
 interface InstallmentErrors {
   errorFieldRequired: boolean
   erorrRangeInstallments: boolean
@@ -93,6 +96,9 @@ type Timer = ReturnType<typeof setInterval>
 let typingTimer: Timer
 const doneTypingInterval = 1500 // Tiempo en milisegundos para considerar que se dejó de escribir
 const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange, disableSectionCtrl }) => {
+  const router = useRouter()
+  const idAccountRouter = Number(router?.query?.idAccount)
+
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
 
   const inter = userThemeConfig.typography?.fontFamilyInter
@@ -112,7 +118,6 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange, disableSect
   })
 
   // Redux
-  const idAccount = useAppSelector(state => state.accounts?.formsData?.form1?.id)
   const endorsementData = useAppSelector(state => state.endorsement.data)
   const dispatch = useAppDispatch()
 
@@ -148,7 +153,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange, disableSect
         paymentPercentage: fixedPercentage,
         premiumPaymentWarranty: 0,
         settlementDueDate: accountData ? new Date(accountData?.informations[0]?.effectiveDate || '') : new Date(),
-        idAccount: accountData ? idAccount : Number(localStorage.getItem('idAccount')),
+        idAccount: idAccountRouter,
         id: 0
       }
       for (let i = 0; i < count; i++) {
@@ -248,6 +253,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange, disableSect
   }
 
   const saveInstallments = async () => {
+    if (!endorsementData.initialized) return
     const newEndorsementData = {
       ...endorsementData,
       installments: installmentsList
@@ -297,11 +303,11 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange, disableSect
   }, [daysFirst])
 
   useEffect(() => {
-    if (idAccount && !endorsementData.initialized) {
-      setAccountId(idAccount)
+    if (idAccountRouter && !endorsementData.initialized) {
+      setAccountId(idAccountRouter)
     } else if (endorsementData) {
       setAccount({
-        id: Number(endorsementData.idAccount),
+        id: idAccountRouter,
         status: '',
         discounts: endorsementData.discounts,
         idAccountStatus: 0,
@@ -331,7 +337,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange, disableSect
       })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [idAccount, setAccountId])
+  }, [idAccountRouter, setAccountId])
 
   useEffect(() => {
     if (accountData && accountData.installments.length > 0) {
@@ -341,7 +347,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange, disableSect
       if (!endorsementData.initialized)
         for (const item of installments) {
           item.settlementDueDate = new Date(item.settlementDueDate + 'T00:00:00.678Z')
-          item.idAccount = accountData ? idAccount : Number(localStorage.getItem('idAccount'))
+          item.idAccount = idAccountRouter
         }
 
       setInstallmentList([...installments])
@@ -356,7 +362,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange, disableSect
       accountData!.informations[0].effectiveDate = fecha
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [accountData, idAccount])
+  }, [accountData, idAccountRouter])
 
   //todo probar en un momento
   useEffect(() => {
@@ -370,7 +376,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange, disableSect
         <TitleContainer>
           <Typography variant='h5'>Payment warranty</Typography>
 
-          <DisableForm isDisabled={disableSectionCtrl}>
+          <DisableForm isDisabled={disableSectionCtrl} sg={2000}>
             <InputsContainer>
               <Grid container spacing={{ xs: 2, sm: 5, md: 5 }} rowSpacing={4} columns={12}>
                 <Grid item xs={12} sm={6} md={4}>
@@ -436,7 +442,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange, disableSect
             </InputsContainer>
           </DisableForm>
         </TitleContainer>
-        <DisableForm isDisabled={disableSectionCtrl}>
+        <DisableForm isDisabled={disableSectionCtrl} sg={2000}>
           <Grid container spacing={2}>
             {installmentsList.map((installment, index) => (
               <CardInstallment
@@ -449,7 +455,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange, disableSect
                   inceptionDate: accountData?.informations[0]?.effectiveDate
                     ? new Date(accountData.informations[0].effectiveDate)
                     : null,
-                  idAccount: accountData ? idAccount : ''
+                  idAccount: accountData ? idAccountRouter : 0
                 }}
                 count={count}
                 key={index}
