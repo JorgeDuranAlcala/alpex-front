@@ -118,6 +118,8 @@ const Security = ({ onStepChange }: SecurityProps) => {
     const tempSecurities: SecurityDto[] = []
 
     for (const security of structuredClone(securitiesParam)) {
+      if (!security.frontingFeeActive && security.frontingFee > 0) security.frontingFeeActive = true
+      if (!security.taxesActive && security.taxes > 0) security.taxesActive = true
       const operationSecurity: CalculateSecurity = new CalculateSecurity().setInformation(information).setSecurity({
         ...security,
         reinsuranceBrokerage: security.reinsuranceBrokerage || 0,
@@ -576,7 +578,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
                   >
                     <Button
                       disabled={currentView === 2 || account?.status.toLowerCase() === 'bound' ? true : false}
-                      className='btn-save'
+                      className='btn-save btn-full-mob'
                       color='success'
                       variant='contained'
                       onClick={SaveData}
@@ -586,7 +588,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
                       </div>
                       SAVE CHANGES
                     </Button>
-                    <Button disabled={currentView === 2} className='btn-next' onClick={handleNextStep}>
+                    <Button disabled={currentView === 2} className='btn-next btn-full-mob' onClick={handleNextStep}>
                       Next Step
                       <div className='btn-icon'>
                         <Icon icon='material-symbols:arrow-right-alt' />
@@ -603,11 +605,11 @@ const Security = ({ onStepChange }: SecurityProps) => {
                 position: 'absolute',
                 bgcolor: 'white',
                 top: '50%',
-                left: '50%',
+                left: { xs: '8%', md: '50%' },
                 boxShadow: 24,
                 pl: 5,
                 pr: 5,
-                transform: 'translate(-50%, -50%)',
+                transform: { xs: 'translate(-4%, -50%)', md: 'translate(-50%, -50%)' },
                 borderRadius: '10px',
                 padding: '15px'
               }}

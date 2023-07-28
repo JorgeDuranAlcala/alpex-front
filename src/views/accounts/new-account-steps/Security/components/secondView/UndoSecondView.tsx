@@ -13,7 +13,7 @@ const UndoContainer = styled(Box)(({ theme }) => ({
   width: '100%',
   zIndex: '1',
   [theme.breakpoints.down('md')]: {
-    top: '-116px'
+    top: '-30px'
   }
 }))
 
@@ -36,7 +36,7 @@ interface UndoSecondViewProps {
   calculateSecurities: (securities: SecurityDto[]) => void
 }
 
-export const UndoSecondView = ({ }: UndoSecondViewProps) => {
+export const UndoSecondView = ({}: UndoSecondViewProps) => {
   const { openModalUndo } = useContext(SecondViewContext)
 
   const handleOpenModalUndo = () => {
@@ -46,13 +46,13 @@ export const UndoSecondView = ({ }: UndoSecondViewProps) => {
   return (
     <UndoContainer
       sx={{
-        top: '-40px'
+        top: '-30px'
       }}
     >
       <AlertContainer>
         <span>You are now on the secondary view, you are not able to edit information here.</span>
         <Button
-          className="second-view-undo-button"
+          className='second-view-undo-button'
           variant='text'
           sx={{
             display: 'flex',

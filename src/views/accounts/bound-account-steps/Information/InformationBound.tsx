@@ -696,11 +696,11 @@ const InformationBound: React.FC<InformationProps> = ({ onStepChange, disableSec
                   position: 'absolute',
                   bgcolor: 'white',
                   top: '50%',
-                  left: '50%',
+                  left: { xs: '8%', md: '50%' },
                   boxShadow: 24,
                   pl: 5,
                   pr: 5,
-                  transform: 'translate(-50%, -50%)',
+                  transform: { xs: 'translate(-4%, -50%)', md: 'translate(-50%, -50%)' },
                   borderRadius: '10px',
                   padding: '20px'
                 }}
