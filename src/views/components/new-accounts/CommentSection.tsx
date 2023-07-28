@@ -225,6 +225,7 @@ const CommentSection = ({ disable = false, step }: CommentSectionProps) => {
                             handleSend()
                           }
                         }}
+                        sx={!disableSaveCommentBtn ? {} : { fill: '#575A6F42 !important' }}
                       />
                     </InputAdornment>
                   )
