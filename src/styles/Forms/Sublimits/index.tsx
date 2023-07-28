@@ -52,7 +52,12 @@ const NextContainer = styled('div')({
   padding: '8px',
   gap: '12px',
   width: '100%',
-  height: '58px'
+  height: '58px',
+
+  '@media (max-width: 600px)': {
+    display: 'block',
+    height: 'auto'
+  }
 })
 
 // const Grid = styled('div')({
@@ -120,14 +125,14 @@ const InputForm = styled('div')({
 })
 
 export {
-  GeneralContainerSublimits,
-  ContainerTitleSublimits,
-  InputsContainerSublimits,
   CardsFormContainer,
   ContainerCard,
-  HeaderCard,
+  ContainerTitleSublimits,
   ContentCard,
-  SubContainer,
+  GeneralContainerSublimits,
+  HeaderCard,
+  InputForm,
+  InputsContainerSublimits,
   NextContainer,
-  InputForm
+  SubContainer
 }
