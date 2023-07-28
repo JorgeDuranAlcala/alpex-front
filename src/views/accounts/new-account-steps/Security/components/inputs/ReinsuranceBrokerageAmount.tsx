@@ -32,7 +32,8 @@ export const ReinsuranceBrokerageAmount = ({
         ...tempSecurities[index],
         reinsuranceBrokerage: percent > 100 ? 0 : percent,
         brokerAgeAmount: value,
-        isChangeBrokerAgeAmount: true
+        isChangeBrokerAgeAmount: true,
+        isChangeTaxesAmount: false
       }
 
       validateForm(tempSecurities[index])
