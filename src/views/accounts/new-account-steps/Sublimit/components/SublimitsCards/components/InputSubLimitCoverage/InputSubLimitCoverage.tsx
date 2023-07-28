@@ -69,6 +69,17 @@ const InputSubLimitCoverage: React.FC<InputSubLimitCoverageProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [limitAmount])
 
+  useEffect(() => {
+    if (!isNotYesLuc) {
+      const subLimitTemp = { ...subLimit }
+      subLimitTemp.yes = false
+      subLimitTemp.luc = true
+      onHandleChangeSubLimit(subLimitTemp)
+      setYesOrLuc(subLimitTemp.yes ? 'yes' : 'luc')
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   return (
     <Grid container>
       <Grid container>
@@ -87,7 +98,8 @@ const InputSubLimitCoverage: React.FC<InputSubLimitCoverageProps> = ({
               isAllowed={values => {
                 const { floatValue } = values
                 const upLimit = +limit
-                if ((floatValue! >= 0 && floatValue! <= upLimit) || floatValue === undefined) {
+
+                if ((floatValue! >= 0 && (floatValue! <= upLimit || floatValue! >= upLimit)) || floatValue === undefined) {
                   return true
                 }
 
@@ -153,7 +165,15 @@ const InputSubLimitCoverage: React.FC<InputSubLimitCoverageProps> = ({
 
 export default InputSubLimitCoverage
 
-export const inputSublimit_validations = ({ limit, isNotYesLuc }: { limit: number; isNotYesLuc: boolean }) =>
+export const inputSublimit_validations = ({
+  limit,
+  isNotYesLuc,
+  luc
+}: {
+  limit: number
+  isNotYesLuc: boolean
+  luc: boolean
+}) =>
   yup.object().shape({
     sublimit: yup
       .number()
@@ -161,7 +181,9 @@ export const inputSublimit_validations = ({ limit, isNotYesLuc }: { limit: numbe
       .test('', 'This field is required', value => {
         const val = value || 0
 
-        return +val <= limit && +val > 0
+        if (luc && val >= 0 && (+val >= limit || +val <= limit) && !isNotYesLuc) return true      
+
+        return (+val >= limit || +val <= limit) && +val > 0
       })
       .required('This field is required'),
     yes: yup

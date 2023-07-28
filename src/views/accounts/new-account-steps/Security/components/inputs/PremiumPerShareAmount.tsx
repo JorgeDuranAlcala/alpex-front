@@ -22,7 +22,12 @@ export const PremiumPerShareAmount = ({
     const tempSecurities = [...securities]
     tempSecurities[index] = {
       ...tempSecurities[index],
-      premiumPerShareAmount: value
+      premiumPerShareAmount: value,
+      isChangeBrokerAgeAmount: false,
+      isChangeFrontingFeeAmount: false,
+      isChangeTaxesAmount: false,
+      isChangeDynamicCommissionAmount: false,
+      discounts: tempSecurities[index].discounts.map(discount => ({ ...discount, isChangeAmount: false }))
     }
     validateForm(tempSecurities[index])
 
@@ -35,8 +40,8 @@ export const PremiumPerShareAmount = ({
         autoFocus
         label='Premium per share'
         value={value}
-        onChange={e => {
-          handleChangePremiumPerShareAmount(Number(e.target.value))
+        onValueChange={(values, sourceInfo) => {
+          if (sourceInfo.event) handleChangePremiumPerShareAmount(Number(values.floatValue))
         }}
         prefix={'$'}
         customInput={TextField}

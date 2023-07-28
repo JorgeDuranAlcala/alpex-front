@@ -1,0 +1,80 @@
+.container-padd {
+  padding: 20px;
+}
+
+.title-installment {
+  font-size: 20px;
+  line-height: 32px;
+  font-weight: 500;
+  font-family: Inter;
+  color: #4d5062de;
+}
+
+.wrapper-installments {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  margin: 20px 0;
+  @media (max-width: 610px) {
+    flex-wrap: wrap;
+  }
+}
+
+.width-full {
+  width: 100%;
+}
+
+.pending-status {
+  color: #ffffff;
+  width: Fill (72px);
+  height: Hug (32px);
+  padding: 4px 12px 4px 12px;
+  border-radius: 16px;
+  background: linear-gradient(0deg, #fdb528, #fdb528), linear-gradient(0deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1));
+}
+
+.paid-status {
+  color: #ffffff;
+  width: Fill (72px);
+  height: Hug (32px);
+  padding: 4px 12px 4px 12px;
+  border-radius: 16px;
+  background: #72e128;
+}
+
+.extra-status {
+  color: #ffffff;
+  width: Fill (72px);
+  height: Hug (32px);
+  padding: 4px 12px 4px 12px;
+  border-radius: 16px;
+  background: #4455cb;
+}
+
+.partially-status {
+  color: #ffffff;
+  width: Fill (72px);
+  height: Hug (32px);
+  padding: 4px 12px 4px 12px;
+  border-radius: 16px;
+  background: #9e9e9e;
+}
+
+.mtop {
+  margin-top: 24px;
+}
+
+.lightgray {
+  border-color: #575a6f1f;
+}
+
+.installments-wrapper {
+  flex-wrap: wrap;
+  @media (max-width: 900px) {
+    flex-direction: column;
+  }
+}
+
+.padd-x {
+  margin: 20px;
+}

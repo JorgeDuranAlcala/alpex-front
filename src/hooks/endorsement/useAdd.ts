@@ -3,9 +3,13 @@ import EndorsementService from 'src/services/endorsement/endorsement.service'
 
 export const useAddEndorsement = () => {
   const addEndorsement = async (newEndorsement: EndorsementDto) => {
-    const response = await EndorsementService.create(newEndorsement)
+    try {
+      const response = await EndorsementService.create(newEndorsement)
 
-    return response
+      return response
+    } catch {
+      return
+    }
   }
 
   return {

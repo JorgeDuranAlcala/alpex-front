@@ -44,11 +44,16 @@ export const ReinsuranceCompany = ({
         isGross: avaliableCompanies.special,
         frontingFeeActive: false,
         taxesActive: false,
-        netPremiumAt100: avaliableCompanies.special ? information.grossPremium : information.netPremium
+        netPremiumAt100: avaliableCompanies.special ? information.grossPremium : information.netPremium,
+        isChangeBrokerAgeAmount: false,
+        isChangeFrontingFeeAmount: false,
+        isChangeTaxesAmount: false,
+        isChangeDynamicCommissionAmount: false,
+        discounts: tempSecurities[index].discounts.map(discount => ({ ...discount, isChangeAmount: false }))
       }
 
-      calculateSecurities(tempSecurities)
       validateForm(tempSecurities[index])
+      calculateSecurities(tempSecurities)
       setIsGross(() => avaliableCompanies.special)
     }
   }

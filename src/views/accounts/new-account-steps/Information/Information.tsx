@@ -42,12 +42,16 @@ import { DiscountDto } from '@/services/accounts/dtos/discount.dto'
 import { useGetAccountById } from '@/hooks/accounts/forms'
 import { DisableForm } from '../_commons/DisableForm'
 
+export interface InformationSectionsInt {
+  basicInfo: boolean
+  placementStructure: boolean
+}
+
 type InformationProps = {
   onStepChange: (step: number) => void
   onIsNewAccountChange: (status: boolean) => void
   typeofAccount?: string
-  activeEndorsement?: boolean
-  editInfo?: object
+  disableSectionCtrl?: InformationSectionsInt
 }
 
 export interface BasicInfoInterface {
@@ -97,13 +101,7 @@ export interface PlacementStructure {
   typeOfLimit: string | number | null
 }
 
-const Information: React.FC<InformationProps> = ({
-  onStepChange,
-  onIsNewAccountChange,
-  typeofAccount,
-  activeEndorsement,
-  editInfo
-}) => {
+const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountChange, disableSectionCtrl }) => {
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
   const [subjectState] = useState<Subject<void>>(new Subject())
   const inter = userThemeConfig.typography?.fontFamilyInter
@@ -113,7 +111,7 @@ const Information: React.FC<InformationProps> = ({
   const [changeTitle, setChangeTitle] = useState(false)
   const [discounts, setDiscounts] = useState<DiscountDto[]>([])
 
-  //Validaciones
+  // Validaciones
   const [allValidated, setAllValidated] = useState(false)
   const [validationCount, setValidationCount] = useState(0)
   const [validatedForms, setValidatedForms] = useState(0)
@@ -121,6 +119,7 @@ const Information: React.FC<InformationProps> = ({
   const [open, setOpen] = useState<boolean>(false)
   const [nextClicked, setNextClicked] = useState<boolean>(false)
   const [saveClicked, setSaveClicked] = useState<boolean>(false)
+
   const [badgeData, setBadgeData] = useState<IAlert>({
     message: '',
     theme: 'success',
@@ -133,12 +132,13 @@ const Information: React.FC<InformationProps> = ({
   const [userFile, setUserFile] = useState<File[]>([])
   const [userFileToDelete, setUserFileToDelete] = useState<File>()
 
-  //store
+  // Store
   const idAccount = useAppSelector(state => state.accounts?.formsData?.form1?.id)
   const lastForm1Information = useAppSelector(state => state.accounts?.formsData?.form1)
+
   const [fileUrls, setFileUrls] = useState<string[]>([])
 
-  // ** Custom Hooks
+  // Custom Hooks
   const { getInformaByIdAccount } = useFindInformationByIdAccount()
   const { addInformation } = useAddInformation()
   const { updateInformationByIdAccount } = useUpdateInformationByIdAccount()
@@ -650,10 +650,12 @@ const Information: React.FC<InformationProps> = ({
         setSaveClicked(true)
         setMakeSaveValidations(true)
         break
+
       case 'next':
         setNextClicked(true)
         setMakeValidations(true)
         break
+
       default:
         break
     }
@@ -761,12 +763,6 @@ const Information: React.FC<InformationProps> = ({
         setOpen(true)
         setNextClicked(false)
       }
-
-      // if (saveClicked) {
-      //   setDisableSave(true)
-      //   handleSaveInformation()
-      //   setSaveClicked(false)
-      // }
     } else {
       setAllValidated(false)
       if (nextClicked) {
@@ -778,8 +774,6 @@ const Information: React.FC<InformationProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [validationCount, validatedForms])
 
-  // console.log('Esta cuenta es de tipo: ', editInfo)
-
   return (
     <>
       <div className='information' style={{ fontFamily: inter }}>
@@ -788,16 +782,8 @@ const Information: React.FC<InformationProps> = ({
         </div>
         <form noValidate autoComplete='on' onSubmit={handleNextStep}>
           <div className='section'>
-            <DisableForm
-
-              // isDisabled={(typeofAccount && typeofAccount === 'bound') ? true : false}
-
-              isDisabled={account?.status.toLowerCase() === 'bound' ? true : false}
-            >
-
+            <DisableForm isDisabled={disableSectionCtrl?.basicInfo} sg={5000}>
               <BasicInfo
-                editInfo={editInfo}
-                activeEndorsement={activeEndorsement}
                 basicInfo={basicInfo}
                 setBasicInfo={setBasicInfo}
                 makeValidations={makeValidations}
@@ -808,14 +794,8 @@ const Information: React.FC<InformationProps> = ({
           </div>
 
           <div className='section'>
-            <DisableForm
-
-              // isDisabled={(typeofAccount && typeofAccount === 'bound') ? true : false}
-
-              isDisabled={account?.status.toLowerCase() === 'bound' ? true : false}
-            >
+            <DisableForm isDisabled={disableSectionCtrl?.placementStructure} sg={5000}>
               <PlacementStructure
-                editInfo={editInfo}
                 placementStructure={placementStructure}
                 setPlacementStructure={setPlacementStructure}
                 onDiscountsChange={handleDiscountsChange}
@@ -823,7 +803,6 @@ const Information: React.FC<InformationProps> = ({
                 onValidationComplete={handleValidationComplete}
                 triggerSubject={subjectState}
               />
-
             </DisableForm>
           </div>
 
@@ -838,31 +817,17 @@ const Information: React.FC<InformationProps> = ({
             />
           </div>
           <div className='section action-buttons'>
-            {typeofAccount && typeofAccount === 'bound' ? (
-              <Button
-                className='btn-save'
-                onClick={() => handleAction('save')}
-                variant='contained'
-                disabled={!activeEndorsement}
-              >
-                <div className='btn-icon' style={{ marginRight: '8px' }}>
-                  <Icon icon='mdi:content-save' />
-                </div>
-                ENDORSEMENT
-              </Button>
-            ) : (
-              <Button
-                className='btn-save'
-                onClick={() => handleAction('save')}
-                variant='contained'
-                disabled={disableSave || account?.status.toLowerCase() === 'bound'}
-              >
-                <div className='btn-icon' style={{ marginRight: '8px' }}>
-                  <Icon icon='mdi:content-save' />
-                </div>
-                SAVE CHANGES
-              </Button>
-            )}
+            <Button
+              className='btn-save'
+              onClick={() => handleAction('save')}
+              variant='contained'
+              disabled={disableSave || account?.status.toLowerCase() === 'bound'}
+            >
+              <div className='btn-icon' style={{ marginRight: '8px' }}>
+                <Icon icon='mdi:content-save' />
+              </div>
+              SAVE CHANGES
+            </Button>
             <Button
               className='btn-next'
               onClick={() => {
@@ -881,11 +846,11 @@ const Information: React.FC<InformationProps> = ({
                   position: 'absolute',
                   bgcolor: 'white',
                   top: '50%',
-                  left: '50%',
+                  left: { xs: '8%', md: '50%' },
                   boxShadow: 24,
                   pl: 5,
                   pr: 5,
-                  transform: 'translate(-50%, -50%)',
+                  transform: { xs: 'translate(-4%, -50%)', md: 'translate(-50%, -50%)' },
                   borderRadius: '10px',
                   padding: '20px'
                 }}

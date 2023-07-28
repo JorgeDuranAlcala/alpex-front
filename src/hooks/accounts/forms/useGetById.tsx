@@ -1,17 +1,21 @@
 import { useEffect, useState } from 'react'
 
+import { DiscountDto } from '@/services/accounts/dtos/discount.dto'
 import { InformationDetailsDto } from '@/services/accounts/dtos/information.dto'
 import { InstallmentDto } from '@/services/accounts/dtos/installments.dto'
 import { SecurityDto } from '@/services/accounts/dtos/security.dto'
 import { SecurityTotalDto } from '@/services/accounts/dtos/securityTotal.dto'
 import { SublimitDto } from '@/services/accounts/dtos/sublimit.dto'
+import { DeepPartial } from 'react-hook-form'
 import AccountServices from 'src/services/accounts/account.service'
 
 export interface ResponseGetAccount {
   id: number
   idAccountStatus: number
   status: string
-  informations: InformationDetailsDto[] //InformationDto[] //
+  idAccountType: number
+  informations: DeepPartial<InformationDetailsDto>[] //InformationDto[] //
+  discounts: DiscountDto[]
   securities: SecurityDto[]
   securitiesTotal: SecurityTotalDto[]
   installments: InstallmentDto[]
@@ -66,6 +70,7 @@ export const useGetAccountById = () => {
     account,
     setAccountId,
     getAccountById,
-    accountId
+    accountId,
+    setAccount
   }
 }

@@ -28,8 +28,8 @@ export const ShareAmount = ({ index, value, errorMessage, validateForm, view }: 
         autoFocus
         label='Share'
         value={value}
-        onValueChange={value => {
-          handleChangeShareAmount(Number(value.floatValue))
+        onValueChange={(values, sourceInfo) => {
+          if (sourceInfo.event) handleChangeShareAmount(Number(values.floatValue))
         }}
         prefix={'$'}
         customInput={TextField}
