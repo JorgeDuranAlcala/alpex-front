@@ -342,6 +342,7 @@ const Sublimits = ({}: SublimitsProps) => {
       </Grid>
       <NextContainer>
         <Button
+          className='btn-full-mob'
           variant='contained'
           color='success'
           sx={{ mr: 2, fontFamily: inter, fontSize: size, letterSpacing: '0.4px' }}

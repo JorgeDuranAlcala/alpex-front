@@ -218,6 +218,10 @@
     min-width: unset;
     width: 50%;
   }
+
+  .btn-full-mob {
+    width: 100%;
+  }
 }
 
 /*---- Status Select ----*/
@@ -801,6 +805,10 @@
 
 .add-reinsurer {
   width: 30%;
+
+  @media (max-width: 600px) {
+    width: 100%;
+  }
 }
 
 .icon-btn {
