@@ -31,7 +31,9 @@ export const TaxesPercent = ({
     const tempSecurities = [...securities]
     tempSecurities[index] = {
       ...tempSecurities[index],
-      taxes: value
+      taxes: value,
+      isChangeTaxesAmount: false,
+      isChangeDynamicCommissionAmount: false
     }
     validateForm(tempSecurities[index])
     calculateSecurities(tempSecurities)
@@ -53,14 +55,12 @@ export const TaxesPercent = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value])
 
-  // console.log({ isTacesTouxhes: forTaxes.current.isTouched, value })
-
   return (
     <FormControl fullWidth>
       <NumericFormat
         autoFocus
         label='Taxes %'
-        value={Number(Number(value).toFixed(2))}
+        value={value}
         onChange={e => {
           handleChangeTaxesPercent(Number(e.target.value.replace('%', '')))
         }}

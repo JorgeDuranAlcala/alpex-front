@@ -1,9 +1,18 @@
+export interface idCCoverageI {
+  active: boolean
+  coverage: string
+  createdAt: string
+  id: number
+  special: boolean
+  updatedAt: string
+}
+
 export interface SublimitDto {
   id: number | undefined
   sublimit: number
   at100: boolean
-  yes: boolean | null
-  luc: boolean | null
+  yes: boolean
+  luc: boolean
   typeDeductible: string
   deductible: number | null
   amount: number | null
@@ -13,7 +22,7 @@ export interface SublimitDto {
   amountBi: number | null
   daysBi: number | null
   coinsurance: number
-  idCCoverage: number | null
+  idCCoverage?: number | null | idCCoverageI | any
   idCDeductiblePer: number | null
   idEndorsement: number | null
   title: string

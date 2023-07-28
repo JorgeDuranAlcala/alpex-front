@@ -1,3 +1,4 @@
+import useAccountTable from '@/hooks/accounts/Table/useAccountTable'
 import useGetAccountHistoryLogByIdAccount from '@/hooks/accounts/historyLog/useFindByIdAccount'
 import { useGetAllLanguage } from '@/hooks/catalogs/language'
 import usePrintReport from '@/hooks/reports/usePrintReport'
@@ -69,8 +70,7 @@ const ActionsHeader: React.FC<IActionsHeaderProps> = ({ accountId, accountStatus
   const { buffer, setPrintReportParams } = usePrintReport()
   const { languages } = useGetAllLanguage()
   const { accountHistoryLog, setIdAccount } = useGetAccountHistoryLogByIdAccount()
-
-  //const { deleteAccounts } = useAccountTable()
+  const { deleteAccounts } = useAccountTable()
 
   useEffect(() => {
     accountId && setIdAccount(accountId)
@@ -78,14 +78,11 @@ const ActionsHeader: React.FC<IActionsHeaderProps> = ({ accountId, accountStatus
   }, [accountId])
 
   const deleteAccount = () => {
-    console.log('Deleted')
-
-    //accountId && deleteAccounts([accountId])
+    accountId && deleteAccounts([accountId])
     setOpenDelete(false)
   }
 
   const downloadReport = (id: number) => {
-    console.log('downloadReport', id)
     if (accountId) {
       setPrintReportParams({
         idAccount: accountId,

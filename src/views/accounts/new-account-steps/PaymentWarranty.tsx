@@ -87,7 +87,7 @@ const CustomInput = forwardRef(({ ...props }: PickerProps, ref: ForwardedRef<HTM
 })
 type Timer = ReturnType<typeof setInterval>
 let typingTimer: Timer
-const doneTypingInterval = 1000 // Tiempo en milisegundos para considerar que se dejó de escribir
+const doneTypingInterval = 1500 // Tiempo en milisegundos para considerar que se dejó de escribir
 const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
 
@@ -186,13 +186,27 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
 
   const makeCalculates = (installment: InstallmentDto) => {
     const temp = { ...installment }
-    const inceptionDate = account ? new Date(account?.informations[0]?.effectiveDate || '') : null
+    let accountDate = ''
+    if (account) {
+      accountDate = account?.informations[0]?.effectiveDate?.toString().replace('Z', '') || ''
+    }
+    const inceptionDate = accountDate ? new Date(accountDate) : null
+
     const receivedNetPremium =
       account && account.securitiesTotal.length > 0 ? account?.securitiesTotal[0]?.receivedNetPremium : 0
 
     if (inceptionDate) {
       const days = temp.premiumPaymentWarranty * 24 * 60 * 60 * 1000
       temp.settlementDueDate = new Date(inceptionDate.getTime() + days)
+
+      // console.log({
+      //   account: account?.informations[0]?.effectiveDate,
+      //   inceptionDate,
+      //   warranty: temp.premiumPaymentWarranty,
+      //   days,
+      //   settlementDueDate: temp.settlementDueDate
+      // })
+      // debugger;
     }
 
     if (receivedNetPremium) {
@@ -355,6 +369,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
       fecha.setMinutes(fecha.getMinutes() + fecha.getTimezoneOffset())
       newAccount!.informations[0].effectiveDate = fecha
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [account, newAccount, idAccount])
 
   //todo probar en un momento
@@ -370,9 +385,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
         <TitleContainer>
           <Typography variant='h5'>Payment warranty</Typography>
 
-          <DisableForm
-            isDisabled={account?.status.toLowerCase() === 'bound' ? true : false}
-          >
+          <DisableForm isDisabled={account?.status.toLowerCase() === 'bound' ? true : false}>
             <InputsContainer>
               <Grid container spacing={{ xs: 2, sm: 5, md: 5 }} rowSpacing={4} columns={12}>
                 <Grid item xs={12} sm={6} md={4}>
@@ -437,12 +450,8 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
               </Grid>
             </InputsContainer>
           </DisableForm>
-
         </TitleContainer>
-        <DisableForm
-          isDisabled={account?.status.toLowerCase() === 'bound' ? true : false}
-        >
-
+        <DisableForm isDisabled={account?.status.toLowerCase() === 'bound' ? true : false}>
           <Grid container spacing={2}>
             {installmentsList.map((installment, index) => (
               <CardInstallment
@@ -467,6 +476,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
       </GeneralContainer>
       <NextContainer>
         <Button
+          className='btn-full-mob'
           variant='contained'
           color='success'
           sx={{ mr: 2, fontFamily: inter, fontSize: size, letterSpacing: '0.4px' }}
@@ -476,6 +486,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
           <SaveIcon /> &nbsp; Save changes
         </Button>
         <Button
+          className='btn-full-mob'
           sx={{
             fontFamily: inter,
             letterSpacing: '0.4px',
@@ -500,11 +511,11 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
               position: 'absolute',
               bgcolor: 'white',
               top: '50%',
-              left: '50%',
+              left: { xs: '8%', md: '50%' },
               boxShadow: 24,
               pl: 5,
               pr: 5,
-              transform: 'translate(-50%, -50%)',
+              transform: { xs: 'translate(-4%, -50%)', md: 'translate(-50%, -50%)' },
               borderRadius: '10px',
               padding: '15px'
             }}

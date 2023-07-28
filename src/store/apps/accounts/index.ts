@@ -100,7 +100,9 @@ export const appAccountsSlice = createSlice({
 
     updateFormsData: (state, { payload }) => {
       state.formsData = { ...state.formsData, ...payload }
-      console.log('Redux -> updateFormsData:', state.formsData)
+    },
+    resetFormsData: state => {
+      state.formsData = {}
     }
   },
   extraReducers: builder => {

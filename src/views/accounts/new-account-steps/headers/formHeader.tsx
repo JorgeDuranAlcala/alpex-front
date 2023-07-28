@@ -1,4 +1,5 @@
 // import { useGetAllEndorsementTypes } from '@/hooks/accounts/endorsementType/getAllEndorsementTypes.tsx'
+import { useGetDoctosByIdAccountAndIdDocumentType } from '@/hooks/accounts/information/useGetFilesByType'
 import { ContainerMobileBound } from '@/styled-components/accounts/Security.styled'
 import { Box, Button, Card, ListItemIcon, ListItemText, Menu, MenuItem, Modal, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
@@ -7,6 +8,7 @@ import { useAppSelector } from 'src/store'
 import StatusSelect from 'src/views/custom/select/StatusSelect'
 import ActionsHeader from './ActionsHeader'
 import ActionsHeaderBound from './ActionsHeaderBound'
+import { ModalTxtImg } from './modals/ModalTxtImg'
 import { ModalUploadImg } from './modals/ModalUploadImg'
 
 // ** MUI Imports
@@ -34,13 +36,28 @@ interface FormHeaderProps {
 
 //Pending types
 
-const ModalUploadImage = () => {
+const ModalUploadImage = ({ accountId }: any) => {
   const [open, setOpen] = useState(false)
   const [image, setImage] = useState('')
   const [imagePreview, setImagePreview] = useState('')
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
-  const [modal, setModal] = useState(false)
+  const [modalUpload, setModalUpload] = useState(false)
+  const [modalTxt, setModalTxt] = useState(false)
+  const [logo, setLogo] = useState<undefined | string>(undefined)
+
+  //hooks
+  const { setAccountDocumentFilters, doctos } = useGetDoctosByIdAccountAndIdDocumentType()
+
   const openMenu = Boolean(anchorEl)
+
+  useEffect(() => {
+    accountId && setAccountDocumentFilters({ idAccount: accountId, idCDocto: 3 }) //TODO change the id
+  }, [accountId])
+
+  useEffect(() => {
+    doctos && setLogo(doctos[0]?.url)
+  }, [doctos])
+
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget)
   }
@@ -56,11 +73,12 @@ const ModalUploadImage = () => {
       case 'upload':
         setOpen(false)
         setAnchorEl(null)
-        setModal(true)
+        setModalUpload(true)
         break
       case 'txtLogo':
         setOpen(false)
         setAnchorEl(null)
+        setModalTxt(true)
         break
       default:
         break
@@ -89,8 +107,19 @@ const ModalUploadImage = () => {
           onClick={handleClick}
         >
           <div className='header-menu'>
-            <Icon icon='ic:baseline-file-upload' style={{ display: 'block', margin: 'auto' }} fontSize={20} />
-            <span style={{ display: 'block' }}>Logo</span>
+            {!logo ? (
+              <>
+                <Icon icon='ic:baseline-file-upload' style={{ display: 'block', margin: 'auto' }} fontSize={20} />
+                <span style={{ display: 'block' }}>Logo</span>
+              </>
+            ) : (
+              <img
+                src={logo}
+                alt='Dragged'
+                className='dragged-image'
+                style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+              />
+            )}
           </div>
         </Button>
         <Menu
@@ -132,7 +161,8 @@ const ModalUploadImage = () => {
           </Typography>
         </Box>
       </Modal>
-      <ModalUploadImg setOpenHistory={setModal} openHistory={modal} />
+      <ModalTxtImg setOpenHistory={setModalTxt} openHistory={modalTxt} />
+      <ModalUploadImg setOpenHistory={setModalUpload} openHistory={modalUpload} accountId={accountId} />
     </>
   )
 }
@@ -188,12 +218,6 @@ const FormHeader = ({
   }, [account])
 
   useEffect(() => {
-    if (accountDetails !== undefined && setTypeofAccount) {
-      setTypeofAccount(accountDetails?.status)
-    }
-  }, [status])
-
-  useEffect(() => {
     accountDetails && setStatus(accountDetails.status)
   }, [accountDetails])
 
@@ -221,7 +245,7 @@ const FormHeader = ({
             {!isNewAccount && (
               <div className='form-header-sections'>
                 <div className='form-header-info-profile-container'>
-                  <ModalUploadImage />
+                  <ModalUploadImage accountId={account?.id} />
                   <div className='form-header-info-profile-txt-container'>
                     <span className='form-header-info-profile-txt-title'>{account?.basicInfo?.insured}</span>
                     <span className='form-header-info-profile-num'>#{account?.id}</span>
@@ -246,9 +270,9 @@ const FormHeader = ({
                 <div className='form-secondContainer-first' style={{ marginRight: '20px' }}>
                   <span className='form-secondContainer-header-title'>Status</span>
                   {status !== '' && accountDetails?.status && (
-                    <StatusSelect margin={0} initialStatus={accountDetails?.status} setSelectedStatus={setStatus} />
+                    <StatusSelect accountDetails={accountDetails} margin={0} initialStatus={accountDetails?.status} setSelectedStatus={setStatus} />
                   )}
-                  {isNewAccount && <StatusSelect margin={0} initialStatus='PENDING' setSelectedStatus={setStatus} />}
+                  {isNewAccount && <StatusSelect accountDetails={accountDetails} margin={0} initialStatus='PENDING' setSelectedStatus={setStatus} />}
                 </div>
 
                 <div className='form-secondContainer-third'>
@@ -282,11 +306,7 @@ const FormHeader = ({
                   </span>
                 </div>
                 {accountDetails && accountDetails?.idAccountStatus === 5 ? ( //TODO
-                  <ActionsHeaderBound
-                    setActiveEndorsement={setActiveEndorsement}
-                    accountStatus='BOUND'
-                    sideHeader={true}
-                  />
+                  <ActionsHeaderBound accountStatus='BOUND' sideHeader={true} />
                 ) : (
                   <ActionsHeader
                     accountId={account?.id}

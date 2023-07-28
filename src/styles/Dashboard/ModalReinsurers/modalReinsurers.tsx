@@ -148,7 +148,7 @@ const ContentModalUpload = styled('div')({
   }
 })
 
-const FormContainerUpload = styled('div')({
+const FormContainerTxt = styled('div')({
   display: 'flex',
   justifyContent: 'center',
   flexDirection: 'column',
@@ -185,6 +185,64 @@ const FormContainerUpload = styled('div')({
   }
 })
 
+const FormContainerUpload = styled('div')({
+  display: 'flex',
+  justifyContent: 'center',
+  flexDirection: 'column',
+  alignContent: 'center',
+
+  '.drag-container': {
+    width: '100%',
+    height: '200px',
+    border: '1px solid #2535A880',
+    borderRadius: '5px',
+    margin: '40px auto 20px auto',
+    backgroundColor: '#f5f5f5',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+
+  '.drag-box': {
+    padding: '20px',
+    cursor: 'move',
+    color: '#2535A8',
+    fontSize: '14px',
+    fontWeight: '700px',
+    width: '280px',
+    letterSpacing: '.4px',
+    display: 'flex',
+    textAlign: 'center'
+  },
+  '.fileSubmit': {
+    display: 'none'
+  },
+
+  '.dragging': {
+    backgroundColor: ' #c0c0c0'
+  },
+
+  '.dragged-image': {
+    maxWidth: '100%',
+    maxHeight: '100%'
+  },
+
+  '.txt': {
+    fontWeight: '400',
+    fontSize: '16px',
+    lineHeight: '24px',
+    letterSpacing: '.15px',
+    color: '#7A7B87',
+    margin: '0px'
+  },
+  '.btnContainer': {
+    display: 'flex',
+    justifyContent: 'center',
+    alignContent: 'center',
+    alignItems: 'center'
+  }
+})
+
 export {
   ButtonClose,
   Column,
@@ -196,6 +254,7 @@ export {
   ContentEndorsmentContainerCancel,
   ContentModalUpload,
   FormContainer,
+  FormContainerTxt,
   FormContainerUpload,
   HeaderColumns,
   HeaderTitleModal,

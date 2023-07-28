@@ -7,13 +7,17 @@ import { NextContainer } from '@/styles/Forms/Sublimits'
 import CustomAlert, { IAlert } from '@/views/custom/alerts'
 import { Button, CardContent, Grid } from '@mui/material'
 import Typography from '@mui/material/Typography'
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react' //useContext
+// import { AbilityContext } from '@/layouts/components/acl/Can'
 import InputLimit from './components/InputLimit/InputLimit'
 import SelectCoverage from './components/SelectCoverage/SelectCoverage'
 import { GenericCard } from './components/SublimitsCards'
 
+// import { useUpdateAccountsStatus } from '@/hooks/accounts/status'
 import UserThemeOptions from '@/layouts/UserThemeOptions'
 import SaveIcon from '@mui/icons-material/Save'
+
+// import CheckIcon from '@mui/icons-material/Check'
 import { DisableForm } from '../_commons/DisableForm'
 
 const initialValues: SublimitDto = {
@@ -76,6 +80,8 @@ interface SublimitsProps {
   getAccountByIdHeader: (idAccount: number) => void
 }
 
+// getAccountByIdHeader
+
 const Sublimits = ({}: SublimitsProps) => {
   const [badgeData, setBadgeData] = useState<IAlert>({
     message: '',
@@ -84,12 +90,14 @@ const Sublimits = ({}: SublimitsProps) => {
     status: 'error'
   })
 
-  const [, setFormInformationData] = useState<any>({})
+  const [, setFormInformationData] = useState<any>({}) //formInformationData
   const [subLimits, setSubLimits] = useState<SublimitDto[]>([])
   const [coverageSelected, setCoverageSelected] = useState<CoverageDto[]>([])
 
+  // const ability = useContext(AbilityContext)
+
   //state para lo botones
-  const [, setDisableBoundBtn] = useState<boolean>(true)
+  // const [disableBoundBtn, setDisableBoundBtn] = useState(ability?.cannot('update', 'accountSublimits'))
   const [disableSaveBtn, setDisableSaveBtn] = useState<boolean>(false)
   const [showErrors, setShowErrors] = useState<boolean>(false)
   const [formErrors, setFormErrors] = useState<boolean[]>([])
@@ -177,7 +185,7 @@ const Sublimits = ({}: SublimitsProps) => {
   }
 
   const handleSubmit = async () => {
-    setDisableBoundBtn(true)
+    // setDisableBoundBtn(true)
     setDisableSaveBtn(true)
     const save: Partial<SublimitDto>[] = []
     const update: Partial<SublimitDto>[] = []
@@ -201,7 +209,6 @@ const Sublimits = ({}: SublimitsProps) => {
       }
     }
 
-    console.log({ update, save })
     Promise.all([updateSublimits(update), saveSublimits(save)])
       .then(values => {
         console.log({ values })
@@ -213,12 +220,14 @@ const Sublimits = ({}: SublimitsProps) => {
         })
 
         getAccountData().then(console.log)
-        setDisableBoundBtn(false)
+
+        // setDisableBoundBtn(false)
         setDisableSaveBtn(false)
       })
       .catch(reason => {
         console.log({ reason })
-        setDisableBoundBtn(false)
+
+        // setDisableBoundBtn(false)
         setDisableSaveBtn(false)
       })
 
@@ -231,6 +240,37 @@ const Sublimits = ({}: SublimitsProps) => {
       })
     }, 4000)
   }
+
+  // const handleUpdateStatus = async () => {
+  //   const existError = formErrors.find(error => error)
+  //   if (!existError) {
+  //     handleSubmit()
+
+  //     await updateAccountsStatus({
+  //       updateStatus: [
+  //         {
+  //           idAccount: formInformationData.id,
+  //           status: 5
+  //         }
+  //       ]
+  //     })
+  //     getAccountByIdHeader(formInformationData.id)
+  //     setBadgeData({
+  //       message: 'Account has been updated',
+  //       theme: 'success',
+  //       open: true,
+  //       status: 'error'
+  //     })
+  //     setTimeout(() => {
+  //       setBadgeData({
+  //         message: 'updated successfully',
+  //         theme: 'success',
+  //         open: false,
+  //         status: 'error'
+  //       })
+  //     }, 50)
+  //   }
+  // }
 
   const getAccountData = async () => {
     const idAccountCache = Number(localStorage.getItem('idAccount'))
@@ -303,6 +343,7 @@ const Sublimits = ({}: SublimitsProps) => {
       </Grid>
       <NextContainer>
         <Button
+          className='btn-full-mob'
           variant='contained'
           color='success'
           sx={{ mr: 2, fontFamily: inter, fontSize: size, letterSpacing: '0.4px' }}
@@ -311,6 +352,18 @@ const Sublimits = ({}: SublimitsProps) => {
         >
           <SaveIcon /> &nbsp; Save changes
         </Button>
+        {/* <Button
+          sx={{
+            fontFamily: inter,
+            letterSpacing: '0.4px',
+            fontSize: userThemeConfig.typography?.size.px15,
+            color: texButtonColor
+          }}
+          disabled={disableBoundBtn}
+          onClick={handleUpdateStatus}
+        >
+          <CheckIcon /> &nbsp; Add bound
+        </Button> */}
       </NextContainer>
     </CardContent>
   )

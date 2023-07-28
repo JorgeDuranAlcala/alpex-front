@@ -1,6 +1,7 @@
 // ** React Imports
 import { useRouter } from 'next/router'
-import { useState } from 'react'
+import { useContext, useState } from 'react'
+import { AbilityContext } from '@/layouts/components/acl/Can'
 
 // ** MUI Imports
 import { Grid, styled } from '@mui/material'
@@ -69,12 +70,10 @@ const TableHeader: React.FC<ITableHeader> = ({
   setSelectAllFlag,
   setSelectedRows
 }) => {
-  console.log({ selectedRows })
-
   // ** Custom Hooks
   const router = useRouter()
   const { deleteAccounts, changeStatusAccounts } = useAccountTable()
-  const { addNewTabButton } = useMultiTabButtons();
+  const { addNewTabButton } = useMultiTabButtons()
 
   const dispatch = useAppDispatch()
   const accountsReducer = useAppSelector(state => state.accounts)
@@ -90,6 +89,7 @@ const TableHeader: React.FC<ITableHeader> = ({
   const [textChangeStatusModal, setTextChangeStatusModal] = useState('')
   const [changeStatusTo, setChangeStatusTo] = useState<EStatus | null>(null)
   const [value, setValue] = useState<string>('')
+  const ability = useContext(AbilityContext)
 
   // useEffect(() => {
   //   setSelectAll(selectAllOption)
@@ -229,12 +229,28 @@ const TableHeader: React.FC<ITableHeader> = ({
       action: 'Add Account'
     })
 
-    router.push('/accounts/new-account');
+    router.push('/accounts/new-account')
     addNewTabButton({
       text: 'New Account',
       link: `/accounts/new-account`,
       isActive: true
     })
+  }
+
+  const selectActionPending = () => {
+    if (ability?.can('read', 'selectActionsChangeStatus')) {
+      return (
+        <MenuItem onClick={() => HandleChangeStatus(EStatus.PENDING)}>{EStatusString.PENDING}</MenuItem>
+      )
+    }
+  }
+
+  const selectActionBound = () => {
+    if (ability?.can('read', 'selectActionsChangeStatus')) {
+      return (
+        <MenuItem onClick={() => HandleChangeStatus(EStatus.BOUND)}>{EStatusString.BOUND}</MenuItem>
+      )
+    }
   }
 
   return (
@@ -295,7 +311,7 @@ const TableHeader: React.FC<ITableHeader> = ({
                   horizontal: 'right'
                 }}
               >
-                <MenuItem onClick={() => HandleChangeStatus(EStatus.PENDING)}>{EStatusString.PENDING}</MenuItem>
+                {selectActionPending()}
                 <MenuItem onClick={() => HandleChangeStatus(EStatus.NOT_MATERIALIZED)}>
                   {EStatusString.NOT_MATERIALIZED}
                 </MenuItem>
@@ -303,7 +319,7 @@ const TableHeader: React.FC<ITableHeader> = ({
                   {EStatusString.NOT_TAKEN_UP}
                 </MenuItem>
                 <MenuItem onClick={() => HandleChangeStatus(EStatus.DECLINED)}>{EStatusString.DECLINED}</MenuItem>
-                <MenuItem onClick={() => HandleChangeStatus(EStatus.BOUND)}>{EStatusString.BOUND}</MenuItem>
+                {selectActionBound()}
               </Menu>
             </MenuItem>
             <MenuItem value={EActions.DOWNLOAD_BORDEREAUX} sx={{ minWidth: '172px', display: 'flex', gap: '5%' }}>

@@ -11,4 +11,9 @@ const AddCedant = () => {
   )
 }
 
+AddCedant.acl = {
+  action: 'read',
+  subject: 'catalog'
+}
+
 export default AddCedant

@@ -36,7 +36,12 @@ export const GrossOrNetPremiumAt100 = ({
     const tempSecurities = [...securities]
     tempSecurities[index] = {
       ...tempSecurities[index],
-      netPremiumAt100: value
+      netPremiumAt100: value,
+      isChangeBrokerAgeAmount: false,
+      isChangeFrontingFeeAmount: false,
+      isChangeTaxesAmount: false,
+      isChangeDynamicCommissionAmount: false,
+      discounts: tempSecurities[index].discounts.map(discount => ({ ...discount, isChangeAmount: false }))
     }
     validateForm(tempSecurities[index])
     calculateSecurities(tempSecurities)
@@ -82,8 +87,8 @@ export const GrossOrNetPremiumAt100 = ({
         autoFocus
         label={isGross ? `Gross premium at %100 ` : 'Net premium at %100'}
         value={value}
-        onValueChange={value => {
-          handleChangeBaseAmount(Number(value.floatValue))
+        onValueChange={(values, sourceInfo) => {
+          if (sourceInfo.event) handleChangeBaseAmount(Number(values.floatValue))
         }}
         onClick={handleClick}
         prefix={'$'}

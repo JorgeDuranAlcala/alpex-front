@@ -35,6 +35,7 @@ export interface InformationDto {
   cedantContactCountry: string
   idLineOfBussines: number
   idTypeOfLimit: number | null
+  idCurrency?: number | null
   idEconomicSector: number | null
   idRiskActivity: number
   idLeadUnderwriter: number | null | string
@@ -44,6 +45,7 @@ export interface InformationDto {
   idAccountType: number
   premiumWithTaxes: number
   premiumWithOutDiscounts: number
+  idEndorsement?: number | null
 }
 
 export interface InformationDetailsDto {
@@ -69,34 +71,86 @@ export interface InformationDetailsDto {
   exchangeRate: number
   netPremium: number | string
   grossPremium: number
-  idAccount: number
-  idCountry: number
-  idBroker: number
-  idBrokerContact: number | null
   brokerContactEmail: string
   brokerContactPhone: string
   brokerContactCountry: string
-  idCedant: number
-  idCedantContact: number | null
   cedantContactEmail: string
   cedantContactPhone: string
   cedantContactCountry: string
-  idLineOfBussines: LineOfBussines
-  idTypeOfLimit: number | null
-  idEconomicSector: number | null
-  idRiskActivity: number
-  idLeadUnderwriter: number | null | string
-  idUnderwriter: number | null | string
-  idTechnicalAssistant: number | null | string
   updatedAt?: number | null | string | any
-  idAccountType: number
   premiumWithTaxes: number
   premiumWithOutDiscounts: number
+  idAccount: number
+  idCurrency: Currency
+  idCountry: Country
+  idBroker: CommonCatalog
+  idBrokerContact: CommonContact
+  idCedant: CommonCatalog
+  idCedantContact: CommonContact
+  idLineOfBussines: LineOfBussines
+  idTypeOfLimit: CommonCatalog
+  idEconomicSector: EconomicSector
+  idRiskActivity: RiskActivity
+  idLeadUnderwriter: CommonUser
+  idUnderwriter: CommonUser
+  idTechnicalAssistant: CommonUser
+  idAccountType: number
 }
 
 interface LineOfBussines {
   id: number
   lineOfBussines: string
+}
+
+interface CommonCatalog {
+  id: number
+  alias: string
+  name: string
+}
+
+interface CommonContact {
+  id: number
+  name: string
+  email: string
+  phone: string
+}
+
+interface EconomicSector {
+  id: number
+  sector: string
+}
+
+interface CommonUser {
+  id: number
+  name: string
+  areaCode: string
+  phone: string
+  surname: string
+  username: string
+  secondSurname: string
+  email: string
+  password: string
+}
+
+interface Country {
+  id: number
+  currency: string
+  name: string
+}
+
+interface Currency {
+  id: number
+  code: string
+  name: string
+  country: string
+}
+
+interface RiskActivity {
+  id: number
+  class: number
+  industryCode: number
+  occupancy: string
+  riskActivity: string
 }
 
 export interface InformationResponse {
@@ -172,4 +226,17 @@ export interface DeleteDoctoDto {
   idAccount: number
   idDocto: number
   fileName: string
+}
+
+export interface AccountDocumentFilters {
+  idAccount: number
+  idCDocto: number
+}
+
+export interface DocumentDto {
+  id: number
+  url: string
+  name: string
+  idCDocto: number
+  idAccount: number
 }
