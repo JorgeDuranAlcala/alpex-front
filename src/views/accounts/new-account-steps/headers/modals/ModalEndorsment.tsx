@@ -1,9 +1,8 @@
 import { useGetAllEndorsementTypes } from '@/hooks/catalogs/endorsementType/getAllEndorsementTypes'
-import { useFindEndorsementsByIdAccount } from '@/hooks/endorsement'
-import { useAppSelector } from '@/store'
+import { AbilityContext } from '@/layouts/components/acl/Can'
 import CloseIcon from '@mui/icons-material/Close'
 import { Box, Button, FormControlLabel, Modal, Radio, RadioGroup, TextField, styled } from '@mui/material'
-import { useEffect } from 'react'
+import { useContext, useState } from 'react'
 import Icon from 'src/@core/components/icon'
 import {
   ButtonClose,
@@ -12,6 +11,10 @@ import {
   FormContainer,
   HeaderTitleModal
 } from 'src/styles/Dashboard/ModalReinsurers/modalReinsurers'
+
+// ** Redux
+import { useAppDispatch, useAppSelector } from 'src/store'
+import { fetchAccountById, updateEndorsement } from 'src/store/apps/endorsement'
 
 const ButtonIcon = styled(Button)({
   boxShadow: 'none',
@@ -29,24 +32,24 @@ const ButtonIcon = styled(Button)({
 
 export const ActionsHeaderBoundModal = ({
   setOpenHistory,
-  uneditableAccount,
+
+  // uneditableAccount,
   openHistory,
   handleSubmit,
-  value,
-  handleRadioChange,
-  setCancellEndorsment,
-  setActiveEndorsement
+  setCancellEndorsment
 }: any) => {
   const { endorsementTypes } = useGetAllEndorsementTypes()
-  const account = useAppSelector(state => state.accounts?.formsData?.form1)
-  const { endorsements, setIdAccount } = useFindEndorsementsByIdAccount()
 
-  useEffect(() => {
-    setIdAccount(account?.id)
-    /* eslint-disable react-hooks/exhaustive-deps */
-  }, [])
+  const ability = useContext(AbilityContext)
+  const [generateEndt] = useState(ability?.cannot('update', 'accountGenerateEndt'))
 
-  console.log('Este es el historial de endorsements: ', endorsements)
+  const [createdEndorsement, setCreatedEndorsement] = useState({
+    type: '',
+    reason: '',
+    idEndorsementType: 0
+  })
+
+  const dispatchRedux = useAppDispatch()
 
   return (
     <div className='header-btns'>
@@ -55,7 +58,7 @@ export const ActionsHeaderBoundModal = ({
           setOpenHistory(true)
         }}
         title='GENERATE ENDT.'
-        disabled={uneditableAccount}
+        disabled={generateEndt}
       >
         <Icon icon='material-symbols:approval-outline' />
       </ButtonIcon>
@@ -86,28 +89,35 @@ export const ActionsHeaderBoundModal = ({
                 aria-labelledby='demo-radio-buttons-group-label'
                 defaultValue='none'
                 name='radio-buttons-group'
-                value={value}
-                onChange={handleRadioChange}
+                value={createdEndorsement.idEndorsementType}
+                onChange={e => {
+                  const endorsementType = endorsementTypes?.find(
+                    endorsement => endorsement.id === Number(e.target.value)
+                  )
+                  setCreatedEndorsement({
+                    ...createdEndorsement,
+                    type: String(endorsementType?.type),
+                    idEndorsementType: Number(endorsementType?.id)
+                  })
+                }}
                 sx={{ display: 'flex', flexDirection: 'column-reverse' }}
               >
                 {endorsementTypes &&
                   endorsementTypes?.map(item => {
-                    // console.log(item)
-
                     return (
                       <FormControlLabel
                         sx={{ height: '54px' }}
                         key={item?.id}
                         control={<Radio />}
                         label={item.type}
-                        value={item.type}
+                        value={item.id}
                       />
                     )
                   })}
               </RadioGroup>
             </form>
           </FormContainer>
-          {value === 'Informative' && (
+          {createdEndorsement.type !== '' && (
             <TextField
               id='standard-multiline-static'
               label='Reason for Endorsement'
@@ -115,6 +125,13 @@ export const ActionsHeaderBoundModal = ({
               variant='standard'
               sx={{ width: '100%', marginBottom: '40px', marginTop: '10px' }}
               helperText='This note will be saved in Endorsement History.'
+              value={createdEndorsement.reason}
+              onChange={e =>
+                setCreatedEndorsement({
+                  ...createdEndorsement,
+                  reason: e.target.value
+                })
+              }
             />
           )}
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '16px', marginTop: '40px' }}>
@@ -129,14 +146,19 @@ export const ActionsHeaderBoundModal = ({
             <Button
               variant='contained'
               onClick={() => {
-                if (value === 'Cancellation') {
-                  setOpenHistory(false)
+                if (createdEndorsement.type === 'Cancellation') {
                   setCancellEndorsment(true)
-                } else {
-                  setActiveEndorsement(true)
-                  setOpenHistory(false)
                 }
+                setOpenHistory(false)
+                dispatchRedux(
+                  updateEndorsement({
+                    ...createdEndorsement,
+                    initialized: true
+                  })
+                )
+                dispatchRedux(fetchAccountById())
               }}
+              disabled={!createdEndorsement.reason}
             >
               NEXT
             </Button>
@@ -147,13 +169,9 @@ export const ActionsHeaderBoundModal = ({
   )
 }
 
-export const ActionsHeaderBoundModalCancel = ({
-  setOpenHistory,
-  openHistory,
-  setCancellEndorsment,
-  value,
-  cancel
-}: any) => {
+export const ActionsHeaderBoundModalCancel = ({ setOpenHistory, openHistory, setCancellEndorsment, cancel }: any) => {
+  const endorsementType = useAppSelector(state => state?.endorsement?.data?.type)
+
   return (
     <div>
       <Modal
@@ -202,7 +220,7 @@ export const ActionsHeaderBoundModalCancel = ({
             <Button
               variant='text'
               onClick={() => {
-                if (value === 'Cancellation') {
+                if (endorsementType === 'Cancellation') {
                   cancel(true)
                   setCancellEndorsment(false)
                 } else {
@@ -215,7 +233,7 @@ export const ActionsHeaderBoundModalCancel = ({
             <Button
               variant='contained'
               onClick={() => {
-                if (value === 'Cancellation') {
+                if (endorsementType === 'Cancellation') {
                   setOpenHistory(false)
                 } else {
                   console.log('Hola')

@@ -23,7 +23,8 @@ export const ButtonAddDiscount = ({ view, formIndex }: { view: number; formIndex
         {
           active: true,
           percentage: 0,
-          amount: 0
+          amount: 0,
+          isChangeAmount: false
         }
       ]
       calculateSecurities(securitiesTemp)

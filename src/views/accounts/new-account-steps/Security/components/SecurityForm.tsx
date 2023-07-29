@@ -229,9 +229,13 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
         }
       }
 
-    if (localSecuritiesTemp.length === tempSecurities.length || idCompany) {
-      validateForm(tempSecurities[index])
-      calculateSecurities(idCompany !== 0 ? tempSecurities : localSecuritiesTemp)
+    localSecuritiesTemp.push(tempSecurities[index])
+
+    // todo: regresar esta validacion si hay error al mostrar el fronting fee y taxes
+    //localSecuritiesTemp.length === tempSecurities.length ||
+    if (idCompany !== 0) {
+      calculateSecurities(tempSecurities)
+
       localSecuritiesTemp = []
     }
   }
@@ -256,12 +260,6 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
   }, [security])
 
   useEffect(() => {
-    isShowFrontingFeeAndTaxes()
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  useEffect(() => {
     securities[index].idCReinsuranceCompany?.id &&
       isShowFrontingFeeAndTaxes(securities[index].idCReinsuranceCompany?.id)
 
@@ -269,6 +267,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
   }, [isGross, securities[index].idCReinsuranceCompany?.id])
 
   useEffect(() => {
+    isShowFrontingFeeAndTaxes()
     const tempSecurities = [...securities]
 
     const isDifferent = isGross
@@ -293,7 +292,12 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
     if (security.idCReinsuranceCompany?.id) setIsGross(() => security.idCReinsuranceCompany.special)
   }, [security.idCReinsuranceCompany])
 
-  /*NOTE: en los componentes de porcentajes no es necesario calcular los otros valores ya que todos los calculos se hacen en el calculate securities a exception de las modificaciones de montos */
+  useEffect(() => {
+    validateForm(security)
+  }, [security])
+
+  /*
+  !NOTE: en los componentes de porcentajes no es necesario calcular los otros valores ya que todos los calculos se hacen en el calculate securities a exception de las modificaciones de montos */
   return (
     <DiscountsProvider>
       <ModalActivateSecondView

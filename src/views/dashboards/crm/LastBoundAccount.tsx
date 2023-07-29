@@ -20,7 +20,6 @@ const LastBoundAccount = () => {
 
   const { account, setBrokerId } = useGetLastAccountByIdBroker()
   const router = useRouter()
-  console.log({ account })
 
   useEffect(() => {
     setBrokerId(0)
@@ -70,7 +69,7 @@ const LastBoundAccount = () => {
           sx={{ width: '60%', minWidth: '180px', height: '42px', fontSize: '15px', fontFamily: inter, color: useColor }}
           onClick={() => {
             localStorage.setItem('idAccount', String(account?.id))
-            router.push(`/accounts/new-account/?&id=${account?.id}`)
+            router.push(`/accounts/created-account/?&idAccount=${account?.id}`)
           }}
         >
           Go to Account

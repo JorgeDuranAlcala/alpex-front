@@ -73,7 +73,6 @@ export type PlacementStructureProps = {
     attachmentPoint: number
     typeOfLimit: string | number | null
   }
-  editInfo?: any
   setPlacementStructure: React.Dispatch<
     React.SetStateAction<{
       currency: string
@@ -107,8 +106,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
   makeValidations,
   onValidationComplete,
   onDiscountsChange,
-  triggerSubject,
-  editInfo
+  triggerSubject
 }) => {
   const { currencies } = useGetAllCurrencies()
   const { typesOfLimits } = useGetAllTypeOfLimit()
@@ -389,7 +387,6 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
     setPair({ targetCurrency: value, baseCurrency: 'USD' })
   }
 
-
   const handleNumericInputChange = (value: any, name: string) => {
     setPlacementStructure({ ...placementStructure, [name]: value })
   }
@@ -513,7 +510,6 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
   }
 
   const calculateDiscount = (index: number, newDiscount: DiscountInputs) => {
-    console.log(newDiscount)
     const total = typeof grossPremium == 'number' ? grossPremium : 0
     let updatedDiscountInput: DiscountInputs = newDiscount
     let updatedDiscount: DiscountDto = {
@@ -524,16 +520,13 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
     }
 
     if (typeof newDiscount.percentage == 'number') {
-      console.log('number')
       const amount = (newDiscount.percentage / 100) * total
       updatedDiscountInput = { ...newDiscount, amount }
       updatedDiscount = { ...updatedDiscount, amount }
     } else {
-      console.log('vacio')
       updatedDiscountInput = { ...newDiscount, amount: 0 }
       updatedDiscount = { ...updatedDiscount, amount: 0 }
     }
-    console.log(updatedDiscountInput)
     setDiscount(updatedDiscountInput)
 
     setDiscounts(state => {
@@ -657,12 +650,6 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
   }, [discount, discountCounter])
 
   React.useEffect(() => {
-    console.log('discount Inputs cambio')
-    console.log(discountInputs)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [discountInputs])
-
-  React.useEffect(() => {
     setTotalDiscountsError(discountValidation)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [taxesP, taxes, frontingFee, frontingFeeP, grossPremium])
@@ -716,7 +703,6 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               value={placementStructure.currency}
               onChange={handleCurrencyChange}
               labelId='currency'
-              disabled={!editInfo.allInfo}
             >
               {currencies
                 ?.filter((obj, index, self) => index === self.findIndex(o => o.code === obj.code))
@@ -773,7 +759,6 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               onValueChange={value => {
                 handleNumericInputChange(value.floatValue, 'total')
               }}
-              disabled={!editInfo.allInfo}
             />
             {false && <FormHelperText sx={{ color: 'error.main' }}>Required Field</FormHelperText>}
           </FormControl>
@@ -793,7 +778,6 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               onValueChange={value => {
                 handleNumericInputChange(value.floatValue, 'sir')
               }}
-              disabled={!editInfo.allInfo}
             />
           </FormControl>
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
@@ -815,11 +799,10 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
                 return (floatValue! >= 0 && floatValue! <= 100) || floatValue === undefined
               }}
               onChange={(e: any) => {
-
-                const value = Number(e.target.value.replace('%', ''));
+                const value = Number(e.target.value.replace('%', ''))
 
                 // console.log(value)
-                calculate('reinsuranceBrokerageP', value);
+                calculate('reinsuranceBrokerageP', value)
 
                 // if (!!(value % 1)) {
                 //   console.log('isFLoat')
@@ -830,7 +813,6 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               }}
               error={errors.reinsuranceBrokeragePError}
               helperText={getErrorMessage('reinsuranceBrokeragePError')}
-              disabled={!editInfo.allInfo}
             />
           </FormControl>
         </div>
@@ -851,7 +833,6 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               decimalScale={2}
               error={errors.exchangeRateError}
               helperText={getErrorMessage('exchangeRateError')}
-              disabled={!editInfo.allInfo}
               onValueChange={value => {
                 handleNumericInputChange(value.floatValue, 'exchangeRate')
               }}
@@ -876,7 +857,6 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               }}
               error={errors.limitError}
               helperText={getErrorMessage('limitError')}
-              disabled={!editInfo.allInfo}
             />
             {false && <FormHelperText sx={{ color: 'error.main' }}>Required Field</FormHelperText>}
           </FormControl>
@@ -902,7 +882,6 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               }}
               error={errors.grossPremiumError}
               helperText={getErrorMessage('grossPremiumError')}
-              disabled={!editInfo.allInfo}
             />
             {false && <FormHelperText sx={{ color: 'error.main' }}>Required Field</FormHelperText>}
           </FormControl>
@@ -935,7 +914,6 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               }}
               error={errors.reinsuranceBrokerageError}
               helperText={getErrorMessage('reinsuranceBrokerageError')}
-              disabled={!editInfo.allInfo}
             />
             {false && <FormHelperText sx={{ color: 'error.main' }}>Required Field</FormHelperText>}
           </FormControl>
@@ -958,7 +936,6 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               onValueChange={value => {
                 handleNumericInputChange(value.floatValue, 'attachmentPoint')
               }}
-              disabled={!editInfo.allInfo}
             />
           </FormControl>
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }} error={errors.typeOfLimitError}>
@@ -969,7 +946,6 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               value={String(placementStructure.typeOfLimit)}
               onChange={handleSelectChange}
               labelId='type-of-limit'
-              disabled={!editInfo.allInfo}
             >
               {typesOfLimits && typesOfLimits.length > 0 ? (
                 typesOfLimits?.map(limit => {
@@ -999,12 +975,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
           <div className='form-row'>
             <div className='row-title'>Taxes</div>
             <div className='switch-btn-container'>
-              <Switch
-                checked={taxesChecked}
-                onChange={handleTaxesChange}
-                color='primary'
-                disabled={!editInfo.allInfo}
-              />
+              <Switch checked={taxesChecked} onChange={handleTaxesChange} color='primary' />
             </div>
           </div>
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
@@ -1020,13 +991,13 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               suffix={'%'}
               decimalScale={2}
               variant='outlined'
-              disabled={editInfo.allInfo && taxesChecked ? false : true}
+              disabled={taxesChecked ? false : true}
               isAllowed={values => {
                 const { floatValue } = values
 
                 return (floatValue! >= 0 && floatValue! <= 100) || floatValue === undefined
               }}
-
+              // eslint-disable-next-line lines-around-comment
               // onValueChange={value => {
               //   if (value.floatValue) {
               //     calculate('taxesP', value.floatValue)
@@ -1034,11 +1005,10 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               //     calculate('taxesP', '')
               //   }
               // }}
-              onChange={(e) => {
-                const value = Number(e.target.value.replace('%', ''));
-                calculate('taxesP', value);
+              onChange={e => {
+                const value = Number(e.target.value.replace('%', ''))
+                calculate('taxesP', value)
               }}
-
               onFocus={e => {
                 if (e.target.value === '0') {
                   e.target.value = ''
@@ -1049,10 +1019,10 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
                 taxesChecked && errors.taxesPError
                   ? 'This field must be greater than 0'
                   : taxesChecked && errors.totalDiscountsError
-                    ? 'The total discounts percentage should be less than 100%'
-                    : taxesChecked && totalDiscountsError
-                      ? 'The total discounts percentage should be less than 100%'
-                      : ''
+                  ? 'The total discounts percentage should be less than 100%'
+                  : taxesChecked && totalDiscountsError
+                  ? 'The total discounts percentage should be less than 100%'
+                  : ''
               }
             />
           </FormControl>
@@ -1068,7 +1038,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               multiline
               prefix='$'
               variant='outlined'
-              disabled={editInfo.allInfo && taxesChecked ? false : true}
+              disabled={taxesChecked ? false : true}
               decimalScale={2}
               isAllowed={values => {
                 const { floatValue } = values
@@ -1093,10 +1063,10 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
                 taxesChecked && errors.taxesError
                   ? 'This field must be greater than 0'
                   : taxesChecked && errors.totalDiscountsError
-                    ? 'The total amount of discounts should be less than Gross Premium'
-                    : taxesChecked && totalDiscountsError
-                      ? 'The total amount of discounts should be less than Gross Premium'
-                      : ''
+                  ? 'The total amount of discounts should be less than Gross Premium'
+                  : taxesChecked && totalDiscountsError
+                  ? 'The total amount of discounts should be less than Gross Premium'
+                  : ''
               }
             />
           </FormControl>
@@ -1106,12 +1076,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
           <div className='form-row'>
             <div className='row-title'>Fronting fee</div>
             <div className='switch-btn-container'>
-              <Switch
-                checked={frontingChecked}
-                onChange={handleFrontingChange}
-                color='primary'
-                disabled={!editInfo.allInfo}
-              />
+              <Switch checked={frontingChecked} onChange={handleFrontingChange} color='primary' />
             </div>
           </div>
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
@@ -1128,13 +1093,13 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               maxRows={4}
               decimalScale={2}
               variant='outlined'
-              disabled={editInfo.allInfo && frontingChecked ? false : true}
+              disabled={frontingChecked ? false : true}
               isAllowed={values => {
                 const { floatValue } = values
 
                 return (floatValue! >= 0 && floatValue! <= 100) || floatValue === undefined
               }}
-
+              // eslint-disable-next-line lines-around-comment
               // onValueChange={value => {
               //   if (value.floatValue) {
               //     calculate('frontingFeeP', value.floatValue)
@@ -1142,19 +1107,19 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               //     calculate('frontingFeeP', '')
               //   }
               // }}
-              onChange={(e) => {
-                const value = Number(e.target.value.replace('%', ''));
-                calculate('frontingFeeP', value);
+              onChange={e => {
+                const value = Number(e.target.value.replace('%', ''))
+                calculate('frontingFeeP', value)
               }}
               error={frontingChecked && (errors.frontingFeePError || errors.totalDiscountsError || totalDiscountsError)}
               helperText={
                 frontingChecked && errors.frontingFeePError
                   ? 'This field must be greater than 0'
                   : frontingChecked && errors.totalDiscountsError
-                    ? 'The total discounts percentage should be less than 100%'
-                    : frontingChecked && totalDiscountsError
-                      ? 'The total discounts percentage should be less than 100%'
-                      : ''
+                  ? 'The total discounts percentage should be less than 100%'
+                  : frontingChecked && totalDiscountsError
+                  ? 'The total discounts percentage should be less than 100%'
+                  : ''
               }
             />
           </FormControl>
@@ -1170,7 +1135,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               prefix='$'
               multiline
               variant='outlined'
-              disabled={editInfo.allInfo && frontingChecked ? false : true}
+              disabled={frontingChecked ? false : true}
               decimalScale={2}
               isAllowed={values => {
                 const { floatValue } = values
@@ -1190,10 +1155,10 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
                 frontingChecked && errors.frontingFeeError
                   ? 'This field must be greater than 0'
                   : frontingChecked && errors.totalDiscountsError
-                    ? 'The total amount of discounts should be less than Gross Premium'
-                    : frontingChecked && totalDiscountsError
-                      ? 'The total amount of discounts should be less than Gross Premium'
-                      : ''
+                  ? 'The total amount of discounts should be less than Gross Premium'
+                  : frontingChecked && totalDiscountsError
+                  ? 'The total amount of discounts should be less than Gross Premium'
+                  : ''
               }
             />
           </FormControl>
@@ -1231,7 +1196,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
 
                   return (floatValue! >= 0 && floatValue! <= 100) || floatValue === undefined
                 }}
-
+                // eslint-disable-next-line lines-around-comment
                 // onValueChange={value => {
                 //   if (value.floatValue) {
                 //     const updatedDiscount = { ...discountItem, percentage: value.floatValue }
@@ -1241,19 +1206,18 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
                 //   }
                 // }}
 
-                onChange={(e) => {
-                  const value = Number(e.target.value.replace('%', ''));
+                onChange={e => {
+                  const value = Number(e.target.value.replace('%', ''))
                   const updatedDiscount = { ...discountItem, percentage: value }
                   calculateDiscount(index, updatedDiscount)
                 }}
-
                 error={totalDiscountsError || discountsErrorsIndex.includes(index)}
                 helperText={
                   totalDiscountsError
                     ? 'The total discounts percentage should be less than 100%'
                     : discountsErrorsIndex.includes(index)
-                      ? 'This field must be greater than 0'
-                      : ''
+                    ? 'This field must be greater than 0'
+                    : ''
                 }
               />
             </FormControl>
@@ -1289,8 +1253,8 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
                   totalDiscountsError
                     ? 'The total amount of discounts should be less than Gross Premium'
                     : discountsErrorsIndex.includes(index)
-                      ? 'This field must be greater than 0'
-                      : ''
+                    ? 'This field must be greater than 0'
+                    : ''
                 }
               />
             </FormControl>
@@ -1298,7 +1262,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
         ))}
 
         <div className='discount-btn'>
-          <Button className='create-contact-btn' onClick={addDiscount} disabled={!editInfo.allInfo}>
+          <Button className='create-contact-btn' onClick={addDiscount}>
             ADD DISCOUNT
             <div className='btn-icon'>
               <Icon icon='mdi:plus-circle-outline' />

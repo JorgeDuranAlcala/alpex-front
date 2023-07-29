@@ -26,6 +26,7 @@ import FormAddress from '@/views/accounts/new-account-steps/FormAddress'
 import Sublimits from '@/views/accounts/new-account-steps/Sublimit/Sublimits'
 import FormHeader from 'src/views/accounts/new-account-steps/headers/formHeader'
 
+import { AccountsTableContextProvider } from '@/context/accounts/Table/reducer'
 import { useGetAccountById } from '@/hooks/accounts/forms'
 import Icon from 'src/@core/components/icon'
 
@@ -67,13 +68,7 @@ const NewAccount = () => {
   const StepForm = ({ step }: { step: number }) => {
     switch (step) {
       case 1:
-        return (
-          <Information
-            editInfo={{ basic: true, allInfo: true }}
-            onStepChange={handleStepChange}
-            onIsNewAccountChange={handleIsNewAccountChange}
-          />
-        )
+        return <Information onStepChange={handleStepChange} onIsNewAccountChange={handleIsNewAccountChange} />
       case 2:
         return <Security onStepChange={handleStepChange} />
       case 3:
@@ -156,37 +151,39 @@ const NewAccount = () => {
   }, [dispatch, router.events])
 
   return (
-    <Grid className='new-account' item xs={12}>
-      {/* "ActionsHeader" component receives the initial status of the
-      account and in order to use it as a "side header" (forms 2 to 4),
-      it is necessary to send the boolean variable "sideHeader = true". */}
-      {/* {activeStep == 1 && isNewAccount ? <ActionsHeader accountStatus='PENDING' sideHeader={false} /> : <FormHeader />} */}
-      {activeStep == 1 && isNewAccount ? (
-        <FormHeader isNewAccount accountDetails={accountDetails} setAccountId={setAccountId} />
-      ) : (
-        <FormHeader accountDetails={accountDetails} setAccountId={setAccountId} />
-      )}
-      <div style={{ display: 'flex', flexDirection: 'row', gap: '16px' }}>
-        <Card>
-          <NewAccountStepper changeStep={activeStep} onStepChange={handleStepChange} />
-          <StepForm step={activeStep} />
-          {/* <TabAccount /> */}
+    <AccountsTableContextProvider>
+      <Grid className='new-account' item xs={12}>
+        {/* "ActionsHeader" component receives the initial status of the
+          account and in order to use it as a "side header" (forms 2 to 4),
+          it is necessary to send the boolean variable "sideHeader = true". */}
+        {/* {activeStep == 1 && isNewAccount ? <ActionsHeader accountStatus='PENDING' sideHeader={false} /> : <FormHeader />} */}
+        {activeStep == 1 && isNewAccount ? (
+          <FormHeader isNewAccount accountDetails={accountDetails} setAccountId={setAccountId} />
+        ) : (
+          <FormHeader accountDetails={accountDetails} setAccountId={setAccountId} />
+        )}
+        <div style={{ display: 'flex', flexDirection: 'row', gap: '16px' }}>
+          <Card>
+            <NewAccountStepper changeStep={activeStep} onStepChange={handleStepChange} />
+            <StepForm step={activeStep} />
+            {/* <TabAccount /> */}
 
-          {/* <UserList /> */}
+            {/* <UserList /> */}
 
-          {/* <InvoiceAdd /> */}
+            {/* <InvoiceAdd /> */}
+          </Card>
+          <div style={{ display: 'none' }}>
+            <MenuForm />
+          </div>
+        </div>
+        <Card sx={{ '@media (min-width:809px)': { display: 'none' } }}>
+          <div style={{ display: 'flex', height: '50px', padding: '14px', alignItems: 'center' }}>
+            <Icon icon={'material-symbols:chat-bubble-outline'} fontSize={24} color='#4D5062' />
+          </div>
+          <CommentSection disable={disableComments} step={activeStep} />
         </Card>
-        <div style={{ display: 'none' }}>
-          <MenuForm />
-        </div>
-      </div>
-      <Card sx={{ '@media (min-width:809px)': { display: 'none' } }}>
-        <div style={{ display: 'flex', height: '50px', padding: '14px', alignItems: 'center' }}>
-          <Icon icon={'material-symbols:chat-bubble-outline'} fontSize={24} color='#4D5062' />
-        </div>
-        <CommentSection disable={disableComments} step={activeStep} />
-      </Card>
-    </Grid>
+      </Grid>
+    </AccountsTableContextProvider>
   )
 }
 
