@@ -22,22 +22,23 @@ import fonts from 'src/views/accounts/font'
 }*/
 
 interface IFilterMenuLobOptionProps {
-  entity: string
+  typology: string
   id: number
   handleClose?: () => void
 }
 
-const FilterMenuOption: React.FC<IFilterMenuLobOptionProps> = ({ entity, id }) => {
+const FilterMenuOption: React.FC<IFilterMenuLobOptionProps> = ({ typology, id }) => {
+
   // const dispatch = useAppDispatch()
   const handleClick = () => {
-   console.log(id)
-   console.log(entity)
+    console.log(id)
+    console.log(typology)
 
     // dispatch(
     //   handleAccountFilter({
-    //     type: 'idLineOfBusiness',
+    //     type: 'idTypology',
     //     value: id,
-    //     text: entity
+    //     text: typology
     //   })
     // )
   }
@@ -54,7 +55,7 @@ const FilterMenuOption: React.FC<IFilterMenuLobOptionProps> = ({ entity, id }) =
               textTransform: 'capitalize'
             }}
           >
-            {entity}
+            {typology}
           </Typography>
         </ListItemText>
       </MenuItem>
@@ -62,24 +63,33 @@ const FilterMenuOption: React.FC<IFilterMenuLobOptionProps> = ({ entity, id }) =
   )
 }
 
-const FilterMenuNomEnt = ({}) => {
-  const entities = [
+const FilterMenuTypology = ({}) => {
+  const typologies = [
     {
       id: 1,
-      name: "Aguascalientes"
+      typology: 'Infraestructura Educativa'
     },
     {
       id: 2,
-      name: "Baja california"
+      typology: 'Infraestructura Educativa'
     },
     {
       id: 3,
-      name: "Campeche"
+      typology: 'Almacenes en General'
     },
     {
       id: 4,
-      name: "Chihuahua"
+      typology: 'Oficinas en General'
     },
+    {
+      id: 5,
+      typology: 'Oficina'
+    },
+    {
+      id: 6,
+      typology: 'Centro Cultural'
+    },
+
   ]
 
   return (
@@ -87,12 +97,12 @@ const FilterMenuNomEnt = ({}) => {
       <Box component={'li'} sx={{ padding: '10px 10px', display: 'block', width: '100%', borderRadius: '0' }}>
         <Box sx={{ display: 'flex' }}>
           <Typography sx={{ color: colors.text.secondary, fontSize: fonts.size.px12, fontFamily: fonts.inter }}>
-            Entities
+            Topologies
           </Typography>
         </Box>
       </Box>
-      {entities.map(entity => (
-        <FilterMenuOption key={entity.id} id={entity.id} entity={entity.name} />
+      {typologies.map(typology => (
+        <FilterMenuOption key={typology.id} id={typology.id} typology={typology.typology} />
       ))}
       {/* <FilterMenuLobOption lob={ELobString.FINANCIAL_LINES} />
       <FilterMenuLobOption lob={ELobString.OTHER} />
@@ -101,4 +111,4 @@ const FilterMenuNomEnt = ({}) => {
   )
 }
 
-export default FilterMenuNomEnt
+export default FilterMenuTypology

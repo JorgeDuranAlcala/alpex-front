@@ -14,8 +14,10 @@ const FilterMenuValfis = () => {
   // const searchTimeOutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const valuetext = (value: number) => {
-    return `${value}°C`
+    return `${value}`
   }
+  const minValfis = 0
+  const maxValfis = 999999999
 
   // const handleOnChange = (value: string) => {
   //   if (searchTimeOutRef.current) {
@@ -45,6 +47,14 @@ const FilterMenuValfis = () => {
       min={0}
       max={999999999}
     />
+    <div className='slider-row'>
+      <div>
+        ${minValfis}
+      </div>
+      <div>
+        ${maxValfis}
+      </div>
+    </div>
     </Box>
   )
 }

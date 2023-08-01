@@ -13,25 +13,23 @@ import Icon from 'src/@core/components/icon'
 // import { deleteAccountFilter, handleAccountFilter } from 'src/store/apps/accounts'
 import fonts from '../font'
 
-const FilterMenuPropertyId = () => {
+const FilterMenuNomMun = () => {
   // const dispatch = useAppDispatch();
   // const searchTimeOutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-
-
   const handleOnChangeSearch = (value: string) => {
-    console.log(value)
+   console.log(value)
 
     // if (searchTimeOutRef.current) {
 
     //   clearTimeout(searchTimeOutRef.current);
     // }
     // searchTimeOutRef.current = setTimeout(() => {
-    //   if (value === '') dispatch(deleteAccountFilter('idAccount'))
+    //   if (value === '') dispatch(deleteAccountFilter('nomMun'))
     //   else
     //     dispatch(
     //       handleAccountFilter({
-    //         type: 'idAccount',
+    //         type: 'nomMun',
     //         value: `${value}`,
     //         text: `${value}`
     //       })
@@ -42,7 +40,7 @@ const FilterMenuPropertyId = () => {
   return (
     <Box component={'li'} sx={{ padding: '3px 30px', display: 'flex', alignItems: 'center', width: '100%' }}>
       <Input
-        placeholder='Search by ID'
+        placeholder='Search by NOM_MUN'
         onChange={e => handleOnChangeSearch(e.target.value)}
         sx={{
           fontFamily: fonts.inter,
@@ -60,4 +58,4 @@ const FilterMenuPropertyId = () => {
   )
 }
 
-export default FilterMenuPropertyId
+export default FilterMenuNomMun
