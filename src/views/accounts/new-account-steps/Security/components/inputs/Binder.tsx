@@ -1,5 +1,6 @@
-import { FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material'
+import { FormControl, InputLabel, MenuItem, SelectChangeEvent } from '@mui/material'
 
+import { SelectAnchor } from '@/@core-custom/inputs/SelectAnchor'
 import { ReinsuranceCompanyBinderDto } from '@/services/catalogs/dtos/ReinsuranceCompanyBinder.dto'
 import ReinsuranceCompanyBinderService from '@/services/catalogs/reinsuranceCompanyBinder.service'
 import { useContext, useEffect, useState } from 'react'
@@ -23,7 +24,7 @@ export const Binder = ({ value, index, view, companyId }: BinderProps) => {
   const [binders, setBinders] = useState<ReinsuranceCompanyBinderDto[]>([])
   const [loading, setLoading] = useState(false)
 
-  const handleOnChangeBinder = (event: SelectChangeEvent) => {
+  const handleOnChangeBinder = (event: SelectChangeEvent | any) => {
     const value = event.target.value
     const binderSelect = binders.find(b => String(b.id) === String(value))
     const tempSecurities = [...securities]
@@ -67,7 +68,7 @@ export const Binder = ({ value, index, view, companyId }: BinderProps) => {
     <FormControl fullWidth sx={{ mb: 6.5 }}>
       <InputLabel id='Binder'>Binder</InputLabel>
 
-      <Select
+      <SelectAnchor
         label='Binder'
         value={selectedBinder && binders.length > 0 ? String(selectedBinder.id) : String(value)}
         labelId='binder'
@@ -83,7 +84,7 @@ export const Binder = ({ value, index, view, companyId }: BinderProps) => {
             </MenuItem>
           ))
         )}
-      </Select>
+      </SelectAnchor>
     </FormControl>
   )
 }
