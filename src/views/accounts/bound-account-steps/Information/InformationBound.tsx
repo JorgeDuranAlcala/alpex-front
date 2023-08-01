@@ -4,7 +4,6 @@ import React, { useEffect, useState } from 'react'
 import UserThemeOptions from 'src/layouts/UserThemeOptions'
 
 // ** Custom Hooks
-// import { useAddDiscounts, useUpdateDiscounts } from '@/hooks/accounts/discount'
 import { useAddEndorsement } from '@/hooks/endorsement/useAdd'
 import {
   useDeleteInformationDocument,
@@ -30,7 +29,6 @@ import Icon from 'src/@core/components/icon'
 // ** Redux
 import { updateEndorsement } from '@/store/apps/endorsement'
 import { useAppDispatch, useAppSelector } from 'src/store'
-import { updateFormsData } from 'src/store/apps/accounts'
 
 // ** Styles
 import { ButtonClose, HeaderTitleModal } from '@/styles/modal/modal.styled'
@@ -45,6 +43,9 @@ import { DiscountDto } from '@/services/accounts/dtos/discount.dto'
 // ** Utils
 import CustomAlert, { IAlert } from '@/views/custom/alerts'
 import { DisableForm } from 'src/views/accounts/new-account-steps/_commons/DisableForm'
+
+// ** Nextjs
+import { useRouter } from 'next/router'
 
 export interface InformationSectionsInt {
   basicInfo: boolean
@@ -104,6 +105,9 @@ export interface PlacementStructure {
 }
 
 const InformationBound: React.FC<InformationProps> = ({ onStepChange, disableSectionCtrl }) => {
+  const router = useRouter()
+  const idAccountRouter = Number(router?.query?.idAccount)
+
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
   const [subjectState] = useState<Subject<void>>(new Subject())
   const inter = userThemeConfig.typography?.fontFamilyInter
@@ -136,8 +140,6 @@ const InformationBound: React.FC<InformationProps> = ({ onStepChange, disableSec
   const [userFileToDelete, setUserFileToDelete] = useState<File>()
 
   // Redux
-  const idAccount = useAppSelector(state => state.accounts.formsData?.form1?.id)
-  const lastForm1Information = useAppSelector(state => state.accounts?.formsData?.form1)
   const endorsementData = useAppSelector(state => state.endorsement.data)
   const dispatch = useAppDispatch()
 
@@ -207,7 +209,7 @@ const InformationBound: React.FC<InformationProps> = ({ onStepChange, disableSec
     if (endorsementData.initialized) {
       information = endorsementData.information
     } else {
-      information = await getInformaByIdAccount(idAccount)
+      information = await getInformaByIdAccount(idAccountRouter)
     }
 
     if (!information) return
@@ -261,11 +263,6 @@ const InformationBound: React.FC<InformationProps> = ({ onStepChange, disableSec
 
     setBasicInfo(obBasicInfo)
     setPlacementStructure(obPlacementStructure)
-    dispatch(
-      updateFormsData({
-        form1: { basicInfo: obBasicInfo, placementStructure: obPlacementStructure, userFile, id: idAccount }
-      })
-    )
   }
 
   // const uploadDoctos = async (idAccount: number) => {
@@ -397,7 +394,7 @@ const InformationBound: React.FC<InformationProps> = ({ onStepChange, disableSec
   const handleDiscountsChange = (newDiscounts: DiscountDto[]) => {
     const discountsTemp = newDiscounts.map(discount => ({
       ...discount,
-      idAccount: idAccount || 0
+      idAccount: idAccountRouter || 0
     }))
     setDiscounts(discountsTemp)
   }
@@ -551,16 +548,9 @@ const InformationBound: React.FC<InformationProps> = ({ onStepChange, disableSec
   }
 
   useEffect(() => {
-    const idAccountCache = Number(localStorage.getItem('idAccount'))
-    dispatch(updateFormsData({ form1: { ...lastForm1Information, id: idAccountCache } }))
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  useEffect(() => {
     const getFiles = async () => {
-      const idAccountCache = Number(localStorage.getItem('idAccount'))
-      if (idAccountCache) {
-        const res = await getInfoDoctosByIdAccount(idAccountCache)
+      if (idAccountRouter) {
+        const res = await getInfoDoctosByIdAccount(idAccountRouter)
         const newDoctoIdByName: any = {}
         const newUserFiles: File[] = []
 
@@ -596,7 +586,7 @@ const InformationBound: React.FC<InformationProps> = ({ onStepChange, disableSec
 
       if (idDocto) {
         const bodyToDelete = {
-          idAccount: idAccount,
+          idAccount: idAccountRouter,
           idDocto,
           fileName: fileName
         }
@@ -605,19 +595,18 @@ const InformationBound: React.FC<InformationProps> = ({ onStepChange, disableSec
       }
     }
 
-    if (userFileToDelete && idAccount) {
+    if (userFileToDelete && idAccountRouter) {
       deleteFile(userFileToDelete)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userFileToDelete])
 
   useEffect(() => {
-    if (idAccount) {
+    if (idAccountRouter) {
       setDataInformation()
     }
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [idAccount])
+  }, [idAccountRouter])
 
   useEffect(() => {
     if (validationCount === 2 && validatedForms === 2) {

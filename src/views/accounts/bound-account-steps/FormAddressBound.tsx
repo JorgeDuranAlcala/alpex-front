@@ -13,6 +13,9 @@ import { GoogleMap, MarkerF, useLoadScript } from '@react-google-maps/api'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import Icon from 'src/@core/components/icon'
 
+// ** Redux
+import { useAppSelector } from '@/store'
+
 // ** Utils
 import { DisableForm } from 'src/views/accounts/new-account-steps/_commons/DisableForm'
 
@@ -41,6 +44,9 @@ type FormAddressProps = {
 }
 
 const FormAddress: React.FC<FormAddressProps> = ({ disableSectionCtrl }) => {
+  // Redux
+  const endorsementData = useAppSelector(state => state.endorsement.data)
+
   const mapRef = useRef<HTMLDivElement>(null)
   const [marker, setMarker] = useState<google.maps.Marker | null>(null)
   const [selectedLocation, setSelectedLocation] = useState<google.maps.LatLng | null>(null)
@@ -103,6 +109,11 @@ const FormAddress: React.FC<FormAddressProps> = ({ disableSectionCtrl }) => {
     }
   }
 
+  const handleEndorsement = () => {
+    console.log('Los errors', errors)
+    console.log('Toda la data para endoso', endorsementData)
+  }
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     setAddressInfo({ ...addressInfo, [name]: value })
@@ -145,7 +156,9 @@ const FormAddress: React.FC<FormAddressProps> = ({ disableSectionCtrl }) => {
   useEffect(() => {
     if (startValidations) {
       validations()
+      handleEndorsement()
       setValidateForm(false)
+      setStartValidations(false)
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -253,7 +266,7 @@ const FormAddress: React.FC<FormAddressProps> = ({ disableSectionCtrl }) => {
   return (
     <AddressContainer>
       <h1 className='title'>Address</h1>
-      <DisableForm isDisabled={disableSectionCtrl}>
+      <DisableForm isDisabled={disableSectionCtrl} sg={2000}>
         <FormContainer>
           <div className='containerInputs'>
             {' '}
@@ -342,7 +355,7 @@ const FormAddress: React.FC<FormAddressProps> = ({ disableSectionCtrl }) => {
       </h1>
       <h2 className='subtitle'>GPS Coordinates</h2>
 
-      <DisableForm isDisabled={disableSectionCtrl}>
+      <DisableForm isDisabled={disableSectionCtrl} sg={2000}>
         <MapContainer>
           <div className='containerCoordinates'>
             <div className='inputsCoordinates'>
@@ -383,7 +396,11 @@ const FormAddress: React.FC<FormAddressProps> = ({ disableSectionCtrl }) => {
                 setStartValidations(true)
               }}
               variant='contained'
-              disabled={true}
+              disabled={
+                !endorsementData.initialized ||
+                endorsementData.type?.toLocaleLowerCase() === 'informative' ||
+                !endorsementData.type
+              }
             >
               <div className='btn-icon' style={{ marginRight: '8px' }}>
                 <Icon icon='material-symbols:approval-outline' />

@@ -86,7 +86,8 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
             [error.path]: error.message
           }
         }
-        console.log({ data })
+
+        // console.log({ data })
         errorsTemp[index] = true
         setErrorCard(data)
       })
