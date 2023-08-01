@@ -1,5 +1,5 @@
 import type { SecurityDto } from '@/services/accounts/dtos/security.dto';
-import { useAppDispatch } from '@/store';
+import { useAppDispatch, useAppSelector } from '@/store';
 import { stepForms_updateSecuritySecondViewSecurities, stepForms_updateSecuritySecurities, stepForms_updateStep } from '@/store/apps/accounts/stepFormsSlice';
 
 import { useEffect, useRef } from 'react';
@@ -14,7 +14,8 @@ interface UseStepUpdateSecurityProps {
 
 const useFormStep_updateSecurity = ({ idAccount, securities, secondViewSecurities }: UseStepUpdateSecurityProps) => {
 
-  const dispatch = useAppDispatch()
+  const dispatch = useAppDispatch();
+  const { tabButtons } = useAppSelector(state => state.multiTabButtonsSlice);
 
   const securitiesRef = useRef<SecurityDto[]>([]);
   const secondViewSecuritiesRef = useRef<SecurityDto[]>([]);
@@ -33,10 +34,18 @@ const useFormStep_updateSecurity = ({ idAccount, securities, secondViewSecuritie
     if (!idAccount) return;
     if (isStepUpdatedRef.current) return;
 
+    const activeTab = tabButtons.find(tab => tab.isActive);
+    if (!activeTab) return;
+
+    if (Number(activeTab.text) !== idAccount) return;
+    console.log('update step', idAccount, 'activeTabId', activeTab.text)
+
     dispatch(stepForms_updateStep({ id: idAccount, data: 2 }))
 
     isStepUpdatedRef.current = true;
 
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, idAccount])
 
   // * Actualiza la información de securities del account actual en Redux

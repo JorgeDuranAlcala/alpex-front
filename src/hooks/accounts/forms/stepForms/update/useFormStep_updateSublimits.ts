@@ -1,6 +1,6 @@
 
 import { SublimitDto } from '@/services/accounts/dtos/sublimit.dto';
-import { useAppDispatch } from '@/store';
+import { useAppDispatch, useAppSelector } from '@/store';
 import { stepForms_updateStep, stepForms_updateSublimitsSublimits } from '@/store/apps/accounts/stepFormsSlice';
 
 import { useEffect, useRef } from 'react';
@@ -14,7 +14,8 @@ interface UseStepUpdateSublimitsProps {
 
 const useFormStep_updateSublimits = ({ idAccount, sublimits }: UseStepUpdateSublimitsProps) => {
 
-  const dispatch = useAppDispatch()
+  const dispatch = useAppDispatch();
+  const { tabButtons } = useAppSelector(state => state.multiTabButtonsSlice);
 
   const sublimitsRef = useRef<SublimitDto[]>([]);
   const isStepUpdatedRef = useRef<boolean>(false);
@@ -32,10 +33,17 @@ const useFormStep_updateSublimits = ({ idAccount, sublimits }: UseStepUpdateSubl
     if (!idAccount) return;
     if (isStepUpdatedRef.current) return;
 
+    const activeTab = tabButtons.find(tab => tab.isActive);
+    if (!activeTab) return;
+
+    if (Number(activeTab.text) !== idAccount) return;
+
     dispatch(stepForms_updateStep({ id: idAccount, data: 3 }))
 
     isStepUpdatedRef.current = true;
 
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, idAccount])
 
   // * Actualiza la información de sublimits del account actual en Redux

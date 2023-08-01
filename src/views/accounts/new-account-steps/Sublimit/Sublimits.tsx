@@ -18,6 +18,7 @@ import { useUpdateAccountsStatus } from '@/hooks/accounts/status'
 import UserThemeOptions from '@/layouts/UserThemeOptions'
 import CheckIcon from '@mui/icons-material/Check'
 import SaveIcon from '@mui/icons-material/Save'
+import { useRouter } from 'next/router'
 import { DisableForm } from '../_commons/DisableForm'
 
 const initialValues: SublimitDto = {
@@ -81,6 +82,7 @@ interface SublimitsProps {
 }
 
 const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
+  const router = useRouter();
   const [badgeData, setBadgeData] = useState<IAlert>({
     message: '',
     theme: 'success',
@@ -268,9 +270,14 @@ const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
   }
 
   const getAccountData = async () => {
-    const idAccountCache = Number(localStorage.getItem('idAccount'))
-    setAccountId(idAccountCache)
-    const accountData = await getAccountById(idAccountCache)
+    const idAccount = Number(localStorage.getItem('idAccount')) || Number(router.query.idAccount)
+
+    if (!idAccount) return
+
+    localStorage.setItem('idAccount', idAccount.toString())
+    setAccountId(idAccount)
+
+    const accountData = await getAccountById(idAccount)
 
     if (accountData && accountData.sublimits.length > 0) {
       setSubLimits([...accountData.sublimits])

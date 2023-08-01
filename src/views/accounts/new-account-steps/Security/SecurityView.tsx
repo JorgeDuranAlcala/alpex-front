@@ -34,6 +34,7 @@ import UserThemeOptions from 'src/layouts/UserThemeOptions'
 import { SecurityMapper } from './mappers/SecurityForm.mapper'
 
 import useFormStep_updateSecurity from '@/hooks/accounts/forms/stepForms/update/useFormStep_updateSecurity'
+import { useRouter } from 'next/router'
 import { DisableForm } from '../_commons/DisableForm'
 import { SecondViewProvider } from './components/secondView/SecondViewProvider'
 import { CalculateSecurity } from './utils/calculates-securities'
@@ -41,6 +42,8 @@ import { CalculateSecurity } from './utils/calculates-securities'
 export const SecurityContext = createContext<SecurityContextDto>({} as SecurityContextDto)
 
 const Security = ({ onStepChange }: SecurityProps) => {
+  const router = useRouter();
+
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
   const [securities, setSecurities] = useState<SecurityDto[]>([])
 
@@ -406,9 +409,10 @@ const Security = ({ onStepChange }: SecurityProps) => {
   }
 
   useEffect(() => {
-    const idAccountCache = Number(localStorage.getItem('idAccount'))
+    const idAccount = Number(localStorage.getItem('idAccount')) || Number(router.query.idAccount)
+    localStorage.setItem('idAccount', idAccount.toString())
 
-    setAccountId(idAccountCache)
+    setAccountId(idAccount)
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])

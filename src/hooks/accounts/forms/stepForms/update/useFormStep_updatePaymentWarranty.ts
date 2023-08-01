@@ -1,5 +1,5 @@
 import { InstallmentDto } from '@/services/accounts/dtos/installments.dto';
-import { useAppDispatch } from '@/store';
+import { useAppDispatch, useAppSelector } from '@/store';
 import { stepForms_updatePaymentWarrantyInstallments, stepForms_updateStep } from '@/store/apps/accounts/stepFormsSlice';
 
 import { useEffect, useRef } from 'react';
@@ -13,7 +13,8 @@ interface UseStepUpdatePaymentWarrantyProps {
 
 const useFormStep_updatePaymentWarranty = ({ idAccount, installments }: UseStepUpdatePaymentWarrantyProps) => {
 
-  const dispatch = useAppDispatch()
+  const dispatch = useAppDispatch();
+  const { tabButtons } = useAppSelector(state => state.multiTabButtonsSlice);
 
   const installmentRef = useRef<InstallmentDto[]>([]);
   const isStepUpdatedRef = useRef<boolean>(false);
@@ -31,10 +32,17 @@ const useFormStep_updatePaymentWarranty = ({ idAccount, installments }: UseStepU
     if (!idAccount) return;
     if (isStepUpdatedRef.current) return;
 
+    const activeTab = tabButtons.find(tab => tab.isActive);
+    if (!activeTab) return;
+
+    if (Number(activeTab.text) !== idAccount) return;
+
     dispatch(stepForms_updateStep({ id: idAccount, data: 3 }))
 
     isStepUpdatedRef.current = true;
 
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, idAccount])
 
   // * Actualiza la información de installments del account actual en Redux

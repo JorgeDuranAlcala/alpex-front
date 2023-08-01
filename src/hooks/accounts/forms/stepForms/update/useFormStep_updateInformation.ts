@@ -1,5 +1,5 @@
 import type { DiscountDto } from '@/services/accounts/dtos/discount.dto';
-import { useAppDispatch } from '@/store';
+import { useAppDispatch, useAppSelector } from '@/store';
 import { stepForms_updateInformationBasicInfo, stepForms_updateInformationDiscounts, stepForms_updateInformationPlacementStructure, stepForms_updateStep } from '@/store/apps/accounts/stepFormsSlice';
 import { useEffect, useRef } from 'react';
 import type { BasicInfoInterface, PlacementStructure } from '../../../../../views/accounts/new-account-steps/Information/Information';
@@ -14,7 +14,8 @@ interface UseStepUpdateInformationProps {
 
 const useFormStep_updateInformation = ({ idAccount, basicInfo, placementStructure, discounts }: UseStepUpdateInformationProps) => {
 
-  const dispatch = useAppDispatch()
+  const dispatch = useAppDispatch();
+  const { tabButtons } = useAppSelector(state => state.multiTabButtonsSlice);
 
   const basicInfoRef = useRef<BasicInfoInterface | null>(null);
   const placementStructureRef = useRef<PlacementStructure | null>(null);
@@ -38,10 +39,17 @@ const useFormStep_updateInformation = ({ idAccount, basicInfo, placementStructur
     if (!idAccount) return;
     if (isStepUpdatedRef.current) return;
 
+    const activeTab = tabButtons.find(tab => tab.isActive);
+    if (!activeTab) return;
+
+    if (Number(activeTab.text) !== idAccount) return;
+
     dispatch(stepForms_updateStep({ id: idAccount, data: 1 }))
 
     isStepUpdatedRef.current = true;
 
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, idAccount])
 
   // * Actualiza la información de basicInfo del account actual en Redux

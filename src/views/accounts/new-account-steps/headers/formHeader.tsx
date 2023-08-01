@@ -178,6 +178,7 @@ const FormHeader = ({
   const [status, setStatus] = useState('')
   const account = useAppSelector(state => state.accounts?.formsData?.form1)
   const lastAccountId = useRef<number | null>(null)
+  const lastAccountDetailsId = useRef<number | null>(null);
 
   const formaterAmount = (amount: number) => {
     if (amount) {
@@ -217,7 +218,7 @@ const FormHeader = ({
   useEffect(() => {
     console.log('formHeader account', account);
 
-    const accountId = account?.id || accountDetails?.id;
+    const accountId = account?.id;
     console.log('formHeader accountId', {
       idFromAccout: account?.id,
       idFromAccountDetails: accountDetails?.id,
@@ -229,10 +230,12 @@ const FormHeader = ({
         lastAccountId: lastAccountId.current,
         accountId: accountId
       })
-      if (lastAccountId.current !== accountId) {
+      if (lastAccountId.current !== accountId || lastAccountDetailsId.current !== accountDetails?.id) {
         lastAccountId.current = accountId
+        lastAccountDetailsId.current = accountId;
         console.log('formHeader setAccountId', accountId)
-        setAccountId(accountId)
+
+        // setAccountId(accountId)
       }
 
       // isAccountSetted.current = true

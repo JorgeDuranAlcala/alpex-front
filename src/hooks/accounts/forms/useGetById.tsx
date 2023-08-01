@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import { InformationDetailsDto } from '@/services/accounts/dtos/information.dto'
 import { InstallmentDto } from '@/services/accounts/dtos/installments.dto'
@@ -30,23 +30,31 @@ const account_status = {
 
 export const useGetAccountById = () => {
   const [account, setAccount] = useState<ResponseGetAccount>()
-  const [accountId, setAccountId] = useState<number | null>(null)
+  const [accountId, setAccountId] = useState<number | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const lastAccountId = useRef<number | null>(null);
 
   const getAccountById = async (idAccount: number): Promise<ResponseGetAccount> => {
     console.log('getAccountById', idAccount)
     const getAccount = await AccountServices.getAccountById(idAccount)
-    if (getAccount) {
-      const idAccountStatus: number = getAccount.idAccountStatus as number
-      const statusKey = `status_${idAccountStatus}`
-      getAccount.status = account_status[statusKey as keyof typeof account_status]
-      setAccount(getAccount)
-    }
+
+    // if (getAccount) {
+    //   const idAccountStatus: number = getAccount.idAccountStatus as number
+    //   const statusKey = `status_${idAccountStatus}`
+    //   getAccount.status = account_status[statusKey as keyof typeof account_status]
+    //   setAccount(getAccount)
+    // }
 
     return getAccount
   }
 
   useEffect(() => {
+    setAccount(undefined);
+    setIsLoading(true);
     if (accountId) {
+
+      if (lastAccountId.current === accountId) return;
+      lastAccountId.current = accountId;
 
       console.log('useGetAccountById', accountId)
       AccountServices.getAccountById(accountId)
@@ -57,16 +65,22 @@ export const useGetAccountById = () => {
             const statusKey = `status_${idAccountStatus}`
             accounts.status = account_status[statusKey as keyof typeof account_status]
           }
-          setAccount(accounts)
+          setAccount(accounts);
+          setIsLoading(false);
         })
         .catch((error: Error) => {
           console.log(error)
         })
     }
+
+    // return () => {
+    //   console.log(accountId, lastAccountId.current)
+    // }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accountId])
 
   return {
+    isLoading,
     account,
     setAccountId,
     getAccountById,

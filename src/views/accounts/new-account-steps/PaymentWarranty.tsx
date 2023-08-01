@@ -12,7 +12,7 @@ import {
   Theme,
   Typography
 } from '@mui/material'
-import { ForwardedRef, forwardRef, useEffect, useState } from 'react'
+import { ForwardedRef, forwardRef, useEffect, useRef, useState } from 'react'
 
 import { default as DatePicker } from 'react-datepicker'
 
@@ -42,6 +42,7 @@ import { ButtonClose, HeaderTitleModal } from '@/styles/modal/modal.styled'
 import { delayMs } from '@/utils/formatDates'
 import CustomAlert, { IAlert } from '@/views/custom/alerts'
 import { Icon } from '@iconify/react'
+import { useRouter } from 'next/router'
 import { NumericFormat } from 'react-number-format'
 import { InstallmentDto } from 'src/services/accounts/dtos/installments.dto'
 import { DisableForm } from './_commons/DisableForm'
@@ -90,6 +91,7 @@ type Timer = ReturnType<typeof setInterval>
 let typingTimer: Timer
 const doneTypingInterval = 1500 // Tiempo en milisegundos para considerar que se dejó de escribir
 const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
+  const router = useRouter();
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
 
   const inter = userThemeConfig.typography?.fontFamilyInter
@@ -118,6 +120,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
   const { account, setAccountId } = useGetAccountById()
   const { deleteInstallments } = useDeleteInstallments()
   const newAccount = account
+  const lastIdAccount = useRef<number>(0);
 
   const [badgeData, setBadgeData] = useState<IAlert>({
     message: '',
@@ -345,7 +348,24 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
   }, [daysFirst])
 
   useEffect(() => {
-    idAccount && setAccountId(idAccount)
+    if (idAccount) {
+      console.log('idAccount', idAccount, 'lastIdAccount', lastIdAccount.current)
+
+      if (lastIdAccount.current === idAccount) return;
+      lastIdAccount.current = idAccount;
+
+      setAccountId(idAccount)
+    } else {
+      const idAccount = Number(localStorage.getItem('idAccount')) || Number(router.query.idAccount)
+
+      if (idAccount) {
+        if (lastIdAccount.current === idAccount) return;
+        lastIdAccount.current = idAccount;
+        localStorage.setItem('idAccount', idAccount.toString())
+
+        setAccountId(idAccount)
+      }
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [idAccount, setAccountId])
 

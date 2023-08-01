@@ -44,6 +44,7 @@ import { useGetAccountById } from '@/hooks/accounts/forms'
 
 // ** Core
 import { stepForms_updateStep } from '@/store/apps/accounts/stepFormsSlice'
+import { Box, CircularProgress } from '@mui/material'
 import Icon from 'src/@core/components/icon'
 
 export interface AllFormsInterface {
@@ -63,7 +64,7 @@ const CreatedAccount = () => {
   const endorsementData = useAppSelector(state => state.endorsement.data)
 
   // Custom Hooks
-  const { account: accountDetails, setAccountId, getAccountById } = useGetAccountById()
+  const { isLoading, account: accountDetails, setAccountId, getAccountById } = useGetAccountById()
   console.log({ accountDetails })
 
   // States
@@ -237,6 +238,15 @@ const CreatedAccount = () => {
     enableInputsCtrl()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editInfo, accountDetails?.status, endorsementData.type])
+
+  if (isLoading) {
+    console.log(accountDetails?.id)
+    console.log(isLoading)
+
+    return <Box>
+      <CircularProgress size={75} />
+    </Box>
+  }
 
   return (
     <AccountsTableContextProvider>
