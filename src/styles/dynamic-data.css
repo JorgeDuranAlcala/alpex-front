@@ -7,3 +7,87 @@
 .total-investment .MuiTypography-root {
   margin-bottom: 0 !important;
 }
+
+.slider-row {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+/*------------------ Property Details Styles  --------------*/
+
+.detail-table-wrapper {
+  width: 100%;
+  padding: 20px;
+}
+
+.detail-table-wrapper .title {
+  font-size: 24px;
+  color: rgba(77, 80, 98, 0.87);
+  margin-bottom: 20px;
+}
+
+.detail-table-wrapper .table .name {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.detail-table-wrapper .item-row {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  padding: 5px;
+}
+
+.detail-table-wrapper .item-col {
+  display: flex;
+  width: 50%;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.detail-table-wrapper .item-row.row-white {
+  background-color: #ffffff;
+}
+
+.detail-table-wrapper .item-row.row-grey {
+  background-color: rgba(76, 78, 100, 0.04);
+}
+
+.property-header-wrapper {
+  width: 100%;
+  display: flex;
+  padding: 40px 20px;
+  justify-content: space-between;
+}
+
+.property-header-wrapper .header-row {
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  align-content: center;
+  font-size: 20px;
+  font-family: Inter;
+  color: rgba(77, 80, 98, 0.87);
+}
+
+.property-header-wrapper .header-col {
+  max-width: 25%;
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0px 10px;
+  align-items: center;
+}
+
+@media (max-width: 1270px) {
+  .property-header-wrapper .header-row {
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 950px) {
+  .property-header-wrapper .header-row {
+    font-size: 16px;
+  }
+}
