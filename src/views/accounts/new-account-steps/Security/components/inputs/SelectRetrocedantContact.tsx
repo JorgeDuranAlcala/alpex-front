@@ -1,7 +1,8 @@
-import { FormControl, FormHelperText, InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material'
+import { FormControl, FormHelperText, InputLabel, MenuItem, } from '@mui/material'
 import { useContext, useEffect, useState } from 'react'
 import * as yup from 'yup'
 
+import { SelectAnchor } from '@/@core-custom/inputs/SelectAnchor'
 import { RetroCedantContactDto } from '@/services/catalogs/dtos/retroCedantContact.dto'
 import { SecurityContext } from '../../SecurityView'
 import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interface'
@@ -22,7 +23,7 @@ export const SelectRetroCedantContact = ({
   const { activeErros, securities, calculateSecurities } = useContext(SecurityContext)
   const [retroCedantContactId, setRetroCedantContactId] = useState<string>(String(value) || '')
 
-  const handleChangeRetroCedantContact = (e: SelectChangeEvent<string>) => {
+  const handleChangeRetroCedantContact = (e: any) => {
     const selectedRetroCendantContactId = e.target.value
     const retroCedantContact = retroCedantContacts?.find(
       retroCedantContact => retroCedantContact.id === Number(selectedRetroCendantContactId)
@@ -37,25 +38,31 @@ export const SelectRetroCedantContact = ({
     calculateSecurities(tempSecurities)
   }
   useEffect(() => {
+    console.log('retroCedantContacts', retroCedantContacts)
+    console.log('value', value)
     if (retroCedantContacts && value) setRetroCedantContactId(String(value))
+
+    if (retroCedantContacts?.length === 0) {
+      setRetroCedantContactId('')
+    }
   }, [value, retroCedantContacts])
 
   return (
     <FormControl fullWidth sx={{ mb: 2 }}>
       <InputLabel>Select Retro Cedant contact</InputLabel>
-      <Select
+      <SelectAnchor
         label='Select Retro Cedant contact '
         value={retroCedantContactId}
         onChange={handleChangeRetroCedantContact}
         labelId='RetroCedantcontact'
         disabled={view === 2 || isDisabled}
       >
-        {retroCedantContacts?.map(contact => (
-          <MenuItem key={contact.name} value={contact.id}>
+        {retroCedantContacts?.map((contact, index) => (
+          <MenuItem key={`${contact.name}_${index}`} value={contact.id}>
             {contact.name}
           </MenuItem>
         ))}
-      </Select>
+      </SelectAnchor>
       <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>{activeErros && errorMessage}</FormHelperText>
     </FormControl>
   )

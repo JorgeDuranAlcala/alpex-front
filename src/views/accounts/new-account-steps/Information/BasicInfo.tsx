@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { ForwardedRef, ReactNode, forwardRef, useEffect, useState } from 'react' //ReactNode
+import React, { ForwardedRef, forwardRef, useEffect, useState } from 'react'; //ReactNode
 
 // ** MUI Imports
-import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import {
   Autocomplete,
   FormControl,
@@ -17,27 +17,28 @@ import {
   SxProps,
   TextField,
   Theme
-} from '@mui/material'
-import Select, { SelectChangeEvent } from '@mui/material/Select' //SelectChangeEvent
+} from '@mui/material';
+import { SelectChangeEvent } from '@mui/material/Select'; //SelectChangeEvent
 
 //Components
-import { ContactModal } from '@/views/accounts/new-account-steps/Information/ContactModal'
+import { ContactModal } from '@/views/accounts/new-account-steps/Information/ContactModal';
 
 //hooks para base info y  modal contac
-import { useGetAllCountries as useCountryGetAll } from 'src/hooks/catalogs/country'
+import { useGetAllCountries as useCountryGetAll } from 'src/hooks/catalogs/country';
 
 // ** Third Party Imports
-import DatePickerWrapper from '@/@core/styles/libs/react-datepicker'
-import { ROLES } from '@/configs/api'
-import { useGetAllEconomicSectors } from '@/hooks/catalogs/economic-sector'
-import DatePicker from 'react-datepicker'
-import { useGetAll as useBrokerGetAll } from 'src/hooks/catalogs/broker'
-import { useGetAllByIdBroker } from 'src/hooks/catalogs/broker-contact/'
-import { useGetAll as useCedantGetAll } from 'src/hooks/catalogs/cedant'
-import { useGetAllByCedant } from 'src/hooks/catalogs/cedant-contact'
-import { useGetAllLineOfBussines } from 'src/hooks/catalogs/lineOfBussines'
-import { useGetAllRiskActivities } from 'src/hooks/catalogs/riskActivity'
-import { useGetByIdRole } from 'src/hooks/catalogs/users/'
+import { SelectAnchor } from '@/@core-custom/inputs/SelectAnchor';
+import DatePickerWrapper from '@/@core/styles/libs/react-datepicker';
+import { ROLES } from '@/configs/api';
+import { useGetAllEconomicSectors } from '@/hooks/catalogs/economic-sector';
+import DatePicker from 'react-datepicker';
+import { useGetAll as useBrokerGetAll } from 'src/hooks/catalogs/broker';
+import { useGetAllByIdBroker } from 'src/hooks/catalogs/broker-contact/';
+import { useGetAll as useCedantGetAll } from 'src/hooks/catalogs/cedant';
+import { useGetAllByCedant } from 'src/hooks/catalogs/cedant-contact';
+import { useGetAllLineOfBussines } from 'src/hooks/catalogs/lineOfBussines';
+import { useGetAllRiskActivities } from 'src/hooks/catalogs/riskActivity';
+import { useGetByIdRole } from 'src/hooks/catalogs/users/';
 
 interface PickerProps {
   label?: string
@@ -200,7 +201,8 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
     !validateForm && validations({ ...basicInfo, [name]: value })
   }
 
-  const handleSelectChange = (event: SelectChangeEvent<string>, child?: ReactNode) => {
+  const handleSelectChange = (event: SelectChangeEvent<string> | any) => {
+    console.log(event.target)
     const target = event.target
     const name = target.name
     const value = target.value
@@ -452,7 +454,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }} error={errors.countryError}>
             <InputLabel>Country</InputLabel>
 
-            <Select
+            <SelectAnchor
               name='country'
               label='Country'
               defaultValue={''}
@@ -474,7 +476,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
                   No options available
                 </MenuItem>
               )}
-            </Select>
+            </SelectAnchor>
 
             {errors.countryError && (
               <FormHelperText sx={{ color: 'error.main' }} id='invoice-country-error'>
@@ -485,7 +487,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }} error={errors.countryError}>
             <InputLabel>Economic Sector</InputLabel>
 
-            <Select
+            <SelectAnchor
               name='economicSector'
               label='Economic Sector'
               defaultValue={''}
@@ -506,7 +508,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
                   No options available
                 </MenuItem>
               )}
-            </Select>
+            </SelectAnchor>
 
             {/* {errors.economicSectorError && (
               <FormHelperText sx={{ color: 'error.main' }} id='invoice-country-error'>
@@ -521,7 +523,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }} error={errors.brokerError}>
             <InputLabel>Select Broker</InputLabel>
 
-            <Select
+            <SelectAnchor
               name='broker'
               label='Select Broker'
               value={String(basicInfo.broker)}
@@ -541,7 +543,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
                   No options available
                 </MenuItem>
               )}
-            </Select>
+            </SelectAnchor>
             {errors.brokerError && (
               <FormHelperText sx={{ color: 'error.main' }} id='broker-error'>
                 {getErrorMessage('countryError')}
@@ -551,7 +553,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <InputLabel>Select Broker Contact</InputLabel>
 
-            <Select
+            <SelectAnchor
               name='brokerContact'
               label='Select Broker Contact'
               value={String(basicInfo.brokerContact)}
@@ -573,7 +575,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
                   No options available
                 </MenuItem>
               )}
-            </Select>
+            </SelectAnchor>
           </FormControl>
           {basicInfo.brokerContact !== '' && (
             <>
@@ -586,7 +588,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               </FormControl>
               <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
                 <InputLabel>Contact country'</InputLabel>
-                <Select
+                <SelectAnchor
                   label='Contact country'
                   value={basicInfo.brokerContactCountry}
                   labelId='Contactcountry'
@@ -597,7 +599,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
                       {country.name}
                     </MenuItem>
                   ))}
-                </Select>
+                </SelectAnchor>
               </FormControl>
             </>
           )}
@@ -614,7 +616,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }} error={errors.cedantError}>
             <InputLabel>Select Cedant</InputLabel>
 
-            <Select
+            <SelectAnchor
               name='cedant'
               label='Select Cedant'
               value={String(basicInfo.cedant)}
@@ -634,7 +636,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
                   No options available
                 </MenuItem>
               )}
-            </Select>
+            </SelectAnchor>
 
             {errors.cedantError && (
               <FormHelperText sx={{ color: 'error.main' }} id='select-cedant-error'>
@@ -645,7 +647,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <InputLabel>Select Cedant Contact</InputLabel>
 
-            <Select
+            <SelectAnchor
               name='cedantContact'
               label='Select Cedant Contact'
               value={`${basicInfo.cedantContact == 0 ? '' : basicInfo.cedantContact}`}
@@ -667,7 +669,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
                   No options available
                 </MenuItem>
               )}
-            </Select>
+            </SelectAnchor>
           </FormControl>
           {basicInfo.cedantContact !== '' && (
             <>
@@ -680,7 +682,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               </FormControl>
               <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
                 <InputLabel>Contact country'</InputLabel>
-                <Select
+                <SelectAnchor
                   label='Contact country'
                   value={basicInfo.cedantContactCountry}
                   labelId='Contactcountry'
@@ -691,7 +693,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
                       {country.name}
                     </MenuItem>
                   ))}
-                </Select>
+                </SelectAnchor>
               </FormControl>
             </>
           )}
@@ -708,7 +710,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }} error={errors.lineOfBusinessError}>
             <InputLabel>Line of business</InputLabel>
 
-            <Select
+            <SelectAnchor
               name='lineOfBusiness'
               label='Line of Business'
               value={String(basicInfo.lineOfBusiness)}
@@ -728,7 +730,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
                   No options available
                 </MenuItem>
               )}
-            </Select>
+            </SelectAnchor>
             {errors.lineOfBusinessError && (
               <FormHelperText sx={{ color: 'error.main' }} id='lineOfBusiness-error'>
                 {getErrorMessage('lineOfBusinessError')}
@@ -752,7 +754,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               renderInput={params => <TextField {...params} label={'Industry Code'} />}
             />
             {false && (
-              <Select
+              <SelectAnchor
                 name='industryCode'
                 label='Industry Code'
                 value={String(basicInfo.industryCode)}
@@ -772,7 +774,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
                     No options available
                   </MenuItem>
                 )}
-              </Select>
+              </SelectAnchor>
             )}
             {errors.industryCodeError && (
               <FormHelperText sx={{ color: 'error.main' }} id='business-error'>
@@ -903,7 +905,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <InputLabel>Underwriter</InputLabel>
 
-            <Select
+            <SelectAnchor
               name='underwriter'
               label='Underwriter'
               value={String(basicInfo.underwriter)}
@@ -923,12 +925,12 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
                   No options available
                 </MenuItem>
               )}
-            </Select>
+            </SelectAnchor>
           </FormControl>
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <InputLabel>Lead underwriter</InputLabel>
 
-            <Select
+            <SelectAnchor
               name='leadUnderwriter'
               label='Lead Underwriter'
               value={String(basicInfo.leadUnderwriter)}
@@ -939,9 +941,8 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
                 leadUnderwriters.map(leadUnderwriter => {
                   return (
                     <MenuItem key={leadUnderwriter.id} value={leadUnderwriter.id}>
-                      {`${leadUnderwriter.name} ${leadUnderwriter.surname || ''} ${
-                        leadUnderwriter.secondSurname || ''
-                      }`}
+                      {`${leadUnderwriter.name} ${leadUnderwriter.surname || ''} ${leadUnderwriter.secondSurname || ''
+                        }`}
                     </MenuItem>
                   )
                 })
@@ -950,13 +951,13 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
                   No options available
                 </MenuItem>
               )}
-            </Select>
+            </SelectAnchor>
           </FormControl>
 
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
             <InputLabel>Technical assistant</InputLabel>
 
-            <Select
+            <SelectAnchor
               name='technicalAssistant'
               label='Technical assistant'
               value={String(basicInfo.technicalAssistant)}
@@ -967,9 +968,8 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
                 technicalAssistants.map(technicalAssistant => {
                   return (
                     <MenuItem key={technicalAssistant.id} value={technicalAssistant.id}>
-                      {`${technicalAssistant.name} ${technicalAssistant.surname || ''} ${
-                        technicalAssistant.secondSurname || ''
-                      }`}
+                      {`${technicalAssistant.name} ${technicalAssistant.surname || ''} ${technicalAssistant.secondSurname || ''
+                        }`}
                     </MenuItem>
                   )
                 })
@@ -978,7 +978,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
                   No options available
                 </MenuItem>
               )}
-            </Select>
+            </SelectAnchor>
           </FormControl>
         </div>
       </div>

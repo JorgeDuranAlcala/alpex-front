@@ -78,3 +78,10 @@
 .padd-x {
   margin: 20px;
 }
+
+.documents-payments {
+  width: 40%;
+  @media (max-width: 669px) {
+    width: 100%;
+  }
+}
