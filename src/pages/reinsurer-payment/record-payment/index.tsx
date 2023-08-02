@@ -14,9 +14,11 @@ import FormHeader from 'src/views/reinsurer-payment/Header/headerRecord'
 
 import { AccountsTableContextProvider } from '@/context/accounts/Table/reducer'
 import { useGetAccountById } from '@/hooks/accounts/forms'
-import DetailInstallment from '@/views/installments/components/DetailsInstallment'
+import DetailReinsurer from '@/views/reinsurer-payment/components/DetailsReinsurer'
 import CardDistributeBalance from '@/views/reinsurer-payment/components/DistributeBalance'
+import PaymentHistory from '@/views/reinsurer-payment/components/PaymentHistory'
 import PaymentInformation from '@/views/reinsurer-payment/components/PaymentInformation'
+import ReinsurerInfo from '@/views/reinsurer-payment/components/ReinsurerInformation'
 
 // import UserList from 'src/pages/apps/user/list'
 
@@ -88,6 +90,18 @@ const PaymentRecord = () => {
               <div className='title-installment'>Everest Re Group LTD</div>
               <PaymentInformation st='Pending' id='1' />
               <Accordion
+                expanded={expanded === 'panel2'}
+                onChange={handleChange('panel2')}
+                style={{ boxShadow: 'none', borderTop: 'none' }}
+              >
+                <AccordionSummary aria-controls='panel1d-content' id='panel1d-header' style={{ padding: '0' }}>
+                  <Typography style={{ marginLeft: '12px' }}>Information</Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <ReinsurerInfo />
+                </AccordionDetails>
+              </Accordion>
+              <Accordion
                 expanded={expanded === 'panel1'}
                 onChange={handleChange('panel1')}
                 style={{ boxShadow: 'none', borderTop: 'none' }}
@@ -96,7 +110,8 @@ const PaymentRecord = () => {
                   <Typography style={{ marginLeft: '12px' }}>Details</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
-                  <DetailInstallment />
+                  <PaymentHistory />
+                  <DetailReinsurer />
                 </AccordionDetails>
               </Accordion>
             </div>

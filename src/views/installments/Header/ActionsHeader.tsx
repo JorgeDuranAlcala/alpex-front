@@ -81,6 +81,17 @@ const ActionsHeader: React.FC<IActionsHeaderProps> = ({ accountId, sideHeader })
                 }}
                 disabled={false}
               >
+                <Icon icon='ic:sharp-download' />
+              </ButtonIcon>
+            </div>
+
+            <div className='header-btns'>
+              <ButtonIcon
+                onClick={() => {
+                  setOpenHistory(true)
+                }}
+                disabled={false}
+              >
                 <Icon icon='mdi:email-outline' />
               </ButtonIcon>
             </div>
