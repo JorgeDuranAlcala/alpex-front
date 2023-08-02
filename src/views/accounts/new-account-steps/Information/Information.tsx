@@ -814,6 +814,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
               setUserFile={setUserFile}
               setUserFileToDelete={setUserFileToDelete}
               changeTitle={onSubmittedFiles}
+              isPayments={false}
             />
           </div>
           <div className='section action-buttons'>

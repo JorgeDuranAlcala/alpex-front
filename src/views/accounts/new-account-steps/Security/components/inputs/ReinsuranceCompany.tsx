@@ -1,8 +1,9 @@
-import { FormControl, FormHelperText, InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material'
+import { FormControl, FormHelperText, InputLabel, MenuItem, SelectChangeEvent } from '@mui/material'
 import { Dispatch, SetStateAction, useContext } from 'react'
 
 // import * as yup from 'yup';
 
+import { SelectAnchor } from '@/@core-custom/inputs/SelectAnchor'
 import { SecurityDto } from '@/services/accounts/dtos/security.dto'
 import { ReinsuranceCompanyDto } from '@/services/catalogs/dtos/ReinsuranceCompanyDto'
 import { SecurityContext } from '../../SecurityView'
@@ -29,7 +30,7 @@ export const ReinsuranceCompany = ({
 }: ReinsuranceCompanyProps) => {
   const { activeErros, information, securities, calculateSecurities } = useContext(SecurityContext)
 
-  const handleChangeCompany = (e: SelectChangeEvent<string>): void => {
+  const handleChangeCompany = (e: SelectChangeEvent<string> | any): void => {
     const avaliableCompanies: ReinsuranceCompanyDto | undefined = avaliableReinsurers
       .filter(reinsure => !companiesSelect.includes(reinsure.id) || security?.idCReinsuranceCompany?.id === reinsure.id)
       .find(reinsurer => reinsurer.id === Number(e.target.value))
@@ -61,7 +62,7 @@ export const ReinsuranceCompany = ({
   return (
     <FormControl fullWidth sx={{ mb: 2 }}>
       <InputLabel id='ReinsuranceCompany'>Reinsurance companies</InputLabel>
-      <Select
+      <SelectAnchor
         id='outlined-Name'
         value={value.toString()}
         onChange={handleChangeCompany}
@@ -78,7 +79,7 @@ export const ReinsuranceCompany = ({
               {reinsurer.name}
             </MenuItem>
           ))}
-      </Select>
+      </SelectAnchor>
       <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>{activeErros && errorMessage}</FormHelperText>
     </FormControl>
   )

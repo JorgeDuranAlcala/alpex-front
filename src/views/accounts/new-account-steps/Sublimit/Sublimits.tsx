@@ -7,7 +7,7 @@ import { NextContainer } from '@/styles/Forms/Sublimits'
 import CustomAlert, { IAlert } from '@/views/custom/alerts'
 import { Button, CardContent, Grid } from '@mui/material'
 import Typography from '@mui/material/Typography'
-import { useEffect, useState } from 'react' //useContext
+import { useEffect, useState } from 'react'; //useContext
 // import { AbilityContext } from '@/layouts/components/acl/Can'
 import InputLimit from './components/InputLimit/InputLimit'
 import SelectCoverage from './components/SelectCoverage/SelectCoverage'
@@ -82,7 +82,7 @@ interface SublimitsProps {
 
 // getAccountByIdHeader
 
-const Sublimits = ({}: SublimitsProps) => {
+const Sublimits = ({ }: SublimitsProps) => {
   const [badgeData, setBadgeData] = useState<IAlert>({
     message: '',
     theme: 'success',
@@ -123,6 +123,8 @@ const Sublimits = ({}: SublimitsProps) => {
   // const { updateAccountsStatus } = useUpdateAccountsStatus()
 
   const handleSelectedCoverage = (coverageSelect: CoverageDto) => {
+    // console.log('coverageSelect', coverageSelect);
+
     setCoverageSelected([...coverageSelected, coverageSelect])
   }
 

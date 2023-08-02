@@ -9,7 +9,12 @@ export const useGetAllByIdRetroCedant = () => {
     RetroCendatContactService.findByIdRetroCedant(idRetroCedant).then(setRetroCedantContacts)
   }
   useEffect(() => {
-    idRetroCedant && findByIdBroker(idRetroCedant)
+    if (idRetroCedant) {
+
+      findByIdBroker(idRetroCedant)
+    } else {
+      setRetroCedantContacts([])
+    }
   }, [idRetroCedant])
 
   return {

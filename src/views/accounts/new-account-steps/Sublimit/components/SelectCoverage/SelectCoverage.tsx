@@ -1,8 +1,9 @@
+import { SelectAnchor } from '@/@core-custom/inputs/SelectAnchor'
 import { useGetAllCoverage } from '@/hooks/catalogs/coverage'
 import UserThemeOptions from '@/layouts/UserThemeOptions'
 import { CoverageDto } from '@/services/catalogs/dtos/coverage.dto'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
-import { Checkbox, Grid, MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material'
+import { Checkbox, Grid, MenuItem, SelectChangeEvent, Typography } from '@mui/material'
 import React from 'react'
 
 export type SelectCoverageProps = {
@@ -26,18 +27,20 @@ const SelectCoverage: React.FC<SelectCoverageProps> = ({ onChangeSelected, cover
   const { coverages } = useGetAllCoverage()
   const texButtonColor = userThemeConfig.palette?.buttonText.primary
 
-  const handleChangeSelect = (event: SelectChangeEvent<string>) => {
+  const handleChangeSelect = (event: SelectChangeEvent<string> | any) => {
     // setDisableBoundBtn(true)
     const selectedValue = event.target.value
     const coverageSelect = coverages.find(cov => cov.coverage === selectedValue)
     coverageSelect && onChangeSelected(coverageSelect)
+
+    // console.log('coverageSelect: ', coverageSelect, 'selectedValue: ', selectedValue);
   }
 
-  // console.log('Seleccionados: ', coverages)
+  // console.log('Seleccionados: ', coverageSelected);
 
   return (
     <Grid item xs={12} sm={6} md={4}>
-      <Select
+      <SelectAnchor
         fullWidth
         sx={{ outline: 'none', borderColor: texButtonColor }}
         IconComponent={KeyboardArrowDownIcon}
@@ -45,8 +48,8 @@ const SelectCoverage: React.FC<SelectCoverageProps> = ({ onChangeSelected, cover
         value={''}
         displayEmpty
         onChange={handleChangeSelect}
-        renderValue={selected => {
-          if (selected.length === 0) {
+        renderValue={(selected) => {
+          if ((selected as unknown as string[]).length === 0) {
             return (
               <Typography
                 sx={{
@@ -97,7 +100,7 @@ const SelectCoverage: React.FC<SelectCoverageProps> = ({ onChangeSelected, cover
               <Typography sx={{ ml: 5 }}>{item.coverage}</Typography>
             </MenuItem>
           ))}
-      </Select>
+      </SelectAnchor>
     </Grid>
   )
 }

@@ -663,6 +663,7 @@ const InformationBound: React.FC<InformationProps> = ({ onStepChange, disableSec
               setUserFile={setUserFile}
               setUserFileToDelete={setUserFileToDelete}
               changeTitle={onSubmittedFiles}
+              isPayments={false}
             />
           </div>
           <div className='section action-buttons'>

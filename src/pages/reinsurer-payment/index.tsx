@@ -1,9 +1,9 @@
 // ** MUI Imports
 import { Container } from 'src/styles/Dashboard/dashboard'
 
-import Table from 'src/views/broker-tracker/Table'
+import Table from 'src/views/reinsurer-payment/Table'
 
-const BrokerTracker = () => {
+const ReinsurerPayment = () => {
   return (
     <Container>
       <Table />
@@ -11,4 +11,4 @@ const BrokerTracker = () => {
   )
 }
 
-export default BrokerTracker
+export default ReinsurerPayment
