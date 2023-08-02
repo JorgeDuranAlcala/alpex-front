@@ -6,7 +6,6 @@ import {
   InputLabel,
   MenuItem,
   Modal,
-  Select,
   TextField,
   Typography
 } from '@mui/material'
@@ -23,6 +22,7 @@ import { useAddCedantContact } from 'src/hooks/catalogs/cedant-contact'
 import { useGetAllCountries } from 'src/hooks/catalogs/country'
 
 //interfaces
+import { SelectAnchor } from '@/@core-custom/inputs/SelectAnchor'
 import { BasicInfoInterface } from 'src/views/accounts/new-account-steps/Information/Information'
 
 type Service = 'broker' | 'cedant'
@@ -71,7 +71,7 @@ export const ContactModal = ({ id, service, updateContacts, setIdCreated, disabl
   const { countries } = useGetAllCountries()
   const { saveBrokerContact } = useAddBrokerContact()
   const { saveCedantContact } = useAddCedantContact()
-  const ALPHA_REGEX =/^[a-zA-ZÀ-ÿ\s]+$/;
+  const ALPHA_REGEX = /^[a-zA-ZÀ-ÿ\s]+$/;
 
   // const {  saveCedant } = useAddCedant()
 
@@ -261,10 +261,10 @@ export const ContactModal = ({ id, service, updateContacts, setIdCreated, disabl
             <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
               <InputLabel>Select country</InputLabel>
 
-              <Select
+              <SelectAnchor
                 label='Select country'
                 value={contactData.country}
-                onChange={e => handleChange('country', e.target.value)}
+                onChange={(e: any) => handleChange('country', e.target.value)}
                 labelId='invoice-country'
               >
                 {countries.map(country => {
@@ -274,7 +274,7 @@ export const ContactModal = ({ id, service, updateContacts, setIdCreated, disabl
                     </MenuItem>
                   )
                 })}
-              </Select>
+              </SelectAnchor>
 
               {countryError && (
                 <FormHelperText sx={{ color: 'error.main' }} id='invoice-country-error'>

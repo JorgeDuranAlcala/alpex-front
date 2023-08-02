@@ -10,28 +10,28 @@ import InputAdornment from '@mui/material/InputAdornment'
 import Icon from 'src/@core/components/icon'
 
 // import { useAppDispatch } from 'src/store'
-// import { deleteAccountFilter, handleAccountFilter } from 'src/store/apps/accounts'
+// import { deleteAccountFilter, handleAccountFilter } from 'src/store/apps/properties'
 import fonts from '../font'
 
-const FilterMenuNomMun = () => {
+const FilterMenuPropertyId = () => {
   // const dispatch = useAppDispatch();
   // const searchTimeOutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
 
 
   const handleOnChangeSearch = (value: string) => {
-   console.log(value)
+    console.log(value)
 
     // if (searchTimeOutRef.current) {
 
     //   clearTimeout(searchTimeOutRef.current);
     // }
     // searchTimeOutRef.current = setTimeout(() => {
-    //   if (value === '') dispatch(deleteAccountFilter('idAccount'))
+    //   if (value === '') dispatch(deleteAccountFilter('idProperty'))
     //   else
     //     dispatch(
     //       handleAccountFilter({
-    //         type: 'idAccount',
+    //         type: 'idProperty',
     //         value: `${value}`,
     //         text: `${value}`
     //       })
@@ -42,7 +42,7 @@ const FilterMenuNomMun = () => {
   return (
     <Box component={'li'} sx={{ padding: '3px 30px', display: 'flex', alignItems: 'center', width: '100%' }}>
       <Input
-        placeholder='Search by NOM_MUN'
+        placeholder='Search by ID'
         onChange={e => handleOnChangeSearch(e.target.value)}
         sx={{
           fontFamily: fonts.inter,
@@ -60,4 +60,4 @@ const FilterMenuNomMun = () => {
   )
 }
 
-export default FilterMenuNomMun
+export default FilterMenuPropertyId

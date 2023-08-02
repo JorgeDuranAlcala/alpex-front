@@ -17,7 +17,7 @@ import permissions from 'src/store/apps/permissions'
 import user from 'src/store/apps/user'
 import users from 'src/store/apps/users'
 import multiTabButtonsSlice from '../layouts/components/multiTabButtons/store/MultiTabButtonSlice'
-
+import properties from './apps/properties'
 import uiUserSlice from './apps/user/uiUserSlice'
 
 export const store = configureStore({
@@ -33,7 +33,7 @@ export const store = configureStore({
     users,
     brokers,
     brokerContacts,
-
+    properties,
     multiTabButtonsSlice,
     endorsement
   },

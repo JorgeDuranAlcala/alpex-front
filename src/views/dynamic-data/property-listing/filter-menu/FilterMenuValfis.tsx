@@ -14,8 +14,10 @@ const FilterMenuValfis = () => {
   // const searchTimeOutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const valuetext = (value: number) => {
-    return `${value}°C`
+    return `${value}`
   }
+  const minValfis = 0
+  const maxValfis = 999999999
 
   // const handleOnChange = (value: string) => {
   //   if (searchTimeOutRef.current) {
@@ -36,15 +38,23 @@ const FilterMenuValfis = () => {
   // }
 
   return (
-    <Box sx={{ padding: '3px 30px', display: 'flex', alignItems: 'center', width: '100%' }}>
+    <Box sx={{ padding: '28px 20px 0px', display: 'flex', flexWrap:'wrap', alignItems: 'center', width: '100%' }}>
       <Slider
       defaultValue={[300000000, 500000000]}
       valueLabelDisplay='auto'
       getAriaValueText={valuetext}
       aria-labelledby='range-slider'
-      min={0}
-      max={999999999}
+      min={minValfis}
+      max={maxValfis}
     />
+    <div className='slider-row'>
+      <div>
+        ${minValfis}
+      </div>
+      <div>
+        ${maxValfis}
+      </div>
+    </div>
     </Box>
   )
 }

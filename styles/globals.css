@@ -30,3 +30,7 @@ code[class*='language-'] {
   font-size: 1.5rem !important;
   display: inline-flex !important;
 }
+
+div[role='presentation']:has(div.custom-menu-paper-select-anchor):has(ul[role='listbox']) {
+  display: none !important;
+}

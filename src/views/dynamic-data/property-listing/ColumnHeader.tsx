@@ -14,7 +14,7 @@ import { GridStateColDef } from '@mui/x-data-grid/models/colDef'
 import Icon from 'src/@core/components/icon'
 
 // ** Custom utilities
-import FilterMenu from 'src/views/dynamic-data/property-listing/FilterMenu'
+import FilterMenu from '@/views/dynamic-data/property-listing/filter-menu'
 import { EFieldColumn } from '.'
 import colors from './colors'
 import fonts from './font'
