@@ -38,14 +38,14 @@ const FilterMenuValfis = () => {
   // }
 
   return (
-    <Box sx={{ padding: '3px 30px', display: 'flex', alignItems: 'center', width: '100%' }}>
+    <Box sx={{ padding: '28px 20px 0px', display: 'flex', flexWrap:'wrap', alignItems: 'center', width: '100%' }}>
       <Slider
       defaultValue={[300000000, 500000000]}
       valueLabelDisplay='auto'
       getAriaValueText={valuetext}
       aria-labelledby='range-slider'
-      min={0}
-      max={999999999}
+      min={minValfis}
+      max={maxValfis}
     />
     <div className='slider-row'>
       <div>
