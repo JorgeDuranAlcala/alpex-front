@@ -353,7 +353,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
       setCount(account.installments.length)
       const installments = [...account.installments]
       for (const item of installments) {
-        item.settlementDueDate = new Date(item.settlementDueDate + 'T00:00:00.678Z')
+        item.settlementDueDate = new Date(item.settlementDueDate + 'T00:00:00')
         item.idAccount = account ? idAccount : Number(localStorage.getItem('idAccount'))
       }
 
