@@ -27,9 +27,17 @@ interface UserFileProps {
   setUserFileToDelete: React.Dispatch<React.SetStateAction<any>>
   changeTitle: (change: boolean) => void
   urls: string[]
+  isPayments: boolean
 }
 
-const FileSubmit: React.FC<UserFileProps> = ({ setUserFile, userFile, urls, setUserFileToDelete, changeTitle }) => {
+const FileSubmit: React.FC<UserFileProps> = ({
+  setUserFile,
+  userFile,
+  urls,
+  setUserFileToDelete,
+  changeTitle,
+  isPayments
+}) => {
   // ** State
   const inputRef = useRef<HTMLInputElement>(null)
   const [file, setFile] = useState<File[]>([])
@@ -669,7 +677,7 @@ const FileSubmit: React.FC<UserFileProps> = ({ setUserFile, userFile, urls, setU
             })}
         </div>
         {/* Buttom actions, render de actions */}
-        <div className='actions-icons'>
+        <div className='actions-icons' style={isPayments ? { marginLeft: '0' } : {}}>
           <Tooltip title='Upload'>
             <IconButton onClick={e => onButtonClick(e)}>
               <Icon icon='mdi:upload' color={'#2535A8'} />
@@ -680,11 +688,13 @@ const FileSubmit: React.FC<UserFileProps> = ({ setUserFile, userFile, urls, setU
               <Icon icon={'ic:round-create-new-folder'} color={'#2535A8'} />
             </IconButton>
           </Tooltip>
-          <Tooltip title='Delete'>
-            <IconButton onClick={e => onDeleteFiles(e)}>
-              <Icon icon={'ic:outline-delete'} color={'#2535A8'} />
-            </IconButton>
-          </Tooltip>
+          {isPayments ? null : (
+            <Tooltip title='Delete'>
+              <IconButton onClick={e => onDeleteFiles(e)}>
+                <Icon icon={'ic:outline-delete'} color={'#2535A8'} />
+              </IconButton>
+            </Tooltip>
+          )}
         </div>
         {/* </form> */}
       </div>

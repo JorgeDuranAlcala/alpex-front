@@ -44,40 +44,56 @@ export default function PaymentInformation({ id }: PaymentInformation) {
   }
 
   return (
-    <div id={id} className='form-secondContainer-wrapper'>
-      <div className='form-secondContainer-wrapper-first-side installments-wrapper'>
-        <div className='form-secondContainer-second'>
-          <span className='form-secondContainer-header-title'>Total Premium</span>
-          <span className='form-secondContainer-header-subtitle'>$100,000 USD</span>
-        </div>
-        <div className='form-secondContainer-second'>
-          <span className='form-secondContainer-header-title'>Received Premium</span>
-          <span className='form-secondContainer-header-subtitle'>$50,000 USD</span>
-        </div>
-        <div className='form-secondContainer-second'>
-          <span className='form-secondContainer-header-title'>Outstanding Premium</span>
-          <span className='form-secondContainer-header-subtitle'>$50,000 USD</span>
-        </div>
-        <div className='form-secondContainer-second'>
-          <DatePickerWrapper className='information-datepicker'>
-            <DatePicker
-              selected={newDueDate}
-              shouldCloseOnSelect
-              id='expiration-date'
-              customInput={<CustomInput label='Expiration date' sx={{ mb: 2, mt: 2, width: '100%' }} />}
-              className={''}
-              onChange={handleDueDateChange}
-              showTimeSelect
-              showMonthDropdown
-              showYearDropdown
-              showDisabledMonthNavigation
-              timeFormat='HH:mm'
-              timeIntervals={15}
-              dateFormat='dd/MM/yyyy'
-            />
-          </DatePickerWrapper>
+    <>
+      <div id={id} className='form-secondContainer-wrapper'>
+        <div className='form-secondContainer-wrapper-first-side installments-wrapper'>
+          <div className='form-secondContainer-second'>
+            <span className='form-secondContainer-header-title'>Total Premium</span>
+            <span className='form-secondContainer-header-subtitle'>$100,000 USD</span>
+          </div>
+          <div className='form-secondContainer-second'>
+            <span className='form-secondContainer-header-title'>Received Premium</span>
+            <span className='form-secondContainer-header-subtitle'>$50,000 USD</span>
+          </div>
+          <div className='form-secondContainer-second'>
+            <span className='form-secondContainer-header-title'>Outstanding Premium</span>
+            <span className='form-secondContainer-header-subtitle'>$50,000 USD</span>
+          </div>
+          <div className='form-secondContainer-second'>
+            <DatePickerWrapper className='information-datepicker'>
+              <DatePicker
+                selected={newDueDate}
+                shouldCloseOnSelect
+                id='due-date'
+                customInput={<CustomInput label='Due Date' sx={{ mb: 2, mt: 2, width: '100%' }} />}
+                className={''}
+                onChange={handleDueDateChange}
+                showTimeSelect
+                showMonthDropdown
+                showYearDropdown
+                showDisabledMonthNavigation
+                timeFormat='HH:mm'
+                timeIntervals={15}
+                dateFormat='dd/MM/yyyy'
+              />
+            </DatePickerWrapper>
+          </div>
         </div>
       </div>
-    </div>
+      <div>
+        <div className='wrapper-installments'>
+          <div>
+            <TextField
+              fullWidth
+              autoFocus
+              name='premiumWithoutDiscounts'
+              label='Premium without Discounts'
+              defaultValue=''
+              value=''
+            />
+          </div>
+        </div>
+      </div>
+    </>
   )
 }

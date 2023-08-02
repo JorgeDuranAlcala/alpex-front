@@ -167,7 +167,7 @@ const CommentSection = ({ disable = false, step }: CommentSectionProps) => {
     <>
       <div className='comments' style={{ fontFamily: inter }}>
         <form noValidate autoComplete='off'>
-          <div className='title'>Comments</div>
+          <div className='title-documents'>Comments</div>
           <div className='comment-wrapper'>
             {commentGroups.length > 0 ? (
               commentGroups.map((group, index) => {
