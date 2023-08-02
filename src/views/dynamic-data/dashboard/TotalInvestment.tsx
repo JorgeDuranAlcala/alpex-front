@@ -69,7 +69,7 @@ const TotalInvestment = () => {
             </div>
             <div className="dashboard-row">
               <Typography variant='body2' sx={{ mb: 5 }}>
-                Total investment
+                Total VALFIS sum
               </Typography>
             </div>
           </Box>
