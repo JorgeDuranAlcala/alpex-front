@@ -3,14 +3,18 @@ import { InvestmentPerStateDto } from "./dtos/dashboard.dto"
 /**
  *  service responsible of the dynamic data methods
  */
-class DashboardServices {
+class DashboardMockServices {
   /**
    * Get the total investment
    * @returns
    */
-  async getTotalInvestment(): Promise<string | number> {
+  async getTotalInvestment(): Promise<any> {
     try {
-      const data = "48.2"
+      const data = {
+        trend: 'positive',
+        total: 48.2,
+        differencePercentage: 22.5,
+      }
 
       return data
     } catch (error) {
@@ -74,8 +78,6 @@ class DashboardServices {
       throw new Error(message)
     }
   }
-
-
 
   /**
    * Get priority properties list
@@ -143,5 +145,5 @@ class DashboardServices {
 
 }
 
-export default new DashboardServices()
+export default new DashboardMockServices()
 
