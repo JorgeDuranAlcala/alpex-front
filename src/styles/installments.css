@@ -79,6 +79,30 @@
   margin: 20px;
 }
 
+.text-area-i {
+  width: 100%;
+  border-width: 2px;
+  border-style: solid;
+  border-color: #575a6f38;
+  border-radius: 8px;
+  color: rgba(77, 80, 98, 0.87);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji',
+    'Segoe UI Emoji';
+  font-weight: 400;
+  font-size: 1rem;
+  line-height: 1.4375em;
+  letter-spacing: 0.15px;
+  padding: 12px;
+}
+
+.text-area-i:hover {
+  border-color: #2535a8;
+}
+.text-area-i:focus {
+  outline: none;
+  border-color: #2535a8;
+}
+
 .documents-payments {
   width: 40%;
   @media (max-width: 669px) {
