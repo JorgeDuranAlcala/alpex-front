@@ -1,9 +1,9 @@
-import { SelectAnchor } from '@/@core-custom/inputs/SelectAnchor'
+
 import { useGetAllCoverage } from '@/hooks/catalogs/coverage'
 import UserThemeOptions from '@/layouts/UserThemeOptions'
 import { CoverageDto } from '@/services/catalogs/dtos/coverage.dto'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
-import { Checkbox, Grid, MenuItem, SelectChangeEvent, Typography } from '@mui/material'
+import { Checkbox, Grid, MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material'
 import React from 'react'
 
 export type SelectCoverageProps = {
@@ -40,7 +40,7 @@ const SelectCoverage: React.FC<SelectCoverageProps> = ({ onChangeSelected, cover
 
   return (
     <Grid item xs={12} sm={6} md={4}>
-      <SelectAnchor
+      <Select
         fullWidth
         sx={{ outline: 'none', borderColor: texButtonColor }}
         IconComponent={KeyboardArrowDownIcon}
@@ -100,7 +100,7 @@ const SelectCoverage: React.FC<SelectCoverageProps> = ({ onChangeSelected, cover
               <Typography sx={{ ml: 5 }}>{item.coverage}</Typography>
             </MenuItem>
           ))}
-      </SelectAnchor>
+      </Select>
     </Grid>
   )
 }

@@ -1,8 +1,7 @@
-import { FormControl, FormHelperText, InputLabel, MenuItem, } from '@mui/material'
+import { FormControl, FormHelperText, InputLabel, MenuItem, Select } from '@mui/material'
 import { useContext, useEffect, useState } from 'react'
 import * as yup from 'yup'
 
-import { SelectAnchor } from '@/@core-custom/inputs/SelectAnchor'
 import { RetroCedantContactDto } from '@/services/catalogs/dtos/retroCedantContact.dto'
 import { SecurityContext } from '../../SecurityView'
 import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interface'
@@ -50,7 +49,7 @@ export const SelectRetroCedantContact = ({
   return (
     <FormControl fullWidth sx={{ mb: 2 }}>
       <InputLabel>Select Retro Cedant contact</InputLabel>
-      <SelectAnchor
+      <Select
         label='Select Retro Cedant contact '
         value={retroCedantContactId}
         onChange={handleChangeRetroCedantContact}
@@ -62,7 +61,7 @@ export const SelectRetroCedantContact = ({
             {contact.name}
           </MenuItem>
         ))}
-      </SelectAnchor>
+      </Select>
       <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>{activeErros && errorMessage}</FormHelperText>
     </FormControl>
   )
