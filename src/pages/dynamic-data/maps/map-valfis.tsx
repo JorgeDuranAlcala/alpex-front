@@ -1,22 +1,17 @@
 // ** MUI Imports
-import Card from '@mui/material/Card'
-import Grid from '@mui/material/Grid'
+import { Container } from 'src/styles/Dashboard/dashboard'
 
 // ** Custom Components Imports
-// import Table from 'src/views/accounts/Table'
+import ValfisMap from '@/views/dynamic-data/maps/valfisMap'
 
-const ValfisMap = () => {
+const MapValfis = () => {
 
   return (
-
-      <Grid item xs={12}>
-      <Card>
-        map Valfis
-      </Card>
-    </Grid>
-
+    <Container>
+      <ValfisMap />
+    </Container>
   )
 }
 
-export default ValfisMap
+export default MapValfis
 
