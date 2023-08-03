@@ -37,8 +37,7 @@ const inter = userThemeConfig.typography?.fontFamilyInter
 
 const onAction = async (id: number) => {
   localStorage.setItem('idAccountIntallments', String(id))
-
-  // window.location.href = `/installments/payment-record/?&id=${String(id)}`
+  window.location.href = `/installments/payment-record/?&id=${String(id)}`
 }
 
 const column: GridColumns<INearlyPaymentStatus> = [
@@ -70,9 +69,7 @@ const column: GridColumns<INearlyPaymentStatus> = [
       )
     },
     renderCell: ({ row }) => (
-      <Typography sx={{ color: colors.primary.main, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
-        <Link sx={{ cursor: 'pointer' }}>{`#${row.accountId}`}</Link>
-      </Typography>
+      <Typography sx={{ fontSize: fonts.size.px14, fontFamily: fonts.inter }}>{`#${row.accountId}`}</Typography>
     )
   },
   {
