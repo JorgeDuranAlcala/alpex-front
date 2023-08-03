@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
+import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
 
 // ** Custom Components Imports
@@ -51,7 +52,7 @@ const TotalInvestment = () => {
   return (
     <Card className='total-investment'>
       <CardContent sx={{ display: 'flex', flexDirection: 'column' }}>
-        <Box sx={{ mb: 6, width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'flex-start', marginBottom: '0' }}>
+        <Box className='data-wrapper'>
           <CustomAvatar skin='light' variant='rounded' color={'success'}>
             <Icon icon='mdi:currency-usd' />
           </CustomAvatar>
@@ -73,6 +74,11 @@ const TotalInvestment = () => {
               </Typography>
             </div>
           </Box>
+          <div className='icon-wrapper'>
+          <Tooltip arrow title='Total valfis info.' placement='top'>
+            <div className='tooltip-content' style={{color: 'rgba(87, 90, 111, 0.54)'}}><Icon icon='mdi:information-outline' /></div>
+          </Tooltip>
+          </div>
         </Box>
       </CardContent>
     </Card>

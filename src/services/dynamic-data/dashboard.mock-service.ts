@@ -65,7 +65,7 @@ class DashboardMockServices {
    async getInvestmentPerState(): Promise<InvestmentPerStateDto> {
     try {
       const data = {
-        totalBuildings: '142,000',
+        totalValfis: '100',
         name: 'Sales',
         data: [14165, 12859, 10375, 8567, 6880],
         categories: ['CX','NL','YU','EM','PU']
@@ -89,48 +89,48 @@ class DashboardMockServices {
         {
           id: "06003_1",
           valfis: "000,000,000.00",
-          cveEnt:"9",
-          cveMun:"14",
+          nomEnt:"9",
+          nomMun:"14",
           type:"Propiedad Federal",
           zonacresta: "10"
         },
         {
           id: "06003_2",
           valfis: "000,000,000.00",
-          cveEnt:"9",
-          cveMun:"14",
+          nomEnt:"9",
+          nomMun:"14",
           type:"Propiedad Federal",
           zonacresta: "10"
         },
         {
           id: "06003_3",
           valfis: "000,000,000.00",
-          cveEnt:"9",
-          cveMun:"14",
+          nomEnt:"9",
+          nomMun:"14",
           type:"Propiedad Federal",
           zonacresta: "10"
         },
         {
           id: "06003_4",
           valfis: "000,000,000.00",
-          cveEnt:"9",
-          cveMun:"14",
+          nomEnt:"9",
+          nomMun:"14",
           type:"Propiedad Federal",
           zonacresta: "10"
         },
         {
           id: "06003_5",
           valfis: "000,000,000.00",
-          cveEnt:"9",
-          cveMun:"14",
+          nomEnt:"9",
+          nomMun:"14",
           type:"Propiedad Federal",
           zonacresta: "10"
         },
         {
           id: "06003_6",
           valfis: "000,000,000.00",
-          cveEnt:"9",
-          cveMun:"14",
+          nomEnt:"9",
+          nomMun:"14",
           type:"Propiedad Federal",
           zonacresta: "10"
         }

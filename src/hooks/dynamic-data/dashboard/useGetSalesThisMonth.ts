@@ -1,8 +1,8 @@
 import DashboardMockService from '@/services/dynamic-data/dashboard.mock-service'
 
-export const useGetSalesPerMonth = () => {
+export const useGetSalesThisMonth = () => {
 
-  const getSalesPerMonth = async (): Promise<any> => {
+  const getSalesThisMonth = async (): Promise<any> => {
     try {
       const res = await DashboardMockService.getSalesThisMonth()
 
@@ -16,6 +16,6 @@ export const useGetSalesPerMonth = () => {
   }
 
   return {
-    getSalesPerMonth
+    getSalesThisMonth
   }
 }

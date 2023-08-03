@@ -1,3 +1,26 @@
+/*---------------------Dashboard styles ----------------*/
+
+.total-investment .data-wrapper {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin-bottom: 0;
+}
+
+.icon-wrapper {
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.investment-per-state .icon-wrapper,
+.sales-this-month .icon-wrapper {
+  position: absolute;
+  right: 20px;
+  top: 23px;
+}
 .see-more-section {
   display: flex;
   justify-content: flex-end;

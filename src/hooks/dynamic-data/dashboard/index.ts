@@ -1,6 +1,6 @@
 export * from './useGetInvestmentPerState'
 export * from './useGetPriorityProperties'
 export * from './useGetProportionInvestment'
-export * from './useGetSalesPerMonth'
+export * from './useGetSalesThisMonth'
 export * from './useGetTotalInvestment'
 

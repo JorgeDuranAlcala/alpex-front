@@ -24,8 +24,10 @@ import colors from 'src/views/accounts/colors'
 import fonts from 'src/views/accounts/font'
 
 //** Dto imports */
-
 import { IProperty } from '@/services/dynamic-data/dtos/dashboard.dto'
+
+//** Hooks imports */
+import { useGetPriorityProperties } from '@/hooks/dynamic-data/dashboard'
 
 export enum EFieldColumn {
   PROPERTY_ID = 'id',
@@ -38,60 +40,87 @@ export enum EFieldColumn {
 
 const PriorityProperties = () => {
   // ** State
+  const { getPriorityProperties } = useGetPriorityProperties()
+ const router = useRouter()
   const [loading, setLoading] = useState<boolean>(false)
-  const properties: IProperty[] = [
-    {
-      id: "06003_1",
-      valfis: "000,000,000.00",
-      nomEnt:"9",
-      nomMun:"14",
-      type:"Propiedad Federal",
-      zonacresta: "10"
-    },
-    {
-      id: "06003_1",
-      valfis: "000,000,000.00",
-      nomEnt:"9",
-      nomMun:"14",
-      type:"Propiedad Federal",
-      zonacresta: "10"
-    },
-    {
-      id: "06003_1",
-      valfis: "000,000,000.00",
-      nomEnt:"9",
-      nomMun:"14",
-      type:"Propiedad Federal",
-      zonacresta: "10"
-    },
-    {
-      id: "06003_1",
-      valfis: "000,000,000.00",
-      nomEnt:"9",
-      nomMun:"14",
-      type:"Propiedad Federal",
-      zonacresta: "10"
-    },
-    {
-      id: "06003_1",
-      valfis: "000,000,000.00",
-      nomEnt:"9",
-      nomMun:"14",
-      type:"Propiedad Federal",
-      zonacresta: "10"
-    },
-    {
-      id: "06003_1",
-      valfis: "000,000,000.00",
-      nomEnt:"9",
-      nomMun:"14",
-      type:"Propiedad Federal",
-      zonacresta: "10"
-    }
-  ]
+  const [properties, setProperties] = useState<IProperty[]>(
+    [
+      {
+        id: '',
+        valfis: '',
+        nomEnt: '',
+        nomMun: '',
+        type: '',
+        zonacresta: ''
+      }
+    ]
+  )
+
+  // const properties: IProperty[] = [
+  //   {
+  //     id: "06003_1",
+  //     valfis: "000,000,000.00",
+  //     nomEnt: "9",
+  //     nomMun: "14",
+  //     type: "Propiedad Federal",
+  //     zonacresta: "10"
+  //   },
+  //   {
+  //     id: "06003_1",
+  //     valfis: "000,000,000.00",
+  //     nomEnt: "9",
+  //     nomMun: "14",
+  //     type: "Propiedad Federal",
+  //     zonacresta: "10"
+  //   },
+  //   {
+  //     id: "06003_1",
+  //     valfis: "000,000,000.00",
+  //     nomEnt: "9",
+  //     nomMun: "14",
+  //     type: "Propiedad Federal",
+  //     zonacresta: "10"
+  //   },
+  //   {
+  //     id: "06003_1",
+  //     valfis: "000,000,000.00",
+  //     nomEnt: "9",
+  //     nomMun: "14",
+  //     type: "Propiedad Federal",
+  //     zonacresta: "10"
+  //   },
+  //   {
+  //     id: "06003_1",
+  //     valfis: "000,000,000.00",
+  //     nomEnt: "9",
+  //     nomMun: "14",
+  //     type: "Propiedad Federal",
+  //     zonacresta: "10"
+  //   },
+  //   {
+  //     id: "06003_1",
+  //     valfis: "000,000,000.00",
+  //     nomEnt: "9",
+  //     nomMun: "14",
+  //     type: "Propiedad Federal",
+  //     zonacresta: "10"
+  //   }
+  // ]
 
   // ** Hooks
-  const router = useRouter()
+
+  const setDataInformation = async () => {
+    const data = await getPriorityProperties()
+
+    if (!data) return
+
+    setProperties(data)
+  }
+
+  useEffect(() => {
+    setDataInformation()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   useEffect(() => {
     setLoading(true);
@@ -102,9 +131,9 @@ const PriorityProperties = () => {
     return () => clearTimeout(timer);
   }, []);
 
-const seeMore = ()=>{
-  router.push(`/dynamic-data/property-listing/`)
-}
+  const seeMore = () => {
+    router.push(`/dynamic-data/property-listing/`)
+  }
 
   const column: GridColumns<IProperty> = [
     {
@@ -148,7 +177,7 @@ const seeMore = ()=>{
       sortable: false,
       headerClassName: 'properties-table-header',
       renderHeader: ({ colDef }) => (
-        <ColumnHeader colDef={colDef}/>
+        <ColumnHeader colDef={colDef} />
       ),
       renderCell: ({ row }) => (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -190,7 +219,7 @@ const seeMore = ()=>{
       sortable: false,
       headerClassName: 'properties-table-header',
       renderHeader: ({ colDef }) => (
-        <ColumnHeader colDef={colDef}   />
+        <ColumnHeader colDef={colDef} />
       ),
       renderCell: ({ row }) => (
         <Typography sx={{ color: colors.text.secondary, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
@@ -247,7 +276,7 @@ const seeMore = ()=>{
   return (
 
     <Card>
-    <DataGrid
+      <DataGrid
         loading={loading}
         autoHeight
         disableSelectionOnClick
@@ -258,12 +287,12 @@ const seeMore = ()=>{
         className={'properties-datagrid'}
 
       />
-       <div className="see-more-section">
-      <Button className='add-btn' onClick={seeMore}>
+      <div className="see-more-section">
+        <Button className='add-btn' onClick={seeMore}>
           See more
-      </Button>
+        </Button>
       </div>
-  </Card>
+    </Card>
 
   )
 }
