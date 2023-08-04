@@ -19,15 +19,18 @@ import fonts from 'src/views/accounts/font'
 import { Link } from '@mui/material'
 import UserThemeOptions from 'src/layouts/UserThemeOptions'
 import HeaderTable from './HeaderTable'
-import { brokers, data } from './data'
+import Status from './Status'
+import { brokers, data, status } from './data'
 
 // ** Custom Hooks imports
 
 interface INearlyPaymentStatus {
   accountId: number
+  status: string
   insured: string
-  installment: string
-  accountDebt: string
+  reinsurer: string
+  dueDate: string
+  contributionPremium: string
   actions: string
 }
 
@@ -37,7 +40,12 @@ const inter = userThemeConfig.typography?.fontFamilyInter
 
 const onAction = async (id: number) => {
   localStorage.setItem('idAccountIntallments', String(id))
-  window.location.href = `/installments/payment-record/?&id=${String(id)}`
+  window.location.href = `/reinsurer-payment/record-payment/?&id=${String(id)}`
+}
+
+const onDataSheet = async (id: number) => {
+  localStorage.setItem('idAccountIntallments', String(id))
+  window.location.href = `/reinsurer-payment/record-payment/?&id=${String(id)}`
 }
 
 const column: GridColumns<INearlyPaymentStatus> = [
@@ -69,7 +77,48 @@ const column: GridColumns<INearlyPaymentStatus> = [
       )
     },
     renderCell: ({ row }) => (
-      <Typography sx={{ fontSize: fonts.size.px14, fontFamily: fonts.inter }}>{`#${row.accountId}`}</Typography>
+      <Typography sx={{ color: colors.primary.main, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
+        <Link
+          sx={{ cursor: 'pointer' }}
+          onClick={() => {
+            onDataSheet(row.accountId)
+          }}
+        >{`#${row.accountId}`}</Link>
+      </Typography>
+    )
+  },
+  {
+    flex: 0.1,
+    field: 'status',
+    headerName: 'STATUS',
+    minWidth: 150,
+    maxWidth: 210,
+    type: 'string',
+    align: 'left',
+    cellClassName: 'account-column-cell-pl-0',
+    disableColumnMenu: true,
+    sortable: false,
+    headerClassName: 'account-column-header',
+    renderHeader: ({ colDef }) => {
+      const { headerName } = colDef
+
+      return (
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Typography
+            component={'span'}
+            variant='body1'
+            sx={{ fontFamily: fonts.inter, fontSize: fonts.size.px12, color: colors.text.light, fontWeight: 500 }}
+          >
+            {headerName}
+          </Typography>
+          <ButtonFilter dataFilter={status} />
+        </div>
+      )
+    },
+    renderCell: ({ row }) => (
+      <Box sx={{ display: 'flex', alignItems: 'center', pl: 3 }}>
+        <Status status={row.status} />
+      </Box>
     )
   },
   {
@@ -95,14 +144,14 @@ const column: GridColumns<INearlyPaymentStatus> = [
           >
             {headerName}
           </Typography>
-          <ButtonFilter dataFilter={brokers} insured />
+          <ButtonFilter dataFilter={brokers} />
         </Box>
       )
     },
     renderCell: ({ row }) => (
       <Typography
         variant='body2'
-        sx={{ color: colors.text.light, fontFamily: fonts.inter, fontSize: fonts.size.px14, fontWeight: 400 }}
+        sx={{ pl: 0, color: colors.text.light, fontFamily: fonts.inter, fontSize: fonts.size.px14, fontWeight: 400 }}
       >
         {row.insured}
       </Typography>
@@ -110,8 +159,8 @@ const column: GridColumns<INearlyPaymentStatus> = [
   },
   {
     flex: 0.1,
-    field: 'installments',
-    headerName: 'INSTALLMENTS',
+    field: 'reinsurer',
+    headerName: 'REINSURER',
     minWidth: 150,
     maxWidth: 210,
     type: 'string',
@@ -140,14 +189,15 @@ const column: GridColumns<INearlyPaymentStatus> = [
         variant='body2'
         sx={{ color: colors.text.light, fontFamily: fonts.inter, fontSize: fonts.size.px14, fontWeight: 400 }}
       >
-        {row.installment}
+        {row.reinsurer}
       </Typography>
     )
   },
+
   {
     flex: 0.1,
-    field: 'accountDebt',
-    headerName: 'ACCOUNT DEBT',
+    field: 'dueDate',
+    headerName: 'DUE DATE',
     minWidth: 150,
     maxWidth: 210,
     type: 'string',
@@ -176,7 +226,7 @@ const column: GridColumns<INearlyPaymentStatus> = [
         variant='body2'
         sx={{ fontFamily: fonts.inter, fontSize: fonts.size.px14, color: colors.text.light, fontWeight: 400 }}
       >
-        {row.accountDebt}
+        {row.dueDate}
       </Typography>
     )
   },
@@ -213,7 +263,7 @@ const column: GridColumns<INearlyPaymentStatus> = [
           }}
         >
           <Button
-            variant='text'
+            variant='outlined'
             sx={{
               width: 'auto',
               height: '30px',
@@ -222,14 +272,10 @@ const column: GridColumns<INearlyPaymentStatus> = [
               fontFamily: inter
             }}
           >
-            SEE ACCOUNT
+            RECORD PAYMENT
           </Button>
         </Link>
       </div>
-
-      // <Button variant='outlined' sx={{ width: '100%', height: '30px', fontSize: '13px' }}>
-      //   Record
-      // </Button>
     )
   }
 ]

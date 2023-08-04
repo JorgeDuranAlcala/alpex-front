@@ -191,6 +191,14 @@
   width: 100%;
 }
 
+.modal-download {
+  width: 30%;
+}
+
+.box-form .form-element {
+  padding: 8px 0;
+}
+
 @media (max-width: 900px) {
   .header-btn {
     display: flex;

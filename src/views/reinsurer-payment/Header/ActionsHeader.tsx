@@ -1,5 +1,6 @@
 import usePrintReport from '@/hooks/reports/usePrintReport'
 import TextareaAutosize from '@mui/base/TextareaAutosize'
+
 import CloseIcon from '@mui/icons-material/Close'
 import { Box, Button, IconButton, Modal, TextField, Typography, styled } from '@mui/material'
 import Checkbox from '@mui/material/Checkbox'
@@ -46,9 +47,9 @@ const ActionsHeader: React.FC<IActionsHeaderProps> = ({ accountId, sideHeader })
   const [status, setStatus] = useState({})
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   // const [editInfo, setEditInfo] = useState(false)
+  const [openDownload, setOpenDownload] = useState(false)
   const [openHistory, setOpenHistory] = useState(false)
   const [showPrintOptions, setShowPrintOptions] = useState(false)
-  const [openDownload, setOpenDownload] = useState(false)
   const [openMail, setOpenMail] = useState(false)
 
   //hooks
@@ -86,7 +87,6 @@ const ActionsHeader: React.FC<IActionsHeaderProps> = ({ accountId, sideHeader })
   const handleChangeTemplate = (event: SelectChangeEvent) => {
     setTemplate(event.target.value as string)
   }
-
   const handleChange = (event: SelectChangeEvent) => {
     setFileType(event.target.value as string)
   }
@@ -165,7 +165,7 @@ const ActionsHeader: React.FC<IActionsHeaderProps> = ({ accountId, sideHeader })
                         labelId='demo-simple-select-label'
                         id='demo-simple-select'
                         value={fileType}
-                        label='Type File'
+                        label='Fyle Type'
                         onChange={handleChange}
                       >
                         <MenuItem value='pdf'>PDF</MenuItem>
@@ -247,6 +247,7 @@ const ActionsHeader: React.FC<IActionsHeaderProps> = ({ accountId, sideHeader })
                     </FormControl>
                   </Box>
                   <Stack spacing={2} direction={{ xs: 'column', sm: 'column', md: 'row-reverse' }}>
+                    <Button variant='contained'>Download</Button>
                     <Button
                       variant='text'
                       onClick={() => {
@@ -255,10 +256,20 @@ const ActionsHeader: React.FC<IActionsHeaderProps> = ({ accountId, sideHeader })
                     >
                       Cancel
                     </Button>
-                    <Button variant='contained'>Download</Button>
                   </Stack>
                 </Box>
               </Modal>
+            </div>
+
+            <div className='header-btns'>
+              <ButtonIcon
+                onClick={() => {
+                  setOpenHistory(true)
+                }}
+                disabled={false}
+              >
+                <Icon icon='ic:baseline-print' />
+              </ButtonIcon>
             </div>
 
             <div className='header-btns'>
