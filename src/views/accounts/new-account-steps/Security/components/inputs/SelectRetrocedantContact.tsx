@@ -37,8 +37,7 @@ export const SelectRetroCedantContact = ({
     calculateSecurities(tempSecurities)
   }
   useEffect(() => {
-    console.log('retroCedantContacts', retroCedantContacts)
-    console.log('value', value)
+
     if (retroCedantContacts && value) setRetroCedantContactId(String(value))
 
     if (retroCedantContacts?.length === 0) {

@@ -40,6 +40,8 @@ import { formatInformationDoctos, getFileFromUrl } from '@/utils/formatDoctos'
 import { DiscountDto } from '@/services/accounts/dtos/discount.dto'
 
 import { useGetAccountById } from '@/hooks/accounts/forms'
+import useFormStep_updateInformation from '@/hooks/accounts/forms/stepForms/update/useFormStep_updateInformation'
+import { useRouter } from 'next/router'
 import { DisableForm } from '../_commons/DisableForm'
 
 export interface InformationSectionsInt {
@@ -102,6 +104,7 @@ export interface PlacementStructure {
 }
 
 const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountChange, disableSectionCtrl }) => {
+  const router = useRouter();
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
   const [subjectState] = useState<Subject<void>>(new Subject())
   const inter = userThemeConfig.typography?.fontFamilyInter
@@ -591,8 +594,10 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
 
   //Evento que controla el evento de continuar
   const handleNextStep = async () => {
+
     if (allValidated) {
       await handleSaveInformation()
+
       onStepChange(2)
     }
     handleCloseModal()
@@ -675,7 +680,10 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
 
   useEffect(() => {
     const idAccountCache = Number(localStorage.getItem('idAccount'))
-    dispatch(updateFormsData({ form1: { ...lastForm1Information, id: idAccountCache } }))
+    if (idAccountCache) {
+
+      dispatch(updateFormsData({ form1: { ...lastForm1Information, id: idAccountCache } }))
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -747,10 +755,23 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   }, [userFileToDelete])
 
   useEffect(() => {
+
+
     if (idAccount) {
+      console.log(idAccount)
+
       setDataInformation()
 
       setAccountId(idAccount)
+    } else {
+      const idAccount = Number(localStorage.getItem('idAccount')) || Number(router.query.idAccount)
+      console.log('idAccountLocalStorage', Number(localStorage.getItem('idAccount')))
+      console.log('idAccountRouter', Number(router.query.idAccount))
+      if (!idAccount) return
+
+      // setDataInformation()
+      // localStorage.setItem('idAccount', idAccount.toString())
+      // setAccountId(idAccount)
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -774,6 +795,16 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [validationCount, validatedForms])
 
+
+  // * INIT -  Actualizar los datos del formulario en Redux + + + + + + + + + + + + + +
+
+  const {
+    handleCanUpdateBasicInfoData,
+    handleCanUpdatePlacementStructureData,
+  } = useFormStep_updateInformation({ idAccount, basicInfo, placementStructure, discounts })
+
+  // * END -  Actualizar los datos del formulario en Redux + + + + + + + + + + + + + +
+
   return (
     <>
       <div className='information' style={{ fontFamily: inter }}>
@@ -781,7 +812,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
           <CustomAlert {...badgeData} />
         </div>
         <form noValidate autoComplete='on' onSubmit={handleNextStep}>
-          <div className='section'>
+          <div className='section' onClick={handleCanUpdateBasicInfoData}>
             <DisableForm isDisabled={disableSectionCtrl?.basicInfo} sg={5000}>
               <BasicInfo
                 basicInfo={basicInfo}
@@ -793,7 +824,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
             </DisableForm>
           </div>
 
-          <div className='section'>
+          <div className='section' onClick={handleCanUpdatePlacementStructureData}>
             <DisableForm isDisabled={disableSectionCtrl?.placementStructure} sg={5000}>
               <PlacementStructure
                 placementStructure={placementStructure}
