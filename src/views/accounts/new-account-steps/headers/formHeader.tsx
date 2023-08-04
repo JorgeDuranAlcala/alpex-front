@@ -253,7 +253,7 @@ const FormHeader = ({
 
   }, [accountDetails])
 
-  console.log('account', account)
+  // console.log('account', account)
 
   return (
     <>

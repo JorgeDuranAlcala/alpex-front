@@ -41,7 +41,6 @@ import { DiscountDto } from '@/services/accounts/dtos/discount.dto'
 
 import { useGetAccountById } from '@/hooks/accounts/forms'
 import useFormStep_updateInformation from '@/hooks/accounts/forms/stepForms/update/useFormStep_updateInformation'
-import { useRouter } from 'next/router'
 import { DisableForm } from '../_commons/DisableForm'
 
 export interface InformationSectionsInt {
@@ -104,7 +103,8 @@ export interface PlacementStructure {
 }
 
 const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountChange, disableSectionCtrl }) => {
-  const router = useRouter();
+
+  // const router = useRouter();
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
   const [subjectState] = useState<Subject<void>>(new Subject())
   const inter = userThemeConfig.typography?.fontFamilyInter
@@ -758,16 +758,17 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
 
 
     if (idAccount) {
-      console.log(idAccount)
+
+      // console.log(idAccount)
 
       setDataInformation()
 
       setAccountId(idAccount)
     } else {
-      const idAccount = Number(localStorage.getItem('idAccount')) || Number(router.query.idAccount)
-      console.log('idAccountLocalStorage', Number(localStorage.getItem('idAccount')))
-      console.log('idAccountRouter', Number(router.query.idAccount))
-      if (!idAccount) return
+      // const idAccount = Number(localStorage.getItem('idAccount')) || Number(router.query.idAccount)
+      // console.log('idAccountLocalStorage', Number(localStorage.getItem('idAccount')))
+      // console.log('idAccountRouter', Number(router.query.idAccount))
+      // if (!idAccount) return
 
       // setDataInformation()
       // localStorage.setItem('idAccount', idAccount.toString())
