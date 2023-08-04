@@ -3,7 +3,18 @@ import { useGetDoctosByIdAccountAndIdDocumentType } from '@/hooks/accounts/infor
 import { ContainerMobileBound } from '@/styled-components/accounts/Security.styled'
 import ActionsHeader2 from '@/views/accounts/new-account-steps/headers/ActionsHeader'
 import StatusSelect from '@/views/custom/select/StatusSelect'
-import { Box, Button, Card, ListItemIcon, ListItemText, Menu, MenuItem, Modal, Typography } from '@mui/material'
+import {
+  Box,
+  Button,
+  Card,
+  ListItemIcon,
+  ListItemText,
+  Menu,
+  MenuItem,
+  Modal,
+  PopperPlacementType,
+  Typography
+} from '@mui/material'
 import { useEffect, useState } from 'react'
 import Icon from 'src/@core/components/icon'
 import { useAppSelector } from 'src/store'
@@ -225,6 +236,9 @@ const InstallmentHeader = ({
     accountDetails && setStatus(accountDetails.status)
   }, [accountDetails])
 
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null)
+  const [placement, setPlacement] = useState<PopperPlacementType | undefined>(undefined)
+
   return (
     <>
       <Card className='info-header' style={{ marginBottom: '16px' }}>
@@ -354,6 +368,19 @@ const InstallmentHeader = ({
               </div>
             ) : null}
             {/* Container second */}
+            <div
+              style={{
+                display: 'none',
+                padding: '0.5rem 1rem',
+                borderRadius: '0.5rem',
+                boxShadow: '0 2px 8px 0 rgba(0,0,0,0.1)',
+                color: '#FFB446',
+                backgroundColor: '#fff6e9'
+              }}
+            >
+              <Icon icon='mdi:alert-outline' style={{ marginRight: '10px' }} />
+              INSTALLMENT 3 HAS PENDING BALANCE PAYMENT. PLEASE UPDATE SOON.
+            </div>
           </div>
         </div>
       </Card>
