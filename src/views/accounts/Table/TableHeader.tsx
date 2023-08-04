@@ -1,7 +1,7 @@
 // ** React Imports
+import { AbilityContext } from '@/layouts/components/acl/Can'
 import { useRouter } from 'next/router'
 import { useContext, useState } from 'react'
-import { AbilityContext } from '@/layouts/components/acl/Can'
 
 // ** MUI Imports
 import { Grid, styled } from '@mui/material'
@@ -22,7 +22,7 @@ import { formatStatusToNumber } from '@/utils/formatStatus'
 import Chip from 'src/@core/components/mui/chip'
 import useAccountTable from 'src/hooks/accounts/Table/useAccountTable'
 import { useAppDispatch, useAppSelector } from 'src/store'
-import { deleteAccountFilter } from 'src/store/apps/accounts'
+import { deleteAccountFilter, updateFormsData } from 'src/store/apps/accounts'
 import { IFilters } from 'src/types/apps/accountsTypes'
 import CustomAlert, { IAlert } from 'src/views/custom/alerts'
 
@@ -234,7 +234,11 @@ const TableHeader: React.FC<ITableHeader> = ({
       text: 'New Account',
       link: `/accounts/new-account`,
       isActive: true
-    })
+    });
+
+
+    localStorage.removeItem('idAccount')
+    dispatch(updateFormsData({ form1: { id: null } }))
   }
 
   const selectActionPending = () => {

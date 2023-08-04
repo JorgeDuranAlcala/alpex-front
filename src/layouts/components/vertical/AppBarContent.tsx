@@ -20,7 +20,7 @@ import { Settings } from 'src/@core/context/settingsContext'
 // import ShortcutsDropdown, { ShortcutsType } from 'src/@core/layouts/components/shared-components/ShortcutsDropdown'
 import UserDropdown from 'src/@core/layouts/components/shared-components/UserDropdown'
 
-// import { MultiTabButtons } from '../multiTabButtons/MultiTabButtons'
+import { MultiTabButtons } from '../multiTabButtons/MultiTabButtons'
 
 // import Autocomplete from 'src/layouts/components/Autocomplete'
 
@@ -153,7 +153,7 @@ const AppBarContent = (props: Props) => {
           ) : null}
           {/* <Autocomplete hidden={hidden} settings={settings} /> */}
 
-          {/* <MultiTabButtons /> */}
+          <MultiTabButtons />
 
         </Box>
 

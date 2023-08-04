@@ -56,6 +56,13 @@ export const multiTabButtonsSlice = createSlice({
     removeTabButtonByIndex: (state, action: PayloadAction<number>) => {
       state.tabButtons.splice(action.payload, 1);
     },
+    removeTabButtonByText: (state, action: PayloadAction<string>) => {
+      const foundItem = state.tabButtons.filter((tabButton) => tabButton.text === action.payload);
+      if (foundItem.length > 0) {
+        const index = state.tabButtons.indexOf(foundItem[0]);
+        state.tabButtons.splice(index, 1);
+      }
+    },
     activateTabButtonByIndex: (state, action: PayloadAction<number>) => {
       const updatedTabButtons = deactivateAllTabButtons(state.tabButtons, action.payload);
       state.tabButtons = updatedTabButtons;
@@ -71,7 +78,8 @@ export const {
   setBackTabButtonProps,
   addTabButton,
   removeTabButtonByIndex,
-  activateTabButtonByIndex
+  activateTabButtonByIndex,
+  removeTabButtonByText
 } = multiTabButtonsSlice.actions;
 
 export default multiTabButtonsSlice.reducer;
