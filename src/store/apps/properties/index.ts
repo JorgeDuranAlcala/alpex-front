@@ -84,7 +84,7 @@ export const appPropertiesSlice = createSlice({
     },
 
   },
-  extraReducers: builder => {
+  extraReducers: builder => { //  Executes code when a certain case occurs Ex: fetchProperties.fulfilled  || fetchProperties.pending
     builder.addCase(fetchProperties.fulfilled, (state, action) => {
       // state.loading = false
       // const account = action.payload.results.filter((item: any) => {

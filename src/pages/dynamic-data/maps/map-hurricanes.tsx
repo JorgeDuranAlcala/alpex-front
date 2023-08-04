@@ -2,16 +2,16 @@
 import { Container } from 'src/styles/Dashboard/dashboard'
 
 // ** Custom Components Imports
-import ValfisMap from '@/views/dynamic-data/maps/ValfisMap'
+import HurricaneMap from '@/views/dynamic-data/maps/HurricaneMap'
 
-const MapValfis = () => {
+const MapEartquake= () => {
 
   return (
     <Container>
-      <ValfisMap />
+      <HurricaneMap />
     </Container>
   )
 }
 
-export default MapValfis
+export default MapEartquake
 
