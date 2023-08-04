@@ -13,7 +13,7 @@ import FormControl from '@mui/material/FormControl'
 import FormHelperText from '@mui/material/FormHelperText'
 import InputLabel from '@mui/material/InputLabel'
 import MenuItem from '@mui/material/MenuItem'
-import { SelectChangeEvent } from '@mui/material/Select'
+import Select, { SelectChangeEvent } from '@mui/material/Select'
 import Switch from '@mui/material/Switch'
 import TextField from '@mui/material/TextField'
 
@@ -26,7 +26,6 @@ import { NumericFormat } from 'react-number-format'
 
 // dtos
 
-import { SelectAnchor } from '@/@core-custom/inputs/SelectAnchor'
 import { DiscountDto } from '@/services/accounts/dtos/discount.dto'
 import { Subject } from 'rxjs'
 
@@ -697,7 +696,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
         <div className='form-col'>
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }} error={errors.currencyError}>
             <InputLabel>Currency</InputLabel>
-            <SelectAnchor
+            <Select
               name='currency'
               id='currency'
               label='Currency'
@@ -714,7 +713,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
                     </MenuItem>
                   )
                 })}
-            </SelectAnchor>
+            </Select>
             {errors.currencyError && (
               <FormHelperText sx={{ color: 'error.main' }} id='invoice-country-error'>
                 {getErrorMessage('currencyError')}
@@ -941,7 +940,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
           </FormControl>
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }} error={errors.typeOfLimitError}>
             <InputLabel>Type of limit</InputLabel>
-            <SelectAnchor
+            <Select
               name='typeOfLimit'
               label='Type of Limit'
               value={String(placementStructure.typeOfLimit)}
@@ -961,7 +960,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
                   No options available
                 </MenuItem>
               )}
-            </SelectAnchor>
+            </Select>
             {errors.typeOfLimitError && (
               <FormHelperText sx={{ color: 'error.main' }} id='invoice-country-error'>
                 {getErrorMessage('typeOfLimitError')}
