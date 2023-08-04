@@ -40,6 +40,8 @@ import { formatInformationDoctos, getFileFromUrl } from '@/utils/formatDoctos'
 import { DiscountDto } from '@/services/accounts/dtos/discount.dto'
 
 import { useGetAccountById } from '@/hooks/accounts/forms'
+import useFormStep_updateInformation from '@/hooks/accounts/forms/stepForms/update/useFormStep_updateInformation'
+import { useRouter } from 'next/router'
 import { DisableForm } from '../_commons/DisableForm'
 
 export interface InformationSectionsInt {
