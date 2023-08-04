@@ -1,9 +1,8 @@
-import { FormControl, FormHelperText, InputLabel, MenuItem, SelectChangeEvent } from '@mui/material'
+import { FormControl, FormHelperText, InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material'
 import { Dispatch, SetStateAction, useContext } from 'react'
 
 // import * as yup from 'yup';
 
-import { SelectAnchor } from '@/@core-custom/inputs/SelectAnchor'
 import { SecurityDto } from '@/services/accounts/dtos/security.dto'
 import { ReinsuranceCompanyDto } from '@/services/catalogs/dtos/ReinsuranceCompanyDto'
 import { SecurityContext } from '../../SecurityView'
@@ -62,7 +61,7 @@ export const ReinsuranceCompany = ({
   return (
     <FormControl fullWidth sx={{ mb: 2 }}>
       <InputLabel id='ReinsuranceCompany'>Reinsurance companies</InputLabel>
-      <SelectAnchor
+      <Select
         id='outlined-Name'
         value={value.toString()}
         onChange={handleChangeCompany}
@@ -79,7 +78,7 @@ export const ReinsuranceCompany = ({
               {reinsurer.name}
             </MenuItem>
           ))}
-      </SelectAnchor>
+      </Select>
       <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>{activeErros && errorMessage}</FormHelperText>
     </FormControl>
   )

@@ -5,7 +5,7 @@ import DatePickerWrapper from '@/@core/styles/libs/react-datepicker'
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
 import TextField from '@mui/material/TextField'
 
-import { InputAdornment, SxProps, Theme } from '@mui/material'
+import { Button, InputAdornment, SxProps, Theme } from '@mui/material'
 
 interface PaymentInformation {
   st?: any
@@ -81,17 +81,11 @@ export default function PaymentInformation({ id }: PaymentInformation) {
         </div>
       </div>
       <div>
-        <div className='wrapper-installments'>
+        <div className='wrapper-installments' style={{ justifyContent: 'flex-start' }}>
           <div>
-            <TextField
-              fullWidth
-              autoFocus
-              name='premiumWithoutDiscounts'
-              label='Premium without Discounts'
-              defaultValue=''
-              value=''
-            />
+            <TextField fullWidth autoFocus name='payment' label='Payment' />
           </div>
+          <Button variant='outlined'>Record Payment</Button>
         </div>
       </div>
     </>
