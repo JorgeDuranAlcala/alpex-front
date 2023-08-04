@@ -1,11 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Box, FormControl, FormHelperText, IconButton, InputLabel, MenuItem, SelectChangeEvent } from '@mui/material'
+import { Box, FormControl, FormHelperText, IconButton, InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material'
 import Icon from 'src/@core/components/icon'
 
 import { Dispatch, SetStateAction, useContext, useEffect, useState } from 'react'
 import * as yup from 'yup'
 
-import { SelectAnchor } from '@/@core-custom/inputs/SelectAnchor'
 import { RetroCedantDto } from '@/services/catalogs/dtos/RetroCedantDto'
 import { RetroCedantContactDto } from '@/services/catalogs/dtos/retroCedantContact.dto'
 import { SecurityContext } from '../../SecurityView'
@@ -68,7 +67,7 @@ export const SelectRetroCedant = ({
   return (
     <FormControl fullWidth sx={{ mb: 2, position: 'relative' }}>
       <InputLabel>Select Retro cedant</InputLabel>
-      <SelectAnchor
+      <Select
         label='Select Retro cedant'
         value={retroCedantId}
         onChange={handleChangeRetroCedant}
@@ -80,7 +79,7 @@ export const SelectRetroCedant = ({
             {cedant.name}
           </MenuItem>
         ))}
-      </SelectAnchor>
+      </Select>
       <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>{activeErros && errorMessage}</FormHelperText>
 
       {retroCedantId ? (
