@@ -298,3 +298,10 @@ export enum REPORTS_ROUTES {
 export enum DEBIT_NOTE_ROUTES {
   DOWNLOAD = 'reports/debit-note'
 }
+
+// ==== DYNAMIC DATA
+
+export enum DATA_DASHBOARD_ROUTES {
+  GET_PRIORITY_PROPERTIES = 'buildings/all',
+
+}

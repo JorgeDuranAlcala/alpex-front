@@ -24,7 +24,7 @@ import colors from 'src/views/accounts/colors'
 import fonts from 'src/views/accounts/font'
 
 //** Dto imports */
-import { IProperty } from '@/services/dynamic-data/dtos/dashboard.dto'
+import { IProperty } from '@/services/dynamic-data/dtos/propertyListing.dto'
 
 //** Hooks imports */
 import { useGetPriorityProperties } from '@/hooks/dynamic-data/dashboard'
@@ -32,26 +32,30 @@ import { useGetPriorityProperties } from '@/hooks/dynamic-data/dashboard'
 export enum EFieldColumn {
   PROPERTY_ID = 'id',
   VALFIS = 'valfis',
-  NOM_ENT = 'nomEnt',
-  NOM_MUN = 'nomMun',
-  TYPE = 'type',
-  ZONACRESTA = 'zonacresta'
+  STATE = 'state',
+  PROVINCE = 'province',
+  INSTITUTION = 'institution',
+  CRESTA_ZONE = 'crestazone'
 }
 
 const PriorityProperties = () => {
   // ** State
-  const { getPriorityProperties } = useGetPriorityProperties()
- const router = useRouter()
+  const { propertyPagination, setPropertyPagination, properties } = useGetPriorityProperties()
+
+  // const { getPriorityProperties } = useGetPriorityProperties()
+  const router = useRouter()
   const [loading, setLoading] = useState<boolean>(false)
-  const [properties, setProperties] = useState<IProperty[]>(
+  const [propertiesList, setPropertiesList] = useState<IProperty[]>(
     [
       {
-        id: '',
-        valfis: '',
-        nomEnt: '',
-        nomMun: '',
-        type: '',
-        zonacresta: ''
+        crestZone: '',
+        institution: '',
+        keyDepe: '',
+        latitude: '',
+        longitude: '',
+        province: '',
+        state: '',
+        valfisValue: ''
       }
     ]
   )
@@ -109,24 +113,35 @@ const PriorityProperties = () => {
 
   // ** Hooks
 
-  const setDataInformation = async () => {
-    const data = await getPriorityProperties()
+  // const setDataInformation = async () => {
+  //   const data = await getPriorityProperties()
 
-    if (!data) return
+  //   if (!data) return
 
-    setProperties(data)
-  }
+  //   setProperties(data)
+  // }
+
+  // useEffect(() => {
+  //   setDataInformation()
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [])
 
   useEffect(() => {
-    setDataInformation()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    setPropertyPagination({ ...propertyPagination })
+    //eslint-disable-next-line
   }, [])
+
+  useEffect(() => {
+    console.log("properties")
+    console.log(properties)
+    setPropertiesList(properties || [])
+  }, [properties])
 
   useEffect(() => {
     setLoading(true);
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 5000);
+    }, 500);
 
     return () => clearTimeout(timer);
   }, []);
@@ -160,14 +175,14 @@ const PriorityProperties = () => {
             onClick={() => {
               console.log("id clicked")
             }}
-          >{`#${row.id}`}</Link>
+          >{`#${row.keyDepe}`}</Link>
         </Typography>
       )
     },
     {
       flex: 0.1,
       field: EFieldColumn.VALFIS,
-      headerName: 'VALFIS',
+      headerName: 'REPL. VALUE',
       minWidth: 130,
       maxWidth: 150,
       type: 'string',
@@ -181,14 +196,14 @@ const PriorityProperties = () => {
       ),
       renderCell: ({ row }) => (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          ${row.valfis}
+          ${row.valfisValue}
         </Box>
       )
     },
     {
       flex: 0.1,
-      field: EFieldColumn.NOM_ENT,
-      headerName: 'NOM_ENT',
+      field: EFieldColumn.STATE,
+      headerName: 'STATE',
       minWidth: 50,
       maxWidth: 90,
       type: 'string',
@@ -202,15 +217,15 @@ const PriorityProperties = () => {
           sx={{ color: colors.text.primary, fontWeight: 500, fontSize: fonts.size.px14, fontFamily: fonts.inter }}
         >
           <Link sx={{ color: colors.text.primary }} href='#'>
-            {row.nomEnt}
+            {row.state}
           </Link>
         </Typography>
       )
     },
     {
       flex: 0.1,
-      field: EFieldColumn.NOM_MUN,
-      headerName: 'NOM_MUN',
+      field: EFieldColumn.PROVINCE,
+      headerName: 'PROVINCE',
       minWidth: 50,
       maxWidth: 90,
       type: 'string',
@@ -223,14 +238,14 @@ const PriorityProperties = () => {
       ),
       renderCell: ({ row }) => (
         <Typography sx={{ color: colors.text.secondary, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
-          {row.nomMun}
+          {row.province}
         </Typography>
       )
     },
     {
       flex: 0.1,
-      field: EFieldColumn.TYPE,
-      headerName: 'TYPE',
+      field: EFieldColumn.INSTITUTION,
+      headerName: 'INSTITUTION',
       minWidth: 150,
       type: 'string',
       align: 'left',
@@ -244,15 +259,15 @@ const PriorityProperties = () => {
 
         return (
           <Typography sx={{ color: colors.text.secondary, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
-            {row.type}
+            {row.institution}
           </Typography>
         )
       }
     },
     {
       flex: 0.1,
-      field: EFieldColumn.ZONACRESTA,
-      headerName: 'ZONACRESTA',
+      field: EFieldColumn.CRESTA_ZONE,
+      headerName: 'CRESTA ZONE',
       minWidth: 120,
       type: 'string',
       align: 'left',
@@ -266,7 +281,7 @@ const PriorityProperties = () => {
 
         return (
           <Typography sx={{ color: colors.text.secondary, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
-            {row.zonacresta}
+            {row.crestZone}
           </Typography>
         )
       }
@@ -280,7 +295,8 @@ const PriorityProperties = () => {
         loading={loading}
         autoHeight
         disableSelectionOnClick
-        rows={properties}
+        rows={propertiesList}
+        getRowId={(row) => "1"}
         columns={column}
         pagination={undefined}
         pageSize={10}
