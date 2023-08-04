@@ -40,9 +40,6 @@ import { formatInformationDoctos, getFileFromUrl } from '@/utils/formatDoctos'
 import { DiscountDto } from '@/services/accounts/dtos/discount.dto'
 
 import { useGetAccountById } from '@/hooks/accounts/forms'
-
-import useFormStep_updateInformation from '@/hooks/accounts/forms/stepForms/update/useFormStep_updateInformation'
-import { useRouter } from 'next/router'
 import { DisableForm } from '../_commons/DisableForm'
 
 export interface InformationSectionsInt {
@@ -805,7 +802,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
           <CustomAlert {...badgeData} />
         </div>
         <form noValidate autoComplete='on' onSubmit={handleNextStep}>
-          <div className='section'>
+          <div className='section' onClick={handleCanUpdateBasicInfoData}>
             <DisableForm isDisabled={disableSectionCtrl?.basicInfo} sg={5000}>
               <BasicInfo
                 basicInfo={basicInfo}
@@ -817,7 +814,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
             </DisableForm>
           </div>
 
-          <div className='section'>
+          <div className='section' onClick={handleCanUpdatePlacementStructureData}>
             <DisableForm isDisabled={disableSectionCtrl?.placementStructure} sg={5000}>
               <PlacementStructure
                 placementStructure={placementStructure}
