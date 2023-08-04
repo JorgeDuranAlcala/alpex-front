@@ -8,7 +8,7 @@ const useFormStep_recuperateStep = () => {
   const forms = useAppSelector(state => state.stepFormSlice);
   const router = useRouter();
 
-  const getLastStep = (idAccount: number | null): {
+  const getLastStep = (idAccount: number | null, isNewAccount = false): {
     lastStep: number | null,
 
     idAccountFromQuery: number | null
@@ -17,21 +17,30 @@ const useFormStep_recuperateStep = () => {
     // console.log(forms)
     let lastStep: number | null = null;
     let idAccountFromQuery: number | null = null;
-
-
-    if (idAccount) {
-      if (forms[idAccount]) {
-        lastStep = forms[idAccount].step;
+    if (isNewAccount) {
+      if (forms['New Account']) {
+        lastStep = forms['New Account'].step;
       }
+
+
     } else {
-      if (router.query.idAccount) {
-        idAccountFromQuery = Number(router.query.idAccount)
-        if (forms[idAccountFromQuery]) {
-          lastStep = forms[idAccountFromQuery].step;
-        }
-      }
 
+      if (idAccount) {
+        if (forms[idAccount]) {
+          lastStep = forms[idAccount].step;
+        }
+      } else {
+
+        if (router.query.idAccount) {
+          idAccountFromQuery = Number(router.query.idAccount)
+          if (forms[idAccountFromQuery]) {
+            lastStep = forms[idAccountFromQuery].step;
+          }
+        }
+
+      }
     }
+
 
     return {
       lastStep,

@@ -594,8 +594,10 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
 
   //Evento que controla el evento de continuar
   const handleNextStep = async () => {
+
     if (allValidated) {
       await handleSaveInformation()
+
       onStepChange(2)
     }
     handleCloseModal()

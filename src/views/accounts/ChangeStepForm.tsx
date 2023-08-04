@@ -4,7 +4,7 @@ import { Dispatch, ReactNode, SetStateAction, useEffect, useRef, useState } from
 import useFormStep_recuperateStep from "@/hooks/accounts/forms/stepForms/recuperate/useFormStep_recuperateStep";
 
 import { useAppDispatch, useAppSelector } from "@/store";
-import { updateFormId } from "@/store/apps/accounts";
+import { updateFormId, updateFormsData } from "@/store/apps/accounts";
 
 
 
@@ -30,24 +30,29 @@ const ChangeStepForm = ({ accountId, step, changeStep, changeAccountId, children
 
   // const isEffectedSameSteps = useRef<boolean>(false);
 
-  console.log('ChangeStepForm render with: ', {
-    step,
-    activeStep,
-    accountId,
-  })
+  // console.log('ChangeStepForm render with: ', {
+  //   step,
+  //   activeStep,
+  //   accountId,
+  // })
 
   useEffect(() => {
 
     if (!accountId) return;
 
-    console.log('tabButtons', tabButtons);
     const activeTab = tabButtons.find(tab => tab.isActive);
-    console.log('activeTab', activeTab);
     if (activeTab) {
+
+      if (activeTab.text.toString().toLocaleLowerCase().includes('new')) {
+        handleNewAccount();
+
+        return;
+
+      }
+
       const idTab = Number(activeTab.text);
 
       if (idTab > 0 && idTab !== accountId) {
-        console.log('ChangeStepForm useEffect changeAccountId', idTab)
 
         handleSetAccountId(idTab);
       }
@@ -60,7 +65,7 @@ const ChangeStepForm = ({ accountId, step, changeStep, changeAccountId, children
     const { lastStep, idAccountFromQuery } = getLastStep(
       accountId ? Number(accountId) : null
     );
-    console.log('ChangeStepForm useEffect getStep', { lastStep, accountId, idAccountFromQuery })
+
 
     if (!accountId && idAccountFromQuery) {
 
@@ -68,7 +73,6 @@ const ChangeStepForm = ({ accountId, step, changeStep, changeAccountId, children
 
       isHandledAccountIdFromQuery.current = true;
 
-      console.log('updateHandler', idAccountFromQuery);
 
       handleSetAccountId(idAccountFromQuery)
 
@@ -79,7 +83,6 @@ const ChangeStepForm = ({ accountId, step, changeStep, changeAccountId, children
 
     if (lastStep) {
       if (lastStep !== step) {
-        console.log('changeStep?')
 
         // debugger;
 
@@ -96,9 +99,26 @@ const ChangeStepForm = ({ accountId, step, changeStep, changeAccountId, children
   }, [step]);
 
 
+  const handleNewAccount = () => {
+
+    localStorage.removeItem('idAccount')
+
+    dispatch(updateFormsData({ form1: { id: null } }));
+    const { lastStep, } = getLastStep(null, true)
+
+    if (lastStep) {
+      if (lastStep !== step) {
+
+        changeStep(lastStep);
+      } else {
+        setActiveStep(step);
+      }
+    } else {
+      setActiveStep(step);
+    }
+  }
 
   const handleSetAccountId = (idAccount: number) => {
-    console.log('handleSet AccountId', idAccount)
 
     localStorage.setItem('idAccount', String(idAccount))
     changeAccountId(idAccount)

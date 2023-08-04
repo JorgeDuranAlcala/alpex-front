@@ -66,7 +66,8 @@ const CreatedAccount = () => {
 
   // Custom Hooks
   const { isLoading, account: accountDetails, setAccountId, getAccountById } = useGetAccountById()
-  console.log({ accountDetails })
+
+  // console.log({ accountDetails })
 
   // States
   const [disableComments] = useState(false)
@@ -133,12 +134,14 @@ const CreatedAccount = () => {
   }
 
   const handleStepChange = (step: number) => {
-    setActiveStep(step)
 
     dispatch(stepForms_updateStep({
       id: accountDetails?.id || 'new account',
       data: step,
     }))
+
+
+    setActiveStep(step)
   }
 
   const handleIsNewAccountChange = (status: boolean) => {
@@ -237,8 +240,6 @@ const CreatedAccount = () => {
   }, [editInfo, accountDetails?.status, endorsementData.type])
 
   if (isLoading) {
-    console.log(accountDetails?.id)
-    console.log(isLoading)
 
     return <Box>
       <CircularProgress size={75} />

@@ -30,6 +30,7 @@ const useFormStep_updateSublimits = ({ idAccount, sublimits }: UseStepUpdateSubl
 
   // * Actualizar el step del account actual en Redux
   useEffect(() => {
+    console.log('useEffect useFormStep_updateSublimits', idAccount)
     if (!idAccount) return;
     if (isStepUpdatedRef.current) return;
 
@@ -38,7 +39,7 @@ const useFormStep_updateSublimits = ({ idAccount, sublimits }: UseStepUpdateSubl
 
     if (Number(activeTab.text) !== idAccount) return;
 
-    dispatch(stepForms_updateStep({ id: idAccount, data: 3 }))
+    dispatch(stepForms_updateStep({ id: idAccount, data: 4 }))
 
     isStepUpdatedRef.current = true;
 

@@ -38,7 +38,9 @@ export const useGetAccountById = () => {
   const lastAccountId = useRef<number | null>(null);
 
   const getAccountById = async (idAccount: number): Promise<ResponseGetAccount> => {
-    console.log('getAccountById', idAccount)
+
+    // console.log('getAccountById', idAccount)
+
     const getAccount = await AccountServices.getAccountById(idAccount)
 
     // if (getAccount) {
@@ -59,7 +61,8 @@ export const useGetAccountById = () => {
       if (lastAccountId.current === accountId) return;
       lastAccountId.current = accountId;
 
-      console.log('useGetAccountById', accountId)
+      // console.log('useGetAccountById', accountId)
+
       AccountServices.getAccountById(accountId)
         .then(accounts => {
           if (accounts) {

@@ -38,7 +38,8 @@ const useFormStep_updateSecurity = ({ idAccount, securities, secondViewSecuritie
     if (!activeTab) return;
 
     if (Number(activeTab.text) !== idAccount) return;
-    console.log('update step', idAccount, 'activeTabId', activeTab.text)
+
+    // console.log('update step', idAccount, 'activeTabId', activeTab.text)
 
     dispatch(stepForms_updateStep({ id: idAccount, data: 2 }))
 
