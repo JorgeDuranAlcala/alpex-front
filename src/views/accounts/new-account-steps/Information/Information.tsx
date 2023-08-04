@@ -678,7 +678,10 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
 
   useEffect(() => {
     const idAccountCache = Number(localStorage.getItem('idAccount'))
-    dispatch(updateFormsData({ form1: { ...lastForm1Information, id: idAccountCache } }))
+    if (idAccountCache) {
+
+      dispatch(updateFormsData({ form1: { ...lastForm1Information, id: idAccountCache } }))
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -753,17 +756,20 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
 
 
     if (idAccount) {
+      console.log(idAccount)
+
       setDataInformation()
 
       setAccountId(idAccount)
     } else {
       const idAccount = Number(localStorage.getItem('idAccount')) || Number(router.query.idAccount)
-
+      console.log('idAccountLocalStorage', Number(localStorage.getItem('idAccount')))
+      console.log('idAccountRouter', Number(router.query.idAccount))
       if (!idAccount) return
 
-      setDataInformation()
-      localStorage.setItem('idAccount', idAccount.toString())
-      setAccountId(idAccount)
+      // setDataInformation()
+      // localStorage.setItem('idAccount', idAccount.toString())
+      // setAccountId(idAccount)
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps

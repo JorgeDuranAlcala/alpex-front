@@ -34,7 +34,6 @@ import CommentSection from 'src/views/components/new-accounts/CommentSection'
 import NewAccountStepper from 'src/views/components/new-accounts/NewAccountStepper'
 
 // ** Redux
-import { updateFormsData } from '@/store/apps/accounts'
 import { useAppDispatch, useAppSelector } from 'src/store'
 import { resetEndorsement } from 'src/store/apps/endorsement'
 
@@ -212,7 +211,9 @@ const CreatedAccount = () => {
   useEffect(() => {
     const handleExit = () => {
       localStorage.removeItem('idAccount')
-      dispatch(updateFormsData({ form1: { id: null } }))
+
+      // Creo que ya no es necesario por el componente multi pestaña
+      // dispatch(updateFormsData({ form1: { id: null } }))
       dispatch(resetEndorsement())
     }
 

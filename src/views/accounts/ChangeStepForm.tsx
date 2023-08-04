@@ -4,6 +4,7 @@ import { Dispatch, ReactNode, SetStateAction, useEffect, useRef, useState } from
 import useFormStep_recuperateStep from "@/hooks/accounts/forms/stepForms/recuperate/useFormStep_recuperateStep";
 
 import { useAppDispatch, useAppSelector } from "@/store";
+import { updateFormId } from "@/store/apps/accounts";
 
 
 
@@ -104,11 +105,11 @@ const ChangeStepForm = ({ accountId, step, changeStep, changeAccountId, children
 
     setActiveStep(null);
 
-    // dispatch(
-    //   updateFormId({
-    //     id: idAccount
-    //   })
-    // )
+    dispatch(
+      updateFormId({
+        id: idAccount
+      })
+    )
   }
 
 
