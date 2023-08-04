@@ -1,3 +1,4 @@
+
 import { useGetAllCoverage } from '@/hooks/catalogs/coverage'
 import UserThemeOptions from '@/layouts/UserThemeOptions'
 import { CoverageDto } from '@/services/catalogs/dtos/coverage.dto'
@@ -26,14 +27,16 @@ const SelectCoverage: React.FC<SelectCoverageProps> = ({ onChangeSelected, cover
   const { coverages } = useGetAllCoverage()
   const texButtonColor = userThemeConfig.palette?.buttonText.primary
 
-  const handleChangeSelect = (event: SelectChangeEvent<string>) => {
+  const handleChangeSelect = (event: SelectChangeEvent<string> | any) => {
     // setDisableBoundBtn(true)
     const selectedValue = event.target.value
     const coverageSelect = coverages.find(cov => cov.coverage === selectedValue)
     coverageSelect && onChangeSelected(coverageSelect)
+
+    // console.log('coverageSelect: ', coverageSelect, 'selectedValue: ', selectedValue);
   }
 
-  // console.log('Seleccionados: ', coverages)
+  // console.log('Seleccionados: ', coverageSelected);
 
   return (
     <Grid item xs={12} sm={6} md={4}>
@@ -45,8 +48,8 @@ const SelectCoverage: React.FC<SelectCoverageProps> = ({ onChangeSelected, cover
         value={''}
         displayEmpty
         onChange={handleChangeSelect}
-        renderValue={selected => {
-          if (selected.length === 0) {
+        renderValue={(selected) => {
+          if ((selected as unknown as string[]).length === 0) {
             return (
               <Typography
                 sx={{

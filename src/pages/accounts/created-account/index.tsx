@@ -9,7 +9,9 @@ import { useRouter } from 'next/router'
 
 // ** Views
 // Bound
-import InformationBound, { InformationSectionsInt } from '@/views/accounts/bound-account-steps/InformationBound'
+import InformationBound, {
+  InformationSectionsInt
+} from '@/views/accounts/bound-account-steps/Information/InformationBound'
 import FormAddressBound from 'src/views/accounts/bound-account-steps/FormAddressBound'
 import PaymentWarrantyBound from 'src/views/accounts/bound-account-steps/PaymentWarrantyBound'
 import SecurityBound from 'src/views/accounts/bound-account-steps/Security/SecurityViewBound'
@@ -95,7 +97,7 @@ const CreatedAccount = () => {
     }
 
     // Para las cuentas de tipo |BOUND|, esto es para cuando ingresas a tu cuenta |SIN ACTIVAR EL ENDORSEMENT|
-    if (accountDetails?.status.toLowerCase() === 'bound' && !endorsementData.init) {
+    if (accountDetails?.status.toLowerCase() === 'bound' && !endorsementData.initialized) {
       setDisableFormsSections({
         ...disableFormsSections,
         information: { basicInfo: true, placementStructure: true },
@@ -107,7 +109,7 @@ const CreatedAccount = () => {
     }
 
     // Para las cuentas de tipo |BOUND| -> |ENDORSEMENT ACTIVADO|
-    if (accountDetails?.status.toLowerCase() === 'bound' && endorsementData.init && endorsementData.type) {
+    if (accountDetails?.status.toLowerCase() === 'bound' && endorsementData.initialized && endorsementData.type) {
       const endorsementType = endorsementData.type.toLowerCase()
       if (endorsementType === 'informative') {
         setDisableFormsSections({
@@ -199,13 +201,7 @@ const CreatedAccount = () => {
           />
         )
       case 4:
-        return (
-          <SublimitsBound
-            onStepChange={handleStepChange}
-            getAccountByIdHeader={getAccountById}
-            disableSectionCtrl={disableFormsSections.sublimits}
-          />
-        )
+        return <SublimitsBound onStepChange={handleStepChange} disableSectionCtrl={disableFormsSections.sublimits} />
       case 5:
         return <FormAddressBound disableSectionCtrl={disableFormsSections.sov} />
       default:

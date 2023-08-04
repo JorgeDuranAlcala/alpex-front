@@ -106,4 +106,9 @@ const Users = () => {
   )
 }
 
+Users.acl = {
+  action: 'read',
+  subject: 'user'
+}
+
 export default Users

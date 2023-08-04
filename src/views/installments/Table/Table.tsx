@@ -45,6 +45,11 @@ const onAction = async (id: number) => {
   window.location.href = `/installments/payment-record/?&id=${String(id)}`
 }
 
+const onDataSheet = async (id: number) => {
+  localStorage.setItem('idAccountIntallments', String(id))
+  window.location.href = `/installments/data-sheet/?&id=${String(id)}`
+}
+
 const column: GridColumns<INearlyPaymentStatus> = [
   {
     flex: 0.1,
@@ -78,7 +83,7 @@ const column: GridColumns<INearlyPaymentStatus> = [
         <Link
           sx={{ cursor: 'pointer' }}
           onClick={() => {
-            onAction(+row.accountId)
+            onDataSheet(row.accountId)
           }}
         >{`#${row.accountId}`}</Link>
       </Typography>
@@ -358,20 +363,27 @@ const column: GridColumns<INearlyPaymentStatus> = [
         </div>
       )
     },
-    renderCell: () => (
+    renderCell: ({ row }) => (
       <div>
-        <Button
-          variant='outlined'
-          sx={{
-            width: 'auto',
-            height: '30px',
-            fontSize: '13px',
-            color: userThemeConfig.palette?.buttonText.primary,
-            fontFamily: inter
+        <Link
+          sx={{ cursor: 'pointer' }}
+          onClick={() => {
+            onAction(row.accountId)
           }}
         >
-          RECORD
-        </Button>
+          <Button
+            variant='outlined'
+            sx={{
+              width: 'auto',
+              height: '30px',
+              fontSize: '13px',
+              color: userThemeConfig.palette?.buttonText.primary,
+              fontFamily: inter
+            }}
+          >
+            RECORD
+          </Button>
+        </Link>
       </div>
 
       // <Button variant='outlined' sx={{ width: '100%', height: '30px', fontSize: '13px' }}>

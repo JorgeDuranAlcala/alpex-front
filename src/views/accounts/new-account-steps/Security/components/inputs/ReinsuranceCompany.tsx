@@ -29,7 +29,7 @@ export const ReinsuranceCompany = ({
 }: ReinsuranceCompanyProps) => {
   const { activeErros, information, securities, calculateSecurities } = useContext(SecurityContext)
 
-  const handleChangeCompany = (e: SelectChangeEvent<string>): void => {
+  const handleChangeCompany = (e: SelectChangeEvent<string> | any): void => {
     const avaliableCompanies: ReinsuranceCompanyDto | undefined = avaliableReinsurers
       .filter(reinsure => !companiesSelect.includes(reinsure.id) || security?.idCReinsuranceCompany?.id === reinsure.id)
       .find(reinsurer => reinsurer.id === Number(e.target.value))

@@ -102,8 +102,8 @@ const CardInstallment = ({ index, installment, onChangeList, error100Percent }: 
                 customInput={TextField}
                 id='percentagePayment'
                 label='Payment %'
-                multiline
-                prefix={'%'}
+                multiline                
+                suffix='%'
                 variant='outlined'
                 isAllowed={values => {
                   const { floatValue } = values

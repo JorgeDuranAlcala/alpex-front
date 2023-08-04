@@ -42,7 +42,6 @@ import { DiscountDto } from '@/services/accounts/dtos/discount.dto'
 import { useGetAccountById } from '@/hooks/accounts/forms'
 
 import useFormStep_updateInformation from '@/hooks/accounts/forms/stepForms/update/useFormStep_updateInformation'
-import { useAddEndorsement } from '@/hooks/endorsement/useAdd'
 import { useRouter } from 'next/router'
 import { DisableForm } from '../_commons/DisableForm'
 
@@ -116,7 +115,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   const [changeTitle, setChangeTitle] = useState(false)
   const [discounts, setDiscounts] = useState<DiscountDto[]>([])
 
-  //Validaciones
+  // Validaciones
   const [allValidated, setAllValidated] = useState(false)
   const [validationCount, setValidationCount] = useState(0)
   const [validatedForms, setValidatedForms] = useState(0)
@@ -137,15 +136,13 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   const [userFile, setUserFile] = useState<File[]>([])
   const [userFileToDelete, setUserFileToDelete] = useState<File>()
 
-  //store
+  // Store
   const idAccount = useAppSelector(state => state.accounts?.formsData?.form1?.id)
   const lastForm1Information = useAppSelector(state => state.accounts?.formsData?.form1)
-  const activeEndorsement = useAppSelector(state => state.endorsement.data.init)
-  const endorsementData = useAppSelector(state => state.endorsement.data)
 
   const [fileUrls, setFileUrls] = useState<string[]>([])
 
-  // ** Custom Hooks
+  // Custom Hooks
   const { getInformaByIdAccount } = useFindInformationByIdAccount()
   const { addInformation } = useAddInformation()
   const { updateInformationByIdAccount } = useUpdateInformationByIdAccount()
@@ -154,7 +151,6 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   const { deleteInformationDocument } = useDeleteInformationDocument()
   const { addDiscounts } = useAddDiscounts()
   const { UpdateDiscounts } = useUpdateDiscounts()
-  const { addEndorsement } = useAddEndorsement()
 
   const { account, setAccountId } = useGetAccountById()
 
@@ -650,91 +646,6 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
     }
   }
 
-  const handleEndorsement = async () => {
-    if (endorsementData.type?.toLowerCase() === 'informative') {
-      setBadgeData({
-        message: `ENDORSING`,
-        status: 'secondary',
-        open: true,
-        icon: <CircularProgress size={20} color='secondary' />,
-        backgroundColor: '#828597',
-        theme: 'info',
-        disableAutoHide: true
-      })
-      await delayMs(1000)
-
-      const newEndorsementData = {
-        ...endorsementData,
-        information: {
-          ...endorsementData.information,
-          insured: basicInfo.insured,
-          idCountry: Number(basicInfo.country),
-          idBroker: Number(basicInfo.broker),
-          idBrokerContact: Number(basicInfo.brokerContact),
-          brokerContactEmail: basicInfo.brokerContactEmail,
-          brokerContactPhone: basicInfo.brokerContactPhone,
-          brokerContactCountry: basicInfo.brokerContactCountry,
-          idCedant: Number(basicInfo.cedant),
-          idCedantContact: Number(basicInfo.cedantContact),
-          cedantContactEmail: basicInfo.cedantContactEmail,
-          cedantContactPhone: basicInfo.cedantContactPhone,
-          cedantContactCountry: basicInfo.cedantContactCountry,
-          idLineOfBussines: Number(basicInfo.lineOfBusiness),
-          idRiskActivity: Number(basicInfo.industryCode),
-          receptionDate: formatUTC(basicInfo.receptionDate),
-          effectiveDate: formatUTC(basicInfo.effectiveDate),
-          expirationDate: formatUTC(basicInfo.expirationDate),
-          idLeadUnderwriter: Number(basicInfo.leadUnderwriter) === 0 ? null : Number(basicInfo.leadUnderwriter),
-          idTechnicalAssistant:
-            Number(basicInfo.technicalAssistant) === 0 ? null : Number(basicInfo.technicalAssistant),
-          idUnderwriter: Number(basicInfo.underwriter) === 0 ? null : Number(basicInfo.underwriter),
-          riskClass: Number(basicInfo.riskClass),
-          idAccountType: Number(basicInfo.idAccountType),
-          idEconomicSector: Number(basicInfo.economicSector) || null
-        }
-      }
-
-      const res = await addEndorsement(newEndorsementData)
-
-      if (!res) {
-        setBadgeData({
-          message: `ENDORSEMENT ERROR`,
-          theme: 'error',
-          open: true,
-          status: 'error',
-          icon: (
-            <Icon
-              style={{
-                color: '#FF4D49',
-                marginTop: '-1px'
-              }}
-              icon='jam:alert'
-            />
-          ),
-          disableAutoHide: true
-        })
-      } else {
-        setBadgeData({
-          message: `ENDT. GENERATED`,
-          status: 'success',
-          open: true,
-          icon: <Icon icon='ic:baseline-check-circle' />,
-          theme: 'success',
-          disableAutoHide: true
-        })
-      }
-
-      await delayMs(1500)
-
-      setBadgeData({
-        message: '',
-        status: undefined,
-        icon: undefined,
-        open: false
-      })
-    }
-  }
-
   const handleAction = (action: string) => {
     setValidationCount(0)
     setValidatedForms(0)
@@ -747,11 +658,6 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
       case 'next':
         setNextClicked(true)
         setMakeValidations(true)
-        break
-
-      case 'endorsement':
-        setMakeSaveValidations(true)
-        handleEndorsement()
         break
 
       default:
@@ -899,59 +805,30 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
           <CustomAlert {...badgeData} />
         </div>
         <form noValidate autoComplete='on' onSubmit={handleNextStep}>
-          {disableSectionCtrl?.basicInfo ? (
-            <div className='section'>
-              <DisableForm isDisabled sg={5000}>
-                <BasicInfo
-                  basicInfo={basicInfo}
-                  setBasicInfo={setBasicInfo}
-                  makeValidations={makeValidations}
-                  makeSaveValidations={makeSaveValidations}
-                  onValidationComplete={handleValidationComplete}
-                />
-              </DisableForm>
-            </div>
-          ) : (
-            <div className='section' onClick={handleCanUpdateBasicInfoData}>
-              <DisableForm sg={5000}>
-                <BasicInfo
-                  basicInfo={basicInfo}
-                  setBasicInfo={setBasicInfo}
-                  makeValidations={makeValidations}
-                  makeSaveValidations={makeSaveValidations}
-                  onValidationComplete={handleValidationComplete}
-                />
-              </DisableForm>
-            </div>
-          )}
+          <div className='section'>
+            <DisableForm isDisabled={disableSectionCtrl?.basicInfo} sg={5000}>
+              <BasicInfo
+                basicInfo={basicInfo}
+                setBasicInfo={setBasicInfo}
+                makeValidations={makeValidations}
+                makeSaveValidations={makeSaveValidations}
+                onValidationComplete={handleValidationComplete}
+              />
+            </DisableForm>
+          </div>
 
-          {disableSectionCtrl?.placementStructure ? (
-            <div className='section'>
-              <DisableForm isDisabled sg={5000}>
-                <PlacementStructure
-                  placementStructure={placementStructure}
-                  setPlacementStructure={setPlacementStructure}
-                  onDiscountsChange={handleDiscountsChange}
-                  makeValidations={makeValidations}
-                  onValidationComplete={handleValidationComplete}
-                  triggerSubject={subjectState}
-                />
-              </DisableForm>
-            </div>
-          ) : (
-            <div className='section' onClick={handleCanUpdatePlacementStructureData}>
-              <DisableForm sg={5000}>
-                <PlacementStructure
-                  placementStructure={placementStructure}
-                  setPlacementStructure={setPlacementStructure}
-                  onDiscountsChange={handleDiscountsChange}
-                  makeValidations={makeValidations}
-                  onValidationComplete={handleValidationComplete}
-                  triggerSubject={subjectState}
-                />
-              </DisableForm>
-            </div>
-          )}
+          <div className='section'>
+            <DisableForm isDisabled={disableSectionCtrl?.placementStructure} sg={5000}>
+              <PlacementStructure
+                placementStructure={placementStructure}
+                setPlacementStructure={setPlacementStructure}
+                onDiscountsChange={handleDiscountsChange}
+                makeValidations={makeValidations}
+                onValidationComplete={handleValidationComplete}
+                triggerSubject={subjectState}
+              />
+            </DisableForm>
+          </div>
 
           <div className='section' style={{ display: 'none' }}>
             <div className='title'>{changeTitle ? 'Submited files' : 'File submit'}</div>
@@ -964,31 +841,17 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
             />
           </div>
           <div className='section action-buttons'>
-            {account && account?.status === 'BOUND' ? (
-              <Button
-                className='btn-endorsement'
-                onClick={() => handleAction('endorsement')}
-                variant='contained'
-                disabled={!activeEndorsement}
-              >
-                <div className='btn-icon' style={{ marginRight: '8px' }}>
-                  <Icon icon='material-symbols:approval-outline' />
-                </div>
-                ENDORSE
-              </Button>
-            ) : (
-              <Button
-                className='btn-save'
-                onClick={() => handleAction('save')}
-                variant='contained'
-                disabled={disableSave || account?.status.toLowerCase() === 'bound'}
-              >
-                <div className='btn-icon' style={{ marginRight: '8px' }}>
-                  <Icon icon='mdi:content-save' />
-                </div>
-                SAVE CHANGES
-              </Button>
-            )}
+            <Button
+              className='btn-save'
+              onClick={() => handleAction('save')}
+              variant='contained'
+              disabled={disableSave || account?.status.toLowerCase() === 'bound'}
+            >
+              <div className='btn-icon' style={{ marginRight: '8px' }}>
+                <Icon icon='mdi:content-save' />
+              </div>
+              SAVE CHANGES
+            </Button>
             <Button
               className='btn-next'
               onClick={() => {
@@ -1007,11 +870,11 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
                   position: 'absolute',
                   bgcolor: 'white',
                   top: '50%',
-                  left: '50%',
+                  left: { xs: '8%', md: '50%' },
                   boxShadow: 24,
                   pl: 5,
                   pr: 5,
-                  transform: 'translate(-50%, -50%)',
+                  transform: { xs: 'translate(-4%, -50%)', md: 'translate(-50%, -50%)' },
                   borderRadius: '10px',
                   padding: '20px'
                 }}

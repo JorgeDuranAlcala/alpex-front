@@ -30,7 +30,7 @@ const defineRulesFor = (role: string, subject: string) => {
     cannot(['delete', 'update', 'create', 'read'], 'user')
     cannot(['delete', 'update', 'read'], 'accountSublimits')
     cannot(['delete', 'update', 'read'], 'accountGenerateEndt')
-    cannot(['delete', 'update', 'read', 'create'], 'selectHeaderBound')
+    cannot(['delete', 'update', 'read', 'create'], 'selectActionsChangeStatus')
   } else if (role === 'Technical assistant') {
     can('manage', 'all')
     cannot(['delete', 'update', 'create', 'read'], 'catalog')

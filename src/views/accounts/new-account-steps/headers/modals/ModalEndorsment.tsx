@@ -153,7 +153,7 @@ export const ActionsHeaderBoundModal = ({
                 dispatchRedux(
                   updateEndorsement({
                     ...createdEndorsement,
-                    init: true
+                    initialized: true
                   })
                 )
                 dispatchRedux(fetchAccountById())
