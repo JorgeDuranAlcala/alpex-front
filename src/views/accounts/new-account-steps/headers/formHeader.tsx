@@ -178,6 +178,9 @@ const FormHeader = ({
   const [status, setStatus] = useState('')
   const account = useAppSelector(state => state.accounts?.formsData?.form1)
 
+  // const lastAccountId = useRef<number | null>(null)
+  // const lastAccountDetailsId = useRef<number | null>(null);
+
   const formaterAmount = (amount: number) => {
     if (amount) {
       return amount.toLocaleString('en-US', {
@@ -213,13 +216,44 @@ const FormHeader = ({
     return ''
   }
 
-  useEffect(() => {
-    account && setAccountId(account.id)
-  }, [account])
+  // useEffect(() => {
+  //   console.log('formHeader account', account);
+
+  //   const accountId = account?.id;
+  //   console.log('formHeader accountId', {
+  //     idFromAccout: account?.id,
+  //     idFromAccountDetails: accountDetails?.id,
+  //     accountId: accountId,
+  //   });
+
+  //   if (accountId) {
+  //     console.log('formHeader lastAccountId', {
+  //       lastAccountId: lastAccountId.current,
+  //       accountId: accountId
+  //     })
+  //     if (lastAccountId.current !== accountId || lastAccountDetailsId.current !== accountDetails?.id) {
+  //       lastAccountId.current = accountId
+  //       lastAccountDetailsId.current = accountId;
+
+  //       // console.log('formHeader setAccountId', accountId)
+
+  //       // setAccountId(accountId)
+  //     }
+
+  //     // isAccountSetted.current = true
+  //   }
+
+  //   // account && setAccountId(account.id)
+  // }, [account, accountDetails])
 
   useEffect(() => {
+
+    // console.log('accountDetails Effect', accountDetails)
     accountDetails && setStatus(accountDetails.status)
+
   }, [accountDetails])
+
+  // console.log('account', account)
 
   return (
     <>

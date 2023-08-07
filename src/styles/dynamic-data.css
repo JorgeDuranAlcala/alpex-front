@@ -1,3 +1,26 @@
+/*---------------------Dashboard styles ----------------*/
+
+.total-investment .data-wrapper {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin-bottom: 0;
+}
+
+.icon-wrapper {
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.investment-per-state .icon-wrapper,
+.sales-this-month .icon-wrapper {
+  position: absolute;
+  right: 20px;
+  top: 23px;
+}
 .see-more-section {
   display: flex;
   justify-content: flex-end;
@@ -88,6 +111,81 @@
 
 @media (max-width: 950px) {
   .property-header-wrapper .header-row {
+    font-size: 16px;
+  }
+}
+
+/*------------------ Map Details Styles  --------------*/
+
+.map-details-wrapper {
+  width: 100%;
+  display: flex;
+  padding: 20px;
+  justify-content: space-between;
+}
+
+.map-details-wrapper .details-row.title {
+  font-size: 12px;
+}
+
+.map-details-wrapper .details-row {
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  align-content: center;
+  font-size: 20px;
+  font-family: Inter;
+  color: rgba(77, 80, 98, 0.87);
+}
+
+.map-details-wrapper .details-col {
+  display: flex;
+  padding: 0px 10px;
+  align-items: center;
+  gap: 13px;
+}
+
+.map-details-wrapper .red-icons {
+  color: red;
+  margin-right: 13px;
+}
+
+.map-details-wrapper .blue-icons {
+  color: #477fff;
+  margin-right: 13px;
+}
+
+.magnitude-icon {
+  border: 1px solid red;
+  height: 25px;
+  width: 25px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.magnitude-icon .red-icons {
+  color: red;
+  max-width: 20px;
+  max-height: 20px;
+  margin: 0;
+}
+
+.vertical-divider {
+  border-left: 1px solid rgba(87, 90, 111, 0.12);
+  margin: 0 20px;
+}
+
+@media (max-width: 1270px) {
+  .map-details-wrapper .details-row {
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 950px) {
+  .map-details-wrapper .details-row {
     font-size: 16px;
   }
 }

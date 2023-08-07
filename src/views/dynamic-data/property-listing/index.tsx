@@ -6,8 +6,8 @@ import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import { DataGrid, GRID_CHECKBOX_SELECTION_COL_DEF, GridColumns } from '@mui/x-data-grid'
 
-
-// ** Custom Hooks imports
+// ** Next Import
+import { useRouter } from 'next/router'
 
 // ** Custom Components Imports
 import ColumnHeader from './ColumnHeader'
@@ -23,7 +23,7 @@ import fonts from 'src/views/accounts/font'
 import { IAlert } from 'src/views/custom/alerts'
 
 // ** Dto imports
-import { IProperty } from '@/services/dynamic-data/dtos/propertyListing.dto'
+import { IPropertyTemp } from '@/services/dynamic-data/dtos/propertyListing.dto'
 
 
 
@@ -52,11 +52,21 @@ const PropertyListingTable = ({ status }: IAccountTable) => {
     icon: undefined
   }
 
+    // ** Hooks
+    const router = useRouter()
+
   const handleClickColumnHeader = (field: string) => {
     alert(field)
   }
 
-  const properties: IProperty[] = [
+  const onDetails = async () => {
+    console.log("coso")
+
+    // localStorage.setItem('idProperty', String(id))
+    router.push(`/dynamic-data/property-listing/property-details`)
+  }
+
+  const properties = [
     {
       id: "06003_1",
       valfis: "000,000,000.00",
@@ -119,7 +129,7 @@ const PropertyListingTable = ({ status }: IAccountTable) => {
     }
   ]
 
-  const column: GridColumns<IProperty> = [
+  const column: GridColumns<IPropertyTemp> = [
     {
       ...GRID_CHECKBOX_SELECTION_COL_DEF,
       headerClassName: 'account-column-header-checkbox'
@@ -142,9 +152,7 @@ const PropertyListingTable = ({ status }: IAccountTable) => {
         <Typography sx={{ color: colors.primary.main, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
           <Link
             sx={{ cursor: 'pointer' }}
-            onClick={() => {
-              console.log("details")
-            }}
+            onClick={onDetails}
           >{`#${row.id}`}</Link>
         </Typography>
       )

@@ -24,87 +24,65 @@ import colors from 'src/views/accounts/colors'
 import fonts from 'src/views/accounts/font'
 
 //** Dto imports */
+import { IProperty } from '@/services/dynamic-data/dtos/propertyListing.dto'
 
-import { IProperty } from '@/services/dynamic-data/dtos/dashboard.dto'
+//** Hooks imports */
+import { useGetPriorityProperties } from '@/hooks/dynamic-data/dashboard'
 
 export enum EFieldColumn {
   PROPERTY_ID = 'id',
   VALFIS = 'valfis',
-  NOM_ENT = 'nomEnt',
-  NOM_MUN = 'nomMun',
-  TYPE = 'type',
-  ZONACRESTA = 'zonacresta'
+  STATE = 'state',
+  PROVINCE = 'province',
+  INSTITUTION = 'institution',
+  CRESTA_ZONE = 'crestazone'
 }
 
 const PriorityProperties = () => {
   // ** State
-  const [loading, setLoading] = useState<boolean>(false)
-  const properties: IProperty[] = [
-    {
-      id: "06003_1",
-      valfis: "000,000,000.00",
-      nomEnt:"9",
-      nomMun:"14",
-      type:"Propiedad Federal",
-      zonacresta: "10"
-    },
-    {
-      id: "06003_1",
-      valfis: "000,000,000.00",
-      nomEnt:"9",
-      nomMun:"14",
-      type:"Propiedad Federal",
-      zonacresta: "10"
-    },
-    {
-      id: "06003_1",
-      valfis: "000,000,000.00",
-      nomEnt:"9",
-      nomMun:"14",
-      type:"Propiedad Federal",
-      zonacresta: "10"
-    },
-    {
-      id: "06003_1",
-      valfis: "000,000,000.00",
-      nomEnt:"9",
-      nomMun:"14",
-      type:"Propiedad Federal",
-      zonacresta: "10"
-    },
-    {
-      id: "06003_1",
-      valfis: "000,000,000.00",
-      nomEnt:"9",
-      nomMun:"14",
-      type:"Propiedad Federal",
-      zonacresta: "10"
-    },
-    {
-      id: "06003_1",
-      valfis: "000,000,000.00",
-      nomEnt:"9",
-      nomMun:"14",
-      type:"Propiedad Federal",
-      zonacresta: "10"
-    }
-  ]
+  const { propertyPagination, setPropertyPagination, properties } = useGetPriorityProperties()
 
-  // ** Hooks
+  // const { getPriorityProperties } = useGetPriorityProperties()
   const router = useRouter()
+  const [loading, setLoading] = useState<boolean>(false)
+  const [propertiesList, setPropertiesList] = useState<IProperty[]>(
+    [
+      {
+        crestZone: '',
+        institution: '',
+        keyDepe: '',
+        latitude: '',
+        longitude: '',
+        province: '',
+        state: '',
+        valfisValue: ''
+      }
+    ]
+  )
+
+  useEffect(() => {
+    setPropertyPagination({ ...propertyPagination })
+    //eslint-disable-next-line
+  }, [])
+
+  useEffect(() => {
+    console.log("properties")
+    console.log(properties)
+    setPropertiesList(properties || [])
+  }, [properties])
 
   useEffect(() => {
     setLoading(true);
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 5000);
+    }, 500);
 
     return () => clearTimeout(timer);
   }, []);
 
-const seeMore = ()=>{
-  router.push(`/dynamic-data/property-listing/`)
-}
+  const seeMore = () => {
+    router.push(`/dynamic-data/property-listing/`)
+  }
 
   const column: GridColumns<IProperty> = [
     {
@@ -131,14 +109,14 @@ const seeMore = ()=>{
             onClick={() => {
               console.log("id clicked")
             }}
-          >{`#${row.id}`}</Link>
+          >{`#${row.keyDepe}`}</Link>
         </Typography>
       )
     },
     {
       flex: 0.1,
       field: EFieldColumn.VALFIS,
-      headerName: 'VALFIS',
+      headerName: 'REPL. VALUE',
       minWidth: 130,
       maxWidth: 150,
       type: 'string',
@@ -148,18 +126,18 @@ const seeMore = ()=>{
       sortable: false,
       headerClassName: 'properties-table-header',
       renderHeader: ({ colDef }) => (
-        <ColumnHeader colDef={colDef}/>
+        <ColumnHeader colDef={colDef} />
       ),
       renderCell: ({ row }) => (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          ${row.valfis}
+          ${row.valfisValue}
         </Box>
       )
     },
     {
       flex: 0.1,
-      field: EFieldColumn.NOM_ENT,
-      headerName: 'NOM_ENT',
+      field: EFieldColumn.STATE,
+      headerName: 'STATE',
       minWidth: 50,
       maxWidth: 90,
       type: 'string',
@@ -173,15 +151,15 @@ const seeMore = ()=>{
           sx={{ color: colors.text.primary, fontWeight: 500, fontSize: fonts.size.px14, fontFamily: fonts.inter }}
         >
           <Link sx={{ color: colors.text.primary }} href='#'>
-            {row.nomEnt}
+            {row.state}
           </Link>
         </Typography>
       )
     },
     {
       flex: 0.1,
-      field: EFieldColumn.NOM_MUN,
-      headerName: 'NOM_MUN',
+      field: EFieldColumn.PROVINCE,
+      headerName: 'PROVINCE',
       minWidth: 50,
       maxWidth: 90,
       type: 'string',
@@ -190,18 +168,18 @@ const seeMore = ()=>{
       sortable: false,
       headerClassName: 'properties-table-header',
       renderHeader: ({ colDef }) => (
-        <ColumnHeader colDef={colDef}   />
+        <ColumnHeader colDef={colDef} />
       ),
       renderCell: ({ row }) => (
         <Typography sx={{ color: colors.text.secondary, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
-          {row.nomMun}
+          {row.province}
         </Typography>
       )
     },
     {
       flex: 0.1,
-      field: EFieldColumn.TYPE,
-      headerName: 'TYPE',
+      field: EFieldColumn.INSTITUTION,
+      headerName: 'INSTITUTION',
       minWidth: 150,
       type: 'string',
       align: 'left',
@@ -215,15 +193,15 @@ const seeMore = ()=>{
 
         return (
           <Typography sx={{ color: colors.text.secondary, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
-            {row.type}
+            {row.institution}
           </Typography>
         )
       }
     },
     {
       flex: 0.1,
-      field: EFieldColumn.ZONACRESTA,
-      headerName: 'ZONACRESTA',
+      field: EFieldColumn.CRESTA_ZONE,
+      headerName: 'CRESTA ZONE',
       minWidth: 120,
       type: 'string',
       align: 'left',
@@ -237,7 +215,7 @@ const seeMore = ()=>{
 
         return (
           <Typography sx={{ color: colors.text.secondary, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
-            {row.zonacresta}
+            {row.crestZone}
           </Typography>
         )
       }
@@ -247,23 +225,25 @@ const seeMore = ()=>{
   return (
 
     <Card>
-    <DataGrid
+      <DataGrid
         loading={loading}
         autoHeight
         disableSelectionOnClick
-        rows={properties}
+        rows={propertiesList}
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        getRowId={(row) => "1"}
         columns={column}
         pagination={undefined}
         pageSize={10}
         className={'properties-datagrid'}
 
       />
-       <div className="see-more-section">
-      <Button className='add-btn' onClick={seeMore}>
+      <div className="see-more-section">
+        <Button className='add-btn' onClick={seeMore}>
           See more
-      </Button>
+        </Button>
       </div>
-  </Card>
+    </Card>
 
   )
 }

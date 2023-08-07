@@ -6,6 +6,7 @@ import { useSelector } from 'react-redux'
 
 import { TypedUseSelectorHook, useDispatch } from 'react-redux'
 import accounts from 'src/store/apps/accounts'
+import stepFormSlice from 'src/store/apps/accounts/stepFormsSlice'
 import calendar from 'src/store/apps/calendar'
 import brokerContacts from 'src/store/apps/catalogs/brokerContacts'
 import brokers from 'src/store/apps/catalogs/brokers'
@@ -35,6 +36,7 @@ export const store = configureStore({
     brokerContacts,
     properties,
     multiTabButtonsSlice,
+    stepFormSlice,
     endorsement
   },
   middleware: getDefaultMiddleware =>

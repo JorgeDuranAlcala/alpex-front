@@ -1,6 +1,5 @@
 // ** MUI Imports
 import Card from '@mui/material/Card';
-import CardMedia from '@mui/material/CardMedia';
 
 
 const PropertiesMap = () => {
@@ -8,13 +7,26 @@ const PropertiesMap = () => {
   const mapSrc = "/images/pages/properties-map.png"
 
   return (
+
     <Card>
-    <CardMedia
-      sx={{ height: 460, backgroundSize: 'auto' }}
+    {/* <CardMedia
+      sx={{ minHeight: '450px', height: "100%", width: "100%", backgroundSize: 'contain' }}
       image={mapSrc}
       title="properties map"
-    />
-  </Card>
+    /> */}
+  <img
+        src={mapSrc}
+        alt="properties map"
+        style={{ width: "100%", height: "100%", objectFit: "contain" }}
+      />
+
+   </Card>
+
+  // <CardMedia
+  //     sx={{ minHeight: '450px', height: "100%", width: "100%", backgroundSize: 'contain' }}
+  //     image={mapSrc}
+  //     title="properties map"
+  //   />
   )
 }
 

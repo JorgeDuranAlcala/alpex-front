@@ -1,7 +1,7 @@
 // ** Redux Imports
 import { RootState } from '@/store'
 import { setDateFilterQuery } from '@/utils/formatDates'
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
+import { PayloadAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 
 // ** Axios Imports
 import accountsService from 'src/services/accounts/account.service'
@@ -76,7 +76,7 @@ export const appAccountsSlice = createSlice({
       }
     },
     deleteAccountFilter: (state, { payload }) => {
-      ;(state.filters = state.filters.filter(item => item.type !== payload)),
+      ; (state.filters = state.filters.filter(item => item.type !== payload)),
         (state.info = {
           count: 0,
           page: 1,
@@ -87,7 +87,7 @@ export const appAccountsSlice = createSlice({
         })
     },
     resetAccountFilter: state => {
-      ;(state.filters = []),
+      ; (state.filters = []),
         (state.info = {
           count: 0,
           page: 1,
@@ -101,6 +101,15 @@ export const appAccountsSlice = createSlice({
     updateFormsData: (state, { payload }) => {
       state.formsData = { ...state.formsData, ...payload }
     },
+    updateFormId: (state, action: PayloadAction<{ id: number }>) => {
+
+      let tempDataForm1 = state.formsData.form1
+      tempDataForm1 = { ...tempDataForm1, id: action.payload.id }
+
+      state.formsData.form1 = tempDataForm1;
+
+    },
+
     resetFormsData: state => {
       state.formsData = {}
     }
@@ -140,7 +149,7 @@ export const appAccountsSlice = createSlice({
   }
 })
 
-export const { handleAccountFilter, deleteAccountFilter, resetAccountFilter, updateFormsData } =
+export const { handleAccountFilter, deleteAccountFilter, resetAccountFilter, updateFormsData, updateFormId } =
   appAccountsSlice.actions
 
 export default appAccountsSlice.reducer

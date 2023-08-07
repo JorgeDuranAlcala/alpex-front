@@ -18,7 +18,7 @@ export interface SalesThisMonthDto {
 }
 
 export interface InvestmentPerStateDto {
-  totalBuildings: number | string
+  totalValfis: number | string
   name: string
   data: number[]
   categories: string[]

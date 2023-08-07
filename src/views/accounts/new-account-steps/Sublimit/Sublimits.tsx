@@ -18,6 +18,8 @@ import UserThemeOptions from '@/layouts/UserThemeOptions'
 import SaveIcon from '@mui/icons-material/Save'
 
 // import CheckIcon from '@mui/icons-material/Check'
+import useFormStep_updateSublimits from '@/hooks/accounts/forms/stepForms/update/useFormStep_updateSublimits'
+import { useRouter } from 'next/router'
 import { DisableForm } from '../_commons/DisableForm'
 
 const initialValues: SublimitDto = {
@@ -83,6 +85,7 @@ interface SublimitsProps {
 // getAccountByIdHeader
 
 const Sublimits = ({ }: SublimitsProps) => {
+  const router = useRouter();
   const [badgeData, setBadgeData] = useState<IAlert>({
     message: '',
     theme: 'success',
@@ -275,9 +278,14 @@ const Sublimits = ({ }: SublimitsProps) => {
   // }
 
   const getAccountData = async () => {
-    const idAccountCache = Number(localStorage.getItem('idAccount'))
-    setAccountId(idAccountCache)
-    const accountData = await getAccountById(idAccountCache)
+    const idAccount = Number(localStorage.getItem('idAccount')) || Number(router.query.idAccount)
+
+    if (!idAccount) return
+
+    localStorage.setItem('idAccount', idAccount.toString())
+    setAccountId(idAccount)
+
+    const accountData = await getAccountById(idAccount)
 
     if (accountData && accountData.sublimits.length > 0) {
       setSubLimits([...accountData.sublimits])
@@ -299,6 +307,15 @@ const Sublimits = ({ }: SublimitsProps) => {
   }, [])
   console.log({ subLimits })
 
+  // * INIT -  Actualizar los datos del formulario en Redux + + + + + + + + + + + + + +
+
+  const { handleCanUpdateSublimitsData } = useFormStep_updateSublimits({
+    idAccount: account?.id || null,
+    sublimits: subLimits
+  });
+
+  // * END -  Actualizar los datos del formulario en Redux + + + + + + + + + + + + + +
+
   return (
     <CardContent>
       <Grid container spacing={5}>
@@ -310,7 +327,7 @@ const Sublimits = ({ }: SublimitsProps) => {
           </div>
         </Grid>
         <Grid item xs={12} sm={12}>
-          <form noValidate autoComplete='on'>
+          <form noValidate autoComplete='on' onClick={handleCanUpdateSublimitsData}>
             <DisableForm isDisabled={account?.status.toLowerCase() === 'bound' ? true : false}>
               {/* campos header */}
               <Grid container spacing={5}>

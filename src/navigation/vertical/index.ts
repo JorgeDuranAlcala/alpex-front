@@ -203,7 +203,8 @@ const navigation = (): VerticalNavItemsType => {
             },
             {
               title: 'Hurricanes',
-              icon: 'ic:baseline-waves'
+              icon: 'ic:baseline-waves',
+              path: '/dynamic-data/maps/map-hurricanes'
             }
           ]
         }

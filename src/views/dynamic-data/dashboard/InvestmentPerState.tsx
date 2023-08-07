@@ -3,55 +3,78 @@ import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
 import CardHeader from '@mui/material/CardHeader'
 import { useTheme } from '@mui/material/styles'
+import Tooltip from '@mui/material/Tooltip'
+
+// ** Icon Imports
+import Icon from 'src/@core/components/icon'
 
 // ** Third Party Imports
 import ReactApexcharts from '@/@core/components/react-apexcharts'
 import { ApexOptions } from 'apexcharts'
 
 // ** Custom Components Imports
-import OptionsMenu from 'src/@core/components/option-menu'
+// import OptionsMenu from 'src/@core/components/option-menu'
 
 // ** Util Import
 import { hexToRGBA } from 'src/@core/utils/hex-to-rgba'
 
-// ** Import services
-//  import dashboardMockService from '@/services/dynamic-data/dashboard.mock-service'
+// ** Import hooks
+import { useGetInvestmentPerState } from '@/hooks/dynamic-data/dashboard'
 
 //Dto imports
-  import { InvestmentPerStateDto } from '@/services/dynamic-data/dtos/dashboard.dto'
+// import { InvestmentPerStateDto } from '@/services/dynamic-data/dtos/dashboard.dto'
 
-// import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 const InvestmentPerState = () => {
   // ** Hook
   const theme = useTheme()
 
-  // const [seriess, setSeriess] = useState<
-  //  [{
-  //     name: string,
-  //     data: number[]
-  //   }]
-  // >()
-  // const [infos, setInfos] = useState<{totalBuildings: string | number, categories: string[] }>()
-
-  // const info = await dashboardMockService.getInvestmentPerState()
-
-  // console.log("info")
-  // console.log(info)
-
-
-  const info: InvestmentPerStateDto ={
-    totalBuildings: '142,000',
-    name: 'Sales',
-    data: [14165, 12859, 10375, 8567, 6880],
-    categories: ['CX','NL','YU','EM','PU']
-  }
-  const series = [
+  const {getInvestmentPerState} = useGetInvestmentPerState()
+  const [totalValfis, setTotalValfis] = useState<string | number>(0)
+  const [categories, setCategories] = useState<string[]>([])
+  const [series, setSeries] = useState<any[]>([
     {
-      name: info.name,
-      data: info.data
+      name: '',
+      data: []
     }
-  ]
+  ])
+
+  const setDataInformation = async () => {
+    const data = await getInvestmentPerState()
+
+    if (!data) return
+
+    const newSeries = [
+      {
+      name: data.name || '',
+      data: data.data || [],
+      }
+    ]
+
+
+    setSeries(newSeries)
+    setTotalValfis(data.totalValfis)
+    setCategories(data.categories)
+  }
+
+  useEffect(() => {
+    setDataInformation()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // const info: InvestmentPerStateDto = {
+  //   totalValfis: '142,000',
+  //   name: 'Sales',
+  //   data: [14165, 12859, 10375, 8567, 6880],
+  //   categories: ['CX', 'NL', 'YU', 'EM', 'PU']
+  // }
+  // const series = [
+  //   {
+  //     name: info.name,
+  //     data: info.data
+  //   }
+  // ]
 
   const options: ApexOptions = {
     chart: {
@@ -114,7 +137,7 @@ const InvestmentPerState = () => {
     xaxis: {
       axisTicks: { show: false },
       axisBorder: { show: false },
-      categories: info?.categories,
+      categories: categories,
       labels: {
         formatter: val => `${Number(val) / 1000}k`,
         style: {
@@ -135,30 +158,21 @@ const InvestmentPerState = () => {
     }
   }
 
-  // useEffect(() => {
-
-  //   const getData = async()=>{
-  //     const result = await dashboardMockService.getInvestmentPerState()
-
-  //     setSeriess(() => [{name: result.name, data: result.data}] )
-  //     setInfos({totalBuildings: result.totalBuildings, categories: result.categories})
-  //   }
-
-  //   getData()
-  // }, [])
 
   return (
-    <Card>
+    <Card className='investment-per-state'>
       <CardHeader
-        title='Sales Country'
-        subheader='Total $42,580 Sales'
+        title='Investment per State'
+        subheader={`Total VALFIS sum $${totalValfis}M`}
+        sx= {{position: 'relative'}}
         subheaderTypographyProps={{ sx: { lineHeight: 1.429 } }}
         titleTypographyProps={{ sx: { letterSpacing: '0.15px' } }}
         action={
-          <OptionsMenu
-            options={['Last 28 Days', 'Last Month', 'Last Year']}
-            iconButtonProps={{ size: 'small', className: 'card-more-options' }}
-          />
+          <div className='icon-wrapper'>
+            <Tooltip arrow title='Investment per state info.' placement='top'>
+              <div className='tooltip-content' style={{ color: 'rgba(87, 90, 111, 0.54)' }}><Icon icon='mdi:information-outline' /></div>
+            </Tooltip>
+          </div>
         }
       />
       <CardContent

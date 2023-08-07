@@ -1,8 +1,14 @@
+import { useEffect, useState } from 'react'
+
 // ** MUI Imports
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
+import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
 import { useTheme } from '@mui/material/styles'
+
+// ** Icon Imports
+import Icon from 'src/@core/components/icon'
 
 // ** Third Party Imports
 import { ApexOptions } from 'apexcharts'
@@ -14,19 +20,42 @@ import ReactApexcharts from 'src/@core/components/react-apexcharts'
 import { hexToRGBA } from 'src/@core/utils/hex-to-rgba'
 
 // ** Dto imports
-import { SalesThisMonthDto } from '@/services/dynamic-data/dtos/dashboard.dto'
+// import { SalesThisMonthDto } from '@/services/dynamic-data/dtos/dashboard.dto'
 
+import { useGetSalesThisMonth } from '@/hooks/dynamic-data/dashboard'
 
 const SalesThisMonth = () => {
+
+  const [totalSales, setTotalSales] = useState<number>()
+  const [series, setSeries] = useState<any[]>([
+    {
+      data:[]
+    }
+  ])
+  const { getSalesThisMonth } = useGetSalesThisMonth()
+
   // ** Hook
   const theme = useTheme()
 
-  const info: SalesThisMonthDto = {
-    total: 28.450,
-    data:[12, 12, 18, 18, 13, 13, 5, 5, 17, 17, 25, 25]
+  const setDataInformation = async () => {
+    const data = await getSalesThisMonth()
+
+    if (!data) return
+
+    const newSeries= [
+      {
+        data: data.data
+      }
+    ]
+    setTotalSales(data.total)
+    setSeries(newSeries)
+
   }
 
-  const series = [{ data: info.data }]
+  useEffect(() => {
+    setDataInformation()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const options: ApexOptions = {
     chart: {
@@ -74,15 +103,20 @@ const SalesThisMonth = () => {
   }
 
   return (
-    <Card>
-      <CardContent sx={{ pb: '0 !important' }}>
+    <Card className='sales-this-month'>
+      <CardContent sx={{ pb: '0 !important', position: 'relative' }}>
         <Typography variant='h6' sx={{ mb: 2.5 }}>
           Sales This Months
         </Typography>
         <Typography variant='body2'>Total Sales This Month</Typography>
-        <Typography variant='h6'>{`$ ${info.total}k`}</Typography>
+        <Typography variant='h6'>{`$ ${totalSales}k`}</Typography>
 
         <ReactApexcharts type='line' height={115} options={options} series={series} />
+        <div className='icon-wrapper'>
+          <Tooltip arrow title='Sales this mont info.' placement='top'>
+            <div className='tooltip-content' style={{color: 'rgba(87, 90, 111, 0.54)'}}><Icon icon='mdi:information-outline' /></div>
+          </Tooltip>
+          </div>
       </CardContent>
     </Card>
   )

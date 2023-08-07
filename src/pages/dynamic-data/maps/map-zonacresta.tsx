@@ -1,22 +1,17 @@
 // ** MUI Imports
-import Card from '@mui/material/Card'
-import Grid from '@mui/material/Grid'
+import { Container } from 'src/styles/Dashboard/dashboard'
 
 // ** Custom Components Imports
-// import Table from 'src/views/accounts/Table'
+import ZonacrestaMap from '@/views/dynamic-data/maps/ZonacrestaMap'
 
-const ZonacrestaMap = () => {
+const MapZonacresta = () => {
 
   return (
-
-      <Grid item xs={12}>
-      <Card>
-        map Zonacresta
-      </Card>
-    </Grid>
-
+    <Container>
+      <ZonacrestaMap />
+    </Container>
   )
 }
 
-export default ZonacrestaMap
+export default MapZonacresta
 
