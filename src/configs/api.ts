@@ -303,5 +303,14 @@ export enum DEBIT_NOTE_ROUTES {
 
 export enum DATA_DASHBOARD_ROUTES {
   GET_PRIORITY_PROPERTIES = 'buildings/all',
+}
 
+export enum DOCUMENTS_ROUTES {
+  GETBYACCOUNTID = 'documents/get/byAccountId',
+  MOVEFILE = 'documents/move/file',
+  RENAMEFOLDER = 'documents/rename/folder',
+  DELETEFILE = 'documents/delete/file',
+  DELETEFOLDER = 'documents/delete/folder',
+  UPLOADFILE = 'documents/upload',
+  CREATEFOLDER = 'documents/create/folder'
 }

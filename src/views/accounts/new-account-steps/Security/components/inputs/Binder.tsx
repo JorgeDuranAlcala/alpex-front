@@ -1,6 +1,7 @@
-import { FormControl, InputLabel, MenuItem, SelectChangeEvent } from '@mui/material'
+import { FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material'
 
-import { SelectAnchor } from '@/@core-custom/inputs/SelectAnchor'
+// import { SelectAnchor } from '@/@core-custom/inputs/SelectAnchor'
+
 import { ReinsuranceCompanyBinderDto } from '@/services/catalogs/dtos/ReinsuranceCompanyBinder.dto'
 import ReinsuranceCompanyBinderService from '@/services/catalogs/reinsuranceCompanyBinder.service'
 import { useContext, useEffect, useState } from 'react'
@@ -68,7 +69,7 @@ export const Binder = ({ value, index, view, companyId }: BinderProps) => {
     <FormControl fullWidth sx={{ mb: 6.5 }}>
       <InputLabel id='Binder'>Binder</InputLabel>
 
-      <SelectAnchor
+      <Select
         label='Binder'
         value={selectedBinder && binders.length > 0 ? String(selectedBinder.id) : String(value)}
         labelId='binder'
@@ -84,7 +85,7 @@ export const Binder = ({ value, index, view, companyId }: BinderProps) => {
             </MenuItem>
           ))
         )}
-      </SelectAnchor>
+      </Select>
     </FormControl>
   )
 }

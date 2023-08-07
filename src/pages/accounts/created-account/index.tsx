@@ -25,6 +25,8 @@ import PaymentWarranty from 'src/views/accounts/new-account-steps/PaymentWarrant
 import Security from 'src/views/accounts/new-account-steps/Security/SecurityView'
 import FormHeader from 'src/views/accounts/new-account-steps/headers/formHeader'
 
+import ChangeStepForm from 'src/views/accounts/ChangeStepForm'
+
 // ** Components
 import MenuForm from '@/pages/menuForm'
 import BoundAccountStepper from '@/views/components/bound-account/BoundAccountStepper'
@@ -32,7 +34,6 @@ import CommentSection from 'src/views/components/new-accounts/CommentSection'
 import NewAccountStepper from 'src/views/components/new-accounts/NewAccountStepper'
 
 // ** Redux
-import { updateFormsData } from '@/store/apps/accounts'
 import { useAppDispatch, useAppSelector } from 'src/store'
 import { resetEndorsement } from 'src/store/apps/endorsement'
 
@@ -43,6 +44,8 @@ import { AccountsTableContextProvider } from '@/context/accounts/Table/reducer'
 import { useGetAccountById } from '@/hooks/accounts/forms'
 
 // ** Core
+import { stepForms_updateStep } from '@/store/apps/accounts/stepFormsSlice'
+import { Box, CircularProgress } from '@mui/material'
 import Icon from 'src/@core/components/icon'
 
 export interface AllFormsInterface {
@@ -62,7 +65,9 @@ const CreatedAccount = () => {
   const endorsementData = useAppSelector(state => state.endorsement.data)
 
   // Custom Hooks
-  const { account: accountDetails, setAccountId, getAccountById } = useGetAccountById()
+  const { isLoading, account: accountDetails, setAccountId, getAccountById } = useGetAccountById()
+
+  // console.log({ accountDetails })
 
   // States
   const [disableComments] = useState(false)
@@ -129,6 +134,13 @@ const CreatedAccount = () => {
   }
 
   const handleStepChange = (step: number) => {
+
+    dispatch(stepForms_updateStep({
+      id: accountDetails?.id || 'new account',
+      data: step,
+    }))
+
+
     setActiveStep(step)
   }
 
@@ -202,7 +214,9 @@ const CreatedAccount = () => {
   useEffect(() => {
     const handleExit = () => {
       localStorage.removeItem('idAccount')
-      dispatch(updateFormsData({ form1: { id: null } }))
+
+      // Creo que ya no es necesario por el componente multi pestaña
+      // dispatch(updateFormsData({ form1: { id: null } }))
       dispatch(resetEndorsement())
     }
 
@@ -225,15 +239,29 @@ const CreatedAccount = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editInfo, accountDetails?.status, endorsementData.type])
 
+  if (isLoading) {
+
+    return <Box>
+      <CircularProgress size={75} />
+    </Box>
+  }
+
   return (
     <AccountsTableContextProvider>
       <Grid className='new-account' item xs={12}>
         <FormHeader setEditInfo={setEditInfo} accountDetails={accountDetails} setAccountId={setAccountId} />
         <div style={{ display: 'flex', flexDirection: 'row', gap: '16px' }}>
-          <Card>
-            {selectAccountStepper()}
-            {selectStepForm()}
-          </Card>
+          <ChangeStepForm
+            accountId={accountDetails?.id || null}
+            changeAccountId={setAccountId}
+            step={activeStep}
+            changeStep={handleStepChange}
+          >
+            <Card>
+              {selectAccountStepper()}
+              {selectStepForm()}
+            </Card>
+          </ChangeStepForm>
           <div style={{ display: 'none' }}>
             <MenuForm />
           </div>
