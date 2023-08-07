@@ -60,72 +60,6 @@ const PriorityProperties = () => {
     ]
   )
 
-  // const properties: IProperty[] = [
-  //   {
-  //     id: "06003_1",
-  //     valfis: "000,000,000.00",
-  //     nomEnt: "9",
-  //     nomMun: "14",
-  //     type: "Propiedad Federal",
-  //     zonacresta: "10"
-  //   },
-  //   {
-  //     id: "06003_1",
-  //     valfis: "000,000,000.00",
-  //     nomEnt: "9",
-  //     nomMun: "14",
-  //     type: "Propiedad Federal",
-  //     zonacresta: "10"
-  //   },
-  //   {
-  //     id: "06003_1",
-  //     valfis: "000,000,000.00",
-  //     nomEnt: "9",
-  //     nomMun: "14",
-  //     type: "Propiedad Federal",
-  //     zonacresta: "10"
-  //   },
-  //   {
-  //     id: "06003_1",
-  //     valfis: "000,000,000.00",
-  //     nomEnt: "9",
-  //     nomMun: "14",
-  //     type: "Propiedad Federal",
-  //     zonacresta: "10"
-  //   },
-  //   {
-  //     id: "06003_1",
-  //     valfis: "000,000,000.00",
-  //     nomEnt: "9",
-  //     nomMun: "14",
-  //     type: "Propiedad Federal",
-  //     zonacresta: "10"
-  //   },
-  //   {
-  //     id: "06003_1",
-  //     valfis: "000,000,000.00",
-  //     nomEnt: "9",
-  //     nomMun: "14",
-  //     type: "Propiedad Federal",
-  //     zonacresta: "10"
-  //   }
-  // ]
-
-  // ** Hooks
-
-  // const setDataInformation = async () => {
-  //   const data = await getPriorityProperties()
-
-  //   if (!data) return
-
-  //   setProperties(data)
-  // }
-
-  // useEffect(() => {
-  //   setDataInformation()
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [])
-
   useEffect(() => {
     setPropertyPagination({ ...propertyPagination })
     //eslint-disable-next-line
@@ -296,6 +230,7 @@ const PriorityProperties = () => {
         autoHeight
         disableSelectionOnClick
         rows={propertiesList}
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         getRowId={(row) => "1"}
         columns={column}
         pagination={undefined}
