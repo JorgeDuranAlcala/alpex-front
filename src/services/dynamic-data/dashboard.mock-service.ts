@@ -141,8 +141,6 @@ class DashboardMockServices {
       // ]
       const url = urlQ ? urlQ : queryBuilder(propertyData.filters, `${DATA_DASHBOARD_ROUTES.GET_PRIORITY_PROPERTIES}`)
       const { data } = await AppAlpexApiGateWay.get(`${url}page=${propertyData.info.page}&itemsPerPage=${propertyData.info.take}`)
-      console.log(url)
-      console.log(propertyData.filters)
 
       return data
     } catch (error) {

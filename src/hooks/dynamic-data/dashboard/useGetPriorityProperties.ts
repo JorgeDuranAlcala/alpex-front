@@ -33,8 +33,6 @@ export const useGetPriorityProperties = () => {
 
   const getPriorityProperties = async (propertyPagination: PropertyPaginationDto) => {
     const data = await DashboardMockService.getPriorityProperties(propertyPagination)
-    console.log('dataa')
-    console.log(data)
     setProperties(data)
 
     // setPropertyInfoPage(info)

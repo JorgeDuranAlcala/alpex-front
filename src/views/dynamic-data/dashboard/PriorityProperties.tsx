@@ -66,8 +66,6 @@ const PriorityProperties = () => {
   }, [])
 
   useEffect(() => {
-    console.log("properties")
-    console.log(properties)
     setPropertiesList(properties || [])
   }, [properties])
 
