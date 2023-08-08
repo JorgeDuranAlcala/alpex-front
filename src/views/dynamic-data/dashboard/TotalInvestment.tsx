@@ -70,12 +70,12 @@ const TotalInvestment = () => {
             </div>
             <div className="dashboard-row">
               <Typography variant='body2' sx={{ mb: 5 }}>
-                Total VALFIS sum
+              Total Capacity
               </Typography>
             </div>
           </Box>
           <div className='icon-wrapper'>
-          <Tooltip arrow title='Total valfis info.' placement='top'>
+          <Tooltip arrow title='Total sum of replacement values' placement='top'>
             <div className='tooltip-content' style={{color: 'rgba(87, 90, 111, 0.54)'}}><Icon icon='mdi:information-outline' /></div>
           </Tooltip>
           </div>
