@@ -33,7 +33,8 @@ import Icon from 'src/@core/components/icon'
 import UserThemeOptions from 'src/layouts/UserThemeOptions'
 import { SecurityMapper } from './mappers/SecurityForm.mapper'
 
-import useFormStep_updateSecurity from '@/hooks/accounts/forms/stepForms/update/useFormStep_updateSecurity'
+// import useFormStep_updateSecurity from '@/hooks/accounts/forms/stepForms/update/useFormStep_updateSecurity'
+
 import { useRouter } from 'next/router'
 import { DisableForm } from '../_commons/DisableForm'
 import { SecondViewProvider } from './components/secondView/SecondViewProvider'
@@ -460,9 +461,9 @@ const Security = ({ onStepChange }: SecurityProps) => {
 
   // * INIT -  Actualizar los datos del formulario en Redux + + + + + + + + + + + + + +
 
-  const {
-    handleCanUpdateSecuritiesData,
-  } = useFormStep_updateSecurity({ idAccount: accountId, securities, secondViewSecurities: securitiesSecondView })
+  // const {
+  //   handleCanUpdateSecuritiesData,
+  // } = useFormStep_updateSecurity({ idAccount: accountId, securities, secondViewSecurities: securitiesSecondView })
 
   // * END -  Actualizar los datos del formulario en Redux + + + + + + + + + + + + + +
 
@@ -486,7 +487,9 @@ const Security = ({ onStepChange }: SecurityProps) => {
 
         <form noValidate autoComplete='on'>
           <SecondViewProvider>
-            <CardContent onClick={handleCanUpdateSecuritiesData}>
+
+            {/* <CardContent onClick={handleCanUpdateSecuritiesData}> */}
+            <CardContent >
               {securities.length > 0 &&
                 securities.map((security, index) => {
                   return (
