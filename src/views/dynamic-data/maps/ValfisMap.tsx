@@ -1,8 +1,13 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 // ** MUI Imports
 import Card from '@mui/material/Card';
 import Grid from '@mui/material/Grid';
+
+import { Loader } from '@googlemaps/js-api-loader';
+
+//** Styled components imports */
+import { MapContainer } from '@/styled-components/dynamic-data/maps.styled';
 
 // ** Custom Components Imports
 import CustomAvatar from 'src/@core/components/mui/avatar';
@@ -12,7 +17,9 @@ import Icon from 'src/@core/components/icon';
 
 const ValfisMap = () => {
 
-  const mapSrc = "/images/pages/properties-map.png"
+  const mapRef = useRef<HTMLDivElement>(null)
+  const map = useRef<google.maps.Map | null>(null)
+  const mapEnabledRef = useRef<boolean>(false)
   const zoneData = {
     totalValue: '19833668',
     zoneA: '$5M - $13M',
@@ -29,10 +36,42 @@ const ValfisMap = () => {
   const [showDetails, setShowDetails] = useState(false)
   const [showZoneDescription, setShowZoneDescription] = useState(false)
 
+
+  const handleMapClick = (event: google.maps.MapMouseEvent) => {
+    if (mapEnabledRef.current) {
+      console.log(event.latLng)
+    }
+  }
+
   useEffect(() => {
     setShowDetails(true)
     setShowZoneDescription(true)
   }, [])
+
+  useEffect(() => {
+    const loadMap = async () => {
+      const loader = new Loader({
+        apiKey: 'AIzaSyBn3_Ng2UuezOHu5Pqz6c7l1CC9z3tdjFQ',
+        version: 'weekly'
+      })
+
+      const google = await loader.load()
+
+      if (mapRef.current) {
+        map.current = new google.maps.Map(mapRef.current, {
+          center: { lat: 23.6345, lng: -102.5528 },
+          zoom: 5
+        })
+
+        map.current.addListener('click', handleMapClick)
+      }
+
+      // geocoder.current = new google.maps.Geocoder()
+    }
+
+    loadMap()
+  }, [])
+
 
   return (
 
@@ -161,12 +200,12 @@ const ValfisMap = () => {
 
       <Grid item xs={12}>
         <Card>
-          <img
-            src={mapSrc}
-            alt="properties map"
-            style={{ width: "100%", height: "100%", objectFit: "contain" }}
-          />
+          <MapContainer>
 
+            <div style={{ borderRadius: '8px', height: '70vh' }}>
+              <div ref={mapRef} style={{ width: '100%', minHeight: '70vh' }} />
+            </div>
+          </MapContainer>
         </Card>
       </Grid>
     </Grid>
