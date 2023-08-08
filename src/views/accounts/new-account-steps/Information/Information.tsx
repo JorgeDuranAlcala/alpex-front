@@ -40,7 +40,9 @@ import { formatInformationDoctos, getFileFromUrl } from '@/utils/formatDoctos'
 import { DiscountDto } from '@/services/accounts/dtos/discount.dto'
 
 import { useGetAccountById } from '@/hooks/accounts/forms'
-import useFormStep_updateInformation from '@/hooks/accounts/forms/stepForms/update/useFormStep_updateInformation'
+
+// import useFormStep_updateInformation from '@/hooks/accounts/forms/stepForms/update/useFormStep_updateInformation'
+
 import { DisableForm } from '../_commons/DisableForm'
 
 export interface InformationSectionsInt {
@@ -799,10 +801,10 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
 
   // * INIT -  Actualizar los datos del formulario en Redux + + + + + + + + + + + + + +
 
-  const {
-    handleCanUpdateBasicInfoData,
-    handleCanUpdatePlacementStructureData,
-  } = useFormStep_updateInformation({ idAccount, basicInfo, placementStructure, discounts })
+  // const {
+  //   handleCanUpdateBasicInfoData,
+  //   handleCanUpdatePlacementStructureData,
+  // } = useFormStep_updateInformation({ idAccount, basicInfo, placementStructure, discounts })
 
   // * END -  Actualizar los datos del formulario en Redux + + + + + + + + + + + + + +
 
@@ -813,7 +815,9 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
           <CustomAlert {...badgeData} />
         </div>
         <form noValidate autoComplete='on' onSubmit={handleNextStep}>
-          <div className='section' onClick={handleCanUpdateBasicInfoData}>
+          {/* <div className='section' onClick={handleCanUpdateBasicInfoData}> */}
+
+          <div className='section' >
             <DisableForm isDisabled={disableSectionCtrl?.basicInfo} sg={5000}>
               <BasicInfo
                 basicInfo={basicInfo}
@@ -825,7 +829,8 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
             </DisableForm>
           </div>
 
-          <div className='section' onClick={handleCanUpdatePlacementStructureData}>
+          {/* <div className='section' onClick={handleCanUpdatePlacementStructureData}> */}
+          <div className='section'>
             <DisableForm isDisabled={disableSectionCtrl?.placementStructure} sg={5000}>
               <PlacementStructure
                 placementStructure={placementStructure}

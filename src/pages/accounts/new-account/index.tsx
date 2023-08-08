@@ -43,7 +43,7 @@ const NewAccount = () => {
   const dispatch = useAppDispatch()
 
   //hooks header
-  const { account: accountDetails, setAccountId, getAccountById } = useGetAccountById()
+  const { account: accountDetails, getAccountById } = useGetAccountById()
 
 
   const { addNewTabButton, removeTabByText } = useMultiTabButtons()
@@ -213,9 +213,9 @@ const NewAccount = () => {
           it is necessary to send the boolean variable "sideHeader = true". */}
         {/* {activeStep == 1 && isNewAccount ? <ActionsHeader accountStatus='PENDING' sideHeader={false} /> : <FormHeader />} */}
         {activeStep == 1 && isNewAccount ? (
-          <FormHeader isNewAccount accountDetails={accountDetails} setAccountId={setAccountId} />
+          <FormHeader isNewAccount accountDetails={accountDetails} />
         ) : (
-          <FormHeader accountDetails={accountDetails} setAccountId={setAccountId} />
+          <FormHeader accountDetails={accountDetails} />
         )}
         <div style={{ display: 'flex', flexDirection: 'row', gap: '16px' }}>
           <Card>
