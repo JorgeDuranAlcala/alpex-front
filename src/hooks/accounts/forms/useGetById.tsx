@@ -37,7 +37,7 @@ export const useGetAccountById = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const lastAccountId = useRef<number | null>(null);
 
-  const getAccountById = async (idAccount: number) => {
+  const getAccountById = async (idAccount: number): Promise<ResponseGetAccount> => {
 
     // console.log('getAccountById', idAccount)
 
@@ -50,11 +50,10 @@ export const useGetAccountById = () => {
 
       // console.log('accounts', getAccount)
 
-      setAccount(getAccount);
-      setIsLoading(false);
+
     }
 
-    // return getAccount
+    return getAccount
   }
 
   useEffect(() => {
@@ -67,22 +66,21 @@ export const useGetAccountById = () => {
 
       // console.log('useGetAccountById', accountId)
 
-      // AccountServices.getAccountById(accountId)
-      //   .then(accounts => {
-      //     if (accounts) {
-      //       accounts.securities = accounts.securities as SecurityDto[]
-      //       const idAccountStatus: number = accounts.idAccountStatus as number
-      //       const statusKey = `status_${idAccountStatus}`
-      //       accounts.status = account_status[statusKey as keyof typeof account_status]
-      //     }
-      //     console.log('accounts', accounts)
-      //     setAccount(accounts);
-      //     setIsLoading(false);
-      //   })
-      //   .catch((error: Error) => {
-      //     console.log(error)
-      //   })
-      getAccountById(accountId)
+      AccountServices.getAccountById(accountId)
+        .then(accounts => {
+          if (accounts) {
+            accounts.securities = accounts.securities as SecurityDto[]
+            const idAccountStatus: number = accounts.idAccountStatus as number
+            const statusKey = `status_${idAccountStatus}`
+            accounts.status = account_status[statusKey as keyof typeof account_status]
+          }
+          console.log('accounts', accounts)
+          setAccount(accounts);
+          setIsLoading(false);
+        })
+        .catch((error: Error) => {
+          console.log(error)
+        })
     }
 
     // return () => {
