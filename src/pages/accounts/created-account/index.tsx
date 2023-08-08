@@ -241,9 +241,17 @@ const CreatedAccount = () => {
 
   if (isLoading) {
 
-    return <Box>
-      <CircularProgress size={75} />
-    </Box>
+    return (
+      <Box sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100%',
+        width: '100%'
+      }}>
+        <CircularProgress size={75} />
+      </Box>
+    )
   }
 
   return (
@@ -261,7 +269,9 @@ const CreatedAccount = () => {
               {selectAccountStepper()}
               {selectStepForm()}
             </Card>
+
           </ChangeStepForm>
+
           <div style={{ display: 'none' }}>
             <MenuForm />
           </div>
