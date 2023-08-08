@@ -37,24 +37,28 @@ export const useGetAccountById = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const lastAccountId = useRef<number | null>(null);
 
-  const getAccountById = async (idAccount: number): Promise<ResponseGetAccount> => {
+  const getAccountById = async (idAccount: number) => {
 
     // console.log('getAccountById', idAccount)
 
     const getAccount = await AccountServices.getAccountById(idAccount)
 
-    // if (getAccount) {
-    //   const idAccountStatus: number = getAccount.idAccountStatus as number
-    //   const statusKey = `status_${idAccountStatus}`
-    //   getAccount.status = account_status[statusKey as keyof typeof account_status]
-    //   setAccount(getAccount)
-    // }
+    if (getAccount) {
+      const idAccountStatus: number = getAccount.idAccountStatus as number
+      const statusKey = `status_${idAccountStatus}`
+      getAccount.status = account_status[statusKey as keyof typeof account_status]
 
-    return getAccount
+      // console.log('accounts', getAccount)
+
+      setAccount(getAccount);
+      setIsLoading(false);
+    }
+
+    // return getAccount
   }
 
   useEffect(() => {
-    setAccount(undefined);
+    // setAccount(undefined);
     setIsLoading(true);
     if (accountId) {
 
@@ -63,20 +67,22 @@ export const useGetAccountById = () => {
 
       // console.log('useGetAccountById', accountId)
 
-      AccountServices.getAccountById(accountId)
-        .then(accounts => {
-          if (accounts) {
-            accounts.securities = accounts.securities as SecurityDto[]
-            const idAccountStatus: number = accounts.idAccountStatus as number
-            const statusKey = `status_${idAccountStatus}`
-            accounts.status = account_status[statusKey as keyof typeof account_status]
-          }
-          setAccount(accounts);
-          setIsLoading(false);
-        })
-        .catch((error: Error) => {
-          console.log(error)
-        })
+      // AccountServices.getAccountById(accountId)
+      //   .then(accounts => {
+      //     if (accounts) {
+      //       accounts.securities = accounts.securities as SecurityDto[]
+      //       const idAccountStatus: number = accounts.idAccountStatus as number
+      //       const statusKey = `status_${idAccountStatus}`
+      //       accounts.status = account_status[statusKey as keyof typeof account_status]
+      //     }
+      //     console.log('accounts', accounts)
+      //     setAccount(accounts);
+      //     setIsLoading(false);
+      //   })
+      //   .catch((error: Error) => {
+      //     console.log(error)
+      //   })
+      getAccountById(accountId)
     }
 
     // return () => {

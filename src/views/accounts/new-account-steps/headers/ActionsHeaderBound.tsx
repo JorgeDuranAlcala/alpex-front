@@ -4,7 +4,7 @@ import { delayMs } from '@/utils/formatDates'
 import CustomAlert, { IAlert } from '@/views/custom/alerts'
 import CloseIcon from '@mui/icons-material/Close'
 import { Box, Button, CircularProgress, Modal, Typography, styled } from '@mui/material'
-import { useEffect, useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import Icon from 'src/@core/components/icon'
 import { ButtonClose, HeaderTitleModal } from 'src/styles/Dashboard/ModalReinsurers/modalReinsurers'
 import StatusSelect from 'src/views/custom/select/StatusSelect'
@@ -227,12 +227,12 @@ const ActionsHeaderBound: React.FC<IActionsHeaderProps> = ({ accountStatus, side
                     <div className='date'>Date</div>
                   </div>
                   {statusHistory.map(status => (
-                    <>
+                    <Fragment key={status.id}>
                       <div className={status.id % 2 == 0 ? 'history-status grey-bg' : 'history-status'} key={status.id}>
                         <div className='name'>{status.name}</div>
                         <div className='date'>{status.date}</div>
                       </div>
-                    </>
+                    </Fragment>
                   ))}
                 </Box>
               </Modal>
