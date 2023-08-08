@@ -1,4 +1,5 @@
 // import { useGetAllEndorsementTypes } from '@/hooks/accounts/endorsementType/getAllEndorsementTypes.tsx'
+
 import { useGetDoctosByIdAccountAndIdDocumentType } from '@/hooks/accounts/information/useGetFilesByType'
 import { ContainerMobileBound } from '@/styled-components/accounts/Security.styled'
 import { Box, Button, Card, ListItemIcon, ListItemText, Menu, MenuItem, Modal, Typography } from '@mui/material'
@@ -31,7 +32,6 @@ interface FormHeaderProps {
   setEditInfo?: any
   setTypeofAccount?: any
   accountDetails: any
-  setAccountId: any
 }
 
 //Pending types
@@ -169,13 +169,16 @@ const ModalUploadImage = ({ accountId }: any) => {
 
 const FormHeader = ({
   isNewAccount,
+  accountDetails,
+  setEditInfo,
   setActiveEndorsement,
   setTypeofAccount,
-  setEditInfo,
-  accountDetails,
-  setAccountId
 }: FormHeaderProps) => {
-  const [status, setStatus] = useState('')
+
+
+  const [status, setStatus] = useState('');
+  const [netPremiumAmount, setNetPremiumAmount] = useState<string | null>(null);
+
   const account = useAppSelector(state => state.accounts?.formsData?.form1)
 
   // const lastAccountId = useRef<number | null>(null)
@@ -217,27 +220,30 @@ const FormHeader = ({
   }
 
   // useEffect(() => {
-  //   console.log('formHeader account', account);
+
+  //   // console.log('formHeader account', account);
 
   //   const accountId = account?.id;
-  //   console.log('formHeader accountId', {
-  //     idFromAccout: account?.id,
-  //     idFromAccountDetails: accountDetails?.id,
-  //     accountId: accountId,
-  //   });
+
+  //   // console.log('formHeader accountId', {
+  //   //   idFromAccout: account?.id,
+  //   //   idFromAccountDetails: accountDetails?.id,
+  //   //   accountId: accountId,
+  //   // });
 
   //   if (accountId) {
-  //     console.log('formHeader lastAccountId', {
-  //       lastAccountId: lastAccountId.current,
-  //       accountId: accountId
-  //     })
+
+  //     // console.log('formHeader lastAccountId', {
+  //     //   lastAccountId: lastAccountId.current,
+  //     //   accountId: accountId
+  //     // })
   //     if (lastAccountId.current !== accountId || lastAccountDetailsId.current !== accountDetails?.id) {
   //       lastAccountId.current = accountId
   //       lastAccountDetailsId.current = accountId;
 
-  //       // console.log('formHeader setAccountId', accountId)
+  //       console.log('formHeader setAccountId', accountId)
 
-  //       // setAccountId(accountId)
+  //       setAccountId(accountId)
   //     }
 
   //     // isAccountSetted.current = true
@@ -248,10 +254,36 @@ const FormHeader = ({
 
   useEffect(() => {
 
-    // console.log('accountDetails Effect', accountDetails)
+    if (account?.placementStructure?.netPremium) {
+
+      const amount = formaterAmount(account?.placementStructure?.netPremium);
+      const currency = account?.placementStructure?.currency;
+
+      setNetPremiumAmount(`$${amount} ${currency}`);
+    } else if (accountDetails?.informations?.length > 0) {
+      const amount = formaterAmount(accountDetails?.informations[0]?.netPremium);
+      const currency = accountDetails?.informations[0]?.currency;
+
+      setNetPremiumAmount(`$${amount} ${currency}`);
+    }
+
+  }, [account, accountDetails])
+
+
+  useEffect(() => {
+
+    // console.log('accountDetails Effect', accountDetails);
+
     accountDetails && setStatus(accountDetails.status)
 
   }, [accountDetails])
+
+
+
+
+
+
+
 
   // console.log('account', account)
 
@@ -288,8 +320,7 @@ const FormHeader = ({
                 <div className='form-header-money-data'>
                   <span className='form-header-money-data-txt'>Net premium</span>
                   <span className='form-header-money-data-num'>
-                    ${account && formaterAmount(account?.placementStructure?.netPremium)}{' '}
-                    {account?.placementStructure?.currency}
+                    {netPremiumAmount}
                   </span>
                   <span className='form-header-money-data-date'>
                     Last Update: {accountDetails && formatDateFromUTC(accountDetails?.informations[0]?.updatedAt)}
@@ -328,7 +359,7 @@ const FormHeader = ({
                   <div className='form-secondContainer-second'>
                     <span className='form-secondContainer-header-title'>Effective Date</span>
                     <span className='form-secondContainer-header-subtitle'>
-                      {accountDetails && formatDateFromUTC(accountDetails?.informations[0]?.effectiveDate)}
+                      {accountDetails && formatDateFromUTC(accountDetails?.informations[0]?.effectiveDate || null)}
                     </span>
                   </div>
                 )}
