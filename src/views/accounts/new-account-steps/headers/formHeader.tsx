@@ -315,7 +315,7 @@ const FormHeader = ({
                 ${netPremiumAmount}
               </span>
               <span className='subtitle'>Reception Date</span>
-              <span className='reception'>{account && convertirFecha(account?.basicInfo?.receptionDate)}</span>
+              <span className='reception'>{receptionDate}</span>
             </ContainerMobileBound>
 
             {/* Contenedor mobile bound */}
