@@ -96,7 +96,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
   const [isShowToggleFrontingFee, setIsShowToggleFrontingFee] = useState(security.frontingFeeActive || false)
   const [frontingFeeEnabled, setFrontingFeeEnabled] = useState<boolean>(security.frontingFeeActive || false)
   const [isTaxesEnabled, setIsTaxesEnabled] = useState<boolean>(security.taxesActive || false)
-  const [isShowToggleTaxes, setIsShowToggleTaxes] = useState<boolean>(security.taxesActive || false)
+  const [, setIsShowToggleTaxes] = useState<boolean>(security.taxesActive || false)
   const [isShowRetroCedant, setIsShowRetroCedant] = useState<boolean>(true)
 
   const [openDialog, setOpenDialog] = useState(false)
