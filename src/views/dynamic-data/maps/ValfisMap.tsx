@@ -15,24 +15,30 @@ import CustomAvatar from 'src/@core/components/mui/avatar';
 // ** Icon Imports
 import Icon from 'src/@core/components/icon';
 
+//** services imports
+import MapsServices from '@/services/dynamic-data/maps-service';
+
 const ValfisMap = () => {
 
   const mapRef = useRef<HTMLDivElement>(null)
   const map = useRef<google.maps.Map | null>(null)
   const mapEnabledRef = useRef<boolean>(false)
-  const zoneData = {
-    totalValue: '19833668',
-    zoneA: '$5M - $13M',
-    zoneB: '$13M - $50M',
-    zoneC: '$50M - '
-  }
 
-  const detailsData = {
-    totalValue: '19833668',
-    state: 'Yucatán',
-    numberAssets: '236,000',
-    crestaZone: '1'
-  }
+
+  const [zoneData, setZoneData] = useState({
+    totalValue: '',
+    zoneA: '',
+    zoneB: '',
+    zoneC: ''
+  })
+
+  const [detailsData, setDetailsData] = useState({
+    totalValue: '',
+    state: '',
+    numberAssets: '',
+    crestaZone: ''
+  })
+
   const [showDetails, setShowDetails] = useState(false)
   const [showZoneDescription, setShowZoneDescription] = useState(false)
 
@@ -42,6 +48,43 @@ const ValfisMap = () => {
       console.log(event.latLng)
     }
   }
+
+  const setZone = async () => {
+    const data = await MapsServices.getZoneDetails()
+
+
+    if (!data) return
+
+    const newData = {
+      totalValue: data.totalValue || '',
+      zoneA: data.zoneA || '',
+      zoneB: data.zoneB || '',
+      zoneC: data.zoneC || '',
+    }
+    setZoneData(newData)
+  }
+
+  const setDetails = async () => {
+    const data = await MapsServices.getValfisDetails()
+
+
+
+    if (!data) return
+
+    const newData = {
+      totalValue: data.totalValue || '',
+      state: data.state || '',
+      numberAssets: data.numberAssets || '',
+      crestaZone: data.crestaZone || ''
+    }
+    setDetailsData(newData)
+  }
+
+  useEffect(() => {
+    setDetails()
+    setZone()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   useEffect(() => {
     setShowDetails(true)

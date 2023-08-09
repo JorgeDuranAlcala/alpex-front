@@ -8,22 +8,25 @@ import { Loader } from '@googlemaps/js-api-loader';
 //** Styled components imports */
 import { MapContainer } from '@/styled-components/dynamic-data/maps.styled';
 
-
 // ** Icon Imports
 import Icon from 'src/@core/components/icon';
+
+//** services imports
+import MapsServices from '@/services/dynamic-data/maps-service';
+
 
 const HurricaneMap = () => {
 
   const mapRef = useRef<HTMLDivElement>(null)
   const map = useRef<google.maps.Map | null>(null)
   const mapEnabledRef = useRef<boolean>(false)
-  const detailsData = {
-    hurricaneName: 'ADRIAN',
-    advisoryDate: '300 PM MDT Tue Jun 27 2023',
-    sormId: 'ep01',
-    stormNumber: '1',
-    cateogry: '2 - Wind 154-177 km/h'
-  }
+  const [detailsData, setDetailsData] = useState({
+    hurricaneName: '',
+    advisoryDate: '',
+    sormId: '',
+    stormNumber: '',
+    cateogry: ''
+  })
   const [showDetails, setShowDetails] = useState(false)
 
   const handleMapClick = (event: google.maps.MapMouseEvent) => {
@@ -31,6 +34,27 @@ const HurricaneMap = () => {
       console.log(event.latLng)
     }
   }
+
+  const setDataInformation = async () => {
+    const data = await MapsServices.getHurricaneDetails()
+
+
+    if (!data) return
+
+    const newData = {
+      hurricaneName: data.hurricaneName || '',
+      advisoryDate: data.advisoryDate || '',
+      sormId: data.sormId || '',
+      stormNumber: data.stormNumber || '',
+      cateogry: data.cateogry || ''
+    }
+    setDetailsData(newData)
+  }
+
+  useEffect(() => {
+    setDataInformation()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   useEffect(() => {
     setShowDetails(true)
@@ -68,9 +92,10 @@ const HurricaneMap = () => {
           <Card>
             <div className='map-details-wrapper'>
               <div className='details-col' style={{ gap: '10px' }}>
-                <Icon className='blue-icons' icon='mdi:waves' />
+
                 <div>
                   <div className='details-row title'>
+                  <Icon className='blue-icons' icon='mdi:waves' />
                     HURRICANE
                   </div>
                   <div className='details-row'>
@@ -80,9 +105,10 @@ const HurricaneMap = () => {
               </div>
               <div className="vertical-divider"></div>
               <div className='details-col'>
-                <Icon className='blue-icons' icon='mdi:calendar-range' />
+
                 <div>
                   <div className='details-row title'>
+                  <Icon className='blue-icons' icon='mdi:calendar-range' />
                     ADVISORY DATE
                   </div>
                   <div className='details-row'>
@@ -92,9 +118,10 @@ const HurricaneMap = () => {
               </div>
               <div className="vertical-divider"></div>
               <div className='details-col'>
-                <Icon className='blue-icons' icon='mdi:information-outline' />
+
                 <div>
                   <div className='details-row title'>
+                  <Icon className='blue-icons' icon='mdi:information-outline' />
                     STORM ID
                   </div>
                   <div className='details-row'>
@@ -105,9 +132,10 @@ const HurricaneMap = () => {
               </div>
               <div className="vertical-divider"></div>
               <div className='details-col'>
-                <Icon className='blue-icons' icon='mdi:format-list-numbered' />
+
                 <div>
                   <div className='details-row title'>
+                  <Icon className='blue-icons' icon='mdi:format-list-numbered' />
                     STORM NUMBER
                   </div>
                   <div className='details-row'>
@@ -118,9 +146,10 @@ const HurricaneMap = () => {
               </div>
               <div className="vertical-divider"></div>
               <div className='details-col'>
-                <Icon className='blue-icons' icon='mdi:alert-outline' />
+
                 <div>
                   <div className='details-row title'>
+                  <Icon className='blue-icons' icon='mdi:alert-outline' />
                     CATEGORY
                   </div>
                   <div className='details-row'>

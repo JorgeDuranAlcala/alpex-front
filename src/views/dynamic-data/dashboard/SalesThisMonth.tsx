@@ -27,6 +27,8 @@ import { useGetSalesThisMonth } from '@/hooks/dynamic-data/dashboard'
 const SalesThisMonth = () => {
 
   const [totalSales, setTotalSales] = useState<number>()
+  const [firstDate, setFirstDate] = useState<string>('')
+  const [lastDate, setLastDate] = useState<string>('')
   const [series, setSeries] = useState<any[]>([
     {
       data:[]
@@ -49,6 +51,8 @@ const SalesThisMonth = () => {
     ]
     setTotalSales(data.total)
     setSeries(newSeries)
+    setFirstDate(data.firstDate)
+    setLastDate(data.lastDate)
 
   }
 
@@ -108,7 +112,7 @@ const SalesThisMonth = () => {
         <Typography variant='h6' sx={{ mb: 2.5 }}>
         Monthly Premiums
         </Typography>
-        <Typography variant='body2'>Total</Typography>
+        <Typography variant='body2'>{firstDate} - {lastDate}</Typography>
         <Typography variant='h6'>{`$ ${totalSales}k`}</Typography>
 
         <ReactApexcharts type='line' height={115} options={options} series={series} />

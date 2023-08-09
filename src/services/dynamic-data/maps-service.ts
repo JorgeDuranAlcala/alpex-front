@@ -37,6 +37,71 @@ class MapsServices {
     }
   }
 
+  async getHurricaneDetails() {
+    try {
+      const data = {
+        hurricaneName: 'ADRIAN',
+        advisoryDate: '300 PM MDT Tue Jun 27 2023',
+        sormId: 'ep01',
+        stormNumber: '1',
+        cateogry: '2 - Wind 154-177 km/h'
+      }
+
+      return data
+    } catch (error) {
+      const message = String(error)
+      throw new Error(message)
+    }
+  }
+
+  async getEarthquakesDetails() {
+    try {
+      const data = {
+        magnitud: '8.2',
+        depht: '10 km',
+        epicenter: '140 km al Suroeste de Pijijiapan Chis. ',
+        coordinates: 'Lat 14.761  Long -94.103',
+        dateTime: '2017/09/07 23:49'
+      }
+
+      return data
+    } catch (error) {
+      const message = String(error)
+      throw new Error(message)
+    }
+  }
+
+  async getZoneDetails() {
+    try {
+      const data = {
+        totalValue: '19833668',
+        zoneA: '$5M - $13M',
+        zoneB: '$13M - $50M',
+        zoneC: '$50M - '
+      }
+
+      return data
+    } catch (error) {
+      const message = String(error)
+      throw new Error(message)
+    }
+  }
+
+  async getValfisDetails() {
+    try {
+      const data = {
+        totalValue: '19833668',
+        state: 'Yucatán',
+        numberAssets: '236,000',
+        crestaZone: '1'
+      }
+
+      return data
+    } catch (error) {
+      const message = String(error)
+      throw new Error(message)
+    }
+  }
 }
 
 export default new MapsServices()

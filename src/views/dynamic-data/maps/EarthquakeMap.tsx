@@ -7,8 +7,8 @@ import { useEffect, useRef, useState } from 'react';
 //** Styled components imports */
 import { MapContainer } from '@/styled-components/dynamic-data/maps.styled';
 
-
-// ** Custom Components Imports
+//** services imports
+import MapsServices from '@/services/dynamic-data/maps-service';
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon';
@@ -18,13 +18,13 @@ const EarthquakesMap = () => {
   const map = useRef<google.maps.Map | null>(null)
   const mapEnabledRef = useRef<boolean>(false)
 
-  const detailsData = {
-    magnitud: '8.2',
-    depht: '10 km',
-    epicenter: '140 km al Suroeste de Pijijiapan Chis. ',
-    coordinates: 'Lat 14.761  Long -94.103',
-    dateTime: '2017/09/07 23:49'
-  }
+  const [detailsData, setDetailsData] = useState({
+    magnitud: ' ',
+    depht: ' ',
+    epicenter: ' ',
+    coordinates: ' ',
+    dateTime: ' '
+  })
   const [showDetails, setShowDetails] = useState(false)
 
 
@@ -33,6 +33,28 @@ const EarthquakesMap = () => {
       console.log(event.latLng)
     }
   }
+
+  const setDataInformation = async () => {
+    const data = await MapsServices.getEarthquakesDetails()
+
+
+    if (!data) return
+
+    const newData = {
+      magnitud: data.magnitud || ' ',
+      depht: data.depht || ' ',
+      epicenter: data.epicenter || ' ',
+      coordinates: data.coordinates || ' ',
+      dateTime: data.dateTime || ' '
+    }
+    setDetailsData(newData)
+  }
+
+  useEffect(() => {
+    setDataInformation()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
 
   useEffect(() => {
     setShowDetails(true)
@@ -70,11 +92,11 @@ const EarthquakesMap = () => {
           <Card>
             <div className='map-details-wrapper'>
               <div className='details-col' style={{ gap: '10px' }}>
-                <div className='magnitude-icon'>
-                  <Icon className='red-icons' icon='mdi:chart-line-variant' />
-                </div>
                 <div>
                   <div className='details-row title'>
+                  <div className='magnitude-icon'>
+                  <Icon className='red-icons' icon='mdi:chart-line-variant' />
+                </div>
                     MAGNITUDE
                   </div>
                   <div className='details-row'>
@@ -84,9 +106,10 @@ const EarthquakesMap = () => {
               </div>
               <div className="vertical-divider"></div>
               <div className='details-col'>
-                <Icon className='red-icons' icon='mdi:arrow-down-thin-circle-outline' />
+
                 <div>
                   <div className='details-row title'>
+                  <Icon className='red-icons' icon='mdi:arrow-down-thin-circle-outline' />
                     DEPTH
                   </div>
                   <div className='details-row'>
@@ -96,9 +119,10 @@ const EarthquakesMap = () => {
               </div>
               <div className="vertical-divider"></div>
               <div className='details-col'>
-                <Icon className='red-icons' icon='mdi:map-marker' />
+
                 <div>
                   <div className='details-row title'>
+                  <Icon className='red-icons' icon='mdi:map-marker' />
                     EPICENTER
                   </div>
                   <div className='details-row'>
@@ -109,9 +133,10 @@ const EarthquakesMap = () => {
               </div>
               <div className="vertical-divider"></div>
               <div className='details-col'>
-                <Icon className='red-icons' icon='mdi:crosshairs' />
+
                 <div>
                   <div className='details-row title'>
+                  <Icon className='red-icons' icon='mdi:crosshairs' />
                     COORDINATES
                   </div>
                   <div className='details-row'>
@@ -122,9 +147,10 @@ const EarthquakesMap = () => {
               </div>
               <div className="vertical-divider"></div>
               <div className='details-col'>
-                <Icon className='red-icons' icon='mdi:calendar-range' />
+
                 <div>
                   <div className='details-row title'>
+                  <Icon className='red-icons' icon='mdi:calendar-range' />
                     DATE & TIME
                   </div>
                   <div className='details-row'>
