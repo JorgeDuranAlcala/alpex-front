@@ -514,37 +514,37 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
             ...(!isShowRetroCedant ? { mt: 8 } : null)
           }}
         >
-          {isShowToggleTaxes ? (
-            <Grid item xs={12} sm={4}>
-              <SwitchTaxes
-                index={index}
-                validateForm={validateForm}
-                security={security}
-                isChecked={isTaxesEnabled}
-                setIsTaxesEnabled={setIsTaxesEnabled}
-                view={security.view}
-              />
+          {/* {isShowToggleTaxes ? ( */}
+          <Grid item xs={12} sm={4}>
+            <SwitchTaxes
+              index={index}
+              validateForm={validateForm}
+              security={security}
+              isChecked={isTaxesEnabled}
+              setIsTaxesEnabled={setIsTaxesEnabled}
+              view={security.view}
+            />
 
-              <TaxesPercent
-                value={security.taxes}
-                errorMessage={errorsSecurity.taxes}
-                index={index}
-                validateForm={validateForm}
-                isDisabled={!isTaxesEnabled}
-                view={security.view}
-              />
+            <TaxesPercent
+              value={security.taxes}
+              errorMessage={errorsSecurity.taxes}
+              index={index}
+              validateForm={validateForm}
+              isDisabled={!isTaxesEnabled}
+              view={security.view}
+            />
 
-              <TaxesAmount
-                value={security.taxesAmount}
-                errorMessage={errorsSecurity.taxesAmount}
-                index={index}
-                validateForm={validateForm}
-                operationSecurity={operationSecurity}
-                isDisabled={!isTaxesEnabled}
-                view={security.view}
-              />
-            </Grid>
-          ) : null}
+            <TaxesAmount
+              value={security.taxesAmount}
+              errorMessage={errorsSecurity.taxesAmount}
+              index={index}
+              validateForm={validateForm}
+              operationSecurity={operationSecurity}
+              isDisabled={!isTaxesEnabled}
+              view={security.view}
+            />
+          </Grid>
+          {/* ) : null} */}
 
           {isShowToggleFrontingFee ? (
             <Grid item xs={12} sm={4}>
