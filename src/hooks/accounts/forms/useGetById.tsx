@@ -43,18 +43,21 @@ export const useGetAccountById = () => {
 
     const getAccount = await AccountServices.getAccountById(idAccount)
 
-    // if (getAccount) {
-    //   const idAccountStatus: number = getAccount.idAccountStatus as number
-    //   const statusKey = `status_${idAccountStatus}`
-    //   getAccount.status = account_status[statusKey as keyof typeof account_status]
-    //   setAccount(getAccount)
-    // }
+    if (getAccount) {
+      const idAccountStatus: number = getAccount.idAccountStatus as number
+      const statusKey = `status_${idAccountStatus}`
+      getAccount.status = account_status[statusKey as keyof typeof account_status]
+
+      // console.log('accounts', getAccount)
+
+
+    }
 
     return getAccount
   }
 
   useEffect(() => {
-    setAccount(undefined);
+    // setAccount(undefined);
     setIsLoading(true);
     if (accountId) {
 
@@ -71,6 +74,7 @@ export const useGetAccountById = () => {
             const statusKey = `status_${idAccountStatus}`
             accounts.status = account_status[statusKey as keyof typeof account_status]
           }
+          console.log('accounts', accounts)
           setAccount(accounts);
           setIsLoading(false);
         })

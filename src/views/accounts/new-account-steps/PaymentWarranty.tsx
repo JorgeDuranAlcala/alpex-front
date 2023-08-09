@@ -37,7 +37,8 @@ import * as yup from 'yup'
 
 //dtos
 import { useGetAccountById } from '@/hooks/accounts/forms'
-import useFormStep_updatePaymentWarranty from '@/hooks/accounts/forms/stepForms/update/useFormStep_updatePaymentWarranty'
+
+// import useFormStep_updatePaymentWarranty from '@/hooks/accounts/forms/stepForms/update/useFormStep_updatePaymentWarranty'
 import { ButtonClose, HeaderTitleModal } from '@/styles/modal/modal.styled'
 import { delayMs } from '@/utils/formatDates'
 import CustomAlert, { IAlert } from '@/views/custom/alerts'
@@ -402,7 +403,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
 
   // * INIT -  Actualizar los datos del formulario en Redux + + + + + + + + + + + + + +
 
-  const { handleCanUpdateInstallmentsData } = useFormStep_updatePaymentWarranty({ idAccount, installments: installmentsList });
+  // const { handleCanUpdateInstallmentsData } = useFormStep_updatePaymentWarranty({ idAccount, installments: installmentsList });
 
   // * END -  Actualizar los datos del formulario en Redux + + + + + + + + + + + + + +
 
@@ -461,7 +462,8 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
                     decimalScale={0}
                     variant='outlined'
                     value={count}
-                    onClick={handleCanUpdateInstallmentsData}
+
+                    // onClick={handleCanUpdateInstallmentsData}
                     onValueChange={value => {
                       handleNumericInputChange(value.floatValue)
                     }}
