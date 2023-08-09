@@ -101,10 +101,10 @@ const ProportionInvestment = () => {
               {`${proportion.invested}k`}
               </Typography>
             </Box>
-            <Typography variant='body2'>Invested</Typography>
+            <Typography variant='body2'>Placed Capacity</Typography>
           </div>
           <div className='icon-wrapper'>
-          <Tooltip arrow title='Proportion invesment info.' placement='top'>
+          <Tooltip arrow title='Invested capital in the current year and available capital for investment' placement='top'>
             <div className='tooltip-content' style={{color: 'rgba(87, 90, 111, 0.54)'}}><Icon icon='mdi:information-outline' /></div>
           </Tooltip>
           </div>
@@ -143,7 +143,7 @@ const ProportionInvestment = () => {
               {`${proportion.avaliable}k`}
               </Typography>
             </Box>
-            <Typography variant='body2'>Avaliable</Typography>
+            <Typography variant='body2'>Available Capacity</Typography>
           </div>
         </Box>
       </CardContent>

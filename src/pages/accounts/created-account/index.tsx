@@ -25,7 +25,7 @@ import PaymentWarranty from 'src/views/accounts/new-account-steps/PaymentWarrant
 import Security from 'src/views/accounts/new-account-steps/Security/SecurityView'
 import FormHeader from 'src/views/accounts/new-account-steps/headers/formHeader'
 
-import ChangeStepForm from 'src/views/accounts/ChangeStepForm'
+// import ChangeStepForm from 'src/views/accounts/ChangeStepForm'
 
 // ** Components
 import MenuForm from '@/pages/menuForm'
@@ -65,7 +65,11 @@ const CreatedAccount = () => {
   const endorsementData = useAppSelector(state => state.endorsement.data)
 
   // Custom Hooks
-  const { isLoading, account: accountDetails, setAccountId, getAccountById } = useGetAccountById()
+  const { account: accountDetails, setAccountId, getAccountById } = useGetAccountById();
+
+  console.log({ accountDetails })
+
+  // const { isLoading, account: accountDetails, setAccountId, getAccountById } = useGetAccountById()
 
   // console.log({ accountDetails })
 
@@ -82,6 +86,7 @@ const CreatedAccount = () => {
     sublimits: false,
     sov: false
   })
+  const [canRender, setCanRender] = useState<boolean>(false);
 
   const enableInputsCtrl = () => {
     // Para todos los tipos de cuenta excepto |BOUND|, en este caso siempre estarán activados
@@ -239,29 +244,57 @@ const CreatedAccount = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editInfo, accountDetails?.status, endorsementData.type])
 
-  if (isLoading) {
 
-    return <Box>
-      <CircularProgress size={75} />
-    </Box>
+  useEffect(() => {
+
+    if (router.query.idAccount) {
+      setAccountId(Number(router.query.idAccount))
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router.query.idAccount]);
+
+  useEffect(() => {
+    if (accountDetails) {
+      setCanRender(true)
+    }
+  }, [accountDetails]);
+
+
+  if (!canRender) {
+
+    return (
+      <Box sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100%',
+        width: '100%'
+      }}>
+        <CircularProgress size={75} />
+      </Box>
+    )
   }
 
   return (
     <AccountsTableContextProvider>
       <Grid className='new-account' item xs={12}>
-        <FormHeader setEditInfo={setEditInfo} accountDetails={accountDetails} setAccountId={setAccountId} />
+        <FormHeader setEditInfo={setEditInfo} accountDetails={accountDetails} />
         <div style={{ display: 'flex', flexDirection: 'row', gap: '16px' }}>
-          <ChangeStepForm
+
+          {/* <ChangeStepForm
             accountId={accountDetails?.id || null}
             changeAccountId={setAccountId}
             step={activeStep}
             changeStep={handleStepChange}
-          >
-            <Card>
-              {selectAccountStepper()}
-              {selectStepForm()}
-            </Card>
-          </ChangeStepForm>
+          > */}
+          <Card>
+            {selectAccountStepper()}
+            {selectStepForm()}
+          </Card>
+
+          {/* </ChangeStepForm> */}
+
           <div style={{ display: 'none' }}>
             <MenuForm />
           </div>

@@ -305,6 +305,11 @@ export enum DATA_DASHBOARD_ROUTES {
   GET_PRIORITY_PROPERTIES = 'buildings/all',
 }
 
+export enum DATA_MAPS_ROUTES {
+  GET_ALL_PROPERTIES = 'buildings/all',
+}
+
+
 export enum DOCUMENTS_ROUTES {
   GETBYACCOUNTID = 'documents/get/byAccountId',
   MOVEFILE = 'documents/move/file',

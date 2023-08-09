@@ -1,27 +1,87 @@
 // ** MUI Imports
+import { Loader } from '@googlemaps/js-api-loader';
 import Card from '@mui/material/Card';
 import Grid from '@mui/material/Grid';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
-// ** Custom Components Imports
+//** Styled components imports */
+import { MapContainer } from '@/styled-components/dynamic-data/maps.styled';
+
+//** services imports
+import MapsServices from '@/services/dynamic-data/maps-service';
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon';
 
 const EarthquakesMap = () => {
+  const mapRef = useRef<HTMLDivElement>(null)
+  const map = useRef<google.maps.Map | null>(null)
+  const mapEnabledRef = useRef<boolean>(false)
 
-  const mapSrc = "/images/pages/properties-map.png"
-  const detailsData = {
-    magnitud: '8.2',
-    depht: '10 km',
-    epicenter: '140 km al Suroeste de Pijijiapan Chis. ',
-    coordinates: 'Lat 14.761  Long -94.103',
-    dateTime: '2017/09/07 23:49'
-  }
+  const [detailsData, setDetailsData] = useState({
+    magnitud: ' ',
+    depht: ' ',
+    epicenter: ' ',
+    coordinates: ' ',
+    dateTime: ' '
+  })
   const [showDetails, setShowDetails] = useState(false)
+
+
+  const handleMapClick = (event: google.maps.MapMouseEvent) => {
+    if (mapEnabledRef.current) {
+      console.log(event.latLng)
+    }
+  }
+
+  const setDataInformation = async () => {
+    const data = await MapsServices.getEarthquakesDetails()
+
+
+    if (!data) return
+
+    const newData = {
+      magnitud: data.magnitud || ' ',
+      depht: data.depht || ' ',
+      epicenter: data.epicenter || ' ',
+      coordinates: data.coordinates || ' ',
+      dateTime: data.dateTime || ' '
+    }
+    setDetailsData(newData)
+  }
+
+  useEffect(() => {
+    setDataInformation()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
 
   useEffect(() => {
     setShowDetails(true)
+  }, [])
+
+  useEffect(() => {
+    const loadMap = async () => {
+      const loader = new Loader({
+        apiKey: 'AIzaSyBn3_Ng2UuezOHu5Pqz6c7l1CC9z3tdjFQ',
+        version: 'weekly'
+      })
+
+      const google = await loader.load()
+
+      if (mapRef.current) {
+        map.current = new google.maps.Map(mapRef.current, {
+          center: { lat: 23.6345, lng: -102.5528 },
+          zoom: 5
+        })
+
+        map.current.addListener('click', handleMapClick)
+      }
+
+      // geocoder.current = new google.maps.Geocoder()
+    }
+
+    loadMap()
   }, [])
 
   return (
@@ -32,11 +92,11 @@ const EarthquakesMap = () => {
           <Card>
             <div className='map-details-wrapper'>
               <div className='details-col' style={{ gap: '10px' }}>
-                <div className='magnitude-icon'>
-                  <Icon className='red-icons' icon='mdi:chart-line-variant' />
-                </div>
                 <div>
                   <div className='details-row title'>
+                  <div className='magnitude-icon'>
+                  <Icon className='red-icons' icon='mdi:chart-line-variant' />
+                </div>
                     MAGNITUDE
                   </div>
                   <div className='details-row'>
@@ -46,9 +106,10 @@ const EarthquakesMap = () => {
               </div>
               <div className="vertical-divider"></div>
               <div className='details-col'>
-                <Icon className='red-icons' icon='mdi:arrow-down-thin-circle-outline' />
+
                 <div>
                   <div className='details-row title'>
+                  <Icon className='red-icons' icon='mdi:arrow-down-thin-circle-outline' />
                     DEPTH
                   </div>
                   <div className='details-row'>
@@ -58,9 +119,10 @@ const EarthquakesMap = () => {
               </div>
               <div className="vertical-divider"></div>
               <div className='details-col'>
-                <Icon className='red-icons' icon='mdi:map-marker' />
+
                 <div>
                   <div className='details-row title'>
+                  <Icon className='red-icons' icon='mdi:map-marker' />
                     EPICENTER
                   </div>
                   <div className='details-row'>
@@ -71,9 +133,10 @@ const EarthquakesMap = () => {
               </div>
               <div className="vertical-divider"></div>
               <div className='details-col'>
-                <Icon className='red-icons' icon='mdi:crosshairs' />
+
                 <div>
                   <div className='details-row title'>
+                  <Icon className='red-icons' icon='mdi:crosshairs' />
                     COORDINATES
                   </div>
                   <div className='details-row'>
@@ -84,9 +147,10 @@ const EarthquakesMap = () => {
               </div>
               <div className="vertical-divider"></div>
               <div className='details-col'>
-                <Icon className='red-icons' icon='mdi:calendar-range' />
+
                 <div>
                   <div className='details-row title'>
+                  <Icon className='red-icons' icon='mdi:calendar-range' />
                     DATE & TIME
                   </div>
                   <div className='details-row'>
@@ -103,12 +167,12 @@ const EarthquakesMap = () => {
       </Grid>
       <Grid item xs={12}>
         <Card>
-          <img
-            src={mapSrc}
-            alt="properties map"
-            style={{ width: "100%", height: "100%", objectFit: "contain" }}
-          />
+          <MapContainer>
 
+            <div style={{ borderRadius: '8px', height: '70vh' }}>
+              <div ref={mapRef} style={{ width: '100%', minHeight: '70vh' }} />
+            </div>
+          </MapContainer>
         </Card>
       </Grid>
     </Grid>

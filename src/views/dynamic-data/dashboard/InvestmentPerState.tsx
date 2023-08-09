@@ -162,14 +162,14 @@ const InvestmentPerState = () => {
   return (
     <Card className='investment-per-state'>
       <CardHeader
-        title='Investment per State'
+        title='Capacity per State'
         subheader={`Total VALFIS sum $${totalValfis}M`}
         sx= {{position: 'relative'}}
         subheaderTypographyProps={{ sx: { lineHeight: 1.429 } }}
         titleTypographyProps={{ sx: { letterSpacing: '0.15px' } }}
         action={
           <div className='icon-wrapper'>
-            <Tooltip arrow title='Investment per state info.' placement='top'>
+            <Tooltip arrow title='Sum of replacement cost estimations per state' placement='top'>
               <div className='tooltip-content' style={{ color: 'rgba(87, 90, 111, 0.54)' }}><Icon icon='mdi:information-outline' /></div>
             </Tooltip>
           </div>
