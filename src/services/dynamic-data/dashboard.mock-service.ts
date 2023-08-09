@@ -52,7 +52,9 @@ class DashboardMockServices {
     try {
       const data ={
         total: 28.450,
-        data:[12, 12, 18, 18, 13, 13, 5, 5, 17, 17, 25, 25]
+        data:[12, 12, 18, 18, 13, 13, 5, 5, 17, 17, 25, 25],
+        firstDate: '00/00/00',
+        lastDate: '00/00/00'
 
       }
 
@@ -141,6 +143,44 @@ class DashboardMockServices {
       // ]
       const url = urlQ ? urlQ : queryBuilder(propertyData.filters, `${DATA_DASHBOARD_ROUTES.GET_PRIORITY_PROPERTIES}`)
       const { data } = await AppAlpexApiGateWay.get(`${url}page=${propertyData.info.page}&itemsPerPage=${propertyData.info.take}`)
+
+      return data
+    } catch (error) {
+      const message = String(error)
+      throw new Error(message)
+    }
+  }
+
+  /**
+   * Get the Investments proportions
+   * @returns
+   */
+  async getHurricaneDetails() {
+    try {
+     const data = {
+      hurricaneName: 'ADRIAN',
+      advisoryDate: '300 PM MDT Tue Jun 27 2023',
+      sormId: 'ep01',
+      stormNumber: '1',
+      cateogry: '2 - Wind 154-177 km/h'
+     }
+
+      return data
+    } catch (error) {
+      const message = String(error)
+      throw new Error(message)
+    }
+  }
+
+  async getEarthquakesDetails() {
+    try {
+     const data = {
+      magnitud: '8.2',
+    depht: '10 km',
+    epicenter: '140 km al Suroeste de Pijijiapan Chis. ',
+    coordinates: 'Lat 14.761  Long -94.103',
+    dateTime: '2017/09/07 23:49'
+     }
 
       return data
     } catch (error) {
