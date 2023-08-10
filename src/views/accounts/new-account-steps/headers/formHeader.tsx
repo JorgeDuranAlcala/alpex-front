@@ -183,13 +183,18 @@ const FormHeader = ({
   const [receptionDate, setReceptionDate] = useState<string | null>(null)
 
   const account = useAppSelector(state => state.accounts?.formsData?.form1)
+  // console.log(accountDetails);
 
   // const lastAccountId = useRef<number | null>(null)
   // const lastAccountDetailsId = useRef<number | null>(null);
 
   const formaterAmount = (amount: number) => {
+
+
     if (amount) {
-      return amount.toLocaleString('en-US', {
+      const amountNumber = Number(amount);
+
+      return amountNumber.toLocaleString('en-US', {
         style: 'decimal',
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
@@ -256,8 +261,6 @@ const FormHeader = ({
   // }, [account, accountDetails])
 
   useEffect(() => {
-    console.log(accountDetails)
-
     if (account) {
       const amount = formaterAmount(account?.placementStructure?.netPremium);
       const currency = account?.placementStructure?.currency;
