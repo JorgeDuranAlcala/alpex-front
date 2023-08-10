@@ -1,35 +1,60 @@
+
+import { useEffect, useState } from 'react';
+
+//** Dto imports */
+import { BasicInfoDto } from '@/services/dynamic-data/dtos/propertyListing.dto';
+
 // ** MUI Imports
 import Card from '@mui/material/Card';
 
+//services imports
+import PropertiesServices from '@/services/dynamic-data/properties.mock-service';
+
+
 const BasicInfo = () => {
 
-  const basicInfo = [
-    {
-      name: 'Name',
-      value: 'XEEP RADIO EDUCACION'
-    },
-    {
-      name: 'Institution',
-      value: 'RADIO EDUCACION'
-    },
-    {
-      name: 'Use of property',
-      value: 'OFICINA'
-    },
-    {
-      name: 'Sector',
-      value: 'COMUNICACIÓN'
-    },
-    {
-      name: 'Acronym',
-      value: 'REDUC'
-    },
-    {
-      name: 'Administration',
-      value: 'FEDERAL'
-    },
 
+  const subjects = [
+    'Name',
+    'Type',
+    'Use of property',
+    'Sector',
+    'Acronym',
+    'Administration'
   ]
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [details, setDetails] = useState<BasicInfoDto>(
+    {
+      name: '',
+      insitution: '',
+      use: '',
+      sector: '',
+      acronym: '',
+      administration: ''
+    })
+
+
+  const setDataInformation = async () => {
+    const data = await PropertiesServices.getBasicInfo()
+
+
+    if (!data) return
+
+    const newData = {
+      name: data.name || '',
+      insitution: data.insitution || '',
+      use: data.use || '',
+      sector: data.sector || '',
+      acronym: data.acronym || '',
+      administration: data.administration || '',
+    }
+    setDetails(newData)
+  }
+
+  useEffect(() => {
+    setDataInformation()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <Card>
@@ -38,18 +63,16 @@ const BasicInfo = () => {
           BasicInfo
         </div>
         <div className='table'>
-          {basicInfo.map((item, index) => {
-            return (
-              <div className={index % 2 === 0 ? 'item-row row-white' : 'item-row row-grey'} key={index}>
-                <div className='item-col name'>
-                   {item.name}
-                </div>
-                <div className='item-col'>
-                   {item.value}
-                </div>
+        {Object.keys(details).map((key, index) => (
+            <div key={key} className={index % 2 === 0 ? 'item-row row-white' : 'item-row row-grey'} >
+              <div className='item-col name'>
+                {subjects[index]}
               </div>
-            )
-          })}
+              <div className='item-col'>
+                {details[key as keyof typeof details]}
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </Card>

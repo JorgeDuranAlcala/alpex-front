@@ -1,35 +1,67 @@
+
+import { useEffect, useState } from 'react';
+
+//** Dto imports */
+import { LocationDto } from '@/services/dynamic-data/dtos/propertyListing.dto';
+
 // ** MUI Imports
 import Card from '@mui/material/Card';
 
+//services imports
+import PropertiesServices from '@/services/dynamic-data/properties.mock-service';
+
 const Location = () => {
 
-  const locationDetails = [
-    {
-      name: 'Name',
-      value: 'XEEP RADIO EDUCACION'
-    },
-    {
-      name: 'Institution',
-      value: 'RADIO EDUCACION'
-    },
-    {
-      name: 'Use of property',
-      value: 'OFICINA'
-    },
-    {
-      name: 'Sector',
-      value: 'COMUNICACIÓN'
-    },
-    {
-      name: 'Acronym',
-      value: 'REDUC'
-    },
-    {
-      name: 'Administration',
-      value: 'FEDERAL'
-    },
-
+  const subjects = [
+    'Adress',
+    'Neighborhood',
+    'C. P.',
+    'State',
+    'State Code',
+    'Province',
+    'Province Code',
+    'Latitude',
+    'Longitude'
   ]
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [details, setDetails] = useState<LocationDto>(
+    {
+      address: '',
+      neighborhood: '',
+      postalCode: '',
+      state: '',
+      stateCode: '',
+      province: '',
+      provinceCode: '',
+      latitude: '',
+      longitude: ''
+    })
+
+  const setDataInformation = async () => {
+    const data = await PropertiesServices.getLocationDetails()
+
+
+    if (!data) return
+
+    const newData = {
+      address: data.address || '',
+      neighborhood: data.neighborhood || '',
+      postalCode: data.postalCode || '',
+      state: data.state || '',
+      stateCode: data.stateCode || '',
+      province: data.province || '',
+      provinceCode: data.provinceCode || '',
+      latitude: data.latitude || '',
+      longitude: data.longitude || '',
+    }
+    setDetails(newData)
+  }
+
+  useEffect(() => {
+    setDataInformation()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <Card>
@@ -38,18 +70,16 @@ const Location = () => {
           Location
         </div>
         <div className='table'>
-          {locationDetails.map((item, index) => {
-            return (
-              <div className={index % 2 === 0 ? 'item-row row-white' : 'item-row row-grey'} key={index}>
-                <div className='item-col name'>
-                   {item.name}
-                </div>
-                <div className='item-col'>
-                   {item.value}
-                </div>
+          {Object.keys(details).map((key, index) => (
+            <div key={key} className={index % 2 === 0 ? 'item-row row-white' : 'item-row row-grey'} >
+              <div className='item-col name'>
+                {subjects[index]}
               </div>
-            )
-          })}
+              <div className='item-col'>
+                {details[key as keyof typeof details]}
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </Card>
