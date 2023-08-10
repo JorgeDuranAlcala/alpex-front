@@ -205,7 +205,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
       } else {
         setIsShowToggleTaxes(informationForm1.taxesP || security.taxes > 0)
         setIsShowToggleFrontingFee(security.frontingFee > 0)
-        setIsTaxesEnabled(informationForm1.taxesP || security.taxes > 0)
+        setIsTaxesEnabled((informationForm1.taxesP && idCompany !== 0) || security.taxes > 0)
         setFrontingFeeEnabled(security.frontingFee > 0)
 
         // if (security.taxes === 0 && informationForm1.taxesP === 0) {
