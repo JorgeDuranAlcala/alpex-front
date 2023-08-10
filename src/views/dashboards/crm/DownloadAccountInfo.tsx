@@ -1,15 +1,26 @@
 // ** MUI Imports
 import { useGetAll } from '@/hooks/catalogs/account-status/useGetAll'
 import { ContainerSelectDownload, HeaderTitle } from '@/styles/Dashboard/DownloadAcounts/downloadAccountsInfo'
+import { delayMs } from '@/utils/formatDates'
+import CustomAlert, { IAlert } from '@/views/custom/alerts'
 import FileDownloadIcon from '@mui/icons-material/FileDownload'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
-import { Button, MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material'
+import { Button, CircularProgress, MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material'
 import Card from '@mui/material/Card'
 import { useState } from 'react'
+import Icon from 'src/@core/components/icon'
 import UserThemeOptions from 'src/layouts/UserThemeOptions'
 import ReportServices from 'src/services/reports/report.service'
 
 const DownloadAccountInfo = () => {
+  // Notifications
+  const [badgeData, setBadgeData] = useState<IAlert>({
+    message: '',
+    theme: 'success',
+    open: false,
+    status: 'error'
+  })
+
   const [status, setStatus] = useState('')
 
   const { accountStatus } = useGetAll()
@@ -19,10 +30,31 @@ const DownloadAccountInfo = () => {
   }
 
   const handleOnDownload = async () => {
+    setBadgeData({
+      message: `DOWNLOADING ACCOUNTS INFO`,
+      status: 'secondary',
+      open: true,
+      icon: <CircularProgress size={20} color='primary' />,
+      backgroundColor: '#828597',
+      theme: 'info',
+      disableAutoHide: true
+    })
+    await delayMs(1000)
+
     try {
-      const url = await ReportServices.downloadAllAccountsReport({ idStatus: parseInt(status) })
-      if (url) {
-        const fileToDownload = new File([url], 'AccountsReport.xlsx')
+      const accountsBuffer = await ReportServices.downloadAllAccountsReport({ idStatus: parseInt(status) })
+      if (accountsBuffer) {
+        setBadgeData({
+          message: `DOWNLOADED SUCCESSFULLY`,
+          status: 'success',
+          open: true,
+          icon: <Icon icon='ic:baseline-check-circle' />,
+          theme: 'success',
+          disableAutoHide: true
+        })
+        await delayMs(1000)
+
+        const fileToDownload = new File([accountsBuffer], 'Template_Accounts_Info_Alpex.xlsx')
         const downloadUrl = URL.createObjectURL(fileToDownload)
         const link = document.createElement('a')
         link.href = downloadUrl
@@ -31,7 +63,31 @@ const DownloadAccountInfo = () => {
       }
     } catch (error) {
       console.error(error)
+      setBadgeData({
+        message: `NOT DATA FOUND`,
+        theme: 'warning',
+        open: true,
+        status: 'warning',
+        icon: (
+          <Icon
+            style={{
+              color: '#EF9713',
+              marginTop: '-1px'
+            }}
+            icon='material-symbols:warning-outline'
+          />
+        ),
+        disableAutoHide: true
+      })
     }
+    await delayMs(1500)
+
+    setBadgeData({
+      message: '',
+      status: undefined,
+      icon: undefined,
+      open: false
+    })
   }
 
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
@@ -54,6 +110,7 @@ const DownloadAccountInfo = () => {
         gap: '12px'
       }}
     >
+      <CustomAlert {...badgeData} />
       <HeaderTitle>
         <Typography
           variant='h6'
@@ -106,6 +163,7 @@ const DownloadAccountInfo = () => {
           }}
           startIcon={<FileDownloadIcon />}
           onClick={handleOnDownload}
+          disabled={status === ''}
         >
           Download
         </Button>
