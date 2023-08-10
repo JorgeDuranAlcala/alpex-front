@@ -9,21 +9,8 @@ import { useState } from 'react'
 import UserThemeOptions from 'src/layouts/UserThemeOptions'
 import ReportServices from 'src/services/reports/report.service'
 
-//Google Analytics
-
 const DownloadAccountInfo = () => {
   const [status, setStatus] = useState('')
-
-  /*const status = [
-    { name: 'Select option', value: '' },
-    { name: 'Pending', value: 1 },
-    { name: 'No materialized', value: 2 },
-    { name: 'Not taken up', value: 3 },
-    { name: 'Declined', value: 4 },
-    { name: 'Bound', value: 5 },
-    { name: 'Reneward', value: 6 },
-    { name: 'All accounts', value: 7 }
-  ]*/
 
   const { accountStatus } = useGetAll()
 
@@ -43,7 +30,6 @@ const DownloadAccountInfo = () => {
         link.click()
       }
     } catch (error) {
-      // eslint-disable-next-line
       console.error(error)
     }
   }
@@ -96,6 +82,11 @@ const DownloadAccountInfo = () => {
             handleOnchange(e)
           }}
           IconComponent={KeyboardArrowDownIcon}
+          renderValue={selected =>
+            selected.length === 0
+              ? 'Select option'
+              : accountStatus.find(accountStatus => accountStatus.id === Number(selected))?.status
+          }
         >
           {accountStatus?.map((item, index) => (
             <MenuItem key={index} value={item.id}>
