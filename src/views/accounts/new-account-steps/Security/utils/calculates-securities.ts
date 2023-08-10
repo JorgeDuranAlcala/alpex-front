@@ -1,5 +1,5 @@
+import { OperationMapper } from '@/mappers/Operations.mapper'
 import { FormInformation, SecurityDto } from '@/services/accounts/dtos/security.dto'
-import { Decimal } from 'decimal.js'
 
 export type ResultSecurities = {
   recievedNetPremium: number
@@ -40,14 +40,14 @@ export class CalculateSecurity {
     if (this.security.isGross) {
       // * is Gross Premium
 
-      const result = new Decimal(this.security.netPremiumAt100).mul(this.security.share).div(100).toNumber()
+      const result = new OperationMapper(this.security.netPremiumAt100).mul(this.security.share).div(100).toNumber()
 
       this.security.premiumPerShareAmount = result
 
       return result
     } else {
       // * is Net Premium
-      const result = new Decimal(this.security.netPremiumAt100)
+      const result = new OperationMapper(this.security.netPremiumAt100)
         .mul(this.security.share)
         .div(100)
         .sub(this.security.taxesAmount || 0)
@@ -63,18 +63,18 @@ export class CalculateSecurity {
   getGrossPremierPerShare(): number {
     // * is Gross Premium or  is Net Premium
     this.security.grossPremiumPerShare = this.security.isGross
-      ? new Decimal(this.security.netPremiumAt100).mul(this.security.share).div(100).toNumber()
-      : new Decimal(this.information.grossPremium).mul(this.security.share).div(100).toNumber()
+      ? new OperationMapper(this.security.netPremiumAt100).mul(this.security.share).div(100).toNumber()
+      : new OperationMapper(this.information.grossPremium).mul(this.security.share).div(100).toNumber()
 
     return this.security.grossPremiumPerShare
   }
 
   getsharePercent(premiumPerShareAmount: number): number {
-    return new Decimal(premiumPerShareAmount).div(this.baseAmount).mul(100).toNumber()
+    return new OperationMapper(premiumPerShareAmount).div(this.baseAmount).mul(100).toNumber()
   }
 
   getBrokerAge(): number {
-    this.security.brokerAgeAmount = new Decimal(this.security.reinsuranceBrokerage)
+    this.security.brokerAgeAmount = new OperationMapper(this.security.reinsuranceBrokerage)
       .mul(this.security.premiumPerShareAmount)
       .div(100)
       .toNumber()
@@ -83,13 +83,16 @@ export class CalculateSecurity {
   }
 
   getBrokerAgePercent(reinsuranceBrokerage: number): number {
-    const result = new Decimal(reinsuranceBrokerage).div(this.security.premiumPerShareAmount).mul(100).toNumber()
+    const result = new OperationMapper(reinsuranceBrokerage)
+      .div(this.security.premiumPerShareAmount)
+      .mul(100)
+      .toNumber()
 
     return result
   }
 
   getDynamicComissionAmount(): number {
-    this.security.dynamicCommissionAmount = new Decimal(this.security.dynamicCommission)
+    this.security.dynamicCommissionAmount = new OperationMapper(this.security.dynamicCommission)
       .mul(this.security.premiumPerShareAmount)
       .div(100)
       .toNumber()
@@ -97,7 +100,7 @@ export class CalculateSecurity {
     return this.security.dynamicCommissionAmount
   }
   getDynamicComissionPercent(dynamicCommission: number): number {
-    const percent = new Decimal(dynamicCommission).mul(100).div(this.security.premiumPerShareAmount).toNumber()
+    const percent = new OperationMapper(dynamicCommission).mul(100).div(this.security.premiumPerShareAmount).toNumber()
 
     return percent
   }
@@ -105,13 +108,13 @@ export class CalculateSecurity {
     // return (this.security.frontingFee * this.security.premiumPerShareAmount) / 100
     if (this.security.isGross) {
       // * is Gross Premium
-      this.security.frontingFeeAmount = new Decimal(this.security.premiumPerShareAmount)
+      this.security.frontingFeeAmount = new OperationMapper(this.security.premiumPerShareAmount)
         .mul(valuePercent)
         .div(100)
         .toNumber()
     } else {
       // * is Net Premium
-      this.security.frontingFeeAmount = new Decimal(this.security.premiumPerShareAmount)
+      this.security.frontingFeeAmount = new OperationMapper(this.security.premiumPerShareAmount)
         .mul(valuePercent)
         .div(100)
         .toNumber()
@@ -123,14 +126,14 @@ export class CalculateSecurity {
     // return (frontingFee / this.security.premiumPerShareAmount) * 100
     if (this.security.isGross) {
       // * is Gross Premium
-      return new Decimal(valueAmount).mul(100).div(this.security.premiumPerShareAmount).toNumber()
+      return new OperationMapper(valueAmount).mul(100).div(this.security.premiumPerShareAmount).toNumber()
     } else {
       // * is Net Premium
-      return new Decimal(valueAmount).div(this.security.premiumPerShareAmount).mul(100).toNumber()
+      return new OperationMapper(valueAmount).div(this.security.premiumPerShareAmount).mul(100).toNumber()
     }
   }
   getShareAmount(): number {
-    this.security.shareAmount = new Decimal(this.information.limit).mul(this.security.share).div(100).toNumber()
+    this.security.shareAmount = new OperationMapper(this.information.limit).mul(this.security.share).div(100).toNumber()
 
     return this.security.shareAmount
   }
@@ -138,18 +141,20 @@ export class CalculateSecurity {
   getNetReinsurancePremium(): number {
     if (this.security.isGross) {
       // * is Gross Premium
-      const sumOthers = new Decimal(this.security.dynamicCommissionAmount)
+      const sumOthers = new OperationMapper(this.security.dynamicCommissionAmount)
         .add(this.security.frontingFeeAmount ? this.security.frontingFeeAmount : 0)
         .add(this.security.brokerAgeAmount)
         .add(this.security.taxesAmount ? this.security.taxesAmount : 0)
         .add(this.security.totalAmountOfDiscounts ? this.security.totalAmountOfDiscounts : 0)
         .toNumber()
 
-      this.security.netReinsurancePremium = new Decimal(this.security.premiumPerShareAmount).sub(sumOthers).toNumber()
+      this.security.netReinsurancePremium = new OperationMapper(this.security.premiumPerShareAmount)
+        .sub(sumOthers)
+        .toNumber()
     } else {
       // * is Net Premium
 
-      this.security.netReinsurancePremium = new Decimal(this.security.premiumPerShareAmount)
+      this.security.netReinsurancePremium = new OperationMapper(this.security.premiumPerShareAmount)
         .sub(this.security.dynamicCommissionAmount)
         .sub(this.security.frontingFeeActive ? this.security.frontingFeeAmount : 0)
         .toNumber()
@@ -163,26 +168,26 @@ export class CalculateSecurity {
     if (this.security.isGross) {
       // * is Gross Premium
 
-      let result = new Decimal(this.security.grossPremiumPerShare).sub(this.security.brokerAgeAmount).toNumber()
+      let result = new OperationMapper(this.security.grossPremiumPerShare).sub(this.security.brokerAgeAmount).toNumber()
 
-      result = new Decimal(taxes).div(result).mul(100).toNumber()
+      result = new OperationMapper(taxes).div(result).mul(100).toNumber()
 
       return result
     } else {
       // * is Net Premium
-      const base = new Decimal(this.security.netPremiumAt100).mul(this.security.share).div(100).toNumber()
+      const base = new OperationMapper(this.security.netPremiumAt100).mul(this.security.share).div(100).toNumber()
 
-      return new Decimal(taxes).div(base).mul(100).toNumber()
+      return new OperationMapper(taxes).div(base).mul(100).toNumber()
     }
   }
 
   getTaxesAmount(value?: number): number {
     if (this.security.isGross) {
       // * is Gross Premium
-      let result = new Decimal(this.security.grossPremiumPerShare).sub(this.security.brokerAgeAmount).toNumber()
+      let result = new OperationMapper(this.security.grossPremiumPerShare).sub(this.security.brokerAgeAmount).toNumber()
 
       if (this.security.taxes || value) {
-        result = new Decimal(result)
+        result = new OperationMapper(result)
           .mul(value ?? this.security.taxes)
           .div(100)
           .toNumber()
@@ -192,10 +197,10 @@ export class CalculateSecurity {
       this.security.taxesAmount = result
     } else {
       // * is Net Premium
-      const base = new Decimal(this.security.netPremiumAt100).mul(this.security.share).div(100).toNumber()
+      const base = new OperationMapper(this.security.netPremiumAt100).mul(this.security.share).div(100).toNumber()
 
       if (this.security.taxes || value) {
-        this.security.taxesAmount = new Decimal(base)
+        this.security.taxesAmount = new OperationMapper(base)
           .mul(value || this.security.taxes)
           .div(100)
           .toNumber()
@@ -210,14 +215,14 @@ export class CalculateSecurity {
   getDiscountPercent(valueAmount: number): number {
     if (this.security.isGross) {
       // * is Gross Premium
-      const base = new Decimal(valueAmount).div(this.security.premiumPerShareAmount).mul(100).toNumber()
+      const base = new OperationMapper(valueAmount).div(this.security.premiumPerShareAmount).mul(100).toNumber()
 
       return base
     } else {
       // * is Net Premium
 
-      const base = new Decimal(this.security.netPremiumAt100).mul(this.security.share).div(100).toNumber()
-      const result = new Decimal(valueAmount).div(base).mul(100).toNumber()
+      const base = new OperationMapper(this.security.netPremiumAt100).mul(this.security.share).div(100).toNumber()
+      const result = new OperationMapper(valueAmount).div(base).mul(100).toNumber()
 
       return result
     }
@@ -225,17 +230,14 @@ export class CalculateSecurity {
   getDiscountAmount(valuePercent: number): number {
     if (this.security.isGross) {
       // * is Gross Premium
-      const base = new Decimal(new Decimal(this.security.premiumPerShareAmount))
-        .mul(new Decimal(valuePercent))
-        .div(100)
-        .toNumber()
+      const base = new OperationMapper(this.security.premiumPerShareAmount).mul(valuePercent).div(100).toNumber()
 
       return base
     } else {
       // * is Net Premium
 
-      const base = new Decimal(this.security.netPremiumAt100).mul(this.security.share).div(100).toNumber()
-      const result = new Decimal(base).mul(valuePercent).div(100).toNumber()
+      const base = new OperationMapper(this.security.netPremiumAt100).mul(this.security.share).div(100).toNumber()
+      const result = new OperationMapper(base).mul(valuePercent).div(100).toNumber()
 
       return result
     }
@@ -257,21 +259,27 @@ export class CalculateSecurity {
       // sharePercent += security.isGross ? 0 : security.share
       premiumPerShareAmountNet += security.isGross ? 0 : security.premiumPerShareAmount
       premiumPerShareAmountGros += security.isGross ? security.premiumPerShareAmount : 0
-      taxesGros += security.isGross ? new Decimal(security.taxesAmount).toNumber() : 0
-      brokerageReinsuranceGross += security.isGross ? new Decimal(security.brokerAgeAmount).toNumber() : 0
-      distributedNetPremium += new Decimal(security.netReinsurancePremium)
+      taxesGros += security.isGross ? new OperationMapper(security.taxesAmount).toNumber() : 0
+      brokerageReinsuranceGross += security.isGross ? new OperationMapper(security.brokerAgeAmount).toNumber() : 0
+      distributedNetPremium += new OperationMapper(security.netReinsurancePremium)
         .add(security.dynamicCommissionAmount)
         .add(security.frontingFeeAmount ?? 0)
         .toNumber()
-      discountAmountGros += security.isGross ? new Decimal(security.totalAmountOfDiscounts).toNumber() : 0
+      discountAmountGros += security.isGross ? new OperationMapper(security.totalAmountOfDiscounts).toNumber() : 0
     }
 
     if (resultSecuritiesOriginal.distribuitedNetPremium > 0) {
       distributedNetPremium = resultSecuritiesOriginal.distribuitedNetPremium
     }
 
-    const recievedNetPremium = new Decimal(premiumPerShareAmountNet)
-      .add(new Decimal(premiumPerShareAmountGros).sub(taxesGros).sub(brokerageReinsuranceGross).sub(discountAmountGros))
+    const recievedNetPremium = new OperationMapper(premiumPerShareAmountNet)
+      .add(
+        new OperationMapper(premiumPerShareAmountGros)
+          .sub(taxesGros)
+          .sub(brokerageReinsuranceGross)
+          .sub(discountAmountGros)
+          .toNumber()
+      )
       .toNumber()
     const diference = Math.abs(recievedNetPremium - distributedNetPremium)
 

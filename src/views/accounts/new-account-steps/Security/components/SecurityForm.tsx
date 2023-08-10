@@ -96,7 +96,7 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
   const [isShowToggleFrontingFee, setIsShowToggleFrontingFee] = useState(security.frontingFeeActive || false)
   const [frontingFeeEnabled, setFrontingFeeEnabled] = useState<boolean>(security.frontingFeeActive || false)
   const [isTaxesEnabled, setIsTaxesEnabled] = useState<boolean>(security.taxesActive || false)
-  const [isShowToggleTaxes, setIsShowToggleTaxes] = useState<boolean>(security.taxesActive || false)
+  const [, setIsShowToggleTaxes] = useState<boolean>(security.taxesActive || false)
   const [isShowRetroCedant, setIsShowRetroCedant] = useState<boolean>(true)
 
   const [openDialog, setOpenDialog] = useState(false)
@@ -203,20 +203,22 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
           }
         }
       } else {
-        setIsShowToggleTaxes(security.taxes > 0)
+        setIsShowToggleTaxes(informationForm1.taxesP || security.taxes > 0)
         setIsShowToggleFrontingFee(security.frontingFee > 0)
-        setIsTaxesEnabled(security.taxes > 0)
+        setIsTaxesEnabled(informationForm1.taxesP || security.taxes > 0)
         setFrontingFeeEnabled(security.frontingFee > 0)
-        if (security.taxes === 0 && informationForm1.taxesP === 0) {
-          setIsShowToggleTaxes(true)
-          if (!security.id) {
-            tempSecurities[index] = {
-              ...tempSecurities[index],
-              taxes: 0,
-              taxesAmount: 0
-            }
+
+        // if (security.taxes === 0 && informationForm1.taxesP === 0) {
+        setIsShowToggleTaxes(true)
+        if (!security.id) {
+          tempSecurities[index] = {
+            ...tempSecurities[index],
+            taxes: informationForm1.taxesP ?? 0,
+            taxesAmount: 0
           }
         }
+
+        // }
         if (security.frontingFee === 0 && informationForm1.frontingFeeP === 0) {
           setIsShowToggleFrontingFee(true)
           if (!security.id) {
@@ -232,8 +234,8 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
     localSecuritiesTemp.push(tempSecurities[index])
 
     // todo: regresar esta validacion si hay error al mostrar el fronting fee y taxes
-    //localSecuritiesTemp.length === tempSecurities.length ||
-    if (idCompany !== 0) {
+    //
+    if (localSecuritiesTemp.length === tempSecurities.length || idCompany !== 0) {
       calculateSecurities(tempSecurities)
 
       localSecuritiesTemp = []
@@ -514,37 +516,37 @@ export const FormSection = ({ index, security, onDeleteItemList }: FormSectionPr
             ...(!isShowRetroCedant ? { mt: 8 } : null)
           }}
         >
-          {isShowToggleTaxes ? (
-            <Grid item xs={12} sm={4}>
-              <SwitchTaxes
-                index={index}
-                validateForm={validateForm}
-                security={security}
-                isChecked={isTaxesEnabled}
-                setIsTaxesEnabled={setIsTaxesEnabled}
-                view={security.view}
-              />
+          {/* {isShowToggleTaxes ? ( */}
+          <Grid item xs={12} sm={4}>
+            <SwitchTaxes
+              index={index}
+              validateForm={validateForm}
+              security={security}
+              isChecked={isTaxesEnabled}
+              setIsTaxesEnabled={setIsTaxesEnabled}
+              view={security.view}
+            />
 
-              <TaxesPercent
-                value={security.taxes}
-                errorMessage={errorsSecurity.taxes}
-                index={index}
-                validateForm={validateForm}
-                isDisabled={!isTaxesEnabled}
-                view={security.view}
-              />
+            <TaxesPercent
+              value={security.taxes}
+              errorMessage={errorsSecurity.taxes}
+              index={index}
+              validateForm={validateForm}
+              isDisabled={!isTaxesEnabled}
+              view={security.view}
+            />
 
-              <TaxesAmount
-                value={security.taxesAmount}
-                errorMessage={errorsSecurity.taxesAmount}
-                index={index}
-                validateForm={validateForm}
-                operationSecurity={operationSecurity}
-                isDisabled={!isTaxesEnabled}
-                view={security.view}
-              />
-            </Grid>
-          ) : null}
+            <TaxesAmount
+              value={security.taxesAmount}
+              errorMessage={errorsSecurity.taxesAmount}
+              index={index}
+              validateForm={validateForm}
+              operationSecurity={operationSecurity}
+              isDisabled={!isTaxesEnabled}
+              view={security.view}
+            />
+          </Grid>
+          {/* ) : null} */}
 
           {isShowToggleFrontingFee ? (
             <Grid item xs={12} sm={4}>
