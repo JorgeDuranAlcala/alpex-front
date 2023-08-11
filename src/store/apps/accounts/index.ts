@@ -76,38 +76,36 @@ export const appAccountsSlice = createSlice({
       }
     },
     deleteAccountFilter: (state, { payload }) => {
-      ; (state.filters = state.filters.filter(item => item.type !== payload)),
-        (state.info = {
-          count: 0,
-          page: 1,
-          take: 10,
-          pages: 0,
-          next: '',
-          prev: ''
-        })
+      state.filters = state.filters.filter(item => item.type !== payload)
+      state.info = {
+        count: 0,
+        page: 1,
+        take: 10,
+        pages: 0,
+        next: '',
+        prev: ''
+      }
     },
     resetAccountFilter: state => {
-      ; (state.filters = []),
-        (state.info = {
-          count: 0,
-          page: 1,
-          take: 10,
-          pages: 0,
-          next: '',
-          prev: ''
-        })
+      state.filters = []
+      state.info = {
+        count: 0,
+        page: 1,
+        take: 10,
+        pages: 0,
+        next: '',
+        prev: ''
+      }
     },
 
     updateFormsData: (state, { payload }) => {
       state.formsData = { ...state.formsData, ...payload }
     },
     updateFormId: (state, action: PayloadAction<{ id: number }>) => {
-
       let tempDataForm1 = state.formsData.form1
       tempDataForm1 = { ...tempDataForm1, id: action.payload.id }
 
-      state.formsData.form1 = tempDataForm1;
-
+      state.formsData.form1 = tempDataForm1
     },
 
     resetFormsData: state => {
@@ -116,24 +114,6 @@ export const appAccountsSlice = createSlice({
   },
   extraReducers: builder => {
     builder.addCase(fetchAccounts.fulfilled, (state, action) => {
-      // state.loading = false
-      // const account = action.payload.results.filter((item: any) => {
-      //   if (state.filters.length) {
-      //     let matchesFilter = true
-      //     state.filters.forEach(filter => {
-      //       if (!formatStatus(item.idAccountStatus[filter.type]).includes(filter.value)) {
-      //         matchesFilter = false
-      //       }
-      //     })
-
-      //     return matchesFilter
-      //   }
-
-      //   return true
-      // })
-      // state.accounts = account
-      // state.info = action.payload.info
-
       state.loading = false
       state.accounts = action.payload.results
       state.info = action.payload.info
