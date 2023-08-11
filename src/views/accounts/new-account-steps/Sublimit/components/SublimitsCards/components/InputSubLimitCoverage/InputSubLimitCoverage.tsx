@@ -1,4 +1,5 @@
 import { SublimitDto } from '@/services/accounts/dtos/sublimit.dto'
+import DialogCustomAlpex from '@/views/components/dialogs/DialogCustomAlpex'
 import {
   Box,
   Checkbox,
@@ -36,6 +37,10 @@ const InputSubLimitCoverage: React.FC<InputSubLimitCoverageProps> = ({
   const [limitAmount, setLimitAmount] = useState<number>(subLimit.sublimit)
   const [isCheckAt100, setIsCheckAt100] = useState<boolean>(false)
   const [yesOrLuc, setYesOrLuc] = useState<string>(subLimit.yes ? 'yes' : 'luc')
+  const [openDialog, setOpenDialog] = useState<boolean>(false)
+
+  // console.log({ limit })
+  // console.log({ limitAmount })
 
   const handleChangeSubLimit = (subLimitAmount: number) => {
     const subLimitTemp = { ...subLimit }
@@ -70,6 +75,16 @@ const InputSubLimitCoverage: React.FC<InputSubLimitCoverageProps> = ({
   }, [limitAmount])
 
   useEffect(() => {
+    if (limitAmount > Number(limit)) {
+      setOpenDialog(true)
+    } else {
+      setOpenDialog(false)
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [limitAmount])
+
+  useEffect(() => {
     if (!isNotYesLuc) {
       const subLimitTemp = { ...subLimit }
       subLimitTemp.yes = false
@@ -95,11 +110,15 @@ const InputSubLimitCoverage: React.FC<InputSubLimitCoverageProps> = ({
               label='Sublimit'
               multiline
               prefix={'$'}
+              decimalScale={2}
               isAllowed={values => {
                 const { floatValue } = values
                 const upLimit = +limit
 
-                if ((floatValue! >= 0 && (floatValue! <= upLimit || floatValue! >= upLimit)) || floatValue === undefined) {
+                if (
+                  (floatValue! >= 0 && (floatValue! <= upLimit || floatValue! >= upLimit)) ||
+                  floatValue === undefined
+                ) {
                   return true
                 }
 
@@ -159,6 +178,17 @@ const InputSubLimitCoverage: React.FC<InputSubLimitCoverageProps> = ({
           <Grid item xs={3} sm={3}></Grid>
         </Grid>
       )}
+      {openDialog && (
+        <DialogCustomAlpex
+          openDialog={openDialog}
+          body={`The current sublimit exceeds the originally established sublimit.`}
+          subBody={`Confirm the new higher sublimit or cancel to close this message.`}
+          title={'Sublimit adjustment alert'}
+          resolve={onChangeCheckAt100}
+          reject={() => setOpenDialog(false)}
+          sublimits={true}
+        />
+      )}
     </Grid>
   )
 }
@@ -181,7 +211,7 @@ export const inputSublimit_validations = ({
       .test('', 'This field is required', value => {
         const val = value || 0
 
-        if (luc && val >= 0 && (+val >= limit || +val <= limit) && !isNotYesLuc) return true      
+        if (luc && val >= 0 && (+val >= limit || +val <= limit) && !isNotYesLuc) return true
 
         return (+val >= limit || +val <= limit) && +val > 0
       })

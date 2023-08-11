@@ -1,12 +1,9 @@
 // ** MUI Imports
 import { Container } from 'src/styles/Dashboard/dashboard'
 
-// import LongMenu from 'src/views/dashboards/crm/filter'
 import Table from 'src/views/broker-tracker/Table'
 
-// import CrmTable from 'src/views/dashboards/crm/CrmTable'
-
-const Installments = () => {
+const BrokerTracker = () => {
   return (
     <Container>
       <Table />
@@ -14,4 +11,4 @@ const Installments = () => {
   )
 }
 
-export default Installments
+export default BrokerTracker

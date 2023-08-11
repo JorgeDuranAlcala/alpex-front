@@ -71,7 +71,7 @@ export const ContactModal = ({ id, service, updateContacts, setIdCreated, disabl
   const { countries } = useGetAllCountries()
   const { saveBrokerContact } = useAddBrokerContact()
   const { saveCedantContact } = useAddCedantContact()
-  const ALPHA_REGEX =/^[a-zA-ZÀ-ÿ\s]+$/;
+  const ALPHA_REGEX = /^[a-zA-ZÀ-ÿ\s]+$/;
 
   // const {  saveCedant } = useAddCedant()
 
@@ -264,7 +264,7 @@ export const ContactModal = ({ id, service, updateContacts, setIdCreated, disabl
               <Select
                 label='Select country'
                 value={contactData.country}
-                onChange={e => handleChange('country', e.target.value)}
+                onChange={(e: any) => handleChange('country', e.target.value)}
                 labelId='invoice-country'
               >
                 {countries.map(country => {

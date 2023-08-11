@@ -40,13 +40,18 @@ const NewAccount = () => {
   const dispatch = useAppDispatch()
 
   //hooks header
-  const { account: accountDetails, setAccountId, getAccountById } = useGetAccountById()
+  const { account: accountDetails, getAccountById } = useGetAccountById()
+
+
+  // const { addNewTabButton, removeTabByText } = useMultiTabButtons()
 
   // const { account, setAccountId } = useGetAccountById()
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [disableComments, setDisableComments] = useState(false)
   const [isNewAccount, setIsNewAccount] = useState<boolean>(true)
-  const [activeStep, setActiveStep] = useState(1)
+  const [activeStep, setActiveStep] = useState(1);
+
+  // const [isPushingToCreatedAccount, setIsPushingToCreatedAccount] = useState<boolean>(false)
 
   // const [sidebar, setSidebar] = useState<boolean>(false)
   // const handleSidebarMenu = () => {
@@ -56,7 +61,37 @@ const NewAccount = () => {
 
   // console.log({ account })
 
+  // const pushToCreatedAccount = (step: number) => {
+  //   const idAccount = localStorage.getItem('idAccount');
+  //   if (idAccount) {
+  //     setIsPushingToCreatedAccount(true);
+  //     addNewTabButton({
+  //       text: idAccount.toString(),
+  //       link: `/accounts/created-account/?&idAccount=${idAccount}`,
+  //       isActive: true
+  //     });
+
+
+  //     removeTabByText('New Account');
+
+  //     dispatch(stepForms_updateStep({
+  //       id: idAccount,
+  //       data: step,
+  //     }))
+
+  //     router.push(`/accounts/created-account/?&idAccount=${idAccount}`);
+
+  //   }
+  // }
+
+
   const handleStepChange = (step: number) => {
+
+    // if (step > 1) {
+    //   pushToCreatedAccount(step);
+
+    //   return;
+    // }
     setActiveStep(step)
     console.log(step)
   }
@@ -150,6 +185,22 @@ const NewAccount = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, router.events])
 
+  // if (isPushingToCreatedAccount) {
+
+  //   return (
+  //     <Box sx={{
+  //       display: 'flex',
+  //       justifyContent: 'center',
+  //       alignItems: 'center',
+  //       height: '100%',
+  //       width: '100%'
+  //     }}>
+  //       <CircularProgress size={75} />
+  //     </Box>
+  //   )
+  // }
+
+
   return (
     <AccountsTableContextProvider>
       <Grid className='new-account' item xs={12}>
@@ -158,9 +209,9 @@ const NewAccount = () => {
           it is necessary to send the boolean variable "sideHeader = true". */}
         {/* {activeStep == 1 && isNewAccount ? <ActionsHeader accountStatus='PENDING' sideHeader={false} /> : <FormHeader />} */}
         {activeStep == 1 && isNewAccount ? (
-          <FormHeader isNewAccount accountDetails={accountDetails} setAccountId={setAccountId} />
+          <FormHeader isNewAccount accountDetails={accountDetails} />
         ) : (
-          <FormHeader accountDetails={accountDetails} setAccountId={setAccountId} />
+          <FormHeader accountDetails={accountDetails} />
         )}
         <div style={{ display: 'flex', flexDirection: 'row', gap: '16px' }}>
           <Card>

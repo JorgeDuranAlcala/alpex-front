@@ -95,8 +95,15 @@ const Table = ({ status }: IAccountTable) => {
   }
 
   useEffect(() => {
-    const page = 1
-    dispatch(fetchAccounts(page))
+    if (status) {
+      if (accountsReducer.filters.find(filter => filter.value === status)) {
+        dispatch(fetchAccounts(1))
+      }
+    } else {
+      if (!accountsReducer.filters.find(filter => filter.unDeleteable === true)) {
+        dispatch(fetchAccounts(1))
+      }
+    }
 
     //eslint-disable-next-line
   }, [accountsReducer.filters])

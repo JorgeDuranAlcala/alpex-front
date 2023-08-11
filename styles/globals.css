@@ -1,9 +1,9 @@
 html,
 body {
   min-height: 100%;
-  overflow-x: hidden;
-  padding-right: 0px !important;
-  overflow: auto !important;
+  /* overflow-x: hidden; */
+  /* padding-right: 0px !important; */
+  /* overflow: auto !important; */
 }
 
 #__next {
@@ -29,4 +29,8 @@ code[class*='language-'] {
 .MuiListItemIcon-root svg {
   font-size: 1.5rem !important;
   display: inline-flex !important;
+}
+
+div[role='presentation']:has(div.custom-menu-paper-select-anchor):has(ul[role='listbox']) {
+  display: none !important;
 }

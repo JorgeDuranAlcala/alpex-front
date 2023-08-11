@@ -236,6 +236,7 @@ const MenuForm = () => {
             setUserFile={setUserFile}
             setUserFileToDelete={setUserFileToDelete}
             changeTitle={onSubmittedFiles}
+            isPayments={false}
           />
         </div>
         <div className='container-divider'>

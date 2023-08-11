@@ -1,5 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { FormControl, FormHelperText, InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material'
+import { Box, FormControl, FormHelperText, IconButton, InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material'
+import Icon from 'src/@core/components/icon'
+
 import { Dispatch, SetStateAction, useContext, useEffect, useState } from 'react'
 import * as yup from 'yup'
 
@@ -26,7 +28,7 @@ export const SelectRetroCedant = ({
   const [retroCedantId, setRetroCedantId] = useState<string>(String(value) || '')
 
   // const [counter, setCounter] = useState(1)
-  const handleChangeRetroCedant = (e: SelectChangeEvent<string>) => {
+  const handleChangeRetroCedant = (e: SelectChangeEvent<string> | any) => {
     const selectedRetroCendantId = e.target.value
     const retroCedant = retroCedants?.find(retroCedant => retroCedant.id === Number(selectedRetroCendantId))
     const tempSecurities = [...securities]
@@ -43,6 +45,19 @@ export const SelectRetroCedant = ({
     }
   }
 
+  const handleRemoveRetroCedant = () => {
+    const tempSecurities = [...securities]
+    tempSecurities[index] = {
+      ...tempSecurities[index],
+      idCRetroCedant: null,
+      idCRetroCedantContact: {} as RetroCedantContactDto
+    }
+    setIdRetroCedant(null);
+    setRetroCedantId('')
+    calculateSecurities(tempSecurities)
+    validateForm(tempSecurities[index])
+  }
+
   useEffect(() => {
     if (retroCedants && retroCedants?.length > 0 && value) {
       setRetroCedantId(String(value))
@@ -50,7 +65,7 @@ export const SelectRetroCedant = ({
   }, [value, retroCedants])
 
   return (
-    <FormControl fullWidth sx={{ mb: 2 }}>
+    <FormControl fullWidth sx={{ mb: 2, position: 'relative' }}>
       <InputLabel>Select Retro cedant</InputLabel>
       <Select
         label='Select Retro cedant'
@@ -66,6 +81,19 @@ export const SelectRetroCedant = ({
         ))}
       </Select>
       <FormHelperText sx={{ color: 'error.main', minHeight: '15px' }}>{activeErros && errorMessage}</FormHelperText>
+
+      {retroCedantId ? (
+        <Box sx={{
+          position: 'absolute',
+          right: '-35px',
+          top: '-10px'
+        }}>
+          <IconButton onClick={handleRemoveRetroCedant}>
+            <Icon icon='clarity:remove-line' />
+          </IconButton>
+
+        </Box>
+      ) : null}
     </FormControl>
   )
 }

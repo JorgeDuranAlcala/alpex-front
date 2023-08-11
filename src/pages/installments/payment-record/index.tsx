@@ -2,7 +2,7 @@ import { useState } from 'react'
 
 // ** MUI Imports
 import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp'
-import { TextField } from '@mui/material'
+import { Button, Stack, TextField } from '@mui/material'
 import MuiAccordion, { AccordionProps } from '@mui/material/Accordion'
 import MuiAccordionDetails from '@mui/material/AccordionDetails'
 import MuiAccordionSummary, { AccordionSummaryProps } from '@mui/material/AccordionSummary'
@@ -181,6 +181,9 @@ const PaymentRecord = () => {
                   />
                 </div>
               </div>
+              <Stack spacing={2} direction={{ xs: 'column', sm: 'column', md: 'row-reverse' }}>
+                <Button variant='contained'>Save Installments Payment</Button>
+              </Stack>
             </div>
           </Card>
         </div>

@@ -62,6 +62,11 @@ const navigation = (): VerticalNavItemsType => {
           path: '/broker-tracker'
         },
         {
+          title: 'Reinsurer Payment',
+          icon: 'material-symbols:mobiledata-off',
+          path: '/reinsurer-payment'
+        },
+        {
           title: 'List',
           path: '/menuForm'
         },
@@ -160,7 +165,7 @@ const navigation = (): VerticalNavItemsType => {
     },
     {
       title: 'Dynamic Data',
-      icon:'custom:dynamic-data',
+      icon: 'custom:dynamic-data',
       children: [
         {
           title: 'Dashboard',
@@ -198,12 +203,12 @@ const navigation = (): VerticalNavItemsType => {
             },
             {
               title: 'Hurricanes',
-              icon: 'ic:baseline-waves',
-            },
+              icon: 'ic:baseline-waves'
+            }
           ]
         }
       ]
-    },
+    }
 
     /***********************************************************************************************************************/
     /*{

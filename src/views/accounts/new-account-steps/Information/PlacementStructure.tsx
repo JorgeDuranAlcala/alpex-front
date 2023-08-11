@@ -381,7 +381,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
     })
   }
 
-  const handleCurrencyChange = (e: SelectChangeEvent<string>) => {
+  const handleCurrencyChange = (e: SelectChangeEvent<string> | any) => {
     const target = e.target
     const value = target.value
     setPair({ targetCurrency: value, baseCurrency: 'USD' })
@@ -391,7 +391,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
     setPlacementStructure({ ...placementStructure, [name]: value })
   }
 
-  const handleSelectChange = (e: SelectChangeEvent<string>) => {
+  const handleSelectChange = (e: SelectChangeEvent<string> | any) => {
     const target = e.target
     const name = target.name
     const value = target.value
@@ -1019,10 +1019,10 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
                 taxesChecked && errors.taxesPError
                   ? 'This field must be greater than 0'
                   : taxesChecked && errors.totalDiscountsError
-                  ? 'The total discounts percentage should be less than 100%'
-                  : taxesChecked && totalDiscountsError
-                  ? 'The total discounts percentage should be less than 100%'
-                  : ''
+                    ? 'The total discounts percentage should be less than 100%'
+                    : taxesChecked && totalDiscountsError
+                      ? 'The total discounts percentage should be less than 100%'
+                      : ''
               }
             />
           </FormControl>
@@ -1063,10 +1063,10 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
                 taxesChecked && errors.taxesError
                   ? 'This field must be greater than 0'
                   : taxesChecked && errors.totalDiscountsError
-                  ? 'The total amount of discounts should be less than Gross Premium'
-                  : taxesChecked && totalDiscountsError
-                  ? 'The total amount of discounts should be less than Gross Premium'
-                  : ''
+                    ? 'The total amount of discounts should be less than Gross Premium'
+                    : taxesChecked && totalDiscountsError
+                      ? 'The total amount of discounts should be less than Gross Premium'
+                      : ''
               }
             />
           </FormControl>
@@ -1116,10 +1116,10 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
                 frontingChecked && errors.frontingFeePError
                   ? 'This field must be greater than 0'
                   : frontingChecked && errors.totalDiscountsError
-                  ? 'The total discounts percentage should be less than 100%'
-                  : frontingChecked && totalDiscountsError
-                  ? 'The total discounts percentage should be less than 100%'
-                  : ''
+                    ? 'The total discounts percentage should be less than 100%'
+                    : frontingChecked && totalDiscountsError
+                      ? 'The total discounts percentage should be less than 100%'
+                      : ''
               }
             />
           </FormControl>
@@ -1155,10 +1155,10 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
                 frontingChecked && errors.frontingFeeError
                   ? 'This field must be greater than 0'
                   : frontingChecked && errors.totalDiscountsError
-                  ? 'The total amount of discounts should be less than Gross Premium'
-                  : frontingChecked && totalDiscountsError
-                  ? 'The total amount of discounts should be less than Gross Premium'
-                  : ''
+                    ? 'The total amount of discounts should be less than Gross Premium'
+                    : frontingChecked && totalDiscountsError
+                      ? 'The total amount of discounts should be less than Gross Premium'
+                      : ''
               }
             />
           </FormControl>
@@ -1216,8 +1216,8 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
                   totalDiscountsError
                     ? 'The total discounts percentage should be less than 100%'
                     : discountsErrorsIndex.includes(index)
-                    ? 'This field must be greater than 0'
-                    : ''
+                      ? 'This field must be greater than 0'
+                      : ''
                 }
               />
             </FormControl>
@@ -1253,8 +1253,8 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
                   totalDiscountsError
                     ? 'The total amount of discounts should be less than Gross Premium'
                     : discountsErrorsIndex.includes(index)
-                    ? 'This field must be greater than 0'
-                    : ''
+                      ? 'This field must be greater than 0'
+                      : ''
                 }
               />
             </FormControl>
