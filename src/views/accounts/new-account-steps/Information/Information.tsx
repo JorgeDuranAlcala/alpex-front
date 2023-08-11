@@ -105,7 +105,6 @@ export interface PlacementStructure {
 }
 
 const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountChange, disableSectionCtrl }) => {
-
   // const router = useRouter();
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
   const [subjectState] = useState<Subject<void>>(new Subject())
@@ -124,6 +123,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   const [open, setOpen] = useState<boolean>(false)
   const [nextClicked, setNextClicked] = useState<boolean>(false)
   const [saveClicked, setSaveClicked] = useState<boolean>(false)
+  const [hasClickedNextStep, setHasClickedNextStep] = useState<boolean>(false)
 
   const [badgeData, setBadgeData] = useState<IAlert>({
     message: '',
@@ -538,51 +538,60 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   }
 
   const handleSaveInformation = async () => {
-    if (idAccount) {
-      setBadgeData({
-        message: `UPDATING INFORMATION`,
-        status: 'secondary',
-        open: true,
-        icon: <CircularProgress size={20} color='primary' />,
-        backgroundColor: '#828597',
-        theme: 'info',
-        disableAutoHide: true
-      })
+    try {
+      if (idAccount) {
+        setBadgeData({
+          message: `UPDATING INFORMATION`,
+          status: 'secondary',
+          open: true,
+          icon: <CircularProgress size={20} color='primary' />,
+          backgroundColor: '#828597',
+          theme: 'info',
+          disableAutoHide: true
+        })
 
-      await updateInformation()
-      await uploadDoctos(idAccount)
-      await updateDiscount()
-      dispatch(updateFormsData({ form1: { basicInfo, placementStructure, userFile, id: idAccount } }))
-      setDisableSave(false)
-    } else {
-      setBadgeData({
-        message: `SAVING INFORMATION`,
-        status: 'secondary',
-        open: true,
-        icon: <CircularProgress size={20} color='secondary' />,
-        backgroundColor: '#828597',
-        theme: 'info',
-        disableAutoHide: true
-      })
+        await updateInformation()
+        await uploadDoctos(idAccount)
+        await updateDiscount()
+        dispatch(updateFormsData({ form1: { basicInfo, placementStructure, userFile, id: idAccount } }))
+        setDisableSave(false)
+      } else {
+        setBadgeData({
+          message: `SAVING INFORMATION`,
+          status: 'secondary',
+          open: true,
+          icon: <CircularProgress size={20} color='secondary' />,
+          backgroundColor: '#828597',
+          theme: 'info',
+          disableAutoHide: true
+        })
 
-      const res = await saveInformation()
-      setDisableSave(false)
-      if (res) {
-        const discountTemp = discounts.map(discount => ({
-          ...discount,
-          idAccount: res.account.id
-        }))
-        await localStorage.setItem('idAccount', String(res.account.id))
-        if (discountTemp.length > 0) {
-          await addDiscounts(discountTemp)
-          triggerFunction()
+        const res = await saveInformation()
+        setDisableSave(false)
+        if (res) {
+          const discountTemp = discounts.map(discount => ({
+            ...discount,
+            idAccount: res.account.id
+          }))
+          await localStorage.setItem('idAccount', String(res.account.id))
+          if (discountTemp.length > 0) {
+            await addDiscounts(discountTemp)
+            triggerFunction()
+          }
         }
+
+        await uploadDoctos(res.account.id)
+        dispatch(updateFormsData({ form1: { basicInfo, placementStructure, userFile, id: res?.account?.id } }))
+
+        onIsNewAccountChange(false)
       }
-
-      await uploadDoctos(res.account.id)
-      dispatch(updateFormsData({ form1: { basicInfo, placementStructure, userFile, id: res?.account?.id } }))
-
-      onIsNewAccountChange(false)
+    } catch (error) {
+      console.log(error)
+      debugger
+      setHasClickedNextStep(false)
+    } finally {
+      debugger
+      if (hasClickedNextStep) onStepChange(2)
     }
   }
 
@@ -596,11 +605,9 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
 
   //Evento que controla el evento de continuar
   const handleNextStep = async () => {
-
     if (allValidated) {
+      setHasClickedNextStep(true)
       await handleSaveInformation()
-
-      onStepChange(2)
     }
     handleCloseModal()
   }
@@ -683,7 +690,6 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   useEffect(() => {
     const idAccountCache = Number(localStorage.getItem('idAccount'))
     if (idAccountCache) {
-
       dispatch(updateFormsData({ form1: { ...lastForm1Information, id: idAccountCache } }))
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -757,10 +763,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   }, [userFileToDelete])
 
   useEffect(() => {
-
-
     if (idAccount) {
-
       // console.log(idAccount)
 
       setDataInformation()
@@ -771,7 +774,6 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
       // console.log('idAccountLocalStorage', Number(localStorage.getItem('idAccount')))
       // console.log('idAccountRouter', Number(router.query.idAccount))
       // if (!idAccount) return
-
       // setDataInformation()
       // localStorage.setItem('idAccount', idAccount.toString())
       // setAccountId(idAccount)
@@ -798,7 +800,6 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [validationCount, validatedForms])
 
-
   // * INIT -  Actualizar los datos del formulario en Redux + + + + + + + + + + + + + +
 
   // const {
@@ -817,7 +818,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
         <form noValidate autoComplete='on' onSubmit={handleNextStep}>
           {/* <div className='section' onClick={handleCanUpdateBasicInfoData}> */}
 
-          <div className='section' >
+          <div className='section'>
             <DisableForm isDisabled={disableSectionCtrl?.basicInfo} sg={5000}>
               <BasicInfo
                 basicInfo={basicInfo}
