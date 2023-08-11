@@ -5,6 +5,10 @@ import { useEffect, useRef, useState } from 'react';
 import { Loader } from '@googlemaps/js-api-loader';
 import Card from '@mui/material/Card';
 
+// ** Next Import
+import { useRouter } from 'next/router';
+
+
 //** Custom imports */
 import {
   MapContainer
@@ -29,6 +33,11 @@ const PropertiesMap = () => {
 
   const [propertiesList, setPropertiesList] = useState<IProperty[]>([])
 
+  const [googleApi, setGoogleApi] = useState<typeof google | null>(null);
+
+    // ** Hooks
+    const router = useRouter()
+
   // const geocoder = useRef<google.maps.Geocoder | null>(null)
 
   const handleMapClick = (event: google.maps.MapMouseEvent) => {
@@ -43,10 +52,13 @@ const PropertiesMap = () => {
         version: 'weekly'
       })
 
-      const google = await loader.load()
+      // const google = await loader.load()
+
+      const googleInstance = await loader.load();
+      setGoogleApi(googleInstance);
 
       if (mapRef.current) {
-        map.current = new google.maps.Map(mapRef.current, {
+        map.current = new googleInstance.maps.Map(mapRef.current, {
           center: { lat: 23.6345, lng: -102.5528 },
           zoom: 5
         })
@@ -54,7 +66,6 @@ const PropertiesMap = () => {
         map.current.addListener('click', handleMapClick)
       }
 
-      // geocoder.current = new google.maps.Geocoder()
     }
 
     loadMap()
@@ -70,26 +81,34 @@ const PropertiesMap = () => {
   }, [properties])
 
  useEffect(() => {
-  console.log(propertiesList)
+  if (propertiesList.length > 0 && !markersAdded && googleApi !== null) {
 
-  // Add markers  if propertiesList has elements and if no marker has been added
-    if (propertiesList.length > 0 && !markersAdded) {
-      propertiesList.forEach((property) => {
-        const latitude = parseFloat(property.latitude.replace(",", "."));
-        const longitude = parseFloat(property.longitude.replace(",", "."));
+    propertiesList.map((property) => {
+      const latitude = parseFloat(property.latitude.replace(",", "."));
+      const longitude = parseFloat(property.longitude.replace(",", "."));
 
-        if (!isNaN(latitude) && !isNaN(longitude)) {
-          new google.maps.Marker({
-            position: { lat: latitude, lng: longitude },
-            map: map.current,
-            title: property.institution,
-          });
-        }
-      });
+      if (!isNaN(latitude) && !isNaN(longitude)) {
+        const marker = new googleApi.maps.Marker({
+          position: { lat: latitude, lng: longitude },
+          map: map.current,
+          title: property.institution,
+        });
 
-      // Markers added true
-      setMarkersAdded(true);
-    }
+        marker.addListener("click", () => {
+          console.log(property.keyDepe);
+          router.push(`/dynamic-data/property-listing/property-details`)
+        });
+
+        return marker
+      }
+
+      return null
+    });
+
+    // Markers added true
+    console.log("se va a setear el add markers")
+    setMarkersAdded(true);
+  }
   }, [propertiesList, markersAdded]);
 
   return (

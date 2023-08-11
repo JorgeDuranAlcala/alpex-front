@@ -51,3 +51,34 @@ export interface PropertyPaginationDto {
   filters: PropertyFiltersDto[]
   info: PropertyInfoDto
 }
+
+export type ConstructionDto = {
+  stories: string;
+  structure: string;
+  slab: string;
+  foundation: string;
+  constructionSurface: string;
+  surfaceArea: string;
+  date: string;
+};
+
+export type BasicInfoDto = {
+  name: string,
+  insitution: string,
+  use: string,
+  sector: string,
+  acronym: string,
+  administration: string
+}
+
+export type LocationDto = {
+  address: string,
+  neighborhood: string,
+  postalCode: string,
+  state: string,
+  stateCode: string,
+  province: string,
+  provinceCode: string,
+  latitude: string,
+  longitude: string
+}

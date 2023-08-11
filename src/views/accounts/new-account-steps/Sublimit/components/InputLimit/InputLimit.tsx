@@ -22,6 +22,7 @@ const InputLimit: React.FC<InputLimitProps> = ({ account }) => {
         multiline
         variant='outlined'
         fullWidth
+        decimalScale={2}
       />
     </Grid>
   )

@@ -254,7 +254,7 @@ const column: GridColumns<INearlyPaymentStatus> = [
           >
             {headerName}
           </Typography>
-          <ButtonFilter dataFilter={brokers} insured />
+          {/* <ButtonFilter dataFilter={brokers} insured /> */}
         </Box>
       )
     },

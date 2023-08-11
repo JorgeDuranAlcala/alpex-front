@@ -46,6 +46,64 @@ class PropertiesServices {
     }
   }
 
+  async getBasicInfo() {
+    try {
+      const data = {
+        name: 'XEEP RADIO EDUCACION',
+        insitution: 'RADIO EDUCACION',
+        use: 'OFICINA',
+        sector: 'COMUNICACIÓN',
+        acronym: 'REDUC',
+        administration: 'FEDERAL'
+      }
+
+      return data
+    } catch (error) {
+      const message = String(error)
+      throw new Error(message)
+    }
+  }
+
+  async getConstructionDetails() {
+    try {
+      const data = {
+        stories: '2',
+        structure: 'MUROS DE MAMPOSTERIA',
+        slab: 'LOSA DE CONCRETO',
+        foundation: 'SUPERFICIAL',
+        constructionSurface: '1.404,65',
+        surfaceArea: '2.901,46',
+        date: '-'
+      }
+
+      return data
+    } catch (error) {
+      const message = String(error)
+      throw new Error(message)
+    }
+  }
+
+  async getLocationDetails() {
+    try {
+      const data = {
+        address: 'ANGEL URRAZA 622',
+        neighborhood: 'DEL VALLE',
+        postalCode: '03100',
+        state: 'CIUDAD DE MÉXICO',
+        stateCode: '9',
+        province: 'BENITO JUÁREZ',
+        provinceCode: '14',
+        latitude: '19,3837665',
+        longitude: '-99,16911088'
+      }
+
+      return data
+    } catch (error) {
+      const message = String(error)
+      throw new Error(message)
+    }
+  }
+
 }
 
 export default new PropertiesServices()
