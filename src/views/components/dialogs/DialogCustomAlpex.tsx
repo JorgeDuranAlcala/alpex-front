@@ -25,7 +25,7 @@ export type DialogProps = {
 }
 const DialogCustomAlpex = ({ openDialog, resolve, title, body, reject, subBody, sublimits }: DialogProps) => {
   // ** State
-  const [open, setOpen] = useState<boolean>(true)
+  const [open, setOpen] = useState<boolean>(false)
 
   // ** Hooks
   // const theme = useTheme()
