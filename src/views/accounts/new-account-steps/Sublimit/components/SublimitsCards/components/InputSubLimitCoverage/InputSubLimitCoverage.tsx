@@ -181,7 +181,7 @@ const InputSubLimitCoverage: React.FC<InputSubLimitCoverageProps> = ({
       {openDialog && (
         <DialogCustomAlpex
           openDialog={openDialog}
-          body={`The current sublimit exceeds the originally established sublimit.`}
+          body={`The current sublimit exceeds the originally established limit.`}
           subBody={`Confirm the new higher sublimit or cancel to close this message.`}
           title={'Sublimit adjustment alert'}
           resolve={onChangeCheckAt100}
