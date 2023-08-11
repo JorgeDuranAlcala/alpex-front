@@ -587,10 +587,9 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
       }
     } catch (error) {
       console.log(error)
-      debugger
+
       setHasClickedNextStep(false)
     } finally {
-      debugger
       if (hasClickedNextStep) onStepChange(2)
     }
   }
@@ -606,7 +605,6 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   //Evento que controla el evento de continuar
   const handleNextStep = async () => {
     if (allValidated) {
-      setHasClickedNextStep(true)
       await handleSaveInformation()
     }
     handleCloseModal()
@@ -668,6 +666,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
       case 'next':
         setNextClicked(true)
         setMakeValidations(true)
+        setHasClickedNextStep(true)
         break
 
       default:
@@ -918,6 +917,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
                       onClick={() => {
                         setOpen(false)
                         setNextClicked(false)
+                        setHasClickedNextStep(false)
                       }}
                     >
                       Keep editing information
@@ -944,6 +944,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
                       onClick={() => {
                         setOpen(false)
                         setNextClicked(false)
+                        setHasClickedNextStep(false)
                       }}
                     >
                       OK
