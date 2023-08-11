@@ -37,6 +37,18 @@
   justify-content: space-between;
 }
 
+.properties-datagrid {
+  min-width: 825px !important;
+}
+
+.properties-card {
+  overflow-x: scroll !important;
+}
+
+.properties-datagrid .MuiTablePagination-toolbar {
+  display: none;
+}
+
 /*------------------ Property Details Styles  --------------*/
 
 .detail-table-wrapper {

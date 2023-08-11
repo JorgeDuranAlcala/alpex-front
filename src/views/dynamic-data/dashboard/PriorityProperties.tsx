@@ -92,7 +92,7 @@ const PriorityProperties = () => {
       field: EFieldColumn.PROPERTY_ID,
       headerName: 'ID',
       minWidth: 50,
-      maxWidth: 150,
+      maxWidth: 110,
       type: 'string',
       align: 'left',
       disableColumnMenu: true,
@@ -136,8 +136,7 @@ const PriorityProperties = () => {
       flex: 0.1,
       field: EFieldColumn.STATE,
       headerName: 'STATE',
-      minWidth: 50,
-      maxWidth: 90,
+      minWidth: 150,
       type: 'string',
       align: 'left',
       disableColumnMenu: true,
@@ -148,9 +147,9 @@ const PriorityProperties = () => {
         <Typography
           sx={{ color: colors.text.primary, fontWeight: 500, fontSize: fonts.size.px14, fontFamily: fonts.inter }}
         >
-          <Link sx={{ color: colors.text.primary }} href='#'>
+
             {row.state}
-          </Link>
+
         </Typography>
       )
     },
@@ -158,8 +157,7 @@ const PriorityProperties = () => {
       flex: 0.1,
       field: EFieldColumn.PROVINCE,
       headerName: 'PROVINCE',
-      minWidth: 50,
-      maxWidth: 90,
+      minWidth: 150,
       type: 'string',
       align: 'left',
       disableColumnMenu: true,
@@ -178,7 +176,7 @@ const PriorityProperties = () => {
       flex: 0.1,
       field: EFieldColumn.INSTITUTION,
       headerName: 'INSTITUTION',
-      minWidth: 150,
+      minWidth: 165,
       type: 'string',
       align: 'left',
       disableColumnMenu: true,
@@ -200,7 +198,7 @@ const PriorityProperties = () => {
       flex: 0.1,
       field: EFieldColumn.CRESTA_ZONE,
       headerName: 'CRESTA ZONE',
-      minWidth: 120,
+      minWidth: 100,
       type: 'string',
       align: 'left',
       disableColumnMenu: true,
@@ -222,7 +220,7 @@ const PriorityProperties = () => {
 
   return (
 
-    <Card>
+    <Card className='properties-card'>
       <DataGrid
         loading={loading}
         autoHeight

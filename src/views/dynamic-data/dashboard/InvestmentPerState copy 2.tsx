@@ -24,9 +24,6 @@ import { useGetInvestmentPerState } from '@/hooks/dynamic-data/dashboard'
 //Dto imports
 // import { InvestmentPerStateDto } from '@/services/dynamic-data/dtos/dashboard.dto'
 
-// ** Helper imports
-import { fromStateToAbbr } from '@/services/helper/fromStateToAbbr'
-
 import { useEffect, useState } from 'react'
 
 const InvestmentPerState = () => {
@@ -38,7 +35,7 @@ const InvestmentPerState = () => {
   const [categories, setCategories] = useState<string[]>([])
   const [series, setSeries] = useState<any[]>([
     {
-      name: 'VALFIS',
+      name: '',
       data: []
     }
   ])
@@ -48,24 +45,18 @@ const InvestmentPerState = () => {
 
     if (!data) return
 
-    const totalList: any[] = []
-    const statesList: string[]= []
-
-    data.dataPerState.forEach((item: { totalValfis: any; state: any }) => {
-      totalList.push(item.totalValfis);
-      statesList.push(fromStateToAbbr(item.state));
-    });
-
     const newSeries = [
       {
-      name: 'VALFIS',
-      data: totalList || [],
+      name: data.name || '',
+      data: data.data || [],
       }
     ]
 
+
+
     setSeries(newSeries)
     setTotalValfis(data.totalValfis)
-    setCategories(statesList)
+    setCategories(data.categories)
   }
 
   useEffect(() => {
@@ -159,7 +150,7 @@ const InvestmentPerState = () => {
       axisBorder: { show: false },
       categories: categories,
       labels: {
-        formatter: val => `${Number(val) / 1000000}M`,
+        formatter: val => `${Number(val) / 1000}k`,
         style: {
           fontSize: '0.875rem',
           colors: theme.palette.text.disabled
@@ -183,7 +174,7 @@ const InvestmentPerState = () => {
     <Card className='investment-per-state'>
       <CardHeader
         title='Capacity per State'
-        subheader={`Total VALFIS sum $${(Number(totalValfis)/1000000).toFixed(1)}M`}
+        subheader={`Total VALFIS sum $${totalValfis}M`}
         sx= {{position: 'relative'}}
         subheaderTypographyProps={{ sx: { lineHeight: 1.429 } }}
         titleTypographyProps={{ sx: { letterSpacing: '0.15px' } }}
