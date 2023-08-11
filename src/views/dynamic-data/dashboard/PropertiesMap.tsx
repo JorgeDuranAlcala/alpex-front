@@ -5,6 +5,10 @@ import { useEffect, useRef, useState } from 'react';
 import { Loader } from '@googlemaps/js-api-loader';
 import Card from '@mui/material/Card';
 
+// ** Next Import
+import { useRouter } from 'next/router';
+
+
 //** Custom imports */
 import {
   MapContainer
@@ -30,6 +34,9 @@ const PropertiesMap = () => {
   const [propertiesList, setPropertiesList] = useState<IProperty[]>([])
 
   const [googleApi, setGoogleApi] = useState<typeof google | null>(null);
+
+    // ** Hooks
+    const router = useRouter()
 
   // const geocoder = useRef<google.maps.Geocoder | null>(null)
 
@@ -89,6 +96,7 @@ const PropertiesMap = () => {
 
         marker.addListener("click", () => {
           console.log(property.keyDepe);
+          router.push(`/dynamic-data/property-listing/property-details`)
         });
 
         return marker

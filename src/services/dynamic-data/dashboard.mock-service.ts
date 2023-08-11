@@ -72,13 +72,18 @@ class DashboardMockServices {
     try {
       const data = {
         totalValfis: '100',
-        name: 'Sales',
+        name: 'VALFIS',
         data: [14165, 12859, 10375, 8567, 6880],
         categories: ['CX','NL','YU','EM','PU']
       }
 
+      // const { data } = await AppAlpexApiGateWay.get(DATA_DASHBOARD_ROUTES.GET_CAPACITY_PER_STATES)
+
 
       return data
+
+
+
     } catch (error) {
       const message = String(error)
       throw new Error(message)

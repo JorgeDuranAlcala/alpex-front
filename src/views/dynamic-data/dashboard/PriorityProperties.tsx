@@ -229,7 +229,7 @@ const PriorityProperties = () => {
         disableSelectionOnClick
         rows={propertiesList}
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        getRowId={(row) => "1"}
+        getRowId={(row) => row.keyDepe}
         columns={column}
         pagination={undefined}
         pageSize={10}

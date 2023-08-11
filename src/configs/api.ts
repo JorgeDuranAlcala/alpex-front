@@ -303,12 +303,16 @@ export enum DEBIT_NOTE_ROUTES {
 
 export enum DATA_DASHBOARD_ROUTES {
   GET_PRIORITY_PROPERTIES = 'buildings/all',
+  GET_CAPACITY_PER_STATES='buildings/top-five'
 }
 
 export enum DATA_MAPS_ROUTES {
   GET_ALL_PROPERTIES = 'buildings/all',
 }
 
+
+
+// ====
 
 export enum DOCUMENTS_ROUTES {
   GETBYACCOUNTID = 'documents/get/byAccountId',
