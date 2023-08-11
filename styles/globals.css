@@ -1,9 +1,9 @@
 html,
 body {
   min-height: 100%;
-  overflow-x: hidden;
-  padding-right: 0px !important;
-  overflow: auto !important;
+  /* overflow-x: hidden; */
+  /* padding-right: 0px !important; */
+  /* overflow: auto !important; */
 }
 
 #__next {
