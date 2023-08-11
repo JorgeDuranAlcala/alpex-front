@@ -76,11 +76,18 @@ const DialogCustomAlpex = ({ openDialog, resolve, title, body, reject, subBody, 
           )}
         </DialogContent>
         <DialogActions className='dialog-actions-dense'>
-          <Button onClick={handleClose} sx={{ width: '20%', m: 2 }}>
-            CANCEL
-          </Button>
           {sublimits ? (
-            <Button variant='contained' sx={{ width: '20%', m: 2 }} onClick={resolve}>
+            <Button onClick={resolve} sx={{ width: '20%', m: 2 }}>
+              CANCEL
+            </Button>
+          ) : (
+            <Button onClick={handleClose} sx={{ width: '20%', m: 2 }}>
+              CANCEL
+            </Button>
+          )}
+
+          {sublimits ? (
+            <Button variant='contained' sx={{ width: '20%', m: 2 }} onClick={handleClose}>
               CONFIRM
             </Button>
           ) : (
