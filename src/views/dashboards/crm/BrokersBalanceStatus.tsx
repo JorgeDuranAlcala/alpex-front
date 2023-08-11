@@ -8,9 +8,6 @@ import { useState } from 'react'
 import ReactApexcharts from 'src/@core/components/react-apexcharts'
 import UserThemeOptions from 'src/layouts/UserThemeOptions'
 
-// import CustomModal from 'src/pages/components/modal'
-// import ModalReinsurers from './ModalReinsurers'
-
 import {
   AccountsDescription,
   AccountsNumber,
@@ -28,17 +25,6 @@ import {
 
 const BrokersBalanceStatus = () => {
   const [broker, setBroker] = useState('')
-
-  // const [allBrokers] = useState(0)
-
-  // const brokers = [
-  //   { name: 'All brokers', value: '' },
-  //   { name: 'broker1', value: 1 },
-  //   { name: 'broker2', value: 2 },
-  //   { name: 'broker3', value: 3 },
-  //   { name: 'broker4', value: 4 },
-  //   { name: 'broker5', value: 5 }
-  // ]
 
   const { brokers } = useGetAll()
 
@@ -113,11 +99,11 @@ const BrokersBalanceStatus = () => {
           displayEmpty
           onChange={e => {
             handleOnchange(e)
-            console.log(e.target.value)
           }}
           IconComponent={KeyboardArrowDownIcon}
-
-          // renderValue={selected => (allBrokers === 0 ? 'All brokers' : selected)}
+          renderValue={selected =>
+            selected.length === 0 ? 'All brokers' : brokers.find(broker => broker.id === Number(selected))?.name
+          }
         >
           {brokers?.map((item, index) => (
             <MenuItem key={index} value={item.id}>
