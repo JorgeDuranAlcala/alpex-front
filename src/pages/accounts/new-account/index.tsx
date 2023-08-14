@@ -28,9 +28,6 @@ import FormHeader from 'src/views/accounts/new-account-steps/headers/formHeader'
 
 import { AccountsTableContextProvider } from '@/context/accounts/Table/reducer'
 import { useGetAccountById } from '@/hooks/accounts/forms'
-import { useMultiTabButtons } from '@/layouts/components/multiTabButtons/hooks/useMultiTabButtons'
-import { stepForms_updateStep } from '@/store/apps/accounts/stepFormsSlice'
-import { Box, CircularProgress } from '@mui/material'
 import Icon from 'src/@core/components/icon'
 
 // import UserList from 'src/pages/apps/user/list'
@@ -46,14 +43,15 @@ const NewAccount = () => {
   const { account: accountDetails, getAccountById } = useGetAccountById()
 
 
-  const { addNewTabButton, removeTabByText } = useMultiTabButtons()
+  // const { addNewTabButton, removeTabByText } = useMultiTabButtons()
 
   // const { account, setAccountId } = useGetAccountById()
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [disableComments, setDisableComments] = useState(false)
   const [isNewAccount, setIsNewAccount] = useState<boolean>(true)
   const [activeStep, setActiveStep] = useState(1);
-  const [isPushingToCreatedAccount, setIsPushingToCreatedAccount] = useState<boolean>(false)
+
+  // const [isPushingToCreatedAccount, setIsPushingToCreatedAccount] = useState<boolean>(false)
 
   // const [sidebar, setSidebar] = useState<boolean>(false)
   // const handleSidebarMenu = () => {
@@ -63,37 +61,37 @@ const NewAccount = () => {
 
   // console.log({ account })
 
-  const pushToCreatedAccount = (step: number) => {
-    const idAccount = localStorage.getItem('idAccount');
-    if (idAccount) {
-      setIsPushingToCreatedAccount(true);
-      addNewTabButton({
-        text: idAccount.toString(),
-        link: `/accounts/created-account/?&idAccount=${idAccount}`,
-        isActive: true
-      });
+  // const pushToCreatedAccount = (step: number) => {
+  //   const idAccount = localStorage.getItem('idAccount');
+  //   if (idAccount) {
+  //     setIsPushingToCreatedAccount(true);
+  //     addNewTabButton({
+  //       text: idAccount.toString(),
+  //       link: `/accounts/created-account/?&idAccount=${idAccount}`,
+  //       isActive: true
+  //     });
 
 
-      removeTabByText('New Account');
+  //     removeTabByText('New Account');
 
-      dispatch(stepForms_updateStep({
-        id: idAccount,
-        data: step,
-      }))
+  //     dispatch(stepForms_updateStep({
+  //       id: idAccount,
+  //       data: step,
+  //     }))
 
-      router.push(`/accounts/created-account/?&idAccount=${idAccount}`);
+  //     router.push(`/accounts/created-account/?&idAccount=${idAccount}`);
 
-    }
-  }
+  //   }
+  // }
 
 
   const handleStepChange = (step: number) => {
 
-    if (step > 1) {
-      pushToCreatedAccount(step);
+    // if (step > 1) {
+    //   pushToCreatedAccount(step);
 
-      return;
-    }
+    //   return;
+    // }
     setActiveStep(step)
     console.log(step)
   }
@@ -187,22 +185,20 @@ const NewAccount = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, router.events])
 
-  if (isPushingToCreatedAccount) {
+  // if (isPushingToCreatedAccount) {
 
-    return (
-      <Box
-
-      // sx={{
-      //   display: 'flex',
-      //   justifyContent: 'center',
-      //   alignItems: 'center',
-      //   height: '100%'
-      // }}
-      >
-        <CircularProgress size={75} />
-      </Box>
-    )
-  }
+  //   return (
+  //     <Box sx={{
+  //       display: 'flex',
+  //       justifyContent: 'center',
+  //       alignItems: 'center',
+  //       height: '100%',
+  //       width: '100%'
+  //     }}>
+  //       <CircularProgress size={75} />
+  //     </Box>
+  //   )
+  // }
 
 
   return (

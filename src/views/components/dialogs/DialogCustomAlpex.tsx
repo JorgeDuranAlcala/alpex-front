@@ -18,10 +18,12 @@ export type DialogProps = {
   openDialog: boolean
   title: string
   body: any
+  subBody?: any
   resolve: () => void
   reject: () => void
+  sublimits?: boolean
 }
-const DialogCustomAlpex = ({ openDialog, resolve, title, body, reject }: DialogProps) => {
+const DialogCustomAlpex = ({ openDialog, resolve, title, body, reject, subBody, sublimits }: DialogProps) => {
   // ** State
   const [open, setOpen] = useState<boolean>(false)
 
@@ -62,15 +64,37 @@ const DialogCustomAlpex = ({ openDialog, resolve, title, body, reject }: DialogP
           </IconButton>
         </DialogTitle>
         <DialogContent>
-          <DialogContentText id='alert-dialog-description'>{body}</DialogContentText>
+          {sublimits ? (
+            <>
+              <DialogContentText id='alert-dialog-description' sx={{ mb: 2 }}>
+                {body}
+              </DialogContentText>
+              <DialogContentText id='alert-dialog-description'>{subBody}</DialogContentText>
+            </>
+          ) : (
+            <DialogContentText id='alert-dialog-description'>{body}</DialogContentText>
+          )}
         </DialogContent>
         <DialogActions className='dialog-actions-dense'>
-          <Button onClick={handleClose} sx={{ width: '20%', m: 2 }}>
-            CANCEL
-          </Button>
-          <Button variant='contained' sx={{ width: '20%', m: 2 }} onClick={resolve}>
-            REMOVE
-          </Button>
+          {sublimits ? (
+            <Button onClick={resolve} sx={{ width: '20%', m: 2 }}>
+              CANCEL
+            </Button>
+          ) : (
+            <Button onClick={handleClose} sx={{ width: '20%', m: 2 }}>
+              CANCEL
+            </Button>
+          )}
+
+          {sublimits ? (
+            <Button variant='contained' sx={{ width: '20%', m: 2 }} onClick={handleClose}>
+              CONFIRM
+            </Button>
+          ) : (
+            <Button variant='contained' sx={{ width: '20%', m: 2 }} onClick={resolve}>
+              REMOVE
+            </Button>
+          )}
         </DialogActions>
       </Dialog>
     </Fragment>
