@@ -24,6 +24,7 @@ export type InputSubLimitCoverageProps = {
   onHandleChangeSubLimit: (subLimit: SublimitDto) => void
   showErrors: boolean
   errorCard: FormErrors
+  subLimits: SublimitDto[]
 }
 
 const InputSubLimitCoverage: React.FC<InputSubLimitCoverageProps> = ({
@@ -32,15 +33,22 @@ const InputSubLimitCoverage: React.FC<InputSubLimitCoverageProps> = ({
   isNotYesLuc,
   showErrors,
   subLimit,
-  errorCard
+  errorCard,
+  subLimits
 }) => {
   const [limitAmount, setLimitAmount] = useState<number>(subLimit.sublimit)
   const [isCheckAt100, setIsCheckAt100] = useState<boolean>(false)
   const [yesOrLuc, setYesOrLuc] = useState<string>(subLimit.yes ? 'yes' : 'luc')
   const [openDialog, setOpenDialog] = useState<boolean>(false)
 
+  const [prevSublimit, setPrevSublimit] = useState<number>(subLimit.sublimit)
+  const [sublimitId, setSublimitId] = useState<number | undefined>(subLimit.id)
+
   // console.log({ limit })
   // console.log({ limitAmount })
+  // console.log({ subLimits })
+  // console.log({ prevSublimit })
+  // console.log({ sublimitId })
 
   const handleChangeSubLimit = (subLimitAmount: number) => {
     const subLimitTemp = { ...subLimit }
@@ -57,6 +65,13 @@ const InputSubLimitCoverage: React.FC<InputSubLimitCoverageProps> = ({
     setLimitAmount(subLimitTemp.sublimit)
     setIsCheckAt100(subLimitTemp.at100)
   }
+
+  const onChangeKeepSublimit = () => {
+    subLimits.forEach(item => {
+      if (item.id === sublimitId) setLimitAmount(prevSublimit)
+    })
+    setOpenDialog(false)
+  }
   const handleChangeRadioYesLuc = (value: string) => {
     const subLimitTemp = { ...subLimit }
     subLimitTemp.yes = value === 'yes'
@@ -64,6 +79,12 @@ const InputSubLimitCoverage: React.FC<InputSubLimitCoverageProps> = ({
     onHandleChangeSubLimit(subLimitTemp)
     setYesOrLuc(value)
   }
+
+  useEffect(() => {
+    const subLimitTemp = { ...subLimit }
+    setPrevSublimit(subLimitTemp.sublimit)
+    setSublimitId(subLimitTemp.id)
+  }, [])
 
   useEffect(() => {
     if (limitAmount !== Number(limit)) {
@@ -75,6 +96,17 @@ const InputSubLimitCoverage: React.FC<InputSubLimitCoverageProps> = ({
   }, [limitAmount])
 
   useEffect(() => {
+    if (subLimits.length > 0 && !openDialog) {
+      subLimits.forEach(subL => {
+        if (limitAmount > subL.sublimit) {
+          setOpenDialog(true)
+        } else {
+          setOpenDialog(false)
+        }
+      })
+      console.log('hay mas de 1 card')
+      console.log({ openDialog })
+    }
     if (limitAmount > Number(limit)) {
       setOpenDialog(true)
     } else {
@@ -83,6 +115,10 @@ const InputSubLimitCoverage: React.FC<InputSubLimitCoverageProps> = ({
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [limitAmount])
+
+  useEffect(() => {
+    setOpenDialog(openDialog)
+  }, [openDialog])
 
   useEffect(() => {
     if (!isNotYesLuc) {
@@ -181,10 +217,10 @@ const InputSubLimitCoverage: React.FC<InputSubLimitCoverageProps> = ({
       {openDialog && (
         <DialogCustomAlpex
           openDialog={openDialog}
-          body={`The current sublimit exceeds the originally established sublimit.`}
+          body={`The current sublimit exceeds the originally established limit.`}
           subBody={`Confirm the new higher sublimit or cancel to close this message.`}
           title={'Sublimit adjustment alert'}
-          resolve={onChangeCheckAt100}
+          resolve={subLimit.id === undefined ? onChangeCheckAt100 : () => onChangeKeepSublimit()}
           reject={() => setOpenDialog(false)}
           sublimits={true}
         />
