@@ -1,7 +1,5 @@
 // ** Custom hooks
 import { useGetAccountById } from '@/hooks/accounts/forms'
-import { useAddSecurities } from '@/hooks/accounts/security'
-import { useAddSecurityTotal, useUpdateSecurityTotalById } from '@/hooks/accounts/securityTotal'
 
 // ** Dtos
 import {
@@ -13,7 +11,7 @@ import {
 } from '@/services/accounts/dtos/security.dto'
 
 // ** Redux
-import { useAppSelector } from '@/store'
+import { useAppDispatch, useAppSelector } from '@/store'
 
 // ** Style
 import { Title } from '@/styled-components/accounts/Security.styled'
@@ -39,13 +37,20 @@ import UserThemeOptions from 'src/layouts/UserThemeOptions'
 import { FormSection } from './components/SecurityForm'
 import { SecurityMapper } from './mappers/SecurityForm.mapper'
 
+import { updateEndorsement } from '@/store/apps/endorsement'
 import { DisableForm } from 'src/views/accounts/new-account-steps/_commons/DisableForm'
 import { SecondViewProvider } from './components/secondView/SecondViewProvider'
 import { CalculateSecurity } from './utils/calculates-securities'
 
+// ** Nextjs
+import { useRouter } from 'next/router'
+
 export const SecurityContext = createContext<SecurityContextDto>({} as SecurityContextDto)
 
 const Security = ({ onStepChange, disableSectionCtrl }: SecurityProps) => {
+  const router = useRouter()
+  const idAccountRouter = Number(router?.query?.idAccount)
+
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
   const [securities, setSecurities] = useState<SecurityDto[]>([])
 
@@ -82,14 +87,11 @@ const Security = ({ onStepChange, disableSectionCtrl }: SecurityProps) => {
   })
   const [companiesSelect] = useState<number[]>([])
 
-  const { account, setAccountId, getAccountById, accountId } = useGetAccountById()
-  const { saveSecurityTotal } = useAddSecurityTotal()
-  const { updateSecurityTotal } = useUpdateSecurityTotalById()
+  const { account, setAccountId, accountId, setAccount } = useGetAccountById()
 
-  // const { updateSecurities } = useUpdateSecurities()
-  const { saveSecurities } = useAddSecurities()
-
-  const accountData = useAppSelector(state => state.accounts)
+  // Redux
+  const endorsementData = useAppSelector(state => state.endorsement.data)
+  const dispatch = useAppDispatch()
 
   const inter = userThemeConfig.typography?.fontFamilyInter
   const initialSecurity = {
@@ -292,16 +294,14 @@ const Security = ({ onStepChange, disableSectionCtrl }: SecurityProps) => {
   }
 
   const onNextStep = () => {
-    // SaveData()
+    SaveData()
     setIsNextStep(true)
     handleCloseModal()
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const SaveData = async () => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const update: Partial<SecurityDto>[] = []
-    const save: Partial<SecurityDto>[] = []
+    if (!endorsementData.initialized) return
+    const newSecurities: Partial<SecurityDto>[] = []
 
     for (const security of securities) {
       // * Con esta validación no se guardarán los datos de la vista 2
@@ -309,66 +309,25 @@ const Security = ({ onStepChange, disableSectionCtrl }: SecurityProps) => {
 
       const mapper = SecurityMapper.securityToSecurityForm(security, Number(accountId))
 
-      save.push({ ...mapper, view: 1 })
+      newSecurities.push({ ...mapper, view: 1 })
     }
 
-    if (!allFormData.id) {
-      //TODO REVISAR SI PUEDE TRABAJAR CON PROMISE ALl
-      console.log({ allFormData, save: true })
-      await saveSecurityTotal([
-        {
-          receivedNetPremium: +allFormData.recievedNetPremium,
-          distributedNetPremium: +allFormData.distribuitedNetPremium,
-          difference: +allFormData.diference,
-          idAccount: +accountData.formsData.form1.id,
-          view: 1
-        }
-      ])
-        .then(response => {
-          console.log('saveSecurityTotal', response[0])
-        })
-        .catch(e => {
-          console.log('saveSecurityTotal', e)
-        })
-    } else {
-      await updateSecurityTotal([
-        {
-          id: +allFormData.id,
-          receivedNetPremium: +allFormData.recievedNetPremium,
-          distributedNetPremium: +allFormData.distribuitedNetPremium,
-          difference: +allFormData.diference,
-          idAccount: +accountData.formsData.form1.id,
-          view: 1
-        }
-      ])
-        .then(response => {
-          console.log('updateSecurityTotal', { response })
-        })
-        .catch(e => {
-          console.log('updateSecurityTotal', e)
-        })
-    }
+    const newSecurityTotal = [
+      {
+        receivedNetPremium: +allFormData.recievedNetPremium,
+        distributedNetPremium: +allFormData.distribuitedNetPremium,
+        difference: +allFormData.diference,
+        idAccount: +idAccountRouter,
+        view: 1
+      }
+    ]
 
-    if (save.length > 0) {
-      await saveSecurities({ idAccount: +accountData.formsData.form1.id, securities: save })
-        .then(() => {
-          // response && response.length > 0 && calculateSecurities(response)
-        })
-        .catch(e => {
-          console.log('ERROR saveSecurities', e)
-        })
-      getAccountById(Number(accountId))
-        .then(accounts => {
-          calculateSecurities(
-            accounts.securities.length > 0
-              ? accounts.securities.map(security => SecurityMapper.securityToSecurityForm(security, Number(accountId)))
-              : [initialSecurity]
-          )
-        })
-        .catch((error: Error) => {
-          console.log(error)
-        })
+    const newEndorsementData = {
+      ...endorsementData,
+      securities: newSecurities,
+      securitiesTotal: newSecurityTotal
     }
+    dispatch(updateEndorsement(newEndorsementData))
   }
 
   const DeleteNewForm = (index: number) => {
@@ -383,10 +342,39 @@ const Security = ({ onStepChange, disableSectionCtrl }: SecurityProps) => {
   }
 
   useEffect(() => {
-    const idAccountCache = Number(localStorage.getItem('idAccount'))
-
-    setAccountId(idAccountCache)
-
+    if (idAccountRouter && !endorsementData.initialized) {
+      setAccountId(idAccountRouter)
+    } else {
+      setAccount({
+        id: Number(endorsementData.idAccount),
+        status: '',
+        discounts: endorsementData.discounts,
+        idAccountStatus: 0,
+        idAccountType: 0,
+        informations: [
+          {
+            ...endorsementData.information,
+            idLineOfBussines: {},
+            idCountry: {},
+            idBroker: {},
+            idCedant: {},
+            idRiskActivity: {},
+            idTypeOfLimit: {},
+            idCurrency: {},
+            idBrokerContact: {},
+            idCedantContact: {},
+            idEconomicSector: {},
+            idLeadUnderwriter: {},
+            idTechnicalAssistant: {},
+            idUnderwriter: {}
+          }
+        ],
+        installments: endorsementData.installments,
+        securities: endorsementData.securities,
+        securitiesTotal: endorsementData.securitiesTotal,
+        sublimits: endorsementData.sublimits
+      })
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -451,7 +439,7 @@ const Security = ({ onStepChange, disableSectionCtrl }: SecurityProps) => {
               {securities.length > 0 &&
                 securities.map((security, index) => {
                   return (
-                    <DisableForm key={`${index}-${security?.id}`} isDisabled={disableSectionCtrl}>
+                    <DisableForm key={`${index}-${security?.id}`} isDisabled={disableSectionCtrl} sg={2000}>
                       <FormSection
                         security={currentView === 2 ? securitiesSecondView[index] : security}
                         index={index}
@@ -527,7 +515,7 @@ const Security = ({ onStepChange, disableSectionCtrl }: SecurityProps) => {
                 <Grid item xs={12} sm={12}>
                   <div className='add-reinsurer'>
                     <Button
-                      disabled={currentView === 2 || account?.status.toLowerCase() === 'bound' ? true : undefined}
+                      disabled={currentView === 2 || disableSectionCtrl ? true : undefined}
                       type='button'
                       onClick={addNewForm}
                       variant='text'

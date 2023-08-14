@@ -1,4 +1,5 @@
 // import { useGetAllEndorsementTypes } from '@/hooks/accounts/endorsementType/getAllEndorsementTypes.tsx'
+
 import { useGetDoctosByIdAccountAndIdDocumentType } from '@/hooks/accounts/information/useGetFilesByType'
 import { ContainerMobileBound } from '@/styled-components/accounts/Security.styled'
 import { Box, Button, Card, ListItemIcon, ListItemText, Menu, MenuItem, Modal, Typography } from '@mui/material'
@@ -31,7 +32,6 @@ interface FormHeaderProps {
   setEditInfo?: any
   setTypeofAccount?: any
   accountDetails: any
-  setAccountId: any
 }
 
 //Pending types
@@ -169,18 +169,32 @@ const ModalUploadImage = ({ accountId }: any) => {
 
 const FormHeader = ({
   isNewAccount,
+  accountDetails,
+  setEditInfo,
   setActiveEndorsement,
   setTypeofAccount,
-  setEditInfo,
-  accountDetails,
-  setAccountId
 }: FormHeaderProps) => {
-  const [status, setStatus] = useState('')
+
+
+  const [status, setStatus] = useState('');
+  const [netPremiumAmount, setNetPremiumAmount] = useState<string | null>(null);
+  const [insured, setInsured] = useState<string | null>(null);
+  const [accountId, setAccountId] = useState<number | null>(null);
+  const [receptionDate, setReceptionDate] = useState<string | null>(null)
+
   const account = useAppSelector(state => state.accounts?.formsData?.form1)
+  // console.log(accountDetails);
+
+  // const lastAccountId = useRef<number | null>(null)
+  // const lastAccountDetailsId = useRef<number | null>(null);
 
   const formaterAmount = (amount: number) => {
+
+
     if (amount) {
-      return amount.toLocaleString('en-US', {
+      const amountNumber = Number(amount);
+
+      return amountNumber.toLocaleString('en-US', {
         style: 'decimal',
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
@@ -213,13 +227,81 @@ const FormHeader = ({
     return ''
   }
 
-  useEffect(() => {
-    account && setAccountId(account.id)
-  }, [account])
+  // useEffect(() => {
+
+  //   // console.log('formHeader account', account);
+
+  //   const accountId = account?.id;
+
+  //   // console.log('formHeader accountId', {
+  //   //   idFromAccout: account?.id,
+  //   //   idFromAccountDetails: accountDetails?.id,
+  //   //   accountId: accountId,
+  //   // });
+
+  //   if (accountId) {
+
+  //     // console.log('formHeader lastAccountId', {
+  //     //   lastAccountId: lastAccountId.current,
+  //     //   accountId: accountId
+  //     // })
+  //     if (lastAccountId.current !== accountId || lastAccountDetailsId.current !== accountDetails?.id) {
+  //       lastAccountId.current = accountId
+  //       lastAccountDetailsId.current = accountId;
+
+  //       console.log('formHeader setAccountId', accountId)
+
+  //       setAccountId(accountId)
+  //     }
+
+  //     // isAccountSetted.current = true
+  //   }
+
+  //   // account && setAccountId(account.id)
+  // }, [account, accountDetails])
 
   useEffect(() => {
+    if (account) {
+      const amount = formaterAmount(account?.placementStructure?.netPremium);
+      const currency = account?.placementStructure?.currency;
+
+      setNetPremiumAmount(`$${amount} ${currency}`);
+      setInsured(account?.basicInfo?.insured);
+      setAccountId(account?.id);
+      setReceptionDate(convertirFecha(account?.basicInfo?.receptionDate));
+
+    }
+
+    if (accountDetails?.informations?.length > 0) {
+      const amount = formaterAmount(accountDetails?.informations[0]?.netPremium);
+      const currency = accountDetails?.informations[0]?.currency;
+
+      setNetPremiumAmount(`$${amount} ${currency}`);
+      setInsured(accountDetails?.informations[0]?.insured);
+      setAccountId(accountDetails?.id);
+      setReceptionDate(convertirFecha(accountDetails?.informations[0]?.receptionDate));
+    }
+
+
+  }, [account, accountDetails])
+
+
+  useEffect(() => {
+
+    // console.log('accountDetails Effect', accountDetails);
+
     accountDetails && setStatus(accountDetails.status)
+
   }, [accountDetails])
+
+
+
+
+
+
+
+
+  // console.log('account', account)
 
   return (
     <>
@@ -228,16 +310,15 @@ const FormHeader = ({
           <div className='form-container-all-data'>
             {/* Contenedor mobile bound */}
             <ContainerMobileBound>
-              <div className='title'>{account?.basicInfo?.insured} </div>
-              <div className='idNumber'>#{account?.id}</div>
+              <div className='title'>{insured} </div>
+              <div className='idNumber'>#{accountId}</div>
 
               <span className='subtitle'>Net premium</span>
               <span className='moneySubtitle'>
-                ${account && formaterAmount(account?.placementStructure?.netPremium)}{' '}
-                {account?.placementStructure?.currency}
+                ${netPremiumAmount}
               </span>
               <span className='subtitle'>Reception Date</span>
-              <span className='reception'>{account && convertirFecha(account?.basicInfo?.receptionDate)}</span>
+              <span className='reception'>{receptionDate}</span>
             </ContainerMobileBound>
 
             {/* Contenedor mobile bound */}
@@ -245,17 +326,16 @@ const FormHeader = ({
             {!isNewAccount && (
               <div className='form-header-sections'>
                 <div className='form-header-info-profile-container'>
-                  <ModalUploadImage accountId={account?.id} />
+                  <ModalUploadImage accountId={accountId} />
                   <div className='form-header-info-profile-txt-container'>
-                    <span className='form-header-info-profile-txt-title'>{account?.basicInfo?.insured}</span>
-                    <span className='form-header-info-profile-num'>#{account?.id}</span>
+                    <span className='form-header-info-profile-txt-title'>{insured}</span>
+                    <span className='form-header-info-profile-num'>#{accountId}</span>
                   </div>
                 </div>
                 <div className='form-header-money-data'>
                   <span className='form-header-money-data-txt'>Net premium</span>
                   <span className='form-header-money-data-num'>
-                    ${account && formaterAmount(account?.placementStructure?.netPremium)}{' '}
-                    {account?.placementStructure?.currency}
+                    {netPremiumAmount}
                   </span>
                   <span className='form-header-money-data-date'>
                     Last Update: {accountDetails && formatDateFromUTC(accountDetails?.informations[0]?.updatedAt)}
@@ -294,7 +374,7 @@ const FormHeader = ({
                   <div className='form-secondContainer-second'>
                     <span className='form-secondContainer-header-title'>Effective Date</span>
                     <span className='form-secondContainer-header-subtitle'>
-                      {accountDetails && formatDateFromUTC(accountDetails?.informations[0]?.effectiveDate)}
+                      {accountDetails && formatDateFromUTC(accountDetails?.informations[0]?.effectiveDate || null)}
                     </span>
                   </div>
                 )}
@@ -307,14 +387,16 @@ const FormHeader = ({
                 </div>
                 {accountDetails && accountDetails?.idAccountStatus === 5 ? ( //TODO
                   <ActionsHeaderBound accountStatus='BOUND' sideHeader={true} />
-                ) : (
+                ) : accountId ? (
+
                   <ActionsHeader
-                    accountId={account?.id}
+                    accountId={accountId}
                     setEditInfo={setEditInfo}
                     accountStatus='PENDING'
                     sideHeader={true}
                   />
-                )}
+                )
+                  : null}
               </div>
             </div>
             {/* Container second */}

@@ -86,7 +86,8 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
             [error.path]: error.message
           }
         }
-        console.log({ data })
+
+        // console.log({ data })
         errorsTemp[index] = true
         setErrorCard(data)
       })
@@ -133,6 +134,7 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
           isNotYesLuc={DONT_SHOW_YES_LUC.includes(subLimitCard.title)}
           errorCard={errorCard}
           showErrors={showErrors}
+          subLimits={subLimits}
         />
         {!DONT_SHOW_DEDUCTIBLE_MATERIAL_DAMAGE.includes(subLimitCard.title) && (
           <DeductibleMaterialDamage
