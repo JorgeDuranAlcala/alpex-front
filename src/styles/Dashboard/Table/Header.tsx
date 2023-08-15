@@ -25,4 +25,12 @@ const ContainerAmounts = styled('div')({
   justifyContent: 'start',
   gap: '8%'
 })
-export { ContainerHeader, ContainerTitle, ContainerAmounts }
+const ContainerFilters = styled('div')({
+  display: 'flex',
+  justifyContent: 'flex-end',
+  alignItems: 'center',
+  paddingLeft: '160px',
+  width: '49%',
+  height: '100%'
+})
+export { ContainerHeader, ContainerTitle, ContainerAmounts, ContainerFilters }
