@@ -1224,9 +1224,9 @@
 
 .form-secondContainer-second {
   display: flex;
-  /* border: 1px solid red; */
+
   flex-direction: column;
-  width: 198px;
+  width: auto;
   gap: 4px;
   /* min-height: 59px; */
   justify-content: space-between;
@@ -1240,6 +1240,25 @@
   }
 }
 
+.container-total-installments {
+  display: flex;
+
+  flex-direction: column;
+  width: 50%;
+  gap: 4px;
+  /* min-height: 59px; */
+  justify-content: space-between;
+}
+
+.container-total-pending {
+  display: flex;
+
+  flex-direction: column;
+  width: 80%;
+  gap: 4px;
+  /* min-height: 59px; */
+  justify-content: space-between;
+}
 .form-secondContainer-third {
   display: none;
 
