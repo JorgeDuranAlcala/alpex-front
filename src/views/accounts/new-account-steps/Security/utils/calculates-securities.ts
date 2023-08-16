@@ -141,15 +141,26 @@ export class CalculateSecurity {
   getNetReinsurancePremium(): number {
     if (this.security.isGross) {
       // * is Gross Premium
-      const sumOthers = new OperationMapper(this.security.dynamicCommissionAmount)
+      let sumOthers = new OperationMapper(this.security.dynamicCommissionAmount)
         .add(this.security.frontingFeeAmount ? this.security.frontingFeeAmount : 0)
         .add(this.security.brokerAgeAmount)
         .add(this.security.taxesAmount ? this.security.taxesAmount : 0)
         .add(this.security.totalAmountOfDiscounts ? this.security.totalAmountOfDiscounts : 0)
-        .toNumber()
+
+      /**
+       * * IMPORTANT: @omar.lopez
+       * EN Taxes existe una regla de negocio para el calculo de los impuestos
+       * si en el formulario 1 esta activo y en el formulario 2 no se encuentra activo se utiliza el porcentaje del taxes
+       * del formulario 1 y se aplica como si estuviera activo en el form2 esto para reaseguradoras que  utilizan el gross
+       */
+      if (this.security.taxesActive) {
+        sumOthers = sumOthers.add(this.security.taxes)
+      } else if (this.information.taxesP) {
+        sumOthers = sumOthers.add(this.getTaxesAmount(this.information.taxesP))
+      }
 
       this.security.netReinsurancePremium = new OperationMapper(this.security.premiumPerShareAmount)
-        .sub(sumOthers)
+        .sub(sumOthers.toNumber())
         .toNumber()
     } else {
       // * is Net Premium
@@ -182,34 +193,30 @@ export class CalculateSecurity {
   }
 
   getTaxesAmount(value?: number): number {
+    let result = 0
     if (this.security.isGross) {
       // * is Gross Premium
-      let result = new OperationMapper(this.security.grossPremiumPerShare).sub(this.security.brokerAgeAmount).toNumber()
 
       if (this.security.taxes || value) {
+        result = new OperationMapper(this.security.grossPremiumPerShare).sub(this.security.brokerAgeAmount).toNumber()
         result = new OperationMapper(result)
           .mul(value ?? this.security.taxes)
           .div(100)
           .toNumber()
-      } else {
-        result = 0
       }
-      this.security.taxesAmount = result
     } else {
       // * is Net Premium
-      const base = new OperationMapper(this.security.netPremiumAt100).mul(this.security.share).div(100).toNumber()
 
       if (this.security.taxes || value) {
-        this.security.taxesAmount = new OperationMapper(base)
+        const base = new OperationMapper(this.security.netPremiumAt100).mul(this.security.share).div(100).toNumber()
+        result = new OperationMapper(base)
           .mul(value || this.security.taxes)
           .div(100)
           .toNumber()
-      } else {
-        this.security.taxesAmount = 0
       }
     }
 
-    return this.security.taxesAmount
+    return result
   }
 
   getDiscountPercent(valueAmount: number): number {
@@ -245,7 +252,8 @@ export class CalculateSecurity {
 
   static getData(
     securities: SecurityDto[],
-    resultSecuritiesOriginal: ResultSecurities = defaultValue
+    resultSecuritiesOriginal: ResultSecurities = defaultValue,
+    information: FormInformation = {} as FormInformation
   ): ResultSecurities {
     // let sharePercent = 0
     let premiumPerShareAmountNet = 0
@@ -256,10 +264,27 @@ export class CalculateSecurity {
     let brokerageReinsuranceGross = 0
 
     for (const security of securities) {
+      const securityOperation = new CalculateSecurity().setInformation(information).setSecurity({
+        ...security
+      })
+
       // sharePercent += security.isGross ? 0 : security.share
       premiumPerShareAmountNet += security.isGross ? 0 : security.premiumPerShareAmount
       premiumPerShareAmountGros += security.isGross ? security.premiumPerShareAmount : 0
-      taxesGros += security.isGross ? new OperationMapper(security.taxesAmount).toNumber() : 0
+
+      /**
+       * * IMPORTANT: @omar.lopez
+       * EN Taxes existe una regla de negocio para el calculo de los impuestos
+       * si en el formulario 1 esta activo y en el formulario 2 no se encuentra activo se utiliza el porcentaje del taxes
+       * del formulario 1 y se aplica como si estuviera activo en el form2 esto para reaseguradoras que  utilizan el gross
+       */
+      if (security.isGross)
+        if (security.taxesActive) {
+          taxesGros += new OperationMapper(security.taxesAmount).toNumber()
+        } else if (information.taxesP) {
+          taxesGros += new OperationMapper(securityOperation.getTaxesAmount(information.taxesP)).toNumber()
+        }
+
       brokerageReinsuranceGross += security.isGross ? new OperationMapper(security.brokerAgeAmount).toNumber() : 0
       distributedNetPremium += new OperationMapper(security.netReinsurancePremium)
         .add(security.dynamicCommissionAmount)
