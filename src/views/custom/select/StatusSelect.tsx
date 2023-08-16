@@ -47,8 +47,13 @@ const statusArray = [
   }
 ]
 
-export default function StatusSelect({ accountDetails, setSelectedStatus, initialStatus, margin = 1 }: any) {
-
+export default function StatusSelect({
+  isNewAccount = false,
+  accountDetails,
+  setSelectedStatus,
+  initialStatus,
+  margin = 1
+}: any) {
   const { changeStatusAccounts } = useAccountTable()
   //eslint-disable-next-line
   const [value, setValue] = useState<string | null>(null)
@@ -59,10 +64,14 @@ export default function StatusSelect({ accountDetails, setSelectedStatus, initia
 
   const auth = useAuth()
   const handleChange = (event: SelectChangeEvent) => {
-    if (status !== event.target.value) {
+    if (status !== event.target.value && !isNewAccount) {
       handleTextChangeStatusModal(event.target.value)
       setShowChangeStatusModal(true)
       setStatus(event.target.value)
+      setSelectedStatus(statusArray.find(stat => stat.label === event.target.value))
+    } else {
+      setStatus(event.target.value)
+      sessionStorage.setItem('accountStatus', event.target.value)
       setSelectedStatus(statusArray.find(stat => stat.label === event.target.value))
     }
   }

@@ -1,5 +1,8 @@
+import { formatStatusToNumber } from '@/utils/formatStatus'
 import React, { useEffect, useState } from 'react'
+import useAccountTable from 'src/hooks/accounts/Table/useAccountTable'
 import UserThemeOptions from 'src/layouts/UserThemeOptions'
+import { EStatus } from 'src/views/accounts/Table/Status'
 
 // ** Custom Hooks
 import {
@@ -107,6 +110,7 @@ export interface PlacementStructure {
 const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountChange, disableSectionCtrl }) => {
   // const router = useRouter();
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
+  const { changeStatusAccounts } = useAccountTable()
   const [subjectState] = useState<Subject<void>>(new Subject())
   const inter = userThemeConfig.typography?.fontFamilyInter
   const [makeValidations, setMakeValidations] = useState(false)
@@ -206,6 +210,22 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
 
   const triggerFunction = () => {
     subjectState.next()
+  }
+
+  const handleChangeStatusAction = async (accountId: number) => {
+    const status = sessionStorage.getItem('accountStatus') ? 'PENDING' : sessionStorage.getItem('accountStatus')
+    if (status) {
+      const changeStatusArray = [
+        {
+          idAccount: accountId,
+          status: formatStatusToNumber(EStatus[status as keyof typeof EStatus])
+        }
+      ]
+      await changeStatusAccounts({
+        updateStatus: changeStatusArray
+      })
+      sessionStorage.removeItem('accountStatus')
+    }
   }
 
   const updateInformation = async () => {
@@ -573,6 +593,8 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
             ...discount,
             idAccount: res.account.id
           }))
+          await handleChangeStatusAction(res.account.id)
+          setAccountId(res.account.id)
           await localStorage.setItem('idAccount', String(res.account.id))
           if (discountTemp.length > 0) {
             await addDiscounts(discountTemp)

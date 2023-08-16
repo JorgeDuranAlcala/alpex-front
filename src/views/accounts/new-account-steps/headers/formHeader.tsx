@@ -355,7 +355,7 @@ const FormHeader = ({
                   {status !== '' && accountDetails?.status && (
                     <StatusSelect accountDetails={accountDetails} margin={0} initialStatus={accountDetails?.status} setSelectedStatus={setStatus} />
                   )}
-                  {isNewAccount && <StatusSelect accountDetails={accountDetails} margin={0} initialStatus='PENDING' setSelectedStatus={setStatus} />}
+                  {isNewAccount && <StatusSelect accountDetails={accountDetails} margin={0} initialStatus='PENDING' setSelectedStatus={setStatus} isNewAccount={isNewAccount} />}
                 </div>
 
                 <div className='form-secondContainer-third'>
