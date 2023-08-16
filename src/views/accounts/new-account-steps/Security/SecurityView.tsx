@@ -38,12 +38,12 @@ import { SecurityMapper } from './mappers/SecurityForm.mapper'
 import { useRouter } from 'next/router'
 import { DisableForm } from '../_commons/DisableForm'
 import { SecondViewProvider } from './components/secondView/SecondViewProvider'
-import { CalculateSecurity } from './utils/calculates-securities'
+import { CalculateSecurity, defaultValue } from './utils/calculates-securities'
 
 export const SecurityContext = createContext<SecurityContextDto>({} as SecurityContextDto)
 
 const Security = ({ onStepChange }: SecurityProps) => {
-  const router = useRouter();
+  const router = useRouter()
 
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
   const [securities, setSecurities] = useState<SecurityDto[]>([])
@@ -245,13 +245,13 @@ const Security = ({ onStepChange }: SecurityProps) => {
       let dataFormView2: FormSecurity = {
         ...allFormDataView2,
         formData: tempSecuritiesView2,
-        ...CalculateSecurity.getData(tempSecuritiesView2)
+        ...CalculateSecurity.getData(tempSecuritiesView2, defaultValue, information)
       }
 
       let dataForm: FormSecurity = {
         ...allFormData,
         formData: tempSecurities,
-        ...CalculateSecurity.getData(tempSecurities, dataFormView2)
+        ...CalculateSecurity.getData(tempSecurities, dataFormView2, information)
       }
 
       if (account) {
@@ -487,9 +487,8 @@ const Security = ({ onStepChange }: SecurityProps) => {
 
         <form noValidate autoComplete='on'>
           <SecondViewProvider>
-
             {/* <CardContent onClick={handleCanUpdateSecuritiesData}> */}
-            <CardContent >
+            <CardContent>
               {securities.length > 0 &&
                 securities.map((security, index) => {
                   return (
