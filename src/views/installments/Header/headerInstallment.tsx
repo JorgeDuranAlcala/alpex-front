@@ -316,7 +316,7 @@ const InstallmentHeader = ({
             <div className='form-secondContainer-wrapper'>
               <SubContainerHeaderData>
                 <Frame3486>
-                  {!isDataSheet ? (
+                  {isDataSheet ? (
                     <ContainerHeaderMobile>
                       <FirstContainer>
                         <SecondContainer
