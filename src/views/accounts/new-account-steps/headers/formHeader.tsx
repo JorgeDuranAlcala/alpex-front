@@ -183,6 +183,9 @@ const FormHeader = ({
   const [receptionDate, setReceptionDate] = useState<string | null>(null)
 
   const account = useAppSelector(state => state.accounts?.formsData?.form1)
+
+  const lastUserName = 'Alejandro Hernández';
+
   // console.log(accountDetails);
 
   // const lastAccountId = useRef<number | null>(null)
@@ -218,11 +221,11 @@ const FormHeader = ({
       const fecha = new Date(new Date(date).toLocaleString('en-US', { timeZone: 'UTC' }))
       const options: Intl.DateTimeFormatOptions = {
         day: '2-digit',
-        month: 'short',
+        month: '2-digit',
         year: 'numeric'
       }
 
-      return new Intl.DateTimeFormat('ban', options).format(fecha)
+      return new Intl.DateTimeFormat('ban', options).format(fecha).toString().replaceAll('/', ' / ')
     }
     return ''
   }
@@ -338,7 +341,7 @@ const FormHeader = ({
                     {netPremiumAmount}
                   </span>
                   <span className='form-header-money-data-date'>
-                    Last Update: {accountDetails && formatDateFromUTC(accountDetails?.informations[0]?.updatedAt)}
+                    Last Update: {accountDetails && formatDateFromUTC(accountDetails?.informations[0]?.updatedAt)} by {lastUserName}
                   </span>
                 </div>
               </div>
@@ -352,7 +355,7 @@ const FormHeader = ({
                   {status !== '' && accountDetails?.status && (
                     <StatusSelect accountDetails={accountDetails} margin={0} initialStatus={accountDetails?.status} setSelectedStatus={setStatus} />
                   )}
-                  {isNewAccount && <StatusSelect accountDetails={accountDetails} margin={0} initialStatus='PENDING' setSelectedStatus={setStatus} />}
+                  {isNewAccount && <StatusSelect accountDetails={accountDetails} margin={0} initialStatus='PENDING' setSelectedStatus={setStatus} isNewAccount={isNewAccount} />}
                 </div>
 
                 <div className='form-secondContainer-third'>
