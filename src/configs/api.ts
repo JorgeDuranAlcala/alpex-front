@@ -310,6 +310,11 @@ export enum DATA_MAPS_ROUTES {
   GET_ALL_PROPERTIES = 'buildings/all',
 }
 
+// ==== ACCOUNT
+export enum DATA_PROPERTIES_ROUTES {
+  GET_BY_ID = 'buildings/data/get-property-details',
+}
+
 
 
 // ====

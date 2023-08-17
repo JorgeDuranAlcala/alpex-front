@@ -1,3 +1,9 @@
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { useEffect } from 'react'
+
+// ** Next
+import { useRouter } from 'next/router'
+
 // ** MUI Imports
 import Grid from '@mui/material/Grid'
 import { Container } from 'src/styles/Dashboard/dashboard'
@@ -8,8 +14,30 @@ import ConstructionDetail from '@/views/dynamic-data/property-listing/property-d
 import Location from '@/views/dynamic-data/property-listing/property-details/Location'
 import PropertyHeader from '@/views/dynamic-data/property-listing/property-details/PropertyHeader'
 
-const DynamicDataDashboard = () => {
+// ** Import services
+import PropertiesServices from '@/services/dynamic-data/properties.mock-service'
 
+const DynamicDataDashboard = () => {
+  // Hooks
+  const router = useRouter()
+
+
+  const setDataInformation = async (id: string) => {
+    const data = await PropertiesServices.getPropertyById(id)
+
+    if (!data) return
+
+    console.log(data)
+  }
+
+  useEffect(() => {
+
+    if (router.query.idProperty) {
+      setDataInformation(String(router.query.idProperty))
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router.query.idProperty]);
 
   return (
     <Container>
