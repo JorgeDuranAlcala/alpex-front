@@ -11,4 +11,9 @@ const BrokerTracker = () => {
   )
 }
 
+BrokerTracker.acl = {
+  action: 'viewBrokerTrackerPayment',
+  subject: 'payments'
+}
+
 export default BrokerTracker

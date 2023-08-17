@@ -242,7 +242,7 @@ const TableHeader: React.FC<ITableHeader> = ({
   }
 
   const selectActionPending = () => {
-    if (ability?.can('read', 'selectActionsChangeStatus')) {
+    if (ability?.can('readStatusPendingAndBound', 'account')) {
       return (
         <MenuItem onClick={() => HandleChangeStatus(EStatus.PENDING)}>{EStatusString.PENDING}</MenuItem>
       )
@@ -250,7 +250,7 @@ const TableHeader: React.FC<ITableHeader> = ({
   }
 
   const selectActionBound = () => {
-    if (ability?.can('read', 'selectActionsChangeStatus')) {
+    if (ability?.can('readStatusPendingAndBound', 'account')) {
       return (
         <MenuItem onClick={() => HandleChangeStatus(EStatus.BOUND)}>{EStatusString.BOUND}</MenuItem>
       )
