@@ -18,13 +18,16 @@ import Icon from 'src/@core/components/icon';
 //** services imports
 import MapsServices from '@/services/dynamic-data/maps-service';
 
+import { MapCoorService } from '@/services/dynamic-data/map-coordinates.service';
+
 const ValfisMap = () => {
 
   const mapRef = useRef<HTMLDivElement>(null)
   const map = useRef<google.maps.Map | null>(null)
+  const polygon = useRef<google.maps.Polygon | null>(null);
   const mapEnabledRef = useRef<boolean>(false)
-
-
+  const mapCoorService = new MapCoorService()
+  const allCoordinates = mapCoorService.getAllCoordinates();
   const [zoneData, setZoneData] = useState({
     totalValue: '',
     zoneA: '',
@@ -105,6 +108,22 @@ const ValfisMap = () => {
           center: { lat: 23.6345, lng: -102.5528 },
           zoom: 5
         })
+
+        for (const state in allCoordinates) {
+          const stateCoordinates = allCoordinates[state];
+          polygon.current = new google.maps.Polygon({
+            paths: stateCoordinates,
+            strokeColor: "#FF0000",
+            strokeOpacity: 0.8,
+            strokeWeight: 2,
+            fillColor: "#FF0000",
+            fillOpacity: 0.35,
+          });
+
+          polygon.current.setMap(map.current);
+        }
+
+        // const bcCoordinates = mapCoorService.getAguasCalientes()
 
         map.current.addListener('click', handleMapClick)
       }
