@@ -25,7 +25,7 @@ const Catalogues = () => {
 
 Catalogues.acl = {
   action: 'read',
-  subject: 'catalog'
+  subject: 'catalogues'
 }
 
 export default Catalogues

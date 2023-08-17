@@ -11,4 +11,9 @@ const ReinsurerPayment = () => {
   )
 }
 
+ReinsurerPayment.acl = {
+  action: 'viewReinsurerPayment',
+  subject: 'payments'
+}
+
 export default ReinsurerPayment

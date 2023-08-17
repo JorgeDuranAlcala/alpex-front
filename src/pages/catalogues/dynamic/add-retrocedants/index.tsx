@@ -10,7 +10,7 @@ const AddRetroCedant = () => {
 
 AddRetroCedant.acl = {
   action: 'read',
-  subject: 'catalog'
+  subject: 'catalogues'
 }
 
 export default AddRetroCedant
