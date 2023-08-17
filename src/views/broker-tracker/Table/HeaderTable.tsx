@@ -1,7 +1,13 @@
 import React from 'react'
 
 // ** MUI Imports
-import { Typography } from '@mui/material'
+
+import {
+  ContainerSelectNameBroker,
+  SubContainerAccountBalanceData,
+  SubContainerInstallments
+} from '@/styles/Payments/BrokerTracer/brokerTracer'
+import { Grid, Typography } from '@mui/material'
 import FormControl from '@mui/material/FormControl'
 import InputLabel from '@mui/material/InputLabel'
 import MenuItem from '@mui/material/MenuItem'
@@ -24,36 +30,49 @@ const HeaderTable = () => {
           </Typography>
         </ContainerTitle>
       </ContainerHeader>
-      <div className='form-secondContainer-wrapper padd-x'>
-        <div className='form-secondContainer-wrapper-first-side installments-wrapper'>
-          <div className='form-secondContainer-second'>
-            <FormControl fullWidth>
-              <InputLabel id='demo-simple-select-label'>Name of Brocker</InputLabel>
-              <Select
-                labelId='demo-simple-select-label'
-                id='demo-simple-select'
-                value={brocker}
-                label='Age'
-                onChange={handleChange}
-              >
-                <MenuItem value={'nameBrocker'}>Name of Brocker Here</MenuItem>
-              </Select>
-            </FormControl>
-          </div>
-          <div className='form-secondContainer-second'>
-            <span className='form-secondContainer-header-title'>All Pending Installments</span>
-            <span className='form-secondContainer-header-subtitle'>9</span>
-          </div>
-          <div className='form-secondContainer-second'>
-            <span className='form-secondContainer-header-title'>All Paid Installments</span>
-            <span className='form-secondContainer-header-subtitle'>4</span>
-          </div>
-          <div className='form-secondContainer-second'>
-            <span className='form-secondContainer-header-title'>Total Debt</span>
-            <span className='form-secondContainer-header-subtitle'>$150,000.00 USD</span>
-          </div>
-        </div>
-      </div>
+      <SubContainerAccountBalanceData>
+        <ContainerSelectNameBroker>
+          <FormControl fullWidth>
+            <InputLabel id='demo-simple-select-label'>Name of Brocker</InputLabel>
+            <Select
+              labelId='demo-simple-select-label'
+              id='demo-simple-select'
+              value={brocker}
+              label='Name of Brocker'
+              onChange={handleChange}
+            >
+              <MenuItem value={'nameBrocker'}>Name of Brocker Here</MenuItem>
+            </Select>
+          </FormControl>
+        </ContainerSelectNameBroker>
+
+        <SubContainerInstallments>
+          <Grid
+            container
+            spacing={{ xs: 5, sm: 5, md: 5 }}
+            sx={{ display: 'flex', flexDirection: 'row', alingItems: 'center' }}
+          >
+            <Grid item xs={12} sm={4} md={4}>
+              <div className='form-secondContainer-second'>
+                <span className='form-secondContainer-header-title'>All Pending Installments</span>
+                <span className='form-secondContainer-header-subtitle'>9</span>
+              </div>
+            </Grid>
+            <Grid item xs={12} sm={4} md={4}>
+              <div className='form-secondContainer-second'>
+                <span className='form-secondContainer-header-title'>All Paid Installments</span>
+                <span className='form-secondContainer-header-subtitle'>4</span>
+              </div>
+            </Grid>
+            <Grid item xs={12} sm={4} md={4}>
+              <div className='form-secondContainer-second'>
+                <span className='form-secondContainer-header-title'>Total Debt</span>
+                <span className='form-secondContainer-header-subtitle'>$150,000.00 USD</span>
+              </div>
+            </Grid>
+          </Grid>
+        </SubContainerInstallments>
+      </SubContainerAccountBalanceData>
     </>
   )
 }
