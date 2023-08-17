@@ -2,6 +2,7 @@ import useAccountTable from '@/hooks/accounts/Table/useAccountTable'
 import useGetAccountHistoryLogByIdAccount from '@/hooks/accounts/historyLog/useFindByIdAccount'
 import { useGetAllLanguage } from '@/hooks/catalogs/language'
 import usePrintReport from '@/hooks/reports/usePrintReport'
+import { HeaderRowsContainer } from '@/styles/Payments/PaymnetsInstallments/paymentsInstallments'
 import CloseIcon from '@mui/icons-material/Close'
 import { Box, Button, Modal, Typography, styled } from '@mui/material'
 import { useEffect, useState } from 'react'
@@ -18,7 +19,7 @@ interface IActionsHeaderProps {
   setEditInfo?: any
 }
 
-/* 
+/*
 interface StatusHistory {
   id: number
   name: string
@@ -131,7 +132,7 @@ const ActionsHeader: React.FC<IActionsHeaderProps> = ({ accountId, accountStatus
         <div className='btnWrappers'>
           {sideHeader ? '' : <div className='header-text'>Status:</div>}
 
-          <div className='header-rows'>
+          <HeaderRowsContainer>
             {sideHeader ? (
               ''
             ) : (
@@ -275,7 +276,7 @@ const ActionsHeader: React.FC<IActionsHeaderProps> = ({ accountId, accountStatus
                 </Box>
               </Modal>
             </div>
-          </div>
+          </HeaderRowsContainer>
         </div>
       </div>
     </>
