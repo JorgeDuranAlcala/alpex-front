@@ -30,6 +30,8 @@ import { useSettings } from 'src/@core/hooks/useSettings'
 import TokenTimeValidateLayout from './components/TimeValidationJWT'
 import Footer from './components/footer'
 
+import { NavGroup, NavLink } from 'src/@core/layouts/types'
+
 interface Props {
   children: ReactNode
   contentHeightFixed?: boolean
@@ -49,10 +51,42 @@ const UserLayout = ({ children, contentHeightFixed }: Props) => {
   const { settings, saveSettings } = useSettings()
 
   const ability = useContext(AbilityContext)
-  const VerticalNavItemsfilter = VerticalNavItems().filter(item => {
-    if (ability?.can('read', item.subject)) {
+  let VerticalNavItemsfilter = VerticalNavItems().filter(item => {
+    if (ability?.can(item?.action, item.subject)) {
       return item
     }
+  }, [])
+
+  VerticalNavItemsfilter = VerticalNavItemsfilter.filter(item => {
+    const isNavGroup = (element: any): element is NavGroup => {
+      return element && 'children' in element
+    }
+    const arrayTemp: (NavLink | NavGroup)[] | undefined = []
+
+    const tap = isNavGroup(item)
+
+    if (tap) {
+      item.children &&
+        item?.children.filter(item2 => {
+          if (ability?.can(item2?.action, item2.subject)) {
+            const tap2 = isNavGroup(item2)
+            const arrayTemp2: (NavLink | NavGroup)[] | undefined = []
+            if (tap2) {
+              item2.children &&
+                item2?.children.filter(item3 => {
+                  if (ability?.can(item3?.action, item3.subject)) {
+                    arrayTemp2.push(item3)
+                  }
+                })
+              if (item2 != undefined) item2.children = arrayTemp2
+            }
+            arrayTemp.push(item2)
+          }
+        })
+      if (item != undefined) item.children = arrayTemp
+    }
+
+    return item
   }, [])
 
   // ** Vars for server side navigation

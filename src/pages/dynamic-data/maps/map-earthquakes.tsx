@@ -18,5 +18,10 @@ const EarthquakeMap = () => {
   )
 }
 
+EarthquakeMap.acl = {
+  action: 'viewEarthquakesData',
+  subject: 'dynamicData'
+}
+
 export default EarthquakeMap
 

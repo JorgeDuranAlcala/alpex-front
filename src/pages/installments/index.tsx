@@ -11,4 +11,9 @@ const Installments = () => {
   )
 }
 
+Installments.acl = {
+  action: 'viewInstallmentsPayment',
+  subject: 'payments'
+}
+
 export default Installments
