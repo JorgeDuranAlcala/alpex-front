@@ -96,7 +96,7 @@ const PropertiesMap = () => {
 
         marker.addListener("click", () => {
           console.log(property.keyDepe);
-          router.push(`/dynamic-data/property-listing/property-details`)
+          router.push(`/dynamic-data/property-listing/property-details/?&idProperty=${property.keyDepe}`)
         });
 
         return marker

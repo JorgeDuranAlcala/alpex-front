@@ -82,6 +82,10 @@ const PriorityProperties = () => {
     router.push(`/dynamic-data/property-listing/`)
   }
 
+  const seeDetails = (id: string) => {
+    router.push(`/dynamic-data/property-listing/property-details/?&idProperty=${id}`)
+  }
+
   const column: GridColumns<IProperty> = [
     {
       ...GRID_CHECKBOX_SELECTION_COL_DEF,
@@ -105,7 +109,7 @@ const PriorityProperties = () => {
         <Typography sx={{ color: colors.primary.main, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
           <Link
             onClick={() => {
-              console.log("id clicked")
+              seeDetails(row.keyDepe)
             }}
           >{`#${row.keyDepe}`}</Link>
         </Typography>
