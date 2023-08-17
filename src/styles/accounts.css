@@ -1327,7 +1327,6 @@
 .form-secondContainer-wrapper-first-side {
   display: flex;
   gap: 12px;
-  border: 1px solid black;
   @media (max-width: 900px) {
     flex-direction: column;
   }

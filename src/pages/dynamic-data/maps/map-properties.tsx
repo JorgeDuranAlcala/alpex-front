@@ -18,5 +18,10 @@ const PopertiesMap = () => {
   )
 }
 
+PopertiesMap.acl = {
+  action: 'viewMapPropertiesData',
+  subject: 'dynamicData'
+}
+
 export default PopertiesMap
 

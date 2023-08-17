@@ -16,7 +16,7 @@ const AddReinsurer = () => {
 
 AddReinsurer.acl = {
   action: 'read',
-  subject: 'catalog'
+  subject: 'catalogues'
 }
 
 export default AddReinsurer

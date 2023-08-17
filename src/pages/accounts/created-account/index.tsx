@@ -310,4 +310,9 @@ const CreatedAccount = () => {
   )
 }
 
+CreatedAccount.acl = {
+  action: 'create',
+  subject: 'account'
+}
+
 export default CreatedAccount

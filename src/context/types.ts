@@ -12,6 +12,11 @@ export type RegisterParams = {
   password: string
 }
 
+export type acl = {
+  action: string[]
+  module: string
+}
+
 export type UserDataType = {
   id: number
   role: string
@@ -20,6 +25,7 @@ export type UserDataType = {
   username: string
   password: string
   avatar?: string | null
+  acl: acl[]
 }
 
 export type AuthValuesType = {
