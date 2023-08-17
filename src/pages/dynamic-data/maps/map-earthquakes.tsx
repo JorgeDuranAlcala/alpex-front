@@ -15,3 +15,10 @@ const MapEartquake= () => {
 
 export default MapEartquake
 
+// EarthquakeMap.acl = {
+//   action: 'viewEarthquakesData',
+//   subject: 'dynamicData'
+// }
+
+// export default EarthquakeMap
+

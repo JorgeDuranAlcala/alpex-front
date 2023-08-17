@@ -855,10 +855,11 @@
   align-items: flex-end;
   margin: 0px;
   padding: 0px;
+  /* border: 1px solid blue; */
 
   @media (max-width: 1000px) {
     margin-top: 14px;
-    /* border: 1px solid green; */
+    border: 1px solid green;
     justify-content: center;
     align-items: center;
     width: 100%;
@@ -1192,7 +1193,6 @@
   font-family: Inter;
   letter-spacing: 0.4px;
   color: #4d506261;
-  align-self: end;
   margin-right: 14px;
 
   @media (max-width: 900px) {
@@ -1224,7 +1224,6 @@
 
 .form-secondContainer-second {
   display: flex;
-
   flex-direction: column;
   width: auto;
   gap: 4px;
@@ -1328,7 +1327,6 @@
 .form-secondContainer-wrapper-first-side {
   display: flex;
   gap: 12px;
-
   @media (max-width: 900px) {
     flex-direction: column;
   }
@@ -1382,6 +1380,10 @@
     align-items: center;
     align-content: center;
   }
+
+  /* @media screen (min-width: 765px) {
+    justify-content: 'space-between';
+  } */
 }
 
 .btnWrapperFth .header-btns {

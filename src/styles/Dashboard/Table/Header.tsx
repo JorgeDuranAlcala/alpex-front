@@ -23,7 +23,7 @@ const ContainerAmounts = styled('div')({
   width: '100%',
   height: 'auto',
   justifyContent: 'start',
-  gap: '8%'
+  gap: '7%'
 })
 const ContainerFilters = styled('div')({
   display: 'flex',

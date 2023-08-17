@@ -15,3 +15,10 @@ const MapZonacresta = () => {
 
 export default MapZonacresta
 
+// ZonacrestaMap.acl = {
+//   action: 'viewZonaCrestaData',
+//   subject: 'dynamicData'
+// }
+
+// export default ZonacrestaMap
+

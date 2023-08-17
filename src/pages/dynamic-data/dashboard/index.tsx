@@ -77,4 +77,9 @@ const DynamicDataDashboard = () => {
   )
 }
 
+DynamicDataDashboard.acl = {
+  action: 'viewDashboardData',
+  subject: 'dynamicData'
+}
+
 export default DynamicDataDashboard

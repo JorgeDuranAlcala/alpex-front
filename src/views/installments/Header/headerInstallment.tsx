@@ -1,12 +1,25 @@
 // import { useGetAllEndorsementTypes } from '@/hooks/accounts/endorsementType/getAllEndorsementTypes.tsx'
 import { useGetDoctosByIdAccountAndIdDocumentType } from '@/hooks/accounts/information/useGetFilesByType'
-import { ContainerMobileBound } from '@/styled-components/accounts/Security.styled'
+
+// import { ContainerMobileBound } from '@/styled-components/accounts/Security.styled'
+import {
+  ContainerActionsHeader,
+  ContainerAmountLastUpdate,
+  ContainerHeaderMobile,
+  FirstContainer,
+  FormHeaderInfoProfileContainer,
+  FormHeaderSection,
+  Frame3486,
+  SecondContainer,
+  SubContainerHeaderData
+} from '@/styles/Payments/PaymnetsInstallments/paymentsInstallments'
 import ActionsHeader2 from '@/views/accounts/new-account-steps/headers/ActionsHeader'
 import StatusSelect from '@/views/custom/select/StatusSelect'
 import {
   Box,
   Button,
   Card,
+  Grid,
   ListItemIcon,
   ListItemText,
   Menu,
@@ -245,7 +258,7 @@ const InstallmentHeader = ({
         <div className='form-header-data'>
           <div className='form-container-all-data'>
             {/* Contenedor mobile bound */}
-            <ContainerMobileBound>
+            {/* <ContainerMobileBound>
               <div className='title'>Quality Insurance México</div>
               <div className='idNumber'>#{account?.id}</div>
 
@@ -268,23 +281,27 @@ const InstallmentHeader = ({
               <span className='subtitle-installment'>1/4</span>
 
               <span className='subtitle'>Balance</span>
-              <span className='subtitle-installment'>$0 USD</span>
-              {/* <span className='subtitle'>Reception Date</span>
+              <span className='subtitle-installment'>$0 USD</span> */}
+            {/* <span className='subtitle'>Reception Date</span>
               <span className='reception'>{account && convertirFecha(account?.basicInfo?.receptionDate)}</span> */}
-            </ContainerMobileBound>
+            {/* </ContainerMobileBound> */}
 
             {/* Contenedor mobile bound */}
             {/* Container first */}
-            <div className='form-header-sections'>
-              <div className='form-header-info-profile-container'>
+            <FormHeaderSection>
+              <FormHeaderInfoProfileContainer>
                 <ModalUploadImage accountId={account?.id} />
                 <div className='form-header-info-profile-txt-container'>
                   <span className='form-header-info-profile-txt-title'>Quality Insurance México</span>
                   <span className='form-header-info-profile-num'>#{account?.id}</span>
                 </div>
-              </div>
-              <div className='form-header-money-data'>
-                <span className='form-header-money-data-txt'>Net premium</span>
+              </FormHeaderInfoProfileContainer>
+              <ContainerAmountLastUpdate>
+                {!isDataSheet ? (
+                  <span className='form-header-money-data-txt'>Net premium</span>
+                ) : (
+                  <span className='form-header-money-data-txt'>Total debit</span>
+                )}
                 <span className='form-header-money-data-num'>
                   ${account && formaterAmount(account?.placementStructure?.netPremium)}{' '}
                   {account?.placementStructure?.currency}
@@ -292,72 +309,150 @@ const InstallmentHeader = ({
                 <span className='form-header-money-data-date'>
                   Last Update: {accountDetails && formatDateFromUTC(accountDetails?.informations[0]?.updatedAt)}
                 </span>
-              </div>
-            </div>
+              </ContainerAmountLastUpdate>
+            </FormHeaderSection>
             {/* Container first */}
             {/* Container second */}
             <div className='form-secondContainer-wrapper'>
-              <div className='form-secondContainer-wrapper-first-side installments-wrapper'>
-                <div className='form-secondContainer-second'>
-                  <span className='form-secondContainer-header-title'>Status</span>
+              <SubContainerHeaderData>
+                <Frame3486>
                   {isDataSheet ? (
-                    <StatusSelect margin={0} initialStatus='PENDING' setSelectedStatus={setStatus} />
+                    <ContainerHeaderMobile>
+                      <FirstContainer>
+                        <SecondContainer
+                          sx={{
+                            width: '33%',
+                            '@media (max-width: 764px)': {
+                              width: '100%'
+                            }
+                          }}
+                        >
+                          <span className='form-secondContainer-header-title'>Status</span>
+                          <StatusSelect margin={0} initialStatus='PENDING' setSelectedStatus={setStatus} />
+                        </SecondContainer>
+
+                        <SecondContainer
+                          sx={{
+                            width: '31%',
+                            '@media (max-width: 764px)': {
+                              display: 'none'
+                            }
+                          }}
+                        >
+                          <span className='form-secondContainer-header-title'>Line of Business</span>
+                          <span className='form-secondContainer-header-subtitle'>Line of Business</span>
+                        </SecondContainer>
+                        <SecondContainer
+                          sx={{
+                            width: '31%',
+                            '@media (max-width: 764px)': {
+                              display: 'none'
+                            }
+                          }}
+                        >
+                          <span className='form-secondContainer-header-title'>Reception Date</span>
+                          <span className='form-secondContainer-header-subtitle'>13 / 03 / 2023</span>
+                        </SecondContainer>
+                      </FirstContainer>
+                      <SecondContainer
+                        sx={{
+                          '@media (min-width: 765px)': {
+                            display: 'none'
+                          }
+                        }}
+                      >
+                        <span className='form-header-money-data-date'>
+                          Last Update: {accountDetails && formatDateFromUTC(accountDetails?.informations[0]?.updatedAt)}
+                        </span>
+                      </SecondContainer>
+                      <SecondContainer sx={{ justifyContent: 'flex-end', paddingBottom: '5px' }}>
+                        <div className='actions-header'>
+                          <ActionsHeader2
+                            accountId={account?.id}
+                            setEditInfo={setEditInfo}
+                            accountStatus='PENDING'
+                            sideHeader={true}
+                          />
+                        </div>
+                      </SecondContainer>
+                    </ContainerHeaderMobile>
                   ) : (
-                    <StatusInstallment status={'Pending'} />
+                    <Box sx={{ flexGrow: 1 }}>
+                      <Grid container spacing={{ xs: 3, sm: 3, md: 3 }}>
+                        <Grid item xs={12} sm={2} md={1.2}>
+                          <div className='form-secondContainer-second'>
+                            <span className='form-secondContainer-header-title'>Status</span>
+                            <StatusInstallment status={'Pending'} />
+                          </div>
+                        </Grid>
+                        <Grid item xs={12} sm={3} md={2}>
+                          <div className='form-secondContainer-second'>
+                            <span className='form-secondContainer-header-title'>Broker Name</span>
+                            <span className='form-secondContainer-header-subtitle'>Broker Name</span>
+                          </div>
+                        </Grid>
+                        <Grid item xs={12} sm={3.5} md={2.3}>
+                          <div className='form-secondContainer-second'>
+                            <span className='form-secondContainer-header-title'>Line of Business</span>
+                            <span className='form-secondContainer-header-subtitle'>Line of Business</span>
+                          </div>
+                        </Grid>
+                        <Grid item xs={12} sm={3.3} md={2}>
+                          <div className='form-secondContainer-second'>
+                            <span className='form-secondContainer-header-title'>Next Due Date</span>
+                            <span className='form-secondContainer-header-subtitle'>10 / 01 / 2023</span>
+                          </div>
+                        </Grid>
+                        <Grid item xs={12} sm={3.3} md={2}>
+                          <div className='form-secondContainer-second'>
+                            <span className='form-secondContainer-header-title'>Next Balance Date</span>
+                            <span className='form-secondContainer-header-subtitle'>$100,000 USD</span>
+                          </div>
+                        </Grid>
+                        <Grid item xs={12} sm={2.5} md={1.2}>
+                          <div className='form-secondContainer-second'>
+                            <span className='form-secondContainer-header-title'>Installments</span>
+                            <span className='form-secondContainer-header-subtitle'>1/4</span>
+                          </div>
+                        </Grid>
+                        <Grid item xs={12} sm={2} md={1.3}>
+                          <div className='form-secondContainer-second'>
+                            <span className='form-secondContainer-header-title'>Balance</span>
+                            <span className='form-secondContainer-header-subtitle'>$0 USD</span>
+                          </div>
+                        </Grid>
+                        <Grid
+                          item
+                          xs={12}
+                          sm={4}
+                          md={12}
+                          sx={{
+                            display: 'flex',
+                            justifyContent: 'flex-end',
+                            alignItems: 'end',
+                            marginBottom: '10px',
+                            '@media (max-width: 599px)': {
+                              display: 'flex',
+                              justifyContent: 'center'
+                            }
+                          }}
+                        >
+                          <ContainerActionsHeader>
+                            <ActionsHeader
+                              accountId={account?.id}
+                              setEditInfo={setEditInfo}
+                              accountStatus='PENDING'
+                              sideHeader={true}
+                            />
+                          </ContainerActionsHeader>
+                        </Grid>
+                      </Grid>
+                    </Box>
                   )}
-                </div>
-                {isDataSheet ? (
-                  <>
-                    <div className='form-secondContainer-second'>
-                      <span className='form-secondContainer-header-title'>Line of Business</span>
-                      <span className='form-secondContainer-header-subtitle'>Line of Business</span>
-                    </div>
-                    <div className='form-secondContainer-second'>
-                      <span className='form-secondContainer-header-title'>Reception Date</span>
-                      <span className='form-secondContainer-header-subtitle'>13 / 03 / 2023</span>
-                    </div>
-                    <div className='form-secondContainer-second'>
-                      <div className='actions-header'>
-                        <ActionsHeader2
-                          accountId={account?.id}
-                          setEditInfo={setEditInfo}
-                          accountStatus='PENDING'
-                          sideHeader={true}
-                        />
-                      </div>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <div className='form-secondContainer-second'>
-                      <span className='form-secondContainer-header-title'>Broker Name</span>
-                      <span className='form-secondContainer-header-subtitle'>Broker Name</span>
-                    </div>
-                    <div className='form-secondContainer-second'>
-                      <span className='form-secondContainer-header-title'>Line of Business</span>
-                      <span className='form-secondContainer-header-subtitle'>Line of Business</span>
-                    </div>
-                    <div className='form-secondContainer-second'>
-                      <span className='form-secondContainer-header-title'>Next Due Date</span>
-                      <span className='form-secondContainer-header-subtitle'>10 / 01 / 2023</span>
-                    </div>
-                    <div className='form-secondContainer-second'>
-                      <span className='form-secondContainer-header-title'>Next Balance Date</span>
-                      <span className='form-secondContainer-header-subtitle'>$100,000 USD</span>
-                    </div>
-                    <div className='form-secondContainer-second'>
-                      <span className='form-secondContainer-header-title'>Installments</span>
-                      <span className='form-secondContainer-header-subtitle'>1/4</span>
-                    </div>
-                    <div className='form-secondContainer-second'>
-                      <span className='form-secondContainer-header-title'>Balance</span>
-                      <span className='form-secondContainer-header-subtitle'>$0 USD</span>
-                    </div>
-                  </>
-                )}
-              </div>
+                </Frame3486>
+              </SubContainerHeaderData>
             </div>
-            {!isDataSheet ? (
+            {/* {isDataSheet ? (
               <div className='actions-header'>
                 <ActionsHeader
                   accountId={account?.id}
@@ -366,7 +461,7 @@ const InstallmentHeader = ({
                   sideHeader={true}
                 />
               </div>
-            ) : null}
+            ) : null} */}
             {/* Container second */}
             <div
               style={{

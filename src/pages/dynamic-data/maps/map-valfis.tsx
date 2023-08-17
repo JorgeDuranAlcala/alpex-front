@@ -15,3 +15,10 @@ const MapValfis = () => {
 
 export default MapValfis
 
+// ValfisMap.acl = {
+//   action: 'viewMapValfisData',
+//   subject: 'dynamicData'
+// }
+
+// export default ValfisMap
+

@@ -144,7 +144,7 @@ export class CalculateSecurity {
       let sumOthers = new OperationMapper(this.security.dynamicCommissionAmount)
         .add(this.security.frontingFeeAmount ? this.security.frontingFeeAmount : 0)
         .add(this.security.brokerAgeAmount)
-        .add(this.security.taxesAmount ? this.security.taxesAmount : 0)
+
         .add(this.security.totalAmountOfDiscounts ? this.security.totalAmountOfDiscounts : 0)
 
       /**
@@ -154,9 +154,11 @@ export class CalculateSecurity {
        * del formulario 1 y se aplica como si estuviera activo en el form2 esto para reaseguradoras que  utilizan el gross
        */
       if (this.security.taxesActive) {
-        sumOthers = sumOthers.add(this.security.taxes)
-      } else if (this.information.taxesP) {
-        sumOthers = sumOthers.add(this.getTaxesAmount(this.information.taxesP))
+        sumOthers = sumOthers.add(this.security.taxesAmount ? this.security.taxesAmount : 0)
+      } else if (this.information.taxesP && this.information.taxesP > 0) {
+        sumOthers = sumOthers.add(
+          this.getTaxesAmount(this.information.taxesP) > 0 ? this.getTaxesAmount(this.information.taxesP) : 0
+        )
       }
 
       this.security.netReinsurancePremium = new OperationMapper(this.security.premiumPerShareAmount)
@@ -278,13 +280,13 @@ export class CalculateSecurity {
        * si en el formulario 1 esta activo y en el formulario 2 no se encuentra activo se utiliza el porcentaje del taxes
        * del formulario 1 y se aplica como si estuviera activo en el form2 esto para reaseguradoras que  utilizan el gross
        */
-      if (security.isGross)
+      if (security.isGross) {
         if (security.taxesActive) {
           taxesGros += new OperationMapper(security.taxesAmount).toNumber()
-        } else if (information.taxesP) {
+        } else if (information.taxesP && information.taxesP > 0) {
           taxesGros += new OperationMapper(securityOperation.getTaxesAmount(information.taxesP)).toNumber()
         }
-
+      }
       brokerageReinsuranceGross += security.isGross ? new OperationMapper(security.brokerAgeAmount).toNumber() : 0
       distributedNetPremium += new OperationMapper(security.netReinsurancePremium)
         .add(security.dynamicCommissionAmount)
