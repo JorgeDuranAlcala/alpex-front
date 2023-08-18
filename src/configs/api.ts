@@ -229,7 +229,8 @@ export enum RETRO_CEDANT_CONTACT_ROUTES {
 }
 
 export enum COVERAGE_ROUTES {
-  GET_ALL = 'catalogs/coverage/all'
+  GET_ALL = 'catalogs/coverage/all',
+  CREATE = 'catalogs/coverage/create'
 }
 
 export enum INSTALLMENT_ROUTERS {
