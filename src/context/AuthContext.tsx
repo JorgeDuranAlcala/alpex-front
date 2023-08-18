@@ -57,7 +57,7 @@ const AuthProvider = ({ children }: Props) => {
             const resUser = response.data.userData
 
             const newUserData = {
-              acl:resUser.acl,
+              acl: resUser.acl,
               email: resUser.email,
               fullName: resUser.name,
               id: resUser.id,
