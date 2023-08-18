@@ -254,8 +254,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
         ...CalculateSecurity.getData(tempSecurities, dataFormView2, information)
       }
 
-      if (account) {
-        account.securitiesTotal.length
+      if (account && account.securitiesTotal.length > 0) {
         if (account.securitiesTotal[0]) {
           dataForm = {
             ...dataForm,

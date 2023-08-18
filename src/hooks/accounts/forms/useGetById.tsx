@@ -33,12 +33,11 @@ const account_status = {
 
 export const useGetAccountById = () => {
   const [account, setAccount] = useState<ResponseGetAccount>()
-  const [accountId, setAccountId] = useState<number | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const lastAccountId = useRef<number | null>(null);
+  const [accountId, setAccountId] = useState<number | null>(null)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const lastAccountId = useRef<number | null>(null)
 
   const getAccountById = async (idAccount: number): Promise<ResponseGetAccount> => {
-
     // console.log('getAccountById', idAccount)
 
     const getAccount = await AccountServices.getAccountById(idAccount)
@@ -47,10 +46,9 @@ export const useGetAccountById = () => {
       const idAccountStatus: number = getAccount.idAccountStatus as number
       const statusKey = `status_${idAccountStatus}`
       getAccount.status = account_status[statusKey as keyof typeof account_status]
+      setAccount(getAccount)
 
       // console.log('accounts', getAccount)
-
-
     }
 
     return getAccount
@@ -58,11 +56,10 @@ export const useGetAccountById = () => {
 
   useEffect(() => {
     // setAccount(undefined);
-    setIsLoading(true);
+    setIsLoading(true)
     if (accountId) {
-
-      if (lastAccountId.current === accountId) return;
-      lastAccountId.current = accountId;
+      if (lastAccountId.current === accountId) return
+      lastAccountId.current = accountId
 
       // console.log('useGetAccountById', accountId)
 
@@ -75,8 +72,8 @@ export const useGetAccountById = () => {
             accounts.status = account_status[statusKey as keyof typeof account_status]
           }
           console.log('accounts', accounts)
-          setAccount(accounts);
-          setIsLoading(false);
+          setAccount(accounts)
+          setIsLoading(false)
         })
         .catch((error: Error) => {
           console.log(error)
