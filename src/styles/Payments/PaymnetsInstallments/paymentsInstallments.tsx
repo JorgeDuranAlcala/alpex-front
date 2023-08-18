@@ -45,7 +45,7 @@ const ContainerHeaderMobile = styled('div')({
   justifyContent: 'space-between',
   '@media (max-width: 764px)': {
     flexDirection: 'column',
-    gap: '15px'
+    gap: '20px'
   }
 })
 const FormHeaderSection = styled('div')({
@@ -55,11 +55,8 @@ const FormHeaderSection = styled('div')({
   flexDirection: 'row',
   justifyContent: 'space-between',
   height: 'auto',
-  '@media (max-width: 899px)': {
-    flexDirection: 'column'
-  },
   '@media (max-width: 764px)': {
-    display: 'none'
+    flexDirection: 'column'
   }
 })
 
@@ -68,8 +65,9 @@ const ContainerAmountLastUpdate = styled('div')({
   flexDirection: 'column',
   alignItems: 'flex-end',
   gap: '8px',
-  '@media (max-width: 899px)': {
-    alignItems: 'flex-start'
+  '@media (max-width: 764px)': {
+    alignItems: 'flex-start',
+    gap: '8px'
   }
 })
 const FormHeaderInfoProfileContainer = styled('div')({
@@ -93,6 +91,27 @@ const HeaderRowsContainer = styled('div')({
   }
 })
 
+const FormHeaderInfoProfiletext = styled('div')({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '16px',
+  '@media (max-width: 764px)': {
+    gap: '10px',
+    marginBottom: '10px'
+  }
+})
+
+const FormHeaderMoneyDataDate = styled('div')({
+  fontWeight: 400,
+  fontSize: '16px',
+  lineHeight: '28px',
+  letterSpacing: '0.15px',
+  color: '#4d506261',
+  '@media (max-width: 764px)': {
+    fontSize: '12px'
+  }
+})
+
 export {
   ContainerHeaderMobile,
   FormHeaderSection,
@@ -103,5 +122,7 @@ export {
   ContainerAmountLastUpdate,
   FormHeaderInfoProfileContainer,
   SecondContainer,
-  HeaderRowsContainer
+  HeaderRowsContainer,
+  FormHeaderInfoProfiletext,
+  FormHeaderMoneyDataDate
 }

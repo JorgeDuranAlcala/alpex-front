@@ -37,7 +37,9 @@ const DataSheet = () => {
         <div style={{ display: 'flex', flexDirection: 'row', gap: '16px' }}>
           <Card>
             <div className='container-padd'>
-              <div className='title-installment'>Information</div>
+              <div className='title-installment' style={{ fontSize: '24px' }}>
+                Information
+              </div>
               <div className='wrapper-installments'>
                 <Grid container spacing={{ xs: 3, sm: 3, md: 3 }}>
                   <Grid item xs={12} md={4} sm={6}>
@@ -184,105 +186,236 @@ const DataSheet = () => {
                   </Grid>
                 </Grid>
               </div>
-              <div className='title-installment'>Security</div>
-
+              <div className='title-installment' style={{ fontSize: '24px', marginBottom: '2%' }}>
+                Security
+              </div>
+              <div className='title-installment'>Everest Re Group LTD</div>
+              <div className='wrapper-installments'>
+                <Grid container spacing={{ xs: 3, sm: 3, md: 3 }}>
+                  <Grid item xs={12} md={6} sm={6}>
+                    <div className='width-full'>
+                      <TextField fullWidth autoFocus name='sharePercent' label='Share %' defaultValue='' value='' />
+                    </div>
+                  </Grid>
+                  <Grid item xs={12} md={6} sm={6}>
+                    <div className='width-full'>
+                      <TextField fullWidth autoFocus name='shareMount' label='Share $' defaultValue='' value='' />
+                    </div>
+                  </Grid>
+                  <Grid item xs={12} md={6} sm={6}>
+                    <div className='width-full'>
+                      <TextField
+                        fullWidth
+                        autoFocus
+                        name='grossPremium'
+                        label='Gross Premium per Share'
+                        defaultValue=''
+                        value=''
+                      />
+                    </div>
+                  </Grid>
+                  <Grid item xs={12} md={6} sm={6}>
+                    <div className='width-full'>
+                      <TextField
+                        fullWidth
+                        autoFocus
+                        name='premiumPerShare'
+                        label='Premium per Share'
+                        defaultValue=''
+                        value=''
+                      />
+                    </div>
+                  </Grid>
+                  <Grid item xs={12} md={6} sm={6}>
+                    <div className='width-full'>
+                      <TextField
+                        fullWidth
+                        autoFocus
+                        name='reinsurancePercent'
+                        label='Reinsurance Brokerage %'
+                        defaultValue=''
+                        value=''
+                      />
+                    </div>
+                  </Grid>
+                  <Grid item xs={12} md={6} sm={6}>
+                    <div className='width-full'>
+                      <TextField
+                        fullWidth
+                        autoFocus
+                        name='reinsuranceBrokerage'
+                        label='Reinsurance Brokerage'
+                        defaultValue=''
+                        value=''
+                      />
+                    </div>
+                  </Grid>
+                  <Grid item xs={12} md={6} sm={6}>
+                    <div className='width-full'>
+                      <TextField
+                        fullWidth
+                        autoFocus
+                        name='dynamicPercent'
+                        label='Dynamic Commission %'
+                        defaultValue=''
+                        value=''
+                      />
+                    </div>
+                  </Grid>
+                  <Grid item xs={12} md={6} sm={6}>
+                    <div className='width-full'>
+                      <TextField
+                        fullWidth
+                        autoFocus
+                        name='dynamicCommission'
+                        label='Dynamic Commission'
+                        defaultValue=''
+                        value=''
+                      />
+                    </div>
+                  </Grid>
+                  <Grid item xs={12} md={6} sm={6}>
+                    <div className='width-full'>
+                      <TextField fullWidth autoFocus name='taxesPercent' label='Taxes %' defaultValue='' value='' />
+                    </div>
+                  </Grid>
+                  <Grid item xs={12} md={6} sm={6}>
+                    <div className='width-full'>
+                      <TextField fullWidth autoFocus name='taxes' label='Taxes' defaultValue='' value='' />
+                    </div>
+                  </Grid>
+                  <Grid item xs={12} md={6} sm={6}>
+                    <div className='width-full'>
+                      <TextField
+                        fullWidth
+                        autoFocus
+                        name='frontingPercent'
+                        label='Fronting Fee %'
+                        defaultValue=''
+                        value=''
+                      />
+                    </div>
+                  </Grid>
+                  <Grid item xs={12} md={6} sm={6}>
+                    <div className='width-full'>
+                      <TextField fullWidth autoFocus name='frontingFee' label='Fronting Fee' defaultValue='' value='' />
+                    </div>
+                  </Grid>
+                </Grid>
+              </div>
               <div className='title-installment'>Reinsurer 1</div>
               <div className='wrapper-installments'>
-                <div className='width-full'>
-                  <TextField fullWidth autoFocus name='sharePercent' label='Share %' defaultValue='' value='' />
-                </div>
-                <div className='width-full'>
-                  <TextField fullWidth autoFocus name='shareMount' label='Share $' defaultValue='' value='' />
-                </div>
-              </div>
-              <div className='wrapper-installments'>
-                <div className='width-full'>
-                  <TextField
-                    fullWidth
-                    autoFocus
-                    name='grossPremium'
-                    label='Gross Premium per Share'
-                    defaultValue=''
-                    value=''
-                  />
-                </div>
-                <div className='width-full'>
-                  <TextField
-                    fullWidth
-                    autoFocus
-                    name='premiumPerShare'
-                    label='Premium per Share'
-                    defaultValue=''
-                    value=''
-                  />
-                </div>
-              </div>
-              <div className='wrapper-installments'>
-                <div className='width-full'>
-                  <TextField
-                    fullWidth
-                    autoFocus
-                    name='reinsurancePercent'
-                    label='Reinsurance Brokerage %'
-                    defaultValue=''
-                    value=''
-                  />
-                </div>
-                <div className='width-full'>
-                  <TextField
-                    fullWidth
-                    autoFocus
-                    name='reinsuranceBrokerage'
-                    label='Reinsurance Brokerage'
-                    defaultValue=''
-                    value=''
-                  />
-                </div>
-              </div>
-              <div className='wrapper-installments'>
-                <div className='width-full'>
-                  <TextField
-                    fullWidth
-                    autoFocus
-                    name='dynamicPercent'
-                    label='Dynamic Commission %'
-                    defaultValue=''
-                    value=''
-                  />
-                </div>
-                <div className='width-full'>
-                  <TextField
-                    fullWidth
-                    autoFocus
-                    name='dynamicCommission'
-                    label='Dynamic Commission'
-                    defaultValue=''
-                    value=''
-                  />
-                </div>
-              </div>
-              <div className='wrapper-installments'>
-                <div className='width-full'>
-                  <TextField fullWidth autoFocus name='taxesPercent' label='Taxes %' defaultValue='' value='' />
-                </div>
-                <div className='width-full'>
-                  <TextField fullWidth autoFocus name='taxes' label='Taxes' defaultValue='' value='' />
-                </div>
-              </div>
-              <div className='wrapper-installments'>
-                <div className='width-full'>
-                  <TextField
-                    fullWidth
-                    autoFocus
-                    name='frontingPercent'
-                    label='Fronting Fee %'
-                    defaultValue=''
-                    value=''
-                  />
-                </div>
-                <div className='width-full'>
-                  <TextField fullWidth autoFocus name='frontingFee' label='Fronting Fee' defaultValue='' value='' />
-                </div>
+                <Grid container spacing={{ xs: 3, sm: 3, md: 3 }}>
+                  <Grid item xs={12} md={6} sm={6}>
+                    <div className='width-full'>
+                      <TextField fullWidth autoFocus name='sharePercent' label='Share %' defaultValue='' value='' />
+                    </div>
+                  </Grid>
+                  <Grid item xs={12} md={6} sm={6}>
+                    <div className='width-full'>
+                      <TextField fullWidth autoFocus name='shareMount' label='Share $' defaultValue='' value='' />
+                    </div>
+                  </Grid>
+                  <Grid item xs={12} md={6} sm={6}>
+                    <div className='width-full'>
+                      <TextField
+                        fullWidth
+                        autoFocus
+                        name='grossPremium'
+                        label='Gross Premium per Share'
+                        defaultValue=''
+                        value=''
+                      />
+                    </div>
+                  </Grid>
+                  <Grid item xs={12} md={6} sm={6}>
+                    <div className='width-full'>
+                      <TextField
+                        fullWidth
+                        autoFocus
+                        name='premiumPerShare'
+                        label='Premium per Share'
+                        defaultValue=''
+                        value=''
+                      />
+                    </div>
+                  </Grid>
+                  <Grid item xs={12} md={6} sm={6}>
+                    <div className='width-full'>
+                      <TextField
+                        fullWidth
+                        autoFocus
+                        name='reinsurancePercent'
+                        label='Reinsurance Brokerage %'
+                        defaultValue=''
+                        value=''
+                      />
+                    </div>
+                  </Grid>
+                  <Grid item xs={12} md={6} sm={6}>
+                    <div className='width-full'>
+                      <TextField
+                        fullWidth
+                        autoFocus
+                        name='reinsuranceBrokerage'
+                        label='Reinsurance Brokerage'
+                        defaultValue=''
+                        value=''
+                      />
+                    </div>
+                  </Grid>
+                  <Grid item xs={12} md={6} sm={6}>
+                    <div className='width-full'>
+                      <TextField
+                        fullWidth
+                        autoFocus
+                        name='dynamicPercent'
+                        label='Dynamic Commission %'
+                        defaultValue=''
+                        value=''
+                      />
+                    </div>
+                  </Grid>
+                  <Grid item xs={12} md={6} sm={6}>
+                    <div className='width-full'>
+                      <TextField
+                        fullWidth
+                        autoFocus
+                        name='dynamicCommission'
+                        label='Dynamic Commission'
+                        defaultValue=''
+                        value=''
+                      />
+                    </div>
+                  </Grid>
+                  <Grid item xs={12} md={6} sm={6}>
+                    <div className='width-full'>
+                      <TextField fullWidth autoFocus name='taxesPercent' label='Taxes %' defaultValue='' value='' />
+                    </div>
+                  </Grid>
+                  <Grid item xs={12} md={6} sm={6}>
+                    <div className='width-full'>
+                      <TextField fullWidth autoFocus name='taxes' label='Taxes' defaultValue='' value='' />
+                    </div>
+                  </Grid>
+                  <Grid item xs={12} md={6} sm={6}>
+                    <div className='width-full'>
+                      <TextField
+                        fullWidth
+                        autoFocus
+                        name='frontingPercent'
+                        label='Fronting Fee %'
+                        defaultValue=''
+                        value=''
+                      />
+                    </div>
+                  </Grid>
+                  <Grid item xs={12} md={6} sm={6}>
+                    <div className='width-full'>
+                      <TextField fullWidth autoFocus name='frontingFee' label='Fronting Fee' defaultValue='' value='' />
+                    </div>
+                  </Grid>
+                </Grid>
               </div>
             </div>
           </Card>
