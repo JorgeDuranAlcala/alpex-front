@@ -307,7 +307,7 @@ const Sublimits = ({ }: SublimitsProps) => {
     getAccountData()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-  console.log({ subLimits })
+  console.log({ subLimits, coverageSelected })
 
   // * INIT -  Actualizar los datos del formulario en Redux + + + + + + + + + + + + + +
 
@@ -346,6 +346,7 @@ const Sublimits = ({ }: SublimitsProps) => {
                   subLimits.map((subLimit, index) => (
                     <Grid item xs={12} sm={12} md={6} lg={4} key={index}>
                       <GenericCard
+                        selectedCoverages={coverageSelected}
                         subLimit={subLimit}
                         setSubLimits={setSubLimits}
                         subLimits={subLimits}
