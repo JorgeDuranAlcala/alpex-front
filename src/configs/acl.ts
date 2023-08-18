@@ -71,13 +71,9 @@ const defineRulesFor = (role: string, subject: string, acl: acl[]) => {
     cannot(['viewMaps', 'read'], 'mapsData')
     cannot(['viewMapsEarthquakesData', 'viewMapsValfisData', 'viewMapsZonaCrestaData', 'viewMapsInsuredPropertyData', 'read'], 'mapsListData')
   } else if (role === 'Técnico') {
-    can('manage', 'all')
-    cannot(['read'], 'catalog')
-    cannot(['read'], 'user')
-    cannot(['viewDashboardData', 'read'], 'dashboardData')
-    cannot(['viewPropertyListData', 'read'], 'propertyListData')
-    cannot(['viewMaps', 'read'], 'mapsData')
-    cannot(['viewMapsEarthquakesData', 'viewMapsValfisData', 'viewMapsZonaCrestaData', 'viewMapsInsuredPropertyData', 'read'], 'mapsListData')
+    acl?.forEach((element) =>{
+      can(element?.action, element?.module)
+    });
   } else {
     can(['read', 'create', 'update', 'delete'], subject)
   }
