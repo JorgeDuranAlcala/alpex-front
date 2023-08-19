@@ -172,19 +172,17 @@ const FormHeader = ({
   accountDetails,
   setEditInfo,
   setActiveEndorsement,
-  setTypeofAccount,
+  setTypeofAccount
 }: FormHeaderProps) => {
-
-
-  const [status, setStatus] = useState('');
-  const [netPremiumAmount, setNetPremiumAmount] = useState<string | null>(null);
-  const [insured, setInsured] = useState<string | null>(null);
-  const [accountId, setAccountId] = useState<number | null>(null);
+  const [status, setStatus] = useState('')
+  const [netPremiumAmount, setNetPremiumAmount] = useState<string | null>(null)
+  const [insured, setInsured] = useState<string | null>(null)
+  const [accountId, setAccountId] = useState<number | null>(null)
   const [receptionDate, setReceptionDate] = useState<string | null>(null)
 
   const account = useAppSelector(state => state.accounts?.formsData?.form1)
 
-  const lastUserName = 'Alejandro Hernández';
+  const lastUserName = 'Alejandro Hernández'
 
   // console.log(accountDetails);
 
@@ -192,10 +190,8 @@ const FormHeader = ({
   // const lastAccountDetailsId = useRef<number | null>(null);
 
   const formaterAmount = (amount: number) => {
-
-
     if (amount) {
-      const amountNumber = Number(amount);
+      const amountNumber = Number(amount)
 
       return amountNumber.toLocaleString('en-US', {
         style: 'decimal',
@@ -265,44 +261,31 @@ const FormHeader = ({
 
   useEffect(() => {
     if (account) {
-      const amount = formaterAmount(account?.placementStructure?.netPremium);
-      const currency = account?.placementStructure?.currency;
+      const amount = formaterAmount(account?.placementStructure?.netPremium)
+      const currency = account?.placementStructure?.currency
 
-      setNetPremiumAmount(`$${amount} ${currency}`);
-      setInsured(account?.basicInfo?.insured);
-      setAccountId(account?.id);
-      setReceptionDate(convertirFecha(account?.basicInfo?.receptionDate));
-
+      setNetPremiumAmount(`$${amount} ${currency}`)
+      setInsured(account?.basicInfo?.insured)
+      setAccountId(account?.id)
+      setReceptionDate(convertirFecha(account?.basicInfo?.receptionDate))
     }
 
     if (accountDetails?.informations?.length > 0) {
-      const amount = formaterAmount(accountDetails?.informations[0]?.netPremium);
-      const currency = accountDetails?.informations[0]?.currency;
+      const amount = formaterAmount(accountDetails?.informations[0]?.netPremium)
+      const currency = accountDetails?.informations[0]?.currency
 
-      setNetPremiumAmount(`$${amount} ${currency}`);
-      setInsured(accountDetails?.informations[0]?.insured);
-      setAccountId(accountDetails?.id);
-      setReceptionDate(convertirFecha(accountDetails?.informations[0]?.receptionDate));
+      setNetPremiumAmount(`$${amount} ${currency}`)
+      setInsured(accountDetails?.informations[0]?.insured)
+      setAccountId(accountDetails?.id)
+      setReceptionDate(convertirFecha(accountDetails?.informations[0]?.receptionDate))
     }
-
-
   }, [account, accountDetails])
 
-
   useEffect(() => {
-
     // console.log('accountDetails Effect', accountDetails);
 
     accountDetails && setStatus(accountDetails.status)
-
   }, [accountDetails])
-
-
-
-
-
-
-
 
   // console.log('account', account)
 
@@ -317,9 +300,7 @@ const FormHeader = ({
               <div className='idNumber'>#{accountId}</div>
 
               <span className='subtitle'>Net premium</span>
-              <span className='moneySubtitle'>
-                ${netPremiumAmount}
-              </span>
+              <span className='moneySubtitle'>${netPremiumAmount}</span>
               <span className='subtitle'>Reception Date</span>
               <span className='reception'>{receptionDate}</span>
             </ContainerMobileBound>
@@ -337,11 +318,10 @@ const FormHeader = ({
                 </div>
                 <div className='form-header-money-data'>
                   <span className='form-header-money-data-txt'>Net premium</span>
-                  <span className='form-header-money-data-num'>
-                    {netPremiumAmount}
-                  </span>
+                  <span className='form-header-money-data-num'>{netPremiumAmount}</span>
                   <span className='form-header-money-data-date'>
-                    Last Update: {accountDetails && formatDateFromUTC(accountDetails?.informations[0]?.updatedAt)} by {lastUserName}
+                    Last Update: {accountDetails && formatDateFromUTC(accountDetails?.informations[0]?.updatedAt)} by{' '}
+                    {lastUserName}
                   </span>
                 </div>
               </div>
@@ -353,9 +333,22 @@ const FormHeader = ({
                 <div className='form-secondContainer-first' style={{ marginRight: '20px' }}>
                   <span className='form-secondContainer-header-title'>Status</span>
                   {status !== '' && accountDetails?.status && (
-                    <StatusSelect accountDetails={accountDetails} margin={0} initialStatus={accountDetails?.status} setSelectedStatus={setStatus} />
+                    <StatusSelect
+                      accountDetails={accountDetails}
+                      margin={0}
+                      initialStatus={accountDetails?.status}
+                      setSelectedStatus={setStatus}
+                    />
                   )}
-                  {isNewAccount && <StatusSelect accountDetails={accountDetails} margin={0} initialStatus='PENDING' setSelectedStatus={setStatus} isNewAccount={isNewAccount} />}
+                  {isNewAccount && (
+                    <StatusSelect
+                      accountDetails={accountDetails}
+                      margin={0}
+                      initialStatus='PENDING'
+                      setSelectedStatus={setStatus}
+                      isNewAccount={isNewAccount}
+                    />
+                  )}
                 </div>
 
                 <div className='form-secondContainer-third'>
@@ -391,15 +384,13 @@ const FormHeader = ({
                 {accountDetails && accountDetails?.idAccountStatus === 5 ? ( //TODO
                   <ActionsHeaderBound accountStatus='BOUND' sideHeader={true} />
                 ) : accountId ? (
-
                   <ActionsHeader
                     accountId={accountId}
                     setEditInfo={setEditInfo}
                     accountStatus='PENDING'
                     sideHeader={true}
                   />
-                )
-                  : null}
+                ) : null}
               </div>
             </div>
             {/* Container second */}

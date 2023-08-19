@@ -40,8 +40,7 @@ const NewAccount = () => {
   const dispatch = useAppDispatch()
 
   //hooks header
-  const { account: accountDetails, getAccountById } = useGetAccountById()
-
+  const { account: accountDetails, getAccountById, setAccountId } = useGetAccountById()
 
   // const { addNewTabButton, removeTabByText } = useMultiTabButtons()
 
@@ -49,7 +48,7 @@ const NewAccount = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [disableComments, setDisableComments] = useState(false)
   const [isNewAccount, setIsNewAccount] = useState<boolean>(true)
-  const [activeStep, setActiveStep] = useState(1);
+  const [activeStep, setActiveStep] = useState(1)
 
   // const [isPushingToCreatedAccount, setIsPushingToCreatedAccount] = useState<boolean>(false)
 
@@ -71,7 +70,6 @@ const NewAccount = () => {
   //       isActive: true
   //     });
 
-
   //     removeTabByText('New Account');
 
   //     dispatch(stepForms_updateStep({
@@ -84,9 +82,7 @@ const NewAccount = () => {
   //   }
   // }
 
-
   const handleStepChange = (step: number) => {
-
     // if (step > 1) {
     //   pushToCreatedAccount(step);
 
@@ -103,7 +99,15 @@ const NewAccount = () => {
   const StepForm = ({ step }: { step: number }) => {
     switch (step) {
       case 1:
-        return <Information onStepChange={handleStepChange} onIsNewAccountChange={handleIsNewAccountChange} />
+        return (
+          <Information
+            onStepChange={handleStepChange}
+            onIsNewAccountChange={handleIsNewAccountChange}
+            getIdAccount={(idAccount: number) => {
+              getAccountById(idAccount)
+            }}
+          />
+        )
       case 2:
         return <Security onStepChange={handleStepChange} />
       case 3:
@@ -199,7 +203,6 @@ const NewAccount = () => {
   //     </Box>
   //   )
   // }
-
 
   return (
     <AccountsTableContextProvider>
