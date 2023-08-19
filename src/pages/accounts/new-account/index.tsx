@@ -40,7 +40,7 @@ const NewAccount = () => {
   const dispatch = useAppDispatch()
 
   //hooks header
-  const { account: accountDetails, getAccountById, setAccountId } = useGetAccountById()
+  const { account: accountDetails, getAccountById } = useGetAccountById()
 
   // const { addNewTabButton, removeTabByText } = useMultiTabButtons()
 
