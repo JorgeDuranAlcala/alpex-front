@@ -8,6 +8,8 @@ import {
   ContainerHeaderMobile,
   FirstContainer,
   FormHeaderInfoProfileContainer,
+  FormHeaderInfoProfiletext,
+  FormHeaderMoneyDataDate,
   FormHeaderSection,
   Frame3486,
   SecondContainer,
@@ -257,47 +259,30 @@ const InstallmentHeader = ({
       <Card className='info-header' style={{ marginBottom: '16px' }}>
         <div className='form-header-data'>
           <div className='form-container-all-data'>
-            {/* Contenedor mobile bound */}
-            {/* <ContainerMobileBound>
-              <div className='title'>Quality Insurance México</div>
-              <div className='idNumber'>#{account?.id}</div>
-
-              <span className='subtitle'>Total debt</span>
-              <span className='moneySubtitle'>$400,000 USD {account?.placementStructure?.currency}</span>
-
-              <span className='subtitle'>Broker Name</span>
-              <span className='subtitle-installment'>Broker Name</span>
-
-              <span className='subtitle'>Line of Business</span>
-              <span className='subtitle-installment'>Line of Business</span>
-
-              <span className='subtitle'>Next Due Date</span>
-              <span className='subtitle-installment'>10 / 01 / 2023</span>
-
-              <span className='subtitle'>Next Balance Date</span>
-              <span className='subtitle-installment'>$100,000 USD</span>
-
-              <span className='subtitle'>Installments</span>
-              <span className='subtitle-installment'>1/4</span>
-
-              <span className='subtitle'>Balance</span>
-              <span className='subtitle-installment'>$0 USD</span> */}
-            {/* <span className='subtitle'>Reception Date</span>
-              <span className='reception'>{account && convertirFecha(account?.basicInfo?.receptionDate)}</span> */}
-            {/* </ContainerMobileBound> */}
-
-            {/* Contenedor mobile bound */}
-            {/* Container first */}
-            <FormHeaderSection>
+            <FormHeaderSection
+              sx={{
+                '@media (max-width: 764px)': {
+                  display: isDataSheet ? 'none' : 'block'
+                }
+              }}
+            >
               <FormHeaderInfoProfileContainer>
-                <ModalUploadImage accountId={account?.id} />
-                <div className='form-header-info-profile-txt-container'>
+                <Box
+                  sx={{
+                    '@media (max-width: 764px)': {
+                      display: 'none'
+                    }
+                  }}
+                >
+                  <ModalUploadImage accountId={account?.id} />
+                </Box>
+                <FormHeaderInfoProfiletext>
                   <span className='form-header-info-profile-txt-title'>Quality Insurance México</span>
                   <span className='form-header-info-profile-num'>#{account?.id}</span>
-                </div>
+                </FormHeaderInfoProfiletext>
               </FormHeaderInfoProfileContainer>
               <ContainerAmountLastUpdate>
-                {!isDataSheet ? (
+                {isDataSheet ? (
                   <span className='form-header-money-data-txt'>Net premium</span>
                 ) : (
                   <span className='form-header-money-data-txt'>Total debit</span>
@@ -306,9 +291,9 @@ const InstallmentHeader = ({
                   ${account && formaterAmount(account?.placementStructure?.netPremium)}{' '}
                   {account?.placementStructure?.currency}
                 </span>
-                <span className='form-header-money-data-date'>
+                <FormHeaderMoneyDataDate>
                   Last Update: {accountDetails && formatDateFromUTC(accountDetails?.informations[0]?.updatedAt)}
-                </span>
+                </FormHeaderMoneyDataDate>
               </ContainerAmountLastUpdate>
             </FormHeaderSection>
             {/* Container first */}
@@ -361,7 +346,7 @@ const InstallmentHeader = ({
                           }
                         }}
                       >
-                        <span className='form-header-money-data-date'>
+                        <span className='form-header-money-data-date' style={{ fontSize: '12px' }}>
                           Last Update: {accountDetails && formatDateFromUTC(accountDetails?.informations[0]?.updatedAt)}
                         </span>
                       </SecondContainer>

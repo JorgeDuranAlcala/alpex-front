@@ -5,14 +5,14 @@ import { CoverageDto } from 'src/services/catalogs/dtos/coverage.dto'
 export const useGetAllCoverage = () => {
   const [coverages, setCoverages] = useState<CoverageDto[]>([])
 
-  const getAllCurrencies = async () => {
+  const getAllCoverages = async () => {
     const data = await CoverageService.getAll()
     setCoverages(data)
   }
 
   useEffect(() => {
-    getAllCurrencies()
+    getAllCoverages()
   }, [])
 
-  return { coverages }
+  return { coverages, getAllCoverages }
 }
