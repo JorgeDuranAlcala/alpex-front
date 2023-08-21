@@ -13,12 +13,9 @@ const MapZonacresta = () => {
   )
 }
 
+MapZonacresta.acl = {
+  action: 'viewZonaCrestaData',
+  subject: 'dynamicData'
+}
+
 export default MapZonacresta
-
-// ZonacrestaMap.acl = {
-//   action: 'viewZonaCrestaData',
-//   subject: 'dynamicData'
-// }
-
-// export default ZonacrestaMap
-

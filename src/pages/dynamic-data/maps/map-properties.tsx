@@ -13,12 +13,9 @@ const MapProperties = () => {
   )
 }
 
+MapProperties.acl = {
+  action: 'viewMapPropertiesData',
+  subject: 'dynamicData'
+}
+
 export default MapProperties
-
-// PopertiesMap.acl = {
-//   action: 'viewMapPropertiesData',
-//   subject: 'dynamicData'
-// }
-
-// export default PopertiesMap
-
