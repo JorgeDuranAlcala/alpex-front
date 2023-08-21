@@ -1,7 +1,18 @@
 // import { useGetAllEndorsementTypes } from '@/hooks/accounts/endorsementType/getAllEndorsementTypes.tsx'
 
 import { useGetDoctosByIdAccountAndIdDocumentType } from '@/hooks/accounts/information/useGetFilesByType'
-import { ContainerMobileBound } from '@/styled-components/accounts/Security.styled'
+
+// import { ContainerMobileBound } from '@/styled-components/accounts/Security.styled'
+import {
+  ContainerAmountLastUpdate,
+  FormHeaderInfoProfileContainer,
+  FormHeaderInfoProfiletext,
+  FormHeaderMoneyDataDate,
+  FormHeaderSection,
+  FormSecondContainerFirstside,
+  Frame3486,
+  SecondContainer
+} from '@/styles/Payments/PaymnetsInstallments/paymentsInstallments'
 import { Box, Button, Card, ListItemIcon, ListItemText, Menu, MenuItem, Modal, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
 import Icon from 'src/@core/components/icon'
@@ -295,7 +306,7 @@ const FormHeader = ({
         <div className='form-header-data'>
           <div className='form-container-all-data'>
             {/* Contenedor mobile bound */}
-            <ContainerMobileBound>
+            {/* <ContainerMobileBound>
               <div className='title'>{insured} </div>
               <div className='idNumber'>#{accountId}</div>
 
@@ -303,34 +314,65 @@ const FormHeader = ({
               <span className='moneySubtitle'>${netPremiumAmount}</span>
               <span className='subtitle'>Reception Date</span>
               <span className='reception'>{receptionDate}</span>
-            </ContainerMobileBound>
+            </ContainerMobileBound> */}
 
             {/* Contenedor mobile bound */}
             {/* Container first */}
             {!isNewAccount && (
-              <div className='form-header-sections'>
-                <div className='form-header-info-profile-container'>
-                  <ModalUploadImage accountId={accountId} />
-                  <div className='form-header-info-profile-txt-container'>
+              <FormHeaderSection>
+                <FormHeaderInfoProfileContainer sx={{ flexDirection: 'row' }}>
+                  <Box
+                    sx={{
+                      '@media (max-width: 764px)': {
+                        display: 'none'
+                      }
+                    }}
+                  >
+                    <ModalUploadImage accountId={accountId} />
+                  </Box>
+                  <FormHeaderInfoProfiletext>
                     <span className='form-header-info-profile-txt-title'>{insured}</span>
                     <span className='form-header-info-profile-num'>#{accountId}</span>
-                  </div>
-                </div>
-                <div className='form-header-money-data'>
+                  </FormHeaderInfoProfiletext>
+                </FormHeaderInfoProfileContainer>
+                <ContainerAmountLastUpdate>
                   <span className='form-header-money-data-txt'>Net premium</span>
                   <span className='form-header-money-data-num'>{netPremiumAmount}</span>
-                  <span className='form-header-money-data-date'>
+                  <FormHeaderMoneyDataDate>
                     Last Update: {accountDetails && formatDateFromUTC(accountDetails?.informations[0]?.updatedAt)} by{' '}
                     {lastUserName}
-                  </span>
-                </div>
-              </div>
+                  </FormHeaderMoneyDataDate>
+                </ContainerAmountLastUpdate>
+              </FormHeaderSection>
             )}
             {/* Container first */}
             {/* Container second */}
-            <div className='form-secondContainer-wrapper'>
-              <div className='form-secondContainer-wrapper-first-side'>
-                <div className='form-secondContainer-first' style={{ marginRight: '20px' }}>
+            <Frame3486
+              sx={{
+                '@media (max-width: 764px)': {
+                  flexDirection: 'column',
+                  gap: '20px'
+                }
+              }}
+            >
+              <FormSecondContainerFirstside
+                sx={{
+                  width: isNewAccount ? '19%' : '100%',
+                  '@media (max-width: 764px)': {
+                    flexDirection: 'column',
+                    gap: '12px',
+                    width: isNewAccount ? '100%' : '100%'
+                  }
+                }}
+              >
+                <SecondContainer
+                  sx={{
+                    width: '160px',
+                    '@media (max-width: 764px)': {
+                      width: '100%'
+                    }
+                  }}
+                >
                   <span className='form-secondContainer-header-title'>Status</span>
                   {status !== '' && accountDetails?.status && (
                     <StatusSelect
@@ -349,7 +391,7 @@ const FormHeader = ({
                       isNewAccount={isNewAccount}
                     />
                   )}
-                </div>
+                </SecondContainer>
 
                 <div className='form-secondContainer-third'>
                   <span className='form-header-money-data-date'>
@@ -358,23 +400,37 @@ const FormHeader = ({
                 </div>
 
                 {!isNewAccount && (
-                  <div className='form-secondContainer-second'>
+                  <SecondContainer
+                    sx={{
+                      width: 'auto',
+                      '@media (max-width: 764px)': {
+                        width: '100%'
+                      }
+                    }}
+                  >
                     <span className='form-secondContainer-header-title'>Line of Business</span>
                     <span className='form-secondContainer-header-subtitle'>
                       {accountDetails && accountDetails?.informations[0]?.idLineOfBussines?.lineOfBussines}
                     </span>
-                  </div>
+                  </SecondContainer>
                 )}
 
                 {!isNewAccount && (
-                  <div className='form-secondContainer-second'>
+                  <SecondContainer
+                    sx={{
+                      width: 'auto',
+                      '@media (max-width: 764px)': {
+                        width: '100%'
+                      }
+                    }}
+                  >
                     <span className='form-secondContainer-header-title'>Effective Date</span>
                     <span className='form-secondContainer-header-subtitle'>
                       {accountDetails && formatDateFromUTC(accountDetails?.informations[0]?.effectiveDate || null)}
                     </span>
-                  </div>
+                  </SecondContainer>
                 )}
-              </div>
+              </FormSecondContainerFirstside>
               <div className={!isNewAccount ? 'actions-header' : 'form-secondContainer-fourths'}>
                 <div className={!isNewAccount ? 'display-none' : 'form-secondContainer-fourth'}>
                   <span className='form-header-money-data-date'>
@@ -392,7 +448,7 @@ const FormHeader = ({
                   />
                 ) : null}
               </div>
-            </div>
+            </Frame3486>
             {/* Container second */}
           </div>
         </div>

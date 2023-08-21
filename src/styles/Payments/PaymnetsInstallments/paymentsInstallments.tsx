@@ -49,14 +49,15 @@ const ContainerHeaderMobile = styled('div')({
   }
 })
 const FormHeaderSection = styled('div')({
-  marginBottom: '24px',
+  marginBottom: '10px',
   gap: '16px',
   display: 'flex',
   flexDirection: 'row',
   justifyContent: 'space-between',
   height: 'auto',
   '@media (max-width: 764px)': {
-    flexDirection: 'column'
+    flexDirection: 'column',
+    gap: '8px'
   }
 })
 
@@ -112,6 +113,11 @@ const FormHeaderMoneyDataDate = styled('div')({
   }
 })
 
+const FormSecondContainerFirstside = styled('div')({
+  display: 'flex',
+  gap: '32px'
+})
+
 export {
   ContainerHeaderMobile,
   FormHeaderSection,
@@ -124,5 +130,6 @@ export {
   SecondContainer,
   HeaderRowsContainer,
   FormHeaderInfoProfiletext,
-  FormHeaderMoneyDataDate
+  FormHeaderMoneyDataDate,
+  FormSecondContainerFirstside
 }
