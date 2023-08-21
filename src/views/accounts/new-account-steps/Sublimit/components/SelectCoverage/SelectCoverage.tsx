@@ -119,9 +119,7 @@ const SelectCoverage: FC<SelectCoverageProps> = ({ onChangeSelected, coverageSel
               <MenuItem
                 value={item.coverage}
                 role={undefined}
-                onClick={() => {
-                  onClickToggle(item.id, item.coverage)
-                }}
+
                 key={index}
                 sx={{
                   height: '50px',
@@ -131,6 +129,9 @@ const SelectCoverage: FC<SelectCoverageProps> = ({ onChangeSelected, coverageSel
                 }}
               >
                 <Checkbox
+                  onClick={() => {
+                    onClickToggle(item.id, item.coverage)
+                  }}
                   sx={{
                     width: '24px',
                     height: '24px',
