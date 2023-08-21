@@ -294,7 +294,8 @@ const FormHeader = ({
   }, [account, accountDetails])
 
   useEffect(() => {
-    console.log('accountDetails Effect', accountDetails);
+
+    // console.log('accountDetails Effect', accountDetails);
 
     if (accountDetails) {
 
@@ -304,9 +305,9 @@ const FormHeader = ({
 
         if (accountDetails.actionsHistory.length === 0) return;
 
-        const lastAction = accountDetails.actionsHistory.reverse();
+        const lastAction = [...accountDetails.actionsHistory].reverse();
 
-        if (lastAction[0].idUser) return;
+        if (!lastAction[0].idUser) return;
 
         const userName = lastAction[0].idUser.username;
         const fullName = `${lastAction[0].idUser.name || 'unknown name'} ${lastAction[0].idUser.surname || ''}`
@@ -359,7 +360,7 @@ const FormHeader = ({
                   <span className='form-header-money-data-num'>{netPremiumAmount}</span>
                   <FormHeaderMoneyDataDate>
                     Last Update: {accountDetails && formatDateFromUTC(accountDetails?.informations[0]?.updatedAt)}
-                    {lastUserName ? `by ${lastUserName}` : null}
+                    {lastUserName ? ` by ${lastUserName}` : null}
                   </FormHeaderMoneyDataDate>
                 </ContainerAmountLastUpdate>
               </FormHeaderSection>
