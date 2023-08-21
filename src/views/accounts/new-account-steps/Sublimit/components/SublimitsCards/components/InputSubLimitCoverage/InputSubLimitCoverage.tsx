@@ -84,7 +84,10 @@ const InputSubLimitCoverage: React.FC<InputSubLimitCoverageProps> = ({
     const subLimitTemp = { ...subLimit }
     setPrevSublimit(subLimitTemp.sublimit)
     setSublimitId(subLimitTemp.id)
-  }, [])
+
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (limitAmount !== Number(limit)) {

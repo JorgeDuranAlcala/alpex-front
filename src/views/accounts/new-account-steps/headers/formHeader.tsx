@@ -311,9 +311,7 @@ const FormHeader = ({
               <div className='idNumber'>#{accountId}</div>
 
               <span className='subtitle'>Net premium</span>
-              <span className='moneySubtitle'>
-                ${netPremiumAmount}
-              </span>
+              <span className='moneySubtitle'>${netPremiumAmount}</span>
               <span className='subtitle'>Reception Date</span>
               <span className='reception'>{receptionDate}</span>
             </ContainerMobileBound> */}

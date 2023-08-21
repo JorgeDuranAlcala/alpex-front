@@ -56,6 +56,7 @@ export interface InformationSectionsInt {
 type InformationProps = {
   onStepChange: (step: number) => void
   onIsNewAccountChange: (status: boolean) => void
+  getIdAccount: (idAccount: number) => void
   typeofAccount?: string
   disableSectionCtrl?: InformationSectionsInt
 }
@@ -107,7 +108,12 @@ export interface PlacementStructure {
   typeOfLimit: string | number | null
 }
 
-const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountChange, disableSectionCtrl }) => {
+const Information: React.FC<InformationProps> = ({
+  onStepChange,
+  onIsNewAccountChange,
+  disableSectionCtrl,
+  getIdAccount
+}) => {
   // const router = useRouter();
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
   const { changeStatusAccounts } = useAccountTable()
@@ -574,6 +580,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
         await uploadDoctos(idAccount)
         await updateDiscount()
         dispatch(updateFormsData({ form1: { basicInfo, placementStructure, userFile, id: idAccount } }))
+        getIdAccount(idAccount)
         setDisableSave(false)
       } else {
         setBadgeData({
@@ -594,6 +601,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
             idAccount: res.account.id
           }))
           await handleChangeStatusAction(res.account.id)
+          getIdAccount(res.account.id)
           setAccountId(res.account.id)
           await localStorage.setItem('idAccount', String(res.account.id))
           if (discountTemp.length > 0) {

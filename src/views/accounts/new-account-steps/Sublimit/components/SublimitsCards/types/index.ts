@@ -1,6 +1,7 @@
 // import { ReactNode } from 'react'
 
 import { SublimitDto } from '@/services/accounts/dtos/sublimit.dto'
+import { CoverageDto } from '@/services/catalogs/dtos/coverage.dto'
 
 export interface RenderFormGeneric {
   type?: number
@@ -17,4 +18,5 @@ export interface RenderFormGeneric {
   setSubLimits: React.Dispatch<React.SetStateAction<SublimitDto[]>>
   setErrors: React.Dispatch<React.SetStateAction<boolean[]>>
   showErrors: boolean
+  selectedCoverages: CoverageDto[];
 }

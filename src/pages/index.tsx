@@ -22,7 +22,7 @@ import { useAuth } from 'src/hooks/useAuth'
   else if (role === 'Reasegurador') {{return '/dynamic-data/dashboard/'}}
   else if (role === 'Asegurado') {{return '/dynamic-data/dashboard/'}}
   else if (role === 'Asegurador') {{return '/dashboards/crm'}}
-  else if (role === 'Técnico') {{return '/dashboards/crm'}}
+  else if (role === 'Técnico') {{return '/dynamic-data/dashboard/'}}
   else return '/dashboards/crm'
 }
 
