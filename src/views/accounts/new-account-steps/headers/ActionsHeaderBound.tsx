@@ -4,11 +4,12 @@ import { delayMs } from '@/utils/formatDates'
 import CustomAlert, { IAlert } from '@/views/custom/alerts'
 import CloseIcon from '@mui/icons-material/Close'
 import { Box, Button, CircularProgress, Modal, Typography, styled } from '@mui/material'
-import { Fragment, useEffect, useState } from 'react'
+import { Fragment, useEffect, useState, useContext } from 'react'
 import Icon from 'src/@core/components/icon'
 import { ButtonClose, HeaderTitleModal } from 'src/styles/Dashboard/ModalReinsurers/modalReinsurers'
 import StatusSelect from 'src/views/custom/select/StatusSelect'
 import { ActionsHeaderBoundModal, ActionsHeaderBoundModalCancel } from './modals/ModalEndorsment'
+import { AbilityContext } from '@/layouts/components/acl/Can'
 
 // ** MUI Imports
 
@@ -60,6 +61,7 @@ const ActionsHeaderBound: React.FC<IActionsHeaderProps> = ({ accountStatus, side
   const [openEndorsment, setOpenEndorsment] = useState(false)
   const [openHistory, setOpenHistory] = useState(false)
   const [cancellEndorsment, setCancellEndorsment] = useState(false)
+  const ability = useContext(AbilityContext)
 
   // Notifications
   const [badgeData, setBadgeData] = useState<IAlert>({
@@ -158,6 +160,17 @@ const ActionsHeaderBound: React.FC<IActionsHeaderProps> = ({ accountStatus, side
     }
   }, [sideHeader])
 
+  const downloadDebitNoteButton = () => {
+    if (ability?.can('downloadDebitNote', 'account')) {
+      
+      return (
+        <ButtonIcon onClick={handleDebitNote} disabled={uneditableAccount} title='DEBIT NOTE'>
+          <Icon icon='material-symbols:post-add' />
+        </ButtonIcon>
+      )
+    }
+  }
+
   return (
     <>
       <CustomAlert {...badgeData} />
@@ -174,9 +187,7 @@ const ActionsHeaderBound: React.FC<IActionsHeaderProps> = ({ accountStatus, side
               </div>
             )}
             <div className='header-btns'>
-              <ButtonIcon onClick={handleDebitNote} disabled={uneditableAccount} title='DEBIT NOTE'>
-                <Icon icon='material-symbols:post-add' />
-              </ButtonIcon>
+              {downloadDebitNoteButton()}
             </div>
             {/* ESTE ES EL MODAL QUE SE DESPLIEGA CUANDO SE GENERA EL ENDORSEMENT*/}
             <ActionsHeaderBoundModal
