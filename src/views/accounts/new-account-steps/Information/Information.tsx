@@ -1,5 +1,8 @@
+import { formatStatusToNumber } from '@/utils/formatStatus'
 import React, { useEffect, useState } from 'react'
+import useAccountTable from 'src/hooks/accounts/Table/useAccountTable'
 import UserThemeOptions from 'src/layouts/UserThemeOptions'
+import { EStatus } from 'src/views/accounts/Table/Status'
 
 // ** Custom Hooks
 import {
@@ -53,6 +56,7 @@ export interface InformationSectionsInt {
 type InformationProps = {
   onStepChange: (step: number) => void
   onIsNewAccountChange: (status: boolean) => void
+  getIdAccount: (idAccount: number) => void
   typeofAccount?: string
   disableSectionCtrl?: InformationSectionsInt
 }
@@ -104,10 +108,15 @@ export interface PlacementStructure {
   typeOfLimit: string | number | null
 }
 
-const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountChange, disableSectionCtrl }) => {
-
+const Information: React.FC<InformationProps> = ({
+  onStepChange,
+  onIsNewAccountChange,
+  disableSectionCtrl,
+  getIdAccount
+}) => {
   // const router = useRouter();
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
+  const { changeStatusAccounts } = useAccountTable()
   const [subjectState] = useState<Subject<void>>(new Subject())
   const inter = userThemeConfig.typography?.fontFamilyInter
   const [makeValidations, setMakeValidations] = useState(false)
@@ -124,6 +133,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   const [open, setOpen] = useState<boolean>(false)
   const [nextClicked, setNextClicked] = useState<boolean>(false)
   const [saveClicked, setSaveClicked] = useState<boolean>(false)
+  const [hasClickedNextStep, setHasClickedNextStep] = useState<boolean>(false)
 
   const [badgeData, setBadgeData] = useState<IAlert>({
     message: '',
@@ -206,6 +216,22 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
 
   const triggerFunction = () => {
     subjectState.next()
+  }
+
+  const handleChangeStatusAction = async (accountId: number) => {
+    const status = sessionStorage.getItem('accountStatus') ? 'PENDING' : sessionStorage.getItem('accountStatus')
+    if (status) {
+      const changeStatusArray = [
+        {
+          idAccount: accountId,
+          status: formatStatusToNumber(EStatus[status as keyof typeof EStatus])
+        }
+      ]
+      await changeStatusAccounts({
+        updateStatus: changeStatusArray
+      })
+      sessionStorage.removeItem('accountStatus')
+    }
   }
 
   const updateInformation = async () => {
@@ -538,51 +564,63 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   }
 
   const handleSaveInformation = async () => {
-    if (idAccount) {
-      setBadgeData({
-        message: `UPDATING INFORMATION`,
-        status: 'secondary',
-        open: true,
-        icon: <CircularProgress size={20} color='primary' />,
-        backgroundColor: '#828597',
-        theme: 'info',
-        disableAutoHide: true
-      })
+    try {
+      if (idAccount) {
+        setBadgeData({
+          message: `UPDATING INFORMATION`,
+          status: 'secondary',
+          open: true,
+          icon: <CircularProgress size={20} color='primary' />,
+          backgroundColor: '#828597',
+          theme: 'info',
+          disableAutoHide: true
+        })
 
-      await updateInformation()
-      await uploadDoctos(idAccount)
-      await updateDiscount()
-      dispatch(updateFormsData({ form1: { basicInfo, placementStructure, userFile, id: idAccount } }))
-      setDisableSave(false)
-    } else {
-      setBadgeData({
-        message: `SAVING INFORMATION`,
-        status: 'secondary',
-        open: true,
-        icon: <CircularProgress size={20} color='secondary' />,
-        backgroundColor: '#828597',
-        theme: 'info',
-        disableAutoHide: true
-      })
+        await updateInformation()
+        await uploadDoctos(idAccount)
+        await updateDiscount()
+        dispatch(updateFormsData({ form1: { basicInfo, placementStructure, userFile, id: idAccount } }))
+        getIdAccount(idAccount)
+        setDisableSave(false)
+      } else {
+        setBadgeData({
+          message: `SAVING INFORMATION`,
+          status: 'secondary',
+          open: true,
+          icon: <CircularProgress size={20} color='secondary' />,
+          backgroundColor: '#828597',
+          theme: 'info',
+          disableAutoHide: true
+        })
 
-      const res = await saveInformation()
-      setDisableSave(false)
-      if (res) {
-        const discountTemp = discounts.map(discount => ({
-          ...discount,
-          idAccount: res.account.id
-        }))
-        await localStorage.setItem('idAccount', String(res.account.id))
-        if (discountTemp.length > 0) {
-          await addDiscounts(discountTemp)
-          triggerFunction()
+        const res = await saveInformation()
+        setDisableSave(false)
+        if (res) {
+          const discountTemp = discounts.map(discount => ({
+            ...discount,
+            idAccount: res.account.id
+          }))
+          await handleChangeStatusAction(res.account.id)
+          getIdAccount(res.account.id)
+          setAccountId(res.account.id)
+          await localStorage.setItem('idAccount', String(res.account.id))
+          if (discountTemp.length > 0) {
+            await addDiscounts(discountTemp)
+            triggerFunction()
+          }
         }
+
+        await uploadDoctos(res.account.id)
+        dispatch(updateFormsData({ form1: { basicInfo, placementStructure, userFile, id: res?.account?.id } }))
+
+        onIsNewAccountChange(false)
       }
+    } catch (error) {
+      console.log(error)
 
-      await uploadDoctos(res.account.id)
-      dispatch(updateFormsData({ form1: { basicInfo, placementStructure, userFile, id: res?.account?.id } }))
-
-      onIsNewAccountChange(false)
+      setHasClickedNextStep(false)
+    } finally {
+      if (hasClickedNextStep) onStepChange(2)
     }
   }
 
@@ -596,11 +634,8 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
 
   //Evento que controla el evento de continuar
   const handleNextStep = async () => {
-
     if (allValidated) {
       await handleSaveInformation()
-
-      onStepChange(2)
     }
     handleCloseModal()
   }
@@ -661,6 +696,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
       case 'next':
         setNextClicked(true)
         setMakeValidations(true)
+        setHasClickedNextStep(true)
         break
 
       default:
@@ -683,7 +719,6 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   useEffect(() => {
     const idAccountCache = Number(localStorage.getItem('idAccount'))
     if (idAccountCache) {
-
       dispatch(updateFormsData({ form1: { ...lastForm1Information, id: idAccountCache } }))
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -757,10 +792,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   }, [userFileToDelete])
 
   useEffect(() => {
-
-
     if (idAccount) {
-
       // console.log(idAccount)
 
       setDataInformation()
@@ -771,7 +803,6 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
       // console.log('idAccountLocalStorage', Number(localStorage.getItem('idAccount')))
       // console.log('idAccountRouter', Number(router.query.idAccount))
       // if (!idAccount) return
-
       // setDataInformation()
       // localStorage.setItem('idAccount', idAccount.toString())
       // setAccountId(idAccount)
@@ -798,7 +829,6 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [validationCount, validatedForms])
 
-
   // * INIT -  Actualizar los datos del formulario en Redux + + + + + + + + + + + + + +
 
   // const {
@@ -817,7 +847,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
         <form noValidate autoComplete='on' onSubmit={handleNextStep}>
           {/* <div className='section' onClick={handleCanUpdateBasicInfoData}> */}
 
-          <div className='section' >
+          <div className='section'>
             <DisableForm isDisabled={disableSectionCtrl?.basicInfo} sg={5000}>
               <BasicInfo
                 basicInfo={basicInfo}
@@ -917,6 +947,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
                       onClick={() => {
                         setOpen(false)
                         setNextClicked(false)
+                        setHasClickedNextStep(false)
                       }}
                     >
                       Keep editing information
@@ -943,6 +974,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
                       onClick={() => {
                         setOpen(false)
                         setNextClicked(false)
+                        setHasClickedNextStep(false)
                       }}
                     >
                       OK

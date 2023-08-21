@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from 'react';
+// import { useEffect, useState } from 'react';
 
 //** Dto imports */
 import { BasicInfoDto } from '@/services/dynamic-data/dtos/propertyListing.dto';
@@ -8,10 +8,14 @@ import { BasicInfoDto } from '@/services/dynamic-data/dtos/propertyListing.dto';
 import Card from '@mui/material/Card';
 
 //services imports
-import PropertiesServices from '@/services/dynamic-data/properties.mock-service';
+// import PropertiesServices from '@/services/dynamic-data/properties.mock-service';
+
+type BasicInfoProps = {
+  basicInfoData: BasicInfoDto
+}
 
 
-const BasicInfo = () => {
+const BasicInfo: React.FC<BasicInfoProps> = ({basicInfoData}) => {
 
 
   const subjects = [
@@ -23,38 +27,30 @@ const BasicInfo = () => {
     'Administration'
   ]
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [details, setDetails] = useState<BasicInfoDto>(
-    {
-      name: '',
-      insitution: '',
-      use: '',
-      sector: '',
-      acronym: '',
-      administration: ''
-    })
+  // const [details, setDetails] = useState<BasicInfoDto>(basicInfoData)
 
 
-  const setDataInformation = async () => {
-    const data = await PropertiesServices.getBasicInfo()
+  // const setDataInformation = async () => {
+  //   const data = await PropertiesServices.getBasicInfo()
 
 
-    if (!data) return
+  //   if (!data) return
 
-    const newData = {
-      name: data.name || '',
-      insitution: data.insitution || '',
-      use: data.use || '',
-      sector: data.sector || '',
-      acronym: data.acronym || '',
-      administration: data.administration || '',
-    }
-    setDetails(newData)
-  }
+  //   const newData = {
+  //     name: data.name || '',
+  //     insitution: data.insitution || '',
+  //     use: data.use || '',
+  //     sector: data.sector || '',
+  //     acronym: data.acronym || '',
+  //     administration: data.administration || '',
+  //   }
+  //   setDetails(newData)
+  // }
 
-  useEffect(() => {
-    setDataInformation()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  // useEffect(() => {
+  //   setDataInformation()
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [])
 
   return (
     <Card>
@@ -63,13 +59,13 @@ const BasicInfo = () => {
           BasicInfo
         </div>
         <div className='table'>
-        {Object.keys(details).map((key, index) => (
+        {Object.keys(basicInfoData).map((key, index) => (
             <div key={key} className={index % 2 === 0 ? 'item-row row-white' : 'item-row row-grey'} >
               <div className='item-col name'>
                 {subjects[index]}
               </div>
               <div className='item-col'>
-                {details[key as keyof typeof details]}
+                {basicInfoData[key as keyof typeof basicInfoData]}
               </div>
             </div>
           ))}

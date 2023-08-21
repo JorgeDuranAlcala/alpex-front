@@ -70,15 +70,7 @@ class DashboardMockServices {
    */
    async getInvestmentPerState(): Promise<InvestmentPerStateDto> {
     try {
-      const data = {
-        totalValfis: '100',
-        name: 'VALFIS',
-        data: [14165, 12859, 10375, 8567, 6880],
-        categories: ['CX','NL','YU','EM','PU']
-      }
-
-      // const { data } = await AppAlpexApiGateWay.get(DATA_DASHBOARD_ROUTES.GET_CAPACITY_PER_STATES)
-
+      const { data } = await AppAlpexApiGateWay.get(DATA_DASHBOARD_ROUTES.GET_CAPACITY_PER_STATES)
 
       return data
 
@@ -96,56 +88,6 @@ class DashboardMockServices {
    */
   async getPriorityProperties(propertyData: PropertyPaginationDto, urlQ?: string) {
     try {
-      // const  data  = [
-      //   {
-      //     id: "06003_1",
-      //     valfis: "000,000,000.00",
-      //     nomEnt:"9",
-      //     nomMun:"14",
-      //     type:"Propiedad Federal",
-      //     zonacresta: "10"
-      //   },
-      //   {
-      //     id: "06003_2",
-      //     valfis: "000,000,000.00",
-      //     nomEnt:"9",
-      //     nomMun:"14",
-      //     type:"Propiedad Federal",
-      //     zonacresta: "10"
-      //   },
-      //   {
-      //     id: "06003_3",
-      //     valfis: "000,000,000.00",
-      //     nomEnt:"9",
-      //     nomMun:"14",
-      //     type:"Propiedad Federal",
-      //     zonacresta: "10"
-      //   },
-      //   {
-      //     id: "06003_4",
-      //     valfis: "000,000,000.00",
-      //     nomEnt:"9",
-      //     nomMun:"14",
-      //     type:"Propiedad Federal",
-      //     zonacresta: "10"
-      //   },
-      //   {
-      //     id: "06003_5",
-      //     valfis: "000,000,000.00",
-      //     nomEnt:"9",
-      //     nomMun:"14",
-      //     type:"Propiedad Federal",
-      //     zonacresta: "10"
-      //   },
-      //   {
-      //     id: "06003_6",
-      //     valfis: "000,000,000.00",
-      //     nomEnt:"9",
-      //     nomMun:"14",
-      //     type:"Propiedad Federal",
-      //     zonacresta: "10"
-      //   }
-      // ]
       const url = urlQ ? urlQ : queryBuilder(propertyData.filters, `${DATA_DASHBOARD_ROUTES.GET_PRIORITY_PROPERTIES}`)
       const { data } = await AppAlpexApiGateWay.get(`${url}page=${propertyData.info.page}&itemsPerPage=${propertyData.info.take}`)
 

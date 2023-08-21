@@ -1,7 +1,8 @@
 import { AppAlpexApiGateWay } from '../app.alpex.api-getway';
 
 //Routes
-
+import { DATA_PROPERTIES_ROUTES } from '@/configs/api';
+import { IPropertyDetailDto } from '@/services/dynamic-data/dtos/propertyListing.dto';
 import { queryBuilder } from '@/services/helper/queryBuilder';
 import { IPropertiesState } from '@/types/apps/propertiesTypes';
 import { getPropertiesMockFunc } from './properties.mock-func';
@@ -11,10 +12,23 @@ import { getPropertiesMockFunc } from './properties.mock-func';
  */
 class PropertiesServices {
   /**
-   * brings the account with the your id
+   * brings the property by id
    * @param id
    * @returns
    */
+
+  async getPropertyById(id: string) {
+    try {
+      const { data } = await AppAlpexApiGateWay.get<IPropertyDetailDto>(`${DATA_PROPERTIES_ROUTES.GET_BY_ID}/${id}`)
+
+      return data
+    } catch (error) {
+      const message = String(error)
+      throw new Error(message)
+    }
+  }
+
+
   async getAllProperties() {
     try {
       const { data } = await getPropertiesMockFunc();

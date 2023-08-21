@@ -21,5 +21,10 @@ const NotMaterializedAccounts = () => {
   )
 }
 
+NotMaterializedAccounts.acl = {
+  action: 'viewNotMaterializedAccounts',
+  subject: 'account'
+}
+
 export default NotMaterializedAccounts
 

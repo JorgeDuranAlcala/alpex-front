@@ -23,4 +23,9 @@ const Accounts = () => {
   )
 }
 
+Accounts.acl = {
+  action: 'viewAllAccounts',
+  subject: 'account'
+}
+
 export default Accounts

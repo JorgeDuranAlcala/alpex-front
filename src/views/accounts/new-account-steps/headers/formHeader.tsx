@@ -1,7 +1,18 @@
 // import { useGetAllEndorsementTypes } from '@/hooks/accounts/endorsementType/getAllEndorsementTypes.tsx'
 
 import { useGetDoctosByIdAccountAndIdDocumentType } from '@/hooks/accounts/information/useGetFilesByType'
-import { ContainerMobileBound } from '@/styled-components/accounts/Security.styled'
+
+// import { ContainerMobileBound } from '@/styled-components/accounts/Security.styled'
+import {
+  ContainerAmountLastUpdate,
+  FormHeaderInfoProfileContainer,
+  FormHeaderInfoProfiletext,
+  FormHeaderMoneyDataDate,
+  FormHeaderSection,
+  FormSecondContainerFirstside,
+  Frame3486,
+  SecondContainer
+} from '@/styles/Payments/PaymnetsInstallments/paymentsInstallments'
 import { Box, Button, Card, ListItemIcon, ListItemText, Menu, MenuItem, Modal, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
 import Icon from 'src/@core/components/icon'
@@ -172,27 +183,27 @@ const FormHeader = ({
   accountDetails,
   setEditInfo,
   setActiveEndorsement,
-  setTypeofAccount,
+  setTypeofAccount
 }: FormHeaderProps) => {
-
-
-  const [status, setStatus] = useState('');
-  const [netPremiumAmount, setNetPremiumAmount] = useState<string | null>(null);
-  const [insured, setInsured] = useState<string | null>(null);
-  const [accountId, setAccountId] = useState<number | null>(null);
-  const [receptionDate, setReceptionDate] = useState<string | null>(null)
+  const [status, setStatus] = useState('')
+  const [netPremiumAmount, setNetPremiumAmount] = useState<string | null>(null)
+  const [insured, setInsured] = useState<string | null>(null)
+  const [accountId, setAccountId] = useState<number | null>(null)
+  const [receptionDate, setReceptionDate] = useState<string | null>(null);
+  const [lastUserName, setLastUserName] = useState<string | null>(null);
 
   const account = useAppSelector(state => state.accounts?.formsData?.form1)
+
+  // const lastUserName = 'Alejandro Hernández'
+
   // console.log(accountDetails);
 
   // const lastAccountId = useRef<number | null>(null)
   // const lastAccountDetailsId = useRef<number | null>(null);
 
   const formaterAmount = (amount: number) => {
-
-
     if (amount) {
-      const amountNumber = Number(amount);
+      const amountNumber = Number(amount)
 
       return amountNumber.toLocaleString('en-US', {
         style: 'decimal',
@@ -218,11 +229,11 @@ const FormHeader = ({
       const fecha = new Date(new Date(date).toLocaleString('en-US', { timeZone: 'UTC' }))
       const options: Intl.DateTimeFormatOptions = {
         day: '2-digit',
-        month: 'short',
+        month: '2-digit',
         year: 'numeric'
       }
 
-      return new Intl.DateTimeFormat('ban', options).format(fecha)
+      return new Intl.DateTimeFormat('ban', options).format(fecha).toString().replaceAll('/', ' / ')
     }
     return ''
   }
@@ -262,44 +273,44 @@ const FormHeader = ({
 
   useEffect(() => {
     if (account) {
-      const amount = formaterAmount(account?.placementStructure?.netPremium);
-      const currency = account?.placementStructure?.currency;
+      const amount = formaterAmount(account?.placementStructure?.netPremium)
+      const currency = account?.placementStructure?.currency
 
-      setNetPremiumAmount(`$${amount} ${currency}`);
-      setInsured(account?.basicInfo?.insured);
-      setAccountId(account?.id);
-      setReceptionDate(convertirFecha(account?.basicInfo?.receptionDate));
-
+      setNetPremiumAmount(`$${amount} ${currency}`)
+      setInsured(account?.basicInfo?.insured)
+      setAccountId(account?.id)
+      setReceptionDate(convertirFecha(account?.basicInfo?.receptionDate))
     }
 
     if (accountDetails?.informations?.length > 0) {
-      const amount = formaterAmount(accountDetails?.informations[0]?.netPremium);
-      const currency = accountDetails?.informations[0]?.currency;
+      const amount = formaterAmount(accountDetails?.informations[0]?.netPremium)
+      const currency = accountDetails?.informations[0]?.currency
 
-      setNetPremiumAmount(`$${amount} ${currency}`);
-      setInsured(accountDetails?.informations[0]?.insured);
-      setAccountId(accountDetails?.id);
-      setReceptionDate(convertirFecha(accountDetails?.informations[0]?.receptionDate));
+      setNetPremiumAmount(`$${amount} ${currency}`)
+      setInsured(accountDetails?.informations[0]?.insured)
+      setAccountId(accountDetails?.id)
+      setReceptionDate(convertirFecha(accountDetails?.informations[0]?.receptionDate))
     }
-
-
   }, [account, accountDetails])
 
-
   useEffect(() => {
-
     // console.log('accountDetails Effect', accountDetails);
 
-    accountDetails && setStatus(accountDetails.status)
+    if (accountDetails) {
 
+      setStatus(accountDetails.status)
+
+      if (Array.isArray(accountDetails.actionsHistory)) {
+        const lastAction = accountDetails.actionsHistory.reverse();
+
+        const userName = lastAction[0].idUser.username;
+        const fullName = `${lastAction[0].idUser.name || 'unknown name'} ${lastAction[0].idUser.surname || ''}`
+
+        setLastUserName(userName || fullName.trim());
+
+      }
+    }
   }, [accountDetails])
-
-
-
-
-
-
-
 
   // console.log('account', account)
 
@@ -309,51 +320,92 @@ const FormHeader = ({
         <div className='form-header-data'>
           <div className='form-container-all-data'>
             {/* Contenedor mobile bound */}
-            <ContainerMobileBound>
+            {/* <ContainerMobileBound>
               <div className='title'>{insured} </div>
               <div className='idNumber'>#{accountId}</div>
 
               <span className='subtitle'>Net premium</span>
-              <span className='moneySubtitle'>
-                ${netPremiumAmount}
-              </span>
+              <span className='moneySubtitle'>${netPremiumAmount}</span>
               <span className='subtitle'>Reception Date</span>
               <span className='reception'>{receptionDate}</span>
-            </ContainerMobileBound>
+            </ContainerMobileBound> */}
 
             {/* Contenedor mobile bound */}
             {/* Container first */}
             {!isNewAccount && (
-              <div className='form-header-sections'>
-                <div className='form-header-info-profile-container'>
-                  <ModalUploadImage accountId={accountId} />
-                  <div className='form-header-info-profile-txt-container'>
+              <FormHeaderSection>
+                <FormHeaderInfoProfileContainer sx={{ flexDirection: 'row' }}>
+                  <Box
+                    sx={{
+                      '@media (max-width: 764px)': {
+                        display: 'none'
+                      }
+                    }}
+                  >
+                    <ModalUploadImage accountId={accountId} />
+                  </Box>
+                  <FormHeaderInfoProfiletext>
                     <span className='form-header-info-profile-txt-title'>{insured}</span>
                     <span className='form-header-info-profile-num'>#{accountId}</span>
-                  </div>
-                </div>
-                <div className='form-header-money-data'>
+                  </FormHeaderInfoProfiletext>
+                </FormHeaderInfoProfileContainer>
+                <ContainerAmountLastUpdate>
                   <span className='form-header-money-data-txt'>Net premium</span>
-                  <span className='form-header-money-data-num'>
-                    {netPremiumAmount}
-                  </span>
-                  <span className='form-header-money-data-date'>
-                    Last Update: {accountDetails && formatDateFromUTC(accountDetails?.informations[0]?.updatedAt)}
-                  </span>
-                </div>
-              </div>
+                  <span className='form-header-money-data-num'>{netPremiumAmount}</span>
+                  <FormHeaderMoneyDataDate>
+                    Last Update: {accountDetails && formatDateFromUTC(accountDetails?.informations[0]?.updatedAt)} by{' '}
+                    {lastUserName}
+                  </FormHeaderMoneyDataDate>
+                </ContainerAmountLastUpdate>
+              </FormHeaderSection>
             )}
             {/* Container first */}
             {/* Container second */}
-            <div className='form-secondContainer-wrapper'>
-              <div className='form-secondContainer-wrapper-first-side'>
-                <div className='form-secondContainer-first' style={{ marginRight: '20px' }}>
+            <Frame3486
+              sx={{
+                '@media (max-width: 764px)': {
+                  flexDirection: 'column',
+                  gap: '20px'
+                }
+              }}
+            >
+              <FormSecondContainerFirstside
+                sx={{
+                  width: isNewAccount ? '19%' : '100%',
+                  '@media (max-width: 764px)': {
+                    flexDirection: 'column',
+                    gap: '12px',
+                    width: isNewAccount ? '100%' : '100%'
+                  }
+                }}
+              >
+                <SecondContainer
+                  sx={{
+                    width: '160px',
+                    '@media (max-width: 764px)': {
+                      width: '100%'
+                    }
+                  }}
+                >
                   <span className='form-secondContainer-header-title'>Status</span>
                   {status !== '' && accountDetails?.status && (
-                    <StatusSelect accountDetails={accountDetails} margin={0} initialStatus={accountDetails?.status} setSelectedStatus={setStatus} />
+                    <StatusSelect
+                      accountDetails={accountDetails}
+                      margin={0}
+                      initialStatus={accountDetails?.status}
+                      setSelectedStatus={setStatus}
+                    />
                   )}
-                  {isNewAccount && <StatusSelect accountDetails={accountDetails} margin={0} initialStatus='PENDING' setSelectedStatus={setStatus} />}
-                </div>
+                  {isNewAccount && (
+                    <StatusSelect
+                      accountDetails={accountDetails}
+                      margin={0}
+                      initialStatus='PENDING'
+                      setSelectedStatus={setStatus}
+                      isNewAccount={isNewAccount}
+                    />
+                  )}
+                </SecondContainer>
 
                 <div className='form-secondContainer-third'>
                   <span className='form-header-money-data-date'>
@@ -362,23 +414,37 @@ const FormHeader = ({
                 </div>
 
                 {!isNewAccount && (
-                  <div className='form-secondContainer-second'>
+                  <SecondContainer
+                    sx={{
+                      width: 'auto',
+                      '@media (max-width: 764px)': {
+                        width: '100%'
+                      }
+                    }}
+                  >
                     <span className='form-secondContainer-header-title'>Line of Business</span>
                     <span className='form-secondContainer-header-subtitle'>
                       {accountDetails && accountDetails?.informations[0]?.idLineOfBussines?.lineOfBussines}
                     </span>
-                  </div>
+                  </SecondContainer>
                 )}
 
                 {!isNewAccount && (
-                  <div className='form-secondContainer-second'>
+                  <SecondContainer
+                    sx={{
+                      width: 'auto',
+                      '@media (max-width: 764px)': {
+                        width: '100%'
+                      }
+                    }}
+                  >
                     <span className='form-secondContainer-header-title'>Effective Date</span>
                     <span className='form-secondContainer-header-subtitle'>
                       {accountDetails && formatDateFromUTC(accountDetails?.informations[0]?.effectiveDate || null)}
                     </span>
-                  </div>
+                  </SecondContainer>
                 )}
-              </div>
+              </FormSecondContainerFirstside>
               <div className={!isNewAccount ? 'actions-header' : 'form-secondContainer-fourths'}>
                 <div className={!isNewAccount ? 'display-none' : 'form-secondContainer-fourth'}>
                   <span className='form-header-money-data-date'>
@@ -388,17 +454,15 @@ const FormHeader = ({
                 {accountDetails && accountDetails?.idAccountStatus === 5 ? ( //TODO
                   <ActionsHeaderBound accountStatus='BOUND' sideHeader={true} />
                 ) : accountId ? (
-
                   <ActionsHeader
                     accountId={accountId}
                     setEditInfo={setEditInfo}
                     accountStatus='PENDING'
                     sideHeader={true}
                   />
-                )
-                  : null}
+                ) : null}
               </div>
-            </div>
+            </Frame3486>
             {/* Container second */}
           </div>
         </div>

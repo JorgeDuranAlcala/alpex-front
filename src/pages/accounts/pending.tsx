@@ -21,5 +21,10 @@ const PendingAccounts = () => {
   )
 }
 
+PendingAccounts.acl = {
+  action: 'viewPendingAccounts',
+  subject: 'account'
+}
+
 export default PendingAccounts
 

@@ -7,15 +7,15 @@ import CustomAvatar from 'src/@core/components/mui/avatar';
 // ** Icon Imports
 import Icon from 'src/@core/components/icon';
 
-const PropertyHeader = () => {
+//** Dto imports  */
+import { PropertyGeneralDto } from '@/services/dynamic-data/dtos/propertyListing.dto';
 
-  const headerData = {
-    propertyid: '#06003_2',
-    valfis: '19,833,668.07',
-    type: 'Propiedad Federal',
-    typology: 'Oficinas en General',
-    zonacresta: '18'
-  }
+type PropertyHeaderProps = {
+  headerData: PropertyGeneralDto
+}
+
+
+const PropertyHeader: React.FC<PropertyHeaderProps> = ({headerData}) => {
 
   return (
     <Card>
@@ -29,7 +29,7 @@ const PropertyHeader = () => {
               Property ID:
             </div>
             <div className='header-row' style={{ color: '#2535A8' }}>
-              {headerData.propertyid}
+              {headerData.properyId}
             </div>
           </div>
         </div>
@@ -38,7 +38,7 @@ const PropertyHeader = () => {
             Valfis
           </div>
           <div className='header-row'>
-            ${headerData.valfis} MXN
+            ${headerData.replacementValue} MXN
           </div>
         </div>
         <div className='header-col'>
@@ -46,7 +46,7 @@ const PropertyHeader = () => {
             Type:
           </div>
           <div className='header-row'>
-            {headerData.type}
+            {headerData.institution}
           </div>
         </div>
         <div className='header-col'>
@@ -62,7 +62,7 @@ const PropertyHeader = () => {
             Zonacresta:
           </div>
           <div className='header-row'>
-            {headerData.zonacresta}
+            {headerData.crestZone}
           </div>
         </div>
 

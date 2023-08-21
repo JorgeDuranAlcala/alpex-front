@@ -13,5 +13,9 @@ const MapZonacresta = () => {
   )
 }
 
-export default MapZonacresta
+MapZonacresta.acl = {
+  action: 'viewZonaCrestaData',
+  subject: 'dynamicData'
+}
 
+export default MapZonacresta

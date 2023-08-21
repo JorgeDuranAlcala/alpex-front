@@ -13,5 +13,14 @@ const MapValfis = () => {
   )
 }
 
+MapValfis.acl = {
+  action: 'viewMapValfisData',
+  subject: 'dynamicData'
+}
+
 export default MapValfis
+
+
+
+
 

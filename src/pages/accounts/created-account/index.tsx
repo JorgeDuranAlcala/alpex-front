@@ -65,7 +65,7 @@ const CreatedAccount = () => {
   const endorsementData = useAppSelector(state => state.endorsement.data)
 
   // Custom Hooks
-  const { account: accountDetails, setAccountId, getAccountById } = useGetAccountById();
+  const { account: accountDetails, setAccountId, getAccountById } = useGetAccountById()
 
   console.log({ accountDetails })
 
@@ -86,7 +86,7 @@ const CreatedAccount = () => {
     sublimits: false,
     sov: false
   })
-  const [canRender, setCanRender] = useState<boolean>(false);
+  const [canRender, setCanRender] = useState<boolean>(false)
 
   const enableInputsCtrl = () => {
     // Para todos los tipos de cuenta excepto |BOUND|, en este caso siempre estarán activados
@@ -139,12 +139,12 @@ const CreatedAccount = () => {
   }
 
   const handleStepChange = (step: number) => {
-
-    dispatch(stepForms_updateStep({
-      id: accountDetails?.id || 'new account',
-      data: step,
-    }))
-
+    dispatch(
+      stepForms_updateStep({
+        id: accountDetails?.id || 'new account',
+        data: step
+      })
+    )
 
     setActiveStep(step)
   }
@@ -177,6 +177,7 @@ const CreatedAccount = () => {
             onIsNewAccountChange={handleIsNewAccountChange}
             disableSectionCtrl={disableFormsSections.information}
             onStepChange={handleStepChange}
+            getIdAccount={(idAccount: number) => setAccountId(idAccount)}
           />
         )
       case 2:
@@ -244,33 +245,31 @@ const CreatedAccount = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editInfo, accountDetails?.status, endorsementData.type])
 
-
   useEffect(() => {
-
     if (router.query.idAccount) {
       setAccountId(Number(router.query.idAccount))
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [router.query.idAccount]);
+  }, [router.query.idAccount])
 
   useEffect(() => {
     if (accountDetails) {
       setCanRender(true)
     }
-  }, [accountDetails]);
-
+  }, [accountDetails])
 
   if (!canRender) {
-
     return (
-      <Box sx={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '100%',
-        width: '100%'
-      }}>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100%',
+          width: '100%'
+        }}
+      >
         <CircularProgress size={75} />
       </Box>
     )
@@ -281,7 +280,6 @@ const CreatedAccount = () => {
       <Grid className='new-account' item xs={12}>
         <FormHeader setEditInfo={setEditInfo} accountDetails={accountDetails} />
         <div style={{ display: 'flex', flexDirection: 'row', gap: '16px' }}>
-
           {/* <ChangeStepForm
             accountId={accountDetails?.id || null}
             changeAccountId={setAccountId}
@@ -308,6 +306,11 @@ const CreatedAccount = () => {
       </Grid>
     </AccountsTableContextProvider>
   )
+}
+
+CreatedAccount.acl = {
+  action: 'create',
+  subject: 'account'
 }
 
 export default CreatedAccount

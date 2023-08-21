@@ -855,10 +855,11 @@
   align-items: flex-end;
   margin: 0px;
   padding: 0px;
+  /* border: 1px solid blue; */
 
   @media (max-width: 1000px) {
     margin-top: 14px;
-    /* border: 1px solid green; */
+    border: 1px solid green;
     justify-content: center;
     align-items: center;
     width: 100%;
@@ -1187,12 +1188,11 @@
 
 .form-header-money-data-date {
   font-weight: 400;
-  font-size: 12px;
+  font-size: 16px;
   line-height: 15px;
   font-family: Inter;
   letter-spacing: 0.4px;
   color: #4d506261;
-  align-self: end;
   margin-right: 14px;
 
   @media (max-width: 900px) {
@@ -1224,13 +1224,12 @@
 
 .form-secondContainer-second {
   display: flex;
-  /* border: 1px solid red; */
   flex-direction: column;
-  width: 198px;
+  width: auto;
   gap: 4px;
   /* min-height: 59px; */
   justify-content: space-between;
-
+  height: 100%;
   @media (max-width: 1300px) {
     width: 170px;
   }
@@ -1240,6 +1239,25 @@
   }
 }
 
+.container-total-installments {
+  display: flex;
+
+  flex-direction: column;
+  width: 50%;
+  gap: 4px;
+  /* min-height: 59px; */
+  justify-content: space-between;
+}
+
+.container-total-pending {
+  display: flex;
+
+  flex-direction: column;
+  width: 80%;
+  gap: 4px;
+  /* min-height: 59px; */
+  justify-content: space-between;
+}
 .form-secondContainer-third {
   display: none;
 
@@ -1309,7 +1327,6 @@
 .form-secondContainer-wrapper-first-side {
   display: flex;
   gap: 12px;
-
   @media (max-width: 900px) {
     flex-direction: column;
   }
@@ -1363,6 +1380,10 @@
     align-items: center;
     align-content: center;
   }
+
+  /* @media screen (min-width: 765px) {
+    justify-content: 'space-between';
+  } */
 }
 
 .btnWrapperFth .header-btns {

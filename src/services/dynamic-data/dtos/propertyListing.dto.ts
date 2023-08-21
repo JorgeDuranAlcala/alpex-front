@@ -52,6 +52,52 @@ export interface PropertyPaginationDto {
   info: PropertyInfoDto
 }
 
+export interface IPropertyDetailDto {
+  general: {
+      properyId: string,
+      replacementValue: string,
+      institution: string,
+      typology:string,
+      crestZone: string,
+  },
+  basicInfo: {
+      name: string,
+      type:string,
+      useOfProperty: string,
+      sector: string,
+      acronym: string,
+      administration:string,
+  },
+  location: {
+      address: string,
+      neighborhood: string,
+      cp: string,
+      state: string,
+      stateCode: string,
+      province: string,
+      provinceCode: string,
+      latitude: string,
+      longitude: string,
+  },
+  constructionDetails: {
+      stories: string,
+      structure: string,
+      slab: string,
+      foundation: string,
+      constructionSurface: string,
+      surfaceArea: string,
+      date: string,
+  }
+}
+
+export type PropertyGeneralDto = {
+  properyId: string,
+  replacementValue: string,
+  institution: string,
+  typology: string,
+  crestZone: string
+}
+
 export type ConstructionDto = {
   stories: string;
   structure: string;
@@ -64,8 +110,8 @@ export type ConstructionDto = {
 
 export type BasicInfoDto = {
   name: string,
-  insitution: string,
-  use: string,
+  type: string,
+  useOfProperty: string,
   sector: string,
   acronym: string,
   administration: string
@@ -74,7 +120,7 @@ export type BasicInfoDto = {
 export type LocationDto = {
   address: string,
   neighborhood: string,
-  postalCode: string,
+  cp: string,
   state: string,
   stateCode: string,
   province: string,

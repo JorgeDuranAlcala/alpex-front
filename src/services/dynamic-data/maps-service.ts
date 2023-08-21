@@ -102,6 +102,49 @@ class MapsServices {
       throw new Error(message)
     }
   }
+
+  async getValfisZoneStates() {
+    try {
+      const data = [
+        { name: 'Aguascalientes', zone: 'c' },
+        { name: 'BajaCalifornia', zone: 'a' },
+        { name: 'BajaCaliforniaSur', zone: 'a' },
+        { name: 'Campeche', zone: 'a' },
+        { name: ' Chiapas', zone: 'c' },
+        { name: ' Chihuahua', zone: 'b' },
+        { name: 'Colima', zone: 'a' },
+        { name: 'DistritoFederal', zone: 'c' },
+        { name: 'Durango', zone: 'c' },
+        { name: 'Guanajuato', zone: 'b' },
+        { name: 'Guerrero', zone: 'a' },
+        { name: 'Hidalgo', zone: 'c' },
+        { name: 'Jalisco', zone: 'b' },
+        { name: 'Mexico', zone: 'b' },
+        { name: 'Michoacan', zone: 'c' },
+        { name: 'Morelos', zone: 'c' },
+        { name: 'Nayarit', zone: 'a' },
+        { name: 'NuevoLeon', zone: 'c' },
+        { name: 'Oaxaca', zone: 'b' },
+        { name: 'Puebla', zone: 'a' },
+        { name: 'Queretaro', zone: 'a' },
+        { name: 'QuintanaRoo', zone: 'c' },
+        { name: 'SanLuisPotosi', zone: 'a' },
+        { name: 'Sinaloa', zone: 'b' },
+        { name: 'Sonora', zone: 'b' },
+        { name: 'Tabasco', zone: 'a' },
+        { name: 'Tamaulipas', zone: 'b' },
+        { name: 'Tlaxcala', zone: 'b' },
+        { name: 'Veracruz', zone: 'a' },
+        { name: 'Yucatan', zone: 'b' },
+        { name: 'Zacatecas', zone: 'a' },
+      ]
+
+      return data
+    } catch (error) {
+      const message = String(error)
+      throw new Error(message)
+    }
+  }
 }
 
 export default new MapsServices()

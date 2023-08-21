@@ -229,7 +229,8 @@ export enum RETRO_CEDANT_CONTACT_ROUTES {
 }
 
 export enum COVERAGE_ROUTES {
-  GET_ALL = 'catalogs/coverage/all'
+  GET_ALL = 'catalogs/coverage/all',
+  CREATE = 'catalogs/coverage/create'
 }
 
 export enum INSTALLMENT_ROUTERS {
@@ -308,6 +309,11 @@ export enum DATA_DASHBOARD_ROUTES {
 
 export enum DATA_MAPS_ROUTES {
   GET_ALL_PROPERTIES = 'buildings/all',
+}
+
+// ==== ACCOUNT
+export enum DATA_PROPERTIES_ROUTES {
+  GET_BY_ID = 'buildings/data/get-property-details',
 }
 
 

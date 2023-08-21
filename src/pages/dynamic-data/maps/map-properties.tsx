@@ -13,5 +13,9 @@ const MapProperties = () => {
   )
 }
 
-export default MapProperties
+MapProperties.acl = {
+  action: 'viewMapPropertiesData',
+  subject: 'dynamicData'
+}
 
+export default MapProperties
