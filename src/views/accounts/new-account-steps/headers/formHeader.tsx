@@ -189,11 +189,12 @@ const FormHeader = ({
   const [netPremiumAmount, setNetPremiumAmount] = useState<string | null>(null)
   const [insured, setInsured] = useState<string | null>(null)
   const [accountId, setAccountId] = useState<number | null>(null)
-  const [receptionDate, setReceptionDate] = useState<string | null>(null)
+  const [receptionDate, setReceptionDate] = useState<string | null>(null);
+  const [lastUserName, setLastUserName] = useState<string | null>(null);
 
   const account = useAppSelector(state => state.accounts?.formsData?.form1)
 
-  const lastUserName = 'Alejandro Hernández'
+  // const lastUserName = 'Alejandro Hernández'
 
   // console.log(accountDetails);
 
@@ -295,7 +296,20 @@ const FormHeader = ({
   useEffect(() => {
     // console.log('accountDetails Effect', accountDetails);
 
-    accountDetails && setStatus(accountDetails.status)
+    if (accountDetails) {
+
+      setStatus(accountDetails.status)
+
+      if (Array.isArray(accountDetails.actionsHistory)) {
+        const lastAction = accountDetails.actionsHistory.reverse();
+
+        const userName = lastAction[0].idUser.username;
+        const fullName = `${lastAction[0].idUser.name || 'unknown name'} ${lastAction[0].idUser.surname || ''}`
+
+        setLastUserName(userName || fullName.trim());
+
+      }
+    }
   }, [accountDetails])
 
   // console.log('account', account)
