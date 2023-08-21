@@ -20,6 +20,10 @@ import MapsServices from '@/services/dynamic-data/maps-service';
 
 import { MapCoorService } from '@/services/dynamic-data/map-coordinates.service';
 
+interface ZoneStatesData {
+  [stateName: string]: string;
+}
+
 const ValfisMap = () => {
 
   const mapRef = useRef<HTMLDivElement>(null)
@@ -34,6 +38,11 @@ const ValfisMap = () => {
     zoneB: '',
     zoneC: ''
   })
+
+  // const [zoneStatesData, setZoneStatesData] = useState([{ name: '', zone: '' }])
+
+  const zoneStatesData: ZoneStatesData = {};
+
 
   const [detailsData, setDetailsData] = useState({
     totalValue: '',
@@ -67,6 +76,15 @@ const ValfisMap = () => {
     setZoneData(newData)
   }
 
+  const setZoneStates = async () => {
+    const data = await MapsServices.getValfisZoneStates()
+    if (!data) return
+    data.forEach(item => {
+      zoneStatesData[item.name] = item.zone;
+    });
+
+  }
+
   const setDetails = async () => {
     const data = await MapsServices.getValfisDetails()
 
@@ -86,6 +104,7 @@ const ValfisMap = () => {
   useEffect(() => {
     setDetails()
     setZone()
+    setZoneStates()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -108,19 +127,39 @@ const ValfisMap = () => {
           center: { lat: 23.6345, lng: -102.5528 },
           zoom: 5
         })
-
+        console.log("states")
         for (const state in allCoordinates) {
+
+          const zone = zoneStatesData[state];
+          let color= "#72E128"
+          if(zone == 'b'){
+            color='#FFB446'
+          }else if(zone == 'c'){
+            color= '#FF4D49'
+          }
+          const infoWindow = new google.maps.InfoWindow()
           const stateCoordinates = allCoordinates[state];
           polygon.current = new google.maps.Polygon({
             paths: stateCoordinates,
-            strokeColor: "#FF0000",
-            strokeOpacity: 0.8,
+            strokeColor:color,
+            strokeOpacity: 0.35,
             strokeWeight: 2,
-            fillColor: "#FF0000",
+            fillColor: color,
             fillOpacity: 0.35,
           });
 
           polygon.current.setMap(map.current);
+          polygon.current.addListener('click', (event: { latLng: google.maps.LatLng | google.maps.LatLngLiteral | null | undefined; }) => {
+            console.log('Datos: ', polygon.current?.getPath())
+
+            const contentString =
+              '<b>Data info</b><br>' +
+              'Clicked'
+
+            infoWindow.setContent(contentString)
+            infoWindow.setPosition(event.latLng)
+            infoWindow.open(map.current)
+          })
         }
 
         // const bcCoordinates = mapCoorService.getAguasCalientes()
