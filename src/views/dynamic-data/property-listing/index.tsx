@@ -59,11 +59,13 @@ const PropertyListingTable = ({ status }: IAccountTable) => {
     alert(field)
   }
 
-  const onDetails = async () => {
+  const onDetails = async (id: string) => {
     console.log("coso")
 
     // localStorage.setItem('idProperty', String(id))
-    router.push(`/dynamic-data/property-listing/property-details`)
+
+    router.push(`/dynamic-data/property-listing/property-details/?&idProperty=${id}`)
+
   }
 
   const properties = [
@@ -152,7 +154,7 @@ const PropertyListingTable = ({ status }: IAccountTable) => {
         <Typography sx={{ color: colors.primary.main, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
           <Link
             sx={{ cursor: 'pointer' }}
-            onClick={onDetails}
+            onClick={() => onDetails(row.id)}
           >{`#${row.id}`}</Link>
         </Typography>
       )

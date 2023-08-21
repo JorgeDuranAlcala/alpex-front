@@ -91,11 +91,11 @@ export interface IPropertyDetailDto {
 }
 
 export type PropertyGeneralDto = {
-  propertyid: string,
-  valfis: string,
-  type: string,
+  properyId: string,
+  replacementValue: string,
+  institution: string,
   typology: string,
-  zonacresta: string
+  crestZone: string
 }
 
 export type ConstructionDto = {
@@ -110,8 +110,8 @@ export type ConstructionDto = {
 
 export type BasicInfoDto = {
   name: string,
-  insitution: string,
-  use: string,
+  type: string,
+  useOfProperty: string,
   sector: string,
   acronym: string,
   administration: string
@@ -120,7 +120,7 @@ export type BasicInfoDto = {
 export type LocationDto = {
   address: string,
   neighborhood: string,
-  postalCode: string,
+  cp: string,
   state: string,
   stateCode: string,
   province: string,

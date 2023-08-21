@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from 'react';
+// import { useEffect, useState } from 'react';
 
 //** Dto imports */
 import { LocationDto } from '@/services/dynamic-data/dtos/propertyListing.dto';
@@ -8,9 +8,14 @@ import { LocationDto } from '@/services/dynamic-data/dtos/propertyListing.dto';
 import Card from '@mui/material/Card';
 
 //services imports
-import PropertiesServices from '@/services/dynamic-data/properties.mock-service';
+// import PropertiesServices from '@/services/dynamic-data/properties.mock-service';
 
-const Location = () => {
+
+type LocationProps = {
+  locationData: LocationDto
+}
+
+const Location: React.FC<LocationProps> = ({locationData}) => {
 
   const subjects = [
     'Adress',
@@ -25,43 +30,43 @@ const Location = () => {
   ]
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [details, setDetails] = useState<LocationDto>(
-    {
-      address: '',
-      neighborhood: '',
-      postalCode: '',
-      state: '',
-      stateCode: '',
-      province: '',
-      provinceCode: '',
-      latitude: '',
-      longitude: ''
-    })
+  // const [details, setDetails] = useState<LocationDto>(
+  //   {
+  //     address: '',
+  //     neighborhood: '',
+  //     postalCode: '',
+  //     state: '',
+  //     stateCode: '',
+  //     province: '',
+  //     provinceCode: '',
+  //     latitude: '',
+  //     longitude: ''
+  //   })
 
-  const setDataInformation = async () => {
-    const data = await PropertiesServices.getLocationDetails()
+  // const setDataInformation = async () => {
+  //   const data = await PropertiesServices.getLocationDetails()
 
 
-    if (!data) return
+  //   if (!data) return
 
-    const newData = {
-      address: data.address || '',
-      neighborhood: data.neighborhood || '',
-      postalCode: data.postalCode || '',
-      state: data.state || '',
-      stateCode: data.stateCode || '',
-      province: data.province || '',
-      provinceCode: data.provinceCode || '',
-      latitude: data.latitude || '',
-      longitude: data.longitude || '',
-    }
-    setDetails(newData)
-  }
+  //   const newData = {
+  //     address: data.address || '',
+  //     neighborhood: data.neighborhood || '',
+  //     postalCode: data.postalCode || '',
+  //     state: data.state || '',
+  //     stateCode: data.stateCode || '',
+  //     province: data.province || '',
+  //     provinceCode: data.provinceCode || '',
+  //     latitude: data.latitude || '',
+  //     longitude: data.longitude || '',
+  //   }
+  //   setDetails(newData)
+  // }
 
-  useEffect(() => {
-    setDataInformation()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  // useEffect(() => {
+  //   setDataInformation()
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [])
 
   return (
     <Card>
@@ -70,13 +75,13 @@ const Location = () => {
           Location
         </div>
         <div className='table'>
-          {Object.keys(details).map((key, index) => (
+          {Object.keys(locationData).map((key, index) => (
             <div key={key} className={index % 2 === 0 ? 'item-row row-white' : 'item-row row-grey'} >
               <div className='item-col name'>
                 {subjects[index]}
               </div>
               <div className='item-col'>
-                {details[key as keyof typeof details]}
+                {locationData[key as keyof typeof locationData]}
               </div>
             </div>
           ))}

@@ -1,5 +1,5 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 // ** Next
 import { useRouter } from 'next/router'
@@ -18,55 +18,60 @@ import PropertyHeader from '@/views/dynamic-data/property-listing/property-detai
 import PropertiesServices from '@/services/dynamic-data/properties.mock-service'
 
 // ** Import Dto
-// import { BasicInfoDto, ConstructionDto, LocationDto, PropertyGeneralDto } from '@/services/dynamic-data/dtos/propertyListing.dto'
+import { BasicInfoDto, ConstructionDto, LocationDto, PropertyGeneralDto } from '@/services/dynamic-data/dtos/propertyListing.dto'
 
 const DynamicDataDashboard = () => {
   // Hooks
   const router = useRouter()
 
-  // const [headerData, setHeaderData] = useState<PropertyGeneralDto>({
-  //   propertyid: '',
-  //   valfis: '',
-  //   type: '',
-  //   typology: '',
-  //   zonacresta: ''
-  // })
-  // const [basicInfoData, setBasicIndoData] = useState<BasicInfoDto>({
-  //   name: '',
-  //     insitution: '',
-  //     use: '',
-  //     sector: '',
-  //     acronym: '',
-  //     administration: ''
-  // })
+  const [headerData, setHeaderData] = useState<PropertyGeneralDto>({
+    properyId: '',
+    replacementValue: '',
+    institution: '',
+    typology: '',
+    crestZone: ''
+  })
+  const [basicInfoData, setBasicIndoData] = useState<BasicInfoDto>({
+    name: '',
+      type: '',
+      useOfProperty: '',
+      sector: '',
+      acronym: '',
+      administration: ''
+  })
 
-  // const [constructionData, setConstructionData] = useState<ConstructionDto>({
-  //   stories: '',
-  //     structure: '',
-  //     slab: '',
-  //     foundation: '',
-  //     constructionSurface: '',
-  //     surfaceArea: '',
-  //     date: ''
-  // })
-  // const [locationData, setLocationData] = useState<LocationDto>({
-  //   address: '',
-  //     neighborhood: '',
-  //     postalCode: '',
-  //     state: '',
-  //     stateCode: '',
-  //     province: '',
-  //     provinceCode: '',
-  //     latitude: '',
-  //     longitude: ''
-  // })
+  const [constructionData, setConstructionData] = useState<ConstructionDto>({
+    stories: '',
+      structure: '',
+      slab: '',
+      foundation: '',
+      constructionSurface: '',
+      surfaceArea: '',
+      date: ''
+  })
+  const [locationData, setLocationData] = useState<LocationDto>({
+    address: '',
+      neighborhood: '',
+      cp: '',
+      state: '',
+      stateCode: '',
+      province: '',
+      provinceCode: '',
+      latitude: '',
+      longitude: ''
+  })
 
   const setDataInformation = async (id: string) => {
     const data = await PropertiesServices.getPropertyById(id)
 
     if (!data) return
 
-    console.log(data)
+    setHeaderData(data.general)
+    setBasicIndoData(data.basicInfo)
+    setConstructionData(data.constructionDetails)
+    setLocationData(data.location)
+
+    console.log(data.general)
   }
 
   useEffect(() => {
@@ -82,22 +87,22 @@ const DynamicDataDashboard = () => {
     <Container>
         <Grid container spacing={6} className='match-height'>
           <Grid item xs={12} >
-            <PropertyHeader />
+            <PropertyHeader headerData={headerData}/>
           </Grid>
           <Grid item xs={12}>
             <Grid container spacing={6}>
               <Grid item xs={12} md={6}>
                 <Grid container spacing={6}>
                   <Grid item xs={12}>
-                    <BasicInfo />
+                    <BasicInfo basicInfoData={basicInfoData} />
                   </Grid>
                   <Grid item xs={12}>
-                    <ConstructionDetail />
+                    <ConstructionDetail constructionData={constructionData} />
                   </Grid>
                 </Grid>
               </Grid>
               <Grid item xs={12} md={6}>
-                <Location />
+                <Location locationData={locationData} />
               </Grid>
             </Grid>
           </Grid>
