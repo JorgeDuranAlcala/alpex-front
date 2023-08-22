@@ -86,6 +86,7 @@ export interface BasicInfoInterface {
   effectiveDate: Date | null
   expirationDate: Date | null
   idAccountType: number
+  typeLogo: number | null
 }
 
 export interface PlacementStructure {
@@ -191,7 +192,8 @@ const Information: React.FC<InformationProps> = ({
     receptionDate: null,
     effectiveDate: null,
     expirationDate: null,
-    idAccountType: 1
+    idAccountType: 1,
+    typeLogo: 1
   })
 
   const [placementStructure, setPlacementStructure] = useState<PlacementStructure>({
@@ -354,7 +356,8 @@ const Information: React.FC<InformationProps> = ({
       idTypeOfLimit: Number(placementStructure.typeOfLimit),
       idAccountType: Number(basicInfo.idAccountType),
       step: 1,
-      idEconomicSector: Number(basicInfo.economicSector) || null
+      idEconomicSector: Number(basicInfo.economicSector) || null,
+      typeLogo: Number(basicInfo.typeLogo)
     }
 
     const res = await addInformation(dataToSave)
@@ -429,7 +432,8 @@ const Information: React.FC<InformationProps> = ({
         receptionDate: information.receptionDate ? new Date(information.receptionDate) : null,
         effectiveDate: information.effectiveDate ? new Date(information.effectiveDate) : null,
         expirationDate: information.expirationDate ? new Date(information.expirationDate) : null,
-        idAccountType: information.idAccountType
+        idAccountType: information.idAccountType,
+        typeLogo: information.typeLogo
       }
 
       const obPlacementStructure = {
