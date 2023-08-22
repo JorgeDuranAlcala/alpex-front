@@ -458,7 +458,7 @@ const FormHeader = ({
                   </span>
                 </div>
                 {accountDetails && accountDetails?.idAccountStatus === 5 ? ( //TODO
-                  <ActionsHeaderBound accountStatus='BOUND' sideHeader={true} />
+                  <ActionsHeaderBound accountStatus='BOUND' sideHeader={true} accountId={accountId} />
                 ) : accountId ? (
                   <ActionsHeader
                     accountId={accountId}
