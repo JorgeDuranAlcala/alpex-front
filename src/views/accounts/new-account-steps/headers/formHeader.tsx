@@ -13,7 +13,8 @@ import {
   Frame3486,
   SecondContainer
 } from '@/styles/Payments/PaymnetsInstallments/paymentsInstallments'
-import { Box, Button, Card, ListItemIcon, ListItemText, Menu, MenuItem, Modal, Typography } from '@mui/material'
+import { Badge, Box, Button, Card, ListItemIcon, ListItemText, Menu, MenuItem, Modal, Typography } from '@mui/material'
+import { styled } from '@mui/material/styles'
 import { useEffect, useState } from 'react'
 import Icon from 'src/@core/components/icon'
 import { useAppSelector } from 'src/store'
@@ -101,11 +102,51 @@ const ModalUploadImage = ({ accountId }: any) => {
     setImagePreview(URL.createObjectURL(e.target.files[0]))
   }
 
-  const randomColor = () => {
-    const colors = ['#f44336', '#e91e63', '#9c27b0', '#673ab7', '#3f51b5', '#2196f3', '#03a9f4', '#00bcd4']
+  const AvatarLetter = styled(Box)(({ theme }) => ({
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
 
-    return colors[Math.floor(Math.random() * colors.length)]
+    backgroundColor: theme.palette.primary.main,
+    color: theme.palette.primary.contrastText,
+    borderRadius: '50%',
+
+    width: '80px',
+    height: '80px'
+  }))
+
+  const { changeTypeLogo } = useAccountTable()
+
+  const handleSelectTextBase = async (idAccount: number) => {
+    await changeTypeLogo({
+      idAccount: idAccount,
+      typeLogo: 2
+    })
   }
+
+  const randomColor = (name: string) => {
+    let hash = 0
+    let i
+    for (i = 0; i < name?.length; i += 1) {
+      hash = name.charCodeAt(i) + ((hash << 5) - hash)
+    }
+
+    let color = '#'
+
+    for (i = 0; i < 3; i += 1) {
+      const value = (hash >> (i * 8)) & 0xff
+      color += `00${value.toString(16)}`.slice(-2)
+    }
+
+    return color
+  }
+
+  const stringAvatar = (name: string) => {
+    const text = name?.split(' ')[0][0] + name?.split(' ')[0][1]
+    return text.toString()
+  }
+
+  const account = useAppSelector(state => state.accounts?.formsData?.form1)
 
   return (
     <>
@@ -118,18 +159,31 @@ const ModalUploadImage = ({ accountId }: any) => {
           onClick={handleClick}
         >
           <div className='header-menu'>
-            {!logo ? (
-              <>
-                <Icon icon='ic:baseline-file-upload' style={{ display: 'block', margin: 'auto' }} fontSize={20} />
-                <span style={{ display: 'block' }}>Logo</span>
-              </>
+            {account?.basicInfo?.typeLogo == 2 ? (
+              <Badge
+                sx={{ ml: 2, cursor: 'pointer', zIndex: 1000, bgcolor: randomColor(account?.basicInfo?.insured) }}
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'right'
+                }}
+              >
+                <AvatarLetter fontSize={20} sx={{ bgcolor: randomColor(account?.basicInfo?.insured) }}>
+                  {stringAvatar(account?.basicInfo?.insured)}
+                </AvatarLetter>
+              </Badge>
             ) : (
-              <img
-                src={logo}
-                alt='Dragged'
-                className='dragged-image'
-                style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-              />
+              <Button
+                id='basic-button'
+                aria-controls={openMenu ? 'basic-menu' : undefined}
+                aria-haspopup='true'
+                aria-expanded={openMenu ? 'true' : undefined}
+                onClick={handleClick}
+              >
+                <div className='header-menu'>
+                  <Icon icon='ic:baseline-file-upload' style={{ display: 'block', margin: 'auto' }} fontSize={20} />
+                  <span style={{ display: 'block' }}>Logo</span>
+                </div>
+              </Button>
             )}
           </div>
         </Button>
@@ -189,8 +243,8 @@ const FormHeader = ({
   const [netPremiumAmount, setNetPremiumAmount] = useState<string | null>(null)
   const [insured, setInsured] = useState<string | null>(null)
   const [accountId, setAccountId] = useState<number | null>(null)
-  const [receptionDate, setReceptionDate] = useState<string | null>(null);
-  const [lastUserName, setLastUserName] = useState<string | null>(null);
+  const [receptionDate, setReceptionDate] = useState<string | null>(null)
+  const [lastUserName, setLastUserName] = useState<string | null>(null)
 
   const account = useAppSelector(state => state.accounts?.formsData?.form1)
 
@@ -294,26 +348,22 @@ const FormHeader = ({
   }, [account, accountDetails])
 
   useEffect(() => {
-
     // console.log('accountDetails Effect', accountDetails);
 
     if (accountDetails) {
-
       setStatus(accountDetails.status)
 
       if (Array.isArray(accountDetails.actionsHistory)) {
+        if (accountDetails.actionsHistory.length === 0) return
 
-        if (accountDetails.actionsHistory.length === 0) return;
+        const lastAction = [...accountDetails.actionsHistory].reverse()
 
-        const lastAction = [...accountDetails.actionsHistory].reverse();
+        if (!lastAction[0].idUser) return
 
-        if (!lastAction[0].idUser) return;
-
-        const userName = lastAction[0].idUser.username;
+        const userName = lastAction[0].idUser.username
         const fullName = `${lastAction[0].idUser.name || 'unknown name'} ${lastAction[0].idUser.surname || ''}`
 
-        setLastUserName(userName || fullName.trim());
-
+        setLastUserName(userName || fullName.trim())
       }
     }
   }, [accountDetails])
