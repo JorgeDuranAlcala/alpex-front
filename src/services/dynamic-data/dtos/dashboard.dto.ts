@@ -32,3 +32,11 @@ export interface IProperty {
   type: string
   zonacresta: string
 }
+
+export interface IEarthquakeDetailDto{
+  magnitud: string
+  depht: string
+  epicenter: string
+  coordinates: string
+  dateTime: string
+}

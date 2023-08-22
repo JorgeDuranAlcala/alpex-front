@@ -21,8 +21,12 @@ import { IProperty } from '@/services/dynamic-data/dtos/propertyListing.dto';
 //** Hooks imports */
 import { useGetPriorityProperties } from '@/hooks/dynamic-data/dashboard';
 
+type EarthquakePropertyProps = {
+  earthquakeProperties: IProperty[],
+  earthquakeDetected: boolean
+}
 
-const PropertiesMap = () => {
+const PropertiesMap: React.FC<EarthquakePropertyProps> = ({earthquakeProperties, earthquakeDetected}) => {
 
   const { propertyPagination, setPropertyPagination, properties } = useGetPriorityProperties()
   const mapRef = useRef<HTMLDivElement>(null)
@@ -78,7 +82,10 @@ const PropertiesMap = () => {
 
   useEffect(() => {
     setPropertiesList(properties || [])
-  }, [properties])
+    if(earthquakeDetected){
+      console.log(earthquakeProperties)
+    }
+  }, [properties, earthquakeProperties, earthquakeDetected])
 
  useEffect(() => {
   if (propertiesList.length > 0 && !markersAdded && googleApi !== null) {
@@ -109,7 +116,7 @@ const PropertiesMap = () => {
     console.log("se va a setear el add markers")
     setMarkersAdded(true);
   }
-  }, [propertiesList, markersAdded]);
+  }, [propertiesList, markersAdded, earthquakeDetected]);
 
   return (
 

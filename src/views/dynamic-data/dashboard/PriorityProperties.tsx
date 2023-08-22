@@ -38,7 +38,12 @@ export enum EFieldColumn {
   CRESTA_ZONE = 'crestazone'
 }
 
-const PriorityProperties = () => {
+type EarthquakePropertyProps = {
+  earthquakeProperties: IProperty[],
+  earthquakeDetected: boolean
+}
+
+const PriorityProperties: React.FC<EarthquakePropertyProps> = ({earthquakeProperties, earthquakeDetected}) => {
   // ** State
   const { propertyPagination, setPropertyPagination, properties } = useGetPriorityProperties()
 
@@ -67,7 +72,10 @@ const PriorityProperties = () => {
 
   useEffect(() => {
     setPropertiesList(properties || [])
-  }, [properties])
+    if(earthquakeDetected){
+      console.log(earthquakeProperties)
+    }
+  }, [properties, earthquakeProperties, earthquakeDetected])
 
   useEffect(() => {
     setLoading(true);
