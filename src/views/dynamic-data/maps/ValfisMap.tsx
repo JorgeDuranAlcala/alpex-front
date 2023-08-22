@@ -24,12 +24,79 @@ interface ZoneStatesData {
   [stateName: string]: string;
 }
 
+type zoneMapProps = {
+  coordinates: { [state: string]: Array<Array<{ lng: number, lat: number }>> },
+  zoneStatesData: ZoneStatesData,
+  handleStateClick: (coordinates: Array<Array<{ lng: number, lat: number }>>, zone: string) => void
+}
+
+
+const ZoneMap: React.FC<zoneMapProps> = ({ coordinates, zoneStatesData, handleStateClick }) => {
+  const map1Ref = useRef<HTMLDivElement>(null);
+  const map1 = useRef<google.maps.Map | null>(null);
+  const polygon = useRef<google.maps.Polygon | null>(null);
+  useEffect(() => {
+    const loadMap = async () => {
+      const loader = new Loader({
+        apiKey: 'AIzaSyBn3_Ng2UuezOHu5Pqz6c7l1CC9z3tdjFQ',
+        version: 'weekly'
+      })
+
+      const google = await loader.load()
+
+      if (map1Ref.current) {
+        map1.current = new google.maps.Map(map1Ref.current, {
+          center: { lat: 23.6345, lng: -102.5528 },
+          zoom: 5
+        })
+        console.log("states")
+        for (const state in coordinates) {
+
+          const zone = zoneStatesData[state];
+          let color = "#72E128"
+          if (zone == 'b') {
+            color = '#FFB446'
+          } else if (zone == 'c') {
+            color = '#FF4D49'
+          }
+
+          // const infoWindow = new google.maps.InfoWindow()
+          const stateCoordinates = coordinates[state];
+          polygon.current = new google.maps.Polygon({
+            paths: stateCoordinates,
+            strokeColor: color,
+            strokeOpacity: 0.35,
+            strokeWeight: 2,
+            fillColor: color,
+            fillOpacity: 0.35,
+          });
+
+          polygon.current.setMap(map1.current);
+          polygon.current.addListener('click', () => handleStateClick(stateCoordinates, zone))
+        }
+
+        // const bcCoordinates = mapCoorService.getAguasCalientes()
+
+        // map1.current.addListener('click', )
+      }
+
+      // geocoder.current = new google.maps.Geocoder()
+    }
+
+    loadMap()
+  }, [])
+
+  return <div ref={map1Ref} style={{ width: '100%', minHeight: '70vh' }} />
+};
+
+
 const ValfisMap = () => {
 
-  const mapRef = useRef<HTMLDivElement>(null)
-  const map = useRef<google.maps.Map | null>(null)
-  const polygon = useRef<google.maps.Polygon | null>(null);
-  const mapEnabledRef = useRef<boolean>(false)
+  // const mapRef = useRef<HTMLDivElement>(null);
+  // const map = useRef<google.maps.Map | null>(null);
+  // const polygon = useRef<google.maps.Polygon | null>(null);
+
+  // const mapEnabledRef = useRef<boolean>(false)
   const mapCoorService = new MapCoorService()
   const allCoordinates = mapCoorService.getAllCoordinates();
   const [zoneData, setZoneData] = useState({
@@ -42,8 +109,6 @@ const ValfisMap = () => {
   // const [zoneStatesData, setZoneStatesData] = useState([{ name: '', zone: '' }])
 
   const zoneStatesData: ZoneStatesData = {};
-
-
   const [detailsData, setDetailsData] = useState({
     totalValue: '',
     state: '',
@@ -53,12 +118,18 @@ const ValfisMap = () => {
 
   const [showDetails, setShowDetails] = useState(false)
   const [showZoneDescription, setShowZoneDescription] = useState(false)
+  const [stateCoordinates, setStateCoordinates] = useState<Array<Array<{ lng: number, lat: number }>>>([
+    [
+      {lng: 0, lat:0}
+    ]
+  ])
+  const [currentZone, setCurrentZone] = useState('')
 
-
-  const handleMapClick = (event: google.maps.MapMouseEvent) => {
-    if (mapEnabledRef.current) {
-      console.log(event.latLng)
-    }
+  const handleStateClick = (coordinates: Array<Array<{ lng: number, lat: number }>>, zone: string) => {
+    console.log(coordinates)
+    setStateCoordinates(coordinates)
+    console.log(zone)
+    setCurrentZone(zone)
   }
 
   const setZone = async () => {
@@ -113,65 +184,71 @@ const ValfisMap = () => {
     setShowZoneDescription(true)
   }, [])
 
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   useEffect(() => {
-    const loadMap = async () => {
-      const loader = new Loader({
-        apiKey: 'AIzaSyBn3_Ng2UuezOHu5Pqz6c7l1CC9z3tdjFQ',
-        version: 'weekly'
-      })
 
-      const google = await loader.load()
+  }, [stateCoordinates, currentZone])
 
-      if (mapRef.current) {
-        map.current = new google.maps.Map(mapRef.current, {
-          center: { lat: 23.6345, lng: -102.5528 },
-          zoom: 5
-        })
-        console.log("states")
-        for (const state in allCoordinates) {
 
-          const zone = zoneStatesData[state];
-          let color= "#72E128"
-          if(zone == 'b'){
-            color='#FFB446'
-          }else if(zone == 'c'){
-            color= '#FF4D49'
-          }
-          const infoWindow = new google.maps.InfoWindow()
-          const stateCoordinates = allCoordinates[state];
-          polygon.current = new google.maps.Polygon({
-            paths: stateCoordinates,
-            strokeColor:color,
-            strokeOpacity: 0.35,
-            strokeWeight: 2,
-            fillColor: color,
-            fillOpacity: 0.35,
-          });
+  // useEffect(() => {
+  //   const loadMap = async () => {
+  //     const loader = new Loader({
+  //       apiKey: 'AIzaSyBn3_Ng2UuezOHu5Pqz6c7l1CC9z3tdjFQ',
+  //       version: 'weekly'
+  //     })
 
-          polygon.current.setMap(map.current);
-          polygon.current.addListener('click', (event: { latLng: google.maps.LatLng | google.maps.LatLngLiteral | null | undefined; }) => {
-            console.log('Datos: ', polygon.current?.getPath())
+  //     const google = await loader.load()
 
-            const contentString =
-              '<b>Data info</b><br>' +
-              'Clicked'
+  //     if (mapRef.current) {
+  //       map.current = new google.maps.Map(mapRef.current, {
+  //         center: { lat: 23.6345, lng: -102.5528 },
+  //         zoom: 5
+  //       })
+  //       console.log("states")
+  //       for (const state in allCoordinates) {
 
-            infoWindow.setContent(contentString)
-            infoWindow.setPosition(event.latLng)
-            infoWindow.open(map.current)
-          })
-        }
+  //         const zone = zoneStatesData[state];
+  //         let color= "#72E128"
+  //         if(zone == 'b'){
+  //           color='#FFB446'
+  //         }else if(zone == 'c'){
+  //           color= '#FF4D49'
+  //         }
+  //         const infoWindow = new google.maps.InfoWindow()
+  //         const stateCoordinates = allCoordinates[state];
+  //         polygon.current = new google.maps.Polygon({
+  //           paths: stateCoordinates,
+  //           strokeColor:color,
+  //           strokeOpacity: 0.35,
+  //           strokeWeight: 2,
+  //           fillColor: color,
+  //           fillOpacity: 0.35,
+  //         });
 
-        // const bcCoordinates = mapCoorService.getAguasCalientes()
+  //         polygon.current.setMap(map.current);
+  //         polygon.current.addListener('click', (event: { latLng: google.maps.LatLng | google.maps.LatLngLiteral | null | undefined; }) => {
+  //           console.log('Datos: ', polygon.current?.getPath())
 
-        map.current.addListener('click', handleMapClick)
-      }
+  //           const contentString =
+  //             '<b>Data info</b><br>' +
+  //             'Clicked'
 
-      // geocoder.current = new google.maps.Geocoder()
-    }
+  //           infoWindow.setContent(contentString)
+  //           infoWindow.setPosition(event.latLng)
+  //           infoWindow.open(map.current)
+  //         })
+  //       }
 
-    loadMap()
-  }, [])
+  //       // const bcCoordinates = mapCoorService.getAguasCalientes()
+
+  //       map.current.addListener('click', handleMapClick)
+  //     }
+
+  //     // geocoder.current = new google.maps.Geocoder()
+  //   }
+
+  //   loadMap()
+  // }, [])
 
 
   return (
@@ -304,10 +381,15 @@ const ValfisMap = () => {
           <MapContainer>
 
             <div style={{ borderRadius: '8px', height: '70vh' }}>
-              <div ref={mapRef} style={{ width: '100%', minHeight: '70vh' }} />
+              <ZoneMap
+                coordinates={allCoordinates}
+                zoneStatesData={zoneStatesData}
+                handleStateClick={handleStateClick}
+              />
             </div>
           </MapContainer>
         </Card>
+
       </Grid>
     </Grid>
   )
