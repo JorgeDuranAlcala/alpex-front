@@ -106,9 +106,11 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
       })
   }
 
+
   const getCoverageTypeByTitle = (title: string) => {
     return selectedCoverages.find(coverage => coverage.coverage === title);
   }
+
 
   useEffect(() => {
     subLimit && setSublimitCard(subLimit)
