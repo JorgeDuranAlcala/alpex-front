@@ -49,19 +49,9 @@ const defineRulesFor = (role: string, subject: string, acl: acl[]) => {
       can(element?.action, element?.module)
     });
   } else if (role === 'Asegurado') {
-    can('manage', 'all')
-    cannot(['viewDashboardAlpex', 'read'], 'dashboardAlpex')
-    cannot(['viewAccountsAlpex', 'read'], 'accountsAlpex')
-    cannot(['viewPaymentsAlpex', 'read'], 'paymentsAlpex')
-    cannot(['viewRenewalsAlpex', 'read'], 'renewalsAlpex')
-    cannot(['viewClaimsAlpex', 'read'], 'claimsAlpex')
-    cannot(['read'], 'catalog')
-    cannot(['read'], 'user')
-    cannot(['viewConfigurationAlpex', 'read'], 'configurationAlpex')
-
-    // cannot(['viewDashboardData', 'read'], 'dashboardData') PENDIENTE DE QUE VISTA/URL PUEDE VER, POR LO PRONTO LO DEJO VER EL DASHBOARD DE DATA Y MAPA DE Hurricanes
-    cannot(['viewPropertyListData', 'read'], 'propertyListData')
-    cannot(['viewMapsEarthquakesData', 'viewMapsValfisData', 'viewMapsZonaCrestaData', 'viewMapsInsuredPropertyData', 'read'], 'mapsListData') // viewMapsInsuredPropertyData es la seccion de Properties?
+    acl?.forEach((element) =>{
+      can(element?.action, element?.module)
+    });
   } else if (role === 'Asegurador') {
     can('manage', 'all')
     cannot(['read'], 'catalog')
