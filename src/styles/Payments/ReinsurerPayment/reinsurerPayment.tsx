@@ -19,7 +19,17 @@ const ContainerTotalBalance = styled('div')({
   gap: '7%'
 })
 
-export { SubContainerReinsurerPaymenData, ContainerTotalBalance }
+const FormHeaderMoneyData = styled('div')({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'flex-end',
+  gap: '8px',
+  '@media (max-width: 599px)': {
+    alignItems: 'flex-start'
+  }
+})
+
+export { SubContainerReinsurerPaymenData, ContainerTotalBalance, FormHeaderMoneyData }
 
 // '@media (max-width: 991px)': {
 //   flexDirection: 'column',
