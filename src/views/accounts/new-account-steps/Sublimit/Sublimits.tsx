@@ -1,5 +1,6 @@
 import { useGetAccountById } from '@/hooks/accounts/forms'
 import { useAddSublimits, useDeleteSublimits, useUpdateSublimits } from '@/hooks/accounts/sublimit'
+import { AbilityContext } from '@/layouts/components/acl/Can'
 import { SublimitDto } from '@/services/accounts/dtos/sublimit.dto'
 import { CoverageDto } from '@/services/catalogs/dtos/coverage.dto'
 import { useAppSelector } from '@/store'
@@ -7,8 +8,7 @@ import { NextContainer } from '@/styles/Forms/Sublimits'
 import CustomAlert, { IAlert } from '@/views/custom/alerts'
 import { Button, CardContent, Grid } from '@mui/material'
 import Typography from '@mui/material/Typography'
-import { useEffect, useState, useContext } from 'react'; //useContext
-import { AbilityContext } from '@/layouts/components/acl/Can'
+import { useContext, useEffect, useState } from 'react'; //useContext
 import InputLimit from './components/InputLimit/InputLimit'
 import SelectCoverage from './components/SelectCoverage/SelectCoverage'
 import { GenericCard } from './components/SublimitsCards'
@@ -97,7 +97,9 @@ const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
 
   const [formInformationData, setFormInformationData] = useState<any>({}) //formInformationData
   const [subLimits, setSubLimits] = useState<SublimitDto[]>([])
-  const [coverageSelected, setCoverageSelected] = useState<CoverageDto[]>([])
+
+  // const [coverageSelected, setCoverageSelected] = useState<CoverageDto[]>([])
+  const [coverageSelected, setCoverageSelected] = useState<any[]>([])
 
   const ability = useContext(AbilityContext)
 
@@ -317,6 +319,7 @@ const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
   // });
 
   // * END -  Actualizar los datos del formulario en Redux + + + + + + + + + + + + + +
+
 
   return (
     <CardContent>
