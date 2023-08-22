@@ -189,11 +189,12 @@ const FormHeader = ({
   const [netPremiumAmount, setNetPremiumAmount] = useState<string | null>(null)
   const [insured, setInsured] = useState<string | null>(null)
   const [accountId, setAccountId] = useState<number | null>(null)
-  const [receptionDate, setReceptionDate] = useState<string | null>(null)
+  const [receptionDate, setReceptionDate] = useState<string | null>(null);
+  const [lastUserName, setLastUserName] = useState<string | null>(null);
 
   const account = useAppSelector(state => state.accounts?.formsData?.form1)
 
-  const lastUserName = 'Alejandro Hernández'
+  // const lastUserName = 'Alejandro Hernández'
 
   // console.log(accountDetails);
 
@@ -293,9 +294,28 @@ const FormHeader = ({
   }, [account, accountDetails])
 
   useEffect(() => {
+
     // console.log('accountDetails Effect', accountDetails);
 
-    accountDetails && setStatus(accountDetails.status)
+    if (accountDetails) {
+
+      setStatus(accountDetails.status)
+
+      if (Array.isArray(accountDetails.actionsHistory)) {
+
+        if (accountDetails.actionsHistory.length === 0) return;
+
+        const lastAction = [...accountDetails.actionsHistory].reverse();
+
+        if (!lastAction[0].idUser) return;
+
+        const userName = lastAction[0].idUser.username;
+        const fullName = `${lastAction[0].idUser.name || 'unknown name'} ${lastAction[0].idUser.surname || ''}`
+
+        setLastUserName(userName || fullName.trim());
+
+      }
+    }
   }, [accountDetails])
 
   // console.log('account', account)
@@ -339,8 +359,8 @@ const FormHeader = ({
                   <span className='form-header-money-data-txt'>Net premium</span>
                   <span className='form-header-money-data-num'>{netPremiumAmount}</span>
                   <FormHeaderMoneyDataDate>
-                    Last Update: {accountDetails && formatDateFromUTC(accountDetails?.informations[0]?.updatedAt)} by{' '}
-                    {lastUserName}
+                    Last Update: {accountDetails && formatDateFromUTC(accountDetails?.informations[0]?.updatedAt)}
+                    {lastUserName ? ` by ${lastUserName}` : null}
                   </FormHeaderMoneyDataDate>
                 </ContainerAmountLastUpdate>
               </FormHeaderSection>

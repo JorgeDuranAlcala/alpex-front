@@ -37,8 +37,12 @@ const SelectCoverage: FC<SelectCoverageProps> = ({ onChangeSelected, coverageSel
 
   const handleChangeSelect = (event: SelectChangeEvent<string> | any) => {
     // setDisableBoundBtn(true)
+    // console.log("Entra data", event);
+
     const selectedValue = event.target.value
-    console.log('handleChange', event);
+
+    // console.log('handleChange', event.target.value);
+
     if (selectedValue === 'new_coverage') {
       setIsOpenModalAddNewCoverage(true);
     } else {
@@ -67,10 +71,13 @@ const SelectCoverage: FC<SelectCoverageProps> = ({ onChangeSelected, coverageSel
 
     const selectedCoveragesIds = coverageSelected.map(selectedCoverage => selectedCoverage.id);
 
-    // console.log(selectedCoveragesIds);
+    // console.log("has seleccionado las siguientes: -->  ", selectedCoveragesIds);
     setUnselectedCoverages(coverages.filter(coverage => !selectedCoveragesIds.includes(coverage.id)))
 
   }, [coverages, coverageSelected])
+
+
+  // console.log("has seleccionado las siguientes: ", coverageSelected);
 
 
   return (
@@ -93,7 +100,8 @@ const SelectCoverage: FC<SelectCoverageProps> = ({ onChangeSelected, coverageSel
           MenuProps={MenuProps}
           value={''}
           displayEmpty
-          onChange={handleChangeSelect}
+
+          // onChange={handleChangeSelect}
           renderValue={(selected) => {
             if ((selected as unknown as string[]).length === 0) {
               return (
@@ -117,28 +125,30 @@ const SelectCoverage: FC<SelectCoverageProps> = ({ onChangeSelected, coverageSel
           {unselectedCoverages
             .map((item, index) => (
               <MenuItem
-                value={item.coverage}
                 role={undefined}
-                onClick={() => {
-                  onClickToggle(item.id, item.coverage)
-                }}
                 key={index}
                 sx={{
                   height: '50px',
                   display: 'flex',
                   flexDirection: 'row',
-                  padding: '4px 20px'
+                  padding: '4px 20px',
                 }}
               >
                 <Checkbox
+                  value={item.coverage}
+                  onClick={() => {
+                    onClickToggle(item.id, item.coverage)
+                  }}
+                  onChange={handleChangeSelect}
                   sx={{
                     width: '24px',
                     height: '24px',
                     color: '#2535A8',
                     '&.Mui-checked': {
                       color: '#2535A8'
-                    }
+                    },
                   }}
+
                   checked={false}
                   tabIndex={-1}
                   disableRipple

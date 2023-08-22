@@ -94,6 +94,7 @@ export const FormAddNewCoverage = ({ onCreated, onCancel }: FormAddNewCoveragePr
         error={!!errorMessage}
         helperText={errorMessage}
         sx={{ height: '75px' }}
+        required
       />
       <FormControlLabel name="yesAndLuc" control={<Checkbox />} label="Yes/Luc" />
       <RadioGroup
