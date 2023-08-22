@@ -19,7 +19,7 @@ export default function OptionAddNewCoverage({ onChange }: OptionAddNewCoverageP
         height: '50px',
         display: 'flex',
         flexDirection: 'row',
-        padding: '4px 20px'
+        padding: '4px 20px',
       }}
     >
 
