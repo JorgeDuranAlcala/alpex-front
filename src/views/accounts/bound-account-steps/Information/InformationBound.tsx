@@ -180,7 +180,8 @@ const InformationBound: React.FC<InformationProps> = ({ onStepChange, disableSec
     receptionDate: null,
     effectiveDate: null,
     expirationDate: null,
-    idAccountType: 1
+    idAccountType: 1,
+    typeLogo: ''
   })
 
   const [placementStructure, setPlacementStructure] = useState<PlacementStructure>({

@@ -3,6 +3,8 @@
 import { useGetDoctosByIdAccountAndIdDocumentType } from '@/hooks/accounts/information/useGetFilesByType'
 
 // import { ContainerMobileBound } from '@/styled-components/accounts/Security.styled'
+import { useAppDispatch, useAppSelector } from '@/store'
+import { updateFormsData } from '@/store/apps/accounts'
 import {
   ContainerAmountLastUpdate,
   FormHeaderInfoProfileContainer,
@@ -18,7 +20,6 @@ import { styled } from '@mui/material/styles'
 import { useEffect, useState } from 'react'
 import Icon from 'src/@core/components/icon'
 import useAccountTable from 'src/hooks/accounts/Table/useAccountTable'
-import { useAppSelector } from 'src/store'
 import StatusSelect from 'src/views/custom/select/StatusSelect'
 import ActionsHeader from './ActionsHeader'
 import ActionsHeaderBound from './ActionsHeaderBound'
@@ -80,7 +81,8 @@ const ModalUploadImage = ({ accountId }: any) => {
   const handleOpen = () => {
     setOpen(true)
   }
-
+  const dispatch = useAppDispatch()
+  const form1Account = useAppSelector(state => state.accounts?.formsData?.form1)
   const handleClose = (action: string) => {
     switch (action) {
       case 'upload':
@@ -91,7 +93,8 @@ const ModalUploadImage = ({ accountId }: any) => {
       case 'txtLogo':
         setOpen(false)
         setAnchorEl(null)
-        setModalTxt(true)
+        handleSelectTextBase(form1Account.id)
+        dispatch(updateFormsData({ form1: { ...form1Account, basicInfo: { ...form1Account.basicInfo, typeLogo: 2 } } }))
         break
       default:
         break
@@ -131,14 +134,11 @@ const ModalUploadImage = ({ accountId }: any) => {
     for (i = 0; i < name?.length; i += 1) {
       hash = name.charCodeAt(i) + ((hash << 5) - hash)
     }
-
     let color = '#'
-
     for (i = 0; i < 3; i += 1) {
       const value = (hash >> (i * 8)) & 0xff
       color += `00${value.toString(16)}`.slice(-2)
     }
-
     return color
   }
 
@@ -146,8 +146,6 @@ const ModalUploadImage = ({ accountId }: any) => {
     const text = name?.split(' ')[0][0] + name?.split(' ')[0][1]
     return text.toString()
   }
-
-  const account = useAppSelector(state => state.accounts?.formsData?.form1)
 
   return (
     <>
@@ -159,34 +157,33 @@ const ModalUploadImage = ({ accountId }: any) => {
           aria-expanded={openMenu ? 'true' : undefined}
           onClick={handleClick}
         >
-          <div className='header-menu'>
-            {account?.basicInfo?.typeLogo == 2 ? (
-              <Badge
-                sx={{ ml: 2, cursor: 'pointer', zIndex: 1000, bgcolor: randomColor(account?.basicInfo?.insured) }}
-                anchorOrigin={{
-                  vertical: 'bottom',
-                  horizontal: 'right'
-                }}
-              >
-                <AvatarLetter fontSize={20} sx={{ bgcolor: randomColor(account?.basicInfo?.insured) }}>
-                  {stringAvatar(account?.basicInfo?.insured)}
-                </AvatarLetter>
-              </Badge>
-            ) : (
-              <Button
-                id='basic-button'
-                aria-controls={openMenu ? 'basic-menu' : undefined}
-                aria-haspopup='true'
-                aria-expanded={openMenu ? 'true' : undefined}
-                onClick={handleClick}
-              >
-                <div className='header-menu'>
-                  <Icon icon='ic:baseline-file-upload' style={{ display: 'block', margin: 'auto' }} fontSize={20} />
-                  <span style={{ display: 'block' }}>Logo</span>
-                </div>
-              </Button>
-            )}
-          </div>
+          {form1Account?.basicInfo?.typeLogo == 2 ? (
+            <Badge
+              sx={{ ml: 2, cursor: 'pointer', zIndex: 1000, bgcolor: randomColor(form1Account?.basicInfo?.insured) }}
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'right'
+              }}
+            >
+              <AvatarLetter fontSize={20} sx={{ bgcolor: randomColor(form1Account?.basicInfo?.insured) }}>
+                {stringAvatar(form1Account?.basicInfo?.insured)}
+              </AvatarLetter>
+            </Badge>
+          ) : form1Account?.basicInfo?.typeLogo == 1 ? (
+            <img
+              src={logo}
+              alt='Dragged'
+              className='dragged-image'
+              style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+            />
+          ) : (
+            <>
+              <div className='header-menu'>
+                <Icon icon='ic:baseline-file-upload' style={{ display: 'block', margin: 'auto' }} fontSize={20} />
+                <span style={{ display: 'block' }}>Logo</span>
+              </div>
+            </>
+          )}
         </Button>
         <Menu
           id='basic-menu'

@@ -69,7 +69,6 @@ const useAccountTable = () => {
   const changeTypeLogo = async (updateTypeLogo: UpdateTypeLogoDto) => {
     try {
       const response = await accountsService.updateTypeLogo(updateTypeLogo)
-      dispatchRedux(fetchAccounts(accountsReducer.info.page))
 
       return response
     } catch (error) {
