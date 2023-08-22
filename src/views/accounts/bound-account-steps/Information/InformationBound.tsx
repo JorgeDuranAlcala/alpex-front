@@ -82,6 +82,7 @@ export interface BasicInfoInterface {
   effectiveDate: Date | null
   expirationDate: Date | null
   idAccountType: number
+  typeLogo: number | null
 }
 
 export interface PlacementStructure {
@@ -180,7 +181,8 @@ const InformationBound: React.FC<InformationProps> = ({ onStepChange, disableSec
     receptionDate: null,
     effectiveDate: null,
     expirationDate: null,
-    idAccountType: 1
+    idAccountType: 1,
+    typeLogo: null
   })
 
   const [placementStructure, setPlacementStructure] = useState<PlacementStructure>({
@@ -238,7 +240,8 @@ const InformationBound: React.FC<InformationProps> = ({ onStepChange, disableSec
       receptionDate: information.receptionDate ? new Date(information.receptionDate) : null,
       effectiveDate: information.effectiveDate ? new Date(information.effectiveDate) : null,
       expirationDate: information.expirationDate ? new Date(information.expirationDate) : null,
-      idAccountType: Number(information.idAccountType)
+      idAccountType: Number(information.idAccountType),
+      typeLogo: information.typeLogo ? information.typeLogo : null
     }
 
     const obPlacementStructure = {

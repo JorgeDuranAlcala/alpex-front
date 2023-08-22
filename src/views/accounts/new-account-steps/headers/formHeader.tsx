@@ -3,6 +3,8 @@
 import { useGetDoctosByIdAccountAndIdDocumentType } from '@/hooks/accounts/information/useGetFilesByType'
 
 // import { ContainerMobileBound } from '@/styled-components/accounts/Security.styled'
+import { useAppDispatch, useAppSelector } from '@/store'
+import { updateFormsData } from '@/store/apps/accounts'
 import {
   ContainerAmountLastUpdate,
   FormHeaderInfoProfileContainer,
@@ -13,10 +15,11 @@ import {
   Frame3486,
   SecondContainer
 } from '@/styles/Payments/PaymnetsInstallments/paymentsInstallments'
-import { Box, Button, Card, ListItemIcon, ListItemText, Menu, MenuItem, Modal, Typography } from '@mui/material'
+import { Badge, Box, Button, Card, ListItemIcon, ListItemText, Menu, MenuItem, Modal, Typography } from '@mui/material'
+import { styled } from '@mui/material/styles'
 import { useEffect, useState } from 'react'
 import Icon from 'src/@core/components/icon'
-import { useAppSelector } from 'src/store'
+import useAccountTable from 'src/hooks/accounts/Table/useAccountTable'
 import StatusSelect from 'src/views/custom/select/StatusSelect'
 import ActionsHeader from './ActionsHeader'
 import ActionsHeaderBound from './ActionsHeaderBound'
@@ -78,7 +81,8 @@ const ModalUploadImage = ({ accountId }: any) => {
   const handleOpen = () => {
     setOpen(true)
   }
-
+  const dispatch = useAppDispatch()
+  const form1Account = useAppSelector(state => state.accounts?.formsData?.form1)
   const handleClose = (action: string) => {
     switch (action) {
       case 'upload':
@@ -89,7 +93,8 @@ const ModalUploadImage = ({ accountId }: any) => {
       case 'txtLogo':
         setOpen(false)
         setAnchorEl(null)
-        setModalTxt(true)
+        handleSelectTextBase(form1Account.id)
+        dispatch(updateFormsData({ form1: { ...form1Account, basicInfo: { ...form1Account.basicInfo, typeLogo: 2 } } }))
         break
       default:
         break
@@ -101,10 +106,45 @@ const ModalUploadImage = ({ accountId }: any) => {
     setImagePreview(URL.createObjectURL(e.target.files[0]))
   }
 
-  const randomColor = () => {
-    const colors = ['#f44336', '#e91e63', '#9c27b0', '#673ab7', '#3f51b5', '#2196f3', '#03a9f4', '#00bcd4']
+  const AvatarLetter = styled(Box)(({ theme }) => ({
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
 
-    return colors[Math.floor(Math.random() * colors.length)]
+    backgroundColor: theme.palette.primary.main,
+    color: theme.palette.primary.contrastText,
+    borderRadius: '50%',
+
+    width: '80px',
+    height: '80px'
+  }))
+
+  const { changeTypeLogo } = useAccountTable()
+
+  const handleSelectTextBase = async (idAccount: number) => {
+    await changeTypeLogo({
+      idAccount: idAccount,
+      typeLogo: 2
+    })
+  }
+
+  const randomColor = (name: string) => {
+    let hash = 0
+    let i
+    for (i = 0; i < name?.length; i += 1) {
+      hash = name.charCodeAt(i) + ((hash << 5) - hash)
+    }
+    let color = '#'
+    for (i = 0; i < 3; i += 1) {
+      const value = (hash >> (i * 8)) & 0xff
+      color += `00${value.toString(16)}`.slice(-2)
+    }
+    return color
+  }
+
+  const stringAvatar = (name: string) => {
+    const text = name?.split(' ')[0][0] + name?.split(' ')[0][1]
+    return text.toString()
   }
 
   return (
@@ -117,21 +157,33 @@ const ModalUploadImage = ({ accountId }: any) => {
           aria-expanded={openMenu ? 'true' : undefined}
           onClick={handleClick}
         >
-          <div className='header-menu'>
-            {!logo ? (
-              <>
+          {form1Account?.basicInfo?.typeLogo == 2 ? (
+            <Badge
+              sx={{ ml: 2, cursor: 'pointer', zIndex: 1000, bgcolor: randomColor(form1Account?.basicInfo?.insured) }}
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'right'
+              }}
+            >
+              <AvatarLetter fontSize={20} sx={{ bgcolor: randomColor(form1Account?.basicInfo?.insured) }}>
+                {stringAvatar(form1Account?.basicInfo?.insured)}
+              </AvatarLetter>
+            </Badge>
+          ) : form1Account?.basicInfo?.typeLogo == 1 ? (
+            <img
+              src={logo}
+              alt='Dragged'
+              className='dragged-image'
+              style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+            />
+          ) : (
+            <>
+              <div className='header-menu'>
                 <Icon icon='ic:baseline-file-upload' style={{ display: 'block', margin: 'auto' }} fontSize={20} />
                 <span style={{ display: 'block' }}>Logo</span>
-              </>
-            ) : (
-              <img
-                src={logo}
-                alt='Dragged'
-                className='dragged-image'
-                style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-              />
-            )}
-          </div>
+              </div>
+            </>
+          )}
         </Button>
         <Menu
           id='basic-menu'
@@ -189,8 +241,8 @@ const FormHeader = ({
   const [netPremiumAmount, setNetPremiumAmount] = useState<string | null>(null)
   const [insured, setInsured] = useState<string | null>(null)
   const [accountId, setAccountId] = useState<number | null>(null)
-  const [receptionDate, setReceptionDate] = useState<string | null>(null);
-  const [lastUserName, setLastUserName] = useState<string | null>(null);
+  const [receptionDate, setReceptionDate] = useState<string | null>(null)
+  const [lastUserName, setLastUserName] = useState<string | null>(null)
 
   const account = useAppSelector(state => state.accounts?.formsData?.form1)
 
@@ -297,17 +349,19 @@ const FormHeader = ({
     // console.log('accountDetails Effect', accountDetails);
 
     if (accountDetails) {
-
       setStatus(accountDetails.status)
 
       if (Array.isArray(accountDetails.actionsHistory)) {
-        const lastAction = accountDetails.actionsHistory.reverse();
+        if (accountDetails.actionsHistory.length === 0) return
 
-        const userName = lastAction[0].idUser.username;
+        const lastAction = [...accountDetails.actionsHistory].reverse()
+
+        if (!lastAction[0].idUser) return
+
+        const userName = lastAction[0].idUser.username
         const fullName = `${lastAction[0].idUser.name || 'unknown name'} ${lastAction[0].idUser.surname || ''}`
 
-        setLastUserName(userName || fullName.trim());
-
+        setLastUserName(userName || fullName.trim())
       }
     }
   }, [accountDetails])
@@ -353,8 +407,8 @@ const FormHeader = ({
                   <span className='form-header-money-data-txt'>Net premium</span>
                   <span className='form-header-money-data-num'>{netPremiumAmount}</span>
                   <FormHeaderMoneyDataDate>
-                    Last Update: {accountDetails && formatDateFromUTC(accountDetails?.informations[0]?.updatedAt)} by{' '}
-                    {lastUserName}
+                    Last Update: {accountDetails && formatDateFromUTC(accountDetails?.informations[0]?.updatedAt)}
+                    {lastUserName ? ` by ${lastUserName}` : null}
                   </FormHeaderMoneyDataDate>
                 </ContainerAmountLastUpdate>
               </FormHeaderSection>
@@ -452,7 +506,7 @@ const FormHeader = ({
                   </span>
                 </div>
                 {accountDetails && accountDetails?.idAccountStatus === 5 ? ( //TODO
-                  <ActionsHeaderBound accountStatus='BOUND' sideHeader={true} />
+                  <ActionsHeaderBound accountStatus='BOUND' sideHeader={true} accountId={accountId} />
                 ) : accountId ? (
                   <ActionsHeader
                     accountId={accountId}

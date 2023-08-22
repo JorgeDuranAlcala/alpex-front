@@ -18,3 +18,8 @@ export interface UpdateStatusDto {
 export interface UpdateStatusArrayDto {
   updateStatus: Partial<UpdateStatusDto>[]
 }
+
+export interface UpdateTypeLogoDto {
+  idAccount: number
+  typeLogo: number
+}
