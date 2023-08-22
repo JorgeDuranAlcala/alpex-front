@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 
 // ** Custom Hooks
 import { useGetAccountById } from '@/hooks/accounts/forms'
+import { useGetAllCoverage } from '@/hooks/catalogs/coverage'
 
 // ** Dtos
 import { SublimitDto } from '@/services/accounts/dtos/sublimit.dto'
@@ -90,10 +91,14 @@ interface SublimitsProps {
 }
 
 const Sublimits = ({ onStepChange, disableSectionCtrl }: SublimitsProps) => {
+
+  const { coverages, getAllCoverages } = useGetAllCoverage();
+
   const router = useRouter()
   const idAccountRouter = Number(router?.query?.idAccount)
 
   const [subLimits, setSubLimits] = useState<SublimitDto[]>([])
+
   const [coverageSelected, setCoverageSelected] = useState<CoverageDto[]>([])
 
   const [showErrors, setShowErrors] = useState<boolean>(false)
@@ -134,7 +139,7 @@ const Sublimits = ({ onStepChange, disableSectionCtrl }: SublimitsProps) => {
 
   const handleDeleteSublimit = async (index: number) => {
     const sublimit = subLimits[index]
-    const coverageDelete = coverageSelected.filter(cov => cov.coverage !== sublimit.title)
+    const coverageDelete = coverageSelected.filter((cov: { coverage: string }) => cov.coverage !== sublimit.title)
 
     setSubLimits(state => {
       const newState = state.filter((sub, i) => index !== i)
@@ -232,6 +237,19 @@ const Sublimits = ({ onStepChange, disableSectionCtrl }: SublimitsProps) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [account])
+
+
+
+  //? Con esto se cargan los datos para sublimits
+  useEffect(() => {
+    if (coverageSelected.length === 0) {
+      const coveragesFiltered = coverages.filter((elemento: any) => { return subLimits.some(filtroItem => filtroItem.idCCoverage.id === elemento.id) });
+      getAllCoverages()
+      setCoverageSelected(coveragesFiltered)
+
+    }
+  }, [subLimits])
+
 
   return (
     <CardContent>
