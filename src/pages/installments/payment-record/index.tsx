@@ -2,7 +2,7 @@ import { useState } from 'react'
 
 // ** MUI Imports
 import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp'
-import { Button, Stack, TextField } from '@mui/material'
+import { Button, FormControl, Stack, TextField } from '@mui/material'
 import MuiAccordion, { AccordionProps } from '@mui/material/Accordion'
 import MuiAccordionDetails from '@mui/material/AccordionDetails'
 import MuiAccordionSummary, { AccordionSummaryProps } from '@mui/material/AccordionSummary'
@@ -15,8 +15,10 @@ import FormHeader from 'src/views/installments/Header/headerInstallment'
 
 import { AccountsTableContextProvider } from '@/context/accounts/Table/reducer'
 import { useGetAccountById } from '@/hooks/accounts/forms'
+import { FormHeaderMoneyData } from '@/styles/Payments/ReinsurerPayment/reinsurerPayment'
 import DetailInstallment from '@/views/installments/components/DetailsInstallment'
 import InstallmentInformation from '@/views/installments/components/InstallmentInformation'
+import { NumericFormat } from 'react-number-format'
 
 // import UserList from 'src/pages/apps/user/list'
 
@@ -35,14 +37,17 @@ const Accordion = styled((props: AccordionProps) => <MuiAccordion disableGutters
 )
 
 const AccordionSummary = styled((props: AccordionSummaryProps) => (
-  <MuiAccordionSummary expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: '0.9rem' }} />} {...props} />
+  <MuiAccordionSummary
+    expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: '0.9rem', transform: 'rotate(90deg)' }} />}
+    {...props}
+  />
 ))(() => ({
   backgroundColor: '#FFFFFF',
   borderStyle: 'none',
   boxShadow: 'none',
   flexDirection: 'row-reverse',
   '& .MuiAccordionSummary-expandIconWrapper.Mui-expanded': {
-    transform: 'rotate(90deg)'
+    transform: 'rotate(180deg)'
   },
   '& .MuiAccordionSummary-content': {
     marginLeft: '0'
@@ -86,9 +91,20 @@ const PaymentRecord = () => {
               <div className='wrapper-installments'>
                 <Grid container spacing={{ xs: 3, sm: 3, md: 3 }}>
                   <Grid item xs={12} md={4} sm={6}>
-                    <div className='width-full'>
-                      <TextField fullWidth autoFocus name='ammount' label='Ammount' defaultValue='' value='$100,000' />
-                    </div>
+                    <FormControl fullWidth>
+                      <NumericFormat
+                        name='total'
+                        allowLeadingZeros
+                        thousandSeparator=','
+                        customInput={TextField}
+                        id='filled-multiline-flexible'
+                        label='Amount'
+                        multiline
+                        prefix={'$'}
+                        decimalScale={2}
+                        variant='outlined'
+                      />
+                    </FormControl>
                   </Grid>
                   <Grid item xs={12} md={4} sm={6}>
                     <div className='width-full'>
@@ -98,25 +114,27 @@ const PaymentRecord = () => {
                         name='currentInstallment'
                         label='Current Installment'
                         defaultValue=''
-                        value='1'
                       />
                     </div>
                   </Grid>
                   <Grid item xs={12} md={4} sm={6}>
                     <div className='width-full'>
-                      <TextField
-                        fullWidth
-                        autoFocus
-                        name='typeOfPayment'
-                        label='Type Of Payment'
-                        defaultValue=''
-                        value='Balance Due'
-                      />
+                      <TextField fullWidth autoFocus name='typeOfPayment' label='Type Of Payment' defaultValue='' />
                     </div>
                   </Grid>
                 </Grid>
               </div>
-              <div className='title-installment'>Distribute balance</div>
+              <Grid container spacing={{ xs: 3, sm: 3, md: 3 }}>
+                <Grid item xs={12} sm={6} md={6}>
+                  <div className='title-installment'>Distribute balance</div>
+                </Grid>
+                <Grid item xs={12} sm={6} md={6}>
+                  <FormHeaderMoneyData>
+                    <span className='form-header-money-data-txt'>Available balance</span>
+                    <span className='form-header-money-data-num'>0</span>
+                  </FormHeaderMoneyData>
+                </Grid>
+              </Grid>
               <div className='wrapper-installments'>
                 <Grid container spacing={{ xs: 3, sm: 3, md: 3 }}>
                   <Grid item xs={12} md={4} sm={6}>
