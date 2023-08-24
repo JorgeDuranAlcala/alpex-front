@@ -28,7 +28,7 @@ const DynamicDataDashboard = () => {
   const [earthquakeCenter, setEarthquakeCenter] = useState('')
   const [earthquakeDistance, setEarthquakeDistance] = useState<number>(0)
   const [earthquakeDetected, setEarthquakeDetected] = useState(false)
-
+  const [urlKmz, setUrlKmz] = useState('')
   const [earthquakeDetail, setEarthquakeDetail] = useState<IEarthquakeDetailDto>({
     magnitude: '',
     depth: ' ',
@@ -64,6 +64,7 @@ const DynamicDataDashboard = () => {
 
     setEarthquakeCenter(data.earthquake[0].coordinatesCenter)
     setEarthquakeDistance(data.earthquake[0].distance)
+    setUrlKmz(data.earthquake[0].urlKmz)
     setEarthquakeDetected(data.isDetected)
     setEarthquakeDetail(newEartquakeDetails)
     setEarthquakeProperties(data.buildings)
@@ -71,7 +72,7 @@ const DynamicDataDashboard = () => {
 
   useEffect(() => {
     // setEarthquakeDetected(true)
-    const time = setInterval(setEarthquakeDetection, 100000);
+    const time = setInterval(setEarthquakeDetection, 15000);
 
     return () => clearTimeout(time)
   }, [])
@@ -118,6 +119,7 @@ const DynamicDataDashboard = () => {
                   earthquakeDetected={earthquakeDetected}
                   earthquakeCenter={earthquakeCenter}
                   earthquakeDistance={earthquakeDistance}
+                  urlKmz={urlKmz}
                 />
               </Grid>
               <Grid item xs={12}>

@@ -71,9 +71,11 @@ const PriorityProperties: React.FC<EarthquakePropertyProps> = ({earthquakeProper
   }, [])
 
   useEffect(() => {
-    setPropertiesList(properties || [])
+
     if(earthquakeDetected){
-      console.log(earthquakeProperties)
+      setPropertiesList(earthquakeProperties || [])
+    }else{
+      setPropertiesList(properties || [])
     }
   }, [properties, earthquakeProperties, earthquakeDetected])
 
@@ -114,7 +116,7 @@ const PriorityProperties: React.FC<EarthquakePropertyProps> = ({earthquakeProper
         <ColumnHeader colDef={colDef} />
       ),
       renderCell: ({ row }) => (
-        <Typography sx={{ color: colors.primary.main, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
+        <Typography sx={{ color: colors.primary.main, fontSize: fonts.size.px14, fontFamily: fonts.inter, cursor: 'pointer' }}>
           <Link
             onClick={() => {
               seeDetails(row.keyDepe)
