@@ -361,7 +361,7 @@ const FormHeader = ({
         const userName = lastAction[0].idUser.username
         const fullName = `${lastAction[0].idUser.name || 'unknown name'} ${lastAction[0].idUser.surname || ''}`
 
-        setLastUserName(userName || fullName.trim())
+        setLastUserName(fullName.trim() || userName)
       }
     }
   }, [accountDetails])
