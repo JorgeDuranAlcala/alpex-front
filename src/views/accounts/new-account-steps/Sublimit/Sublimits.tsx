@@ -324,13 +324,17 @@ const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
   // * END -  Actualizar los datos del formulario en Redux + + + + + + + + + + + + + +
 
   useEffect(() => {
+    getAllCoverages()
     if (coverageSelected.length === 0) {
       const coveragesFiltered = coverages.filter((elemento: any) => { return subLimits.some(filtroItem => filtroItem.idCCoverage.id === elemento.id) });
-      getAllCoverages()
+
       setCoverageSelected(coveragesFiltered)
 
     }
   }, [subLimits])
+
+  // console.log(coverageSelected);
+
 
   return (
     <CardContent>
