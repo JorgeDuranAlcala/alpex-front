@@ -19,34 +19,61 @@ import ApexChartWrapper from 'src/@core/styles/libs/react-apexcharts';
 import { IEarthquakeDetailDto } from '@/services/dynamic-data/dtos/dashboard.dto';
 import { IProperty } from '@/services/dynamic-data/dtos/propertyListing.dto';
 
+//services imports
+import DashboardMockService from '@/services/dynamic-data/dashboard.mock-service';
+
+
 const DynamicDataDashboard = () => {
 
-  // const[hurricaneDetails, setHurricaneDetails] = useState(false)
+  const [earthquakeCenter, setEarthquakeCenter] = useState('')
+  const [earthquakeDistance, setEarthquakeDistance] = useState<number>(0)
   const [earthquakeDetected, setEarthquakeDetected] = useState(false)
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [earthquakeDetail, setEarthquakeDetail] = useState<IEarthquakeDetailDto>({
-    magnitud: ' ',
-    depht: ' ',
+    magnitude: '',
+    depth: ' ',
     epicenter: ' ',
-    coordinates: ' ',
+    coordinatesCenter: ' ',
     dateTime: ' '
   })
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
   const [earthquakeProperties, setEarthquakeProperties] = useState<IProperty[]>([{
-    crestZone: '',
-    institution: '',
-    keyDepe: '',
-    latitude: '',
-    longitude: '',
+    crestZone:'',
+    institution:'',
+    keyDepe:'',
+    latitude:'',
+    longitude:'',
     province: '',
-    state: '',
-    valfisValue: '',
+    state:'',
+    valfisValue: ''
   }])
 
+  const setEarthquakeDetection = async () => {
+    const data = await DashboardMockService.getEarthquakesMockData()
+
+
+    if (!data) return
+
+    const newEartquakeDetails = {
+      magnitude:data.earthquake[0].magnitude || ' ',
+      depth: data.earthquake[0].depth || ' ',
+      epicenter:data.earthquake[0].epicenter || ' ',
+      coordinatesCenter:data.earthquake[0].coordinatesCenter || ' ',
+      dateTime: data.earthquake[0].dateTime || ' '
+    }
+
+    setEarthquakeCenter(data.earthquake[0].coordinatesCenter)
+    setEarthquakeDistance(data.earthquake[0].distance)
+    setEarthquakeDetected(data.isDetected)
+    setEarthquakeDetail(newEartquakeDetails)
+    setEarthquakeProperties(data.buildings)
+  }
 
   useEffect(() => {
-    setEarthquakeDetected(true)
+    // setEarthquakeDetected(true)
+    const time = setInterval(setEarthquakeDetection, 100000);
+
+    return () => clearTimeout(time)
   }, [])
 
   return (
@@ -89,6 +116,8 @@ const DynamicDataDashboard = () => {
                 <PropertiesMap
                   earthquakeProperties={earthquakeProperties}
                   earthquakeDetected={earthquakeDetected}
+                  earthquakeCenter={earthquakeCenter}
+                  earthquakeDistance={earthquakeDistance}
                 />
               </Grid>
               <Grid item xs={12}>

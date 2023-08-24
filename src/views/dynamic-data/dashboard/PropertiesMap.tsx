@@ -23,10 +23,17 @@ import { useGetPriorityProperties } from '@/hooks/dynamic-data/dashboard';
 
 type EarthquakePropertyProps = {
   earthquakeProperties: IProperty[],
-  earthquakeDetected: boolean
+  earthquakeDetected: boolean,
+  earthquakeCenter: string,
+  earthquakeDistance: number
 }
 
-const PropertiesMap: React.FC<EarthquakePropertyProps> = ({earthquakeProperties, earthquakeDetected}) => {
+const PropertiesMap: React.FC<EarthquakePropertyProps> = ({
+  earthquakeProperties,
+  earthquakeDetected,
+  earthquakeCenter,
+  earthquakeDistance
+}) => {
 
   const { propertyPagination, setPropertyPagination, properties } = useGetPriorityProperties()
   const mapRef = useRef<HTMLDivElement>(null)
@@ -84,6 +91,8 @@ const PropertiesMap: React.FC<EarthquakePropertyProps> = ({earthquakeProperties,
     setPropertiesList(properties || [])
     if(earthquakeDetected){
       console.log(earthquakeProperties)
+      console.log(earthquakeCenter)
+      console.log(earthquakeDistance)
     }
   }, [properties, earthquakeProperties, earthquakeDetected])
 

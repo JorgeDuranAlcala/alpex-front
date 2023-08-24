@@ -11,7 +11,7 @@ import Icon from 'src/@core/components/icon'
  import { IEarthquakeDetailDto } from '@/services/dynamic-data/dtos/dashboard.dto'
 
 //services imports
-import DashboardMockService from '@/services/dynamic-data/dashboard.mock-service'
+// import DashboardMockService from '@/services/dynamic-data/dashboard.mock-service'
 
 // Custom Hooks
 // import { useGetTotalInvestment } from '@/hooks/dynamic-data/dashboard'
@@ -27,33 +27,33 @@ const EarthquakeDetails: React.FC<EarthquakeDetailProps> = ({earthquakeData, ear
   // const { getTotalInvestment } = useGetTotalInvestment()
 
   const [detailsData, setDetailsData] = useState({
-    magnitud: ' ',
-    depht: ' ',
+    magnitude: ' ',
+    depth: ' ',
     epicenter: ' ',
-    coordinates: ' ',
+    coordinatesCenter: ' ',
     dateTime: ' '
   })
 
-  const setDataInformation = async () => {
-    const data = await DashboardMockService.getEarthquakesDetails()
+  // const setDataInformation = async () => {
+  //   const data = await DashboardMockService.getEarthquakesDetails()
 
 
-    if (!data) return
+  //   if (!data) return
 
-    const newData = {
-      magnitud: data.magnitud || ' ',
-      depht: data.depht || ' ',
-      epicenter: data.epicenter || ' ',
-      coordinates: data.coordinates || ' ',
-      dateTime: data.dateTime || ' '
-    }
-    setDetailsData(newData)
-  }
+  //   const newData = {
+  //     magnitud: data.magnitud || ' ',
+  //     depht: data.depht || ' ',
+  //     epicenter: data.epicenter || ' ',
+  //     coordinates: data.coordinates || ' ',
+  //     dateTime: data.dateTime || ' '
+  //   }
+  //   setDetailsData(newData)
+  // }
 
   useEffect(() => {
-    setDataInformation()
+    // setDataInformation()
     if(earthquakeDetected){
-      console.log(earthquakeData)
+      setDetailsData(earthquakeData)
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -71,7 +71,7 @@ const EarthquakeDetails: React.FC<EarthquakeDetailProps> = ({earthquakeData, ear
               MAGNITUDE
             </div>
             <div className='details-row'>
-              {detailsData.magnitud}
+              {detailsData.magnitude}
             </div>
           </div>
         </div>
@@ -84,7 +84,7 @@ const EarthquakeDetails: React.FC<EarthquakeDetailProps> = ({earthquakeData, ear
               DEPTH
             </div>
             <div className='details-row'>
-              {detailsData.depht}
+              {detailsData.depth}
             </div>
           </div>
         </div>
@@ -111,7 +111,7 @@ const EarthquakeDetails: React.FC<EarthquakeDetailProps> = ({earthquakeData, ear
               COORDINATES
             </div>
             <div className='details-row'>
-              {detailsData.coordinates}
+              {detailsData.coordinatesCenter}
             </div>
           </div>
 

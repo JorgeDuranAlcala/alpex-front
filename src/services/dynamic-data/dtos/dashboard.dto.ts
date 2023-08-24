@@ -34,9 +34,9 @@ export interface IProperty {
 }
 
 export interface IEarthquakeDetailDto{
-  magnitud: string
-  depht: string
+  magnitude: string
+  depth: string
   epicenter: string
-  coordinates: string
+  coordinatesCenter: string
   dateTime: string
 }
