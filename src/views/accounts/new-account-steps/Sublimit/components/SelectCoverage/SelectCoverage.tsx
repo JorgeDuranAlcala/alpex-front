@@ -100,8 +100,7 @@ const SelectCoverage: FC<SelectCoverageProps> = ({ onChangeSelected, coverageSel
           MenuProps={MenuProps}
           value={''}
           displayEmpty
-
-          // onChange={handleChangeSelect}
+          onChange={handleChangeSelect}
           renderValue={(selected) => {
             if ((selected as unknown as string[]).length === 0) {
               return (
@@ -127,6 +126,10 @@ const SelectCoverage: FC<SelectCoverageProps> = ({ onChangeSelected, coverageSel
               <MenuItem
                 role={undefined}
                 key={index}
+                value={item.coverage}
+                onClick={() => {
+                  onClickToggle(item.id, item.coverage)
+                }}
                 sx={{
                   height: '50px',
                   display: 'flex',
@@ -135,11 +138,6 @@ const SelectCoverage: FC<SelectCoverageProps> = ({ onChangeSelected, coverageSel
                 }}
               >
                 <Checkbox
-                  value={item.coverage}
-                  onClick={() => {
-                    onClickToggle(item.id, item.coverage)
-                  }}
-                  onChange={handleChangeSelect}
                   sx={{
                     width: '24px',
                     height: '24px',
@@ -148,7 +146,6 @@ const SelectCoverage: FC<SelectCoverageProps> = ({ onChangeSelected, coverageSel
                       color: '#2535A8'
                     },
                   }}
-
                   checked={false}
                   tabIndex={-1}
                   disableRipple

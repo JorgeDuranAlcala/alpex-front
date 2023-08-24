@@ -118,6 +118,8 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [subLimit])
 
+  // console.log("Holaa", subLimitCard);
+
   return (
     <ContainerCard>
       <HeaderCard className='sublimits-generic-card-header' sx={{ padding: '5px 10px 5px 26px' }}>
@@ -148,8 +150,6 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
           subLimit={subLimitCard}
           onHandleChangeSubLimit={handleChangeSubLimit}
           isNotYesLuc={!getCoverageTypeByTitle(subLimitCard.title)?.yesAndLuc || false}
-
-          // isNotYesLuc={DONT_SHOW_YES_LUC.includes(subLimitCard.title)}
           errorCard={errorCard}
           showErrors={showErrors}
           subLimits={subLimits}
