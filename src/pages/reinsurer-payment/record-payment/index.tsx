@@ -37,14 +37,17 @@ const Accordion = styled((props: AccordionProps) => <MuiAccordion disableGutters
 )
 
 const AccordionSummary = styled((props: AccordionSummaryProps) => (
-  <MuiAccordionSummary expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: '0.9rem' }} />} {...props} />
+  <MuiAccordionSummary
+    expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: '0.9rem', transform: 'rotate(90deg)' }} />}
+    {...props}
+  />
 ))(() => ({
   backgroundColor: '#FFFFFF',
   borderStyle: 'none',
   boxShadow: 'none',
   flexDirection: 'row-reverse',
   '& .MuiAccordionSummary-expandIconWrapper.Mui-expanded': {
-    transform: 'rotate(90deg)'
+    transform: 'rotate(180deg)'
   },
   '& .MuiAccordionSummary-content': {
     marginLeft: '0'

@@ -49,6 +49,10 @@
   display: none;
 }
 
+.properties-datagrid .MuiDataGrid-footerContainer {
+  display: none;
+}
+
 /*------------------ Property Details Styles  --------------*/
 
 .detail-table-wrapper {
@@ -206,4 +210,21 @@
 /*------------------ Map Styles  --------------*/
 .full-map-grid {
   padding-top: 0 !important;
+}
+
+.state-map .gm-fullscreen-control {
+  display: none;
+}
+
+.close-state-map {
+  position: absolute;
+  top: 13px;
+  right: 13px;
+  padding: 4px 16px;
+  background-color: white;
+  font-size: 25px;
+  border-radius: 50%;
+  -webkit-box-shadow: 0px 5px 8px -1px rgba(0, 0, 0, 0.67);
+  -moz-box-shadow: 0px 5px 8px -1px rgba(0, 0, 0, 0.67);
+  box-shadow: 0px 5px 8px -1px rgba(0, 0, 0, 0.67);
 }

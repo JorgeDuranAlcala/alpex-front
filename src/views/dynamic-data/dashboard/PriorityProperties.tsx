@@ -38,7 +38,12 @@ export enum EFieldColumn {
   CRESTA_ZONE = 'crestazone'
 }
 
-const PriorityProperties = () => {
+type EarthquakePropertyProps = {
+  earthquakeProperties: IProperty[],
+  earthquakeDetected: boolean
+}
+
+const PriorityProperties: React.FC<EarthquakePropertyProps> = ({earthquakeProperties, earthquakeDetected}) => {
   // ** State
   const { propertyPagination, setPropertyPagination, properties } = useGetPriorityProperties()
 
@@ -66,8 +71,13 @@ const PriorityProperties = () => {
   }, [])
 
   useEffect(() => {
-    setPropertiesList(properties || [])
-  }, [properties])
+
+    if(earthquakeDetected){
+      setPropertiesList(earthquakeProperties || [])
+    }else{
+      setPropertiesList(properties || [])
+    }
+  }, [properties, earthquakeProperties, earthquakeDetected])
 
   useEffect(() => {
     setLoading(true);
@@ -106,7 +116,7 @@ const PriorityProperties = () => {
         <ColumnHeader colDef={colDef} />
       ),
       renderCell: ({ row }) => (
-        <Typography sx={{ color: colors.primary.main, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
+        <Typography sx={{ color: colors.primary.main, fontSize: fonts.size.px14, fontFamily: fonts.inter, cursor: 'pointer' }}>
           <Link
             onClick={() => {
               seeDetails(row.keyDepe)

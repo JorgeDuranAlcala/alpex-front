@@ -21,24 +21,41 @@ import { IProperty } from '@/services/dynamic-data/dtos/propertyListing.dto';
 //** Hooks imports */
 import { useGetPriorityProperties } from '@/hooks/dynamic-data/dashboard';
 
+type EarthquakePropertyProps = {
+  earthquakeProperties: IProperty[],
+  earthquakeDetected: boolean,
+  earthquakeCenter: string,
+  earthquakeDistance: number,
+  urlKmz: string
+}
 
-const PropertiesMap = () => {
+const PropertiesMap: React.FC<EarthquakePropertyProps> = ({
+  earthquakeProperties,
+  earthquakeDetected,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  earthquakeCenter,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  earthquakeDistance,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  urlKmz
+}) => {
 
   const { propertyPagination, setPropertyPagination, properties } = useGetPriorityProperties()
   const mapRef = useRef<HTMLDivElement>(null)
   const map = useRef<google.maps.Map | null>(null)
   const mapEnabledRef = useRef<boolean>(false)
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [markersAdded, setMarkersAdded] = useState<boolean>(false);
+
+   const circle = useRef<google.maps.Circle | null>(null);
+
+  // const kmlImg = useRef<google.maps.KmlLayer | null>(null);
 
   const [propertiesList, setPropertiesList] = useState<IProperty[]>([])
 
-  const [googleApi, setGoogleApi] = useState<typeof google | null>(null);
+  // const [googleApi, setGoogleApi] = useState<typeof google | null>(null);
 
-    // ** Hooks
-    const router = useRouter()
+  // ** Hooks
+  const router = useRouter()
 
-  // const geocoder = useRef<google.maps.Geocoder | null>(null)
 
   const handleMapClick = (event: google.maps.MapMouseEvent) => {
     if (mapEnabledRef.current) {
@@ -52,10 +69,7 @@ const PropertiesMap = () => {
         version: 'weekly'
       })
 
-      // const google = await loader.load()
-
       const googleInstance = await loader.load();
-      setGoogleApi(googleInstance);
 
       if (mapRef.current) {
         map.current = new googleInstance.maps.Map(mapRef.current, {
@@ -64,12 +78,70 @@ const PropertiesMap = () => {
         })
 
         map.current.addListener('click', handleMapClick)
-      }
 
+
+        if (propertiesList.length > 0) {
+
+          propertiesList.map((property) => {
+            const latitude = parseFloat(property.latitude.replace(",", "."));
+            const longitude = parseFloat(property.longitude.replace(",", "."));
+
+            if (!isNaN(latitude) && !isNaN(longitude)) {
+              const marker = new googleInstance.maps.Marker({
+                position: { lat: latitude, lng: longitude },
+                map: map.current,
+                title: property.institution,
+              });
+
+              marker.addListener("click", () => {
+                console.log(property.keyDepe);
+                router.push(`/dynamic-data/property-listing/property-details/?&idProperty=${property.keyDepe}`)
+              });
+
+              return marker
+            }
+
+            return null
+          });
+
+
+        }
+
+        if (earthquakeDetected) {
+          const [centerLatStr, centerLngStr] = earthquakeCenter.split(",");
+          const centerLat = parseFloat(centerLatStr);
+          const centerLng = parseFloat(centerLngStr);
+
+          const circleCoords = {
+            center: { lat: centerLat, lng: centerLng },
+            distance: earthquakeDistance * 1000
+          };
+
+          circle.current = new googleInstance.maps.Circle({
+            strokeColor: '#f00',
+            strokeOpacity: 0.18,
+            strokeWeight: 1,
+            fillColor: '#f00',
+            fillOpacity: 0.15,
+            map: map.current,
+            center: circleCoords.center,
+            radius: circleCoords.distance,
+          });
+        }
+
+        // if (earthquakeDetected) {
+        //   kmlImg.current = new google.maps.KmlLayer({
+        //     url: urlKmz,
+        //     map: map.current,
+        //   });
+        // }
+
+
+      }
     }
 
     loadMap()
-  }, [])
+  }, [propertiesList, earthquakeDetected])
 
   useEffect(() => {
     setPropertyPagination({ ...propertyPagination })
@@ -77,51 +149,58 @@ const PropertiesMap = () => {
   }, [])
 
   useEffect(() => {
-    setPropertiesList(properties || [])
-  }, [properties])
 
- useEffect(() => {
-  if (propertiesList.length > 0 && !markersAdded && googleApi !== null) {
+    if (earthquakeDetected) {
+      setPropertiesList(earthquakeProperties || [])
+    } else {
+      setPropertiesList(properties || [])
+    }
+  }, [properties, earthquakeProperties, earthquakeDetected])
 
-    propertiesList.map((property) => {
-      const latitude = parseFloat(property.latitude.replace(",", "."));
-      const longitude = parseFloat(property.longitude.replace(",", "."));
+  //  useEffect(() => {
+  //   console.log('properties list')
+  //   console.log(propertiesList)
+  //   if (propertiesList.length > 0 && !markersAdded && googleApi !== null) {
 
-      if (!isNaN(latitude) && !isNaN(longitude)) {
-        const marker = new googleApi.maps.Marker({
-          position: { lat: latitude, lng: longitude },
-          map: map.current,
-          title: property.institution,
-        });
+  //     propertiesList.map((property) => {
+  //       const latitude = parseFloat(property.latitude.replace(",", "."));
+  //       const longitude = parseFloat(property.longitude.replace(",", "."));
 
-        marker.addListener("click", () => {
-          console.log(property.keyDepe);
-          router.push(`/dynamic-data/property-listing/property-details/?&idProperty=${property.keyDepe}`)
-        });
+  //       if (!isNaN(latitude) && !isNaN(longitude)) {
+  //         const marker = new googleApi.maps.Marker({
+  //           position: { lat: latitude, lng: longitude },
+  //           map: map.current,
+  //           title: property.institution,
+  //         });
 
-        return marker
-      }
+  //         marker.addListener("click", () => {
+  //           console.log(property.keyDepe);
+  //           router.push(`/dynamic-data/property-listing/property-details/?&idProperty=${property.keyDepe}`)
+  //         });
 
-      return null
-    });
+  //         return marker
+  //       }
 
-    // Markers added true
-    console.log("se va a setear el add markers")
-    setMarkersAdded(true);
-  }
-  }, [propertiesList, markersAdded]);
+  //       return null
+  //     });
+
+  //     // Markers added true
+  //     console.log("se va a setear el add markers")
+  //     setMarkersAdded(true);
+  //   }
+  //   }, [propertiesList, markersAdded, earthquakeDetected]);
 
   return (
 
     <Card>
-     <MapContainer>
+      <MapContainer>
 
-        <div style={{ borderRadius: '8px', height: '500px'}}>
+        <div style={{ borderRadius: '8px', height: '500px' }}>
           <div ref={mapRef} style={{ width: '100%', minHeight: '500px' }} />
         </div>
       </MapContainer>
 
-   </Card>
+    </Card>
 
   )
 }

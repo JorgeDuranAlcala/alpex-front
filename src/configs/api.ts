@@ -20,7 +20,8 @@ export enum ACCOUNT_ROUTES {
   DELETE = 'account/delete',
   DUPLICATE = 'account/duplicate',
   UPDATE_STATUS = 'account/update-status',
-  GET_LAST_BY_ID_BROKER = 'account/broker'
+  GET_LAST_BY_ID_BROKER = 'account/broker',
+  UPDATE_TYPE_LOGO = 'account/update-typelogo'
 }
 
 //Comentario
@@ -304,7 +305,8 @@ export enum DEBIT_NOTE_ROUTES {
 
 export enum DATA_DASHBOARD_ROUTES {
   GET_PRIORITY_PROPERTIES = 'buildings/all',
-  GET_CAPACITY_PER_STATES='buildings/top-five'
+  GET_CAPACITY_PER_STATES='buildings/top-five',
+  GET_EARTHQUAKES_DATA='data/earthquakes/earthquake-detected'
 }
 
 export enum DATA_MAPS_ROUTES {

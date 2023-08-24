@@ -353,7 +353,7 @@ const InstallmentHeader = ({
                       <Grid
                         container
                         spacing={{ xs: 3, sm: 3, md: 3 }}
-                        sx={{ display: 'flex', justifyContent: 'space-between' }}
+                        sx={{ display: 'flex', justifyContent: 'space-between', gap: '10px' }}
                       >
                         <Grid item xs={12} sm={2} md={1.2}>
                           <div className='form-secondContainer-second'>

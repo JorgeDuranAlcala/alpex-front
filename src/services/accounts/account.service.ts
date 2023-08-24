@@ -5,7 +5,7 @@ import { ACCOUNT_ROUTES } from '@/configs/api'
 import { ResponseGetAccount } from '@/hooks/accounts/forms/useGetById'
 import { queryBuilder } from '@/services/helper/queryBuilder'
 import { IAccountsState } from '@/types/apps/accountsTypes'
-import { UpdateStatusArrayDto } from './dtos/account.dto'
+import { UpdateStatusArrayDto, UpdateTypeLogoDto } from './dtos/account.dto'
 
 /**
  *  service responsible of the  account methods
@@ -102,6 +102,17 @@ class AccountServices {
   async getLastAccountByIdBroker(idBroker: number) {
     try {
       const { data } = await AppAlpexApiGateWay.get(`${ACCOUNT_ROUTES.GET_LAST_BY_ID_BROKER}/${idBroker}`)
+
+      return data
+    } catch (error) {
+      const message = String(error)
+      throw new Error(message)
+    }
+  }
+
+  async updateTypeLogo(updateTypeLogo: UpdateTypeLogoDto) {
+    try {
+      const { data } = await AppAlpexApiGateWay.post(ACCOUNT_ROUTES.UPDATE_TYPE_LOGO, updateTypeLogo)
 
       return data
     } catch (error) {

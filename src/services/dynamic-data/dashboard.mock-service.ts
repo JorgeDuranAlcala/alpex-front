@@ -73,9 +73,6 @@ class DashboardMockServices {
       const { data } = await AppAlpexApiGateWay.get(DATA_DASHBOARD_ROUTES.GET_CAPACITY_PER_STATES)
 
       return data
-
-
-
     } catch (error) {
       const message = String(error)
       throw new Error(message)
@@ -119,17 +116,95 @@ class DashboardMockServices {
     }
   }
 
-  async getEarthquakesDetails() {
+  async getEarthquakesData() {
     try {
-     const data = {
-      magnitud: '8.2',
-    depht: '10 km',
-    epicenter: '140 km al Suroeste de Pijijiapan Chis. ',
-    coordinates: 'Lat 14.761  Long -94.103',
-    dateTime: '2017/09/07 23:49'
-     }
+      const { data } = await AppAlpexApiGateWay.get(DATA_DASHBOARD_ROUTES.GET_EARTHQUAKES_DATA)
 
       return data
+
+    } catch (error) {
+      const message = String(error)
+      throw new Error(message)
+    }
+  }
+
+  async getEarthquakesMockData() {
+    try {
+      const data = {
+        isDetected: true,
+        buildings: [
+            {
+                id: 14,
+                keyDepe: "01018_7_13",
+                valfisValue: "9178000.00",
+                latitude: "14,906961",
+                longitude: "-92,26361",
+                state: "Chiapas",
+                province: "Tapachula",
+                institution: "EDIFICACION",
+                crestZone: ""
+            },
+            {
+                id: 31,
+                keyDepe: "01044_32",
+                valfisValue: "10604120.00",
+                latitude: "16,72726758",
+                longitude: "-92,63937332",
+                state: "Chiapas",
+                province: "San Cristóbal de las Casas",
+                institution: "EDIFICACION",
+                crestZone: ""
+            },
+            {
+                id: 34,
+                keyDepe: "null",
+                valfisValue: "10686396.00",
+                latitude: "16,75452014",
+                longitude: "-93,08108451",
+                state: "Chiapas",
+                province: "Tuxtla Gutiérrez",
+                institution: "EDIFICACION",
+                crestZone: ""
+            },
+            {
+                id: 73,
+                keyDepe: "03003_31367",
+                valfisValue: "1453057.06",
+                latitude: "16,653611",
+                longitude: "-94,680833",
+                state: "Oaxaca",
+                province: "San Miguel Chimalapa",
+                institution: "PRIMARIA",
+                crestZone: ""
+            },
+            {
+                id: 74,
+                keyDepe: "03003_31367",
+                valfisValue: "2418800.30",
+                latitude: "15,877222",
+                longitude: "-96,200278",
+                state: "Oaxaca",
+                province: "San Miguel del Puerto",
+                institution: "PRIMARIA",
+                crestZone: ""
+            }
+        ],
+        earthquake: [
+            {
+                coordinatesCenter: "14.81,-94.15",
+                depth: "16.1",
+                magnitude: "6.5",
+                epicenter: "140 km al SUROESTE de  PIJIJIAPAN, CHIS",
+                dateTime: "2023-08-22",
+                urlKmz: "http://www2.ssn.unam.mx:8080/recursos/imagenes/mapas-de-intensidades/2023/20230714092900A_1/20230714092900A_1.kmz",
+                furthestStation: "16.281855,-92.136919",
+                distance: 270.7197975672411
+            }
+        ]
+    }
+
+      return data
+
     } catch (error) {
       const message = String(error)
       throw new Error(message)

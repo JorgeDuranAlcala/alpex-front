@@ -2,6 +2,7 @@ import { Box, Button, Checkbox, CircularProgress, FormControlLabel, Radio, Radio
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 
 import { useCreateCoverage } from '@/hooks/catalogs/coverage/useCreate';
+import { ContainerCheckbox } from './FormAddNewCoverageStyles';
 
 const FormStyled = styled('form')(() => ({
   display: 'flex',
@@ -94,8 +95,13 @@ export const FormAddNewCoverage = ({ onCreated, onCancel }: FormAddNewCoveragePr
         error={!!errorMessage}
         helperText={errorMessage}
         sx={{ height: '75px' }}
+        required
       />
-      <FormControlLabel name="yesAndLuc" control={<Checkbox />} label="Yes/Luc" />
+      <ContainerCheckbox>
+
+        <Checkbox name="yesAndLuc" />
+        Yes/Luc
+      </ContainerCheckbox>
       <RadioGroup
         aria-labelledby="demo-radio-buttons-group-label"
         defaultValue="Business Interruption"
@@ -132,3 +138,5 @@ export const FormAddNewCoverage = ({ onCreated, onCancel }: FormAddNewCoveragePr
     </FormStyled>
   )
 }
+
+// control={<Checkbox />} label="Yes/Luc"
