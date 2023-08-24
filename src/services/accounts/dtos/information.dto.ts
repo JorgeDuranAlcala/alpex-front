@@ -45,6 +45,7 @@ export interface InformationDto {
   idAccountType: number
   premiumWithTaxes: number
   premiumWithOutDiscounts: number
+  typeLogo: number | null
   idEndorsement?: number | null
 }
 
@@ -195,6 +196,7 @@ export interface InformationResponse {
   idUnderwriter: number | null | string
   idTechnicalAssistant: number | null | string
   idAccountType: number
+  typeLogo: number | null
 }
 
 export interface AccountHistory {
