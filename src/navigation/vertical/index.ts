@@ -9,7 +9,7 @@ const navigation = (): VerticalNavItemsType => {
       icon: 'ic:baseline-dashboard',
       path: '/dashboards/crm',
       subject: 'dashboard',
-      action:'read',
+      action: 'read',
     },
     {
       title: 'Accounts',
@@ -17,50 +17,50 @@ const navigation = (): VerticalNavItemsType => {
       externalLink: true,
       path: '/accounts',
       subject: 'account',
-      action:'read',
+      action: 'read',
       children: [
         {
           title: 'All',
           icon: 'ion:file-tray-stacked',
           path: '/accounts',
           subject: 'account',
-          action:'viewAllAccounts',
+          action: 'viewAllAccounts',
         },
         {
           title: 'Pending',
           icon: 'mdi:clock',
           path: '/accounts/pending',
           subject: 'account',
-          action:'viewPendingAccounts',
+          action: 'viewPendingAccounts',
         },
         {
           title: 'Not Materialized',
           icon: 'mdi:progress-helper',
           path: '/accounts/not-materialized',
           subject: 'account',
-          action:'viewNotMaterializedAccounts',
-        
+          action: 'viewNotMaterializedAccounts',
+
         },
         {
           title: 'Not Taken Up',
           icon: 'custom:not-taken-up',
           path: '/accounts/not-taken-up',
           subject: 'account',
-          action:'viewNotTakenUpAccounts',
+          action: 'viewNotTakenUpAccounts',
         },
         {
           title: 'Declined',
           icon: 'mdi:cancel',
           path: '/accounts/declined',
           subject: 'account',
-          action:'viewDeclinedAccounts',
+          action: 'viewDeclinedAccounts',
         },
         {
           title: 'Bound',
           icon: 'icon-park-outline:link-three',
           path: '/accounts/bound',
           subject: 'account',
-          action:'viewBoundAccounts',
+          action: 'viewBoundAccounts',
         }
       ]
     },
@@ -75,21 +75,21 @@ const navigation = (): VerticalNavItemsType => {
           icon: 'ic:assignment-turned-in',
           path: '/installments',
           subject: 'payments',
-          action:'viewInstallmentsPayment',
+          action: 'viewInstallmentsPayment',
         },
         {
           title: 'Brocker Tracker',
           icon: 'mdi:text-search',
           path: '/broker-tracker',
           subject: 'payments',
-          action:'viewBrokerTrackerPayment',
+          action: 'viewBrokerTrackerPayment',
         },
         {
           title: 'Reinsurer Payment',
           icon: 'material-symbols:mobiledata-off',
           path: '/reinsurer-payment',
           subject: 'payments',
-          action:'viewReinsurerPayment',
+          action: 'viewReinsurerPayment',
         },
         {
           title: 'List',
@@ -105,6 +105,37 @@ const navigation = (): VerticalNavItemsType => {
           title: 'Add'
         }
       ]
+    },
+    {
+      title: 'ARAP',
+      icon: 'ic:round-calculate',
+      subject: 'arap',
+      action: 'read',
+      children: [
+        {
+          title: 'Overview',
+          icon: 'la:signal',
+
+          // icon: 'healthicons:high-bars-negative',
+          path: '/arap/overview',
+          subject: 'arap',
+          action: 'viewOverviewArap',
+        },
+        {
+          title: 'Payables',
+          icon: 'ph:minus-fill',
+          path: '/arap/payables',
+          subject: 'arap',
+          action: 'viewPayablesArap',
+        },
+        {
+          title: 'Receivables',
+          icon: 'ph:plus-fill',
+          path: '/arap/receivables',
+          subject: 'arap',
+          action: 'viewReceivablesArap',
+        },
+      ],
     },
     {
       title: 'Renewals',
@@ -155,19 +186,19 @@ const navigation = (): VerticalNavItemsType => {
       icon: 'mdi:user-group',
       path: '/users',
       subject: 'users',
-      action:'read',
+      action: 'read',
     },
     {
       title: 'Catalogues',
       icon: 'ic:sharp-menu-book',
       subject: 'catalogues',
-      action:'read',
+      action: 'read',
       children: [
         {
           title: 'Dynamic',
           path: '/catalogues/dynamic',
           subject: 'catalogues',
-          action:'viewDynamicCatalogues',
+          action: 'viewDynamicCatalogues',
 
           // path: '/apps/invoice/list'
         },
@@ -202,14 +233,14 @@ const navigation = (): VerticalNavItemsType => {
       title: 'Dynamic Data',
       icon: 'custom:dynamic-data',
       subject: 'dynamicData',
-      action:'read',
+      action: 'read',
       children: [
         {
           title: 'Dashboard',
           icon: 'ic:baseline-dashboard',
           path: '/dynamic-data/dashboard',
           subject: 'dynamicData',
-          action:'viewDashboardData',
+          action: 'viewDashboardData',
         },
         {
           title: 'Property listing',
