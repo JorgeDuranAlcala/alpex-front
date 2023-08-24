@@ -156,7 +156,7 @@ const ActionsHeader: React.FC<IActionsHeaderProps> = ({ accountId, accountStatus
                 onClick={() => {
                   setOpenHistory(true)
                 }}
-                disabled={uneditableAccount || !accountId}
+                disabled={uneditableAccount}
               >
                 <Icon icon='mdi:clock-outline' />
               </ButtonIcon>
@@ -201,7 +201,7 @@ const ActionsHeader: React.FC<IActionsHeaderProps> = ({ accountId, accountStatus
                 onClick={() => {
                   setShowPrintOptions(!showPrintOptions)
                 }}
-                disabled={uneditableAccount || !accountId}
+                disabled={uneditableAccount}
               >
                 <div className='btn-icon'>
                   <Icon icon='mdi:printer' />
@@ -236,7 +236,7 @@ const ActionsHeader: React.FC<IActionsHeaderProps> = ({ accountId, accountStatus
                 onClick={() => {
                   setOpenDelete(true)
                 }}
-                disabled={uneditableAccount || !accountId}
+                disabled={uneditableAccount}
               >
                 <div className='btn-icon'>
                   <Icon icon='mdi:delete-outline' />

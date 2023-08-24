@@ -73,7 +73,7 @@ const DataSheet = () => {
                   </Grid>
                 </Grid>
               </div>
-              <div className='title-installment'>Placemnet Structure</div>
+              <div className='title-installment'>Placement Structure</div>
               <div className='wrapper-installments'>
                 <Grid container spacing={{ xs: 3, sm: 3, md: 3 }}>
                   <Grid item xs={12} md={4} sm={6}>

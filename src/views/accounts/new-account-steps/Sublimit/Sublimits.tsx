@@ -21,6 +21,7 @@ import CheckIcon from '@mui/icons-material/Check'
 
 // import useFormStep_updateSublimits from '@/hooks/accounts/forms/stepForms/update/useFormStep_updateSublimits'
 
+import { useGetAllCoverage } from '@/hooks/catalogs/coverage'
 import { useRouter } from 'next/router'
 import { DisableForm } from '../_commons/DisableForm'
 
@@ -94,6 +95,8 @@ const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
     open: false,
     status: 'error'
   })
+
+  const { coverages, getAllCoverages } = useGetAllCoverage();
 
   const [formInformationData, setFormInformationData] = useState<any>({}) //formInformationData
   const [subLimits, setSubLimits] = useState<SublimitDto[]>([])
@@ -320,6 +323,14 @@ const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
 
   // * END -  Actualizar los datos del formulario en Redux + + + + + + + + + + + + + +
 
+  useEffect(() => {
+    if (coverageSelected.length === 0) {
+      const coveragesFiltered = coverages.filter((elemento: any) => { return subLimits.some(filtroItem => filtroItem.idCCoverage.id === elemento.id) });
+      getAllCoverages()
+      setCoverageSelected(coveragesFiltered)
+
+    }
+  }, [subLimits])
 
   return (
     <CardContent>
