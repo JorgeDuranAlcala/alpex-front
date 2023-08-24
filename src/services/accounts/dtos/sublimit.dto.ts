@@ -27,4 +27,7 @@ export interface SublimitDto {
   idEndorsement: number | null
   title: string
   idAccount: number
+  coverageTypeName?: string
+  coverageTypeI?: number | any
+
 }

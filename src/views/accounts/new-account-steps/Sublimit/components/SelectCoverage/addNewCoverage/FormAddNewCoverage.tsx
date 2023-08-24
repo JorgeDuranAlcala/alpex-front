@@ -20,9 +20,10 @@ const ActionButtonsContainer = styled(Box)(() => ({
 interface FormAddNewCoverageProps {
   onCreated: () => void;
   onCancel: () => void;
+  idAccount: number | any;
 }
 
-export const FormAddNewCoverage = ({ onCreated, onCancel }: FormAddNewCoverageProps) => {
+export const FormAddNewCoverage = ({ onCreated, onCancel, idAccount }: FormAddNewCoverageProps) => {
   const { status, createCoverage } = useCreateCoverage();
 
   // console.log(status, createCoverage);
@@ -51,6 +52,7 @@ export const FormAddNewCoverage = ({ onCreated, onCancel }: FormAddNewCoveragePr
 
       const yesAndLuc = yesAndLucCheckbox.checked;
       const coverageType = coverageTypeRadio.value;
+      const accountId = idAccount
 
       // console.log(coverage, yesAndLuc, coverageType);
 
@@ -58,6 +60,7 @@ export const FormAddNewCoverage = ({ onCreated, onCancel }: FormAddNewCoveragePr
         coverage,
         yesAndLuc,
         coverageType,
+        accountId
       });
     }
   }
