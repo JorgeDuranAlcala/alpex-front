@@ -3,9 +3,9 @@ import { AppAlpexApiGateWay } from 'src/services/app.alpex.api-getway'
 import { CoverageDto, CoverageInputDto } from 'src/services/catalogs/dtos/coverage.dto'
 
 class CedantService {
-  async getAll(): Promise<CoverageDto[]> {
+  async getAll(accountId: string | number): Promise<CoverageDto[]> {
     try {
-      const { data } = await AppAlpexApiGateWay.get<Promise<CoverageDto[]>>(COVERAGE_ROUTES.GET_ALL)
+      const { data } = await AppAlpexApiGateWay.get<Promise<CoverageDto[]>>(COVERAGE_ROUTES.GET_ALL + accountId)
 
       return data
     } catch (error) {

@@ -118,7 +118,7 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [subLimit])
 
-  // console.log("Holaa", subLimitCard);
+  // console.log("->", subLimitCard, selectedCoverages);
 
   return (
     <ContainerCard>
@@ -155,7 +155,7 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
           subLimits={subLimits}
         />
 
-        {getCoverageTypeByTitle(subLimitCard.title)?.coverageTypeId.name === coverageTypes.special || getCoverageTypeByTitle(subLimitCard.title)?.coverageTypeId.name === coverageTypes.businessInterruption ? (
+        {getCoverageTypeByTitle(subLimitCard.title)?.coverageTypeName === coverageTypes.special || getCoverageTypeByTitle(subLimitCard.title)?.coverageTypeName === coverageTypes.businessInterruption ? (
           <DeductibleMaterialDamage
             subLimit={subLimitCard}
             onHandleChangeSubLimit={handleChangeSubLimit}
@@ -164,7 +164,7 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
           />
         ) : null}
 
-        {getCoverageTypeByTitle(subLimitCard.title)?.coverageTypeId.name === coverageTypes.standard || getCoverageTypeByTitle(subLimitCard.title)?.coverageTypeId.name === coverageTypes.businessInterruption ? (
+        {getCoverageTypeByTitle(subLimitCard.title)?.coverageTypeName === coverageTypes.standard || getCoverageTypeByTitle(subLimitCard.title)?.coverageTypeName === coverageTypes.businessInterruption ? (
           <BusinessInterruption
             subLimit={subLimitCard}
             onHandleChangeSubLimit={handleChangeSubLimit}
