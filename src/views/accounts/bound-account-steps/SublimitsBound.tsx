@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react'
 
 // ** Custom Hooks
 import { useGetAccountById } from '@/hooks/accounts/forms'
-import { useGetAllCoverage } from '@/hooks/catalogs/coverage'
 
 // ** Dtos
 import { SublimitDto } from '@/services/accounts/dtos/sublimit.dto'
@@ -27,6 +26,7 @@ import Icon from 'src/@core/components/icon'
 import { DisableForm } from '@/views/accounts/new-account-steps/_commons/DisableForm'
 
 // ** Nextjs
+import { useGetAllCoverage } from '@/hooks/catalogs/coverage'
 import { useRouter } from 'next/router'
 
 const initialValues: SublimitDto = {
@@ -92,7 +92,7 @@ interface SublimitsProps {
 
 const Sublimits = ({ onStepChange, disableSectionCtrl }: SublimitsProps) => {
 
-  const { coverages, getAllCoverages } = useGetAllCoverage();
+
 
   const router = useRouter()
   const idAccountRouter = Number(router?.query?.idAccount)
@@ -104,12 +104,14 @@ const Sublimits = ({ onStepChange, disableSectionCtrl }: SublimitsProps) => {
   const [showErrors, setShowErrors] = useState<boolean>(false)
   const [formErrors, setFormErrors] = useState<boolean[]>([])
 
-  // Redux
+  //* Redux
   const endorsementData = useAppSelector(state => state.endorsement.data)
+  const accountData = useAppSelector(state => state.accounts)
   const dispatch = useAppDispatch()
 
-  // Custom hooks
+  //* Custom hooks
   const { account, setAccountId, setAccount } = useGetAccountById()
+  const { coverages, getAllCoverages, setAccountIdCoverage } = useGetAllCoverage();
 
   const handleSelectedCoverage = (coverageSelect: CoverageDto) => {
     setCoverageSelected([...coverageSelected, coverageSelect])
@@ -243,8 +245,11 @@ const Sublimits = ({ onStepChange, disableSectionCtrl }: SublimitsProps) => {
   //? Con esto se cargan los datos para sublimits
   useEffect(() => {
     if (coverageSelected.length === 0) {
+      setAccountIdCoverage(accountData.formsData.form1?.id)
+
+      getAllCoverages(accountData.formsData.form1?.id)
       const coveragesFiltered = coverages.filter((elemento: any) => { return subLimits.some(filtroItem => filtroItem.idCCoverage.id === elemento.id) });
-      getAllCoverages()
+
       setCoverageSelected(coveragesFiltered)
 
     }
@@ -264,6 +269,7 @@ const Sublimits = ({ onStepChange, disableSectionCtrl }: SublimitsProps) => {
               <Grid container spacing={5}>
                 <InputLimit account={account} />
                 <SelectCoverage
+                  idAccount={accountData.formsData.form1?.id}
                   onChangeSelected={handleSelectedCoverage}
                   coverageSelected={coverageSelected}
                   onClickToggle={handleToggle}
