@@ -5,9 +5,9 @@ import UserThemeOptions from 'src/layouts/UserThemeOptions'
 import { EStatus } from 'src/views/accounts/Table/Status'
 
 // ** Custom Hooks
+import { useAddFolder } from '@/hooks/documents/useAddFolder'
 import {
   useAddInformation,
-  useDeleteInformationDocument,
   useFindInformationByIdAccount,
   useGetInfoDoctosByIdAccount,
   useUpdateInformationByIdAccount,
@@ -17,7 +17,7 @@ import {
 import { useAddDiscounts, useUpdateDiscounts } from '@/hooks/accounts/discount'
 
 //Components
-import FileSubmit from './FileSubmit'
+// import FileSubmit from './FileSubmit'
 import PlacementStructure from './PlacementStructure'
 
 // ** MUI Imports
@@ -123,7 +123,8 @@ const Information: React.FC<InformationProps> = ({
   const [makeValidations, setMakeValidations] = useState(false)
   const [makeSaveValidations, setMakeSaveValidations] = useState(false)
   const [disableSave, setDisableSave] = useState(false)
-  const [changeTitle, setChangeTitle] = useState(false)
+
+  // const [changeTitle, setChangeTitle] = useState(false)
   const [discounts, setDiscounts] = useState<DiscountDto[]>([])
 
   // Validaciones
@@ -146,7 +147,9 @@ const Information: React.FC<InformationProps> = ({
   // Save id doctos by file name
   const [doctoIdByName, setDoctoIdByName] = useState({})
   const [userFile, setUserFile] = useState<File[]>([])
-  const [userFileToDelete, setUserFileToDelete] = useState<File>()
+  const [updateInfo, setUpdateInfo] = useState<boolean>(false)
+
+  // const [userFileToDelete, setUserFileToDelete] = useState<File>()
 
   // Store
   const idAccount = useAppSelector(state => state.accounts?.formsData?.form1?.id)
@@ -160,9 +163,11 @@ const Information: React.FC<InformationProps> = ({
   const { updateInformationByIdAccount } = useUpdateInformationByIdAccount()
   const { uploadInformationDocument } = useUploadInformationDocument()
   const { getInfoDoctosByIdAccount } = useGetInfoDoctosByIdAccount()
-  const { deleteInformationDocument } = useDeleteInformationDocument()
+
+  // const { deleteInformationDocument } = useDeleteInformationDocument()
   const { addDiscounts } = useAddDiscounts()
   const { UpdateDiscounts } = useUpdateDiscounts()
+  const { createFolder } = useAddFolder()
 
   const { account, setAccountId } = useGetAccountById()
 
@@ -457,6 +462,7 @@ const Information: React.FC<InformationProps> = ({
       }
 
       setBasicInfo(obBasicInfo)
+      setUpdateInfo(true)
       setPlacementStructure(obPlacementStructure)
       dispatch(
         updateFormsData({
@@ -570,7 +576,9 @@ const Information: React.FC<InformationProps> = ({
   const handleSaveInformation = async () => {
     try {
       if (idAccount) {
-        setBadgeData({
+
+        if (!updateInfo) {
+           setBadgeData({
           message: `UPDATING INFORMATION`,
           status: 'secondary',
           open: true,
@@ -586,6 +594,8 @@ const Information: React.FC<InformationProps> = ({
         dispatch(updateFormsData({ form1: { basicInfo, placementStructure, userFile, id: idAccount } }))
         getIdAccount(idAccount)
         setDisableSave(false)
+        if (hasClickedNextStep) onStepChange(2)
+       }
       } else {
         setBadgeData({
           message: `SAVING INFORMATION`,
@@ -608,6 +618,8 @@ const Information: React.FC<InformationProps> = ({
           getIdAccount(res.account.id)
           setAccountId(res.account.id)
           await localStorage.setItem('idAccount', String(res.account.id))
+          debugger
+          createFolder({ folderName: 'Final Slip', accountId: Number(res.account.id) })
           if (discountTemp.length > 0) {
             await addDiscounts(discountTemp)
             triggerFunction()
@@ -716,9 +728,9 @@ const Information: React.FC<InformationProps> = ({
     setMakeValidations(false)
   }
 
-  const onSubmittedFiles = (change: boolean) => {
-    setChangeTitle(change)
-  }
+  // const onSubmittedFiles = (change: boolean) => {
+  //   setChangeTitle(change)
+  // }
 
   useEffect(() => {
     const idAccountCache = Number(localStorage.getItem('idAccount'))
@@ -773,27 +785,27 @@ const Information: React.FC<InformationProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  useEffect(() => {
-    const deleteFile = async (userFileToDelete: File) => {
-      const fileName = String(userFileToDelete.name)
-      const idDocto = doctoIdByName[fileName as keyof typeof doctoIdByName]
+  // useEffect(() => {
+  //   const deleteFile = async (userFileToDelete: File) => {
+  //     const fileName = String(userFileToDelete.name)
+  //     const idDocto = doctoIdByName[fileName as keyof typeof doctoIdByName]
 
-      if (idDocto) {
-        const bodyToDelete = {
-          idAccount: idAccount,
-          idDocto,
-          fileName: fileName
-        }
-        await deleteInformationDocument(bodyToDelete)
-        delete doctoIdByName[fileName as keyof typeof doctoIdByName]
-      }
-    }
+  //     if (idDocto) {
+  //       const bodyToDelete = {
+  //         idAccount: idAccount,
+  //         idDocto,
+  //         fileName: fileName
+  //       }
+  //       await deleteInformationDocument(bodyToDelete)
+  //       delete doctoIdByName[fileName as keyof typeof doctoIdByName]
+  //     }
+  //   }
 
-    if (userFileToDelete && idAccount) {
-      deleteFile(userFileToDelete)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userFileToDelete])
+  //   if (userFileToDelete && idAccount) {
+  //     deleteFile(userFileToDelete)
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [userFileToDelete])
 
   useEffect(() => {
     if (idAccount) {
@@ -859,6 +871,7 @@ const Information: React.FC<InformationProps> = ({
                 makeValidations={makeValidations}
                 makeSaveValidations={makeSaveValidations}
                 onValidationComplete={handleValidationComplete}
+                setUpdateInfo={setUpdateInfo}
               />
             </DisableForm>
           </div>
@@ -873,20 +886,9 @@ const Information: React.FC<InformationProps> = ({
                 makeValidations={makeValidations}
                 onValidationComplete={handleValidationComplete}
                 triggerSubject={subjectState}
+                setUpdateInfo={setUpdateInfo}
               />
             </DisableForm>
-          </div>
-
-          <div className='section' style={{ display: 'none' }}>
-            <div className='title'>{changeTitle ? 'Submited files' : 'File submit'}</div>
-            <FileSubmit
-              userFile={userFile}
-              urls={fileUrls}
-              setUserFile={setUserFile}
-              setUserFileToDelete={setUserFileToDelete}
-              changeTitle={onSubmittedFiles}
-              isPayments={false}
-            />
           </div>
           <div className='section action-buttons'>
             <Button
