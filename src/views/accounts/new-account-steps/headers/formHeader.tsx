@@ -407,7 +407,7 @@ const FormHeader = ({
                   <span className='form-header-money-data-txt'>Net premium</span>
                   <span className='form-header-money-data-num'>{netPremiumAmount}</span>
                   <FormHeaderMoneyDataDate>
-                    Last Update: {accountDetails && formatDateFromUTC(accountDetails?.informations[0]?.updatedAt)}
+                    Last Update: {accountDetails && formatDateFromUTC(accountDetails?.actionsHistory?.slice(-1)[0].updatedAt)}
                     {lastUserName ? ` by ${lastUserName}` : null}
                   </FormHeaderMoneyDataDate>
                 </ContainerAmountLastUpdate>
