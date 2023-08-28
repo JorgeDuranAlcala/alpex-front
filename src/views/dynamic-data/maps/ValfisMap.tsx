@@ -30,6 +30,10 @@ type zoneMapProps = {
   handleStateClick: (coordinates: Array<Array<{ lng: number, lat: number }>>, zone: string) => void
 }
 
+type stateDetailMapProps = {
+  stateCoordinates: Array<Array<{ lng: number, lat: number }>>,
+  zone: string
+}
 
 const ZoneMap: React.FC<zoneMapProps> = ({ coordinates, zoneStatesData, handleStateClick }) => {
   const map1Ref = useRef<HTMLDivElement>(null);
@@ -84,10 +88,62 @@ const ZoneMap: React.FC<zoneMapProps> = ({ coordinates, zoneStatesData, handleSt
     }
 
     loadMap()
-  }, [])
+  }, [coordinates, zoneStatesData])
 
   return <div ref={map1Ref} style={{ width: '100%', minHeight: '70vh' }} />
 };
+
+
+const StateDetailMap: React.FC<stateDetailMapProps> = ({ stateCoordinates, zone }) => {
+  const mapRef = useRef<HTMLDivElement>(null);
+  const map = useRef<google.maps.Map | null>(null);
+  const polygon = useRef<google.maps.Polygon | null>(null);
+
+  useEffect(() => {
+    console.log("inside map")
+    console.log(zone)
+    const loadMap = async () => {
+      const loader = new Loader({
+        apiKey: 'AIzaSyBn3_Ng2UuezOHu5Pqz6c7l1CC9z3tdjFQ',
+        version: 'weekly'
+      })
+
+      const google = await loader.load()
+
+      if (mapRef.current) {
+        map.current = new google.maps.Map(mapRef.current, {
+          center: { lat: 23.6345, lng: -102.5528 },
+          zoom: 5
+        })
+
+        let color = "#72E128"
+        if (zone == 'b') {
+          color = '#FFB446'
+        } else if (zone == 'c') {
+          color = '#FF4D49'
+        }
+
+        polygon.current = new google.maps.Polygon({
+          paths: stateCoordinates,
+          strokeColor: color,
+          strokeOpacity: 0.35,
+          strokeWeight: 2,
+          fillColor: color,
+          fillOpacity: 0.35,
+        });
+
+        polygon.current.setMap(map.current);
+
+      }
+
+    }
+
+    loadMap()
+  }, [stateCoordinates, zone])
+
+  return <div ref={mapRef} className='state-map' style={{ width: '100%', minHeight: '70vh' }} />
+};
+
 
 
 const ValfisMap = () => {
@@ -107,8 +163,8 @@ const ValfisMap = () => {
   })
 
   // const [zoneStatesData, setZoneStatesData] = useState([{ name: '', zone: '' }])
+const [zoneStatesData, setZoneStatesData] = useState<ZoneStatesData>({ name: '', zone: '' })
 
-  const zoneStatesData: ZoneStatesData = {};
   const [detailsData, setDetailsData] = useState({
     totalValue: '',
     state: '',
@@ -116,11 +172,10 @@ const ValfisMap = () => {
     crestaZone: ''
   })
 
-  const [showDetails, setShowDetails] = useState(false)
-  const [showZoneDescription, setShowZoneDescription] = useState(false)
+  const [showStateDetails, setShowStateDetails] = useState(false)
   const [stateCoordinates, setStateCoordinates] = useState<Array<Array<{ lng: number, lat: number }>>>([
     [
-      {lng: 0, lat:0}
+      { lng: 0, lat: 0 }
     ]
   ])
   const [currentZone, setCurrentZone] = useState('')
@@ -130,6 +185,7 @@ const ValfisMap = () => {
     setStateCoordinates(coordinates)
     console.log(zone)
     setCurrentZone(zone)
+    setShowStateDetails(true)
   }
 
   const setZone = async () => {
@@ -148,12 +204,13 @@ const ValfisMap = () => {
   }
 
   const setZoneStates = async () => {
+    const zoneStates: ZoneStatesData = {};
     const data = await MapsServices.getValfisZoneStates()
     if (!data) return
     data.forEach(item => {
-      zoneStatesData[item.name] = item.zone;
+      zoneStates[item.name] = item.zone;
     });
-
+    setZoneStatesData(zoneStates)
   }
 
   const setDetails = async () => {
@@ -179,82 +236,15 @@ const ValfisMap = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  useEffect(() => {
-    setShowDetails(true)
-    setShowZoneDescription(true)
-  }, [])
-
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   useEffect(() => {
 
   }, [stateCoordinates, currentZone])
 
-
-  // useEffect(() => {
-  //   const loadMap = async () => {
-  //     const loader = new Loader({
-  //       apiKey: 'AIzaSyBn3_Ng2UuezOHu5Pqz6c7l1CC9z3tdjFQ',
-  //       version: 'weekly'
-  //     })
-
-  //     const google = await loader.load()
-
-  //     if (mapRef.current) {
-  //       map.current = new google.maps.Map(mapRef.current, {
-  //         center: { lat: 23.6345, lng: -102.5528 },
-  //         zoom: 5
-  //       })
-  //       console.log("states")
-  //       for (const state in allCoordinates) {
-
-  //         const zone = zoneStatesData[state];
-  //         let color= "#72E128"
-  //         if(zone == 'b'){
-  //           color='#FFB446'
-  //         }else if(zone == 'c'){
-  //           color= '#FF4D49'
-  //         }
-  //         const infoWindow = new google.maps.InfoWindow()
-  //         const stateCoordinates = allCoordinates[state];
-  //         polygon.current = new google.maps.Polygon({
-  //           paths: stateCoordinates,
-  //           strokeColor:color,
-  //           strokeOpacity: 0.35,
-  //           strokeWeight: 2,
-  //           fillColor: color,
-  //           fillOpacity: 0.35,
-  //         });
-
-  //         polygon.current.setMap(map.current);
-  //         polygon.current.addListener('click', (event: { latLng: google.maps.LatLng | google.maps.LatLngLiteral | null | undefined; }) => {
-  //           console.log('Datos: ', polygon.current?.getPath())
-
-  //           const contentString =
-  //             '<b>Data info</b><br>' +
-  //             'Clicked'
-
-  //           infoWindow.setContent(contentString)
-  //           infoWindow.setPosition(event.latLng)
-  //           infoWindow.open(map.current)
-  //         })
-  //       }
-
-  //       // const bcCoordinates = mapCoorService.getAguasCalientes()
-
-  //       map.current.addListener('click', handleMapClick)
-  //     }
-
-  //     // geocoder.current = new google.maps.Geocoder()
-  //   }
-
-  //   loadMap()
-  // }, [])
-
-
   return (
 
     <Grid container spacing={6} className='match-height'>
-      {showZoneDescription &&
+      {!showStateDetails &&
         <Grid item xs={12}>
           <Card>
             <div className='map-details-wrapper'>
@@ -320,7 +310,7 @@ const ValfisMap = () => {
         </Grid>
       }
 
-      {showDetails && <Grid item xs={12}>
+      {showStateDetails && <Grid item xs={12}>
         <Card>
           <div className='map-details-wrapper'>
             <div className='details-col' style={{ gap: '10px' }}>
@@ -377,19 +367,38 @@ const ValfisMap = () => {
 
 
       <Grid item xs={12}>
-        <Card>
-          <MapContainer>
+        {!showStateDetails &&
+          <Card>
+            <MapContainer>
 
-            <div style={{ borderRadius: '8px', height: '70vh' }}>
-              <ZoneMap
-                coordinates={allCoordinates}
-                zoneStatesData={zoneStatesData}
-                handleStateClick={handleStateClick}
-              />
-            </div>
-          </MapContainer>
-        </Card>
-
+              <div style={{ borderRadius: '8px', height: '70vh' }}>
+                <ZoneMap
+                  coordinates={allCoordinates}
+                  zoneStatesData={zoneStatesData}
+                  handleStateClick={handleStateClick}
+                />
+              </div>
+            </MapContainer>
+          </Card>
+        }
+        {showStateDetails &&
+          <Card>
+            <MapContainer style={{position: 'relative'}}>
+              <div style={{ borderRadius: '8px', height: '70vh' }}>
+                <StateDetailMap
+                  stateCoordinates={stateCoordinates}
+                  zone={currentZone}
+                />
+              </div>
+              <div
+                className='close-state-map'
+                onClick={() => setShowStateDetails(false)}
+              >
+                x
+              </div>
+            </MapContainer>
+          </Card>
+        }
       </Grid>
     </Grid>
   )
