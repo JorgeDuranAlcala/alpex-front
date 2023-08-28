@@ -13,7 +13,7 @@ import Icon from 'src/@core/components/icon'
 //   sidebar: boolean
 // }
 
-const MenuForm = () => {
+const MenuForm = ({ idAccountInit }: { idAccountInit?: number | null }) => {
   //store
   const idAccount = useAppSelector(state => state.accounts?.formsData?.form1?.id)
 
@@ -237,6 +237,7 @@ const MenuForm = () => {
             setUserFileToDelete={setUserFileToDelete}
             changeTitle={onSubmittedFiles}
             isPayments={false}
+            idAccountInit={idAccountInit}
           />
         </div>
         <div className='container-divider'>
