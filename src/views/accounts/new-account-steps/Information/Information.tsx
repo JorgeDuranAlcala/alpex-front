@@ -147,6 +147,7 @@ const Information: React.FC<InformationProps> = ({
   // Save id doctos by file name
   const [doctoIdByName, setDoctoIdByName] = useState({})
   const [userFile, setUserFile] = useState<File[]>([])
+  const [updateInfo, setUpdateInfo] = useState<boolean>(false)
 
   // const [userFileToDelete, setUserFileToDelete] = useState<File>()
 
@@ -461,6 +462,7 @@ const Information: React.FC<InformationProps> = ({
       }
 
       setBasicInfo(obBasicInfo)
+      setUpdateInfo(true)
       setPlacementStructure(obPlacementStructure)
       dispatch(
         updateFormsData({
@@ -574,7 +576,9 @@ const Information: React.FC<InformationProps> = ({
   const handleSaveInformation = async () => {
     try {
       if (idAccount) {
-        setBadgeData({
+
+        if (!updateInfo) {
+           setBadgeData({
           message: `UPDATING INFORMATION`,
           status: 'secondary',
           open: true,
@@ -590,6 +594,8 @@ const Information: React.FC<InformationProps> = ({
         dispatch(updateFormsData({ form1: { basicInfo, placementStructure, userFile, id: idAccount } }))
         getIdAccount(idAccount)
         setDisableSave(false)
+        if (hasClickedNextStep) onStepChange(2)
+       }
       } else {
         setBadgeData({
           message: `SAVING INFORMATION`,
@@ -865,6 +871,7 @@ const Information: React.FC<InformationProps> = ({
                 makeValidations={makeValidations}
                 makeSaveValidations={makeSaveValidations}
                 onValidationComplete={handleValidationComplete}
+                setUpdateInfo={setUpdateInfo}
               />
             </DisableForm>
           </div>
@@ -879,6 +886,7 @@ const Information: React.FC<InformationProps> = ({
                 makeValidations={makeValidations}
                 onValidationComplete={handleValidationComplete}
                 triggerSubject={subjectState}
+                setUpdateInfo={setUpdateInfo}
               />
             </DisableForm>
           </div>
