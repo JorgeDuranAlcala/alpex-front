@@ -118,18 +118,26 @@ const FormSecondContainerFirstside = styled('div')({
   gap: '32px'
 })
 
+const ContainerPadd = styled('div')({
+  padding: '20px',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '12px'
+})
+
 export {
-  ContainerHeaderMobile,
-  FormHeaderSection,
-  SubContainerHeaderData,
-  Frame3486,
   ContainerActionsHeader,
-  FirstContainer,
   ContainerAmountLastUpdate,
+  ContainerHeaderMobile,
+  ContainerPadd,
+  FirstContainer,
   FormHeaderInfoProfileContainer,
-  SecondContainer,
-  HeaderRowsContainer,
   FormHeaderInfoProfiletext,
   FormHeaderMoneyDataDate,
-  FormSecondContainerFirstside
+  FormHeaderSection,
+  FormSecondContainerFirstside,
+  Frame3486,
+  HeaderRowsContainer,
+  SecondContainer,
+  SubContainerHeaderData
 }
