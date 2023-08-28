@@ -21,7 +21,8 @@ import CheckIcon from '@mui/icons-material/Check'
 
 // import useFormStep_updateSublimits from '@/hooks/accounts/forms/stepForms/update/useFormStep_updateSublimits'
 
-import { useRouter } from 'next/router'
+// import { useRouter } from 'next/router'
+import { useGetAllCoverage } from '@/hooks/catalogs/coverage'
 import { DisableForm } from '../_commons/DisableForm'
 
 const initialValues: SublimitDto = {
@@ -87,13 +88,14 @@ interface SublimitsProps {
 // getAccountByIdHeader
 
 const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
-  const router = useRouter();
+  // const router = useRouter();
   const [badgeData, setBadgeData] = useState<IAlert>({
     message: '',
     theme: 'success',
     open: false,
     status: 'error'
   })
+
 
   const [formInformationData, setFormInformationData] = useState<any>({}) //formInformationData
   const [subLimits, setSubLimits] = useState<SublimitDto[]>([])
@@ -128,6 +130,7 @@ const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
 
   // ** Custom hooks
   const { updateAccountsStatus } = useUpdateAccountsStatus()
+  const { coverages, getAllCoverages, setAccountIdCoverage } = useGetAllCoverage();
 
   const handleSelectedCoverage = (coverageSelect: CoverageDto) => {
     // console.log('coverageSelect', coverageSelect);
@@ -135,10 +138,15 @@ const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
     setCoverageSelected([...coverageSelected, coverageSelect])
   }
 
+
+
   const handleToggle = (value: number, label: string) => {
     try {
-      const idAccountCache = Number(localStorage.getItem('idAccount'))
+      const idAccountCache = Number(localStorage.getItem('idAccount')) ?? accountData.formsData.form1?.id
+
       const subLimitsTemp = subLimits.find(sublimit => sublimit.title === label)
+
+      // console.log(' idAccountCache -> ', idAccountCache);
 
       if (!subLimitsTemp) {
         const subLimitsTemp = [...subLimits]
@@ -282,17 +290,18 @@ const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
   }
 
   const getAccountData = async () => {
-    const idAccount = Number(localStorage.getItem('idAccount')) || Number(router.query.idAccount)
+    const idAccount = Number(localStorage.getItem('idAccount')) ?? accountData.formsData.form1?.id
 
+    // console.log(' idAccountCache -> ', idAccount);
     if (!idAccount) return
 
     localStorage.setItem('idAccount', idAccount.toString())
     setAccountId(idAccount)
 
-    const accountData = await getAccountById(idAccount)
+    const accountDataF = await getAccountById(idAccount)
 
-    if (accountData && accountData.sublimits.length > 0) {
-      setSubLimits([...accountData.sublimits])
+    if (accountDataF && accountDataF.sublimits.length > 0) {
+      setSubLimits([...accountDataF.sublimits])
 
       formErrors.push(false)
     }
@@ -321,6 +330,27 @@ const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
   // * END -  Actualizar los datos del formulario en Redux + + + + + + + + + + + + + +
 
 
+
+
+  // console.log("Estos son los coverages seleccionados: -> ", coverageSelected, subLimits);
+
+  // console.log("Data de la cuenta: ->", accountData.formsData.form1?.id);
+
+  //? Con esto se cargan los datos para sublimits
+  useEffect(() => {
+    if (coverageSelected.length === 0) {
+      // console.log("No hay datos aquí ");
+      setAccountIdCoverage(accountData.formsData.form1?.id)
+
+      getAllCoverages(accountData.formsData.form1?.id)
+      const coveragesFiltered = coverages.filter((elemento: any) => { return subLimits.some(filtroItem => filtroItem.idCCoverage.id === elemento.id) });
+      setCoverageSelected(coveragesFiltered)
+
+      // console.log("Retornamos estos datos -> ", coveragesFiltered, coverages);
+    }
+
+  }, [subLimits, accountData])
+
   return (
     <CardContent>
       <Grid container spacing={5}>
@@ -339,6 +369,7 @@ const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
               <Grid container spacing={5}>
                 <InputLimit account={account} />
                 <SelectCoverage
+                  idAccount={accountData.formsData.form1?.id}
                   onChangeSelected={handleSelectedCoverage}
                   coverageSelected={coverageSelected}
                   onClickToggle={handleToggle}

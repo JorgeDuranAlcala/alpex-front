@@ -11,6 +11,7 @@ export type SelectCoverageProps = {
   onChangeSelected: (converageSelected: CoverageDto) => void
   coverageSelected: CoverageDto[]
   onClickToggle: (value: number, label: string) => void
+  idAccount: number | any
 }
 const ITEM_HEIGHT = 60
 const ITEM_PADDING_TOP = 8
@@ -23,9 +24,9 @@ const MenuProps = {
     }
   }
 }
-const SelectCoverage: FC<SelectCoverageProps> = ({ onChangeSelected, coverageSelected, onClickToggle }) => {
+const SelectCoverage: FC<SelectCoverageProps> = ({ onChangeSelected, coverageSelected, onClickToggle, idAccount }) => {
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
-  const { coverages, getAllCoverages } = useGetAllCoverage();
+  const { coverages, getAllCoverages, setAccountIdCoverage } = useGetAllCoverage();
 
   const texButtonColor = userThemeConfig.palette?.buttonText.primary
 
@@ -59,8 +60,8 @@ const SelectCoverage: FC<SelectCoverageProps> = ({ onChangeSelected, coverageSel
   const handleOnCreatedNewCoverage = () => {
     handleCloseModalAddNewCoverage();
 
-
-    getAllCoverages();
+    setAccountIdCoverage(idAccount)
+    getAllCoverages(idAccount);
   }
 
   const handleCloseModalAddNewCoverage = () => {
@@ -76,8 +77,7 @@ const SelectCoverage: FC<SelectCoverageProps> = ({ onChangeSelected, coverageSel
 
   }, [coverages, coverageSelected])
 
-
-  // console.log("has seleccionado las siguientes: ", coverageSelected);
+  // console.log(coverages, coverageSelected);
 
 
   return (
@@ -87,6 +87,7 @@ const SelectCoverage: FC<SelectCoverageProps> = ({ onChangeSelected, coverageSel
         onClose={handleCloseModalAddNewCoverage}
       >
         <FormAddNewCoverage
+          idAccount={idAccount}
           onCreated={handleOnCreatedNewCoverage}
           onCancel={handleCloseModalAddNewCoverage}
         />
@@ -100,8 +101,7 @@ const SelectCoverage: FC<SelectCoverageProps> = ({ onChangeSelected, coverageSel
           MenuProps={MenuProps}
           value={''}
           displayEmpty
-
-          // onChange={handleChangeSelect}
+          onChange={handleChangeSelect}
           renderValue={(selected) => {
             if ((selected as unknown as string[]).length === 0) {
               return (
@@ -127,6 +127,10 @@ const SelectCoverage: FC<SelectCoverageProps> = ({ onChangeSelected, coverageSel
               <MenuItem
                 role={undefined}
                 key={index}
+                value={item.coverage}
+                onClick={() => {
+                  onClickToggle(item.id, item.coverage)
+                }}
                 sx={{
                   height: '50px',
                   display: 'flex',
@@ -135,11 +139,6 @@ const SelectCoverage: FC<SelectCoverageProps> = ({ onChangeSelected, coverageSel
                 }}
               >
                 <Checkbox
-                  value={item.coverage}
-                  onClick={() => {
-                    onClickToggle(item.id, item.coverage)
-                  }}
-                  onChange={handleChangeSelect}
                   sx={{
                     width: '24px',
                     height: '24px',
@@ -148,7 +147,6 @@ const SelectCoverage: FC<SelectCoverageProps> = ({ onChangeSelected, coverageSel
                       color: '#2535A8'
                     },
                   }}
-
                   checked={false}
                   tabIndex={-1}
                   disableRipple

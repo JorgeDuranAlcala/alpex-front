@@ -2,6 +2,7 @@ import { Box, Button, Checkbox, CircularProgress, FormControlLabel, Radio, Radio
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 
 import { useCreateCoverage } from '@/hooks/catalogs/coverage/useCreate';
+import { ContainerCheckbox } from './FormAddNewCoverageStyles';
 
 const FormStyled = styled('form')(() => ({
   display: 'flex',
@@ -19,9 +20,10 @@ const ActionButtonsContainer = styled(Box)(() => ({
 interface FormAddNewCoverageProps {
   onCreated: () => void;
   onCancel: () => void;
+  idAccount: number | any;
 }
 
-export const FormAddNewCoverage = ({ onCreated, onCancel }: FormAddNewCoverageProps) => {
+export const FormAddNewCoverage = ({ onCreated, onCancel, idAccount }: FormAddNewCoverageProps) => {
   const { status, createCoverage } = useCreateCoverage();
 
   // console.log(status, createCoverage);
@@ -50,6 +52,7 @@ export const FormAddNewCoverage = ({ onCreated, onCancel }: FormAddNewCoveragePr
 
       const yesAndLuc = yesAndLucCheckbox.checked;
       const coverageType = coverageTypeRadio.value;
+      const accountId = idAccount
 
       // console.log(coverage, yesAndLuc, coverageType);
 
@@ -57,6 +60,7 @@ export const FormAddNewCoverage = ({ onCreated, onCancel }: FormAddNewCoveragePr
         coverage,
         yesAndLuc,
         coverageType,
+        accountId
       });
     }
   }
@@ -96,7 +100,11 @@ export const FormAddNewCoverage = ({ onCreated, onCancel }: FormAddNewCoveragePr
         sx={{ height: '75px' }}
         required
       />
-      <FormControlLabel name="yesAndLuc" control={<Checkbox />} label="Yes/Luc" />
+      <ContainerCheckbox>
+
+        <Checkbox name="yesAndLuc" />
+        Yes/Luc
+      </ContainerCheckbox>
       <RadioGroup
         aria-labelledby="demo-radio-buttons-group-label"
         defaultValue="Business Interruption"
@@ -133,3 +141,5 @@ export const FormAddNewCoverage = ({ onCreated, onCancel }: FormAddNewCoveragePr
     </FormStyled>
   )
 }
+
+// control={<Checkbox />} label="Yes/Luc"

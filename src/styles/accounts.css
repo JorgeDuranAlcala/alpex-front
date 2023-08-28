@@ -473,10 +473,31 @@
 }
 
 .final-slip {
-  background-color: #686b7e;
+  background-color: #686b7e !important;
   border-radius: 10px;
   height: 36px;
   width: 100%;
+}
+
+.icon-dots {
+  color: rgb(255, 255, 255);
+  position: absolute;
+  z-index: 1;
+  margin-left: 85%;
+  margin-top: 15px;
+}
+
+.menu-dots-open {
+  display: block;
+}
+
+.menu-dots-none {
+  display: none;
+}
+
+.css-v84d5j-MuiSvgIcon-root {
+  margin-left: 12px;
+  color: white;
 }
 
 .actions-icons {
