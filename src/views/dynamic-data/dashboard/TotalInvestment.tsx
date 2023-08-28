@@ -10,6 +10,9 @@ import Typography from '@mui/material/Typography'
 // ** Custom Components Imports
 import CustomAvatar from 'src/@core/components/mui/avatar'
 
+// utils imports
+import { formatQuantityDigits } from '@/utils/formatQuantityDigits'
+
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
 
@@ -61,7 +64,7 @@ const TotalInvestment = () => {
           >
             <div className='dashboard-row' style={{ width: '100%', display: 'flex', alignItems: 'center' }}>
               <Typography variant='h6' sx={{ mb: 1 }}>
-                {`$ ${totalInvestment.total}k`}
+                {`$ ${formatQuantityDigits(totalInvestment.total)}`}
               </Typography>
               <Icon icon={totalInvestment.trend === 'positive' ? 'mdi:chevron-up' : 'mdi:chevron-down'} fontSize='1.25rem' />
               <Typography variant='subtitle2' sx={{ color: totalInvestment.trend === 'positive' ? 'success.main' : 'error.main' }}>

@@ -14,13 +14,16 @@ class DashboardMockServices {
    */
   async getTotalInvestment(): Promise<any> {
     try {
-      const data = {
+
+      const { data } = await AppAlpexApiGateWay.get(DATA_DASHBOARD_ROUTES.GET_CAPACITY_PER_STATES)
+
+      const dataResults = {
         trend: 'positive',
-        total: 48.2,
+        total: data.totalValfis,
         differencePercentage: 22.5,
       }
 
-      return data
+      return dataResults
     } catch (error) {
       const message = String(error)
       throw new Error(message)

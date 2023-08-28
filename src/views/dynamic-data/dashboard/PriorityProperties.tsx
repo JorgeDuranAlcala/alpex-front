@@ -8,7 +8,8 @@ import Card from '@mui/material/Card'
 import Typography from '@mui/material/Typography'
 import { DataGrid, GRID_CHECKBOX_SELECTION_COL_DEF, GridColumns } from '@mui/x-data-grid'
 
-// ** Icon Imports
+// ** Utils imports
+import { formatMoneyDigits } from '@/utils/formatMoneyDigits'
 
 // ** Next Import
 import { useRouter } from 'next/router'
@@ -105,8 +106,8 @@ const PriorityProperties: React.FC<EarthquakePropertyProps> = ({earthquakeProper
       flex: 0.1,
       field: EFieldColumn.PROPERTY_ID,
       headerName: 'ID',
-      minWidth: 50,
-      maxWidth: 110,
+      minWidth: 130,
+      maxWidth: 150,
       type: 'string',
       align: 'left',
       disableColumnMenu: true,
@@ -142,7 +143,7 @@ const PriorityProperties: React.FC<EarthquakePropertyProps> = ({earthquakeProper
       ),
       renderCell: ({ row }) => (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          ${row.valfisValue}
+          ${formatMoneyDigits(row.valfisValue)}
         </Box>
       )
     },
@@ -159,11 +160,16 @@ const PriorityProperties: React.FC<EarthquakePropertyProps> = ({earthquakeProper
       renderHeader: ({ colDef }) => <ColumnHeader colDef={colDef} />,
       renderCell: ({ row }) => (
         <Typography
-          sx={{ color: colors.text.primary, fontWeight: 500, fontSize: fonts.size.px14, fontFamily: fonts.inter }}
+          sx={{
+            color: colors.text.primary,
+            fontWeight: 500,
+            fontSize: fonts.size.px14,
+            fontFamily: fonts.inter,
+            overflow:'hidden',
+            textOverflow:'ellipsis'
+          }}
         >
-
             {row.state}
-
         </Typography>
       )
     },
@@ -181,7 +187,13 @@ const PriorityProperties: React.FC<EarthquakePropertyProps> = ({earthquakeProper
         <ColumnHeader colDef={colDef} />
       ),
       renderCell: ({ row }) => (
-        <Typography sx={{ color: colors.text.secondary, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
+        <Typography sx={{
+          color: colors.text.secondary,
+          fontSize: fonts.size.px14,
+          fontFamily: fonts.inter,
+          overflow:'hidden',
+          textOverflow:'ellipsis'
+        }}>
           {row.province}
         </Typography>
       )
@@ -202,7 +214,13 @@ const PriorityProperties: React.FC<EarthquakePropertyProps> = ({earthquakeProper
       renderCell: ({ row }) => {
 
         return (
-          <Typography sx={{ color: colors.text.secondary, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
+          <Typography sx={{
+            color: colors.text.secondary,
+            fontSize: fonts.size.px14,
+            fontFamily: fonts.inter,
+            overflow:'hidden',
+            textOverflow:'ellipsis'
+            }}>
             {row.institution}
           </Typography>
         )

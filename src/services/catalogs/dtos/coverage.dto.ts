@@ -14,6 +14,7 @@ export interface CoverageDto {
   active: boolean;
   yesAndLuc: boolean;
   coverageTypeId: CoverageTypeID;
+  coverageTypeName?: string
 }
 
 export interface CoverageTypeID {
@@ -28,4 +29,5 @@ export interface CoverageInputDto {
   coverage: string,
   yesAndLuc: boolean,
   coverageType: string,
+  accountId: number | any
 }
