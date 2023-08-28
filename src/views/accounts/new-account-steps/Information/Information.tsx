@@ -166,7 +166,7 @@ const Information: React.FC<InformationProps> = ({
   // const { deleteInformationDocument } = useDeleteInformationDocument()
   const { addDiscounts } = useAddDiscounts()
   const { UpdateDiscounts } = useUpdateDiscounts()
-  const { setdctoUser } = useAddFolder()
+  const { createFolder } = useAddFolder()
 
   const { account, setAccountId } = useGetAccountById()
 
@@ -571,14 +571,6 @@ const Information: React.FC<InformationProps> = ({
     triggerFunction()
   }
 
-  const createfolder = (id: number) => {
-    const localId = localStorage.getItem('idAccount') || id
-    if (localId) {
-      console.log('🚀 ~ file: Information.tsx:577 ~ createfolder ~ localId:', localId)
-      setdctoUser({ folderName: 'Final Slip', accountId: Number(localId) })
-    }
-  }
-
   const handleSaveInformation = async () => {
     try {
       if (idAccount) {
@@ -621,7 +613,7 @@ const Information: React.FC<InformationProps> = ({
           setAccountId(res.account.id)
           await localStorage.setItem('idAccount', String(res.account.id))
           debugger
-          createfolder(res.account.id)
+          createFolder({ folderName: 'Final Slip', accountId: Number(res.account.id) })
           if (discountTemp.length > 0) {
             await addDiscounts(discountTemp)
             triggerFunction()

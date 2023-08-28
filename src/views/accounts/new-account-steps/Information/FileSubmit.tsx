@@ -13,6 +13,7 @@ import {
   ListItemIcon,
   ListItemText,
   Modal,
+  TextField,
   Tooltip,
   Typography
 } from '@mui/material'
@@ -25,6 +26,7 @@ import { useGetFolders } from '@/hooks/documents/getFoldersById'
 import { useMoveFile } from '@/hooks/documents/moveFile'
 import { useRemoveFile } from '@/hooks/documents/removeFile'
 import { useRemoveFolder } from '@/hooks/documents/removeFolder'
+import { useRenameFolder } from '@/hooks/documents/renameFolder'
 import { useUploadFile } from '@/hooks/documents/uploadFile'
 import { useAddFolder } from '@/hooks/documents/useAddFolder'
 import { responseFile } from '@/services/documents/dtos/documents.dto'
@@ -107,22 +109,20 @@ const FileSubmit: React.FC<UserFileProps> = ({
 
   const [open, setOpen] = useState<boolean>(false)
   const [openList, setOpenList] = useState<boolean>(false)
-
-  // const [openOptions, setOpenOptions] = useState(false)
-  // const [createFolderInit, setCreateFolderInit] = useState(false)
   const [numFolder, setNumFolder] = useState(0)
   const [openFolders, setOpenFolder] = useState(false)
-
-  // const [deleteChecks, setDeleteChecks] = useState(false)
   const [reloadInfo, setReloadInfo] = useState<any>()
+  const [openRename, setOpenRename] = useState(false)
+  const [renameValue, setRenameValue] = useState<string>('')
 
   const router = useRouter()
-  const { setdctoUser } = useAddFolder()
+  const { createFolder } = useAddFolder()
   const { foldersAccount, setIdUser } = useGetFolders()
   const { uploadFile, setUpload } = useUploadFile()
   const { removeFile, setRemove } = useRemoveFile()
   const { moveFile, setmoveToFolder } = useMoveFile()
   const { removeFolder, setRemoveF } = useRemoveFolder()
+  const { renameFolder, setRename } = useRenameFolder()
 
   const [badgeData, setBadgeData] = useState<IAlert>({
     message: '',
@@ -215,60 +215,34 @@ const FileSubmit: React.FC<UserFileProps> = ({
     removeUrl(index) // cambiamos la lista de urls cuando se ha borrado sin guardar
     setSelectedFile(null)
     setOpenDelete(false)
-    setIdUser(Number(router.query.idAccount))
+    setIdUser(idAccountInit || Number(localStorage.getItem('idAccount')))
     setReloadInfo(foldersAccount)
   }
 
   const handleRemoveFile = async (e: any, file: responseFile) => {
     e.preventDefault
-    console.log('id', file)
     const idFileRemove = JSON.stringify(file.fileId)
-    console.log(idFileRemove)
     await setRemove({ fileId: Number(idFileRemove) })
     console.log(removeFile)
     setOpenDelete(false)
-    await setIdUser(Number(router.query.idAccount))
+    await setIdUser(idAccountInit || Number(localStorage.getItem('idAccount')))
     setReloadInfo(foldersAccount)
   }
 
   const handleMoveFolder = (e: any) => {
     e.preventDefault
-    console.log(e)
     setOpenFolder(true)
   }
 
   const handleMoveFolderInto = (e: any, pathId: string | null) => {
     e.preventDefault
-    console.log(e)
     setOpenList(true)
     console.log(pathId)
-
-    // const stringId = 'folder-' + pathId
-    // const idElement = document.getElementById(stringId)
-    // if (idElement !== null) {
-    //   idElement.style.display = 'block'
-    // }
   }
 
   const clickOpenOptions = (file: responseFile) => {
     console.log('File', file)
-
-    // const stringId = 'options-f-' + file.fileId
-    // const idElement = document.getElementById(stringId)
-    // console.log(stringId)
-    // console.log(idElement)
     handleClick()
-
-    // if (openOptions && idElement) {
-    //   setOpenOptions(false)
-
-    //   // setSelectedFile(null)
-    //   // idElement!.style.display = 'none'
-    //   idElement.classList.add("menu-none");
-    // } else {
-    //   setOpenOptions(true)
-    //   idElement.classList.add("menu-block");
-    // }
   }
 
   const handleInfoToFolder = async (e: any, index: number, type: string, idFolder: number) => {
@@ -280,51 +254,40 @@ const FileSubmit: React.FC<UserFileProps> = ({
       documentType: 'General',
       document: { type: selectedFile?.type, name: selectedFile?.name, base64: fileB64 }
     })
-    console.log(type, uploadFile)
+    console.log(uploadFile)
     file.splice(index, 1)
     setFile([...file])
     setSelectedFile(null)
     setOpenFolder(false)
-    setIdUser(Number(router.query.idAccount))
+    setIdUser(idAccountInit || Number(localStorage.getItem('idAccount')))
     setReloadInfo(foldersAccount)
   }
 
   const handleMoveFileToFolder = async (e: any, file: responseFile, idFolder: number) => {
     e.preventDefault
-    console.log(idFolder)
-    console.log(file)
     const idFileMove = JSON.stringify(file.fileId)
-    console.log(idFileMove)
     setmoveToFolder({ filesId: [idFolder, Number(idFileMove)] })
     console.log(moveFile)
     setOpen(false)
-    setIdUser(Number(router.query.idAccount))
+    setIdUser(idAccountInit || Number(localStorage.getItem('idAccount')))
     setReloadInfo(foldersAccount)
     setOpenList(false)
+    console.log(reloadInfo)
   }
 
   useEffect(() => {
-    setIdUser(idAccountInit || Number(router.query.idAccount))
+    setIdUser(idAccountInit || Number(localStorage.getItem('idAccount')))
     console.log(foldersAccount)
     setReloadInfo(foldersAccount)
-  }, [router.query.idAccount, idAccountInit])
+  }, [router.query.idAccount, idAccountInit, localStorage.getItem('idAccount')])
 
   const onAddFolder = (e: any) => {
     e.preventDefault
     const nameFolder = 'New Folder ' + numFolder
-    setdctoUser({ folderName: nameFolder, accountId: Number(localStorage.getItem('idAccount')) })
+    createFolder({ folderName: nameFolder, accountId: Number(localStorage.getItem('idAccount')) })
     const newNum = numFolder + 1
     setNumFolder(newNum)
   }
-
-  // const onDeleteFiles = (e: any) => {
-  //   e.preventDefault
-  //   if (!deleteChecks) {
-  //     setDeleteChecks(true)
-  //   } else {
-  //     console.log('ELIMINAR')
-  //   }
-  // }
 
   useEffect(() => {
     if (userFile.length > 0) {
@@ -349,15 +312,11 @@ const FileSubmit: React.FC<UserFileProps> = ({
   }
 
   const clickDots = (e: any) => {
-    console.log(e)
-    const idElemento = e.target.id
-    console.log(idElemento)
-    const elemento = document.getElementById(idElemento)
-    console.log(elemento)
+    // const idElemento = e.target.id
+    // const elemento = document.getElementById(idElemento)
+    // console.log(elemento)
     const menuId = e.target.id + '-menu'
-    console.log(menuId)
     const menu = document.getElementsByClassName(menuId)
-    console.log(menu)
     for (let i = 0; i < menu.length; i++) {
       console.log(menu[i].classList)
       menu[i].classList.remove('menu-dots-none')
@@ -365,35 +324,41 @@ const FileSubmit: React.FC<UserFileProps> = ({
     }
   }
 
-  const renameFolder = (folder: any, index: any) => {
-    console.log(folder)
-    console.log(index)
+  const renameFolderFunction = (folder: any, index: any) => {
     const menuId = index + '-dots-menu'
-    console.log(menuId)
     const menu = document.getElementsByClassName(menuId)
-    console.log(menu)
+    setOpenRename(true)
     for (let i = 0; i < menu.length; i++) {
       console.log(menu[i].classList)
       menu[i].classList.remove('menu-dots-open')
       menu[i].classList.add('menu-dots-none')
     }
-    console.log(menu)
   }
 
   const deleteFolder = (folder: any, index: any) => {
-    console.log(folder.folderId)
     const menuId = index + '-dots-menu'
-    console.log(menuId)
     const menu = document.getElementsByClassName(menuId)
-    console.log(menu)
     setRemoveF({ folderId: Number(folder.folderId) })
     for (let i = 0; i < menu.length; i++) {
       console.log(menu[i].classList)
       menu[i].classList.remove('menu-dots-open')
       menu[i].classList.add('menu-dots-none')
     }
-    console.log(menu)
     console.log(removeFolder)
+  }
+
+  const handleRenameFolder = (e: any, folder: any) => {
+    setOpenRename(false)
+    const newNameFolder = renameValue
+    console.log(folder)
+    console.log(newNameFolder)
+    setRename({ folderId: folder.folderId, newFolderName: newNameFolder })
+    console.log(renameFolder)
+  }
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target
+    setRenameValue(value)
   }
 
   return (
@@ -519,14 +484,14 @@ const FileSubmit: React.FC<UserFileProps> = ({
 
         {/* Buttoms files, render de folders creados */}
         <div>
-          {reloadInfo && reloadInfo.length > 0
-            ? reloadInfo.map(
+          {foldersAccount && foldersAccount.length > 0
+            ? foldersAccount.map(
                 (
                   folder: {
                     folderName: string
                     files: any[]
                   },
-                  index: string
+                  index
                 ) => {
                   return (
                     <div key={'folder' + index}>
@@ -556,7 +521,7 @@ const FileSubmit: React.FC<UserFileProps> = ({
                             key='renombrar'
                             className='language'
                             onClick={() => {
-                              renameFolder(folder, index)
+                              renameFolderFunction(folder, index)
                             }}
                           >
                             Renombrar
@@ -571,6 +536,51 @@ const FileSubmit: React.FC<UserFileProps> = ({
                             Eliminar
                           </div>
                         </div>
+                        <Modal
+                          className='delete-modal'
+                          open={openRename}
+                          onClose={() => {
+                            setOpenRename(false)
+                          }}
+                        >
+                          <Box className='modal-wrapper'>
+                            <HeaderTitleModal>
+                              <Typography variant='h6'>New folder name</Typography>
+                              <ButtonClose
+                                onClick={() => {
+                                  setOpenRename(false)
+                                }}
+                              >
+                                <CloseIcon />
+                              </ButtonClose>
+                            </HeaderTitleModal>
+                            <TextField
+                              fullWidth
+                              autoFocus
+                              value={renameValue}
+                              defaultValue=''
+                              onChange={handleInputChange}
+                              label='Rename folder'
+                              id={'rename-folder-' + index}
+                            />
+                            <Button
+                              style={{ marginTop: '24px' }}
+                              className='header-modal-btn'
+                              variant='contained'
+                              onClick={e => handleRenameFolder(e, folder)}
+                            >
+                              RENAME
+                            </Button>
+                            <Button
+                              className='close-modal header-modal-btn'
+                              onClick={() => {
+                                setOpenDelete(false)
+                              }}
+                            >
+                              CANCEL
+                            </Button>
+                          </Box>
+                        </Modal>
                         <Accordion
                           expanded={expanded === 'panel' + index}
                           onChange={handleChange('panel' + index)}
@@ -585,7 +595,7 @@ const FileSubmit: React.FC<UserFileProps> = ({
                             <ListItemButton
                               sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}
                             >
-                              <Typography sx={{ color: '#FFF' }}>{folder.folderName.replace('_402', '')}</Typography>
+                              <Typography sx={{ color: '#FFF' }}>{folder.folderName.split('_')[0]}</Typography>
                             </ListItemButton>
                           </AccordionSummary>
                           <AccordionDetails>
@@ -668,7 +678,7 @@ const FileSubmit: React.FC<UserFileProps> = ({
                                                 className='option'
                                                 onClick={e => handleMoveFileToFolder(e, fileElement, folder.folderId)}
                                               >
-                                                {folder.folderName}
+                                                {folder.folderName.split('_')[0]}
                                               </div>
                                             )
                                           })}
