@@ -7,6 +7,7 @@ export const useAddFolder = () => {
 
   // const [user, setUser] = useState<IResponse>()
   const [folders, setFolders] = useState<responseFolder>()
+  const [successAddFolder, setSuccessAddFolder] = useState<boolean>(false)
 
   const createFolder = async (folder: CreateFolder) => {
     // console.log('CreateFolder', folder?.accountId)
@@ -14,10 +15,13 @@ export const useAddFolder = () => {
     const data = await DocumentsServices.createFolder(folder)
     console.log(data)
     setFolders(data)
+    setSuccessAddFolder(true)
   }
 
   return {
     folders,
-    createFolder
+    createFolder,
+    successAddFolder,
+    setSuccessAddFolder
   }
 }

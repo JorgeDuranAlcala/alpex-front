@@ -5,8 +5,8 @@ import DocumentsServices from 'src/services/documents/documents.service'
 export const useGetFolders = () => {
   const [foldersAccount, setfoldersAccount] = useState<responseFoldersByAccount[]>([])
   const [idUser, setIdUser] = useState<null | number>(null)
-  const findById = (idUser: number) => {
-    DocumentsServices.getDocumentsById(idUser).then(setfoldersAccount)
+  const findById = async (idUser: number) => {
+    await DocumentsServices.getDocumentsById(idUser).then(setfoldersAccount)
   }
   useEffect(() => {
     idUser && findById(idUser)
