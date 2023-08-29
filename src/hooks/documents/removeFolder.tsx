@@ -5,12 +5,14 @@ import DocumentsServices from 'src/services/documents/documents.service'
 export const useRemoveFolder = () => {
   const [removeFolder, setRemoveFolder] = useState<responseFolder>()
   const [remove, setRemoveF] = useState<DeleteFolder | null>()
+  const [successDeleteFolder, setSuccessDeletefolder] = useState<boolean>(false)
 
   useEffect(() => {
     if (!remove) return
     DocumentsServices.deleteFolder(remove)
       .then(response => {
         setRemoveFolder(response)
+        setSuccessDeletefolder(true)
       })
       .catch(error => {
         throw error
@@ -19,6 +21,8 @@ export const useRemoveFolder = () => {
 
   return {
     removeFolder,
-    setRemoveF
+    setRemoveF,
+    successDeleteFolder,
+    setSuccessDeletefolder
   }
 }

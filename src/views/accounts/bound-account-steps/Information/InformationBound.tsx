@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState } from 'react'
 
 // ** Theme
@@ -130,6 +131,7 @@ const InformationBound: React.FC<InformationProps> = ({ onStepChange, disableSec
   const [allValidated, setAllValidated] = useState(false)
   const [validationCount, setValidationCount] = useState(0)
   const [validatedForms, setValidatedForms] = useState(0)
+  const [updateInfo, setUpdateInfo] = useState<boolean>(false)
 
   const [open, setOpen] = useState<boolean>(false)
   const [nextClicked, setNextClicked] = useState<boolean>(false)
@@ -265,6 +267,7 @@ const InformationBound: React.FC<InformationProps> = ({ onStepChange, disableSec
     }
 
     setBasicInfo(obBasicInfo)
+    setUpdateInfo(true)
     setPlacementStructure(obPlacementStructure)
   }
 
@@ -642,6 +645,7 @@ const InformationBound: React.FC<InformationProps> = ({ onStepChange, disableSec
                 makeValidations={makeValidations}
                 makeSaveValidations={makeSaveValidations}
                 onValidationComplete={handleValidationComplete}
+                setUpdateInfo={setUpdateInfo}
               />
             </DisableForm>
           </div>

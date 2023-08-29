@@ -45,7 +45,7 @@ export interface RenameFolder {
 }
 
 export interface DeleteFile {
-  fileId: number
+  fileId: any
 }
 
 export interface DeleteFolder {

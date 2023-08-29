@@ -152,6 +152,7 @@ const Information: React.FC<InformationProps> = ({
   // Save id doctos by file name
   const [doctoIdByName, setDoctoIdByName] = useState({})
   const [userFile, setUserFile] = useState<File[]>([])
+  const [updateInfo, setUpdateInfo] = useState<boolean>(false)
 
   //***Para endosos***************************************************
   const router = useRouter()
@@ -717,6 +718,7 @@ const Information: React.FC<InformationProps> = ({
       }
 
       setBasicInfo(obBasicInfo)
+      setUpdateInfo(true)
       setPlacementStructure(obPlacementStructure)
       dispatch(
         updateFormsData({
@@ -830,7 +832,9 @@ const Information: React.FC<InformationProps> = ({
   const handleSaveInformation = async () => {
     try {
       if (idAccount) {
-        setBadgeData({
+
+        if (!updateInfo) {
+           setBadgeData({
           message: `UPDATING INFORMATION`,
           status: 'secondary',
           open: true,
@@ -846,6 +850,8 @@ const Information: React.FC<InformationProps> = ({
         dispatch(updateFormsData({ form1: { basicInfo, placementStructure, userFile, id: idAccount } }))
         getIdAccount ? getIdAccount(idAccount) : undefined
         setDisableSave(false)
+        if (hasClickedNextStep) onStepChange(2)
+       }
       } else {
         setBadgeData({
           message: `SAVING INFORMATION`,
@@ -868,7 +874,6 @@ const Information: React.FC<InformationProps> = ({
           getIdAccount ? getIdAccount(res.account.id) : undefined
           setAccountId(res.account.id)
           await localStorage.setItem('idAccount', String(res.account.id))
-          debugger
           createFolder({ folderName: 'Final Slip', accountId: Number(res.account.id) })
           if (discountTemp.length > 0) {
             await addDiscounts(discountTemp)
@@ -1158,6 +1163,7 @@ const Information: React.FC<InformationProps> = ({
                 onValidationComplete={
                   isBoundAccount ? handleValidationCompleteEndorsementAccount : handleValidationComplete
                 }
+                setUpdateInfo={setUpdateInfo}
               />
             </DisableForm>
           </div>
@@ -1172,6 +1178,7 @@ const Information: React.FC<InformationProps> = ({
                 makeValidations={makeValidations}
                 onValidationComplete={handleValidationComplete}
                 triggerSubject={subjectState}
+                setUpdateInfo={setUpdateInfo}
               />
             </DisableForm>
           </div>
