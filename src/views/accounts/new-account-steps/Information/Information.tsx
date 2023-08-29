@@ -718,7 +718,6 @@ const Information: React.FC<InformationProps> = ({
       }
 
       setBasicInfo(obBasicInfo)
-      setUpdateInfo(true)
       setPlacementStructure(obPlacementStructure)
       dispatch(
         updateFormsData({
@@ -832,9 +831,7 @@ const Information: React.FC<InformationProps> = ({
   const handleSaveInformation = async () => {
     try {
       if (idAccount) {
-        console.log('fuera del if ====>', updateInfo);
-        if (!updateInfo) {
-          console.log('entre al if de actualizacion =====>', updateInfo);
+        if (updateInfo) {
            setBadgeData({
           message: `UPDATING INFORMATION`,
           status: 'secondary',
