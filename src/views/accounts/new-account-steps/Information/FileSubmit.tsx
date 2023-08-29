@@ -226,7 +226,7 @@ const FileSubmit: React.FC<UserFileProps> = ({
   const handleRemoveFile = (e: any, file: responseFile) => {
     e.preventDefault
     const idFileRemove = JSON.stringify(file.fileId)
-    setRemove({ fileId: [Number(idFileRemove)] })
+    setRemove({ filesId: [Number(idFileRemove)] })
     console.log(removeFile)
     setOpenDelete(false)
     findById(idAccountInit || Number(localStorage.getItem('idAccount')))
@@ -282,7 +282,7 @@ const FileSubmit: React.FC<UserFileProps> = ({
   const handleMoveFileToFolder = async (e: any, file: responseFile, idFolder: number) => {
     e.preventDefault
     const idFileMove = JSON.stringify(file.fileId)
-    setmoveToFolder({ filesId: [idFolder, Number(idFileMove)] })
+    setmoveToFolder({ destinationFolderId: idFolder, fileId: Number(idFileMove) })
     console.log(moveFile)
     setOpen(false)
     findById(idAccountInit || Number(localStorage.getItem('idAccount')))
