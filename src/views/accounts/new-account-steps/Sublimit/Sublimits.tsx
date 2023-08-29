@@ -3,26 +3,31 @@ import { useAddSublimits, useDeleteSublimits, useUpdateSublimits } from '@/hooks
 import { AbilityContext } from '@/layouts/components/acl/Can'
 import { SublimitDto } from '@/services/accounts/dtos/sublimit.dto'
 import { CoverageDto } from '@/services/catalogs/dtos/coverage.dto'
-import { useAppSelector } from '@/store'
+import { useAppDispatch, useAppSelector } from '@/store'
 import { NextContainer } from '@/styles/Forms/Sublimits'
 import CustomAlert, { IAlert } from '@/views/custom/alerts'
 import { Button, CardContent, Grid } from '@mui/material'
 import Typography from '@mui/material/Typography'
-import { useContext, useEffect, useState } from 'react'; //useContext
+import { useContext, useEffect, useState } from 'react' //useContext
 import InputLimit from './components/InputLimit/InputLimit'
 import SelectCoverage from './components/SelectCoverage/SelectCoverage'
 import { GenericCard } from './components/SublimitsCards'
 
 import { useUpdateAccountsStatus } from '@/hooks/accounts/status'
 import UserThemeOptions from '@/layouts/UserThemeOptions'
-import SaveIcon from '@mui/icons-material/Save'
-
 import CheckIcon from '@mui/icons-material/Check'
+import SaveIcon from '@mui/icons-material/Save'
+import Icon from 'src/@core/components/icon'
+
+//Custom hooks
+import { useGetAllCoverage } from '@/hooks/catalogs/coverage'
+
+//import Redux para endosos
+import { updateEndorsement } from '@/store/apps/endorsement'
 
 // import useFormStep_updateSublimits from '@/hooks/accounts/forms/stepForms/update/useFormStep_updateSublimits'
 
-// import { useRouter } from 'next/router'
-import { useGetAllCoverage } from '@/hooks/catalogs/coverage'
+import { useRouter } from 'next/router'
 import { DisableForm } from '../_commons/DisableForm'
 
 const initialValues: SublimitDto = {
@@ -82,20 +87,23 @@ export const initialErrorValues: FormErrors = {
 }
 
 interface SublimitsProps {
-  getAccountByIdHeader: (idAccount: number) => void
+  getAccountByIdHeader?: (idAccount: number) => void
+  onStepChange?: (step: number) => void
+  disableSectionCtrl?: boolean
+  isBoundAccount?: boolean
 }
 
 // getAccountByIdHeader
 
-const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
-  // const router = useRouter();
+const Sublimits = ({ getAccountByIdHeader, onStepChange, disableSectionCtrl, isBoundAccount }: SublimitsProps) => {
+  const router = useRouter()
+  const idAccountRouter = Number(router?.query?.idAccount)
   const [badgeData, setBadgeData] = useState<IAlert>({
     message: '',
     theme: 'success',
     open: false,
     status: 'error'
   })
-
 
   const [formInformationData, setFormInformationData] = useState<any>({}) //formInformationData
   const [subLimits, setSubLimits] = useState<SublimitDto[]>([])
@@ -110,10 +118,14 @@ const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
   const [disableSaveBtn, setDisableSaveBtn] = useState<boolean>(false)
   const [showErrors, setShowErrors] = useState<boolean>(false)
   const [formErrors, setFormErrors] = useState<boolean[]>([])
-  const { account, setAccountId, getAccountById } = useGetAccountById()
+  const { account, setAccountId, getAccountById, setAccount } = useGetAccountById()
 
   //** REDUX
   const accountData = useAppSelector(state => state.accounts)
+
+  // Redux para endosos********************************************
+  const endorsementData = useAppSelector(state => state.endorsement.data)
+  const dispatch = useAppDispatch()
 
   //theme
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
@@ -130,7 +142,9 @@ const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
 
   // ** Custom hooks
   const { updateAccountsStatus } = useUpdateAccountsStatus()
-  const { coverages, getAllCoverages, setAccountIdCoverage } = useGetAllCoverage();
+
+  // custom hooks para endosos
+  const { coverages, getAllCoverages, setAccountIdCoverage } = useGetAllCoverage()
 
   const handleSelectedCoverage = (coverageSelect: CoverageDto) => {
     // console.log('coverageSelect', coverageSelect);
@@ -138,15 +152,10 @@ const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
     setCoverageSelected([...coverageSelected, coverageSelect])
   }
 
-
-
   const handleToggle = (value: number, label: string) => {
     try {
       const idAccountCache = Number(localStorage.getItem('idAccount')) ?? accountData.formsData.form1?.id
-
       const subLimitsTemp = subLimits.find(sublimit => sublimit.title === label)
-
-      // console.log(' idAccountCache -> ', idAccountCache);
 
       if (!subLimitsTemp) {
         const subLimitsTemp = [...subLimits]
@@ -156,7 +165,7 @@ const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
             ...initialValues,
             title: label,
             idCCoverage: value,
-            idAccount: account ? account?.id : idAccountCache
+            idAccount: account ? account?.id : isBoundAccount ? idAccountRouter : idAccountCache
           }
         ])
         formErrors.push(false)
@@ -173,7 +182,8 @@ const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
     /**
      * Hace el borrado de la base de datos directamente
      */
-    await deleteSublimits([sublimit])
+    //Validación para endosos
+    isBoundAccount ? undefined : await deleteSublimits([sublimit])
 
     setSubLimits(state => {
       const newState = state.filter((sub, i) => index !== i)
@@ -200,6 +210,101 @@ const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
       setShowErrors(true)
     }
   }
+
+  //* funciones para la parte de Endosos para sublimits***************************************************
+  //Evento que controla el evento de continuar
+  const handleNextStep = async () => {
+    const existError = formErrors.find(error => error)
+    if (!existError && subLimits.length > 0) {
+      handleSaveSubmit()
+      onStepChange ? onStepChange(5) : undefined
+    } else {
+      setShowErrors(true)
+    }
+  }
+
+  const handleSaveSubmit = async () => {
+    if (!endorsementData.initialized) return
+    const save: Partial<SublimitDto>[] = []
+    for (const subLimit of subLimits) {
+      // * Cuando hay un cambio en el componente DeductibleMaterialDamage,
+      // * desaparece el campo idCDeductiblePer, si no hay un cambio
+      // * lo deja en 0, entonces cuando venga en 0, lo elimino
+
+      const tempSubmit = {
+        ...subLimit,
+        ...(subLimit?.idCDeductiblePer === 0 ? { idCDeductiblePer: null } : null)
+      }
+
+      save.push(tempSubmit)
+    }
+
+    const newEndorsementData = {
+      ...endorsementData,
+      sublimits: save
+    }
+    dispatch(updateEndorsement(newEndorsementData))
+  }
+  useEffect(() => {
+    if (idAccountRouter && !endorsementData.initialized) {
+      setAccountId(idAccountRouter)
+    } else {
+      setAccount({
+        id: idAccountRouter,
+        status: '',
+        discounts: endorsementData.discounts,
+        idAccountStatus: 0,
+        idAccountType: 0,
+        informations: [
+          {
+            ...endorsementData.information,
+            idLineOfBussines: {},
+            idCountry: {},
+            idBroker: {},
+            idCedant: {},
+            idRiskActivity: {},
+            idTypeOfLimit: {},
+            idCurrency: {},
+            idBrokerContact: {},
+            idCedantContact: {},
+            idEconomicSector: {},
+            idLeadUnderwriter: {},
+            idTechnicalAssistant: {},
+            idUnderwriter: {}
+          }
+        ],
+        installments: endorsementData.installments,
+        securities: endorsementData.securities,
+        securitiesTotal: endorsementData.securitiesTotal,
+        sublimits: endorsementData.sublimits
+      })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [idAccountRouter, setAccountId])
+
+  useEffect(() => {
+    if (account && account.sublimits.length > 0) {
+      setSubLimits([...account.sublimits])
+
+      formErrors.push(false)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [account])
+
+  useEffect(() => {
+    if (coverageSelected.length === 0) {
+      setAccountIdCoverage(accountData.formsData.form1?.id)
+
+      getAllCoverages(accountData.formsData.form1?.id)
+      const coveragesFiltered = coverages.filter((elemento: any) => {
+        return subLimits.some(filtroItem => filtroItem.idCCoverage.id === elemento.id)
+      })
+
+      setCoverageSelected(coveragesFiltered)
+    }
+  }, [subLimits])
+
+  //************************************************************************
 
   const handleSubmit = async () => {
     setDisableBoundBtn(true)
@@ -271,7 +376,7 @@ const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
           }
         ]
       })
-      getAccountByIdHeader(formInformationData.id)
+      getAccountByIdHeader ? getAccountByIdHeader(formInformationData.id) : undefined
       setBadgeData({
         message: 'Account has been updated',
         theme: 'success',
@@ -292,7 +397,6 @@ const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
   const getAccountData = async () => {
     const idAccount = Number(localStorage.getItem('idAccount')) ?? accountData.formsData.form1?.id
 
-    // console.log(' idAccountCache -> ', idAccount);
     if (!idAccount) return
 
     localStorage.setItem('idAccount', idAccount.toString())
@@ -329,28 +433,6 @@ const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
 
   // * END -  Actualizar los datos del formulario en Redux + + + + + + + + + + + + + +
 
-
-
-
-  // console.log("Estos son los coverages seleccionados: -> ", coverageSelected, subLimits);
-
-  // console.log("Data de la cuenta: ->", accountData.formsData.form1?.id);
-
-  //? Con esto se cargan los datos para sublimits
-  useEffect(() => {
-    if (coverageSelected.length === 0) {
-      // console.log("No hay datos aquí ");
-      setAccountIdCoverage(accountData.formsData.form1?.id)
-
-      getAllCoverages(accountData.formsData.form1?.id)
-      const coveragesFiltered = coverages.filter((elemento: any) => { return subLimits.some(filtroItem => filtroItem.idCCoverage.id === elemento.id) });
-      setCoverageSelected(coveragesFiltered)
-
-      // console.log("Retornamos estos datos -> ", coveragesFiltered, coverages);
-    }
-
-  }, [subLimits, accountData])
-
   return (
     <CardContent>
       <Grid container spacing={5}>
@@ -363,8 +445,13 @@ const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
         </Grid>
         <Grid item xs={12} sm={12}>
           {/* <form noValidate autoComplete='on' onClick={handleCanUpdateSublimitsData}> */}
-          <form noValidate autoComplete='on' >
-            <DisableForm isDisabled={account?.status.toLowerCase() === 'bound' ? true : false}>
+          <form noValidate autoComplete='on'>
+            <DisableForm
+              isDisabled={
+                isBoundAccount ? disableSectionCtrl : account?.status.toLowerCase() === 'bound' ? true : false
+              }
+              sg={isBoundAccount ? 2000 : undefined}
+            >
               {/* campos header */}
               <Grid container spacing={5}>
                 <InputLimit account={account} />
@@ -399,28 +486,44 @@ const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
         </Grid>
       </Grid>
       <NextContainer>
-        <Button
-          className='btn-full-mob'
-          variant='contained'
-          color='success'
-          sx={{ mr: 2, fontFamily: inter, fontSize: size, letterSpacing: '0.4px' }}
-          disabled={disableSaveBtn || account?.status.toLowerCase() === 'bound' ? true : false}
-          onClick={handleClickSave}
-        >
-          <SaveIcon /> &nbsp; Save changes
-        </Button>
-        <Button
-          sx={{
-            fontFamily: inter,
-            letterSpacing: '0.4px',
-            fontSize: userThemeConfig.typography?.size.px15,
-            color: texButtonColor
-          }}
-          disabled={disableBoundBtn}
-          onClick={handleUpdateStatus}
-        >
-          <CheckIcon /> &nbsp; Add bound
-        </Button>
+        {isBoundAccount ? (
+          <Button
+            className='btn-next'
+            onClick={() => {
+              handleNextStep()
+            }}
+          >
+            Next Step
+            <div className='btn-icon'>
+              <Icon icon='material-symbols:arrow-right-alt' />
+            </div>
+          </Button>
+        ) : (
+          <>
+            <Button
+              className='btn-full-mob'
+              variant='contained'
+              color='success'
+              sx={{ mr: 2, fontFamily: inter, fontSize: size, letterSpacing: '0.4px' }}
+              disabled={disableSaveBtn || account?.status.toLowerCase() === 'bound' ? true : false}
+              onClick={handleClickSave}
+            >
+              <SaveIcon /> &nbsp; Save changes
+            </Button>
+            <Button
+              sx={{
+                fontFamily: inter,
+                letterSpacing: '0.4px',
+                fontSize: userThemeConfig.typography?.size.px15,
+                color: texButtonColor
+              }}
+              disabled={disableBoundBtn}
+              onClick={handleUpdateStatus}
+            >
+              <CheckIcon /> &nbsp; Add bound
+            </Button>
+          </>
+        )}
       </NextContainer>
     </CardContent>
   )
