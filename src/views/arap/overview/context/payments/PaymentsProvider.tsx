@@ -62,12 +62,20 @@ export const PaymentsProvider = ({ children }: { children: ReactNode }) => {
     if (!paymentsGrid) return;
     if (paymentsGrid.paymentsGridList.length === 0) return;
 
+    setIsLoading(true);
+
     const tempFilters: Filter[] = paymentsGrid.filters || [];
 
-    setPaymentsGrid({
-      ...paymentsGrid,
-      filters: [...tempFilters, filters]
-    })
+    // Todo: reemplazar este Timeout por el servicio que se implementará
+    setTimeout(() => {
+      setPaymentsGrid({
+        ...paymentsGrid,
+        filters: [...tempFilters, filters]
+      });
+
+      setIsLoading(false);
+    }, 500);
+
   }
 
   const handleDeleteFilters = (type: string) => {
@@ -75,8 +83,19 @@ export const PaymentsProvider = ({ children }: { children: ReactNode }) => {
     if (!paymentsGrid) return;
     if (paymentsGrid.paymentsGridList.length === 0) return;
 
+    setIsLoading(true);
+
     const tempFilters: Filter[] = paymentsGrid.filters.filter(filterItem => filterItem.type !== type);
 
+
+    // Todo: reemplazar este Timeout por el servicio que se implementará
+    setTimeout(() => {
+      setPaymentsGrid({
+        ...paymentsGrid,
+        filters: [...tempFilters]
+      });
+      setIsLoading(false);
+    }, 500);
 
     setPaymentsGrid({
       ...paymentsGrid,

@@ -102,7 +102,7 @@ const ColumnHeader: React.FC<IColunmHeader> = ({ colDef, showIcon = true, type }
         }}
         PaperProps={{ style: { minWidth: widthMenu, borderRadius: '10px' } }}
       >
-        <SwitcherFilterMenus field={field} />
+        <SwitcherFilterMenus field={field} handleClose={handleClose} />
       </Menu>
     </Box>
   )

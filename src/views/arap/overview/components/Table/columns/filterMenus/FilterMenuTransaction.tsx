@@ -10,19 +10,20 @@ import { useContext } from 'react'
 
 
 interface FilterMenuOptionProps {
-  item: ARAPTransaction
-  handleClose?: () => void
+  value: ARAPTransaction;
+  text: string;
+  handleClose?: () => void;
 }
 
-const FilterMenuOption: React.FC<FilterMenuOptionProps> = ({ item }) => {
+const FilterMenuOption: React.FC<FilterMenuOptionProps> = ({ value, text }) => {
   const { handleChangeFilters } = useContext(PaymentsContext);
 
   const handleClick = () => {
 
     handleChangeFilters({
       type: 'transaction',
-      value: item,
-      text: item
+      value,
+      text
     })
   }
 
@@ -35,7 +36,7 @@ const FilterMenuOption: React.FC<FilterMenuOptionProps> = ({ item }) => {
           handleClick()
         }}
       >
-        {item}
+        {text}
       </MenuItem>
     </>
   )
@@ -46,7 +47,7 @@ const FilterMenuTransaction = ({ }) => {
     <>
       {OptionsARAPTransaction.map((item) => (
 
-        <FilterMenuOption key={item.value} item={item.value} />
+        <FilterMenuOption key={item.value} value={item.value} text={item.text} />
       ))}
     </>
   )

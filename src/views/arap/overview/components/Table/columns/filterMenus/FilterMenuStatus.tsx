@@ -10,19 +10,20 @@ import { useContext } from 'react'
 
 
 interface IFilterMenuStatusOptionProps {
-  status: ARAPStatus
+  value: ARAPStatus;
+  text: string;
   handleClose?: () => void
 }
 
-const FilterMenuStatusOption: React.FC<IFilterMenuStatusOptionProps> = ({ status }) => {
+const FilterMenuStatusOption: React.FC<IFilterMenuStatusOptionProps> = ({ value, text }) => {
   const { handleChangeFilters } = useContext(PaymentsContext);
 
   const handleClick = () => {
 
     handleChangeFilters({
       type: 'status',
-      value: status,
-      text: status
+      value,
+      text
     })
   }
 
@@ -30,12 +31,12 @@ const FilterMenuStatusOption: React.FC<IFilterMenuStatusOptionProps> = ({ status
     <>
       <MenuItem
         className='account-menu-item'
-        sx={{ padding: '14px 10px', borderRadius: '0', textTransform: 'capitalize' }}
+        sx={{ padding: '14px 10px', borderRadius: '0' }}
         onClick={() => {
           handleClick()
         }}
       >
-        {status}
+        {text}
       </MenuItem>
     </>
   )
@@ -46,7 +47,7 @@ const FilterMenuStatus = ({ }) => {
     <>
       {OptionsARAPStatus.map((status) => (
 
-        <FilterMenuStatusOption key={status.value} status={status.value} />
+        <FilterMenuStatusOption key={status.value} value={status.value} text={status.text} />
       ))}
     </>
   )

@@ -10,32 +10,34 @@ import { useContext } from 'react'
 
 
 interface FilterMenuOptionProps {
-  item: ARAPCapabilityName
+  value: ARAPCapabilityName;
+  text: string;
   handleClose?: () => void
 }
 
-const FilterMenuOption: React.FC<FilterMenuOptionProps> = ({ item }) => {
+const FilterMenuOption: React.FC<FilterMenuOptionProps> = ({ value, text }) => {
   const { handleChangeFilters } = useContext(PaymentsContext);
 
   const handleClick = () => {
 
     handleChangeFilters({
       type: 'capabilityName',
-      value: item,
-      text: item
-    })
+      value,
+      text
+    });
+
   }
 
   return (
     <>
       <MenuItem
         className='account-menu-item'
-        sx={{ padding: '14px 10px', borderRadius: '0', textTransform: 'capitalize' }}
+        sx={{ padding: '14px 10px', borderRadius: '0' }}
         onClick={() => {
           handleClick()
         }}
       >
-        {item}
+        {text}
       </MenuItem>
     </>
   )
@@ -46,7 +48,7 @@ const FilterMenuCapabilityName = ({ }) => {
     <>
       {OptionsARAPCapabilityName.map((item) => (
 
-        <FilterMenuOption key={item.value} item={item.value} />
+        <FilterMenuOption key={item.value} value={item.value} text={item.text} />
       ))}
     </>
   )

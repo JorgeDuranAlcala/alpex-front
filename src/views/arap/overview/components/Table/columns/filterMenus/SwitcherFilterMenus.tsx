@@ -18,26 +18,36 @@ interface IFilterMenu {
 }
 
 
-export const SwitcherFilterMenus = ({ field, }: IFilterMenu) => {
+export const SwitcherFilterMenus = ({ field, handleClose }: IFilterMenu) => {
 
   const FilterMenuComponents: IComponents = {
     [EFieldColumn.TRANSACTION_ID]: (
-      <FilterMenuTransactionId />
+      <FilterMenuTransactionId handleClose={handleClose} />
     ),
     [EFieldColumn.CAPABILITY_NAME]: (
-      <FilterMenuCapabilityName />
+      <div onClick={handleClose}>
+        <FilterMenuCapabilityName />
+      </div>
     ),
     [EFieldColumn.STATUS]: (
-      <FilterMenuStatus />
+      <div onClick={handleClose}>
+        <FilterMenuStatus />
+      </div>
     ),
     [EFieldColumn.TRANSACTION]: (
-      <FilterMenuTransaction />
+      <div onClick={handleClose}>
+        <FilterMenuTransaction />
+      </div>
     ),
     [EFieldColumn.AMOUNT]: (
-      <FilterMenuAmount />
+      <div onClick={handleClose}>
+        <FilterMenuAmount />
+      </div>
     ),
     [EFieldColumn.TRANSACTION_DATE]: (
-      <FilterMenuTransactionDate />
+      <div onClick={handleClose}>
+        <FilterMenuTransactionDate />
+      </div>
     ),
 
   }

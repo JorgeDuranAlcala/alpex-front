@@ -13,7 +13,10 @@ import Icon from 'src/@core/components/icon'
 import { PaymentsContext } from '@/views/arap/overview/context/payments/PaymentsContext'
 import { EFieldColumn } from '../efieldColumn'
 
-const FilterMenuTransactionId = () => {
+interface FilterMenuTransactionIdProps {
+  handleClose?: () => void
+}
+const FilterMenuTransactionId = ({ handleClose }: FilterMenuTransactionIdProps) => {
 
   const { handleChangeFilters, handleDeleteFilters } = useContext(PaymentsContext);
   const searchTimeOutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -37,11 +40,19 @@ const FilterMenuTransactionId = () => {
     }, 500);
   }
 
+  const handleCloseOnEnter = (key: string) => {
+    if (handleClose && key === 'Enter') {
+
+      handleClose();
+    }
+  }
+
   return (
     <Box component={'li'} sx={{ padding: '3px 30px', display: 'flex', alignItems: 'center', width: '100%' }}>
       <Input
         placeholder='Search by ID'
         onChange={e => handleOnChangeSearch(e.target.value)}
+        onKeyDown={e => handleCloseOnEnter(e.key)}
         sx={{
           fontFamily: 'Inter',
           fontSize: '16px',
