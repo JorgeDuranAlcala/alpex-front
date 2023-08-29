@@ -850,7 +850,9 @@ const Information: React.FC<InformationProps> = ({
         dispatch(updateFormsData({ form1: { basicInfo, placementStructure, userFile, id: idAccount } }))
         getIdAccount ? getIdAccount(idAccount) : undefined
         setDisableSave(false)
-        if (hasClickedNextStep) onStepChange(2)
+        if (hasClickedNextStep) {
+          onStepChange ? onStepChange(2) : undefined
+        }
        }
       } else {
         setBadgeData({
