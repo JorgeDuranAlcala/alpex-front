@@ -98,6 +98,7 @@ export type PlacementStructureProps = {
   onValidationComplete: (valid: boolean, formName: string) => void
   onDiscountsChange: (discounts: DiscountDto[]) => void
   triggerSubject: Subject<void>
+  setUpdateInfo: (valid: boolean) => void
 }
 
 const PlacementStructure: React.FC<PlacementStructureProps> = ({
@@ -106,7 +107,8 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
   makeValidations,
   onValidationComplete,
   onDiscountsChange,
-  triggerSubject
+  triggerSubject,
+  setUpdateInfo,
 }) => {
   const { currencies } = useGetAllCurrencies()
   const { typesOfLimits } = useGetAllTypeOfLimit()
@@ -379,16 +381,19 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
       netPremiumWithTaxes: netPremiumWithTaxesc ?? 0,
       netPremiumWithoutDiscounts: netPremiumWithoutDiscountsc ?? 0
     })
+     setUpdateInfo(false)
   }
 
   const handleCurrencyChange = (e: SelectChangeEvent<string> | any) => {
     const target = e.target
     const value = target.value
     setPair({ targetCurrency: value, baseCurrency: 'USD' })
+    setUpdateInfo(false)
   }
 
   const handleNumericInputChange = (value: any, name: string) => {
     setPlacementStructure({ ...placementStructure, [name]: value })
+    setUpdateInfo(false)
   }
 
   const handleSelectChange = (e: SelectChangeEvent<string> | any) => {
@@ -399,6 +404,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
       ...placementStructure,
       [name]: value
     })
+    setUpdateInfo(false)
   }
 
   const handleTaxesChange = () => {
@@ -412,6 +418,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
         taxes: 0,
         taxesP: 0
       })
+      setUpdateInfo(false)
     }
     setTaxesChecked(!taxesChecked)
   }
@@ -427,6 +434,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
         frontingFee: 0,
         frontingFeeP: 0
       })
+      setUpdateInfo(false)
     }
     setFrontingChecked(!frontingChecked)
   }
@@ -635,6 +643,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
         currency: pair.targetCurrency,
         exchangeRate: exchangeRate.conversionRate || 0
       })
+      setUpdateInfo(false)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [exchangeRate])
