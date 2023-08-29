@@ -15,6 +15,7 @@ import FormHeader from 'src/views/installments/Header/headerInstallment'
 
 import { AccountsTableContextProvider } from '@/context/accounts/Table/reducer'
 import { useGetAccountById } from '@/hooks/accounts/forms'
+import { ContainerPadd } from '@/styles/Payments/PaymnetsInstallments/paymentsInstallments'
 import { FormHeaderMoneyData } from '@/styles/Payments/ReinsurerPayment/reinsurerPayment'
 import DetailInstallment from '@/views/installments/components/DetailsInstallment'
 import InstallmentInformation from '@/views/installments/components/InstallmentInformation'
@@ -83,6 +84,7 @@ const PaymentRecord = () => {
           setEditInfo={setEditInfo}
           accountDetails={accountDetails}
           setAccountId={setAccountId}
+          isDataSheet={false}
         />
         <div style={{ display: 'flex', flexDirection: 'row', gap: '16px' }}>
           <Card>
@@ -107,7 +109,7 @@ const PaymentRecord = () => {
                     </FormControl>
                   </Grid>
                   <Grid item xs={12} md={4} sm={6}>
-                    <div className='width-full'>
+                    <FormControl fullWidth>
                       <TextField
                         fullWidth
                         autoFocus
@@ -115,12 +117,19 @@ const PaymentRecord = () => {
                         label='Current Installment'
                         defaultValue=''
                       />
-                    </div>
+                    </FormControl>
                   </Grid>
                   <Grid item xs={12} md={4} sm={6}>
-                    <div className='width-full'>
-                      <TextField fullWidth autoFocus name='typeOfPayment' label='Type Of Payment' defaultValue='' />
-                    </div>
+                    <FormControl fullWidth>
+                      <TextField
+                        fullWidth
+                        autoFocus
+                        name='typeOfPayment'
+                        label='Type Of Payment'
+                        value='Type Of Payment'
+                        disabled
+                      />
+                    </FormControl>
                   </Grid>
                 </Grid>
               </div>
@@ -138,7 +147,7 @@ const PaymentRecord = () => {
               <div className='wrapper-installments'>
                 <Grid container spacing={{ xs: 3, sm: 3, md: 3 }}>
                   <Grid item xs={12} md={4} sm={6}>
-                    <div className='width-full'>
+                    <FormControl fullWidth>
                       <TextField
                         fullWidth
                         autoFocus
@@ -147,7 +156,7 @@ const PaymentRecord = () => {
                         defaultValue=''
                         value='1'
                       />
-                    </div>
+                    </FormControl>
                   </Grid>
                   <Grid item xs={12} md={4} sm={6}>
                     <div className='width-full'>
@@ -276,7 +285,7 @@ const PaymentRecord = () => {
         </div>
         <div style={{ display: 'flex', flexDirection: 'row', gap: '16px' }}>
           <Card>
-            <div className='container-padd'>
+            <ContainerPadd>
               <div className='title-installment'>Installment 1</div>
               <InstallmentInformation st='Pending' id='1' />
               <Accordion
@@ -291,12 +300,12 @@ const PaymentRecord = () => {
                   <DetailInstallment />
                 </AccordionDetails>
               </Accordion>
-            </div>
+            </ContainerPadd>
           </Card>
         </div>
         <div style={{ display: 'flex', flexDirection: 'row', gap: '16px' }}>
           <Card>
-            <div className='container-padd'>
+            <ContainerPadd>
               <div className='title-installment'>Installment 2</div>
               <InstallmentInformation st='Paid' id='2' />
               <Accordion
@@ -311,12 +320,12 @@ const PaymentRecord = () => {
                   <DetailInstallment />
                 </AccordionDetails>
               </Accordion>
-            </div>
+            </ContainerPadd>
           </Card>
         </div>
         <div style={{ display: 'flex', flexDirection: 'row', gap: '16px' }}>
           <Card>
-            <div className='container-padd'>
+            <ContainerPadd>
               <div className='title-installment'>Installment 3</div>
               <InstallmentInformation st='Extra' id='3' />
               <Accordion
@@ -331,12 +340,12 @@ const PaymentRecord = () => {
                   <DetailInstallment />
                 </AccordionDetails>
               </Accordion>
-            </div>
+            </ContainerPadd>
           </Card>
         </div>
         <div style={{ display: 'flex', flexDirection: 'row', gap: '16px' }}>
           <Card>
-            <div className='container-padd'>
+            <ContainerPadd>
               <div className='title-installment'>Installment 4</div>
               <InstallmentInformation st='Partially' id='4' />
               <Accordion
@@ -351,7 +360,7 @@ const PaymentRecord = () => {
                   <DetailInstallment />
                 </AccordionDetails>
               </Accordion>
-            </div>
+            </ContainerPadd>
           </Card>
         </div>
       </Grid>

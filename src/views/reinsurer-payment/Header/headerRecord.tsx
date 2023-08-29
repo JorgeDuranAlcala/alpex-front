@@ -338,14 +338,14 @@ const InstallmentHeader = ({
                         </span>
                       </SecondContainer>
                       <SecondContainer sx={{ justifyContent: 'flex-end', paddingBottom: '5px' }}>
-                        <div className='actions-header'>
+                        <ContainerActionsHeader>
                           <ActionsHeader2
                             accountId={account?.id}
                             setEditInfo={setEditInfo}
                             accountStatus='PENDING'
                             sideHeader={true}
                           />
-                        </div>
+                        </ContainerActionsHeader>
                       </SecondContainer>
                     </ContainerHeaderMobile>
                   ) : (
