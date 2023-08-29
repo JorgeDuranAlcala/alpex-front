@@ -1,8 +1,10 @@
+import { Filter } from "@/views/arap/_commons/interfaces/Grid";
 import { payments_mock } from "@/views/arap/mocks/payments_mock";
 import { ReactNode, useState } from "react";
 import { QueryFilters } from '../../interfaces/QueryFilters';
 import { PaymentsGrid } from '../../interfaces/payments/PaymentsGrid';
 import { PaymentsContext } from "./PaymentsContext";
+
 
 
 export const PaymentsProvider = ({ children }: { children: ReactNode }) => {
@@ -54,12 +56,42 @@ export const PaymentsProvider = ({ children }: { children: ReactNode }) => {
     })
   }
 
+  const handleChangeFilters = (filters: Filter) => {
+    console.log('handleChangeFilters', filters);
+
+    if (!paymentsGrid) return;
+    if (paymentsGrid.paymentsGridList.length === 0) return;
+
+    const tempFilters: Filter[] = paymentsGrid.filters || [];
+
+    setPaymentsGrid({
+      ...paymentsGrid,
+      filters: [...tempFilters, filters]
+    })
+  }
+
+  const handleDeleteFilters = (type: string) => {
+
+    if (!paymentsGrid) return;
+    if (paymentsGrid.paymentsGridList.length === 0) return;
+
+    const tempFilters: Filter[] = paymentsGrid.filters.filter(filterItem => filterItem.type !== type);
+
+
+    setPaymentsGrid({
+      ...paymentsGrid,
+      filters: [...tempFilters]
+    })
+  }
+
   return (
     <PaymentsContext.Provider value={{
       isLoading,
       paymentsGrid,
       loadPaymentsGrid,
-      onChangePage
+      onChangePage,
+      handleChangeFilters,
+      handleDeleteFilters
     }}>
       {children}
     </PaymentsContext.Provider>

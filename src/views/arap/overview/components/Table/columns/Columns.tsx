@@ -3,11 +3,11 @@ import fonts from '@/views/accounts/font';
 import { Box, Typography } from '@mui/material';
 import { GRID_CHECKBOX_SELECTION_COL_DEF, GridColumns } from '@mui/x-data-grid';
 import Link from 'next/link';
-import { PaymentColumn } from '../../interfaces/payments/PaymentsGrid';
+import { PaymentColumn } from '../../../interfaces/payments/PaymentsGrid';
+import { ActionHistory } from '../renderedCells/ActionHistory';
+import { Status } from '../renderedCells/Status';
 import ColumnHeader from './ColumnHeader';
 import { EFieldColumn } from './efieldColumn';
-import { ActionHistory } from './renderedCells/ActionHistory';
-import { Status } from './renderedCells/Status';
 
 
 
@@ -43,7 +43,7 @@ export const columns: GridColumns<PaymentColumn> = [
     flex: 0.1,
     field: EFieldColumn.CAPABILITY_NAME,
     headerName: 'CAPABILITY NAME',
-    minWidth: 170,
+    minWidth: 180,
     type: 'string',
     align: 'left',
     disableColumnMenu: true,
@@ -86,7 +86,7 @@ export const columns: GridColumns<PaymentColumn> = [
     flex: 0.1,
     field: EFieldColumn.TRANSACTION,
     headerName: 'TRANSACTION',
-    minWidth: 140,
+    minWidth: 160,
 
     type: 'string',
     align: 'left',
@@ -117,7 +117,9 @@ export const columns: GridColumns<PaymentColumn> = [
     ),
     renderCell: ({ row }) => (
       <Typography sx={{ color: colors.text.secondary, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
-        {row.amount}
+        ${row.amount.toLocaleString('en-US', {
+          minimumFractionDigits: 2,
+        })} {row.currency}
       </Typography>
     )
   },
@@ -125,7 +127,7 @@ export const columns: GridColumns<PaymentColumn> = [
     flex: 0.1,
     field: EFieldColumn.TRANSACTION_DATE,
     headerName: 'TRANSACTION DATE',
-    minWidth: 165,
+    minWidth: 190,
     type: 'string',
     align: 'left',
     disableColumnMenu: true,
@@ -137,16 +139,9 @@ export const columns: GridColumns<PaymentColumn> = [
     renderCell: ({ row }) => {
       if (!row || !row.transactionDate) return
 
-      const replaceDashes = row.transactionDate.replace(/-/g, '/')
-      const fromatDate = new Date(replaceDashes)
 
-      const options: Intl.DateTimeFormatOptions = {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit'
-      }
-
-      const transactionDate = fromatDate.toLocaleDateString('Es-MX', options).replace(/\//g, '-')
+      // const transactionDate = formatDateTemplate(row.transactionDate);
+      const transactionDate = row.transactionDate;
 
       return (
         <Typography sx={{ color: colors.text.secondary, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
