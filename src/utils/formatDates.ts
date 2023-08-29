@@ -4,6 +4,15 @@ export const timestampToOnlyDate = (date: string): string | undefined => {
   }
 }
 
+export const formatDateTemplate = (date: string): string => {
+
+  const dateWithoutTime = date.split('T')[0];
+  const dateSplitted = dateWithoutTime.split('-');
+
+  return `${dateSplitted[2]}/${dateSplitted[1]}/${dateSplitted[0]}`
+
+}
+
 export const setDateFilterQuery = (rawFilter: any, filtersArray: any[], nameDate: string) => {
   if (rawFilter.subtype === 'fulldate') {
     filtersArray.push({
