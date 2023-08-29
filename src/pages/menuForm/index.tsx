@@ -1,4 +1,5 @@
 import { useDeleteInformationDocument, useGetInfoDoctosByIdAccount } from '@/hooks/accounts/information'
+import { useGetFolders } from '@/hooks/documents/getFoldersById'
 import { useAppSelector } from '@/store'
 import { getFileFromUrl } from '@/utils/formatDoctos'
 import FileSubmit from '@/views/accounts/new-account-steps/Information/FileSubmit'
@@ -21,6 +22,7 @@ const MenuForm = ({ idAccountInit }: { idAccountInit?: number | null }) => {
   const { getInfoDoctosByIdAccount } = useGetInfoDoctosByIdAccount()
   const { deleteInformationDocument } = useDeleteInformationDocument()
   const theme = useTheme()
+  const { foldersAccount, setIdUser } = useGetFolders()
 
   //States
   const [doctoIdByName, setDoctoIdByName] = useState({})
@@ -34,6 +36,7 @@ const MenuForm = ({ idAccountInit }: { idAccountInit?: number | null }) => {
 
   const handleSidebarMenu = () => {
     setSidebar(!sidebar)
+    setIdUser(Number(localStorage.getItem('idAccount')))
     console.log('Hola')
   }
 
@@ -238,6 +241,7 @@ const MenuForm = ({ idAccountInit }: { idAccountInit?: number | null }) => {
             changeTitle={onSubmittedFiles}
             isPayments={false}
             idAccountInit={idAccountInit}
+            foldersAccountClick={foldersAccount}
           />
         </div>
         <div className='container-divider'>

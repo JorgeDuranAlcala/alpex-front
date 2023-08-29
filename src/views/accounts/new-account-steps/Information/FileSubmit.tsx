@@ -74,6 +74,7 @@ interface UserFileProps {
   urls: string[]
   isPayments: boolean
   idAccountInit?: number | null
+  foldersAccountClick?: any
 }
 
 export const fileToBase64 = (file: any) => {
@@ -99,6 +100,8 @@ const FileSubmit: React.FC<UserFileProps> = ({
   changeTitle,
   isPayments,
   idAccountInit
+
+  // foldersAccountClick
 }) => {
   // ** State
   const inputRef = useRef<HTMLInputElement>(null)
@@ -109,20 +112,21 @@ const FileSubmit: React.FC<UserFileProps> = ({
 
   const [open, setOpen] = useState<boolean>(false)
   const [openList, setOpenList] = useState<boolean>(false)
-  const [numFolder, setNumFolder] = useState(0)
+
+  // const [numFolder, setNumFolder] = useState(0)
   const [openFolders, setOpenFolder] = useState(false)
   const [reloadInfo, setReloadInfo] = useState<any>()
   const [openRename, setOpenRename] = useState(false)
   const [renameValue, setRenameValue] = useState<string>('')
 
   const router = useRouter()
-  const { createFolder } = useAddFolder()
-  const { foldersAccount, setIdUser } = useGetFolders()
-  const { uploadFile, setUpload } = useUploadFile()
-  const { removeFile, setRemove } = useRemoveFile()
-  const { moveFile, setmoveToFolder } = useMoveFile()
-  const { removeFolder, setRemoveF } = useRemoveFolder()
-  const { renameFolder, setRename } = useRenameFolder()
+  const { createFolder, successAddFolder, setSuccessAddFolder } = useAddFolder()
+  const { foldersAccount, setIdUser, findById } = useGetFolders()
+  const { uploadFile, setUpload, successUploadFolder, setSuccessUploadFolder } = useUploadFile()
+  const { removeFile, setRemove, successDeleteFile, setSuccessDeleteFile } = useRemoveFile()
+  const { moveFile, setmoveToFolder, successMoveFile, setSuccessMoveFile } = useMoveFile()
+  const { removeFolder, setRemoveF, successDeleteFolder, setSuccessDeletefolder } = useRemoveFolder()
+  const { renameFolder, setRename, successRenameFolder, setSuccessRenameFolder } = useRenameFolder()
 
   const [badgeData, setBadgeData] = useState<IAlert>({
     message: '',
@@ -219,15 +223,21 @@ const FileSubmit: React.FC<UserFileProps> = ({
     setReloadInfo(foldersAccount)
   }
 
-  const handleRemoveFile = async (e: any, file: responseFile) => {
+  const handleRemoveFile = (e: any, file: responseFile) => {
     e.preventDefault
     const idFileRemove = JSON.stringify(file.fileId)
-    await setRemove({ fileId: Number(idFileRemove) })
+    setRemove({ filesId: [Number(idFileRemove)] })
     console.log(removeFile)
     setOpenDelete(false)
-    await setIdUser(idAccountInit || Number(localStorage.getItem('idAccount')))
-    setReloadInfo(foldersAccount)
+    findById(idAccountInit || Number(localStorage.getItem('idAccount')))
+    setSuccessDeleteFile(true)
   }
+
+  useEffect(() => {
+    if (successDeleteFile) {
+      findById(idAccountInit || Number(localStorage.getItem('idAccount'))).then(() => setSuccessDeleteFile(false))
+    }
+  }, [successDeleteFile])
 
   const handleMoveFolder = (e: any) => {
     e.preventDefault
@@ -259,35 +269,53 @@ const FileSubmit: React.FC<UserFileProps> = ({
     setFile([...file])
     setSelectedFile(null)
     setOpenFolder(false)
-    setIdUser(idAccountInit || Number(localStorage.getItem('idAccount')))
-    setReloadInfo(foldersAccount)
+    findById(idAccountInit || Number(localStorage.getItem('idAccount')))
+    setSuccessUploadFolder(true)
   }
+
+  useEffect(() => {
+    if (successUploadFolder) {
+      findById(idAccountInit || Number(localStorage.getItem('idAccount'))).then(() => setSuccessUploadFolder(false))
+    }
+  }, [successUploadFolder])
 
   const handleMoveFileToFolder = async (e: any, file: responseFile, idFolder: number) => {
     e.preventDefault
     const idFileMove = JSON.stringify(file.fileId)
-    setmoveToFolder({ filesId: [idFolder, Number(idFileMove)] })
+    setmoveToFolder({ destinationFolderId: idFolder, fileId: Number(idFileMove) })
     console.log(moveFile)
     setOpen(false)
-    setIdUser(idAccountInit || Number(localStorage.getItem('idAccount')))
-    setReloadInfo(foldersAccount)
+    findById(idAccountInit || Number(localStorage.getItem('idAccount')))
+    setSuccessMoveFile(true)
     setOpenList(false)
     console.log(reloadInfo)
   }
 
   useEffect(() => {
+    if (successMoveFile) {
+      findById(idAccountInit || Number(localStorage.getItem('idAccount'))).then(() => setSuccessMoveFile(false))
+    }
+  }, [successMoveFile])
+
+  useEffect(() => {
     setIdUser(idAccountInit || Number(localStorage.getItem('idAccount')))
     console.log(foldersAccount)
     setReloadInfo(foldersAccount)
-  }, [router.query.idAccount, idAccountInit, localStorage.getItem('idAccount')])
+  }, [router.query.idAccount, idAccountInit])
 
   const onAddFolder = (e: any) => {
     e.preventDefault
-    const nameFolder = 'New Folder ' + numFolder
+    const nameFolder = 'New Folder ' + foldersAccount.length
     createFolder({ folderName: nameFolder, accountId: Number(localStorage.getItem('idAccount')) })
-    const newNum = numFolder + 1
-    setNumFolder(newNum)
+    findById(idAccountInit || Number(localStorage.getItem('idAccount')))
+    setSuccessAddFolder(true)
   }
+
+  useEffect(() => {
+    if (successAddFolder) {
+      findById(idAccountInit || Number(localStorage.getItem('idAccount'))).then(() => setSuccessAddFolder(false))
+    }
+  }, [successAddFolder])
 
   useEffect(() => {
     if (userFile.length > 0) {
@@ -345,7 +373,15 @@ const FileSubmit: React.FC<UserFileProps> = ({
       menu[i].classList.add('menu-dots-none')
     }
     console.log(removeFolder)
+    findById(idAccountInit || Number(localStorage.getItem('idAccount')))
+    setSuccessDeletefolder(true)
   }
+
+  useEffect(() => {
+    if (successDeleteFolder) {
+      findById(idAccountInit || Number(localStorage.getItem('idAccount'))).then(() => setSuccessDeletefolder(false))
+    }
+  }, [successDeleteFolder])
 
   const handleRenameFolder = (e: any, folder: any) => {
     setOpenRename(false)
@@ -354,7 +390,15 @@ const FileSubmit: React.FC<UserFileProps> = ({
     console.log(newNameFolder)
     setRename({ folderId: folder.folderId, newFolderName: newNameFolder })
     console.log(renameFolder)
+    findById(idAccountInit || Number(localStorage.getItem('idAccount')))
+    setSuccessRenameFolder(true)
   }
+
+  useEffect(() => {
+    if (successRenameFolder) {
+      findById(idAccountInit || Number(localStorage.getItem('idAccount'))).then(() => setSuccessRenameFolder(false))
+    }
+  }, [successRenameFolder])
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target
@@ -431,7 +475,7 @@ const FileSubmit: React.FC<UserFileProps> = ({
                                   className='option'
                                   onClick={e => handleInfoToFolder(e, index, 'new', folder.folderId)}
                                 >
-                                  {folder.folderName}
+                                  {folder.folderName.split('_')[0]}
                                 </div>
                               )
                             })}

@@ -32,7 +32,8 @@ export interface responseFile {
   filePath: string
 }
 export interface MoveFile {
-  filesId: any
+  destinationFolderId: number
+  fileId: number
 }
 
 export interface responseMoveFile {
@@ -45,7 +46,7 @@ export interface RenameFolder {
 }
 
 export interface DeleteFile {
-  fileId: number
+  filesId: any
 }
 
 export interface DeleteFolder {

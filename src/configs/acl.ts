@@ -21,13 +21,9 @@ export type acl = {
  * admin can manage everything and client can just visit ACL page
  */
 const defineRulesFor = (role: string, subject: string, acl: acl[]) => {
-  const { can, cannot, rules } = new AbilityBuilder(AppAbility)
+  const { can, /*cannot,*/ rules } = new AbilityBuilder(AppAbility)
   if (role === 'admin') {
     can('manage', 'all')
-    acl?.forEach((element) =>{
-      console.log('elementAction => ', element?.action);
-      console.log('elementModule => ', element?.module);
-    });
   } else if (role === 'Lead underwriter') {
     acl?.forEach((element) =>{
       can(element?.action, element?.module)
@@ -53,13 +49,9 @@ const defineRulesFor = (role: string, subject: string, acl: acl[]) => {
       can(element?.action, element?.module)
     });
   } else if (role === 'Asegurador') {
-    can('manage', 'all')
-    cannot(['read'], 'catalog')
-    cannot(['read'], 'user')
-    cannot(['viewDashboardData', 'read'], 'dashboardData')
-    cannot(['viewPropertyListData', 'read'], 'propertyListData')
-    cannot(['viewMaps', 'read'], 'mapsData')
-    cannot(['viewMapsEarthquakesData', 'viewMapsValfisData', 'viewMapsZonaCrestaData', 'viewMapsInsuredPropertyData', 'read'], 'mapsListData')
+    acl?.forEach((element) =>{
+      can(element?.action, element?.module)
+    });
   } else if (role === 'Técnico') {
     acl?.forEach((element) =>{
       can(element?.action, element?.module)
