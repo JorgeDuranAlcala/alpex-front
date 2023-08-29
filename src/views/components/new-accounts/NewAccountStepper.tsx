@@ -49,7 +49,7 @@ const StepModal: React.FC<ModalProps> = ({
   return (
     <>
       <Modal className='stepper-modal' open={open} onClose={handleClose}>
-        <Box className='modal-wrapper' style={{ width: isBoundStepper ? '25%' : '0%' }}>
+        <Box className='modal-wrapper' style={{ width: isBoundStepper ? '25%' : '40%' }}>
           <HeaderTitleModal>
             {isBoundStepper ? (
               <Typography variant='h6'>Changing to step {selectedStep}</Typography>
