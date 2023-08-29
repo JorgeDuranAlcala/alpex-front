@@ -32,6 +32,7 @@ import * as yup from 'yup'
 import { useAuth } from 'src/hooks/useAuth'
 
 // ** Layout Import
+import { CircularProgress } from '@mui/material'
 import BlankLayout from 'src/@core/layouts/BlankLayout'
 import Footer from 'src/layouts/components/footer'
 
@@ -72,9 +73,10 @@ const Background = () => {
 }
 
 const LoginPage = () => {
-  const [rememberMe, setRememberMe] = useState<boolean>(true)
-  const [showPassword, setShowPassword] = useState<boolean>(false)
-  const [authError, setAuthError] = useState<boolean>(false)
+  const [rememberMe, setRememberMe] = useState<boolean>(true);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [authError, setAuthError] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   // ** Hooks
   const auth = useAuth()
@@ -88,15 +90,18 @@ const LoginPage = () => {
   })
 
   const onSubmit: SubmitHandler<FormData> = data => {
+    setIsLoading(true);
     Analytics.event({
       action: 'click_login',
       category: 'click_login',
       label: 'login_device '
     })
+
     const { email, password } = data
     auth.login({ email: email.trim(), password: password.trim(), rememberMe }, () => {
       setAuthError(true)
-    })
+      setIsLoading(false);
+    });
   }
 
   return (
@@ -154,6 +159,7 @@ const LoginPage = () => {
                     onBlur={onBlur}
                     label='Password'
                     onChange={onChange}
+                    onKeyDown={e => e.key === 'Enter' && onSubmit(control._formValues as FormData)}
                     id='auth-login-v2-password'
                     type={showPassword ? 'text' : 'password'}
                     endAdornment={
@@ -201,14 +207,19 @@ const LoginPage = () => {
         <div className='form-row login-btn'>
           <Button
             fullWidth
+            color="primary"
             size='large'
             type='submit'
             variant='contained'
             onClick={handleSubmit(onSubmit)}
-            sx={{ mb: 7 }}
-            style={{ backgroundColor: '#2535A8' }}
+            sx={{ mb: 7, position: 'relative' }}
+            disabled={isLoading}
           >
             Login
+
+            {isLoading ?
+              <CircularProgress color="secondary" size={25} sx={{ ml: 25, position: 'absolute' }} />
+              : null}
           </Button>
         </div>
         <div className='form-row'>
