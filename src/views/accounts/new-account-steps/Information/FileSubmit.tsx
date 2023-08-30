@@ -257,12 +257,12 @@ const FileSubmit: React.FC<UserFileProps> = ({
 
   const handleInfoToFolder = async (e: any, index: number, type: string, idFolder: number) => {
     e.preventDefault
-    const fileB64 = await fileToBase64(selectedFile)
+    const fileB64: any = await fileToBase64(selectedFile)
     setUpload({
       accountId: Number(router.query.idAccount),
       folderId: idFolder,
       documentType: 'General',
-      document: { type: selectedFile?.type, name: selectedFile?.name?.split('.')[0], base64: fileB64 }
+      document: { type: selectedFile?.type, name: selectedFile?.name?.split('.')[0], base64: fileB64.split(',')[1] }
     })
     console.log(uploadFile)
     file.splice(index, 1)
