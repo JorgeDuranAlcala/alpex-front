@@ -428,10 +428,10 @@ const Table = ({ status }: IAccountTable) => {
     )
 
     localStorage.setItem('idAccount', String(id))
-    router.push(`/accounts/created-endorsement-account/?&idAccount=${id}`)
+    router.push(`/accounts/created-account/?&idAccount=${id}`)
     addNewTabButton({
       text: id.toString(),
-      link: `/accounts/created-endorsement-account/?&idAccount=${id}`,
+      link: `/accounts/created-account/?&idAccount=${id}`,
       isActive: true
     })
   }
