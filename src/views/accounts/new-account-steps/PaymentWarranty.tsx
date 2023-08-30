@@ -216,14 +216,6 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange, disableSect
       const days = temp.premiumPaymentWarranty * 24 * 60 * 60 * 1000
       temp.settlementDueDate = new Date(inceptionDate.getTime() + days)
 
-      // console.log({
-      //   account: account?.informations[0]?.effectiveDate,
-      //   inceptionDate,
-      //   warranty: temp.premiumPaymentWarranty,
-      //   days,
-      //   settlementDueDate: temp.settlementDueDate
-      // })
-      // debugger;
     }
 
     if (receivedNetPremium) {
@@ -294,11 +286,13 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange, disableSect
   }
 
   useEffect(() => {
-    if (idAccountRouter && !endorsementData.initialized) {
-      setAccountId(idAccountRouter)
+    const accountID = Number(idAccountRouter || localStorage.getItem('idAccount'))
+    
+    if (accountID && !endorsementData.initialized) {
+      setAccountId(accountID)
     } else if (endorsementData) {
       setAccount({
-        id: idAccountRouter,
+        id: accountID,
         status: '',
         discounts: endorsementData.discounts,
         idAccountStatus: 0,
@@ -410,7 +404,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange, disableSect
 
   useEffect(() => {
     if (idAccount) {
-      console.log('idAccount', idAccount, 'lastIdAccount', lastIdAccount.current)
+      
 
       if (lastIdAccount.current === idAccount) return
       lastIdAccount.current = idAccount
@@ -447,9 +441,9 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange, disableSect
       isBoundAccount ? null : setInitialInstallmentList([...installments])
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    if (newAccount && !check) {
-      setCheck(true)
-      const corte = new String(newAccount!.informations[0].effectiveDate!)
+    if (account && newAccount && !check) {
+      setCheck(true)      
+      const corte = new String(newAccount.informations[0].effectiveDate)
       const corte2 = Date.parse(corte.substring(0, 10))
       const fecha = new Date(corte2)
       fecha.setMinutes(fecha.getMinutes() + fecha.getTimezoneOffset())
