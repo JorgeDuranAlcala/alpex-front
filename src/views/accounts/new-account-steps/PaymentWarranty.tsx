@@ -92,7 +92,7 @@ type Timer = ReturnType<typeof setInterval>
 let typingTimer: Timer
 const doneTypingInterval = 1500 // Tiempo en milisegundos para considerar que se dejó de escribir
 const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
-  const router = useRouter();
+  const router = useRouter()
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
 
   const inter = userThemeConfig.typography?.fontFamilyInter
@@ -121,7 +121,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
   const { account, setAccountId } = useGetAccountById()
   const { deleteInstallments } = useDeleteInstallments()
   const newAccount = account
-  const lastIdAccount = useRef<number>(0);
+  const lastIdAccount = useRef<number>(0)
 
   const [badgeData, setBadgeData] = useState<IAlert>({
     message: '',
@@ -203,15 +203,6 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
     if (inceptionDate) {
       const days = temp.premiumPaymentWarranty * 24 * 60 * 60 * 1000
       temp.settlementDueDate = new Date(inceptionDate.getTime() + days)
-
-      // console.log({
-      //   account: account?.informations[0]?.effectiveDate,
-      //   inceptionDate,
-      //   warranty: temp.premiumPaymentWarranty,
-      //   days,
-      //   settlementDueDate: temp.settlementDueDate
-      // })
-      // debugger;
     }
 
     if (receivedNetPremium) {
@@ -350,18 +341,16 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
 
   useEffect(() => {
     if (idAccount) {
-      console.log('idAccount', idAccount, 'lastIdAccount', lastIdAccount.current)
-
-      if (lastIdAccount.current === idAccount) return;
-      lastIdAccount.current = idAccount;
+      if (lastIdAccount.current === idAccount) return
+      lastIdAccount.current = idAccount
 
       setAccountId(idAccount)
     } else {
       const idAccount = Number(localStorage.getItem('idAccount')) || Number(router.query.idAccount)
 
       if (idAccount) {
-        if (lastIdAccount.current === idAccount) return;
-        lastIdAccount.current = idAccount;
+        if (lastIdAccount.current === idAccount) return
+        lastIdAccount.current = idAccount
         localStorage.setItem('idAccount', idAccount.toString())
 
         setAccountId(idAccount)
@@ -383,9 +372,9 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
       setInitialInstallmentList([...installments])
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    if (newAccount && !check) {
+    if (account && newAccount && !check) {
       setCheck(true)
-      const corte = new String(newAccount!.informations[0].effectiveDate!)
+      const corte = new String(newAccount.informations[0].effectiveDate)
       const corte2 = Date.parse(corte.substring(0, 10))
       const fecha = new Date(corte2)
       fecha.setMinutes(fecha.getMinutes() + fecha.getTimezoneOffset())
@@ -399,7 +388,6 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
     installmentsList.length > 0 && validations()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [installmentsList])
-
 
   // * INIT -  Actualizar los datos del formulario en Redux + + + + + + + + + + + + + +
 
@@ -462,8 +450,6 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
                     decimalScale={0}
                     variant='outlined'
                     value={count}
-
-                    // onClick={handleCanUpdateInstallmentsData}
                     onValueChange={value => {
                       handleNumericInputChange(value.floatValue)
                     }}

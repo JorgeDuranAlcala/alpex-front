@@ -41,7 +41,7 @@ export const ActionsHeaderBoundModal = ({
   const { endorsementTypes } = useGetAllEndorsementTypes()
 
   const ability = useContext(AbilityContext)
-  const [generateEndt] = useState(ability?.cannot('update', 'accountGenerateEndt'))
+  const [generateEndt] = useState(ability?.cannot('generateEndorsement', 'account'))
 
   const [createdEndorsement, setCreatedEndorsement] = useState({
     type: '',

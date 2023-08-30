@@ -42,14 +42,13 @@ const NewAccount = () => {
   //hooks header
   const { account: accountDetails, getAccountById } = useGetAccountById()
 
-
   // const { addNewTabButton, removeTabByText } = useMultiTabButtons()
 
   // const { account, setAccountId } = useGetAccountById()
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [disableComments, setDisableComments] = useState(false)
   const [isNewAccount, setIsNewAccount] = useState<boolean>(true)
-  const [activeStep, setActiveStep] = useState(1);
+  const [activeStep, setActiveStep] = useState(1)
 
   // const [isPushingToCreatedAccount, setIsPushingToCreatedAccount] = useState<boolean>(false)
 
@@ -71,7 +70,6 @@ const NewAccount = () => {
   //       isActive: true
   //     });
 
-
   //     removeTabByText('New Account');
 
   //     dispatch(stepForms_updateStep({
@@ -84,9 +82,7 @@ const NewAccount = () => {
   //   }
   // }
 
-
   const handleStepChange = (step: number) => {
-
     // if (step > 1) {
     //   pushToCreatedAccount(step);
 
@@ -99,11 +95,21 @@ const NewAccount = () => {
   const handleIsNewAccountChange = (status: boolean) => {
     setIsNewAccount(status)
   }
+  const [idAccountInit, setIdAccountInit] = useState<number | null>(null)
 
   const StepForm = ({ step }: { step: number }) => {
     switch (step) {
       case 1:
-        return <Information onStepChange={handleStepChange} onIsNewAccountChange={handleIsNewAccountChange} />
+        return (
+          <Information
+            onStepChange={handleStepChange}
+            onIsNewAccountChange={handleIsNewAccountChange}
+            getIdAccount={(idAccount: number) => {
+              getAccountById(idAccount)
+              setIdAccountInit(idAccount)
+            }}
+          />
+        )
       case 2:
         return <Security onStepChange={handleStepChange} />
       case 3:
@@ -200,7 +206,6 @@ const NewAccount = () => {
   //   )
   // }
 
-
   return (
     <AccountsTableContextProvider>
       <Grid className='new-account' item xs={12}>
@@ -224,7 +229,7 @@ const NewAccount = () => {
             {/* <InvoiceAdd /> */}
           </Card>
           <div style={{ display: 'none' }}>
-            <MenuForm />
+            <MenuForm idAccountInit={idAccountInit} />
           </div>
         </div>
         <Card sx={{ '@media (min-width:809px)': { display: 'none' } }}>
@@ -236,6 +241,11 @@ const NewAccount = () => {
       </Grid>
     </AccountsTableContextProvider>
   )
+}
+
+NewAccount.acl = {
+  action: 'create',
+  subject: 'account'
 }
 
 export default NewAccount

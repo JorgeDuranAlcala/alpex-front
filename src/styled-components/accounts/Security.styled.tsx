@@ -9,7 +9,8 @@ export const Container = styled('div')({
 export const GroupInputs = styled('div')({
   height: '100%',
   width: '100%',
-  border: '1px solid black',
+
+  // border: '1px solid black',
   justifyContent: 'space-between'
 })
 export const Title = styled('div')({

@@ -2,6 +2,7 @@ import useAccountTable from '@/hooks/accounts/Table/useAccountTable'
 import useGetAccountHistoryLogByIdAccount from '@/hooks/accounts/historyLog/useFindByIdAccount'
 import { useGetAllLanguage } from '@/hooks/catalogs/language'
 import usePrintReport from '@/hooks/reports/usePrintReport'
+import { HeaderRowsContainer } from '@/styles/Payments/PaymnetsInstallments/paymentsInstallments'
 import CloseIcon from '@mui/icons-material/Close'
 import { Box, Button, Modal, Typography, styled } from '@mui/material'
 import { useEffect, useState } from 'react'
@@ -18,7 +19,7 @@ interface IActionsHeaderProps {
   setEditInfo?: any
 }
 
-/* 
+/*
 interface StatusHistory {
   id: number
   name: string
@@ -131,7 +132,7 @@ const ActionsHeader: React.FC<IActionsHeaderProps> = ({ accountId, accountStatus
         <div className='btnWrappers'>
           {sideHeader ? '' : <div className='header-text'>Status:</div>}
 
-          <div className='header-rows'>
+          <HeaderRowsContainer>
             {sideHeader ? (
               ''
             ) : (
@@ -155,7 +156,7 @@ const ActionsHeader: React.FC<IActionsHeaderProps> = ({ accountId, accountStatus
                 onClick={() => {
                   setOpenHistory(true)
                 }}
-                disabled={uneditableAccount || !accountId}
+                disabled={uneditableAccount}
               >
                 <Icon icon='mdi:clock-outline' />
               </ButtonIcon>
@@ -200,7 +201,7 @@ const ActionsHeader: React.FC<IActionsHeaderProps> = ({ accountId, accountStatus
                 onClick={() => {
                   setShowPrintOptions(!showPrintOptions)
                 }}
-                disabled={uneditableAccount || !accountId}
+                disabled={uneditableAccount}
               >
                 <div className='btn-icon'>
                   <Icon icon='mdi:printer' />
@@ -235,7 +236,7 @@ const ActionsHeader: React.FC<IActionsHeaderProps> = ({ accountId, accountStatus
                 onClick={() => {
                   setOpenDelete(true)
                 }}
-                disabled={uneditableAccount || !accountId}
+                disabled={uneditableAccount}
               >
                 <div className='btn-icon'>
                   <Icon icon='mdi:delete-outline' />
@@ -275,7 +276,7 @@ const ActionsHeader: React.FC<IActionsHeaderProps> = ({ accountId, accountStatus
                 </Box>
               </Modal>
             </div>
-          </div>
+          </HeaderRowsContainer>
         </div>
       </div>
     </>

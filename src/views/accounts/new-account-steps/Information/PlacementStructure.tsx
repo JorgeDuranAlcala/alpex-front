@@ -98,6 +98,7 @@ export type PlacementStructureProps = {
   onValidationComplete: (valid: boolean, formName: string) => void
   onDiscountsChange: (discounts: DiscountDto[]) => void
   triggerSubject: Subject<void>
+  setUpdateInfo: (valid: boolean) => void
 }
 
 const PlacementStructure: React.FC<PlacementStructureProps> = ({
@@ -106,7 +107,8 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
   makeValidations,
   onValidationComplete,
   onDiscountsChange,
-  triggerSubject
+  triggerSubject,
+  setUpdateInfo,
 }) => {
   const { currencies } = useGetAllCurrencies()
   const { typesOfLimits } = useGetAllTypeOfLimit()
@@ -385,10 +387,12 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
     const target = e.target
     const value = target.value
     setPair({ targetCurrency: value, baseCurrency: 'USD' })
+    setUpdateInfo(true)
   }
 
   const handleNumericInputChange = (value: any, name: string) => {
     setPlacementStructure({ ...placementStructure, [name]: value })
+    setUpdateInfo(true)
   }
 
   const handleSelectChange = (e: SelectChangeEvent<string> | any) => {
@@ -399,6 +403,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
       ...placementStructure,
       [name]: value
     })
+    setUpdateInfo(true)
   }
 
   const handleTaxesChange = () => {
@@ -412,6 +417,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
         taxes: 0,
         taxesP: 0
       })
+      setUpdateInfo(true)
     }
     setTaxesChecked(!taxesChecked)
   }
@@ -427,6 +433,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
         frontingFee: 0,
         frontingFeeP: 0
       })
+      setUpdateInfo(true)
     }
     setFrontingChecked(!frontingChecked)
   }

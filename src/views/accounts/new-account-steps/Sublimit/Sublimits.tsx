@@ -1,27 +1,29 @@
 import { useGetAccountById } from '@/hooks/accounts/forms'
 import { useAddSublimits, useDeleteSublimits, useUpdateSublimits } from '@/hooks/accounts/sublimit'
+import { AbilityContext } from '@/layouts/components/acl/Can'
 import { SublimitDto } from '@/services/accounts/dtos/sublimit.dto'
 import { CoverageDto } from '@/services/catalogs/dtos/coverage.dto'
 import { useAppSelector } from '@/store'
 import { NextContainer } from '@/styles/Forms/Sublimits'
 import CustomAlert, { IAlert } from '@/views/custom/alerts'
 import { Button, CardContent, Grid } from '@mui/material'
+import CircularProgress from '@mui/material/CircularProgress'
 import Typography from '@mui/material/Typography'
-import { useEffect, useState } from 'react'; //useContext
-// import { AbilityContext } from '@/layouts/components/acl/Can'
+import { useContext, useEffect, useState } from 'react' //useContext
 import InputLimit from './components/InputLimit/InputLimit'
 import SelectCoverage from './components/SelectCoverage/SelectCoverage'
 import { GenericCard } from './components/SublimitsCards'
 
-// import { useUpdateAccountsStatus } from '@/hooks/accounts/status'
+import { useUpdateAccountsStatus } from '@/hooks/accounts/status'
 import UserThemeOptions from '@/layouts/UserThemeOptions'
 import SaveIcon from '@mui/icons-material/Save'
 
-// import CheckIcon from '@mui/icons-material/Check'
+import CheckIcon from '@mui/icons-material/Check'
 
 // import useFormStep_updateSublimits from '@/hooks/accounts/forms/stepForms/update/useFormStep_updateSublimits'
 
-import { useRouter } from 'next/router'
+// import { useRouter } from 'next/router'
+import { useGetAllCoverage } from '@/hooks/catalogs/coverage'
 import { DisableForm } from '../_commons/DisableForm'
 
 const initialValues: SublimitDto = {
@@ -86,8 +88,8 @@ interface SublimitsProps {
 
 // getAccountByIdHeader
 
-const Sublimits = ({ }: SublimitsProps) => {
-  const router = useRouter();
+const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
+  // const router = useRouter();
   const [badgeData, setBadgeData] = useState<IAlert>({
     message: '',
     theme: 'success',
@@ -95,14 +97,16 @@ const Sublimits = ({ }: SublimitsProps) => {
     status: 'error'
   })
 
-  const [, setFormInformationData] = useState<any>({}) //formInformationData
+  const [formInformationData, setFormInformationData] = useState<any>({}) //formInformationData
   const [subLimits, setSubLimits] = useState<SublimitDto[]>([])
-  const [coverageSelected, setCoverageSelected] = useState<CoverageDto[]>([])
 
-  // const ability = useContext(AbilityContext)
+  // const [coverageSelected, setCoverageSelected] = useState<CoverageDto[]>([])
+  const [coverageSelected, setCoverageSelected] = useState<any[]>([])
+
+  const ability = useContext(AbilityContext)
 
   //state para lo botones
-  // const [disableBoundBtn, setDisableBoundBtn] = useState(ability?.cannot('update', 'accountSublimits'))
+  const [disableBoundBtn, setDisableBoundBtn] = useState(ability?.cannot('addBound', 'account'))
   const [disableSaveBtn, setDisableSaveBtn] = useState<boolean>(false)
   const [showErrors, setShowErrors] = useState<boolean>(false)
   const [formErrors, setFormErrors] = useState<boolean[]>([])
@@ -117,7 +121,7 @@ const Sublimits = ({ }: SublimitsProps) => {
   const inter = userThemeConfig.typography?.fontFamilyInter
   const size = userThemeConfig.typography?.size.px14
 
-  // const texButtonColor = userThemeConfig.palette?.buttonText.primary
+  const texButtonColor = userThemeConfig.palette?.buttonText.primary
 
   //hooks para sublimits
   const { saveSublimits } = useAddSublimits()
@@ -125,7 +129,8 @@ const Sublimits = ({ }: SublimitsProps) => {
   const { deleteSublimits } = useDeleteSublimits()
 
   // ** Custom hooks
-  // const { updateAccountsStatus } = useUpdateAccountsStatus()
+  const { updateAccountsStatus } = useUpdateAccountsStatus()
+  const { getAllCoverages, setAccountIdCoverage, coverages } = useGetAllCoverage()
 
   const handleSelectedCoverage = (coverageSelect: CoverageDto) => {
     // console.log('coverageSelect', coverageSelect);
@@ -133,10 +138,13 @@ const Sublimits = ({ }: SublimitsProps) => {
     setCoverageSelected([...coverageSelected, coverageSelect])
   }
 
-  const handleToggle = (value: number, label: string) => {
+  const handleAddCoverage = (value: number, label: string) => {
     try {
-      const idAccountCache = Number(localStorage.getItem('idAccount'))
+      const idAccountCache = Number(localStorage.getItem('idAccount')) ?? accountData.formsData.form1?.id
+
       const subLimitsTemp = subLimits.find(sublimit => sublimit.title === label)
+
+      // console.log(' idAccountCache -> ', idAccountCache);
 
       if (!subLimitsTemp) {
         const subLimitsTemp = [...subLimits]
@@ -180,11 +188,22 @@ const Sublimits = ({ }: SublimitsProps) => {
     if (coverageDelete) {
       setCoverageSelected([...coverageDelete])
     }
+    getAllCoverages(accountData.formsData.form1?.id)
   }
 
   const handleClickSave = () => {
     const existError = formErrors.find(error => error)
     if (!existError && subLimits.length > 0) {
+      setDisableSaveBtn(true)
+      setBadgeData({
+        message: `SAVING INFORMATION`,
+        status: 'secondary',
+        open: true,
+        icon: <CircularProgress size={20} color='secondary' />,
+        backgroundColor: '#828597',
+        theme: 'info',
+        disableAutoHide: true
+      })
       handleSubmit()
     } else {
       setShowErrors(true)
@@ -192,8 +211,7 @@ const Sublimits = ({ }: SublimitsProps) => {
   }
 
   const handleSubmit = async () => {
-    // setDisableBoundBtn(true)
-    setDisableSaveBtn(true)
+    setDisableBoundBtn(true)
     const save: Partial<SublimitDto>[] = []
     const update: Partial<SublimitDto>[] = []
     for (const subLimit of subLimits) {
@@ -215,8 +233,15 @@ const Sublimits = ({ }: SublimitsProps) => {
         save.push(tempSubmit)
       }
     }
-
-    Promise.all([updateSublimits(update), saveSublimits(save)])
+    let actions: any[] = []
+    if (update.length > 0 && save.length > 0) {
+      actions = [updateSublimits(update), saveSublimits(save)]
+    } else if (save.length > 0) {
+      actions = [saveSublimits(save)]
+    } else if (update.length > 0) {
+      actions = [updateSublimits(update)]
+    }
+    await Promise.all(actions)
       .then(values => {
         console.log({ values })
         setBadgeData({
@@ -228,13 +253,13 @@ const Sublimits = ({ }: SublimitsProps) => {
 
         getAccountData().then(console.log)
 
-        // setDisableBoundBtn(false)
+        setDisableBoundBtn(false)
         setDisableSaveBtn(false)
       })
       .catch(reason => {
         console.log({ reason })
 
-        // setDisableBoundBtn(false)
+        setDisableBoundBtn(false)
         setDisableSaveBtn(false)
       })
 
@@ -248,49 +273,50 @@ const Sublimits = ({ }: SublimitsProps) => {
     }, 4000)
   }
 
-  // const handleUpdateStatus = async () => {
-  //   const existError = formErrors.find(error => error)
-  //   if (!existError) {
-  //     handleSubmit()
+  const handleUpdateStatus = async () => {
+    const existError = formErrors.find(error => error)
+    if (!existError) {
+      handleSubmit()
 
-  //     await updateAccountsStatus({
-  //       updateStatus: [
-  //         {
-  //           idAccount: formInformationData.id,
-  //           status: 5
-  //         }
-  //       ]
-  //     })
-  //     getAccountByIdHeader(formInformationData.id)
-  //     setBadgeData({
-  //       message: 'Account has been updated',
-  //       theme: 'success',
-  //       open: true,
-  //       status: 'error'
-  //     })
-  //     setTimeout(() => {
-  //       setBadgeData({
-  //         message: 'updated successfully',
-  //         theme: 'success',
-  //         open: false,
-  //         status: 'error'
-  //       })
-  //     }, 50)
-  //   }
-  // }
+      await updateAccountsStatus({
+        updateStatus: [
+          {
+            idAccount: formInformationData.id,
+            status: 5
+          }
+        ]
+      })
+      getAccountByIdHeader(formInformationData.id)
+      setBadgeData({
+        message: 'Account has been updated',
+        theme: 'success',
+        open: true,
+        status: 'error'
+      })
+      setTimeout(() => {
+        setBadgeData({
+          message: 'updated successfully',
+          theme: 'success',
+          open: false,
+          status: 'error'
+        })
+      }, 50)
+    }
+  }
 
   const getAccountData = async () => {
-    const idAccount = Number(localStorage.getItem('idAccount')) || Number(router.query.idAccount)
+    const idAccount = Number(localStorage.getItem('idAccount')) ?? accountData.formsData.form1?.id
 
+    // console.log(' idAccountCache -> ', idAccount);
     if (!idAccount) return
 
     localStorage.setItem('idAccount', idAccount.toString())
     setAccountId(idAccount)
 
-    const accountData = await getAccountById(idAccount)
+    const accountDataF = await getAccountById(idAccount)
 
-    if (accountData && accountData.sublimits.length > 0) {
-      setSubLimits([...accountData.sublimits])
+    if (accountDataF && accountDataF.sublimits.length > 0) {
+      setSubLimits([...accountDataF.sublimits])
 
       formErrors.push(false)
     }
@@ -307,16 +333,19 @@ const Sublimits = ({ }: SublimitsProps) => {
     getAccountData()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-  console.log({ subLimits })
+  useEffect(() => {
+    if (coverageSelected.length === 0) {
+      // console.log("No hay datos aquí ");
+      setAccountIdCoverage(accountData.formsData.form1?.id)
 
-  // * INIT -  Actualizar los datos del formulario en Redux + + + + + + + + + + + + + +
+      getAllCoverages(accountData.formsData.form1?.id)
+      const coveragesFiltered = coverages.filter((elemento: any) => { return subLimits.some(filtroItem => filtroItem.idCCoverage.id === elemento.id) });
+      setCoverageSelected(coveragesFiltered)
 
-  // const { handleCanUpdateSublimitsData } = useFormStep_updateSublimits({
-  //   idAccount: account?.id || null,
-  //   sublimits: subLimits
-  // });
-
-  // * END -  Actualizar los datos del formulario en Redux + + + + + + + + + + + + + +
+      // console.log("Retornamos estos datos -> ", coveragesFiltered, coverages);
+    }
+  }, [subLimits, accountData])
+  console.log({ subLimits, coverageSelected })
 
   return (
     <CardContent>
@@ -330,15 +359,16 @@ const Sublimits = ({ }: SublimitsProps) => {
         </Grid>
         <Grid item xs={12} sm={12}>
           {/* <form noValidate autoComplete='on' onClick={handleCanUpdateSublimitsData}> */}
-          <form noValidate autoComplete='on' >
+          <form noValidate autoComplete='on'>
             <DisableForm isDisabled={account?.status.toLowerCase() === 'bound' ? true : false}>
               {/* campos header */}
               <Grid container spacing={5}>
                 <InputLimit account={account} />
                 <SelectCoverage
+                  idAccount={accountData.formsData.form1?.id}
                   onChangeSelected={handleSelectedCoverage}
                   coverageSelected={coverageSelected}
-                  onClickToggle={handleToggle}
+                  onClickToggle={handleAddCoverage}
                 />
               </Grid>
               <Grid container spacing={5} sx={{ mt: '20px' }}>
@@ -346,6 +376,7 @@ const Sublimits = ({ }: SublimitsProps) => {
                   subLimits.map((subLimit, index) => (
                     <Grid item xs={12} sm={12} md={6} lg={4} key={index}>
                       <GenericCard
+                        selectedCoverages={coverageSelected}
                         subLimit={subLimit}
                         setSubLimits={setSubLimits}
                         subLimits={subLimits}
@@ -374,7 +405,7 @@ const Sublimits = ({ }: SublimitsProps) => {
         >
           <SaveIcon /> &nbsp; Save changes
         </Button>
-        {/* <Button
+        <Button
           sx={{
             fontFamily: inter,
             letterSpacing: '0.4px',
@@ -385,7 +416,7 @@ const Sublimits = ({ }: SublimitsProps) => {
           onClick={handleUpdateStatus}
         >
           <CheckIcon /> &nbsp; Add bound
-        </Button> */}
+        </Button>
       </NextContainer>
     </CardContent>
   )

@@ -1,9 +1,12 @@
+import { formatStatusToNumber } from '@/utils/formatStatus'
 import FormControl from '@mui/material/FormControl'
 import MenuItem from '@mui/material/MenuItem'
 import Select, { SelectChangeEvent } from '@mui/material/Select'
 import { useEffect, useState } from 'react'
-import Status from 'src/views/accounts/Table/Status'
+import useAccountTable from 'src/hooks/accounts/Table/useAccountTable'
 import { useAuth } from 'src/hooks/useAuth'
+import Status, { EStatus, EStatusString } from 'src/views/accounts/Table/Status'
+import ModalAction from '../modal'
 
 interface StatusSelect {
   setSelectedStatus: React.Dispatch<React.SetStateAction<any>>
@@ -44,15 +47,53 @@ const statusArray = [
   }
 ]
 
-export default function StatusSelect({ accountDetails, setSelectedStatus, initialStatus, margin = 1 }: any) {
+export default function StatusSelect({
+  isNewAccount = false,
+  accountDetails,
+  setSelectedStatus,
+  initialStatus,
+  margin = 1
+}: any) {
+  const { changeStatusAccounts } = useAccountTable()
   //eslint-disable-next-line
   const [value, setValue] = useState<string | null>(null)
   const [status, setStatus] = useState(initialStatus)
   const [statusArrayTemp, setStatusArrayTemp] = useState(statusArray)
+  const [showChangeStatusModal, setShowChangeStatusModal] = useState(false)
+  const [textChangeStatusModal, setTextChangeStatusModal] = useState('')
+
   const auth = useAuth()
   const handleChange = (event: SelectChangeEvent) => {
-    setStatus(event.target.value)
-    setSelectedStatus(statusArray.find(stat => stat.label === event.target.value))
+    if (status !== event.target.value && !isNewAccount) {
+      handleTextChangeStatusModal(event.target.value)
+      setShowChangeStatusModal(true)
+      setStatus(event.target.value)
+      setSelectedStatus(statusArray.find(stat => stat.label === event.target.value))
+    } else {
+      setStatus(event.target.value)
+      sessionStorage.setItem('accountStatus', event.target.value)
+      setSelectedStatus(statusArray.find(stat => stat.label === event.target.value))
+    }
+  }
+  const handleChangeStatusAction = async () => {
+    if (status) {
+      const changeStatusArray = [
+        {
+          idAccount: accountDetails.id,
+          status: formatStatusToNumber(EStatus[status as keyof typeof EStatus])
+        }
+      ]
+      await changeStatusAccounts({
+        updateStatus: changeStatusArray
+      })
+    }
+  }
+  const handleClickCancel = () => {
+    setStatus(initialStatus)
+  }
+  const handleTextChangeStatusModal = (newStatus: string) => {
+    const msg = 'You are about to change'
+    setTextChangeStatusModal(`${msg} #${accountDetails.id} to a ${EStatusString[newStatus as keyof typeof EStatus]}.`)
   }
   useEffect(() => {
     setSelectedStatus(statusArray.find(stat => stat.label === value))
@@ -75,18 +116,17 @@ export default function StatusSelect({ accountDetails, setSelectedStatus, initia
           if (item.label == 'Bound') {
             return item
           }
-          
         }, [])
         setStatusArrayTemp(statusArrayFilter)
       } else if (auth?.user?.role == 'Lead underwriter' || auth?.user?.role == 'Technical assistant') {
-        if(accountDetails?.endorsements > 0){
+        if (accountDetails?.endorsements > 0) {
           const statusArrayFilter = statusArray.filter(item => {
             if (item.label == 'Bound') {
               return item
             }
-          }, [])  
+          }, [])
           setStatusArrayTemp(statusArrayFilter)
-        }else{
+        } else {
           const statusArrayFilter = statusArray.filter(item => {
             if (item.label == 'Bound' || item.label == 'Pending') {
               return item
@@ -131,6 +171,16 @@ export default function StatusSelect({ accountDetails, setSelectedStatus, initia
           ))}
         </Select>
       </FormControl>
+      <ModalAction
+        headingText={textChangeStatusModal}
+        text='Do you want to proceed?'
+        handleClickContinue={handleChangeStatusAction}
+        setShow={showChangeStatusModal}
+        onClose={() => {
+          setShowChangeStatusModal(false)
+        }}
+        handleClickCancel={handleClickCancel}
+      />
     </div>
   )
 }

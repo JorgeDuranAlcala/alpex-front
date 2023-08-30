@@ -13,7 +13,7 @@ const AddCedant = () => {
 
 AddCedant.acl = {
   action: 'read',
-  subject: 'catalog'
+  subject: 'catalogues'
 }
 
 export default AddCedant

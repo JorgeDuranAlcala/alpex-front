@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState } from 'react'
 
 // ** Theme
@@ -82,6 +83,7 @@ export interface BasicInfoInterface {
   effectiveDate: Date | null
   expirationDate: Date | null
   idAccountType: number
+  typeLogo: number | null
 }
 
 export interface PlacementStructure {
@@ -129,6 +131,7 @@ const InformationBound: React.FC<InformationProps> = ({ onStepChange, disableSec
   const [allValidated, setAllValidated] = useState(false)
   const [validationCount, setValidationCount] = useState(0)
   const [validatedForms, setValidatedForms] = useState(0)
+  const [updateInfo, setUpdateInfo] = useState<boolean>(false)
 
   const [open, setOpen] = useState<boolean>(false)
   const [nextClicked, setNextClicked] = useState<boolean>(false)
@@ -180,7 +183,8 @@ const InformationBound: React.FC<InformationProps> = ({ onStepChange, disableSec
     receptionDate: null,
     effectiveDate: null,
     expirationDate: null,
-    idAccountType: 1
+    idAccountType: 1,
+    typeLogo: null
   })
 
   const [placementStructure, setPlacementStructure] = useState<PlacementStructure>({
@@ -238,7 +242,8 @@ const InformationBound: React.FC<InformationProps> = ({ onStepChange, disableSec
       receptionDate: information.receptionDate ? new Date(information.receptionDate) : null,
       effectiveDate: information.effectiveDate ? new Date(information.effectiveDate) : null,
       expirationDate: information.expirationDate ? new Date(information.expirationDate) : null,
-      idAccountType: Number(information.idAccountType)
+      idAccountType: Number(information.idAccountType),
+      typeLogo: information.typeLogo ? information.typeLogo : null
     }
 
     const obPlacementStructure = {
@@ -262,6 +267,7 @@ const InformationBound: React.FC<InformationProps> = ({ onStepChange, disableSec
     }
 
     setBasicInfo(obBasicInfo)
+    setUpdateInfo(true)
     setPlacementStructure(obPlacementStructure)
   }
 
@@ -639,6 +645,7 @@ const InformationBound: React.FC<InformationProps> = ({ onStepChange, disableSec
                 makeValidations={makeValidations}
                 makeSaveValidations={makeSaveValidations}
                 onValidationComplete={handleValidationComplete}
+                setUpdateInfo={setUpdateInfo}
               />
             </DisableForm>
           </div>

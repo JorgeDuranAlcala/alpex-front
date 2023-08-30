@@ -2,7 +2,7 @@ import { useState } from 'react'
 
 // ** MUI Imports
 import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp'
-import { Button, Stack, TextField } from '@mui/material'
+import { Button, FormControl, Stack, TextField } from '@mui/material'
 import MuiAccordion, { AccordionProps } from '@mui/material/Accordion'
 import MuiAccordionDetails from '@mui/material/AccordionDetails'
 import MuiAccordionSummary, { AccordionSummaryProps } from '@mui/material/AccordionSummary'
@@ -15,8 +15,11 @@ import FormHeader from 'src/views/installments/Header/headerInstallment'
 
 import { AccountsTableContextProvider } from '@/context/accounts/Table/reducer'
 import { useGetAccountById } from '@/hooks/accounts/forms'
+import { ContainerPadd } from '@/styles/Payments/PaymnetsInstallments/paymentsInstallments'
+import { FormHeaderMoneyData } from '@/styles/Payments/ReinsurerPayment/reinsurerPayment'
 import DetailInstallment from '@/views/installments/components/DetailsInstallment'
 import InstallmentInformation from '@/views/installments/components/InstallmentInformation'
+import { NumericFormat } from 'react-number-format'
 
 // import UserList from 'src/pages/apps/user/list'
 
@@ -35,14 +38,17 @@ const Accordion = styled((props: AccordionProps) => <MuiAccordion disableGutters
 )
 
 const AccordionSummary = styled((props: AccordionSummaryProps) => (
-  <MuiAccordionSummary expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: '0.9rem' }} />} {...props} />
+  <MuiAccordionSummary
+    expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: '0.9rem', transform: 'rotate(90deg)' }} />}
+    {...props}
+  />
 ))(() => ({
   backgroundColor: '#FFFFFF',
   borderStyle: 'none',
   boxShadow: 'none',
   flexDirection: 'row-reverse',
   '& .MuiAccordionSummary-expandIconWrapper.Mui-expanded': {
-    transform: 'rotate(90deg)'
+    transform: 'rotate(180deg)'
   },
   '& .MuiAccordionSummary-content': {
     marginLeft: '0'
@@ -78,109 +84,199 @@ const PaymentRecord = () => {
           setEditInfo={setEditInfo}
           accountDetails={accountDetails}
           setAccountId={setAccountId}
+          isDataSheet={false}
         />
         <div style={{ display: 'flex', flexDirection: 'row', gap: '16px' }}>
           <Card>
             <div className='container-padd'>
               <div className='title-installment'>Record Installment Payment</div>
               <div className='wrapper-installments'>
-                <div className='width-full'>
-                  <TextField fullWidth autoFocus name='ammount' label='Ammount' defaultValue='' value='$100,000' />
-                </div>
-                <div className='width-full'>
-                  <TextField
-                    fullWidth
-                    autoFocus
-                    name='currentInstallment'
-                    label='Current Installment'
-                    defaultValue=''
-                    value='1'
-                  />
-                </div>
-                <div className='width-full'>
-                  <TextField
-                    fullWidth
-                    autoFocus
-                    name='typeOfPayment'
-                    label='Type Of Payment'
-                    defaultValue=''
-                    value='Balance Due'
-                  />
-                </div>
+                <Grid container spacing={{ xs: 3, sm: 3, md: 3 }}>
+                  <Grid item xs={12} md={4} sm={6}>
+                    <FormControl fullWidth>
+                      <NumericFormat
+                        name='total'
+                        allowLeadingZeros
+                        thousandSeparator=','
+                        customInput={TextField}
+                        id='filled-multiline-flexible'
+                        label='Amount'
+                        multiline
+                        prefix={'$'}
+                        decimalScale={2}
+                        variant='outlined'
+                      />
+                    </FormControl>
+                  </Grid>
+                  <Grid item xs={12} md={4} sm={6}>
+                    <FormControl fullWidth>
+                      <TextField
+                        fullWidth
+                        autoFocus
+                        name='currentInstallment'
+                        label='Current Installment'
+                        defaultValue=''
+                      />
+                    </FormControl>
+                  </Grid>
+                  <Grid item xs={12} md={4} sm={6}>
+                    <FormControl fullWidth>
+                      <TextField
+                        fullWidth
+                        autoFocus
+                        name='typeOfPayment'
+                        label='Type Of Payment'
+                        value='Type Of Payment'
+                        disabled
+                      />
+                    </FormControl>
+                  </Grid>
+                </Grid>
               </div>
-              <div className='title-installment'>Distribute balance</div>
+              <Grid container spacing={{ xs: 3, sm: 3, md: 3 }}>
+                <Grid item xs={12} sm={6} md={6}>
+                  <div className='title-installment'>Distribute balance</div>
+                </Grid>
+                <Grid item xs={12} sm={6} md={6}>
+                  <FormHeaderMoneyData>
+                    <span className='form-header-money-data-txt'>Available balance</span>
+                    <span className='form-header-money-data-num'>0</span>
+                  </FormHeaderMoneyData>
+                </Grid>
+              </Grid>
               <div className='wrapper-installments'>
-                <div className='width-full'>
-                  <TextField fullWidth autoFocus name='installment1' label='Installment' defaultValue='' value='1' />
-                </div>
-                <div className='width-full'>
-                  <TextField fullWidth autoFocus name='balance1' label='Balance %' defaultValue='' value='' />
-                </div>
-                <div className='width-full'>
-                  <TextField
-                    fullWidth
-                    autoFocus
-                    name='balanceAmmount1'
-                    label='Balance ammount'
-                    defaultValue=''
-                    value=''
-                  />
-                </div>
+                <Grid container spacing={{ xs: 3, sm: 3, md: 3 }}>
+                  <Grid item xs={12} md={4} sm={6}>
+                    <FormControl fullWidth>
+                      <TextField
+                        fullWidth
+                        autoFocus
+                        name='installment1'
+                        label='Installment'
+                        defaultValue=''
+                        value='1'
+                      />
+                    </FormControl>
+                  </Grid>
+                  <Grid item xs={12} md={4} sm={6}>
+                    <div className='width-full'>
+                      <TextField fullWidth autoFocus name='balance1' label='Balance %' defaultValue='' value='' />
+                    </div>
+                  </Grid>
+                  <Grid item xs={12} md={4} sm={6}>
+                    <div className='width-full'>
+                      <TextField
+                        fullWidth
+                        autoFocus
+                        name='balanceAmmount1'
+                        label='Balance ammount'
+                        defaultValue=''
+                        value=''
+                      />
+                    </div>
+                  </Grid>
+                </Grid>
               </div>
               <div className='wrapper-installments'>
-                <div className='width-full'>
-                  <TextField fullWidth autoFocus name='installment2' label='Installment' defaultValue='' value='2' />
-                </div>
-                <div className='width-full'>
-                  <TextField fullWidth autoFocus name='balance2' label='Balance %' defaultValue='' value='' />
-                </div>
-                <div className='width-full'>
-                  <TextField
-                    fullWidth
-                    autoFocus
-                    name='balanceAmmount2'
-                    label='Balance ammount'
-                    defaultValue=''
-                    value=''
-                  />
-                </div>
+                <Grid container spacing={{ xs: 3, sm: 3, md: 3 }}>
+                  <Grid item xs={12} md={4} sm={6}>
+                    <div className='width-full'>
+                      <TextField
+                        fullWidth
+                        autoFocus
+                        name='installment1'
+                        label='Installment'
+                        defaultValue=''
+                        value='2'
+                      />
+                    </div>
+                  </Grid>
+                  <Grid item xs={12} md={4} sm={6}>
+                    <div className='width-full'>
+                      <TextField fullWidth autoFocus name='balance1' label='Balance %' defaultValue='' value='' />
+                    </div>
+                  </Grid>
+                  <Grid item xs={12} md={4} sm={6}>
+                    <div className='width-full'>
+                      <TextField
+                        fullWidth
+                        autoFocus
+                        name='balanceAmmount1'
+                        label='Balance ammount'
+                        defaultValue=''
+                        value=''
+                      />
+                    </div>
+                  </Grid>
+                </Grid>
               </div>
               <div className='wrapper-installments'>
-                <div className='width-full'>
-                  <TextField fullWidth autoFocus name='installment3' label='Installment' defaultValue='' value='3' />
-                </div>
-                <div className='width-full'>
-                  <TextField fullWidth autoFocus name='balance3' label='Balance %' defaultValue='' value='' />
-                </div>
-                <div className='width-full'>
-                  <TextField
-                    fullWidth
-                    autoFocus
-                    name='balanceAmmount3'
-                    label='Balance ammount'
-                    defaultValue=''
-                    value=''
-                  />
-                </div>
+                <Grid container spacing={{ xs: 3, sm: 3, md: 3 }}>
+                  <Grid item xs={12} md={4} sm={6}>
+                    <div className='width-full'>
+                      <TextField
+                        fullWidth
+                        autoFocus
+                        name='installment1'
+                        label='Installment'
+                        defaultValue=''
+                        value='3'
+                      />
+                    </div>
+                  </Grid>
+                  <Grid item xs={12} md={4} sm={6}>
+                    <div className='width-full'>
+                      <TextField fullWidth autoFocus name='balance1' label='Balance %' defaultValue='' value='' />
+                    </div>
+                  </Grid>
+                  <Grid item xs={12} md={4} sm={6}>
+                    <div className='width-full'>
+                      <TextField
+                        fullWidth
+                        autoFocus
+                        name='balanceAmmount1'
+                        label='Balance ammount'
+                        defaultValue=''
+                        value=''
+                      />
+                    </div>
+                  </Grid>
+                </Grid>
               </div>
               <div className='wrapper-installments'>
-                <div className='width-full'>
-                  <TextField fullWidth autoFocus name='installment4' label='Installment' defaultValue='' value='4' />
-                </div>
-                <div className='width-full'>
-                  <TextField fullWidth autoFocus name='balance4' label='Balance %' defaultValue='' value='' />
-                </div>
-                <div className='width-full'>
-                  <TextField
-                    fullWidth
-                    autoFocus
-                    name='balanceAmmount4'
-                    label='Balance ammount'
-                    defaultValue=''
-                    value=''
-                  />
-                </div>
+                <Grid container spacing={{ xs: 3, sm: 3, md: 3 }}>
+                  <Grid item xs={12} md={4} sm={6}>
+                    <div className='width-full'>
+                      <TextField
+                        fullWidth
+                        autoFocus
+                        name='installment1'
+                        label='Installment'
+                        defaultValue=''
+                        value='4'
+                      />
+                    </div>
+                  </Grid>
+                  <Grid item xs={12} md={4} sm={6}>
+                    <div className='width-full'>
+                      <TextField fullWidth autoFocus name='balance1' label='Balance %' defaultValue='' value='' />
+                    </div>
+                  </Grid>
+                  <Grid item xs={12} md={4} sm={6}>
+                    <div className='width-full'>
+                      <TextField
+                        fullWidth
+                        autoFocus
+                        name='balanceAmmount1'
+                        label='Balance ammount'
+                        defaultValue=''
+                        value=''
+                      />
+                    </div>
+                  </Grid>
+                </Grid>
               </div>
+
               <Stack spacing={2} direction={{ xs: 'column', sm: 'column', md: 'row-reverse' }}>
                 <Button variant='contained'>Save Installments Payment</Button>
               </Stack>
@@ -189,7 +285,7 @@ const PaymentRecord = () => {
         </div>
         <div style={{ display: 'flex', flexDirection: 'row', gap: '16px' }}>
           <Card>
-            <div className='container-padd'>
+            <ContainerPadd>
               <div className='title-installment'>Installment 1</div>
               <InstallmentInformation st='Pending' id='1' />
               <Accordion
@@ -204,12 +300,12 @@ const PaymentRecord = () => {
                   <DetailInstallment />
                 </AccordionDetails>
               </Accordion>
-            </div>
+            </ContainerPadd>
           </Card>
         </div>
         <div style={{ display: 'flex', flexDirection: 'row', gap: '16px' }}>
           <Card>
-            <div className='container-padd'>
+            <ContainerPadd>
               <div className='title-installment'>Installment 2</div>
               <InstallmentInformation st='Paid' id='2' />
               <Accordion
@@ -224,12 +320,12 @@ const PaymentRecord = () => {
                   <DetailInstallment />
                 </AccordionDetails>
               </Accordion>
-            </div>
+            </ContainerPadd>
           </Card>
         </div>
         <div style={{ display: 'flex', flexDirection: 'row', gap: '16px' }}>
           <Card>
-            <div className='container-padd'>
+            <ContainerPadd>
               <div className='title-installment'>Installment 3</div>
               <InstallmentInformation st='Extra' id='3' />
               <Accordion
@@ -244,12 +340,12 @@ const PaymentRecord = () => {
                   <DetailInstallment />
                 </AccordionDetails>
               </Accordion>
-            </div>
+            </ContainerPadd>
           </Card>
         </div>
         <div style={{ display: 'flex', flexDirection: 'row', gap: '16px' }}>
           <Card>
-            <div className='container-padd'>
+            <ContainerPadd>
               <div className='title-installment'>Installment 4</div>
               <InstallmentInformation st='Partially' id='4' />
               <Accordion
@@ -264,7 +360,7 @@ const PaymentRecord = () => {
                   <DetailInstallment />
                 </AccordionDetails>
               </Accordion>
-            </div>
+            </ContainerPadd>
           </Card>
         </div>
       </Grid>

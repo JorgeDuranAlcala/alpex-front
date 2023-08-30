@@ -11,6 +11,7 @@
 }
 
 .wrapper-installments {
+  /* border: 1px solid red; */
   display: flex;
   justify-content: space-between;
   gap: 20px;
@@ -80,7 +81,7 @@
 }
 
 .text-area-i {
-  width: 100%;
+  width: 380px !important;
   border-width: 2px;
   border-style: solid;
   border-color: #575a6f38;
@@ -93,6 +94,8 @@
   line-height: 1.4375em;
   letter-spacing: 0.15px;
   padding: 12px;
+  height: 165px !important;
+  overflow-y: auto !important;
 }
 
 .text-area-i:hover {
