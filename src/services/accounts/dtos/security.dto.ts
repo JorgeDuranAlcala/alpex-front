@@ -150,5 +150,4 @@ export type SecurityContextDto = {
 export type SecurityProps = {
   onStepChange: (step: number) => void
   disableSectionCtrl?: boolean
-  isBoundAccount?: boolean
 }
