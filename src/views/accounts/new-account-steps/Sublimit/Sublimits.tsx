@@ -130,7 +130,7 @@ const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
 
   // ** Custom hooks
   const { updateAccountsStatus } = useUpdateAccountsStatus()
-  const { coverages, getAllCoverages, setAccountIdCoverage } = useGetAllCoverage()
+  const { getAllCoverages } = useGetAllCoverage()
 
   const handleSelectedCoverage = (coverageSelect: CoverageDto) => {
     // console.log('coverageSelect', coverageSelect);

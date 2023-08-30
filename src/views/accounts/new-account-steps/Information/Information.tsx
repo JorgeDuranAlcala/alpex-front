@@ -871,6 +871,7 @@ const Information: React.FC<InformationProps> = ({
                 makeValidations={makeValidations}
                 makeSaveValidations={makeSaveValidations}
                 onValidationComplete={handleValidationComplete}
+                setUpdateInfo={setUpdateInfo}
               />
             </DisableForm>
           </div>
