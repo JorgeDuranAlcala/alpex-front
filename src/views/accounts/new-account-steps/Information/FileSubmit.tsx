@@ -262,7 +262,7 @@ const FileSubmit: React.FC<UserFileProps> = ({
       accountId: Number(router.query.idAccount),
       folderId: idFolder,
       documentType: 'General',
-      document: { type: selectedFile?.type, name: selectedFile?.name, base64: fileB64 }
+      document: { type: selectedFile?.type, name: selectedFile?.name?.split('.')[0], base64: fileB64 }
     })
     console.log(uploadFile)
     file.splice(index, 1)
@@ -347,8 +347,13 @@ const FileSubmit: React.FC<UserFileProps> = ({
     const menu = document.getElementsByClassName(menuId)
     for (let i = 0; i < menu.length; i++) {
       console.log(menu[i].classList)
-      menu[i].classList.remove('menu-dots-none')
-      menu[i].classList.add('menu-dots-open')
+      if (menu[i].classList.value.indexOf('menu-dots-open') >= 0) {
+        menu[i].classList.remove('menu-dots-open')
+        menu[i].classList.add('menu-dots-none')
+      } else {
+        menu[i].classList.remove('menu-dots-none')
+        menu[i].classList.add('menu-dots-open')
+      }
     }
   }
 
@@ -568,7 +573,7 @@ const FileSubmit: React.FC<UserFileProps> = ({
                               renameFolderFunction(folder, index)
                             }}
                           >
-                            Renombrar
+                            Rename
                           </div>
                           <div
                             key='eliminar'
@@ -577,7 +582,7 @@ const FileSubmit: React.FC<UserFileProps> = ({
                               deleteFolder(folder, index)
                             }}
                           >
-                            Eliminar
+                            Delete
                           </div>
                         </div>
                         <Modal
