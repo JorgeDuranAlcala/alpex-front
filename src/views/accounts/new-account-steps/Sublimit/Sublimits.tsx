@@ -7,6 +7,7 @@ import { useAppDispatch, useAppSelector } from '@/store'
 import { NextContainer } from '@/styles/Forms/Sublimits'
 import CustomAlert, { IAlert } from '@/views/custom/alerts'
 import { Button, CardContent, Grid } from '@mui/material'
+import CircularProgress from '@mui/material/CircularProgress'
 import Typography from '@mui/material/Typography'
 import { useContext, useEffect, useState } from 'react' //useContext
 import InputLimit from './components/InputLimit/InputLimit'
@@ -152,7 +153,7 @@ const Sublimits = ({ getAccountByIdHeader, onStepChange, disableSectionCtrl, isB
     setCoverageSelected([...coverageSelected, coverageSelect])
   }
 
-  const handleToggle = (value: number, label: string) => {
+  const handleAddCoverage = (value: number, label: string) => {
     try {
       const idAccountCache = Number(localStorage.getItem('idAccount')) ?? accountData.formsData.form1?.id
       const subLimitsTemp = subLimits.find(sublimit => sublimit.title === label)
@@ -200,11 +201,22 @@ const Sublimits = ({ getAccountByIdHeader, onStepChange, disableSectionCtrl, isB
     if (coverageDelete) {
       setCoverageSelected([...coverageDelete])
     }
+    getAllCoverages(accountData.formsData.form1?.id)
   }
 
   const handleClickSave = () => {
     const existError = formErrors.find(error => error)
     if (!existError && subLimits.length > 0) {
+      setDisableSaveBtn(true)
+      setBadgeData({
+        message: `SAVING INFORMATION`,
+        status: 'secondary',
+        open: true,
+        icon: <CircularProgress size={20} color='secondary' />,
+        backgroundColor: '#828597',
+        theme: 'info',
+        disableAutoHide: true
+      })
       handleSubmit()
     } else {
       setShowErrors(true)
@@ -308,7 +320,6 @@ const Sublimits = ({ getAccountByIdHeader, onStepChange, disableSectionCtrl, isB
 
   const handleSubmit = async () => {
     setDisableBoundBtn(true)
-    setDisableSaveBtn(true)
     const save: Partial<SublimitDto>[] = []
     const update: Partial<SublimitDto>[] = []
     for (const subLimit of subLimits) {
@@ -330,8 +341,15 @@ const Sublimits = ({ getAccountByIdHeader, onStepChange, disableSectionCtrl, isB
         save.push(tempSubmit)
       }
     }
-
-    Promise.all([updateSublimits(update), saveSublimits(save)])
+    let actions: any[] = []
+    if (update.length > 0 && save.length > 0) {
+      actions = [updateSublimits(update), saveSublimits(save)]
+    } else if (save.length > 0) {
+      actions = [saveSublimits(save)]
+    } else if (update.length > 0) {
+      actions = [updateSublimits(update)]
+    }
+    await Promise.all(actions)
       .then(values => {
         console.log({ values })
         setBadgeData({
@@ -423,16 +441,7 @@ const Sublimits = ({ getAccountByIdHeader, onStepChange, disableSectionCtrl, isB
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
   console.log({ subLimits, coverageSelected })
-
-  // * INIT -  Actualizar los datos del formulario en Redux + + + + + + + + + + + + + +
-
-  // const { handleCanUpdateSublimitsData } = useFormStep_updateSublimits({
-  //   idAccount: account?.id || null,
-  //   sublimits: subLimits
-  // });
-
-  // * END -  Actualizar los datos del formulario en Redux + + + + + + + + + + + + + +
-
+ 
   return (
     <CardContent>
       <Grid container spacing={5}>
@@ -459,7 +468,7 @@ const Sublimits = ({ getAccountByIdHeader, onStepChange, disableSectionCtrl, isB
                   idAccount={accountData.formsData.form1?.id}
                   onChangeSelected={handleSelectedCoverage}
                   coverageSelected={coverageSelected}
-                  onClickToggle={handleToggle}
+                  onClickToggle={handleAddCoverage}
                 />
               </Grid>
               <Grid container spacing={5} sx={{ mt: '20px' }}>
