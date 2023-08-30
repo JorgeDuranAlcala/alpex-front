@@ -18,8 +18,6 @@ import { default as DatePicker } from 'react-datepicker'
 
 // import Icon from 'src/@core/components/icon'
 
-import { updateEndorsement } from 'src/store/apps/endorsement'
-
 import CloseIcon from '@mui/icons-material/Close'
 import { Box, Modal } from '@mui/material'
 
@@ -34,7 +32,7 @@ import {
 
 //hooks
 import { useAddInstallments, useDeleteInstallments } from 'src/hooks/accounts/installments'
-import { useAppDispatch, useAppSelector } from 'src/store'
+import { useAppSelector } from 'src/store'
 import * as yup from 'yup'
 
 //dtos
@@ -64,8 +62,6 @@ interface PickerProps {
 
 type InformationProps = {
   onStepChange?: (step: number) => void
-  disableSectionCtrl?: boolean
-  isBoundAccount?: boolean
 }
 
 const schema = yup.object().shape({
@@ -95,16 +91,8 @@ const CustomInput = forwardRef(({ ...props }: PickerProps, ref: ForwardedRef<HTM
 type Timer = ReturnType<typeof setInterval>
 let typingTimer: Timer
 const doneTypingInterval = 1500 // Tiempo en milisegundos para considerar que se dejó de escribir
-const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange, disableSectionCtrl, isBoundAccount }) => {
-  const router = useRouter()
-
-  /***Endosos PaymentWarranty********************/
-  const idAccountRouter = Number(router?.query?.idAccount)
-  const endorsementData = useAppSelector(state => state.endorsement.data)
-  const dispatch = useAppDispatch()
-
-  //*******************
-
+const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
+  const router = useRouter();
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
 
   const inter = userThemeConfig.typography?.fontFamilyInter
@@ -130,10 +118,10 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange, disableSect
   const { addInstallments } = useAddInstallments()
   const accountData = useAppSelector(state => state.accounts)
   const idAccount = accountData?.formsData?.form1?.id
-  const { account, setAccountId, setAccount } = useGetAccountById()
+  const { account, setAccountId } = useGetAccountById()
   const { deleteInstallments } = useDeleteInstallments()
   const newAccount = account
-  const lastIdAccount = useRef<number>(0)
+  const lastIdAccount = useRef<number>(0);
 
   const [badgeData, setBadgeData] = useState<IAlert>({
     message: '',
@@ -152,7 +140,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange, disableSect
       if (!count || count === 0 || count > 12) {
         setInstallmentList([])
 
-        isBoundAccount ? null : setIsChange(true)
+        setIsChange(true)
 
         setError({
           ...error,
@@ -173,7 +161,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange, disableSect
         paymentPercentage: fixedPercentage,
         premiumPaymentWarranty: 0,
         settlementDueDate: account ? new Date(account?.informations[0]?.effectiveDate || '') : new Date(),
-        idAccount: account ? idAccount : isBoundAccount ? idAccountRouter : Number(localStorage.getItem('idAccount')),
+        idAccount: account ? idAccount : Number(localStorage.getItem('idAccount')),
         id: 0
       }
       for (let i = 0; i < count; i++) {
@@ -188,7 +176,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange, disableSect
 
       setInstallmentList(installmentsTemp)
 
-      isBoundAccount ? null : setIsChange(true)
+      setIsChange(true)
       setError({
         ...error,
         erorrRangeInstallments: false,
@@ -242,7 +230,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange, disableSect
     setInstallmentList(installmentsLisTemp)
     setDaysFirst(installmentsLisTemp[0].premiumPaymentWarranty)
 
-    isBoundAccount ? null : setIsChange(true)
+    setIsChange(true)
     setCheck(false)
   }
 
@@ -283,54 +271,6 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange, disableSect
     }
   }
 
-  //**Endosos Installments******************************************
-  const saveEndorsementInstallments = async () => {
-    if (!endorsementData.initialized) return
-    const newEndorsementData = {
-      ...endorsementData,
-      installments: installmentsList
-    }
-    dispatch(updateEndorsement(newEndorsementData))
-  }
-
-  useEffect(() => {
-    if (idAccountRouter && !endorsementData.initialized) {
-      setAccountId(idAccountRouter)
-    } else if (endorsementData) {
-      setAccount({
-        id: idAccountRouter,
-        status: '',
-        discounts: endorsementData.discounts,
-        idAccountStatus: 0,
-        idAccountType: 0,
-        informations: [
-          {
-            ...endorsementData.information,
-            idLineOfBussines: {},
-            idCountry: {},
-            idBroker: {},
-            idCedant: {},
-            idRiskActivity: {},
-            idTypeOfLimit: {},
-            idCurrency: {},
-            idBrokerContact: {},
-            idCedantContact: {},
-            idEconomicSector: {},
-            idLeadUnderwriter: {},
-            idTechnicalAssistant: {},
-            idUnderwriter: {}
-          }
-        ],
-        installments: endorsementData.installments,
-        securities: endorsementData.securities,
-        securitiesTotal: endorsementData.securitiesTotal,
-        sublimits: endorsementData.sublimits
-      })
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [idAccountRouter, setAccountId])
-
-  //************************************************** */
   const saveInstallments = async () => {
     setDisableSaveBtn(true)
     if (isChange) {
@@ -371,7 +311,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange, disableSect
   const nextStep = () => {
     validations()
     if (onStepChange) {
-      isBoundAccount ? saveEndorsementInstallments() : saveInstallments()
+      saveInstallments()
       onStepChange(4)
     }
   }
@@ -412,16 +352,16 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange, disableSect
     if (idAccount) {
       console.log('idAccount', idAccount, 'lastIdAccount', lastIdAccount.current)
 
-      if (lastIdAccount.current === idAccount) return
-      lastIdAccount.current = idAccount
+      if (lastIdAccount.current === idAccount) return;
+      lastIdAccount.current = idAccount;
 
       setAccountId(idAccount)
     } else {
       const idAccount = Number(localStorage.getItem('idAccount')) || Number(router.query.idAccount)
 
       if (idAccount) {
-        if (lastIdAccount.current === idAccount) return
-        lastIdAccount.current = idAccount
+        if (lastIdAccount.current === idAccount) return;
+        lastIdAccount.current = idAccount;
         localStorage.setItem('idAccount', idAccount.toString())
 
         setAccountId(idAccount)
@@ -436,15 +376,11 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange, disableSect
       const installments = [...account.installments]
       for (const item of installments) {
         item.settlementDueDate = new Date(item.settlementDueDate + 'T00:00:00')
-        item.idAccount = account
-          ? idAccount
-          : isBoundAccount
-          ? idAccountRouter
-          : Number(localStorage.getItem('idAccount'))
+        item.idAccount = account ? idAccount : Number(localStorage.getItem('idAccount'))
       }
 
       setInstallmentList([...installments])
-      isBoundAccount ? null : setInitialInstallmentList([...installments])
+      setInitialInstallmentList([...installments])
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     if (newAccount && !check) {
@@ -456,13 +392,14 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange, disableSect
       newAccount!.informations[0].effectiveDate = fecha
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [account, newAccount, idAccount, idAccountRouter])
+  }, [account, newAccount, idAccount])
 
   //todo probar en un momento
   useEffect(() => {
     installmentsList.length > 0 && validations()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [installmentsList])
+
 
   // * INIT -  Actualizar los datos del formulario en Redux + + + + + + + + + + + + + +
 
@@ -477,10 +414,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange, disableSect
         <TitleContainer>
           <Typography variant='h5'>Payment warranty</Typography>
 
-          <DisableForm
-            isDisabled={isBoundAccount ? disableSectionCtrl : account?.status.toLowerCase() === 'bound' ? true : false}
-            sg={isBoundAccount ? 2000 : undefined}
-          >
+          <DisableForm isDisabled={account?.status.toLowerCase() === 'bound' ? true : false}>
             <InputsContainer>
               <Grid container spacing={{ xs: 2, sm: 5, md: 5 }} rowSpacing={4} columns={12}>
                 <Grid item xs={12} sm={6} md={4}>
@@ -528,9 +462,8 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange, disableSect
                     decimalScale={0}
                     variant='outlined'
                     value={count}
-                    
-                    // onClick={handleCanUpdateInstallmentsData}
 
+                    // onClick={handleCanUpdateInstallmentsData}
                     onValueChange={value => {
                       handleNumericInputChange(value.floatValue)
                     }}
@@ -549,10 +482,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange, disableSect
             </InputsContainer>
           </DisableForm>
         </TitleContainer>
-        <DisableForm
-          isDisabled={isBoundAccount ? disableSectionCtrl : account?.status.toLowerCase() === 'bound' ? true : false}
-          sg={isBoundAccount ? 2000 : undefined}
-        >
+        <DisableForm isDisabled={account?.status.toLowerCase() === 'bound' ? true : false}>
           <Grid container spacing={2}>
             {installmentsList.map((installment, index) => (
               <CardInstallment
@@ -565,7 +495,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange, disableSect
                   inceptionDate: account?.informations[0]?.effectiveDate
                     ? new Date(account.informations[0].effectiveDate)
                     : null,
-                  idAccount: account ? idAccount : account && isBoundAccount ? idAccountRouter : '' || 0
+                  idAccount: account ? idAccount : ''
                 }}
                 count={count}
                 key={index}
@@ -576,46 +506,29 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange, disableSect
         </DisableForm>
       </GeneralContainer>
       <NextContainer>
-        {isBoundAccount ? (
-          <Button
-            sx={{
-              fontFamily: inter,
-              letterSpacing: '0.4px',
-              fontSize: userThemeConfig.typography?.size.px15,
-              color: texButtonColor
-            }}
-            onClick={openModal}
-          >
-            Next step &nbsp;
-            <ArrowForwardIcon />
-          </Button>
-        ) : (
-          <>
-            <Button
-              className='btn-full-mob'
-              variant='contained'
-              color='success'
-              sx={{ mr: 2, fontFamily: inter, fontSize: size, letterSpacing: '0.4px' }}
-              disabled={disableSaveBtn || account?.status.toLowerCase() === 'bound' ? true : false}
-              onClick={saveInstallments}
-            >
-              <SaveIcon /> &nbsp; Save changes
-            </Button>
-            <Button
-              className='btn-full-mob'
-              sx={{
-                fontFamily: inter,
-                letterSpacing: '0.4px',
-                fontSize: userThemeConfig.typography?.size.px15,
-                color: texButtonColor
-              }}
-              onClick={openModal}
-            >
-              Next step &nbsp;
-              <ArrowForwardIcon />
-            </Button>
-          </>
-        )}
+        <Button
+          className='btn-full-mob'
+          variant='contained'
+          color='success'
+          sx={{ mr: 2, fontFamily: inter, fontSize: size, letterSpacing: '0.4px' }}
+          disabled={disableSaveBtn || account?.status.toLowerCase() === 'bound' ? true : false}
+          onClick={saveInstallments}
+        >
+          <SaveIcon /> &nbsp; Save changes
+        </Button>
+        <Button
+          className='btn-full-mob'
+          sx={{
+            fontFamily: inter,
+            letterSpacing: '0.4px',
+            fontSize: userThemeConfig.typography?.size.px15,
+            color: texButtonColor
+          }}
+          onClick={openModal}
+        >
+          Next step &nbsp;
+          <ArrowForwardIcon />
+        </Button>
 
         <Modal
           className='next-step-modal'

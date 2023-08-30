@@ -15,7 +15,6 @@ import {
 } from 'src/hooks/accounts/information'
 
 import { useAddDiscounts, useUpdateDiscounts } from '@/hooks/accounts/discount'
-import { useAddEndorsement } from '@/hooks/endorsement/useAdd'
 
 //Components
 // import FileSubmit from './FileSubmit'
@@ -45,12 +44,8 @@ import { DiscountDto } from '@/services/accounts/dtos/discount.dto'
 
 import { useGetAccountById } from '@/hooks/accounts/forms'
 
-// *Redux
-import { updateEndorsement } from '@/store/apps/endorsement'
-
 // import useFormStep_updateInformation from '@/hooks/accounts/forms/stepForms/update/useFormStep_updateInformation'
 
-import { useRouter } from 'next/router'
 import { DisableForm } from '../_commons/DisableForm'
 
 export interface InformationSectionsInt {
@@ -59,12 +54,11 @@ export interface InformationSectionsInt {
 }
 
 type InformationProps = {
-  onStepChange?: (step: number) => void
-  onIsNewAccountChange?: (status: boolean) => void
-  getIdAccount?: (idAccount: number) => void
+  onStepChange: (step: number) => void
+  onIsNewAccountChange: (status: boolean) => void
+  getIdAccount: (idAccount: number) => void
   typeofAccount?: string
   disableSectionCtrl?: InformationSectionsInt
-  isBoundAccount?: boolean
 }
 
 export interface BasicInfoInterface {
@@ -119,9 +113,9 @@ const Information: React.FC<InformationProps> = ({
   onStepChange,
   onIsNewAccountChange,
   disableSectionCtrl,
-  getIdAccount,
-  isBoundAccount
+  getIdAccount
 }) => {
+  // const router = useRouter();
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
   const { changeStatusAccounts } = useAccountTable()
   const [subjectState] = useState<Subject<void>>(new Subject())
@@ -130,6 +124,7 @@ const Information: React.FC<InformationProps> = ({
   const [makeSaveValidations, setMakeSaveValidations] = useState(false)
   const [disableSave, setDisableSave] = useState(false)
 
+  // const [changeTitle, setChangeTitle] = useState(false)
   const [discounts, setDiscounts] = useState<DiscountDto[]>([])
 
   // Validaciones
@@ -154,21 +149,7 @@ const Information: React.FC<InformationProps> = ({
   const [userFile, setUserFile] = useState<File[]>([])
   const [updateInfo, setUpdateInfo] = useState<boolean>(false)
 
-  //***Para endosos***************************************************
-  const router = useRouter()
-  const idAccountRouter = Number(router?.query?.idAccount)
-
-  // const [changeTitle, setChangeTitle] = useState(false)
   // const [userFileToDelete, setUserFileToDelete] = useState<File>()
-
-  // Redux state para endorsements
-  const endorsementData = useAppSelector(state => state.endorsement.data)
-
-  //Custom hooks para endorsements
-  // const { deleteInformationDocument } = useDeleteInformationDocument()
-  const { addEndorsement } = useAddEndorsement()
-
-  //*******************************************************************
 
   // Store
   const idAccount = useAppSelector(state => state.accounts?.formsData?.form1?.id)
@@ -183,6 +164,7 @@ const Information: React.FC<InformationProps> = ({
   const { uploadInformationDocument } = useUploadInformationDocument()
   const { getInfoDoctosByIdAccount } = useGetInfoDoctosByIdAccount()
 
+  // const { deleteInformationDocument } = useDeleteInformationDocument()
   const { addDiscounts } = useAddDiscounts()
   const { UpdateDiscounts } = useUpdateDiscounts()
   const { createFolder } = useAddFolder()
@@ -238,244 +220,6 @@ const Information: React.FC<InformationProps> = ({
     attachmentPoint: 0.0,
     typeOfLimit: ''
   })
-
-  //***Para Endosos*************************************************/
-  const setDataInformationEndorsementAccount = async () => {
-    let information
-
-    if (endorsementData.initialized) {
-      information = endorsementData.information
-    } else {
-      information = await getInformaByIdAccount(idAccountRouter)
-    }
-
-    if (!information) return
-
-    const obBasicInfo = {
-      insured: information.insured || '',
-      country: information.idCountry || '',
-      economicSector: information.idEconomicSector || '',
-      broker: information.idBroker || '',
-      brokerContact: information.idBrokerContact || '',
-      brokerContactEmail: information.brokerContactEmail || '',
-      brokerContactPhone: information.brokerContactPhone || '',
-      brokerContactCountry: information.brokerContactCountry || '',
-      cedant: information?.idCedant || '',
-      cedantContact: information.idCedantContact || '',
-      cedantContactEmail: information.cedantContactEmail || '',
-      cedantContactPhone: information.cedantContactPhone || '',
-      cedantContactCountry: information.cedantContactCountry || '',
-      lineOfBusiness: information.idLineOfBussines || '',
-      underwriter: information.idUnderwriter || '',
-      leadUnderwriter: information.idLeadUnderwriter || '',
-      technicalAssistant: information.idTechnicalAssistant || '',
-      industryCode: information.idRiskActivity || '',
-      riskActivity: '',
-      riskClass: Number(information.riskClass),
-      receptionDate: information.receptionDate ? new Date(information.receptionDate) : null,
-      effectiveDate: information.effectiveDate ? new Date(information.effectiveDate) : null,
-      expirationDate: information.expirationDate ? new Date(information.expirationDate) : null,
-      idAccountType: Number(information.idAccountType),
-      typeLogo: information.typeLogo ? information.typeLogo : null
-    }
-
-    const obPlacementStructure = {
-      currency: information.currency || '',
-      typeOfLimit: information.idTypeOfLimit || '',
-      exchangeRate: Number(information.exchangeRate) || 0.0,
-      attachmentPoint: Number(information.attachmentPoint) || 0.0,
-      frontingFee: Number(information.frontingFee) || 0.0,
-      grossPremium: Number(information.grossPremium) || 0.0,
-      limit: Number(information.limit) || 0.0,
-      netPremium: Number(information.netPremium) || 0.0,
-      reinsuranceBrokerage: Number(information.reinsuranceBrokerage) || 0.0,
-      sir: Number(information.sir) || 0.0,
-      taxes: Number(information.taxes) || 0.0,
-      total: Number(information.totalValues) || 0.0,
-      reinsuranceBrokerageP: Number(information.reinsuranceBrokerageTotal) || 0.0,
-      taxesP: Number(information.taxesTotal) || 0.0,
-      frontingFeeP: Number(information.frontingFeeTotal) || 0.0,
-      netPremiumWithTaxes: Number(information.premiumWithTaxes) || 0.0,
-      netPremiumWithoutDiscounts: Number(information.premiumWithOutDiscounts) || 0.0
-    }
-
-    setBasicInfo(obBasicInfo)
-    setPlacementStructure(obPlacementStructure)
-  }
-
-  const handleSaveInformationEndorsementAccount = async () => {
-    if (!endorsementData.initialized) return
-    const dataToUpdate = {
-      insured: basicInfo.insured,
-      idCountry: Number(basicInfo.country),
-      idBroker: Number(basicInfo.broker),
-      idBrokerContact: Number(basicInfo.brokerContact),
-      brokerContactEmail: basicInfo.brokerContactEmail,
-      brokerContactPhone: basicInfo.brokerContactPhone,
-      brokerContactCountry: basicInfo.brokerContactCountry,
-      idCedant: Number(basicInfo.cedant),
-      idCedantContact: Number(basicInfo.cedantContact),
-      cedantContactEmail: basicInfo.cedantContactEmail,
-      cedantContactPhone: basicInfo.cedantContactPhone,
-      cedantContactCountry: basicInfo.cedantContactCountry,
-      idLineOfBussines: Number(basicInfo.lineOfBusiness),
-      idRiskActivity: Number(basicInfo.industryCode),
-      receptionDate: formatUTC(basicInfo.receptionDate),
-      effectiveDate: formatUTC(basicInfo.effectiveDate),
-      expirationDate: formatUTC(basicInfo.expirationDate),
-      idLeadUnderwriter: Number(basicInfo.leadUnderwriter) === 0 ? null : Number(basicInfo.leadUnderwriter),
-      idTechnicalAssistant: Number(basicInfo.technicalAssistant) === 0 ? null : Number(basicInfo.technicalAssistant),
-      idUnderwriter: Number(basicInfo.underwriter) === 0 ? null : Number(basicInfo.underwriter),
-      riskClass: Number(basicInfo.riskClass),
-      currency: placementStructure.currency,
-      exchangeRate: placementStructure.exchangeRate,
-      attachmentPoint: placementStructure.attachmentPoint,
-      frontingFee: placementStructure.frontingFee,
-      frontingFeeTotal: placementStructure.frontingFeeP,
-      grossPremium: placementStructure.grossPremium,
-      limit: placementStructure.limit,
-      netPremium: placementStructure.netPremium,
-      premiumWithTaxes: placementStructure.netPremiumWithTaxes,
-      premiumWithOutDiscounts: placementStructure.netPremiumWithoutDiscounts,
-      reinsuranceBrokerage: placementStructure.reinsuranceBrokerage,
-      reinsuranceBrokerageTotal: placementStructure.reinsuranceBrokerageP,
-      sir: placementStructure.sir,
-      taxes: placementStructure.taxes,
-      taxesTotal: placementStructure.taxesP,
-      totalValues: placementStructure.total,
-      idTypeOfLimit: Number(placementStructure.typeOfLimit),
-      idAccountType: Number(basicInfo.idAccountType),
-      step: 1,
-      idEconomicSector: Number(basicInfo.economicSector) || null
-    }
-    const newEndorsementData = {
-      ...endorsementData,
-      information: {
-        ...endorsementData.information,
-        ...dataToUpdate
-      },
-      discounts: [...discounts]
-    }
-
-    dispatch(updateEndorsement(newEndorsementData))
-  }
-
-  const handleValidationCompleteEndorsementAccount = (valid: boolean, formName: string) => {
-    setValidationCount(prevCount => prevCount + 1)
-
-    //controller to update and save when the next button is clicked
-    if (nextClicked) {
-      if (valid && makeValidations) {
-        if (nextClicked) setValidatedForms(prevCount => prevCount + 1)
-
-        if (formName == 'basicInfo' && saveClicked) {
-          // If Basic info is validated and save button was clicked then save information
-          setMakeSaveValidations(false)
-          setDisableSave(true)
-          handleSaveInformation()
-
-          setSaveClicked(false)
-        }
-      } else {
-        setMakeValidations(false)
-        setNextClicked(false)
-      }
-    }
-  }
-
-  const handleEndorsement = async () => {
-    if (endorsementData.type?.toLowerCase() === 'informative') {
-      setBadgeData({
-        message: `ENDORSING`,
-        status: 'secondary',
-        open: true,
-        icon: <CircularProgress size={20} color='secondary' />,
-        backgroundColor: '#828597',
-        theme: 'info',
-        disableAutoHide: true
-      })
-      await delayMs(1000)
-
-      const newEndorsementData = {
-        ...endorsementData,
-        information: {
-          ...endorsementData.information,
-          insured: basicInfo.insured,
-          idCountry: Number(basicInfo.country),
-          idBroker: Number(basicInfo.broker),
-          idBrokerContact: Number(basicInfo.brokerContact),
-          brokerContactEmail: basicInfo.brokerContactEmail,
-          brokerContactPhone: basicInfo.brokerContactPhone,
-          brokerContactCountry: basicInfo.brokerContactCountry,
-          idCedant: Number(basicInfo.cedant),
-          idCedantContact: Number(basicInfo.cedantContact),
-          cedantContactEmail: basicInfo.cedantContactEmail,
-          cedantContactPhone: basicInfo.cedantContactPhone,
-          cedantContactCountry: basicInfo.cedantContactCountry,
-          idLineOfBussines: Number(basicInfo.lineOfBusiness),
-          idRiskActivity: Number(basicInfo.industryCode),
-          receptionDate: formatUTC(basicInfo.receptionDate),
-          effectiveDate: formatUTC(basicInfo.effectiveDate),
-          expirationDate: formatUTC(basicInfo.expirationDate),
-          idLeadUnderwriter: Number(basicInfo.leadUnderwriter) === 0 ? null : Number(basicInfo.leadUnderwriter),
-          idTechnicalAssistant:
-            Number(basicInfo.technicalAssistant) === 0 ? null : Number(basicInfo.technicalAssistant),
-          idUnderwriter: Number(basicInfo.underwriter) === 0 ? null : Number(basicInfo.underwriter),
-          riskClass: Number(basicInfo.riskClass),
-          idAccountType: Number(basicInfo.idAccountType),
-          idEconomicSector: Number(basicInfo.economicSector) || null
-        }
-      }
-
-      const res = await addEndorsement(newEndorsementData)
-
-      if (!res) {
-        setBadgeData({
-          message: `ENDORSEMENT ERROR`,
-          theme: 'error',
-          open: true,
-          status: 'error',
-          icon: (
-            <Icon
-              style={{
-                color: '#FF4D49',
-                marginTop: '-1px'
-              }}
-              icon='jam:alert'
-            />
-          ),
-          disableAutoHide: true
-        })
-      } else {
-        setBadgeData({
-          message: `ENDT. GENERATED`,
-          status: 'success',
-          open: true,
-          icon: <Icon icon='ic:baseline-check-circle' />,
-          theme: 'success',
-          disableAutoHide: true
-        })
-      }
-
-      await delayMs(1500)
-
-      setBadgeData({
-        message: '',
-        status: undefined,
-        icon: undefined,
-        open: false
-      })
-    }
-  }
-
-  useEffect(() => {
-    if (idAccountRouter) {
-      setDataInformationEndorsementAccount()
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [idAccountRouter])
-
-  //************************************************************* */
 
   const triggerFunction = () => {
     subjectState.next()
@@ -725,9 +469,9 @@ const Information: React.FC<InformationProps> = ({
           form1: { basicInfo: obBasicInfo, placementStructure: obPlacementStructure, userFile, id: idAccount }
         })
       )
-      onIsNewAccountChange ? onIsNewAccountChange(false) : undefined
+      onIsNewAccountChange(false)
     }
-    onIsNewAccountChange ? onIsNewAccountChange(false) : undefined
+    onIsNewAccountChange(false)
   }
 
   const uploadDoctos = async (idAccount: number) => {
@@ -832,28 +576,27 @@ const Information: React.FC<InformationProps> = ({
   const handleSaveInformation = async () => {
     try {
       if (idAccount) {
-
         if (!updateInfo) {
-           setBadgeData({
-          message: `UPDATING INFORMATION`,
-          status: 'secondary',
-          open: true,
-          icon: <CircularProgress size={20} color='primary' />,
-          backgroundColor: '#828597',
-          theme: 'info',
-          disableAutoHide: true
-        })
+          setBadgeData({
+            message: `UPDATING INFORMATION`,
+            status: 'secondary',
+            open: true,
+            icon: <CircularProgress size={20} color='primary' />,
+            backgroundColor: '#828597',
+            theme: 'info',
+            disableAutoHide: true
+          })
 
-        await updateInformation()
-        await uploadDoctos(idAccount)
-        await updateDiscount()
-        dispatch(updateFormsData({ form1: { basicInfo, placementStructure, userFile, id: idAccount } }))
-        getIdAccount ? getIdAccount(idAccount) : undefined
-        setDisableSave(false)
-        if (hasClickedNextStep) {
-          onStepChange ? onStepChange(2) : undefined
+          await updateInformation()
+          await uploadDoctos(idAccount)
+          await updateDiscount()
+          dispatch(updateFormsData({ form1: { basicInfo, placementStructure, userFile, id: idAccount } }))
+          getIdAccount(idAccount)
+          setDisableSave(false)
+          if (hasClickedNextStep) {
+            onStepChange ? onStepChange(2) : undefined
+          }
         }
-       }
       } else {
         setBadgeData({
           message: `SAVING INFORMATION`,
@@ -873,7 +616,7 @@ const Information: React.FC<InformationProps> = ({
             idAccount: res.account.id
           }))
           await handleChangeStatusAction(res.account.id)
-          getIdAccount ? getIdAccount(res.account.id) : undefined
+          getIdAccount(res.account.id)
           setAccountId(res.account.id)
           await localStorage.setItem('idAccount', String(res.account.id))
           createFolder({ folderName: 'Final Slip', accountId: Number(res.account.id) })
@@ -886,16 +629,14 @@ const Information: React.FC<InformationProps> = ({
         await uploadDoctos(res.account.id)
         dispatch(updateFormsData({ form1: { basicInfo, placementStructure, userFile, id: res?.account?.id } }))
 
-        onIsNewAccountChange ? onIsNewAccountChange(false) : undefined
+        onIsNewAccountChange(false)
       }
     } catch (error) {
       console.log(error)
 
       setHasClickedNextStep(false)
     } finally {
-      if (hasClickedNextStep) {
-        onStepChange ? onStepChange(2) : undefined
-      }
+      if (hasClickedNextStep) onStepChange(2)
     }
   }
 
@@ -910,12 +651,7 @@ const Information: React.FC<InformationProps> = ({
   //Evento que controla el evento de continuar
   const handleNextStep = async () => {
     if (allValidated) {
-      if (isBoundAccount) {
-        await handleSaveInformationEndorsementAccount()
-        onStepChange ? onStepChange(2) : undefined
-      } else {
-        await handleSaveInformation()
-      }
+      await handleSaveInformation()
     }
     handleCloseModal()
   }
@@ -978,10 +714,7 @@ const Information: React.FC<InformationProps> = ({
         setMakeValidations(true)
         setHasClickedNextStep(true)
         break
-      case 'endorsement':
-        setMakeSaveValidations(true)
-        handleEndorsement()
-        break
+
       default:
         break
     }
@@ -1024,31 +757,6 @@ const Information: React.FC<InformationProps> = ({
       const idAccountCache = Number(localStorage.getItem('idAccount'))
       if (idAccountCache) {
         const res = await getInfoDoctosByIdAccount(idAccountCache)
-        const newDoctoIdByName: any = {}
-        const newUserFiles: File[] = []
-
-        if (res.length > 0) {
-          const urls: string[] = []
-          for (const docto of res) {
-            newDoctoIdByName[docto.name] = docto.id
-            urls.push(docto.url)
-            const newFile = await getFileFromUrl(docto.url, docto.name)
-            if (newFile) {
-              newUserFiles.push(newFile)
-            }
-          }
-
-          setFileUrls(urls)
-          setUserFile(newUserFiles)
-
-          setDoctoIdByName({
-            ...doctoIdByName,
-            ...newDoctoIdByName
-          })
-        }
-      }
-      if (isBoundAccount && idAccountRouter) {
-        const res = await getInfoDoctosByIdAccount(idAccountRouter)
         const newDoctoIdByName: any = {}
         const newUserFiles: File[] = []
 
@@ -1162,10 +870,7 @@ const Information: React.FC<InformationProps> = ({
                 setBasicInfo={setBasicInfo}
                 makeValidations={makeValidations}
                 makeSaveValidations={makeSaveValidations}
-                onValidationComplete={
-                  isBoundAccount ? handleValidationCompleteEndorsementAccount : handleValidationComplete
-                }
-                setUpdateInfo={setUpdateInfo}
+                onValidationComplete={handleValidationComplete}
               />
             </DisableForm>
           </div>
@@ -1185,58 +890,28 @@ const Information: React.FC<InformationProps> = ({
             </DisableForm>
           </div>
           <div className='section action-buttons'>
-            {isBoundAccount ? (
-              <>
-                <Button
-                  className='btn-endorsement'
-                  onClick={() => handleAction('endorsement')}
-                  variant='contained'
-                  disabled={!(endorsementData?.type?.toLowerCase() === 'informative')}
-                >
-                  <div className='btn-icon' style={{ marginRight: '8px' }}>
-                    <Icon icon='material-symbols:approval-outline' />
-                  </div>
-                  ENDORSE
-                </Button>
-                <Button
-                  className='btn-next'
-                  onClick={() => {
-                    handleAction('next')
-                  }}
-                  disabled={endorsementData?.type?.toLowerCase() === 'informative'}
-                >
-                  Next Step
-                  <div className='btn-icon'>
-                    <Icon icon='material-symbols:arrow-right-alt' />
-                  </div>
-                </Button>
-              </>
-            ) : (
-              <>
-                <Button
-                  className='btn-save'
-                  onClick={() => handleAction('save')}
-                  variant='contained'
-                  disabled={disableSave || account?.status.toLowerCase() === 'bound'}
-                >
-                  <div className='btn-icon' style={{ marginRight: '8px' }}>
-                    <Icon icon='mdi:content-save' />
-                  </div>
-                  SAVE CHANGES
-                </Button>
-                <Button
-                  className='btn-next'
-                  onClick={() => {
-                    handleAction('next')
-                  }}
-                >
-                  Next Step
-                  <div className='btn-icon'>
-                    <Icon icon='material-symbols:arrow-right-alt' />
-                  </div>
-                </Button>
-              </>
-            )}
+            <Button
+              className='btn-save'
+              onClick={() => handleAction('save')}
+              variant='contained'
+              disabled={disableSave || account?.status.toLowerCase() === 'bound'}
+            >
+              <div className='btn-icon' style={{ marginRight: '8px' }}>
+                <Icon icon='mdi:content-save' />
+              </div>
+              SAVE CHANGES
+            </Button>
+            <Button
+              className='btn-next'
+              onClick={() => {
+                handleAction('next')
+              }}
+            >
+              Next Step
+              <div className='btn-icon'>
+                <Icon icon='material-symbols:arrow-right-alt' />
+              </div>
+            </Button>
 
             <Modal className='next-step-modal' open={open} onClose={handleCloseModal}>
               <Box
@@ -1272,28 +947,16 @@ const Information: React.FC<InformationProps> = ({
                     <Button className='continue-modal-btn' variant='contained' onClick={handleNextStep}>
                       CONTINUE
                     </Button>
-                    {isBoundAccount ? (
-                      <Button
-                        className='create-contact-modal'
-                        onClick={() => {
-                          setOpen(false)
-                          setNextClicked(false)
-                        }}
-                      >
-                        Keep editing information
-                      </Button>
-                    ) : (
-                      <Button
-                        className='create-contact-modal'
-                        onClick={() => {
-                          setOpen(false)
-                          setNextClicked(false)
-                          setHasClickedNextStep(false)
-                        }}
-                      >
-                        Keep editing information
-                      </Button>
-                    )}
+                    <Button
+                      className='create-contact-modal'
+                      onClick={() => {
+                        setOpen(false)
+                        setNextClicked(false)
+                        setHasClickedNextStep(false)
+                      }}
+                    >
+                      Keep editing information
+                    </Button>
                   </>
                 ) : (
                   <>
@@ -1310,30 +973,17 @@ const Information: React.FC<InformationProps> = ({
                     <div className='next-modal-text'>
                       Please fill out all the required files to proceed to the next form.
                     </div>
-                    {isBoundAccount ? (
-                      <Button
-                        className='ok-modal-btn'
-                        variant='contained'
-                        onClick={() => {
-                          setOpen(false)
-                          setNextClicked(false)
-                        }}
-                      >
-                        OK
-                      </Button>
-                    ) : (
-                      <Button
-                        className='ok-modal-btn'
-                        variant='contained'
-                        onClick={() => {
-                          setOpen(false)
-                          setNextClicked(false)
-                          setHasClickedNextStep(false)
-                        }}
-                      >
-                        OK
-                      </Button>
-                    )}
+                    <Button
+                      className='ok-modal-btn'
+                      variant='contained'
+                      onClick={() => {
+                        setOpen(false)
+                        setNextClicked(false)
+                        setHasClickedNextStep(false)
+                      }}
+                    >
+                      OK
+                    </Button>
                   </>
                 )}
               </Box>
