@@ -24,10 +24,6 @@ const defineRulesFor = (role: string, subject: string, acl: acl[]) => {
   const { can, /*cannot,*/ rules } = new AbilityBuilder(AppAbility)
   if (role === 'admin') {
     can('manage', 'all')
-    acl?.forEach((element) =>{
-      console.log('elementAction => ', element?.action);
-      console.log('elementModule => ', element?.module);
-    });
   } else if (role === 'Lead underwriter') {
     acl?.forEach((element) =>{
       can(element?.action, element?.module)

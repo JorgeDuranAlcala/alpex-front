@@ -102,7 +102,7 @@ export const ContactModal = ({ id, service, updateContacts, setIdCreated, disabl
               ...state,
               brokerContact: contactBroker.id
             }))
-            setUpdateInfo(false)
+            setUpdateInfo(true)
             setStartValidations(false)
             setError(true)
             updateContacts(id)
@@ -126,7 +126,6 @@ export const ContactModal = ({ id, service, updateContacts, setIdCreated, disabl
               ...state,
               cedantContact: contactCedant.id
             }))
-            setUpdateInfo(false)
             setStartValidations(false)
             setError(true)
             updateContacts(id)

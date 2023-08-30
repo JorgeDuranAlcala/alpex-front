@@ -201,7 +201,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     setBasicInfo({ ...basicInfo, [name]: value })
-    setUpdateInfo(false)
+    setUpdateInfo(true)
 
     !validateForm && validations({ ...basicInfo, [name]: value })
   }
@@ -236,24 +236,24 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
     }
     !validateForm && validations(basicInfoTem)
     setBasicInfo(basicInfoTem)
-    setUpdateInfo(false)
+    setUpdateInfo(true)
   }
 
   const handleReceptionDateChange = (date: Date) => {
     setBasicInfo({ ...basicInfo, receptionDate: date })
-    setUpdateInfo(false)
+    setUpdateInfo(true)
     !validateForm && validations({ ...basicInfo, receptionDate: date })
   }
 
   const handleEffectiveDateChange = (date: Date) => {
     setBasicInfo({ ...basicInfo, effectiveDate: date })
-    setUpdateInfo(false)
+    setUpdateInfo(true)
     !validateForm && validations({ ...basicInfo, effectiveDate: date })
   }
 
   const handleExpirationDateChange = (date: Date | null) => {
     setBasicInfo({ ...basicInfo, expirationDate: date })
-    setUpdateInfo(false)
+    setUpdateInfo(true)
     !validateForm && validations({ ...basicInfo, expirationDate: date })
   }
 
@@ -268,7 +268,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
     }
     !validateForm && validations(basicInfo)
     setBasicInfo(basicInfo)
-    setUpdateInfo(false)
+    setUpdateInfo(true)
   }
 
   const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {

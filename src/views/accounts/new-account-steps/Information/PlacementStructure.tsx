@@ -381,19 +381,18 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
       netPremiumWithTaxes: netPremiumWithTaxesc ?? 0,
       netPremiumWithoutDiscounts: netPremiumWithoutDiscountsc ?? 0
     })
-     setUpdateInfo(false)
   }
 
   const handleCurrencyChange = (e: SelectChangeEvent<string> | any) => {
     const target = e.target
     const value = target.value
     setPair({ targetCurrency: value, baseCurrency: 'USD' })
-    setUpdateInfo(false)
+    setUpdateInfo(true)
   }
 
   const handleNumericInputChange = (value: any, name: string) => {
     setPlacementStructure({ ...placementStructure, [name]: value })
-    setUpdateInfo(false)
+    setUpdateInfo(true)
   }
 
   const handleSelectChange = (e: SelectChangeEvent<string> | any) => {
@@ -404,7 +403,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
       ...placementStructure,
       [name]: value
     })
-    setUpdateInfo(false)
+    setUpdateInfo(true)
   }
 
   const handleTaxesChange = () => {
@@ -418,7 +417,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
         taxes: 0,
         taxesP: 0
       })
-      setUpdateInfo(false)
+      setUpdateInfo(true)
     }
     setTaxesChecked(!taxesChecked)
   }
@@ -434,7 +433,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
         frontingFee: 0,
         frontingFeeP: 0
       })
-      setUpdateInfo(false)
+      setUpdateInfo(true)
     }
     setFrontingChecked(!frontingChecked)
   }
@@ -643,7 +642,6 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
         currency: pair.targetCurrency,
         exchangeRate: exchangeRate.conversionRate || 0
       })
-      setUpdateInfo(false)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [exchangeRate])

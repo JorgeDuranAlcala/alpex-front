@@ -2,9 +2,9 @@ import { Card, CircularProgress, styled } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import { useContext } from 'react';
 import { PaymentsContext } from '../../context/payments/PaymentsContext';
-import { columns } from './Columns';
 import CustomPagination from './CustomPagination';
 import TableHeader from './TableHeader';
+import { columns } from './columns/Columns';
 
 export const PaymentsTable = () => {
 

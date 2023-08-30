@@ -278,7 +278,7 @@ const FormHeader = ({
 
   const formatDateFromUTC = (date: Date | null): string => {
     if (date) {
-      const fecha = new Date(new Date(date).toLocaleString('en-US', { timeZone: 'UTC' }))
+      const fecha = new Date(new Date(date).toLocaleString('en-US', { timeZone: 'MST' }))
       const options: Intl.DateTimeFormatOptions = {
         day: '2-digit',
         month: '2-digit',
