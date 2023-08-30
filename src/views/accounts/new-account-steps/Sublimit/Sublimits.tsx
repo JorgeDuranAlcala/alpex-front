@@ -130,7 +130,7 @@ const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
 
   // ** Custom hooks
   const { updateAccountsStatus } = useUpdateAccountsStatus()
-  const { getAllCoverages } = useGetAllCoverage()
+  const { getAllCoverages, setAccountIdCoverage, coverages } = useGetAllCoverage()
 
   const handleSelectedCoverage = (coverageSelect: CoverageDto) => {
     // console.log('coverageSelect', coverageSelect);
@@ -333,6 +333,18 @@ const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
     getAccountData()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+  useEffect(() => {
+    if (coverageSelected.length === 0) {
+      // console.log("No hay datos aquí ");
+      setAccountIdCoverage(accountData.formsData.form1?.id)
+
+      getAllCoverages(accountData.formsData.form1?.id)
+      const coveragesFiltered = coverages.filter((elemento: any) => { return subLimits.some(filtroItem => filtroItem.idCCoverage.id === elemento.id) });
+      setCoverageSelected(coveragesFiltered)
+
+      // console.log("Retornamos estos datos -> ", coveragesFiltered, coverages);
+    }
+  }, [subLimits, accountData])
   console.log({ subLimits, coverageSelected })
 
   return (
