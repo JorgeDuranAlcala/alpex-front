@@ -832,26 +832,26 @@ const Information: React.FC<InformationProps> = ({
     try {
       if (idAccount) {
         if (updateInfo) {
-           setBadgeData({
-          message: `UPDATING INFORMATION`,
-          status: 'secondary',
-          open: true,
-          icon: <CircularProgress size={20} color='primary' />,
-          backgroundColor: '#828597',
-          theme: 'info',
-          disableAutoHide: true
-        })
+          setBadgeData({
+            message: `UPDATING INFORMATION`,
+            status: 'secondary',
+            open: true,
+            icon: <CircularProgress size={20} color='primary' />,
+            backgroundColor: '#828597',
+            theme: 'info',
+            disableAutoHide: true
+          })
 
-        await updateInformation()
-        await uploadDoctos(idAccount)
-        await updateDiscount()
-        dispatch(updateFormsData({ form1: { basicInfo, placementStructure, userFile, id: idAccount } }))
-        getIdAccount ? getIdAccount(idAccount) : undefined
-        setDisableSave(false)
-        if (hasClickedNextStep) {
-          onStepChange ? onStepChange(2) : undefined
+          await updateInformation()
+          await uploadDoctos(idAccount)
+          await updateDiscount()
+          dispatch(updateFormsData({ form1: { basicInfo, placementStructure, userFile, id: idAccount } }))
+          getIdAccount ? getIdAccount(idAccount) : undefined
+          setDisableSave(false)
+          if (hasClickedNextStep) {
+            onStepChange ? onStepChange(2) : undefined
+          }
         }
-       }
       } else {
         setBadgeData({
           message: `SAVING INFORMATION`,
