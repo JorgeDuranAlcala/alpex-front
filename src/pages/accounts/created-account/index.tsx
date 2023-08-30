@@ -292,8 +292,9 @@ const CreatedAccount = () => {
           </Card>
 
           {/* </ChangeStepForm> */}
-
-          <MenuForm />
+          <div style={{ display: 'none' }}>
+            <MenuForm />
+          </div>
         </div>
         <Card sx={{ '@media (min-width:809px)': { display: 'none' } }}>
           <div style={{ display: 'flex', height: '50px', padding: '14px', alignItems: 'center' }}>
