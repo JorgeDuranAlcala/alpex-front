@@ -14,10 +14,6 @@ import { styled } from '@mui/material/styles'
 import { GoogleMap, MarkerF, useLoadScript } from '@react-google-maps/api'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import Icon from 'src/@core/components/icon'
-import { DisableForm } from './_commons/DisableForm'
-
-// ** Redux
-import { useAppSelector } from '@/store'
 
 export interface AddressInfo {
   addressLine1: string
@@ -47,11 +43,7 @@ const ColorButton = styled(Button)<ButtonProps>(({}) => ({
   }
 }))
 
-type FormAddressProps = {
-  disableSectionCtrl?: boolean
-  isBoundAccount?: boolean
-}
-const FormAddress: React.FC<FormAddressProps> = ({ disableSectionCtrl, isBoundAccount }) => {
+const FormAddress = () => {
   const mapRef = useRef<HTMLDivElement>(null)
   const [marker, setMarker] = useState<google.maps.Marker | null>(null)
   const [selectedLocation, setSelectedLocation] = useState<google.maps.LatLng | null>(null)
@@ -61,9 +53,6 @@ const FormAddress: React.FC<FormAddressProps> = ({ disableSectionCtrl, isBoundAc
   const map = useRef<google.maps.Map | null>(null)
   const geocoder = useRef<google.maps.Geocoder | null>(null)
   const [mapEnabled, setMapEnabled] = useState<boolean>(mapEnabledRef.current)
-
-  // Redux state - para la parte de endosos
-  const endorsementData = useAppSelector(state => state.endorsement.data)
 
   const [startValidations, setStartValidations] = useState(false)
   const [validateForm, setValidateForm] = useState<boolean>(true)
@@ -117,15 +106,6 @@ const FormAddress: React.FC<FormAddressProps> = ({ disableSectionCtrl, isBoundAc
     }
   }
 
-  //**Endosos**************************
-
-  const handleEndorsement = () => {
-    console.log('Los errors', errors)
-    console.log('Toda la data para endoso', endorsementData)
-  }
-
-  //*********************************
-
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     setAddressInfo({ ...addressInfo, [name]: value })
@@ -168,9 +148,7 @@ const FormAddress: React.FC<FormAddressProps> = ({ disableSectionCtrl, isBoundAc
   useEffect(() => {
     if (startValidations) {
       validations()
-      isBoundAccount ? handleEndorsement() : null
       setValidateForm(false)
-      isBoundAccount ? setStartValidations(false) : null
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -278,32 +256,31 @@ const FormAddress: React.FC<FormAddressProps> = ({ disableSectionCtrl, isBoundAc
   return (
     <AddressContainer>
       <h1 className='title'>Address</h1>
-      <DisableForm isDisabled={disableSectionCtrl} sg={2000}>
-        <FormContainer>
-          <div className='containerInputs'>
-            {' '}
-            <div style={{ width: '100%' }}>
-              <AutocompleteAddress setAddress={setAddress}>
-                <TextField
-                  sx={{ width: '100%' }}
-                  value={address.address && address.address}
-                  defaultValue=''
-                  onChange={({ target }) => {
-                    setAddress({
-                      ...address,
-                      address: target.value
-                    })
-                  }}
-                  id='address-line-1'
-                  name='addressLine1'
-                  label='Address Line 1'
-                  disabled={mapEnabled}
-                  error={!!errors.addressLine1Error}
-                  helperText={getErrorMessage('addressLine1Error')}
-                />
-              </AutocompleteAddress>
-            </div>
-            {/* <FormControl fullWidth>
+      <FormContainer>
+        <div className='containerInputs'>
+          {' '}
+          <div style={{ width: '100%' }}>
+            <AutocompleteAddress setAddress={setAddress}>
+              <TextField
+                sx={{ width: '100%' }}
+                value={address.address && address.address}
+                defaultValue=''
+                onChange={({ target }) => {
+                  setAddress({
+                    ...address,
+                    address: target.value
+                  })
+                }}
+                id='address-line-1'
+                name='addressLine1'
+                label='Address Line 1'
+                disabled={mapEnabled}
+                error={!!errors.addressLine1Error}
+                helperText={getErrorMessage('addressLine1Error')}
+              />
+            </AutocompleteAddress>
+          </div>
+          {/* <FormControl fullWidth>
             <TextField
               sx={{ width: '100%' }}
               value={addressInfo.addressLine2}
@@ -316,138 +293,114 @@ const FormAddress: React.FC<FormAddressProps> = ({ disableSectionCtrl, isBoundAc
               helperText={getErrorMessage('addressLine2Error')}
             />
           </FormControl> */}
-          </div>
-          <div className='containerInputs'>
-            <TextField
-              sx={{ width: '100%' }}
-              value={address.country}
-              defaultValue=''
-              label='Country'
-              disabled={mapEnabled}
-              error={!!errors.countryError}
-              helperText={getErrorMessage('countryError')}
-            />
-            <TextField
-              sx={{ width: '100%' }}
-              value={address.postalCode}
-              id='zip-code'
-              name='zipCode'
-              label='Zip code'
-              onChange={handleInputChange}
-              disabled={mapEnabled}
-              error={!!errors.zipCodeError}
-              helperText={getErrorMessage('zipCodeError')}
-            />
-          </div>
-          <div className='containerInputs'>
-            {' '}
-            <TextField
-              sx={{ width: '100%' }}
-              value={address.city}
-              defaultValue=''
-              label='City'
-              disabled={mapEnabled}
-              error={!!errors.cityError}
-              helperText={getErrorMessage('cityError')}
-            />
-            <TextField
-              sx={{ width: '100%' }}
-              value={address.state}
-              defaultValue=''
-              label='State / Province'
-              disabled={mapEnabled}
-              error={!!errors.stateError}
-              helperText={getErrorMessage('stateError')}
-            />
-          </div>
-        </FormContainer>
-      </DisableForm>
+        </div>
+        <div className='containerInputs'>
+          <TextField
+            sx={{ width: '100%' }}
+            value={address.country}
+            defaultValue=''
+            label='Country'
+            disabled={mapEnabled}
+            error={!!errors.countryError}
+            helperText={getErrorMessage('countryError')}
+          />
+          <TextField
+            sx={{ width: '100%' }}
+            value={address.postalCode}
+            id='zip-code'
+            name='zipCode'
+            label='Zip code'
+            onChange={handleInputChange}
+            disabled={mapEnabled}
+            error={!!errors.zipCodeError}
+            helperText={getErrorMessage('zipCodeError')}
+          />
+        </div>
+        <div className='containerInputs'>
+          {' '}
+          <TextField
+            sx={{ width: '100%' }}
+            value={address.city}
+            defaultValue=''
+            label='City'
+            disabled={mapEnabled}
+            error={!!errors.cityError}
+            helperText={getErrorMessage('cityError')}
+          />
+          <TextField
+            sx={{ width: '100%' }}
+            value={address.state}
+            defaultValue=''
+            label='State / Province'
+            disabled={mapEnabled}
+            error={!!errors.stateError}
+            helperText={getErrorMessage('stateError')}
+          />
+        </div>
+      </FormContainer>
       <h1 className='title' style={{ marginTop: '40px', marginBottom: '32px' }}>
         Map
       </h1>
       <h2 className='subtitle'>GPS Coordinates</h2>
-      <DisableForm isDisabled={disableSectionCtrl} sg={2000}>
-        <MapContainer>
-          <div className='containerCoordinates'>
-            <div className='inputsCoordinates'>
-              <TextField
-                sx={{ maxWidth: '160px', '@media (max-width:900px)': { maxWidth: '100%', width: '100%' } }}
-                value={addressInfo.latitude}
-                id='standard-basic'
-                label='Latitude'
-                variant='standard'
-                disabled={true}
-              />
-              <TextField
-                sx={{ maxWidth: '160px', '@media (max-width:900px)': { maxWidth: '100%', width: '100%' } }}
-                id='standard-basic'
-                value={addressInfo.longitude}
-                label='Longitude'
-                variant='standard'
-                disabled={true}
-              />
-            </div>
-            <Button
-              variant='outlined'
-              sx={{ padding: '7px 22px', '@media (max-width:900px)': { marginTop: '20px' } }}
-              onClick={handleChooseLocation}
-            >
-              {mapEnabled ? 'Choose location by address' : 'Choose location on the map'}
-            </Button>
-          </div>
 
-          <div style={{ borderRadius: '8px', height: '500px', margin: '20px 0px 60px ' }}>
-            <div ref={mapRef} style={{ width: '100%', minHeight: '500px' }} />
+      <MapContainer>
+        <div className='containerCoordinates'>
+          <div className='inputsCoordinates'>
+            <TextField
+              sx={{ maxWidth: '160px', '@media (max-width:900px)': { maxWidth: '100%', width: '100%' } }}
+              value={addressInfo.latitude}
+              id='standard-basic'
+              label='Latitude'
+              variant='standard'
+              disabled={true}
+            />
+            <TextField
+              sx={{ maxWidth: '160px', '@media (max-width:900px)': { maxWidth: '100%', width: '100%' } }}
+              id='standard-basic'
+              value={addressInfo.longitude}
+              label='Longitude'
+              variant='standard'
+              disabled={true}
+            />
           </div>
+          <Button
+            variant='outlined'
+            sx={{ padding: '7px 22px', '@media (max-width:900px)': { marginTop: '20px' } }}
+            onClick={handleChooseLocation}
+          >
+            {mapEnabled ? 'Choose location by address' : 'Choose location on the map'}
+          </Button>
+        </div>
 
-          <ButtonContainer>
-            {isBoundAccount ? (
-              <Button
-                className='btn-endorsement'
-                onClick={() => {
-                  setStartValidations(true)
-                }}
-                variant='contained'
-                disabled={
-                  !endorsementData.initialized ||
-                  endorsementData.type?.toLocaleLowerCase() === 'informative' ||
-                  !endorsementData.type
-                }
-              >
-                <div className='btn-icon' style={{ marginRight: '8px' }}>
-                  <Icon icon='material-symbols:approval-outline' />
-                </div>
-                ENDORSE
-              </Button>
-            ) : (
-              <>
-                <ColorButton
-                  sx={{
-                    maxWidth: '200px',
-                    '@media (max-width:900px)': { maxWidth: '100%', width: '100%', color: 'white' }
-                  }}
-                  color='success'
-                  variant='outlined'
-                  startIcon={<Icon icon='ic:baseline-save' />}
-                >
-                  {' '}
-                  SAVE CHANGES
-                </ColorButton>
-                <Button
-                  sx={{ maxWidth: '200px', '@media (max-width:900px)': { maxWidth: '100%', width: '100%' } }}
-                  variant='contained'
-                  endIcon={<Icon icon='material-symbols:check' />}
-                  onClick={() => {
-                    setStartValidations(true)
-                  }}
-                >
-                  ADD BOUND
-                </Button>
-              </>
-            )}
-          </ButtonContainer>
-        </MapContainer>
-      </DisableForm>
+        <div style={{ borderRadius: '8px', height: '500px', margin: '20px 0px 60px ' }}>
+          <div ref={mapRef} style={{ width: '100%', minHeight: '500px' }} />
+        </div>
+
+        <ButtonContainer>
+          <ColorButton
+            sx={{
+              maxWidth: '200px',
+              '@media (max-width:900px)': { maxWidth: '100%', width: '100%', color: 'white' }
+            }}
+            color='success'
+            variant='outlined'
+            startIcon={<Icon icon='ic:baseline-save' />}
+          >
+            {' '}
+            SAVE CHANGES
+          </ColorButton>
+          <Button
+            sx={{ maxWidth: '200px', '@media (max-width:900px)': { maxWidth: '100%', width: '100%' } }}
+            variant='contained'
+            endIcon={<Icon icon='material-symbols:check' />}
+            onClick={() => {
+              setStartValidations(true)
+            }}
+          >
+            ADD BOUND
+          </Button>
+        </ButtonContainer>
+      </MapContainer>
     </AddressContainer>
   )
 }

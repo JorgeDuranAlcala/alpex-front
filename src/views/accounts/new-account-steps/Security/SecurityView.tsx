@@ -9,7 +9,7 @@ import {
   SecurityProps
 } from '@/services/accounts/dtos/security.dto'
 
-import { useAppDispatch, useAppSelector } from '@/store'
+import { useAppSelector } from '@/store'
 
 import { Title } from '@/styled-components/accounts/Security.styled'
 import { ButtonClose, HeaderTitleModal } from '@/styles/modal/modal.styled'
@@ -40,16 +40,10 @@ import { DisableForm } from '../_commons/DisableForm'
 import { SecondViewProvider } from './components/secondView/SecondViewProvider'
 import { CalculateSecurity, defaultValue } from './utils/calculates-securities'
 
-//******Import Redux endosos */
-import { updateEndorsement } from '@/store/apps/endorsement'
-
 export const SecurityContext = createContext<SecurityContextDto>({} as SecurityContextDto)
 
-const Security = ({ onStepChange, disableSectionCtrl, isBoundAccount }: SecurityProps) => {
+const Security = ({ onStepChange }: SecurityProps) => {
   const router = useRouter()
-
-  //********************Endosos
-  const idAccountRouter = Number(router?.query?.idAccount)
 
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
   const [securities, setSecurities] = useState<SecurityDto[]>([])
@@ -87,7 +81,7 @@ const Security = ({ onStepChange, disableSectionCtrl, isBoundAccount }: Security
   })
   const [companiesSelect] = useState<number[]>([])
 
-  const { account, setAccountId, getAccountById, accountId, setAccount } = useGetAccountById()
+  const { account, setAccountId, getAccountById, accountId } = useGetAccountById()
   const { saveSecurityTotal } = useAddSecurityTotal()
   const { updateSecurityTotal } = useUpdateSecurityTotalById()
 
@@ -95,10 +89,6 @@ const Security = ({ onStepChange, disableSectionCtrl, isBoundAccount }: Security
   const { saveSecurities } = useAddSecurities()
 
   const accountData = useAppSelector(state => state.accounts)
-
-  //**********************Redux Endosos
-  const endorsementData = useAppSelector(state => state.endorsement.data)
-  const dispatch = useAppDispatch()
 
   const inter = userThemeConfig.typography?.fontFamilyInter
   const [badgeData, setBadgeData] = useState<IAlert>({
@@ -311,7 +301,7 @@ const Security = ({ onStepChange, disableSectionCtrl, isBoundAccount }: Security
   }
 
   const onNextStep = () => {
-    isBoundAccount ? SaveDataEndorsementAccount() : SaveData()
+    SaveData()
     setIsNextStep(true)
     handleCloseModal()
   }
@@ -409,76 +399,6 @@ const Security = ({ onStepChange, disableSectionCtrl, isBoundAccount }: Security
     }
   }
 
-  //Endosos Code ***********************************************************
-  const SaveDataEndorsementAccount = async () => {
-    if (!endorsementData.initialized) return
-    const newSecurities: Partial<SecurityDto>[] = []
-
-    for (const security of securities) {
-      // * Con esta validación no se guardarán los datos de la vista 2
-      if (security.view === 2) return
-
-      const mapper = SecurityMapper.securityToSecurityForm(security, Number(accountId))
-
-      newSecurities.push({ ...mapper, view: 1 })
-    }
-
-    const newSecurityTotal = [
-      {
-        receivedNetPremium: +allFormData.recievedNetPremium,
-        distributedNetPremium: +allFormData.distribuitedNetPremium,
-        difference: +allFormData.diference,
-        idAccount: +idAccountRouter,
-        view: 1
-      }
-    ]
-
-    const newEndorsementData = {
-      ...endorsementData,
-      securities: newSecurities,
-      securitiesTotal: newSecurityTotal
-    }
-    dispatch(updateEndorsement(newEndorsementData))
-  }
-
-  useEffect(() => {
-    if (idAccountRouter && !endorsementData.initialized) {
-      setAccountId(idAccountRouter)
-    } else {
-      setAccount({
-        id: Number(endorsementData.idAccount),
-        status: '',
-        discounts: endorsementData.discounts,
-        idAccountStatus: 0,
-        idAccountType: 0,
-        informations: [
-          {
-            ...endorsementData.information,
-            idLineOfBussines: {},
-            idCountry: {},
-            idBroker: {},
-            idCedant: {},
-            idRiskActivity: {},
-            idTypeOfLimit: {},
-            idCurrency: {},
-            idBrokerContact: {},
-            idCedantContact: {},
-            idEconomicSector: {},
-            idLeadUnderwriter: {},
-            idTechnicalAssistant: {},
-            idUnderwriter: {}
-          }
-        ],
-        installments: endorsementData.installments,
-        securities: endorsementData.securities,
-        securitiesTotal: endorsementData.securitiesTotal,
-        sublimits: endorsementData.sublimits
-      })
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  //**************************************************************************
   const DeleteNewForm = (index: number) => {
     const updatedSecurities = [...securities]
     const updatedErrors = [...allErrors]
@@ -573,10 +493,7 @@ const Security = ({ onStepChange, disableSectionCtrl, isBoundAccount }: Security
                   return (
                     <DisableForm
                       key={`${index}-${security?.id}`}
-                      isDisabled={
-                        isBoundAccount ? disableSectionCtrl : account?.status.toLowerCase() === 'bound' ? true : false
-                      }
-                      sg={isBoundAccount ? 2000 : undefined}
+                      isDisabled={account?.status.toLowerCase() === 'bound' ? true : false}
                     >
                       <FormSection
                         security={currentView === 2 ? securitiesSecondView[index] : security}
@@ -652,35 +569,19 @@ const Security = ({ onStepChange, disableSectionCtrl, isBoundAccount }: Security
                 {/* ADD REINSURER */}
                 <Grid item xs={12} sm={12}>
                   <div className='add-reinsurer'>
-                    {isBoundAccount ? (
-                      <Button
-                        disabled={currentView === 2 || disableSectionCtrl ? true : undefined}
-                        type='button'
-                        onClick={addNewForm}
-                        variant='text'
-                        color='primary'
-                        size='large'
-                        fullWidth
-                        sx={{ justifyContent: 'start' }}
-                      >
-                        <Icon icon='material-symbols:add-circle-outline' fontSize={20} className='icon-btn' /> ADD
-                        REINSURER
-                      </Button>
-                    ) : (
-                      <Button
-                        disabled={currentView === 2 || account?.status.toLowerCase() === 'bound' ? true : undefined}
-                        type='button'
-                        onClick={addNewForm}
-                        variant='text'
-                        color='primary'
-                        size='large'
-                        fullWidth
-                        sx={{ justifyContent: 'start' }}
-                      >
-                        <Icon icon='material-symbols:add-circle-outline' fontSize={20} className='icon-btn' /> ADD
-                        REINSURER
-                      </Button>
-                    )}
+                    <Button
+                      disabled={currentView === 2 || account?.status.toLowerCase() === 'bound' ? true : undefined}
+                      type='button'
+                      onClick={addNewForm}
+                      variant='text'
+                      color='primary'
+                      size='large'
+                      fullWidth
+                      sx={{ justifyContent: 'start' }}
+                    >
+                      <Icon icon='material-symbols:add-circle-outline' fontSize={20} className='icon-btn' /> ADD
+                      REINSURER
+                    </Button>
                   </div>
                 </Grid>
 
@@ -689,35 +590,24 @@ const Security = ({ onStepChange, disableSectionCtrl, isBoundAccount }: Security
                     className='section action-buttons'
                     style={{ float: 'right', marginRight: 'auto', marginBottom: '20px' }}
                   >
-                    {isBoundAccount ? (
-                      <Button disabled={currentView === 2} className='btn-next' onClick={handleNextStep}>
-                        Next Step
-                        <div className='btn-icon'>
-                          <Icon icon='material-symbols:arrow-right-alt' />
-                        </div>
-                      </Button>
-                    ) : (
-                      <>
-                        <Button
-                          disabled={currentView === 2 || account?.status.toLowerCase() === 'bound' ? true : false}
-                          className='btn-save btn-full-mob'
-                          color='success'
-                          variant='contained'
-                          onClick={SaveData}
-                        >
-                          <div className='btn-icon'>
-                            <Icon icon='mdi:content-save' />
-                          </div>
-                          SAVE CHANGES
-                        </Button>
-                        <Button disabled={currentView === 2} className='btn-next btn-full-mob' onClick={handleNextStep}>
-                          Next Step
-                          <div className='btn-icon'>
-                            <Icon icon='material-symbols:arrow-right-alt' />
-                          </div>
-                        </Button>
-                      </>
-                    )}
+                    <Button
+                      disabled={currentView === 2 || account?.status.toLowerCase() === 'bound' ? true : false}
+                      className='btn-save btn-full-mob'
+                      color='success'
+                      variant='contained'
+                      onClick={SaveData}
+                    >
+                      <div className='btn-icon'>
+                        <Icon icon='mdi:content-save' />
+                      </div>
+                      SAVE CHANGES
+                    </Button>
+                    <Button disabled={currentView === 2} className='btn-next btn-full-mob' onClick={handleNextStep}>
+                      Next Step
+                      <div className='btn-icon'>
+                        <Icon icon='material-symbols:arrow-right-alt' />
+                      </div>
+                    </Button>
                   </div>
                 </Grid>
               </Grid>
