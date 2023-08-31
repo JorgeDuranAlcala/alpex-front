@@ -23,4 +23,9 @@ const PropertyListing = () => {
   )
 }
 
+PropertyListing.acl = {
+  action: 'viewPropertyListingData',
+  subject: 'dynamicData'
+}
+
 export default PropertyListing

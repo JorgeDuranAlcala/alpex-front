@@ -33,6 +33,7 @@ interface Props {
   disabledBtn: boolean
   updateContacts: (id: number) => void
   setIdCreated: React.Dispatch<React.SetStateAction<BasicInfoInterface>>
+  setUpdateInfo: (valid: boolean) => void
 }
 
 interface ContactData {
@@ -56,7 +57,7 @@ const expresions = {
   phone: /^\d{10}$/ // 7 a 10 numeros.
 }
 
-export const ContactModal = ({ id, service, updateContacts, setIdCreated, disabledBtn }: Props) => {
+export const ContactModal = ({ id, service, updateContacts, setIdCreated, disabledBtn, setUpdateInfo }: Props) => {
   const [contactData, setContactData] = useState<ContactData>(initialContactData)
   const [open, setOpen] = useState<boolean>(false)
 
@@ -101,6 +102,7 @@ export const ContactModal = ({ id, service, updateContacts, setIdCreated, disabl
               ...state,
               brokerContact: contactBroker.id
             }))
+            setUpdateInfo(true)
             setStartValidations(false)
             setError(true)
             updateContacts(id)

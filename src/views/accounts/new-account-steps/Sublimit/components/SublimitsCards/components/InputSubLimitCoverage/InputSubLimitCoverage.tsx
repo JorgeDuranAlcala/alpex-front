@@ -4,7 +4,6 @@ import {
   Box,
   Checkbox,
   FormControl,
-  FormControlLabel,
   FormHelperText,
   Grid,
   Radio,
@@ -16,6 +15,7 @@ import React, { useEffect, useState } from 'react'
 import { NumericFormat } from 'react-number-format'
 import * as yup from 'yup'
 import { FormErrors } from '../../../../Sublimits'
+import { ContainerRadioGroup } from './RadioGroup'
 
 export type InputSubLimitCoverageProps = {
   limit: number
@@ -84,7 +84,10 @@ const InputSubLimitCoverage: React.FC<InputSubLimitCoverageProps> = ({
     const subLimitTemp = { ...subLimit }
     setPrevSublimit(subLimitTemp.sublimit)
     setSublimitId(subLimitTemp.id)
-  }, [])
+
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (limitAmount !== Number(limit)) {
@@ -206,8 +209,15 @@ const InputSubLimitCoverage: React.FC<InputSubLimitCoverageProps> = ({
               }}
               style={{ display: 'flex', justifyContent: 'space-around' }}
             >
-              <FormControlLabel value='yes' control={<Radio sx={{ mr: 2 }} />} label='Yes' />
-              <FormControlLabel value='luc' control={<Radio sx={{ mr: 2 }} />} label='Luc' />
+              <ContainerRadioGroup>
+                <Radio value='yes' sx={{ mr: 0 }} />
+                <label className="YesLabel">Yes</label>
+              </ContainerRadioGroup>
+              <ContainerRadioGroup>
+
+                <Radio value='luc' sx={{ mr: 0 }} />
+                <label className="YesLabel">Luc</label>
+              </ContainerRadioGroup>
             </RadioGroup>
             <FormHelperText sx={{ color: 'error.main' }}>{showErrors && errorCard.luc}</FormHelperText>
           </Grid>

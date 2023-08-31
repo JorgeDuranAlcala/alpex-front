@@ -18,6 +18,11 @@ import { useAuth } from 'src/hooks/useAuth'
   if (role === 'Lead underwriter') {return '/dashboards/crm'}
   else if (role === 'Underwriter') {{return '/dashboards/crm'}}
   else if (role === 'Technical assistant') {{return '/dashboards/crm'}}
+  else if (role === 'Suscriptor') {{return '/dynamic-data/dashboard/'}}
+  else if (role === 'Reasegurador') {{return '/dynamic-data/dashboard/'}}
+  else if (role === 'Asegurado') {{return '/dynamic-data/dashboard/'}}
+  else if (role === 'Asegurador') {{return '/dynamic-data/dashboard/'}}
+  else if (role === 'Técnico') {{return '/dynamic-data/dashboard/'}}
   else return '/dashboards/crm'
 }
 

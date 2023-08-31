@@ -11,7 +11,7 @@ import AccountsTableContext from 'src/context/accounts/Table/reducer'
 import accountsService from 'src/services/accounts/account.service'
 
 // ** Custom utilities
-import { UpdateStatusArrayDto } from '@/services/accounts/dtos/account.dto'
+import { UpdateStatusArrayDto, UpdateTypeLogoDto } from '@/services/accounts/dtos/account.dto'
 import { useAppDispatch, useAppSelector } from '@/store'
 import { IAccountsState } from '@/types/apps/accountsTypes'
 import { fetchAccounts } from 'src/store/apps/accounts'
@@ -66,13 +66,23 @@ const useAccountTable = () => {
       console.error(error)
     }
   }
+  const changeTypeLogo = async (updateTypeLogo: UpdateTypeLogoDto) => {
+    try {
+      const response = await accountsService.updateTypeLogo(updateTypeLogo)
+
+      return response
+    } catch (error) {
+      console.error(error)
+    }
+  }
 
   return {
     accounts,
     getAccounts,
     deleteAccounts,
     duplicateAccounts,
-    changeStatusAccounts
+    changeStatusAccounts,
+    changeTypeLogo
   }
 }
 

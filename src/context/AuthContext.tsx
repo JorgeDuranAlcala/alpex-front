@@ -57,6 +57,7 @@ const AuthProvider = ({ children }: Props) => {
             const resUser = response.data.userData
 
             const newUserData = {
+              acl: resUser.acl,
               email: resUser.email,
               fullName: resUser.name,
               id: resUser.id,
@@ -129,9 +130,10 @@ const AuthProvider = ({ children }: Props) => {
           const tokenDecoded = jwt.decode(response.data.token, { complete: true })
 
           // @ts-ignore
-          const { email, name, id, roles, username } = tokenDecoded.payload
+          const { email, name, id, roles, username, acl } = tokenDecoded.payload
 
           const newUserData = {
+            acl: acl,
             email: email,
             fullName: name,
             id: id,

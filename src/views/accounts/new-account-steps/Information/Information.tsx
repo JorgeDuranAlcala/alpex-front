@@ -1,10 +1,13 @@
+import { formatStatusToNumber } from '@/utils/formatStatus'
 import React, { useEffect, useState } from 'react'
+import useAccountTable from 'src/hooks/accounts/Table/useAccountTable'
 import UserThemeOptions from 'src/layouts/UserThemeOptions'
+import { EStatus } from 'src/views/accounts/Table/Status'
 
 // ** Custom Hooks
+import { useAddFolder } from '@/hooks/documents/useAddFolder'
 import {
   useAddInformation,
-  useDeleteInformationDocument,
   useFindInformationByIdAccount,
   useGetInfoDoctosByIdAccount,
   useUpdateInformationByIdAccount,
@@ -14,7 +17,7 @@ import {
 import { useAddDiscounts, useUpdateDiscounts } from '@/hooks/accounts/discount'
 
 //Components
-import FileSubmit from './FileSubmit'
+// import FileSubmit from './FileSubmit'
 import PlacementStructure from './PlacementStructure'
 
 // ** MUI Imports
@@ -53,6 +56,7 @@ export interface InformationSectionsInt {
 type InformationProps = {
   onStepChange: (step: number) => void
   onIsNewAccountChange: (status: boolean) => void
+  getIdAccount: (idAccount: number) => void
   typeofAccount?: string
   disableSectionCtrl?: InformationSectionsInt
 }
@@ -82,6 +86,7 @@ export interface BasicInfoInterface {
   effectiveDate: Date | null
   expirationDate: Date | null
   idAccountType: number
+  typeLogo: number | null
 }
 
 export interface PlacementStructure {
@@ -104,15 +109,22 @@ export interface PlacementStructure {
   typeOfLimit: string | number | null
 }
 
-const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountChange, disableSectionCtrl }) => {
+const Information: React.FC<InformationProps> = ({
+  onStepChange,
+  onIsNewAccountChange,
+  disableSectionCtrl,
+  getIdAccount
+}) => {
   // const router = useRouter();
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
+  const { changeStatusAccounts } = useAccountTable()
   const [subjectState] = useState<Subject<void>>(new Subject())
   const inter = userThemeConfig.typography?.fontFamilyInter
   const [makeValidations, setMakeValidations] = useState(false)
   const [makeSaveValidations, setMakeSaveValidations] = useState(false)
   const [disableSave, setDisableSave] = useState(false)
-  const [changeTitle, setChangeTitle] = useState(false)
+
+  // const [changeTitle, setChangeTitle] = useState(false)
   const [discounts, setDiscounts] = useState<DiscountDto[]>([])
 
   // Validaciones
@@ -135,7 +147,9 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   // Save id doctos by file name
   const [doctoIdByName, setDoctoIdByName] = useState({})
   const [userFile, setUserFile] = useState<File[]>([])
-  const [userFileToDelete, setUserFileToDelete] = useState<File>()
+  const [updateInfo, setUpdateInfo] = useState<boolean>(false)
+
+  // const [userFileToDelete, setUserFileToDelete] = useState<File>()
 
   // Store
   const idAccount = useAppSelector(state => state.accounts?.formsData?.form1?.id)
@@ -149,9 +163,11 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   const { updateInformationByIdAccount } = useUpdateInformationByIdAccount()
   const { uploadInformationDocument } = useUploadInformationDocument()
   const { getInfoDoctosByIdAccount } = useGetInfoDoctosByIdAccount()
-  const { deleteInformationDocument } = useDeleteInformationDocument()
+
+  // const { deleteInformationDocument } = useDeleteInformationDocument()
   const { addDiscounts } = useAddDiscounts()
   const { UpdateDiscounts } = useUpdateDiscounts()
+  const { createFolder } = useAddFolder()
 
   const { account, setAccountId } = useGetAccountById()
 
@@ -181,7 +197,8 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
     receptionDate: null,
     effectiveDate: null,
     expirationDate: null,
-    idAccountType: 1
+    idAccountType: 1,
+    typeLogo: 1
   })
 
   const [placementStructure, setPlacementStructure] = useState<PlacementStructure>({
@@ -206,6 +223,22 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
 
   const triggerFunction = () => {
     subjectState.next()
+  }
+
+  const handleChangeStatusAction = async (accountId: number) => {
+    const status = sessionStorage.getItem('accountStatus') ? 'PENDING' : sessionStorage.getItem('accountStatus')
+    if (status) {
+      const changeStatusArray = [
+        {
+          idAccount: accountId,
+          status: formatStatusToNumber(EStatus[status as keyof typeof EStatus])
+        }
+      ]
+      await changeStatusAccounts({
+        updateStatus: changeStatusArray
+      })
+      sessionStorage.removeItem('accountStatus')
+    }
   }
 
   const updateInformation = async () => {
@@ -328,7 +361,8 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
       idTypeOfLimit: Number(placementStructure.typeOfLimit),
       idAccountType: Number(basicInfo.idAccountType),
       step: 1,
-      idEconomicSector: Number(basicInfo.economicSector) || null
+      idEconomicSector: Number(basicInfo.economicSector) || null,
+      typeLogo: Number(basicInfo.typeLogo)
     }
 
     const res = await addInformation(dataToSave)
@@ -403,7 +437,8 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
         receptionDate: information.receptionDate ? new Date(information.receptionDate) : null,
         effectiveDate: information.effectiveDate ? new Date(information.effectiveDate) : null,
         expirationDate: information.expirationDate ? new Date(information.expirationDate) : null,
-        idAccountType: information.idAccountType
+        idAccountType: information.idAccountType,
+        typeLogo: information.typeLogo
       }
 
       const obPlacementStructure = {
@@ -540,21 +575,27 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
   const handleSaveInformation = async () => {
     try {
       if (idAccount) {
-        setBadgeData({
-          message: `UPDATING INFORMATION`,
-          status: 'secondary',
-          open: true,
-          icon: <CircularProgress size={20} color='primary' />,
-          backgroundColor: '#828597',
-          theme: 'info',
-          disableAutoHide: true
-        })
+        if (!updateInfo) {
+          setBadgeData({
+            message: `UPDATING INFORMATION`,
+            status: 'secondary',
+            open: true,
+            icon: <CircularProgress size={20} color='primary' />,
+            backgroundColor: '#828597',
+            theme: 'info',
+            disableAutoHide: true
+          })
 
-        await updateInformation()
-        await uploadDoctos(idAccount)
-        await updateDiscount()
-        dispatch(updateFormsData({ form1: { basicInfo, placementStructure, userFile, id: idAccount } }))
-        setDisableSave(false)
+          await updateInformation()
+          await uploadDoctos(idAccount)
+          await updateDiscount()
+          dispatch(updateFormsData({ form1: { basicInfo, placementStructure, userFile, id: idAccount } }))
+          getIdAccount(idAccount)
+          setDisableSave(false)
+          if (hasClickedNextStep) {
+            onStepChange ? onStepChange(2) : undefined
+          }
+        }
       } else {
         setBadgeData({
           message: `SAVING INFORMATION`,
@@ -573,7 +614,12 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
             ...discount,
             idAccount: res.account.id
           }))
+          await handleChangeStatusAction(res.account.id)
+          getIdAccount(res.account.id)
+          setAccountId(res.account.id)
           await localStorage.setItem('idAccount', String(res.account.id))
+          createFolder({ folderName: 'Final Slip', accountId: Number(res.account.id) })
+          createFolder({ folderName: 'root', accountId: Number(res.account.id) })
           if (discountTemp.length > 0) {
             await addDiscounts(discountTemp)
             triggerFunction()
@@ -682,9 +728,9 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
     setMakeValidations(false)
   }
 
-  const onSubmittedFiles = (change: boolean) => {
-    setChangeTitle(change)
-  }
+  // const onSubmittedFiles = (change: boolean) => {
+  //   setChangeTitle(change)
+  // }
 
   useEffect(() => {
     const idAccountCache = Number(localStorage.getItem('idAccount'))
@@ -739,27 +785,27 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  useEffect(() => {
-    const deleteFile = async (userFileToDelete: File) => {
-      const fileName = String(userFileToDelete.name)
-      const idDocto = doctoIdByName[fileName as keyof typeof doctoIdByName]
+  // useEffect(() => {
+  //   const deleteFile = async (userFileToDelete: File) => {
+  //     const fileName = String(userFileToDelete.name)
+  //     const idDocto = doctoIdByName[fileName as keyof typeof doctoIdByName]
 
-      if (idDocto) {
-        const bodyToDelete = {
-          idAccount: idAccount,
-          idDocto,
-          fileName: fileName
-        }
-        await deleteInformationDocument(bodyToDelete)
-        delete doctoIdByName[fileName as keyof typeof doctoIdByName]
-      }
-    }
+  //     if (idDocto) {
+  //       const bodyToDelete = {
+  //         idAccount: idAccount,
+  //         idDocto,
+  //         fileName: fileName
+  //       }
+  //       await deleteInformationDocument(bodyToDelete)
+  //       delete doctoIdByName[fileName as keyof typeof doctoIdByName]
+  //     }
+  //   }
 
-    if (userFileToDelete && idAccount) {
-      deleteFile(userFileToDelete)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userFileToDelete])
+  //   if (userFileToDelete && idAccount) {
+  //     deleteFile(userFileToDelete)
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [userFileToDelete])
 
   useEffect(() => {
     if (idAccount) {
@@ -825,6 +871,7 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
                 makeValidations={makeValidations}
                 makeSaveValidations={makeSaveValidations}
                 onValidationComplete={handleValidationComplete}
+                setUpdateInfo={setUpdateInfo}
               />
             </DisableForm>
           </div>
@@ -839,20 +886,9 @@ const Information: React.FC<InformationProps> = ({ onStepChange, onIsNewAccountC
                 makeValidations={makeValidations}
                 onValidationComplete={handleValidationComplete}
                 triggerSubject={subjectState}
+                setUpdateInfo={setUpdateInfo}
               />
             </DisableForm>
-          </div>
-
-          <div className='section' style={{ display: 'none' }}>
-            <div className='title'>{changeTitle ? 'Submited files' : 'File submit'}</div>
-            <FileSubmit
-              userFile={userFile}
-              urls={fileUrls}
-              setUserFile={setUserFile}
-              setUserFileToDelete={setUserFileToDelete}
-              changeTitle={onSubmittedFiles}
-              isPayments={false}
-            />
           </div>
           <div className='section action-buttons'>
             <Button

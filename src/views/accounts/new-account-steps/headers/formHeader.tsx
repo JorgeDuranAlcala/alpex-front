@@ -1,11 +1,25 @@
 // import { useGetAllEndorsementTypes } from '@/hooks/accounts/endorsementType/getAllEndorsementTypes.tsx'
 
 import { useGetDoctosByIdAccountAndIdDocumentType } from '@/hooks/accounts/information/useGetFilesByType'
-import { ContainerMobileBound } from '@/styled-components/accounts/Security.styled'
-import { Box, Button, Card, ListItemIcon, ListItemText, Menu, MenuItem, Modal, Typography } from '@mui/material'
+
+// import { ContainerMobileBound } from '@/styled-components/accounts/Security.styled'
+import { useAppDispatch, useAppSelector } from '@/store'
+import { updateFormsData } from '@/store/apps/accounts'
+import {
+  ContainerAmountLastUpdate,
+  FormHeaderInfoProfileContainer,
+  FormHeaderInfoProfiletext,
+  FormHeaderMoneyDataDate,
+  FormHeaderSection,
+  FormSecondContainerFirstside,
+  Frame3486,
+  SecondContainer
+} from '@/styles/Payments/PaymnetsInstallments/paymentsInstallments'
+import { Badge, Box, Button, Card, ListItemIcon, ListItemText, Menu, MenuItem, Modal, Typography } from '@mui/material'
+import { styled } from '@mui/material/styles'
 import { useEffect, useState } from 'react'
 import Icon from 'src/@core/components/icon'
-import { useAppSelector } from 'src/store'
+import useAccountTable from 'src/hooks/accounts/Table/useAccountTable'
 import StatusSelect from 'src/views/custom/select/StatusSelect'
 import ActionsHeader from './ActionsHeader'
 import ActionsHeaderBound from './ActionsHeaderBound'
@@ -67,7 +81,8 @@ const ModalUploadImage = ({ accountId }: any) => {
   const handleOpen = () => {
     setOpen(true)
   }
-
+  const dispatch = useAppDispatch()
+  const form1Account = useAppSelector(state => state.accounts?.formsData?.form1)
   const handleClose = (action: string) => {
     switch (action) {
       case 'upload':
@@ -78,7 +93,8 @@ const ModalUploadImage = ({ accountId }: any) => {
       case 'txtLogo':
         setOpen(false)
         setAnchorEl(null)
-        setModalTxt(true)
+        handleSelectTextBase(form1Account.id)
+        dispatch(updateFormsData({ form1: { ...form1Account, basicInfo: { ...form1Account.basicInfo, typeLogo: 2 } } }))
         break
       default:
         break
@@ -90,10 +106,45 @@ const ModalUploadImage = ({ accountId }: any) => {
     setImagePreview(URL.createObjectURL(e.target.files[0]))
   }
 
-  const randomColor = () => {
-    const colors = ['#f44336', '#e91e63', '#9c27b0', '#673ab7', '#3f51b5', '#2196f3', '#03a9f4', '#00bcd4']
+  const AvatarLetter = styled(Box)(({ theme }) => ({
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
 
-    return colors[Math.floor(Math.random() * colors.length)]
+    backgroundColor: theme.palette.primary.main,
+    color: theme.palette.primary.contrastText,
+    borderRadius: '50%',
+
+    width: '80px',
+    height: '80px'
+  }))
+
+  const { changeTypeLogo } = useAccountTable()
+
+  const handleSelectTextBase = async (idAccount: number) => {
+    await changeTypeLogo({
+      idAccount: idAccount,
+      typeLogo: 2
+    })
+  }
+
+  const randomColor = (name: string) => {
+    let hash = 0
+    let i
+    for (i = 0; i < name?.length; i += 1) {
+      hash = name.charCodeAt(i) + ((hash << 5) - hash)
+    }
+    let color = '#'
+    for (i = 0; i < 3; i += 1) {
+      const value = (hash >> (i * 8)) & 0xff
+      color += `00${value.toString(16)}`.slice(-2)
+    }
+    return color
+  }
+
+  const stringAvatar = (name: string) => {
+    const text = name?.split(' ')[0][0] + name?.split(' ')[0][1]
+    return text.toString()
   }
 
   return (
@@ -106,21 +157,33 @@ const ModalUploadImage = ({ accountId }: any) => {
           aria-expanded={openMenu ? 'true' : undefined}
           onClick={handleClick}
         >
-          <div className='header-menu'>
-            {!logo ? (
-              <>
+          {form1Account?.basicInfo?.typeLogo == 2 ? (
+            <Badge
+              sx={{ ml: 2, cursor: 'pointer', zIndex: 1000, bgcolor: randomColor(form1Account?.basicInfo?.insured) }}
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'right'
+              }}
+            >
+              <AvatarLetter fontSize={20} sx={{ bgcolor: randomColor(form1Account?.basicInfo?.insured) }}>
+                {stringAvatar(form1Account?.basicInfo?.insured)}
+              </AvatarLetter>
+            </Badge>
+          ) : form1Account?.basicInfo?.typeLogo == 1 ? (
+            <img
+              src={logo}
+              alt='Dragged'
+              className='dragged-image'
+              style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+            />
+          ) : (
+            <>
+              <div className='header-menu'>
                 <Icon icon='ic:baseline-file-upload' style={{ display: 'block', margin: 'auto' }} fontSize={20} />
                 <span style={{ display: 'block' }}>Logo</span>
-              </>
-            ) : (
-              <img
-                src={logo}
-                alt='Dragged'
-                className='dragged-image'
-                style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-              />
-            )}
-          </div>
+              </div>
+            </>
+          )}
         </Button>
         <Menu
           id='basic-menu'
@@ -172,27 +235,27 @@ const FormHeader = ({
   accountDetails,
   setEditInfo,
   setActiveEndorsement,
-  setTypeofAccount,
+  setTypeofAccount
 }: FormHeaderProps) => {
-
-
-  const [status, setStatus] = useState('');
-  const [netPremiumAmount, setNetPremiumAmount] = useState<string | null>(null);
-  const [insured, setInsured] = useState<string | null>(null);
-  const [accountId, setAccountId] = useState<number | null>(null);
+  const [status, setStatus] = useState('')
+  const [netPremiumAmount, setNetPremiumAmount] = useState<string | null>(null)
+  const [insured, setInsured] = useState<string | null>(null)
+  const [accountId, setAccountId] = useState<number | null>(null)
   const [receptionDate, setReceptionDate] = useState<string | null>(null)
+  const [lastUserName, setLastUserName] = useState<string | null>(null)
 
   const account = useAppSelector(state => state.accounts?.formsData?.form1)
+
+  // const lastUserName = 'Alejandro Hernández'
+
   // console.log(accountDetails);
 
   // const lastAccountId = useRef<number | null>(null)
   // const lastAccountDetailsId = useRef<number | null>(null);
 
   const formaterAmount = (amount: number) => {
-
-
     if (amount) {
-      const amountNumber = Number(amount);
+      const amountNumber = Number(amount)
 
       return amountNumber.toLocaleString('en-US', {
         style: 'decimal',
@@ -215,14 +278,14 @@ const FormHeader = ({
 
   const formatDateFromUTC = (date: Date | null): string => {
     if (date) {
-      const fecha = new Date(new Date(date).toLocaleString('en-US', { timeZone: 'UTC' }))
+      const fecha = new Date(new Date(date).toLocaleString('en-US', { timeZone: 'MST' }))
       const options: Intl.DateTimeFormatOptions = {
         day: '2-digit',
-        month: 'short',
+        month: '2-digit',
         year: 'numeric'
       }
 
-      return new Intl.DateTimeFormat('ban', options).format(fecha)
+      return new Intl.DateTimeFormat('ban', options).format(fecha).toString().replaceAll('/', ' / ')
     }
     return ''
   }
@@ -262,44 +325,46 @@ const FormHeader = ({
 
   useEffect(() => {
     if (account) {
-      const amount = formaterAmount(account?.placementStructure?.netPremium);
-      const currency = account?.placementStructure?.currency;
+      const amount = formaterAmount(account?.placementStructure?.netPremium)
+      const currency = account?.placementStructure?.currency
 
-      setNetPremiumAmount(`$${amount} ${currency}`);
-      setInsured(account?.basicInfo?.insured);
-      setAccountId(account?.id);
-      setReceptionDate(convertirFecha(account?.basicInfo?.receptionDate));
-
+      setNetPremiumAmount(`$${amount} ${currency}`)
+      setInsured(account?.basicInfo?.insured)
+      setAccountId(account?.id)
+      setReceptionDate(convertirFecha(account?.basicInfo?.receptionDate))
     }
 
     if (accountDetails?.informations?.length > 0) {
-      const amount = formaterAmount(accountDetails?.informations[0]?.netPremium);
-      const currency = accountDetails?.informations[0]?.currency;
+      const amount = formaterAmount(accountDetails?.informations[0]?.netPremium)
+      const currency = accountDetails?.informations[0]?.currency
 
-      setNetPremiumAmount(`$${amount} ${currency}`);
-      setInsured(accountDetails?.informations[0]?.insured);
-      setAccountId(accountDetails?.id);
-      setReceptionDate(convertirFecha(accountDetails?.informations[0]?.receptionDate));
+      setNetPremiumAmount(`$${amount} ${currency}`)
+      setInsured(accountDetails?.informations[0]?.insured)
+      setAccountId(accountDetails?.id)
+      setReceptionDate(convertirFecha(accountDetails?.informations[0]?.receptionDate))
     }
-
-
   }, [account, accountDetails])
 
-
   useEffect(() => {
-
     // console.log('accountDetails Effect', accountDetails);
 
-    accountDetails && setStatus(accountDetails.status)
+    if (accountDetails) {
+      setStatus(accountDetails.status)
 
+      if (Array.isArray(accountDetails.actionsHistory)) {
+        if (accountDetails.actionsHistory.length === 0) return
+
+        const lastAction = [...accountDetails.actionsHistory].reverse()
+
+        if (!lastAction[0].idUser) return
+
+        const userName = lastAction[0].idUser.username
+        const fullName = `${lastAction[0].idUser.name || 'unknown name'} ${lastAction[0].idUser.surname || ''}`
+
+        setLastUserName(fullName.trim() || userName)
+      }
+    }
   }, [accountDetails])
-
-
-
-
-
-
-
 
   // console.log('account', account)
 
@@ -309,51 +374,93 @@ const FormHeader = ({
         <div className='form-header-data'>
           <div className='form-container-all-data'>
             {/* Contenedor mobile bound */}
-            <ContainerMobileBound>
+            {/* <ContainerMobileBound>
               <div className='title'>{insured} </div>
               <div className='idNumber'>#{accountId}</div>
 
               <span className='subtitle'>Net premium</span>
-              <span className='moneySubtitle'>
-                ${netPremiumAmount}
-              </span>
+              <span className='moneySubtitle'>${netPremiumAmount}</span>
               <span className='subtitle'>Reception Date</span>
               <span className='reception'>{receptionDate}</span>
-            </ContainerMobileBound>
+            </ContainerMobileBound> */}
 
             {/* Contenedor mobile bound */}
             {/* Container first */}
             {!isNewAccount && (
-              <div className='form-header-sections'>
-                <div className='form-header-info-profile-container'>
-                  <ModalUploadImage accountId={accountId} />
-                  <div className='form-header-info-profile-txt-container'>
+              <FormHeaderSection>
+                <FormHeaderInfoProfileContainer sx={{ flexDirection: 'row' }}>
+                  <Box
+                    sx={{
+                      '@media (max-width: 764px)': {
+                        display: 'none'
+                      }
+                    }}
+                  >
+                    <ModalUploadImage accountId={accountId} />
+                  </Box>
+                  <FormHeaderInfoProfiletext>
                     <span className='form-header-info-profile-txt-title'>{insured}</span>
                     <span className='form-header-info-profile-num'>#{accountId}</span>
-                  </div>
-                </div>
-                <div className='form-header-money-data'>
+                  </FormHeaderInfoProfiletext>
+                </FormHeaderInfoProfileContainer>
+                <ContainerAmountLastUpdate>
                   <span className='form-header-money-data-txt'>Net premium</span>
-                  <span className='form-header-money-data-num'>
-                    {netPremiumAmount}
-                  </span>
-                  <span className='form-header-money-data-date'>
-                    Last Update: {accountDetails && formatDateFromUTC(accountDetails?.informations[0]?.updatedAt)}
-                  </span>
-                </div>
-              </div>
+                  <span className='form-header-money-data-num'>{netPremiumAmount}</span>
+                  <FormHeaderMoneyDataDate>
+                    {accountDetails &&
+                      `Last Update: ${formatDateFromUTC(accountDetails?.actionsHistory?.slice(-1)[0]?.updatedAt)}`}
+                    {lastUserName ? ` by ${lastUserName}` : null}
+                  </FormHeaderMoneyDataDate>
+                </ContainerAmountLastUpdate>
+              </FormHeaderSection>
             )}
             {/* Container first */}
             {/* Container second */}
-            <div className='form-secondContainer-wrapper'>
-              <div className='form-secondContainer-wrapper-first-side'>
-                <div className='form-secondContainer-first' style={{ marginRight: '20px' }}>
+            <Frame3486
+              sx={{
+                '@media (max-width: 764px)': {
+                  flexDirection: 'column',
+                  gap: '20px'
+                }
+              }}
+            >
+              <FormSecondContainerFirstside
+                sx={{
+                  width: isNewAccount ? '19%' : '100%',
+                  '@media (max-width: 764px)': {
+                    flexDirection: 'column',
+                    gap: '12px',
+                    width: isNewAccount ? '100%' : '100%'
+                  }
+                }}
+              >
+                <SecondContainer
+                  sx={{
+                    width: '160px',
+                    '@media (max-width: 764px)': {
+                      width: '100%'
+                    }
+                  }}
+                >
                   <span className='form-secondContainer-header-title'>Status</span>
                   {status !== '' && accountDetails?.status && (
-                    <StatusSelect accountDetails={accountDetails} margin={0} initialStatus={accountDetails?.status} setSelectedStatus={setStatus} />
+                    <StatusSelect
+                      accountDetails={accountDetails}
+                      margin={0}
+                      initialStatus={accountDetails?.status}
+                      setSelectedStatus={setStatus}
+                    />
                   )}
-                  {isNewAccount && <StatusSelect accountDetails={accountDetails} margin={0} initialStatus='PENDING' setSelectedStatus={setStatus} />}
-                </div>
+                  {isNewAccount && (
+                    <StatusSelect
+                      accountDetails={accountDetails}
+                      margin={0}
+                      initialStatus='PENDING'
+                      setSelectedStatus={setStatus}
+                      isNewAccount={isNewAccount}
+                    />
+                  )}
+                </SecondContainer>
 
                 <div className='form-secondContainer-third'>
                   <span className='form-header-money-data-date'>
@@ -362,23 +469,37 @@ const FormHeader = ({
                 </div>
 
                 {!isNewAccount && (
-                  <div className='form-secondContainer-second'>
+                  <SecondContainer
+                    sx={{
+                      width: 'auto',
+                      '@media (max-width: 764px)': {
+                        width: '100%'
+                      }
+                    }}
+                  >
                     <span className='form-secondContainer-header-title'>Line of Business</span>
                     <span className='form-secondContainer-header-subtitle'>
                       {accountDetails && accountDetails?.informations[0]?.idLineOfBussines?.lineOfBussines}
                     </span>
-                  </div>
+                  </SecondContainer>
                 )}
 
                 {!isNewAccount && (
-                  <div className='form-secondContainer-second'>
+                  <SecondContainer
+                    sx={{
+                      width: 'auto',
+                      '@media (max-width: 764px)': {
+                        width: '100%'
+                      }
+                    }}
+                  >
                     <span className='form-secondContainer-header-title'>Effective Date</span>
                     <span className='form-secondContainer-header-subtitle'>
                       {accountDetails && formatDateFromUTC(accountDetails?.informations[0]?.effectiveDate || null)}
                     </span>
-                  </div>
+                  </SecondContainer>
                 )}
-              </div>
+              </FormSecondContainerFirstside>
               <div className={!isNewAccount ? 'actions-header' : 'form-secondContainer-fourths'}>
                 <div className={!isNewAccount ? 'display-none' : 'form-secondContainer-fourth'}>
                   <span className='form-header-money-data-date'>
@@ -386,19 +507,17 @@ const FormHeader = ({
                   </span>
                 </div>
                 {accountDetails && accountDetails?.idAccountStatus === 5 ? ( //TODO
-                  <ActionsHeaderBound accountStatus='BOUND' sideHeader={true} />
+                  <ActionsHeaderBound accountStatus='BOUND' sideHeader={true} accountId={accountId} />
                 ) : accountId ? (
-
                   <ActionsHeader
                     accountId={accountId}
                     setEditInfo={setEditInfo}
                     accountStatus='PENDING'
                     sideHeader={true}
                   />
-                )
-                  : null}
+                ) : null}
               </div>
-            </div>
+            </Frame3486>
             {/* Container second */}
           </div>
         </div>
