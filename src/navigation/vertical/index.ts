@@ -90,20 +90,6 @@ const navigation = (): VerticalNavItemsType => {
           subject: 'payments',
           action: 'viewReinsurerPayment'
         }
-
-        // {
-        //   title: 'List',
-        //   path: '/menuForm'
-        // },
-        // {
-        //   title: 'Preview'
-        // },
-        // {
-        //   title: 'Edit'
-        // },
-        // {
-        //   title: 'Add'
-        // }
       ]
     },
     {
