@@ -9,7 +9,7 @@ const navigation = (): VerticalNavItemsType => {
       icon: 'ic:baseline-dashboard',
       path: '/dashboards/crm',
       subject: 'dashboard',
-      action: 'read',
+      action: 'read'
     },
     {
       title: 'Accounts',
@@ -24,43 +24,42 @@ const navigation = (): VerticalNavItemsType => {
           icon: 'ion:file-tray-stacked',
           path: '/accounts',
           subject: 'account',
-          action: 'viewAllAccounts',
+          action: 'viewAllAccounts'
         },
         {
           title: 'Pending',
           icon: 'mdi:clock',
           path: '/accounts/pending',
           subject: 'account',
-          action: 'viewPendingAccounts',
+          action: 'viewPendingAccounts'
         },
         {
           title: 'Not Materialized',
           icon: 'mdi:progress-helper',
           path: '/accounts/not-materialized',
           subject: 'account',
-          action: 'viewNotMaterializedAccounts',
-
+          action: 'viewNotMaterializedAccounts'
         },
         {
           title: 'Not Taken Up',
           icon: 'custom:not-taken-up',
           path: '/accounts/not-taken-up',
           subject: 'account',
-          action: 'viewNotTakenUpAccounts',
+          action: 'viewNotTakenUpAccounts'
         },
         {
           title: 'Declined',
           icon: 'mdi:cancel',
           path: '/accounts/declined',
           subject: 'account',
-          action: 'viewDeclinedAccounts',
+          action: 'viewDeclinedAccounts'
         },
         {
           title: 'Bound',
           icon: 'icon-park-outline:link-three',
           path: '/accounts/bound',
           subject: 'account',
-          action: 'viewBoundAccounts',
+          action: 'viewBoundAccounts'
         }
       ]
     },
@@ -75,35 +74,36 @@ const navigation = (): VerticalNavItemsType => {
           icon: 'ic:assignment-turned-in',
           path: '/installments',
           subject: 'payments',
-          action: 'viewInstallmentsPayment',
+          action: 'viewInstallmentsPayment'
         },
         {
           title: 'Brocker Tracker',
           icon: 'mdi:text-search',
           path: '/broker-tracker',
           subject: 'payments',
-          action: 'viewBrokerTrackerPayment',
+          action: 'viewBrokerTrackerPayment'
         },
         {
           title: 'Reinsurer Payment',
           icon: 'material-symbols:mobiledata-off',
           path: '/reinsurer-payment',
           subject: 'payments',
-          action: 'viewReinsurerPayment',
-        },
-        {
-          title: 'List',
-          path: '/menuForm'
-        },
-        {
-          title: 'Preview'
-        },
-        {
-          title: 'Edit'
-        },
-        {
-          title: 'Add'
+          action: 'viewReinsurerPayment'
         }
+
+        // {
+        //   title: 'List',
+        //   path: '/menuForm'
+        // },
+        // {
+        //   title: 'Preview'
+        // },
+        // {
+        //   title: 'Edit'
+        // },
+        // {
+        //   title: 'Add'
+        // }
       ]
     },
     {
@@ -119,23 +119,23 @@ const navigation = (): VerticalNavItemsType => {
           // icon: 'healthicons:high-bars-negative',
           path: '/arap/overview',
           subject: 'arap',
-          action: 'viewOverviewArap',
+          action: 'viewOverviewArap'
         },
         {
           title: 'Payables',
           icon: 'ph:minus-fill',
           path: '/arap/payables',
           subject: 'arap',
-          action: 'viewPayablesArap',
+          action: 'viewPayablesArap'
         },
         {
           title: 'Receivables',
           icon: 'ph:plus-fill',
           path: '/arap/receivables',
           subject: 'arap',
-          action: 'viewReceivablesArap',
-        },
-      ],
+          action: 'viewReceivablesArap'
+        }
+      ]
     },
     {
       title: 'Renewals',
@@ -186,7 +186,7 @@ const navigation = (): VerticalNavItemsType => {
       icon: 'mdi:user-group',
       path: '/users',
       subject: 'users',
-      action: 'read',
+      action: 'read'
     },
     {
       title: 'Catalogues',
@@ -198,7 +198,7 @@ const navigation = (): VerticalNavItemsType => {
           title: 'Dynamic',
           path: '/catalogues/dynamic',
           subject: 'catalogues',
-          action: 'viewDynamicCatalogues',
+          action: 'viewDynamicCatalogues'
 
           // path: '/apps/invoice/list'
         },
@@ -240,14 +240,14 @@ const navigation = (): VerticalNavItemsType => {
           icon: 'ic:baseline-dashboard',
           path: '/dynamic-data/dashboard',
           subject: 'dynamicData',
-          action: 'viewDashboardData',
+          action: 'viewDashboardData'
         },
         {
           title: 'Property listing',
           icon: 'ic:baseline-list',
           path: '/dynamic-data/property-listing',
           subject: 'dynamicData',
-          action: 'viewPropertyListingData',
+          action: 'viewPropertyListingData'
         },
         {
           title: 'Maps',
@@ -260,35 +260,35 @@ const navigation = (): VerticalNavItemsType => {
               icon: 'ic:round-location-city',
               path: '/dynamic-data/maps/map-properties',
               subject: 'dynamicData',
-              action: 'viewMapPropertiesData',
+              action: 'viewMapPropertiesData'
             },
             {
               title: 'VALFIS',
               icon: 'ic:baseline-attach-money',
               path: '/dynamic-data/maps/map-valfis',
               subject: 'dynamicData',
-              action: 'viewMapValfisData',
+              action: 'viewMapValfisData'
             },
             {
               title: 'ZONACRESTA',
               icon: 'ic:round-location-on',
               path: '/dynamic-data/maps/map-zonacresta',
               subject: 'dynamicData',
-              action: 'viewZonaCrestaData',
+              action: 'viewZonaCrestaData'
             },
             {
               title: 'Earthquakes',
               icon: 'ic:baseline-warning-amber',
               path: '/dynamic-data/maps/map-earthquakes',
               subject: 'dynamicData',
-              action: 'viewEarthquakesData',
+              action: 'viewEarthquakesData'
             },
             {
               title: 'Hurricanes',
               icon: 'ic:baseline-waves',
               path: '/dynamic-data/maps/map-hurricanes',
               subject: 'dynamicData',
-              action: 'viewHurricanesData',
+              action: 'viewHurricanesData'
             }
           ]
         }
