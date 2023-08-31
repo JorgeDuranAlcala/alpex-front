@@ -1,27 +1,21 @@
 // ** MUI Imports
-import Card from '@mui/material/Card'
-import Grid from '@mui/material/Grid'
+import { Container } from 'src/styles/Dashboard/dashboard'
 
 // ** Custom Components Imports
-// import Table from 'src/views/accounts/Table'
+import EarthquakeMap from '@/views/dynamic-data/maps/EarthquakeMap'
 
-const EarthquakeMap = () => {
+const MapEartquake= () => {
 
   return (
-
-      <Grid item xs={12}>
-      <Card>
-        map Earthquakes
-      </Card>
-    </Grid>
-
+    <Container>
+      <EarthquakeMap />
+    </Container>
   )
 }
 
-EarthquakeMap.acl = {
+MapEartquake.acl = {
   action: 'viewEarthquakesData',
   subject: 'dynamicData'
 }
 
-export default EarthquakeMap
-
+export default MapEartquake
