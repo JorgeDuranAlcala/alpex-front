@@ -41,7 +41,7 @@ export interface responseMoveFile {
 }
 
 export interface RenameFolder {
-  folderId: number
+  folderId: number | null
   newFolderName: string
 }
 

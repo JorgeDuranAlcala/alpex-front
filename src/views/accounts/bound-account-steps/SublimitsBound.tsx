@@ -46,7 +46,6 @@ const initialValues: SublimitDto = {
   idCDeductiblePer: 0,
   active: true,
   idCCoverage: null,
-  idEndorsement: null,
   title: '',
   idAccount: 0
 }
@@ -91,9 +90,6 @@ interface SublimitsProps {
 }
 
 const Sublimits = ({ onStepChange, disableSectionCtrl }: SublimitsProps) => {
-
-
-
   const router = useRouter()
   const idAccountRouter = Number(router?.query?.idAccount)
 
@@ -111,7 +107,7 @@ const Sublimits = ({ onStepChange, disableSectionCtrl }: SublimitsProps) => {
 
   //* Custom hooks
   const { account, setAccountId, setAccount } = useGetAccountById()
-  const { coverages, getAllCoverages, setAccountIdCoverage } = useGetAllCoverage();
+  const { coverages, getAllCoverages, setAccountIdCoverage } = useGetAllCoverage()
 
   const handleSelectedCoverage = (coverageSelect: CoverageDto) => {
     setCoverageSelected([...coverageSelected, coverageSelect])
@@ -240,21 +236,19 @@ const Sublimits = ({ onStepChange, disableSectionCtrl }: SublimitsProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [account])
 
-
-
   //? Con esto se cargan los datos para sublimits
   useEffect(() => {
     if (coverageSelected.length === 0) {
       setAccountIdCoverage(accountData.formsData.form1?.id)
 
       getAllCoverages(accountData.formsData.form1?.id)
-      const coveragesFiltered = coverages.filter((elemento: any) => { return subLimits.some(filtroItem => filtroItem.idCCoverage.id === elemento.id) });
+      const coveragesFiltered = coverages.filter((elemento: any) => {
+        return subLimits.some(filtroItem => filtroItem.idCCoverage.id === elemento.id)
+      })
 
       setCoverageSelected(coveragesFiltered)
-
     }
   }, [subLimits])
-
 
   return (
     <CardContent>
