@@ -1,6 +1,6 @@
-sudo chmod 777 /var/www/new-front-data-copy
+sudo chmod 777 /var/www/new-front-dynamic-copy
 
-sudo cp /var/www/.env.front /var/www/new-front-data-copy/.env
+sudo cp /var/www/.env.front /var/www/new-front-dynamic-copy/.env
 cd /var/www/new-front-data-copy
 node -v
 # yarn install
