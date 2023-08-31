@@ -13,7 +13,7 @@ import { useContext, useEffect, useState } from 'react' //useContext
 import InputLimit from './components/InputLimit/InputLimit'
 import SelectCoverage from './components/SelectCoverage/SelectCoverage'
 import { GenericCard } from './components/SublimitsCards'
-
+import { useRouter } from 'next/router'
 import { useUpdateAccountsStatus } from '@/hooks/accounts/status'
 import UserThemeOptions from '@/layouts/UserThemeOptions'
 import SaveIcon from '@mui/icons-material/Save'
@@ -89,7 +89,7 @@ interface SublimitsProps {
 // getAccountByIdHeader
 
 const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
-  // const router = useRouter();
+  const router = useRouter();
   const [badgeData, setBadgeData] = useState<IAlert>({
     message: '',
     theme: 'success',
@@ -314,7 +314,6 @@ const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
     setAccountId(idAccount)
 
     const accountDataF = await getAccountById(idAccount)
-
     if (accountDataF && accountDataF.sublimits.length > 0) {
       setSubLimits([...accountDataF.sublimits])
 
@@ -331,20 +330,22 @@ const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
 
   useEffect(() => {
     getAccountData()
+    const id = Number(router.query?.idAccount || accountData.formsData.form1?.id || localStorage.getItem('idAccount'))
+    if (id) {
+      setAccountIdCoverage(id)
+  
+      getAllCoverages(id)
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-  useEffect(() => {
+  }, [router.query?.idAccount, accountData])
+  useEffect(() => {  
     if (coverageSelected.length === 0) {
-      // console.log("No hay datos aquí ");
-      setAccountIdCoverage(accountData.formsData.form1?.id)
-
-      getAllCoverages(accountData.formsData.form1?.id)
-      const coveragesFiltered = coverages.filter((elemento: any) => { return subLimits.some(filtroItem => filtroItem.idCCoverage.id === elemento.id) });
-      setCoverageSelected(coveragesFiltered)
+      const coveragesFiltered = coverages.filter((elemento: any) => { return subLimits.some(filtroItem => filtroItem.idCCoverage.id === elemento.id) });      
+      setCoverageSelected(coveragesFiltered)      
 
       // console.log("Retornamos estos datos -> ", coveragesFiltered, coverages);
     }
-  }, [subLimits, accountData])
+  }, [subLimits, accountData, coverages])
   console.log({ subLimits, coverageSelected })
 
   return (
