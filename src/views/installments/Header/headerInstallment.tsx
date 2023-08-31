@@ -351,14 +351,14 @@ const InstallmentHeader = ({
                         </span>
                       </SecondContainer>
                       <SecondContainer sx={{ justifyContent: 'flex-end', paddingBottom: '5px' }}>
-                        <div className='actions-header'>
+                        <ContainerActionsHeader>
                           <ActionsHeader2
                             accountId={account?.id}
                             setEditInfo={setEditInfo}
                             accountStatus='PENDING'
                             sideHeader={true}
                           />
-                        </div>
+                        </ContainerActionsHeader>
                       </SecondContainer>
                     </ContainerHeaderMobile>
                   ) : (
@@ -384,13 +384,13 @@ const InstallmentHeader = ({
                         </Grid>
                         <Grid item xs={12} sm={3.3} md={2}>
                           <div className='form-secondContainer-second'>
-                            <span className='form-secondContainer-header-title'>Next Due Date</span>
+                            <span className='form-secondContainer-header-title'>Due Date</span>
                             <span className='form-secondContainer-header-subtitle'>10 / 01 / 2023</span>
                           </div>
                         </Grid>
                         <Grid item xs={12} sm={3.3} md={2}>
                           <div className='form-secondContainer-second'>
-                            <span className='form-secondContainer-header-title'>Next Balance Date</span>
+                            <span className='form-secondContainer-header-title'>Balance Due</span>
                             <span className='form-secondContainer-header-subtitle'>$100,000 USD</span>
                           </div>
                         </Grid>
@@ -415,7 +415,8 @@ const InstallmentHeader = ({
                             display: 'flex',
                             justifyContent: 'flex-end',
                             alignItems: 'end',
-                            marginBottom: '10px',
+                            marginTop: '10px',
+
                             '@media (max-width: 599px)': {
                               display: 'flex',
                               justifyContent: 'center'

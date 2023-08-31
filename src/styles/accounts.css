@@ -473,10 +473,31 @@
 }
 
 .final-slip {
-  background-color: #686b7e;
+  background-color: #686b7e !important;
   border-radius: 10px;
   height: 36px;
   width: 100%;
+}
+
+.icon-dots {
+  color: rgb(255, 255, 255);
+  position: absolute;
+  z-index: 1;
+  margin-left: 85%;
+  margin-top: 15px;
+}
+
+.menu-dots-open {
+  display: block;
+}
+
+.menu-dots-none {
+  display: none;
+}
+
+.css-v84d5j-MuiSvgIcon-root {
+  margin-left: 12px;
+  color: white;
 }
 
 .actions-icons {
@@ -859,7 +880,6 @@
 
   @media (max-width: 1000px) {
     margin-top: 14px;
-    border: 1px solid green;
     justify-content: center;
     align-items: center;
     width: 100%;
@@ -1161,11 +1181,11 @@
 }
 
 .form-header-money-data-num {
-  font-weight: 500;
-  font-size: 24px;
-  line-height: 32.02px;
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 32px;
   font-family: Inter;
-  letter-spacing: 0.4px;
+  letter-spacing: 0.15px;
   color: #4d5062de;
 }
 

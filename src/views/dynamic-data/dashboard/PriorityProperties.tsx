@@ -2,15 +2,17 @@
 import { useEffect, useState } from 'react'
 
 // ** MUI Imports
+import { Button } from '@mui/material'
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
 import Typography from '@mui/material/Typography'
 import { DataGrid, GRID_CHECKBOX_SELECTION_COL_DEF, GridColumns } from '@mui/x-data-grid'
 
-// ** Icon Imports
+// ** Utils imports
+import { formatMoneyDigits } from '@/utils/formatMoneyDigits'
 
 // ** Next Import
-// import { useRouter } from 'next/router'
+import { useRouter } from 'next/router'
 
 // ** Custom Components Imports
 import ColumnHeader from './TableColumnHeader'
@@ -22,90 +24,78 @@ import { Link } from '@mui/material'
 import colors from 'src/views/accounts/colors'
 import fonts from 'src/views/accounts/font'
 
-export interface IProperty {
-  id: string
-  valfis: string
-  cveEnt: string
-  cveMun: string
-  type: string
-  zonacresta: string
-}
+//** Dto imports */
+import { IProperty } from '@/services/dynamic-data/dtos/propertyListing.dto'
+
+//** Hooks imports */
+import { useGetPriorityProperties } from '@/hooks/dynamic-data/dashboard'
 
 export enum EFieldColumn {
   PROPERTY_ID = 'id',
   VALFIS = 'valfis',
-  CVE_ENT = 'cveEnt',
-  CVE_MUN = 'cveMun',
-  TYPE = 'type',
-  ZONACRESTA = 'zonacresta'
+  STATE = 'state',
+  PROVINCE = 'province',
+  INSTITUTION = 'institution',
+  CRESTA_ZONE = 'crestazone'
 }
 
-const PriorityProperties = () => {
-  // ** State
-  const [loading, setLoading] = useState<boolean>(false)
-  const properties: IProperty[] = [
-    {
-      id: "06003_1",
-      valfis: "000,000,000.00",
-      cveEnt:"9",
-      cveMun:"14",
-      type:"Propiedad Federal",
-      zonacresta: "10"
-    },
-    {
-      id: "06003_1",
-      valfis: "000,000,000.00",
-      cveEnt:"9",
-      cveMun:"14",
-      type:"Propiedad Federal",
-      zonacresta: "10"
-    },
-    {
-      id: "06003_1",
-      valfis: "000,000,000.00",
-      cveEnt:"9",
-      cveMun:"14",
-      type:"Propiedad Federal",
-      zonacresta: "10"
-    },
-    {
-      id: "06003_1",
-      valfis: "000,000,000.00",
-      cveEnt:"9",
-      cveMun:"14",
-      type:"Propiedad Federal",
-      zonacresta: "10"
-    },
-    {
-      id: "06003_1",
-      valfis: "000,000,000.00",
-      cveEnt:"9",
-      cveMun:"14",
-      type:"Propiedad Federal",
-      zonacresta: "10"
-    },
-    {
-      id: "06003_1",
-      valfis: "000,000,000.00",
-      cveEnt:"9",
-      cveMun:"14",
-      type:"Propiedad Federal",
-      zonacresta: "10"
-    }
-  ]
+type EarthquakePropertyProps = {
+  earthquakeProperties: IProperty[],
+  earthquakeDetected: boolean
+}
 
-  // ** Hooks
-  // const router = useRouter()
+const PriorityProperties: React.FC<EarthquakePropertyProps> = ({earthquakeProperties, earthquakeDetected}) => {
+  // ** State
+  const { propertyPagination, setPropertyPagination, properties } = useGetPriorityProperties()
+
+  // const { getPriorityProperties } = useGetPriorityProperties()
+  const router = useRouter()
+  const [loading, setLoading] = useState<boolean>(false)
+  const [propertiesList, setPropertiesList] = useState<IProperty[]>(
+    [
+      {
+        crestZone: '',
+        institution: '',
+        keyDepe: '',
+        latitude: '',
+        longitude: '',
+        province: '',
+        state: '',
+        valfisValue: ''
+      }
+    ]
+  )
+
+  useEffect(() => {
+    setPropertyPagination({ ...propertyPagination })
+    //eslint-disable-next-line
+  }, [])
+
+  useEffect(() => {
+
+    if(earthquakeDetected){
+      setPropertiesList(earthquakeProperties || [])
+    }else{
+      setPropertiesList(properties || [])
+    }
+  }, [properties, earthquakeProperties, earthquakeDetected])
 
   useEffect(() => {
     setLoading(true);
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 5000);
+    }, 500);
 
     return () => clearTimeout(timer);
   }, []);
 
+  const seeMore = () => {
+    router.push(`/dynamic-data/property-listing/`)
+  }
+
+  const seeDetails = (id: string) => {
+    router.push(`/dynamic-data/property-listing/property-details/?&idProperty=${id}`)
+  }
 
   const column: GridColumns<IProperty> = [
     {
@@ -116,7 +106,7 @@ const PriorityProperties = () => {
       flex: 0.1,
       field: EFieldColumn.PROPERTY_ID,
       headerName: 'ID',
-      minWidth: 50,
+      minWidth: 130,
       maxWidth: 150,
       type: 'string',
       align: 'left',
@@ -127,19 +117,19 @@ const PriorityProperties = () => {
         <ColumnHeader colDef={colDef} />
       ),
       renderCell: ({ row }) => (
-        <Typography sx={{ color: colors.primary.main, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
+        <Typography sx={{ color: colors.primary.main, fontSize: fonts.size.px14, fontFamily: fonts.inter, cursor: 'pointer' }}>
           <Link
             onClick={() => {
-              console.log("id clicked")
+              seeDetails(row.keyDepe)
             }}
-          >{`#${row.id}`}</Link>
+          >{`#${row.keyDepe}`}</Link>
         </Typography>
       )
     },
     {
       flex: 0.1,
       field: EFieldColumn.VALFIS,
-      headerName: 'VALFIS',
+      headerName: 'REPL. VALUE',
       minWidth: 130,
       maxWidth: 150,
       type: 'string',
@@ -149,20 +139,19 @@ const PriorityProperties = () => {
       sortable: false,
       headerClassName: 'properties-table-header',
       renderHeader: ({ colDef }) => (
-        <ColumnHeader colDef={colDef}/>
+        <ColumnHeader colDef={colDef} />
       ),
       renderCell: ({ row }) => (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          ${row.valfis}
+          ${formatMoneyDigits(row.valfisValue)}
         </Box>
       )
     },
     {
       flex: 0.1,
-      field: EFieldColumn.CVE_ENT,
-      headerName: 'CVE_ENT',
-      minWidth: 50,
-      maxWidth: 90,
+      field: EFieldColumn.STATE,
+      headerName: 'STATE',
+      minWidth: 150,
       type: 'string',
       align: 'left',
       disableColumnMenu: true,
@@ -171,39 +160,49 @@ const PriorityProperties = () => {
       renderHeader: ({ colDef }) => <ColumnHeader colDef={colDef} />,
       renderCell: ({ row }) => (
         <Typography
-          sx={{ color: colors.text.primary, fontWeight: 500, fontSize: fonts.size.px14, fontFamily: fonts.inter }}
+          sx={{
+            color: colors.text.primary,
+            fontWeight: 500,
+            fontSize: fonts.size.px14,
+            fontFamily: fonts.inter,
+            overflow:'hidden',
+            textOverflow:'ellipsis'
+          }}
         >
-          <Link sx={{ color: colors.text.primary }} href='#'>
-            {row.cveEnt}
-          </Link>
+            {row.state}
         </Typography>
       )
     },
     {
       flex: 0.1,
-      field: EFieldColumn.CVE_MUN,
-      headerName: 'CVE_MUN',
-      minWidth: 50,
-      maxWidth: 90,
+      field: EFieldColumn.PROVINCE,
+      headerName: 'PROVINCE',
+      minWidth: 150,
       type: 'string',
       align: 'left',
       disableColumnMenu: true,
       sortable: false,
       headerClassName: 'properties-table-header',
       renderHeader: ({ colDef }) => (
-        <ColumnHeader colDef={colDef}   />
+        <ColumnHeader colDef={colDef} />
       ),
       renderCell: ({ row }) => (
-        <Typography sx={{ color: colors.text.secondary, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
-          {row.cveMun}
+        <Typography sx={{
+          color: colors.text.secondary,
+          fontSize: fonts.size.px14,
+          fontFamily: fonts.inter,
+          overflow:'hidden',
+          textOverflow:'ellipsis'
+        }}>
+          {row.province}
         </Typography>
       )
     },
     {
       flex: 0.1,
-      field: EFieldColumn.TYPE,
-      headerName: 'TYPE',
-      minWidth: 150,
+      field: EFieldColumn.INSTITUTION,
+      headerName: 'INSTITUTION',
+      minWidth: 165,
       type: 'string',
       align: 'left',
       disableColumnMenu: true,
@@ -215,17 +214,23 @@ const PriorityProperties = () => {
       renderCell: ({ row }) => {
 
         return (
-          <Typography sx={{ color: colors.text.secondary, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
-            {row.type}
+          <Typography sx={{
+            color: colors.text.secondary,
+            fontSize: fonts.size.px14,
+            fontFamily: fonts.inter,
+            overflow:'hidden',
+            textOverflow:'ellipsis'
+            }}>
+            {row.institution}
           </Typography>
         )
       }
     },
     {
       flex: 0.1,
-      field: EFieldColumn.ZONACRESTA,
-      headerName: 'ZONACRESTA',
-      minWidth: 120,
+      field: EFieldColumn.CRESTA_ZONE,
+      headerName: 'CRESTA ZONE',
+      minWidth: 100,
       type: 'string',
       align: 'left',
       disableColumnMenu: true,
@@ -238,7 +243,7 @@ const PriorityProperties = () => {
 
         return (
           <Typography sx={{ color: colors.text.secondary, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
-            {row.zonacresta}
+            {row.crestZone}
           </Typography>
         )
       }
@@ -247,19 +252,26 @@ const PriorityProperties = () => {
 
   return (
 
-    <Card>
-    <DataGrid
+    <Card className='properties-card'>
+      <DataGrid
         loading={loading}
         autoHeight
         disableSelectionOnClick
-        rows={properties}
+        rows={propertiesList}
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        getRowId={(row) => row.keyDepe}
         columns={column}
         pagination={undefined}
         pageSize={10}
         className={'properties-datagrid'}
 
       />
-  </Card>
+      <div className="see-more-section">
+        <Button className='add-btn' onClick={seeMore}>
+          See more
+        </Button>
+      </div>
+    </Card>
 
   )
 }

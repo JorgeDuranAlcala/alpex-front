@@ -338,14 +338,14 @@ const InstallmentHeader = ({
                         </span>
                       </SecondContainer>
                       <SecondContainer sx={{ justifyContent: 'flex-end', paddingBottom: '5px' }}>
-                        <div className='actions-header'>
+                        <ContainerActionsHeader>
                           <ActionsHeader2
                             accountId={account?.id}
                             setEditInfo={setEditInfo}
                             accountStatus='PENDING'
                             sideHeader={true}
                           />
-                        </div>
+                        </ContainerActionsHeader>
                       </SecondContainer>
                     </ContainerHeaderMobile>
                   ) : (
@@ -353,7 +353,7 @@ const InstallmentHeader = ({
                       <Grid
                         container
                         spacing={{ xs: 3, sm: 3, md: 3 }}
-                        sx={{ display: 'flex', justifyContent: 'space-between' }}
+                        sx={{ display: 'flex', justifyContent: 'space-between', gap: '10px' }}
                       >
                         <Grid item xs={12} sm={2} md={1.2}>
                           <div className='form-secondContainer-second'>

@@ -114,6 +114,7 @@ type BasicInfoProps = {
   makeValidations: boolean
   makeSaveValidations: boolean
   onValidationComplete: (valid: boolean, formName: string) => void
+  setUpdateInfo: (valid: boolean) => void
 }
 
 /* eslint-disable */
@@ -142,7 +143,8 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
   setBasicInfo,
   makeValidations,
   makeSaveValidations,
-  onValidationComplete
+  onValidationComplete,
+  setUpdateInfo,
 }) => {
   //cargamos la informacion de los catalogos de base de datos
   const { countries } = useCountryGetAll()
@@ -199,6 +201,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     setBasicInfo({ ...basicInfo, [name]: value })
+    setUpdateInfo(true)
 
     !validateForm && validations({ ...basicInfo, [name]: value })
   }
@@ -233,20 +236,24 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
     }
     !validateForm && validations(basicInfoTem)
     setBasicInfo(basicInfoTem)
+    setUpdateInfo(true)
   }
 
   const handleReceptionDateChange = (date: Date) => {
     setBasicInfo({ ...basicInfo, receptionDate: date })
+    setUpdateInfo(true)
     !validateForm && validations({ ...basicInfo, receptionDate: date })
   }
 
   const handleEffectiveDateChange = (date: Date) => {
     setBasicInfo({ ...basicInfo, effectiveDate: date })
+    setUpdateInfo(true)
     !validateForm && validations({ ...basicInfo, effectiveDate: date })
   }
 
   const handleExpirationDateChange = (date: Date | null) => {
     setBasicInfo({ ...basicInfo, expirationDate: date })
+    setUpdateInfo(true)
     !validateForm && validations({ ...basicInfo, expirationDate: date })
   }
 
@@ -261,6 +268,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
     }
     !validateForm && validations(basicInfo)
     setBasicInfo(basicInfo)
+    setUpdateInfo(true)
   }
 
   const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -611,6 +619,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
             id={Number(basicInfo.broker)}
             updateContacts={updateBrokerContact}
             setIdCreated={setBasicInfo}
+            setUpdateInfo={setUpdateInfo}
           />
         </div>
         <div className='form-col'>
@@ -705,6 +714,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
             id={Number(basicInfo.cedant)}
             updateContacts={updateCedantContact}
             setIdCreated={setBasicInfo}
+            setUpdateInfo={setUpdateInfo}
           />
         </div>
         <div className='form-col'>

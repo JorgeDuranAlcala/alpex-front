@@ -95,6 +95,7 @@ const NewAccount = () => {
   const handleIsNewAccountChange = (status: boolean) => {
     setIsNewAccount(status)
   }
+  const [idAccountInit, setIdAccountInit] = useState<number | null>(null)
 
   const StepForm = ({ step }: { step: number }) => {
     switch (step) {
@@ -105,6 +106,7 @@ const NewAccount = () => {
             onIsNewAccountChange={handleIsNewAccountChange}
             getIdAccount={(idAccount: number) => {
               getAccountById(idAccount)
+              setIdAccountInit(idAccount)
             }}
           />
         )
@@ -227,7 +229,7 @@ const NewAccount = () => {
             {/* <InvoiceAdd /> */}
           </Card>
           <div style={{ display: 'none' }}>
-            <MenuForm />
+            <MenuForm idAccountInit={idAccountInit} />
           </div>
         </div>
         <Card sx={{ '@media (min-width:809px)': { display: 'none' } }}>

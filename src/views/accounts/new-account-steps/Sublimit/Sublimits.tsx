@@ -1,27 +1,29 @@
 import { useGetAccountById } from '@/hooks/accounts/forms'
+import { useUpdateAccountsStatus } from '@/hooks/accounts/status'
 import { useAddSublimits, useDeleteSublimits, useUpdateSublimits } from '@/hooks/accounts/sublimit'
+import UserThemeOptions from '@/layouts/UserThemeOptions'
 import { AbilityContext } from '@/layouts/components/acl/Can'
 import { SublimitDto } from '@/services/accounts/dtos/sublimit.dto'
 import { CoverageDto } from '@/services/catalogs/dtos/coverage.dto'
 import { useAppSelector } from '@/store'
 import { NextContainer } from '@/styles/Forms/Sublimits'
 import CustomAlert, { IAlert } from '@/views/custom/alerts'
+import SaveIcon from '@mui/icons-material/Save'
 import { Button, CardContent, Grid } from '@mui/material'
+import CircularProgress from '@mui/material/CircularProgress'
 import Typography from '@mui/material/Typography'
+import { useRouter } from 'next/router'
 import { useContext, useEffect, useState } from 'react' //useContext
 import InputLimit from './components/InputLimit/InputLimit'
 import SelectCoverage from './components/SelectCoverage/SelectCoverage'
 import { GenericCard } from './components/SublimitsCards'
 
-import { useUpdateAccountsStatus } from '@/hooks/accounts/status'
-import UserThemeOptions from '@/layouts/UserThemeOptions'
-import SaveIcon from '@mui/icons-material/Save'
-
 import CheckIcon from '@mui/icons-material/Check'
 
 // import useFormStep_updateSublimits from '@/hooks/accounts/forms/stepForms/update/useFormStep_updateSublimits'
 
-import { useRouter } from 'next/router'
+// import { useRouter } from 'next/router'
+import { useGetAllCoverage } from '@/hooks/catalogs/coverage'
 import { DisableForm } from '../_commons/DisableForm'
 
 const initialValues: SublimitDto = {
@@ -127,6 +129,7 @@ const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
 
   // ** Custom hooks
   const { updateAccountsStatus } = useUpdateAccountsStatus()
+  const { getAllCoverages, setAccountIdCoverage, coverages } = useGetAllCoverage()
 
   const handleSelectedCoverage = (coverageSelect: CoverageDto) => {
     // console.log('coverageSelect', coverageSelect);
@@ -134,10 +137,13 @@ const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
     setCoverageSelected([...coverageSelected, coverageSelect])
   }
 
-  const handleToggle = (value: number, label: string) => {
+  const handleAddCoverage = (value: number, label: string) => {
     try {
-      const idAccountCache = Number(localStorage.getItem('idAccount'))
+      const idAccountCache = Number(localStorage.getItem('idAccount')) ?? accountData.formsData.form1?.id
+
       const subLimitsTemp = subLimits.find(sublimit => sublimit.title === label)
+
+      // console.log(' idAccountCache -> ', idAccountCache);
 
       if (!subLimitsTemp) {
         const subLimitsTemp = [...subLimits]
@@ -181,11 +187,22 @@ const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
     if (coverageDelete) {
       setCoverageSelected([...coverageDelete])
     }
+    getAllCoverages(accountData.formsData.form1?.id)
   }
 
   const handleClickSave = () => {
     const existError = formErrors.find(error => error)
     if (!existError && subLimits.length > 0) {
+      setDisableSaveBtn(true)
+      setBadgeData({
+        message: `SAVING INFORMATION`,
+        status: 'secondary',
+        open: true,
+        icon: <CircularProgress size={20} color='secondary' />,
+        backgroundColor: '#828597',
+        theme: 'info',
+        disableAutoHide: true
+      })
       handleSubmit()
     } else {
       setShowErrors(true)
@@ -194,7 +211,6 @@ const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
 
   const handleSubmit = async () => {
     setDisableBoundBtn(true)
-    setDisableSaveBtn(true)
     const save: Partial<SublimitDto>[] = []
     const update: Partial<SublimitDto>[] = []
     for (const subLimit of subLimits) {
@@ -216,8 +232,15 @@ const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
         save.push(tempSubmit)
       }
     }
-
-    Promise.all([updateSublimits(update), saveSublimits(save)])
+    let actions: any[] = []
+    if (update.length > 0 && save.length > 0) {
+      actions = [updateSublimits(update), saveSublimits(save)]
+    } else if (save.length > 0) {
+      actions = [saveSublimits(save)]
+    } else if (update.length > 0) {
+      actions = [updateSublimits(update)]
+    }
+    await Promise.all(actions)
       .then(values => {
         console.log({ values })
         setBadgeData({
@@ -281,17 +304,17 @@ const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
   }
 
   const getAccountData = async () => {
-    const idAccount = Number(localStorage.getItem('idAccount')) || Number(router.query.idAccount)
+    const idAccount = Number(localStorage.getItem('idAccount')) ?? accountData.formsData.form1?.id
 
+    // console.log(' idAccountCache -> ', idAccount);
     if (!idAccount) return
 
     localStorage.setItem('idAccount', idAccount.toString())
     setAccountId(idAccount)
 
-    const accountData = await getAccountById(idAccount)
-
-    if (accountData && accountData.sublimits.length > 0) {
-      setSubLimits([...accountData.sublimits])
+    const accountDataF = await getAccountById(idAccount)
+    if (accountDataF && accountDataF.sublimits.length > 0) {
+      setSubLimits([...accountDataF.sublimits])
 
       formErrors.push(false)
     }
@@ -306,18 +329,25 @@ const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
 
   useEffect(() => {
     getAccountData()
+    const id = Number(router.query?.idAccount || accountData.formsData.form1?.id || localStorage.getItem('idAccount'))
+    if (id) {
+      setAccountIdCoverage(id)
+
+      getAllCoverages(id)
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [router.query?.idAccount, accountData])
+  useEffect(() => {
+    if (coverageSelected.length === 0) {
+      const coveragesFiltered = coverages.filter((elemento: any) => {
+        return subLimits.some(filtroItem => filtroItem.idCCoverage.id === elemento.id)
+      })
+      setCoverageSelected(coveragesFiltered)
+
+      // console.log("Retornamos estos datos -> ", coveragesFiltered, coverages);
+    }
+  }, [subLimits, accountData, coverages])
   console.log({ subLimits, coverageSelected })
-
-  // * INIT -  Actualizar los datos del formulario en Redux + + + + + + + + + + + + + +
-
-  // const { handleCanUpdateSublimitsData } = useFormStep_updateSublimits({
-  //   idAccount: account?.id || null,
-  //   sublimits: subLimits
-  // });
-
-  // * END -  Actualizar los datos del formulario en Redux + + + + + + + + + + + + + +
 
   return (
     <CardContent>
@@ -337,9 +367,10 @@ const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
               <Grid container spacing={5}>
                 <InputLimit account={account} />
                 <SelectCoverage
+                  idAccount={accountData.formsData.form1?.id}
                   onChangeSelected={handleSelectedCoverage}
                   coverageSelected={coverageSelected}
-                  onClickToggle={handleToggle}
+                  onClickToggle={handleAddCoverage}
                 />
               </Grid>
               <Grid container spacing={5} sx={{ mt: '20px' }}>

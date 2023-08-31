@@ -278,7 +278,7 @@ const FormHeader = ({
 
   const formatDateFromUTC = (date: Date | null): string => {
     if (date) {
-      const fecha = new Date(new Date(date).toLocaleString('en-US', { timeZone: 'UTC' }))
+      const fecha = new Date(new Date(date).toLocaleString('en-US', { timeZone: 'MST' }))
       const options: Intl.DateTimeFormatOptions = {
         day: '2-digit',
         month: '2-digit',
@@ -361,7 +361,7 @@ const FormHeader = ({
         const userName = lastAction[0].idUser.username
         const fullName = `${lastAction[0].idUser.name || 'unknown name'} ${lastAction[0].idUser.surname || ''}`
 
-        setLastUserName(userName || fullName.trim())
+        setLastUserName(fullName.trim() || userName)
       }
     }
   }, [accountDetails])
@@ -407,7 +407,8 @@ const FormHeader = ({
                   <span className='form-header-money-data-txt'>Net premium</span>
                   <span className='form-header-money-data-num'>{netPremiumAmount}</span>
                   <FormHeaderMoneyDataDate>
-                    Last Update: {accountDetails && formatDateFromUTC(accountDetails?.informations[0]?.updatedAt)}
+                    {accountDetails &&
+                      `Last Update: ${formatDateFromUTC(accountDetails?.actionsHistory?.slice(-1)[0]?.updatedAt)}`}
                     {lastUserName ? ` by ${lastUserName}` : null}
                   </FormHeaderMoneyDataDate>
                 </ContainerAmountLastUpdate>
@@ -506,7 +507,7 @@ const FormHeader = ({
                   </span>
                 </div>
                 {accountDetails && accountDetails?.idAccountStatus === 5 ? ( //TODO
-                  <ActionsHeaderBound accountStatus='BOUND' sideHeader={true} />
+                  <ActionsHeaderBound accountStatus='BOUND' sideHeader={true} accountId={accountId} />
                 ) : accountId ? (
                   <ActionsHeader
                     accountId={accountId}

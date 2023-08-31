@@ -292,7 +292,6 @@ const CreatedAccount = () => {
           </Card>
 
           {/* </ChangeStepForm> */}
-
           <div style={{ display: 'none' }}>
             <MenuForm />
           </div>

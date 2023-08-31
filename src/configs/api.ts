@@ -301,6 +301,27 @@ export enum DEBIT_NOTE_ROUTES {
   DOWNLOAD = 'reports/debit-note'
 }
 
+// ==== DYNAMIC DATA
+
+export enum DATA_DASHBOARD_ROUTES {
+  GET_PRIORITY_PROPERTIES = 'buildings/all',
+  GET_CAPACITY_PER_STATES='buildings/top-five',
+  GET_EARTHQUAKES_DATA='data/earthquakes/earthquake-detected'
+}
+
+export enum DATA_MAPS_ROUTES {
+  GET_ALL_PROPERTIES = 'buildings/all',
+}
+
+// ==== ACCOUNT
+export enum DATA_PROPERTIES_ROUTES {
+  GET_BY_ID = 'buildings/data/get-property-details',
+}
+
+
+
+// ====
+
 export enum DOCUMENTS_ROUTES {
   GETBYACCOUNTID = 'documents/get/byAccountId',
   MOVEFILE = 'documents/move/file',
