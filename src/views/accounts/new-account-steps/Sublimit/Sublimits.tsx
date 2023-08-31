@@ -8,7 +8,7 @@ import { NextContainer } from '@/styles/Forms/Sublimits'
 import CustomAlert, { IAlert } from '@/views/custom/alerts'
 import { Button, CardContent, Grid } from '@mui/material'
 import Typography from '@mui/material/Typography'
-import { useContext, useEffect, useState } from 'react'; //useContext
+import { useContext, useEffect, useState } from 'react' //useContext
 import InputLimit from './components/InputLimit/InputLimit'
 import SelectCoverage from './components/SelectCoverage/SelectCoverage'
 import { GenericCard } from './components/SublimitsCards'
@@ -41,7 +41,6 @@ const initialValues: SublimitDto = {
   idCDeductiblePer: 0,
   active: true,
   idCCoverage: null,
-  idEndorsement: null,
   title: '',
   idAccount: 0
 }
@@ -87,7 +86,7 @@ interface SublimitsProps {
 // getAccountByIdHeader
 
 const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
-  const router = useRouter();
+  const router = useRouter()
   const [badgeData, setBadgeData] = useState<IAlert>({
     message: '',
     theme: 'success',
@@ -320,7 +319,6 @@ const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
 
   // * END -  Actualizar los datos del formulario en Redux + + + + + + + + + + + + + +
 
-
   return (
     <CardContent>
       <Grid container spacing={5}>
@@ -333,7 +331,7 @@ const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
         </Grid>
         <Grid item xs={12} sm={12}>
           {/* <form noValidate autoComplete='on' onClick={handleCanUpdateSublimitsData}> */}
-          <form noValidate autoComplete='on' >
+          <form noValidate autoComplete='on'>
             <DisableForm isDisabled={account?.status.toLowerCase() === 'bound' ? true : false}>
               {/* campos header */}
               <Grid container spacing={5}>

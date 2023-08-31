@@ -46,7 +46,6 @@ const initialValues: SublimitDto = {
   idCDeductiblePer: 0,
   active: true,
   idCCoverage: null,
-  idEndorsement: null,
   title: '',
   idAccount: 0
 }
@@ -91,8 +90,7 @@ interface SublimitsProps {
 }
 
 const Sublimits = ({ onStepChange, disableSectionCtrl }: SublimitsProps) => {
-
-  const { coverages, getAllCoverages } = useGetAllCoverage();
+  const { coverages, getAllCoverages } = useGetAllCoverage()
 
   const router = useRouter()
   const idAccountRouter = Number(router?.query?.idAccount)
@@ -238,18 +236,16 @@ const Sublimits = ({ onStepChange, disableSectionCtrl }: SublimitsProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [account])
 
-
-
   //? Con esto se cargan los datos para sublimits
   useEffect(() => {
     if (coverageSelected.length === 0) {
-      const coveragesFiltered = coverages.filter((elemento: any) => { return subLimits.some(filtroItem => filtroItem.idCCoverage.id === elemento.id) });
+      const coveragesFiltered = coverages.filter((elemento: any) => {
+        return subLimits.some(filtroItem => filtroItem.idCCoverage.id === elemento.id)
+      })
       getAllCoverages()
       setCoverageSelected(coveragesFiltered)
-
     }
   }, [subLimits])
-
 
   return (
     <CardContent>
