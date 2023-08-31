@@ -228,7 +228,9 @@ const NewAccount = () => {
 
             {/* <InvoiceAdd /> */}
           </Card>
-          <MenuForm idAccountInit={idAccountInit} />
+          <div style={{ display: 'none' }}>
+            <MenuForm idAccountInit={idAccountInit} />
+          </div>
         </div>
         <Card sx={{ '@media (min-width:809px)': { display: 'none' } }}>
           <div style={{ display: 'flex', height: '50px', padding: '14px', alignItems: 'center' }}>

@@ -13,26 +13,16 @@ import { ButtonClose, HeaderTitleModal } from 'src/styles/Dashboard/ModalReinsur
 interface StepperProps {
   changeStep?: number
   onStepChange?: (step: number) => void
-  isBoundStepper?: boolean
 }
 
 interface ModalProps {
   openModal: boolean
   text?: string
-  selectedStep?: number
   onCloseModal: (close: boolean) => void
   onStepBack: () => void
-  isBoundStepper?: boolean
 }
 
-const StepModal: React.FC<ModalProps> = ({
-  openModal,
-  selectedStep,
-  onCloseModal,
-  onStepBack,
-  text,
-  isBoundStepper
-}) => {
+const StepModal: React.FC<ModalProps> = ({ openModal, onCloseModal, onStepBack, text }) => {
   const [open, setOpen] = useState<boolean>(false)
 
   const handleClose = () => {
@@ -49,24 +39,15 @@ const StepModal: React.FC<ModalProps> = ({
   return (
     <>
       <Modal className='stepper-modal' open={open} onClose={handleClose}>
-        <Box className='modal-wrapper' style={{ width: isBoundStepper ? '25%' : '0%' }}>
+        <Box className='modal-wrapper'>
           <HeaderTitleModal>
-            {isBoundStepper ? (
-              <Typography variant='h6'>Changing to step {selectedStep}</Typography>
-            ) : (
-              <Typography variant='h6'>Going back?</Typography>
-            )}
+            <Typography variant='h6'>Going back?</Typography>
             <ButtonClose onClick={handleClose}>
               <CloseIcon />
             </ButtonClose>
           </HeaderTitleModal>
           <div className='stepper-modal-text'>{text}</div>
-          <Button
-            className='stepper-modal-btn'
-            variant='contained'
-            onClick={onStepBack}
-            style={{ marginBottom: isBoundStepper ? '15px' : '0px' }}
-          >
+          <Button className='stepper-modal-btn' variant='contained' onClick={onStepBack}>
             CONTINUE
           </Button>
           <Button className='close-modal stepper-modal-btn' onClick={handleClose}>
@@ -79,7 +60,7 @@ const StepModal: React.FC<ModalProps> = ({
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const NewAccountStepper = ({ changeStep = 1, onStepChange, isBoundStepper }: StepperProps) => {
+const NewAccountStepper = ({ changeStep = 1, onStepChange }: StepperProps) => {
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
   const inter = userThemeConfig.typography?.fontFamilyInter
   const [activeStep, setActiveStep] = useState(1)
@@ -88,41 +69,28 @@ const NewAccountStepper = ({ changeStep = 1, onStepChange, isBoundStepper }: Ste
   const [openModal, setOpenModal] = useState(false)
 
   const handleStepClick = (step: number) => {
-    if (!isBoundStepper) {
-      setSelectedStep(step)
+    setSelectedStep(step)
 
-      if (selectedStep < activeStep) {
-        switch (activeStep) {
-          case 2: {
-            setModalText(
-              'Doing this will cause the information entered in form #2, deleted. Would you like to continue?'
-            )
-            break
-          }
-          case 3: {
-            setModalText(
-              'Doing this will cause the information entered in form #3, deleted. Would you like to continue?'
-            )
-            break
-          }
-          case 4: {
-            setModalText(
-              'Doing this will cause the information entered in form #4, deleted. Would you like to continue?'
-            )
-            break
-          }
-          case 5: {
-            setModalText(
-              'Doing this will cause the information entered in form #5, deleted. Would you like to continue?'
-            )
-            break
-          }
+    if (selectedStep < activeStep) {
+      switch (activeStep) {
+        case 2: {
+          setModalText('Doing this will cause the information entered in form #2, deleted. Would you like to continue?')
+          break
         }
-
-        setOpenModal(true)
+        case 3: {
+          setModalText('Doing this will cause the information entered in form #3, deleted. Would you like to continue?')
+          break
+        }
+        case 4: {
+          setModalText('Doing this will cause the information entered in form #4, deleted. Would you like to continue?')
+          break
+        }
+        case 5: {
+          setModalText('Doing this will cause the information entered in form #5, deleted. Would you like to continue?')
+          break
+        }
       }
-    } else {
-      setSelectedStep(step)
+
       setOpenModal(true)
     }
   }
@@ -163,14 +131,12 @@ const NewAccountStepper = ({ changeStep = 1, onStepChange, isBoundStepper }: Ste
           </div>
         </div>
         <StepModal
-          text={isBoundStepper ? 'Would you like to continue?' : modalText}
+          text={modalText}
           openModal={openModal}
           onCloseModal={() => {
             setOpenModal(false)
           }}
           onStepBack={stepBack}
-          selectedStep={selectedStep}
-          isBoundStepper={isBoundStepper}
         />
       </div>
     </>

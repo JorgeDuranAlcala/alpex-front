@@ -16,8 +16,9 @@ import Icon from 'src/@core/components/icon'
 
 import colors from 'src/views/accounts/colors'
 import fonts from 'src/views/accounts/font'
-import { PaymentsContext } from '../../context/payments/PaymentsContext'
+import { PaymentsContext } from '../../../context/payments/PaymentsContext'
 import { EFieldColumn } from './efieldColumn'
+import { SwitcherFilterMenus } from './filterMenus/SwitcherFilterMenus'
 
 interface IColunmHeader {
   colDef: GridStateColDef
@@ -26,9 +27,10 @@ interface IColunmHeader {
   type?: string
 }
 
-const ColumnHeader: React.FC<IColunmHeader> = ({ colDef, action, showIcon = true, type }) => {
+const ColumnHeader: React.FC<IColunmHeader> = ({ colDef, showIcon = true, type }) => {
   // ** Props
-  const { headerName, field } = colDef
+  const { headerName, field } = colDef;
+
   const { paymentsGrid } = useContext(PaymentsContext);
   const filtersActive = paymentsGrid?.filters || [];
 
@@ -43,14 +45,16 @@ const ColumnHeader: React.FC<IColunmHeader> = ({ colDef, action, showIcon = true
 
   const isActiveButton = activeButtons?.find(active => active === type);
 
+  // console.log('isActiveButton', isActiveButton)
+  // console.log('activeButtons', activeButtons)
   const handleClose = () => {
     setAnchorEl(null)
   }
 
   const handleOnClick = () => {
-    if (!action) {
-      return
-    }
+    // if (!action) {
+    //   return
+    // }
 
     const columnHeader: any = columnHeaderRef.current
 
@@ -98,7 +102,7 @@ const ColumnHeader: React.FC<IColunmHeader> = ({ colDef, action, showIcon = true
         }}
         PaperProps={{ style: { minWidth: widthMenu, borderRadius: '10px' } }}
       >
-        {/* <FilterMenu field={field} /> */}
+        <SwitcherFilterMenus field={field} handleClose={handleClose} />
       </Menu>
     </Box>
   )

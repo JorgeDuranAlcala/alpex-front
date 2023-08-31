@@ -17,11 +17,11 @@ import { PaymentsContext } from '../../context/payments/PaymentsContext'
 
 const TableHeader = () => {
 
-  const { paymentsGrid } = useContext(PaymentsContext);
+  const { paymentsGrid, handleDeleteFilters } = useContext(PaymentsContext);
 
 
   const handleDelete = (filter: Filter) => {
-    console.log(filter.type)
+    handleDeleteFilters(filter.type)
   }
 
 

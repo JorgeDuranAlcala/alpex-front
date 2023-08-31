@@ -4,6 +4,5 @@ export interface SecurityTotalDto {
   distributedNetPremium: number
   difference: number
   view: number
-  idEndorsement?: number
   idAccount: number
 }

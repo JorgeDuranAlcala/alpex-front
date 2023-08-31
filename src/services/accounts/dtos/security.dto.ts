@@ -39,7 +39,6 @@ export interface SecurityDto {
   idCReinsuranceCompanyBinder: ReinsuranceCompanyBinderDto | null
   idCRetroCedant: RetroCedantDto | null
   idCRetroCedantContact: RetroCedantContactDto | null
-  idEndorsement: number
   idAccount: number
   isGross: boolean
   recievedNetPremium: number
@@ -150,5 +149,4 @@ export type SecurityContextDto = {
 export type SecurityProps = {
   onStepChange: (step: number) => void
   disableSectionCtrl?: boolean
-  isBoundAccount?: boolean
 }
