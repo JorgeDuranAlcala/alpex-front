@@ -110,7 +110,7 @@ const FileSubmit: React.FC<UserFileProps> = ({
   const [selectedFile, setSelectedFile] = useState<File | null>(null) // saves the row wehen user click on actions button
   const [openDelete, setOpenDelete] = useState(false)
   const [openDeleteRoot, setOpenDeleteRoot] = useState(false)
-
+  const [fileIdToDelete, setFileIdToDelete] = useState<number>()
   const [openList, setOpenList] = useState<boolean>(false)
 
   const [reloadInfo, setReloadInfo] = useState<any>()
@@ -120,7 +120,7 @@ const FileSubmit: React.FC<UserFileProps> = ({
   const [idFolderDelete, setIdFolderDelete] = useState<string | undefined>(undefined)
 
   const router = useRouter()
-  const { createFolder, successAddFolder, setSuccessAddFolder } = useAddFolder()
+  const { folders, createFolder, successAddFolder, setSuccessAddFolder } = useAddFolder()
   const { foldersAccount, setIdUser, findById } = useGetFolders()
   const { uploadFile, setUpload, successUploadFolder, setSuccessUploadFolder } = useUploadFile()
   const { removeFile, setRemove, successDeleteFile, setSuccessDeleteFile } = useRemoveFile()
@@ -141,7 +141,9 @@ const FileSubmit: React.FC<UserFileProps> = ({
     const fileSize = rawFiles?.[0]?.size
     const fileName = rawFiles?.[0]?.name
     const maxFileSize = 5 * 1024 * 1024 // 5MB (example maximum file size)
-
+    console.log('sizes')
+    console.log(fileSize)
+    console.log(maxFileSize)
     if (fileSize > maxFileSize) {
       setTimeout(() => {
         setBadgeData({
@@ -168,20 +170,27 @@ const FileSubmit: React.FC<UserFileProps> = ({
         }, 3000)
       }, 500)
     } else {
-      console.log(file)
+      // console.log(file)
 
       setFile([...file, ...rawFiles])
+      console.log('filders account')
 
       // setUserFile([...file, ...rawFiles])
+
+      console.log(foldersAccount)
       const folderRoot = foldersAccount.find(folder => folder.folderName.split('_')[0] === 'root')
       if (folderRoot) {
-        debugger
+        // debugger
+        console.log('inside if folderRoot')
+        console.log([...file, ...rawFiles].length - 1)
         handleInfoToFolder(e, [...file, ...rawFiles].length - 1, 'General', folderRoot.folderId, rawFiles)
       }
     }
   }
 
   const onButtonClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    console.log("on add file click")
+    console.log(idAccountInit)
     e.preventDefault()
     console.log(e)
     if (inputRef.current !== null) {
@@ -204,10 +213,11 @@ const FileSubmit: React.FC<UserFileProps> = ({
     setSelectedFile(null)
   }
 
-  const handleRemoveFileRoot = async (e: any, file: responseFile) => {
-    const idFileRemove = JSON.stringify(file.fileId)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const handleRemoveFileRoot = async (e: any) => {
+
+    const idFileRemove = JSON.stringify(fileIdToDelete)
     console.log(idFileRemove)
-    console.log(file)
     await setRemove({ filesId: [Number(idFileRemove)] })
     console.log(removeFile)
     findById(idAccountInit || Number(localStorage.getItem('idAccount')))
@@ -234,11 +244,6 @@ const FileSubmit: React.FC<UserFileProps> = ({
     }
   }, [successDeleteFile])
 
-  // const handleMoveFolder = (e: any) => {
-  //   e.preventDefault
-  //   setOpenFolder(true)
-  // }
-
   const handleMoveFolderInto = (e: any, pathId: string | null) => {
     e.preventDefault
     setOpenList(true)
@@ -246,9 +251,11 @@ const FileSubmit: React.FC<UserFileProps> = ({
   }
 
   const clickOpenOptions = (file: responseFile) => {
+    console.log(file)
     const idOptions = 'options-f-' + file.fileId
     const menuOptions = document.getElementById(idOptions)
     console.log(menuOptions?.id)
+
     setIdFolderDelete(idOptions)
     console.log('folderdelete', idFolderDelete)
     if (menuOptions) {
@@ -268,11 +275,14 @@ const FileSubmit: React.FC<UserFileProps> = ({
     selectedFileParam?: File[]
   ) => {
     e.preventDefault
+    console.log('selectedFileParam')
     console.log(selectedFileParam)
+    if(selectedFileParam)
+    console.log(selectedFileParam[0])
     const fileB64: any = await fileToBase64(selectedFileParam ? selectedFileParam[0] : selectedFile)
     const nameFile = selectedFileParam ? selectedFileParam[0].name.split('.')[0] : selectedFile?.name.split('.')[0]
     setUpload({
-      accountId: Number(router.query.idAccount),
+      accountId: idAccountInit || Number(router.query.idAccount),
       folderId: idFolder,
       documentType: 'General',
       document: { type: selectedFile?.type, name: nameFile, base64: fileB64.split(',')[1] }
@@ -317,7 +327,8 @@ const FileSubmit: React.FC<UserFileProps> = ({
 
   useEffect(() => {
     setIdUser(idAccountInit || Number(localStorage.getItem('idAccount')))
-
+    if(idAccountInit)
+    findById(idAccountInit)
     setReloadInfo(foldersAccount)
     console.log('🚀 ~ file: FileSubmit.tsx:304 ~ useEffect ~ foldersAccount:', foldersAccount)
   }, [router.query.idAccount, idAccountInit])
@@ -331,10 +342,21 @@ const FileSubmit: React.FC<UserFileProps> = ({
   }
 
   useEffect(() => {
+    console.log('se agrego un folder')
+    console.log(folders)
     if (successAddFolder) {
       findById(idAccountInit || Number(localStorage.getItem('idAccount'))).then(() => setSuccessAddFolder(false))
+      console.log('si esto se ejecuta')
     }
-  }, [successAddFolder])
+  }, [successAddFolder, folders])
+
+  useEffect(() => {
+    console.log('se ejecuto un findBY y folders debe cambiar')
+    console.log(foldersAccount)
+
+  }, [foldersAccount])
+
+
 
   useEffect(() => {
     if (userFile.length > 0) {
@@ -349,6 +371,8 @@ const FileSubmit: React.FC<UserFileProps> = ({
   }
 
   const clickDots = (e: any) => {
+    console.log('target')
+    console.log(e.target.id)
     const menuId = e.target.id + '-menu'
     const menu = document.getElementsByClassName(menuId)
     for (let i = 0; i < menu.length; i++) {
@@ -419,6 +443,11 @@ const FileSubmit: React.FC<UserFileProps> = ({
     setRenameValue(value)
   }
 
+  useEffect(()=>{
+    console.log('idaccouninit cambio')
+    console.log(idAccountInit)
+  },[idAccountInit])
+
   return (
     <Fragment>
       <CustomAlert {...badgeData} />
@@ -470,7 +499,12 @@ const FileSubmit: React.FC<UserFileProps> = ({
                             Download
                             <Icon icon={'mdi:download'} fontSize={24} color='rgba(87, 90, 111, 0.54)' />
                           </div>
-                          <div className='option' onClick={() => setOpenDeleteRoot(true)}>
+                          <div className='option' onClick={() => {
+                            console.log('deleteclick')
+                            console.log(fileElement.fileId)
+                            setFileIdToDelete(fileElement.fileId)
+                            setOpenDeleteRoot(true)}
+                            }>
                             Delete
                             <Icon icon={'ic:outline-delete'} fontSize={24} color='rgba(87, 90, 111, 0.54)' />
                           </div>
@@ -514,7 +548,8 @@ const FileSubmit: React.FC<UserFileProps> = ({
                               <Button
                                 className='header-modal-btn'
                                 variant='contained'
-                                onClick={e => handleRemoveFileRoot(e, fileElement)}
+                                onClick={e => {
+                                  handleRemoveFileRoot(e)}}
                               >
                                 DELETE
                               </Button>
@@ -778,7 +813,7 @@ const FileSubmit: React.FC<UserFileProps> = ({
         {/* Buttom actions, render de actions */}
         <div className='actions-icons' style={isPayments ? { marginLeft: '0' } : {}}>
           <Tooltip title='Upload'>
-            <IconButton onClick={e => onButtonClick(e)}>
+            <IconButton className="disabled" onClick={e => onButtonClick(e)} >
               <Icon icon='mdi:upload' color={'#2535A8'} />
             </IconButton>
           </Tooltip>
