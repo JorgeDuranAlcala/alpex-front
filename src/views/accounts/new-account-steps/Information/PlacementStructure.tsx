@@ -387,11 +387,17 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
     const target = e.target
     const value = target.value
     setPair({ targetCurrency: value, baseCurrency: 'USD' })
+
     setUpdateInfo(true)
   }
 
   const handleNumericInputChange = (value: any, name: string) => {
     setPlacementStructure({ ...placementStructure, [name]: value })
+
+    // setUpdateInfo(true)
+  }
+
+  const handleNumericInputManuallyChange = () => {
     setUpdateInfo(true)
   }
 
@@ -403,6 +409,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
       ...placementStructure,
       [name]: value
     })
+
     setUpdateInfo(true)
   }
 
@@ -417,9 +424,10 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
         taxes: 0,
         taxesP: 0
       })
-      setUpdateInfo(true)
+
     }
     setTaxesChecked(!taxesChecked)
+    setUpdateInfo(true)
   }
 
   const handleFrontingChange = () => {
@@ -433,9 +441,10 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
         frontingFee: 0,
         frontingFeeP: 0
       })
-      setUpdateInfo(true)
+
     }
     setFrontingChecked(!frontingChecked)
+    setUpdateInfo(true)
   }
 
   const addDiscount = () => {
@@ -445,6 +454,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
     setDiscounts(newDiscounts)
     setDiscountInputs(newDiscountInput)
     setDiscountCounter(discountCounter + 1)
+    setUpdateInfo(true)
   }
 
   const deleteDiscount = async (index: number) => {
@@ -480,6 +490,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
     if (discountToDelete) {
       await deleteDiscountsById(discountToDelete)
     }
+    setUpdateInfo(true)
   }
 
   const calculateDiscountP = (index: number, newDiscount: DiscountInputs) => {
@@ -745,6 +756,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               onValueChange={value => {
                 handleNumericInputChange(value.floatValue, 'exchangeRate')
               }}
+              onChange={handleNumericInputManuallyChange}
             />
             {false && <FormHelperText sx={{ color: 'error.main' }}>Required Field</FormHelperText>}
           </FormControl>
@@ -766,6 +778,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               onValueChange={value => {
                 handleNumericInputChange(value.floatValue, 'total')
               }}
+              onChange={handleNumericInputManuallyChange}
             />
             {false && <FormHelperText sx={{ color: 'error.main' }}>Required Field</FormHelperText>}
           </FormControl>
@@ -785,6 +798,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               onValueChange={value => {
                 handleNumericInputChange(value.floatValue, 'sir')
               }}
+              onChange={handleNumericInputManuallyChange}
             />
           </FormControl>
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
@@ -810,6 +824,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
 
                 // console.log(value)
                 calculate('reinsuranceBrokerageP', value)
+                handleNumericInputManuallyChange();
 
                 // if (!!(value % 1)) {
                 //   console.log('isFLoat')
@@ -843,6 +858,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               onValueChange={value => {
                 handleNumericInputChange(value.floatValue, 'exchangeRate')
               }}
+              onChange={handleNumericInputManuallyChange}
             />
             {false && <FormHelperText sx={{ color: 'error.main' }}>Required Field</FormHelperText>}
           </FormControl>
@@ -862,6 +878,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               onValueChange={value => {
                 handleNumericInputChange(value.floatValue, 'limit')
               }}
+              onChange={handleNumericInputManuallyChange}
               error={errors.limitError}
               helperText={getErrorMessage('limitError')}
             />
@@ -887,6 +904,8 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
                   calculate('grossPremium', '')
                 }
               }}
+              onChange={handleNumericInputManuallyChange}
+
               error={errors.grossPremiumError}
               helperText={getErrorMessage('grossPremiumError')}
             />
@@ -919,6 +938,8 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
                   calculate('reinsuranceBrokerage', '')
                 }
               }}
+
+              onChange={handleNumericInputManuallyChange}
               error={errors.reinsuranceBrokerageError}
               helperText={getErrorMessage('reinsuranceBrokerageError')}
             />
@@ -943,6 +964,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               onValueChange={value => {
                 handleNumericInputChange(value.floatValue, 'attachmentPoint')
               }}
+              onChange={handleNumericInputManuallyChange}
             />
           </FormControl>
           <FormControl fullWidth sx={{ mb: 2, mt: 2 }} error={errors.typeOfLimitError}>
@@ -1015,6 +1037,8 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               onChange={e => {
                 const value = Number(e.target.value.replace('%', ''))
                 calculate('taxesP', value)
+                handleNumericInputManuallyChange()
+
               }}
               onFocus={e => {
                 if (e.target.value === '0') {
@@ -1059,7 +1083,9 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
                 } else {
                   calculate('taxes', '')
                 }
+
               }}
+              onChange={handleNumericInputManuallyChange}
               onFocus={e => {
                 if (e.target.value === '0') {
                   e.target.value = ''
@@ -1117,6 +1143,8 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
               onChange={e => {
                 const value = Number(e.target.value.replace('%', ''))
                 calculate('frontingFeeP', value)
+                handleNumericInputManuallyChange()
+
               }}
               error={frontingChecked && (errors.frontingFeePError || errors.totalDiscountsError || totalDiscountsError)}
               helperText={
@@ -1157,6 +1185,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
                   calculate('frontingFee', '')
                 }
               }}
+              onChange={handleNumericInputManuallyChange}
               error={frontingChecked && (errors.frontingFeeError || errors.totalDiscountsError || totalDiscountsError)}
               helperText={
                 frontingChecked && errors.frontingFeeError
@@ -1217,6 +1246,8 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
                   const value = Number(e.target.value.replace('%', ''))
                   const updatedDiscount = { ...discountItem, percentage: value }
                   calculateDiscount(index, updatedDiscount)
+                  handleNumericInputManuallyChange()
+
                 }}
                 error={totalDiscountsError || discountsErrorsIndex.includes(index)}
                 helperText={
@@ -1255,6 +1286,8 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
                     calculateDiscountP(index, { ...discountItem, amount: '' })
                   }
                 }}
+                onChange={handleNumericInputManuallyChange}
+
                 error={totalDiscountsError || discountsErrorsIndex.includes(index)}
                 helperText={
                   totalDiscountsError
@@ -1339,6 +1372,7 @@ const PlacementStructure: React.FC<PlacementStructureProps> = ({
                 setNetPremium(value.floatValue)
                 handleNumericInputChange(value.floatValue, 'netPremium')
               }}
+              onChange={handleNumericInputManuallyChange}
             />
           </FormControl>
         </div>
