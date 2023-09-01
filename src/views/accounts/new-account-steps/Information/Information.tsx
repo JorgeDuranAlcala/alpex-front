@@ -395,7 +395,9 @@ const Information: React.FC<InformationProps> = ({
         disableAutoHide: true
       })
     }
-    setDisableSave(false)
+
+    // setDisableSave(false)
+
     await delayMs(1000)
     setBadgeData({
       message: '',
@@ -573,9 +575,13 @@ const Information: React.FC<InformationProps> = ({
   }
 
   const handleSaveInformation = async () => {
+    console.log('handleSaveInformation', {
+      idAccount,
+      updateInfo
+    })
     try {
       if (idAccount) {
-        if (!updateInfo) {
+        if (updateInfo) {
           setBadgeData({
             message: `UPDATING INFORMATION`,
             status: 'secondary',
@@ -591,7 +597,9 @@ const Information: React.FC<InformationProps> = ({
           await updateDiscount()
           dispatch(updateFormsData({ form1: { basicInfo, placementStructure, userFile, id: idAccount } }))
           getIdAccount(idAccount)
-          setDisableSave(false)
+
+          // setDisableSave(false)
+
           if (hasClickedNextStep) {
             onStepChange ? onStepChange(2) : undefined
           }
@@ -608,7 +616,9 @@ const Information: React.FC<InformationProps> = ({
         })
 
         const res = await saveInformation()
-        setDisableSave(false)
+        console.log({ res })
+
+        // setDisableSave(false)
         if (res) {
           const discountTemp = discounts.map(discount => ({
             ...discount,
@@ -663,13 +673,23 @@ const Information: React.FC<InformationProps> = ({
     if (saveClicked) {
       console.log('save or update')
 
+      console.log({
+        valid,
+        formName,
+        makeSaveValidations,
+        makeValidations,
+        nextClicked,
+        saveClicked,
+      })
       if (valid && makeSaveValidations) {
         if (nextClicked) setValidatedForms(prevCount => prevCount + 1)
 
         if (formName == 'basicInfo' && saveClicked) {
           // If Basic info is validated and save button was clicked then save information
           setMakeSaveValidations(false)
-          setDisableSave(true)
+
+          // setDisableSave(true)
+
           handleSaveInformation()
 
           setSaveClicked(false)
@@ -688,7 +708,9 @@ const Information: React.FC<InformationProps> = ({
         if (formName == 'basicInfo' && saveClicked) {
           // If Basic info is validated and save button was clicked then save information
           setMakeSaveValidations(false)
-          setDisableSave(true)
+
+          // setDisableSave(true)
+
           handleSaveInformation()
 
           setSaveClicked(false)
@@ -845,6 +867,14 @@ const Information: React.FC<InformationProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [validationCount, validatedForms])
 
+  useEffect(() => {
+    if (updateInfo) {
+      setDisableSave(false);
+    } else {
+      setDisableSave(true);
+    }
+  }, [updateInfo])
+
   // * INIT -  Actualizar los datos del formulario en Redux + + + + + + + + + + + + + +
 
   // const {
@@ -853,6 +883,8 @@ const Information: React.FC<InformationProps> = ({
   // } = useFormStep_updateInformation({ idAccount, basicInfo, placementStructure, discounts })
 
   // * END -  Actualizar los datos del formulario en Redux + + + + + + + + + + + + + +
+
+  // console.log('updateInfo', updateInfo)
 
   return (
     <>
