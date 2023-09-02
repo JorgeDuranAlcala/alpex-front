@@ -26,7 +26,7 @@ interface ICardInstallment {
   daysFirst?: number
   error100Percent: boolean
   onChangeList: (index: number, { name, value }: { name: keyof InstallmentDto; value: any }) => void
-  setIsUpdatedInfoByUser: React.Dispatch<React.SetStateAction<boolean>>
+  setIsUpdatedInfoByUser?: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 interface PickerProps {
@@ -62,7 +62,10 @@ const CardInstallment = ({ index, installment, onChangeList, error100Percent, se
   }
 
   const handleUpdatedInfoByUser = () => {
-    setIsUpdatedInfoByUser(true);
+    if (setIsUpdatedInfoByUser) {
+
+      setIsUpdatedInfoByUser(true);
+    }
   }
 
   return (

@@ -58,7 +58,10 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
     }
     setSubLimits(subLimitsTemp)
     validateForm(subLimitsTemp[index])
-    setIsUpdatedInfoByUser(true);
+    if (setIsUpdatedInfoByUser) {
+
+      setIsUpdatedInfoByUser(true);
+    }
   }
 
   const onDeleteItem = async () => {

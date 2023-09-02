@@ -428,7 +428,8 @@ const Security = ({ onStepChange, disableSectionCtrl }: SecurityProps) => {
         companiesSelect,
         calculateSecurities,
         setAllErrors,
-        setCurrentView
+        setCurrentView,
+        setIsUpdatedInfoByUser: () => null
       }}
     >
       <div style={{ fontFamily: inter }}>

@@ -9,7 +9,6 @@ export interface RenderFormGeneric {
   state?: any
   setState?: (data: any) => {}
   handleOnDeleteForm: (index: number) => void
-  setIsUpdatedInfoByUser: React.Dispatch<React.SetStateAction<boolean>>
 
   index?: number
   limit: number
@@ -20,4 +19,5 @@ export interface RenderFormGeneric {
   setErrors: React.Dispatch<React.SetStateAction<boolean[]>>
   showErrors: boolean
   selectedCoverages: CoverageDto[];
+  setIsUpdatedInfoByUser?: React.Dispatch<React.SetStateAction<boolean>>
 }
