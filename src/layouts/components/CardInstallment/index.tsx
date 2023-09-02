@@ -21,11 +21,12 @@ interface GlobalInfo {
 interface ICardInstallment {
   index: number
   installment: InstallmentDto
-  onChangeList: (index: number, { name, value }: { name: keyof InstallmentDto; value: any }) => void
   globalInfo: GlobalInfo
   count?: number
   daysFirst?: number
   error100Percent: boolean
+  onChangeList: (index: number, { name, value }: { name: keyof InstallmentDto; value: any }) => void
+  setIsUpdatedInfoByUser: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 interface PickerProps {
@@ -52,12 +53,16 @@ const CustomInput = forwardRef(({ ...props }: PickerProps, ref: ForwardedRef<HTM
   )
 })
 
-const CardInstallment = ({ index, installment, onChangeList, error100Percent }: ICardInstallment) => {
+const CardInstallment = ({ index, installment, onChangeList, error100Percent, setIsUpdatedInfoByUser }: ICardInstallment) => {
   const userThemeConfig: any = Object.assign({}, UserThemeOptions())
   const textColor = userThemeConfig.palette?.text.subTitle
 
   const handleNumericInputChange = (value: any, name: keyof InstallmentDto) => {
     onChangeList(index, { name, value })
+  }
+
+  const handleUpdatedInfoByUser = () => {
+    setIsUpdatedInfoByUser(true);
   }
 
   return (
@@ -91,7 +96,11 @@ const CardInstallment = ({ index, installment, onChangeList, error100Percent }: 
 
                   return (floatValue! >= 0 && floatValue! <= upLimit) || floatValue === undefined
                 }}
-                onValueChange={value => handleNumericInputChange(value.value, 'premiumPaymentWarranty')}
+                onValueChange={(value, sourceInfo) => {
+                  handleNumericInputChange(value.value, 'premiumPaymentWarranty')
+                  if (sourceInfo.event) { handleUpdatedInfoByUser() }
+                }
+                }
               />
             </FormControl>
             <FormControl fullWidth>
@@ -102,7 +111,7 @@ const CardInstallment = ({ index, installment, onChangeList, error100Percent }: 
                 customInput={TextField}
                 id='percentagePayment'
                 label='Payment %'
-                multiline                
+                multiline
                 suffix='%'
                 variant='outlined'
                 isAllowed={values => {
@@ -116,7 +125,11 @@ const CardInstallment = ({ index, installment, onChangeList, error100Percent }: 
                     ? installment.paymentPercentage.toFixed(2)
                     : installment.paymentPercentage
                 }
-                onValueChange={value => handleNumericInputChange(value.floatValue, 'paymentPercentage')}
+                onValueChange={(value, sourceInfo) => {
+                  handleNumericInputChange(value.floatValue, 'paymentPercentage')
+                  if (sourceInfo.event) { handleUpdatedInfoByUser() }
+                }
+                }
               />
               {error100Percent && (
                 <FormHelperText sx={{ color: 'error.main' }}>The sum of payment % must be equal to 100.</FormHelperText>
@@ -151,6 +164,7 @@ const CardInstallment = ({ index, installment, onChangeList, error100Percent }: 
                 customInput={<CustomInput label='Settlement due date' sx={{ width: '100%' }} />}
                 disabled={true}
                 onChange={() => {
+
                   return
                 }}
                 dateFormat={'dd/MM/yyyy'}

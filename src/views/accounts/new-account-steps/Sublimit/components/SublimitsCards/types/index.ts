@@ -9,6 +9,7 @@ export interface RenderFormGeneric {
   state?: any
   setState?: (data: any) => {}
   handleOnDeleteForm: (index: number) => void
+  setIsUpdatedInfoByUser: React.Dispatch<React.SetStateAction<boolean>>
 
   index?: number
   limit: number

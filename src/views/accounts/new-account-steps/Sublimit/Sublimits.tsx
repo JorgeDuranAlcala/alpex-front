@@ -13,7 +13,7 @@ import { Button, CardContent, Grid } from '@mui/material'
 import CircularProgress from '@mui/material/CircularProgress'
 import Typography from '@mui/material/Typography'
 import { useRouter } from 'next/router'
-import { useContext, useEffect, useState } from 'react' //useContext
+import { useContext, useEffect, useState } from 'react'; //useContext
 import InputLimit from './components/InputLimit/InputLimit'
 import SelectCoverage from './components/SelectCoverage/SelectCoverage'
 import { GenericCard } from './components/SublimitsCards'
@@ -106,7 +106,9 @@ const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
 
   //state para lo botones
   const [disableBoundBtn, setDisableBoundBtn] = useState(ability?.cannot('addBound', 'account'))
-  const [disableSaveBtn, setDisableSaveBtn] = useState<boolean>(false)
+
+  const [isUpdatedInfoByUser, setIsUpdatedInfoByUser] = useState(false);
+  const [disableSaveBtn, setDisableSaveBtn] = useState<boolean>(true)
   const [showErrors, setShowErrors] = useState<boolean>(false)
   const [formErrors, setFormErrors] = useState<boolean[]>([])
   const { account, setAccountId, getAccountById } = useGetAccountById()
@@ -135,6 +137,7 @@ const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
     // console.log('coverageSelect', coverageSelect);
 
     setCoverageSelected([...coverageSelected, coverageSelect])
+    setIsUpdatedInfoByUser(true);
   }
 
   const handleAddCoverage = (value: number, label: string) => {
@@ -185,7 +188,9 @@ const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
     })
 
     if (coverageDelete) {
-      setCoverageSelected([...coverageDelete])
+      setCoverageSelected([...coverageDelete]);
+
+      setIsUpdatedInfoByUser(true)
     }
     getAllCoverages(accountData.formsData.form1?.id)
   }
@@ -253,12 +258,13 @@ const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
         getAccountData().then(console.log)
 
         setDisableBoundBtn(false)
-        setDisableSaveBtn(false)
+        setIsUpdatedInfoByUser(false)
       })
       .catch(reason => {
         console.log({ reason })
 
         setDisableBoundBtn(false)
+        setIsUpdatedInfoByUser(false)
         setDisableSaveBtn(false)
       })
 
@@ -346,7 +352,17 @@ const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
 
       // console.log("Retornamos estos datos -> ", coveragesFiltered, coverages);
     }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [subLimits, accountData, coverages])
+
+  useEffect(() => {
+
+    if (isUpdatedInfoByUser) {
+      setDisableSaveBtn(false);
+    }
+  }, [isUpdatedInfoByUser])
+
   console.log({ subLimits, coverageSelected })
 
   return (
@@ -379,6 +395,7 @@ const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
                     <Grid item xs={12} sm={12} md={6} lg={4} key={index}>
                       <GenericCard
                         selectedCoverages={coverageSelected}
+                        setIsUpdatedInfoByUser={setIsUpdatedInfoByUser}
                         subLimit={subLimit}
                         setSubLimits={setSubLimits}
                         subLimits={subLimits}
@@ -402,7 +419,7 @@ const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
           variant='contained'
           color='success'
           sx={{ mr: 2, fontFamily: inter, fontSize: size, letterSpacing: '0.4px' }}
-          disabled={disableSaveBtn || account?.status.toLowerCase() === 'bound' ? true : false}
+          disabled={disableSaveBtn || account?.status.toLowerCase() === 'bound' ? true : false || !isUpdatedInfoByUser}
           onClick={handleClickSave}
         >
           <SaveIcon /> &nbsp; Save changes

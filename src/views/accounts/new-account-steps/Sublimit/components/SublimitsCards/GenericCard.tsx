@@ -43,7 +43,8 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
   subLimits,
   setErrors,
   showErrors,
-  selectedCoverages
+  selectedCoverages,
+  setIsUpdatedInfoByUser
 }: RenderFormGeneric) => {
   const [subLimitCard, setSublimitCard] = useState<SublimitDto>(subLimit)
   const [errorCard, setErrorCard] = useState<FormErrors>(initialErrorValues)
@@ -57,6 +58,7 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
     }
     setSubLimits(subLimitsTemp)
     validateForm(subLimitsTemp[index])
+    setIsUpdatedInfoByUser(true);
   }
 
   const onDeleteItem = async () => {
