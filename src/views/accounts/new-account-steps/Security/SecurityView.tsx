@@ -80,6 +80,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
     frontingFeeP: 0
   })
   const [companiesSelect] = useState<number[]>([])
+  const [isUpdatedInfoByUser, setIsUpdatedInfoByUser] = useState(false);
 
   const { account, setAccountId, getAccountById, accountId } = useGetAccountById()
   const { saveSecurityTotal } = useAddSecurityTotal()
@@ -219,6 +220,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
   }
 
   const calculateSecurities = (securitiesParam: SecurityDto[]) => {
+
     if (securitiesParam.length > 0 && information) {
       companiesSelect.splice(0, companiesSelect.length)
 
@@ -310,6 +312,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
     const update: Partial<SecurityDto>[] = []
     const save: Partial<SecurityDto>[] = []
 
+    setIsUpdatedInfoByUser(false)
     for (const security of securities) {
       // * Con esta validación no se guardarán los datos de la vista 2
       if (security.view === 2) return
@@ -360,13 +363,16 @@ const Security = ({ onStepChange }: SecurityProps) => {
       await saveSecurities({ idAccount: +accountData.formsData.form1.id, securities: save })
         .then(() => {
           // response && response.length > 0 && calculateSecurities(response)
-          update.length === 0 &&
+          if (update.length === 0) {
+
             setBadgeData({
               message: 'THE INFORMATION HAS BEEN SAVED',
               theme: 'success',
               open: true,
               status: 'error'
             })
+
+          }
         })
         .catch(e => {
           console.log('ERROR saveSecurities', e)
@@ -378,6 +384,8 @@ const Security = ({ onStepChange }: SecurityProps) => {
             status: 'error',
             icon: <Icon style={{ color: '#FF4D49' }} icon='icon-park-outline:error' />
           })
+
+          setIsUpdatedInfoByUser(true)
         })
       getAccountById(Number(accountId))
         .then(accounts => {
@@ -477,7 +485,8 @@ const Security = ({ onStepChange }: SecurityProps) => {
         companiesSelect,
         calculateSecurities,
         setAllErrors,
-        setCurrentView
+        setCurrentView,
+        setIsUpdatedInfoByUser,
       }}
     >
       <div style={{ fontFamily: inter }}>
@@ -591,7 +600,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
                     style={{ float: 'right', marginRight: 'auto', marginBottom: '20px' }}
                   >
                     <Button
-                      disabled={currentView === 2 || account?.status.toLowerCase() === 'bound' ? true : false}
+                      disabled={currentView === 2 || account?.status.toLowerCase() === 'bound' ? true : false || !isUpdatedInfoByUser}
                       className='btn-save btn-full-mob'
                       color='success'
                       variant='contained'

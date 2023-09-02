@@ -25,7 +25,7 @@ export const DiscountPercent = ({
   discounts,
   view
 }: DiscountPercentProps) => {
-  const { securities, calculateSecurities } = useContext(SecurityContext)
+  const { securities, calculateSecurities, setIsUpdatedInfoByUser } = useContext(SecurityContext)
   const { achievedMessageError, checkIsPercentageAchieved } = usePercentageAchieved()
 
   const handleChangeDiscountPercent = (value: number) => {
@@ -38,6 +38,7 @@ export const DiscountPercent = ({
     }
     securitiesTemp[index].isChangeDynamicCommissionAmount = false
     calculateSecurities(securitiesTemp)
+    setIsUpdatedInfoByUser(true)
   }
 
   useEffect(() => {
