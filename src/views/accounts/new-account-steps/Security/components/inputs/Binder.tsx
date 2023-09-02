@@ -20,7 +20,7 @@ const LoaderMenuItem = () => (
 )
 
 export const Binder = ({ value, index, view, companyId }: BinderProps) => {
-  const { securities, calculateSecurities } = useContext(SecurityContext)
+  const { securities, calculateSecurities, setIsUpdatedInfoByUser } = useContext(SecurityContext)
   const [selectedBinder, setSelectedBinder] = useState<ReinsuranceCompanyBinderDto | null>(null)
   const [binders, setBinders] = useState<ReinsuranceCompanyBinderDto[]>([])
   const [loading, setLoading] = useState(false)
@@ -38,6 +38,7 @@ export const Binder = ({ value, index, view, companyId }: BinderProps) => {
 
       setSelectedBinder(binderSelect)
       calculateSecurities(tempSecurities)
+      setIsUpdatedInfoByUser(true);
     }
   }
   useEffect(() => {

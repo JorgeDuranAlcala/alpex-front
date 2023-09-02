@@ -17,7 +17,7 @@ type Timer = ReturnType<typeof setInterval>
 let typingTimer: Timer
 const doneTypingInterval = 1700 // Tiempo en milisegundos para considerar que se dejó de escribir
 export const DiscountAmount = ({ discountIndex, value, operationSecurity, view, index }: DiscountAmountProps) => {
-  const { securities, calculateSecurities } = useContext(SecurityContext)
+  const { securities, calculateSecurities, setIsUpdatedInfoByUser } = useContext(SecurityContext)
 
   const handleChangeDiscountAmount = (value: number) => {
     clearInterval(typingTimer)
@@ -36,6 +36,7 @@ export const DiscountAmount = ({ discountIndex, value, operationSecurity, view, 
       securitiesTemp[index].isChangeDynamicCommissionAmount = false
       calculateSecurities(securitiesTemp)
       clearInterval(typingTimer)
+      setIsUpdatedInfoByUser(true)
     }, doneTypingInterval)
   }
 

@@ -21,7 +21,7 @@ export const ReinsuranceBrokerageAmount = ({
   validateForm,
   view
 }: ReinsuranceBrokerageAmountProps) => {
-  const { activeErros, securities, calculateSecurities } = useContext(SecurityContext)
+  const { activeErros, securities, calculateSecurities, setIsUpdatedInfoByUser } = useContext(SecurityContext)
 
   const handleChangeBrokerAgeAmount = (value: number) => {
     clearInterval(typingTimer)
@@ -38,6 +38,7 @@ export const ReinsuranceBrokerageAmount = ({
 
       validateForm(tempSecurities[index])
       calculateSecurities(tempSecurities)
+      setIsUpdatedInfoByUser(true)
 
       // Limpiar el intervalo
       clearInterval(typingTimer)

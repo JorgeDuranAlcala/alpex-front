@@ -18,7 +18,7 @@ export const SwitchFrontingFee = ({
   setFrontingFeeEnabled,
   view
 }: SwitchFrontingFeeProps) => {
-  const { securities, calculateSecurities } = useContext(SecurityContext)
+  const { securities, calculateSecurities, setIsUpdatedInfoByUser } = useContext(SecurityContext)
 
   const handleSwitch = () => {
     const tempSecurities = [...securities]
@@ -34,6 +34,7 @@ export const SwitchFrontingFee = ({
     validateForm(tempSecurities[index])
     setFrontingFeeEnabled(() => !isChecked)
     calculateSecurities(tempSecurities)
+    setIsUpdatedInfoByUser(true)
   }
 
   return (

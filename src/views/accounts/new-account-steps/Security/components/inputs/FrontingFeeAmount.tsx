@@ -23,7 +23,7 @@ export const FrontingFeeAmount = ({
   operationSecurity,
   view
 }: FrontingFeeAmountProps) => {
-  const { activeErros, securities, calculateSecurities } = useContext(SecurityContext)
+  const { activeErros, securities, calculateSecurities, setIsUpdatedInfoByUser } = useContext(SecurityContext)
 
   const handleChangeFrontingFeeAmount = (value: number) => {
     clearInterval(typingTimer)
@@ -37,6 +37,7 @@ export const FrontingFeeAmount = ({
       }
       validateForm(tempSecurities[index])
       calculateSecurities(tempSecurities)
+      setIsUpdatedInfoByUser(true)
 
       // Limpiar el intervalo
       clearInterval(typingTimer)

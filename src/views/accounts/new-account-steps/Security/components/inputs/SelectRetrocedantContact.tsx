@@ -19,7 +19,7 @@ export const SelectRetroCedantContact = ({
   validateForm,
   view
 }: SelectRetroCedantContactProps) => {
-  const { activeErros, securities, calculateSecurities } = useContext(SecurityContext)
+  const { activeErros, securities, calculateSecurities, setIsUpdatedInfoByUser } = useContext(SecurityContext)
   const [retroCedantContactId, setRetroCedantContactId] = useState<string>(String(value) || '')
 
   const handleChangeRetroCedantContact = (e: any) => {
@@ -35,6 +35,7 @@ export const SelectRetroCedantContact = ({
     }
     validateForm(tempSecurities[index])
     calculateSecurities(tempSecurities)
+    setIsUpdatedInfoByUser(true)
   }
   useEffect(() => {
 

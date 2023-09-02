@@ -20,7 +20,7 @@ export const ReinsuranceBrokeragePercent = ({
   validateForm,
   view
 }: ReinsuranceBrokeragePercentProps) => {
-  const { activeErros, securities, calculateSecurities } = useContext(SecurityContext)
+  const { activeErros, securities, calculateSecurities, setIsUpdatedInfoByUser } = useContext(SecurityContext)
 
   const handleChangeBrokerRagePercent = (value: number) => {
     const tempSecurities = [...securities]
@@ -32,6 +32,7 @@ export const ReinsuranceBrokeragePercent = ({
     }
     validateForm(tempSecurities[index])
     calculateSecurities(tempSecurities)
+    setIsUpdatedInfoByUser(true)
   }
 
   return (

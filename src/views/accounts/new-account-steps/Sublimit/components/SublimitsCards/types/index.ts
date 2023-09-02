@@ -19,4 +19,5 @@ export interface RenderFormGeneric {
   setErrors: React.Dispatch<React.SetStateAction<boolean[]>>
   showErrors: boolean
   selectedCoverages: CoverageDto[];
+  setIsUpdatedInfoByUser?: React.Dispatch<React.SetStateAction<boolean>>
 }
