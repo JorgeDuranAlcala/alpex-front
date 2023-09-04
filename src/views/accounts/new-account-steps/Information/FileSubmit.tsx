@@ -118,6 +118,7 @@ const FileSubmit: React.FC<UserFileProps> = ({
   const [renameValue, setRenameValue] = useState<string>('')
   const [idFolderRename, setIdFolderRename] = useState<number | null>(null)
   const [idFolderDelete, setIdFolderDelete] = useState<string | undefined>(undefined)
+  const [optionValue, setOptionValue] = useState<string | undefined>('')
 
   const router = useRouter()
   const { folders, createFolder, successAddFolder, setSuccessAddFolder } = useAddFolder()
@@ -257,6 +258,8 @@ const FileSubmit: React.FC<UserFileProps> = ({
     console.log(menuOptions?.id)
 
     setIdFolderDelete(idOptions)
+    setOptionValue(menuOptions?.id)
+    console.log('optionvalue', optionValue)
     console.log('folderdelete', idFolderDelete)
     if (menuOptions) {
       if (menuOptions?.style.display === 'none') {
@@ -393,6 +396,7 @@ const FileSubmit: React.FC<UserFileProps> = ({
     console.log(folder)
     setIdFolderRename(folder.folderId)
     setOpenRename(true)
+    setRenameValue(folder.folderName.split('_')[0])
     for (let i = 0; i < menu.length; i++) {
       console.log(menu[i].classList)
       menu[i].classList.remove('menu-dots-open')
@@ -513,18 +517,20 @@ const FileSubmit: React.FC<UserFileProps> = ({
                             className='menu-options'
                             id={'folder-' + fileElement.filePath}
                           >
-                            {foldersAccount.map((folder, index) => {
-                              return (
-                                <div
-                                  id={'option-' + index}
-                                  key={'option-' + index}
-                                  className='option'
-                                  onClick={e => handleMoveFileToFolder(e, fileElement, folder.folderId)}
-                                >
-                                  {folder.folderName.split('_')[0]}
-                                </div>
-                              )
-                            })}
+                            {foldersAccount
+                              .filter(folder => folder.folderName.split('_')[0] !== 'root')
+                              .map((folder, index) => {
+                                return (
+                                  <div
+                                    id={'option-' + index}
+                                    key={'option-' + index}
+                                    className='option'
+                                    onClick={e => handleMoveFileToFolder(e, fileElement, folder.folderId)}
+                                  >
+                                    {folder.folderName.split('_')[0]}
+                                  </div>
+                                )
+                              })}
                           </div>
                           <Modal
                             className='delete-modal'

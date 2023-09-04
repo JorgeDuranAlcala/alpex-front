@@ -107,7 +107,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
   const [daysFirst, setDaysFirst] = useState<number>()
   const [open, setOpen] = useState<boolean>(false)
   const [isChange, setIsChange] = useState<boolean>(false)
-  const [disableSaveBtn, setDisableSaveBtn] = useState<boolean>(false)
+  const [disableSaveBtn, setDisableSaveBtn] = useState<boolean>(true)
   const [error, setError] = useState<InstallmentErrors>({
     errorFieldRequired: false,
     erorrRangeInstallments: false,
@@ -115,6 +115,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
     error100Percent: false
   })
 
+  const [isUpdatedInfoByUser, setIsUpdatedInfoByUser] = useState(false);
   const { addInstallments } = useAddInstallments()
   const accountData = useAppSelector(state => state.accounts)
   const idAccount = accountData?.formsData?.form1?.id
@@ -296,7 +297,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
         open: false
       })
     }
-    setDisableSaveBtn(false)
+    setIsUpdatedInfoByUser(false)
   }
 
   const nextStep = () => {
@@ -389,6 +390,14 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [installmentsList])
 
+  useEffect(() => {
+
+    if (isUpdatedInfoByUser) {
+      setDisableSaveBtn(false);
+    }
+  }, [isUpdatedInfoByUser])
+
+
   // * INIT -  Actualizar los datos del formulario en Redux + + + + + + + + + + + + + +
 
   // const { handleCanUpdateInstallmentsData } = useFormStep_updatePaymentWarranty({ idAccount, installments: installmentsList });
@@ -450,8 +459,12 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
                     decimalScale={0}
                     variant='outlined'
                     value={count}
-                    onValueChange={value => {
+                    onValueChange={(value, sourceInfo) => {
                       handleNumericInputChange(value.floatValue)
+
+                      if (sourceInfo.event) {
+                        setIsUpdatedInfoByUser(true)
+                      }
                     }}
                   />
                   {error.errorFieldRequired && (
@@ -476,6 +489,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
                 installment={installment}
                 daysFirst={installment.premiumPaymentWarranty || 0}
                 onChangeList={handleItemChange}
+                setIsUpdatedInfoByUser={setIsUpdatedInfoByUser}
                 globalInfo={{
                   receivedNetPremium: account ? account?.securitiesTotal[0]?.receivedNetPremium : 0,
                   inceptionDate: account?.informations[0]?.effectiveDate
@@ -497,7 +511,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
           variant='contained'
           color='success'
           sx={{ mr: 2, fontFamily: inter, fontSize: size, letterSpacing: '0.4px' }}
-          disabled={disableSaveBtn || account?.status.toLowerCase() === 'bound' ? true : false}
+          disabled={disableSaveBtn || account?.status.toLowerCase() === 'bound' ? true : false || !isUpdatedInfoByUser}
           onClick={saveInstallments}
         >
           <SaveIcon /> &nbsp; Save changes
