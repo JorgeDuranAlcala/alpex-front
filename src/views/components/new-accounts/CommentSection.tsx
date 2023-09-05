@@ -8,8 +8,8 @@ import InputAdornment from '@mui/material/InputAdornment'
 import TextField from '@mui/material/TextField'
 
 //hooks
-import { useAddComment, useGetCommentsByIdAccount } from '@/hooks/accounts/comments'
-import { CommentDto } from '@/services/accounts/dtos/comment.dto'
+import { useAddAccountComment, useGetAccountComments } from '@/hooks/comments/'
+import { CommentDto } from '@/services/comments/dto/comment.dto'
 
 interface CommentSectionProps {
   disable?: boolean
@@ -33,8 +33,8 @@ const CommentSection = ({ disable = false, step }: CommentSectionProps) => {
 
   // const [disable, setDisable] = useState(false)
   const [currentComment, setCurrentComment] = useState('')
-  const { getComments } = useGetCommentsByIdAccount()
-  const { addComment } = useAddComment()
+  const { getAccountComments } = useGetAccountComments()
+  const { addAccountComment } = useAddAccountComment()
   const [commentGroups, setCommentGroup] = useState<CommentGroup[]>([])
 
   //disable buttons
@@ -105,12 +105,12 @@ const CommentSection = ({ disable = false, step }: CommentSectionProps) => {
     setDisableSaveCommentBtn(true)
     const idAccountCache = Number(localStorage.getItem('idAccount'))
     if (currentComment !== '') {
-      await addComment({
-        accountId: idAccountCache,
+      await addAccountComment({
+        idAccount: idAccountCache,
         comment: currentComment
       })
       setCurrentComment('')
-      const data = await getComments(idAccountCache)
+      const data = await getAccountComments(idAccountCache)
       groupComments(data)
     }
     setDisableSaveCommentBtn(false)
@@ -145,21 +145,21 @@ const CommentSection = ({ disable = false, step }: CommentSectionProps) => {
     setCommentGroup([...commentGroupsTemp])
   }
 
-  const getAccountComments = async () => {
+  const getAccountCommentsFnc = async () => {
     const idAccountCache = Number(localStorage.getItem('idAccount'))
     if (idAccountCache) {
-      const data = await getComments(idAccountCache)
+      const data = await getAccountComments(idAccountCache)
       groupComments(data)
     }
   }
 
   useEffect(() => {
-    getAccountComments()
+    getAccountCommentsFnc()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
-    getAccountComments()
+    getAccountCommentsFnc()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [step])
 
