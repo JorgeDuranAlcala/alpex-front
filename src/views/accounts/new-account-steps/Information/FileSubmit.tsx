@@ -118,6 +118,7 @@ const FileSubmit: React.FC<UserFileProps> = ({
   const [currentFile, setCurrentFile] = useState<responseFile | null>(null) // saves the row wehen user click on actions button
 
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [reloadInfo, setReloadInfo] = useState<any>()
   const [openRename, setOpenRename] = useState(false)
   const [renameValue, setRenameValue] = useState<string>('')
@@ -130,8 +131,10 @@ const FileSubmit: React.FC<UserFileProps> = ({
   const { foldersAccount, setIdUser, findById } = useGetFolders()
   const { uploadFile, setUpload, successUploadFolder, setSuccessUploadFolder } = useUploadFile()
   const { removeFile, setRemove, successDeleteFile, setSuccessDeleteFile } = useRemoveFile()
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { moveFile, setmoveToFolder, successMoveFile, setSuccessMoveFile } = useMoveFile()
   const { removeFolder, setRemoveF, successDeleteFolder, setSuccessDeletefolder } = useRemoveFolder()
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { renameFolder, setRename, successRenameFolder, setSuccessRenameFolder } = useRenameFolder()
 
   const [badgeData, setBadgeData] = useState<IAlert>({
@@ -176,19 +179,15 @@ const FileSubmit: React.FC<UserFileProps> = ({
         }, 3000)
       }, 500)
     } else {
-      // console.log(file)
 
       setFile([...file, ...rawFiles])
-      console.log('filders account')
 
       // setUserFile([...file, ...rawFiles])
 
-      console.log(foldersAccount)
       const folderRoot = foldersAccount.find(folder => folder.folderName.split('_')[0] === 'root')
       if (folderRoot) {
         // debugger
-        console.log('inside if folderRoot')
-        console.log([...file, ...rawFiles].length - 1)
+
         handleInfoToFolder(e, [...file, ...rawFiles].length - 1, 'General', folderRoot.folderId, rawFiles)
       }
     }
@@ -221,11 +220,8 @@ const FileSubmit: React.FC<UserFileProps> = ({
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleRemoveFileRoot = async (e: any) => {
-    console.log('ide file remove')
     const idFileRemove = JSON.stringify(fileIdToDelete)
-    console.log(idFileRemove)
     await setRemove({ filesId: [Number(idFileRemove)] })
-    console.log(removeFile)
     findById(idAccountInit || Number(localStorage.getItem('idAccount')))
     setSuccessDeleteFile(true)
     setOpenDeleteRoot(false)
@@ -260,8 +256,7 @@ const FileSubmit: React.FC<UserFileProps> = ({
 
 
   const toggleMenu = (file: responseFile) => {
-    console.log('toggleMenu')
-    console.log(file.fileId)
+
     if (openItemMenu === file.fileId) {
       setOpenItemMenu(null); // Si el menú está abierto, ciérralo
     } else {
@@ -300,10 +295,6 @@ const FileSubmit: React.FC<UserFileProps> = ({
     selectedFileParam?: File[]
   ) => {
     e.preventDefault
-    console.log('selectedFileParam')
-    console.log(selectedFileParam)
-    if (selectedFileParam)
-      console.log(selectedFileParam[0])
     const fileB64: any = await fileToBase64(selectedFileParam ? selectedFileParam[0] : selectedFile)
     const nameFile = selectedFileParam ? selectedFileParam[0].name : selectedFile?.name
     setUpload({
@@ -317,7 +308,7 @@ const FileSubmit: React.FC<UserFileProps> = ({
       file.splice(index, 1)
       setFile([...file])
     }
-    console.log(file)
+
     setSelectedFile(null)
 
     // setOpenFolder(false)
@@ -335,13 +326,15 @@ const FileSubmit: React.FC<UserFileProps> = ({
     e.preventDefault
     const idFileMove = JSON.stringify(file.fileId)
     setmoveToFolder({ destinationFolderId: idFolder, fileId: Number(idFileMove) })
-    console.log(moveFile)
+
+    // console.log(moveFile)
 
     // setOpen(false)
     findById(idAccountInit || Number(localStorage.getItem('idAccount')))
     setSuccessMoveFile(true)
     setOpenList(false)
-    console.log(reloadInfo)
+
+    // console.log(reloadInfo)
   }
 
   useEffect(() => {
@@ -367,21 +360,14 @@ const FileSubmit: React.FC<UserFileProps> = ({
   }
 
   useEffect(() => {
-    console.log('se agrego un folder')
-    console.log(folders)
     if (successAddFolder) {
       findById(idAccountInit || Number(localStorage.getItem('idAccount'))).then(() => setSuccessAddFolder(false))
-      console.log('si esto se ejecuta')
     }
   }, [successAddFolder, folders])
 
   useEffect(() => {
-    console.log('se ejecuto un findBY y folders debe cambiar')
     console.log(foldersAccount)
-
   }, [foldersAccount])
-
-
 
   useEffect(() => {
     if (userFile.length > 0) {
@@ -396,8 +382,6 @@ const FileSubmit: React.FC<UserFileProps> = ({
   }
 
   const clickDots = (e: any) => {
-    console.log('target')
-    console.log(e.target.id)
     const menuId = e.target.id + '-menu'
     const menu = document.getElementsByClassName(menuId)
     for (let i = 0; i < menu.length; i++) {
@@ -415,7 +399,6 @@ const FileSubmit: React.FC<UserFileProps> = ({
   const renameFolderFunction = (folder: any, index: any) => {
     const menuId = index + '-dots-menu'
     const menu = document.getElementsByClassName(menuId)
-    console.log(folder)
     setIdFolderRename(folder.folderId)
     setOpenRename(true)
     setRenameValue(folder.folderName.split('_')[0])
@@ -451,7 +434,6 @@ const FileSubmit: React.FC<UserFileProps> = ({
     const newNameFolder = renameValue
     console.log(folder)
     await setRename({ folderId: idFolderRename, newFolderName: newNameFolder })
-    console.log(renameFolder)
     await findById(idAccountInit || Number(localStorage.getItem('idAccount')))
     setSuccessRenameFolder(true)
     setRenameValue('')
