@@ -14,10 +14,12 @@
 ]
 */
 
-export const overview_payables_mock = [
+import { PayableGrid } from "../overview/interfaces/overview/PayableGrid";
+
+export const overview_payables_mock: PayableGrid['payableGridList'] = [
   {
     "amount_paid": 45272562.1,
-    "currency": "undefined",
+    "currency": "USD",
     "capability_name": "Zytrek",
     "pmt_date": "05/07/2023",
     "account": "Insured Techade",
@@ -27,7 +29,7 @@ export const overview_payables_mock = [
   },
   {
     "amount_paid": 26502993.79,
-    "currency": "undefined",
+    "currency": "USD",
     "capability_name": "Geekular",
     "pmt_date": "01/08/2023",
     "account": "Insured Ultrimax",
@@ -37,7 +39,7 @@ export const overview_payables_mock = [
   },
   {
     "amount_paid": 4737477.77,
-    "currency": "undefined",
+    "currency": "USD",
     "capability_name": "Medalert",
     "pmt_date": "07/08/2021",
     "account": "Insured Acusage",
@@ -57,7 +59,7 @@ export const overview_payables_mock = [
   },
   {
     "amount_paid": 81762993.88,
-    "currency": "undefined",
+    "currency": "USD",
     "capability_name": "Ziggles",
     "pmt_date": "07/09/2022",
     "account": "Insured Optyk",

@@ -1,5 +1,5 @@
 import { CreateFolder, responseFolder } from '@/services/documents/dtos/documents.dto'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import DocumentsServices from 'src/services/documents/documents.service'
 
 export const useAddFolder = () => {
@@ -16,7 +16,13 @@ export const useAddFolder = () => {
     console.log(data)
     setFolders(data)
     setSuccessAddFolder(true)
+
   }
+
+  useEffect(() => {
+
+    console.log(successAddFolder)
+  }, [successAddFolder])
 
   return {
     folders,
