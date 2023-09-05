@@ -2,7 +2,7 @@
 import { useContext } from 'react'
 
 // ** MUI Imports
-import { Box, Grid } from '@mui/material'
+import { Box } from '@mui/material'
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
@@ -38,43 +38,39 @@ const TableHeader = ({ title, subtitle, rightTitle, detailsType }: TableHeaderPr
 
   return (
     <TableHeaderContainer sx={{ justifyContent: 'space-between' }}>
-      <Box >
+      <Box sx={{ flexGrow: 1, }}>
 
-        <Grid
-          container
-          spacing={{ xs: 2, sm: 2, md: 2 }}
+        <Box
           sx={{
             display: 'flex',
             alignItems: 'center',
-            justifyContent: filters.length === 1 ? 'space-between' : null
+            justifyContent: filters.length === 0 ? 'space-between' : null
           }}
         >
 
-          <Grid item xs={12} sm={5} md={7} sx={{ height: 'auto' }}>
-            <TitleH6>{title}</TitleH6>
-            {filters.length === 0 ? null : filters.map((filter, index) =>
-            (
-              <Chip
-                key={index}
-                label={filter.text}
-                sx={{
-                  backgroundColor: '#174BC125',
-                  marginRight: '6px',
-                  color: '#2535A8',
-                  fontWeight: 500,
-                  fontFamily: 'Inter',
-                  mb: 2
-                }}
-                onDelete={() => {
-                  handleDelete(filter)
-                }}
-                deleteIcon={<Icon icon='mdi:close-circle' style={{ color: '2535A8' }} />}
-              />
-            )
-            )}
-          </Grid>
+          <TitleH6 sx={{ display: 'inline-block', mr: '16px' }}>{title}</TitleH6>
+          {filters.length === 0 ? null : filters.map((filter, index) =>
+          (
+            <Chip
+              key={index}
+              label={filter.text}
+              sx={{
+                backgroundColor: '#174BC125',
+                marginRight: '6px',
+                color: '#2535A8',
+                fontWeight: 500,
+                fontFamily: 'Inter',
+                mb: 2
+              }}
+              onDelete={() => {
+                handleDelete(filter)
+              }}
+              deleteIcon={<Icon icon='mdi:close-circle' style={{ color: '2535A8' }} />}
+            />
+          )
+          )}
 
-        </Grid>
+        </Box>
 
         <Subtitle sx={{ mt: '8px' }}>{subtitle}</Subtitle>
       </Box>
