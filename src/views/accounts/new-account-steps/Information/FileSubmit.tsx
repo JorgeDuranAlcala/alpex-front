@@ -124,7 +124,7 @@ const FileSubmit: React.FC<UserFileProps> = ({
   const [idFolderRename, setIdFolderRename] = useState<number | null>(null)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [idFolderDelete, setIdFolderDelete] = useState<string | undefined>(undefined)
-
+  const [optionValue, setOptionValue] = useState<string | undefined>('')
   const router = useRouter()
   const { folders, createFolder, successAddFolder, setSuccessAddFolder } = useAddFolder()
   const { foldersAccount, setIdUser, findById } = useGetFolders()
@@ -268,7 +268,10 @@ const FileSubmit: React.FC<UserFileProps> = ({
       setOpenItemMenu(file.fileId); // Si el menú está cerrado, ábrelo
       setCurrentFile(file || null);
       const idOptions = 'options-f-' + file.fileId
+      const menuOptions = document.getElementById(idOptions)
       setIdFolderDelete(idOptions)
+      setOptionValue(menuOptions?.id)
+      console.log('optionvalue', optionValue)
     }
   };
 
@@ -415,6 +418,7 @@ const FileSubmit: React.FC<UserFileProps> = ({
     console.log(folder)
     setIdFolderRename(folder.folderId)
     setOpenRename(true)
+    setRenameValue(folder.folderName.split('_')[0])
     for (let i = 0; i < menu.length; i++) {
       console.log(menu[i].classList)
       menu[i].classList.remove('menu-dots-open')
@@ -539,13 +543,13 @@ const FileSubmit: React.FC<UserFileProps> = ({
                             >
                               {foldersAccount.map((folder, index) => {
                                 return (
-                                  <div
+                                  folder.folderName.split('_')[0] !== 'root' && <div
                                     id={'option-' + index}
                                     key={'option-' + index}
                                     className='option'
                                     onClick={e => handleMoveFileToFolder(e, fileElement, folder.folderId)}
                                   >
-                                    {folder.folderName.split('_')[0] !== 'root' && folder.folderName.split('_')[0]}
+                                    { folder.folderName.split('_')[0]}
                                   </div>
                                 )
                               })}
