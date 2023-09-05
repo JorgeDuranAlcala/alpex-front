@@ -305,7 +305,7 @@ const FileSubmit: React.FC<UserFileProps> = ({
     if (selectedFileParam)
       console.log(selectedFileParam[0])
     const fileB64: any = await fileToBase64(selectedFileParam ? selectedFileParam[0] : selectedFile)
-    const nameFile = selectedFileParam ? selectedFileParam[0].name.split('.')[0] : selectedFile?.name.split('.')[0]
+    const nameFile = selectedFileParam ? selectedFileParam[0].name : selectedFile?.name
     setUpload({
       accountId: idAccountInit || Number(router.query.idAccount),
       folderId: idFolder,
@@ -499,7 +499,7 @@ const FileSubmit: React.FC<UserFileProps> = ({
 
                   return (
                     <div key={index} className='file-details'>
-                      <Typography className='file-name'>{fileElement.name}</Typography>
+                      <Typography className='file-name'>{fileElement.name.split('.')[0]}</Typography>
                       <div className='menu-btn'>
                         <IconButton
                           onClick={() => {
@@ -527,8 +527,6 @@ const FileSubmit: React.FC<UserFileProps> = ({
                               <Icon icon={'mdi:download'} fontSize={24} color='rgba(87, 90, 111, 0.54)' />
                             </div>
                             <div className='option' onClick={() => {
-                              console.log('deleteclick')
-                              console.log(fileElement.fileId)
                               setFileIdToDelete(fileElement.fileId)
                               setOpenDeleteRoot(true)
                             }
