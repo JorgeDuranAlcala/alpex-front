@@ -303,7 +303,9 @@ const Security = ({ onStepChange }: SecurityProps) => {
   }
 
   const onNextStep = () => {
-    SaveData()
+    if (isUpdatedInfoByUser) {
+      SaveData()
+    }
     setIsNextStep(true)
     handleCloseModal()
   }

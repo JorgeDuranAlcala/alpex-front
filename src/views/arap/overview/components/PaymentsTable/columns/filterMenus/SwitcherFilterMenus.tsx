@@ -40,9 +40,7 @@ export const SwitcherFilterMenus = ({ field, handleClose }: IFilterMenu) => {
       </div>
     ),
     [EFieldColumn.AMOUNT]: (
-      <div onClick={handleClose}>
-        <FilterMenuAmount />
-      </div>
+      <FilterMenuAmount handleClose={handleClose} />
     ),
     [EFieldColumn.TRANSACTION_DATE]: (
       <div onClick={handleClose}>
