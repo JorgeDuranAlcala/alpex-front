@@ -215,8 +215,6 @@ const FileSubmit: React.FC<UserFileProps> = ({
 
   const handleDownload = (e: any, index: number, file: responseFile) => {
     e.preventDefault
-
-    // const fileToDownload = file
     window.open(file.filePath, '_blank')
     setSelectedFile(null)
     setOpenItemMenu(null)
@@ -254,9 +252,6 @@ const FileSubmit: React.FC<UserFileProps> = ({
 
   const handleMoveFolderInto = (e: any, pathId: string | null) => {
     e.preventDefault
-
-    // setOpenList(true)
-    console.log(pathId)
     if (openFolderList ===  pathId) {
       setOpenFolderList(null); // Si el menú está abierto, ciérralo
     } else {
@@ -281,23 +276,6 @@ const FileSubmit: React.FC<UserFileProps> = ({
     }
   };
 
-  // const clickOpenOptions = (file: responseFile) => {
-  //   console.log(file)
-  //   const idOptions = 'options-f-' + file.fileId
-  //   const menuOptions = document.getElementById(idOptions)
-  //   console.log(menuOptions?.id)
-
-  //   setIdFolderDelete(idOptions)
-  //   console.log('folderdelete', idFolderDelete)
-  //   if (menuOptions) {
-  //     if (menuOptions?.style.display === 'none') {
-  //       menuOptions.style.display = 'block'
-  //     } else {
-  //       menuOptions.style.display = 'none'
-  //     }
-  //   }
-  // }
-
   const handleInfoToFolder = async (
     e: any,
     index: number,
@@ -321,8 +299,6 @@ const FileSubmit: React.FC<UserFileProps> = ({
     }
 
     setSelectedFile(null)
-
-    // setOpenFolder(false)
     findById(idAccountInit || Number(localStorage.getItem('idAccount')))
     setSuccessUploadFolder(true)
   }
@@ -335,19 +311,18 @@ const FileSubmit: React.FC<UserFileProps> = ({
 
   const handleMoveFileToFolder = async (e: any, file: responseFile, idFolder: number) => {
     e.preventDefault
+
     const idFileMove = JSON.stringify(file.fileId)
+
     setmoveToFolder({ destinationFolderId: idFolder, fileId: Number(idFileMove) })
 
-    // console.log(moveFile)
-
-    // setOpen(false)
     findById(idAccountInit || Number(localStorage.getItem('idAccount')))
-    setSuccessMoveFile(true)
 
-    // setOpenList(false)
+    setSuccessMoveFile(true)
     setOpenFolderList(null);
     setOpenItemMenu(null)
 
+    // console.log(moveFile)
     // console.log(reloadInfo)
   }
 
@@ -474,7 +449,6 @@ const FileSubmit: React.FC<UserFileProps> = ({
     <Fragment>
       <CustomAlert {...badgeData} />
       <div className='upload-btn'>
-        {/* <form id="form-file-upload" onSubmit={(e) => e.preventDefault()}> */}
         <input
           ref={inputRef}
           type='file'
