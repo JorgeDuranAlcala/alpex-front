@@ -26,8 +26,8 @@ export enum ACCOUNT_ROUTES {
 
 //Comentario
 export enum ACCOUNT_COMMENTS {
-  ADD = 'account/comment',
-  GET_ALL = 'account/comments'
+  ADD_ACCOUNT_COMMENT = 'comments/account/add',
+  GET_ACCOUNT_COMMENTS = 'comments/account'
 }
 
 //Account History Log
@@ -305,20 +305,18 @@ export enum DEBIT_NOTE_ROUTES {
 
 export enum DATA_DASHBOARD_ROUTES {
   GET_PRIORITY_PROPERTIES = 'buildings/all',
-  GET_CAPACITY_PER_STATES='buildings/top-five',
-  GET_EARTHQUAKES_DATA='data/earthquakes/earthquake-detected'
+  GET_CAPACITY_PER_STATES = 'buildings/top-five',
+  GET_EARTHQUAKES_DATA = 'data/earthquakes/earthquake-detected'
 }
 
 export enum DATA_MAPS_ROUTES {
-  GET_ALL_PROPERTIES = 'buildings/all',
+  GET_ALL_PROPERTIES = 'buildings/all'
 }
 
 // ==== ACCOUNT
 export enum DATA_PROPERTIES_ROUTES {
-  GET_BY_ID = 'buildings/data/get-property-details',
+  GET_BY_ID = 'buildings/data/get-property-details'
 }
-
-
 
 // ====
 
