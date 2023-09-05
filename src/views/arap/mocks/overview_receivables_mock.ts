@@ -15,10 +15,12 @@
 ]
  */
 
-export const overview_receivables_mock = [
+import { ReceivableGrid } from "../overview/interfaces/overview/ReceivableGrid";
+
+export const overview_receivables_mock: ReceivableGrid['receivableGridList'] = [
   {
     "amount_received": 3183718.16,
-    "currency": "undefined",
+    "currency": "USD",
     "broker": "Idealis",
     "pmt_date": "31/05/2021",
     "account": "Insured Typhonica",
@@ -29,7 +31,7 @@ export const overview_receivables_mock = [
   },
   {
     "amount_received": 6125580.29,
-    "currency": "undefined",
+    "currency": "USD",
     "broker": "Golistic",
     "pmt_date": "29/12/2022",
     "account": "Insured Pyramis",
@@ -51,7 +53,7 @@ export const overview_receivables_mock = [
   },
   {
     "amount_received": 93039577.69,
-    "currency": "undefined",
+    "currency": "USD",
     "broker": "Exoblue",
     "pmt_date": "30/05/2018",
     "account": "Insured Twiist",
@@ -62,7 +64,7 @@ export const overview_receivables_mock = [
   },
   {
     "amount_received": 80393051.19,
-    "currency": "undefined",
+    "currency": "USD",
     "broker": "Printspan",
     "pmt_date": "02/09/2021",
     "account": "Insured Verton",

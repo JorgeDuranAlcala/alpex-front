@@ -1,4 +1,6 @@
 import { Box, styled } from "@mui/material"
+import { DifferenceTable } from "./components/OverviewDetailsTable/DifferenceTable"
+import { OverViewDetailsProvider } from "./context/overviewDetails/OverviewDetailsProvider"
 
 
 const ViewContainer = styled(Box)(() => ({
@@ -11,8 +13,10 @@ const ViewContainer = styled(Box)(() => ({
 
 export const OverviewDifferenceView = () => {
   return (
-    <ViewContainer>
-      Render table
-    </ViewContainer>
+    <OverViewDetailsProvider>
+      <ViewContainer>
+        <DifferenceTable />
+      </ViewContainer>
+    </OverViewDetailsProvider>
   )
 }

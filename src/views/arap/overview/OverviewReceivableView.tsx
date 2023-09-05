@@ -1,4 +1,6 @@
 import { Box, styled } from "@mui/material"
+import { ReceivableTable } from "./components/OverviewDetailsTable/ReceivableTable"
+import { OverViewDetailsProvider } from "./context/overviewDetails/OverviewDetailsProvider"
 
 
 const ViewContainer = styled(Box)(() => ({
@@ -11,8 +13,10 @@ const ViewContainer = styled(Box)(() => ({
 
 export const OverviewReceivableView = () => {
   return (
-    <ViewContainer>
-      Render table
-    </ViewContainer>
+    <OverViewDetailsProvider>
+      <ViewContainer>
+        <ReceivableTable />
+      </ViewContainer>
+    </OverViewDetailsProvider>
   )
 }

@@ -16,7 +16,9 @@
 ]
 */
 
-export const overview_differences_mock = [
+import { DifferenceGrid } from "../overview/interfaces/overview/DifferenceGrid";
+
+export const overview_differences_mock: DifferenceGrid['differenceGridList'] = [
   {
     "amount_received": 5704389.47,
     "currency": "USD",
@@ -30,7 +32,7 @@ export const overview_differences_mock = [
   },
   {
     "amount_received": 28877553.93,
-    "currency": "undefined",
+    "currency": "USD",
     "capability_name": "Zanity",
     "pmt_date": "27/03/2022",
     "account": "Insured Klugger",
@@ -41,7 +43,7 @@ export const overview_differences_mock = [
   },
   {
     "amount_received": 86823231.67,
-    "currency": "undefined",
+    "currency": "USD",
     "capability_name": "Kindaloo",
     "pmt_date": "08/01/2019",
     "account": "Insured Enersave",
@@ -52,7 +54,7 @@ export const overview_differences_mock = [
   },
   {
     "amount_received": 3790542.03,
-    "currency": "undefined",
+    "currency": "USD",
     "capability_name": "Cormoran",
     "pmt_date": "06/07/2023",
     "account": "Insured Digifad",
@@ -63,7 +65,7 @@ export const overview_differences_mock = [
   },
   {
     "amount_received": 39835765.35,
-    "currency": "undefined",
+    "currency": "USD",
     "capability_name": "Sybixtex",
     "pmt_date": "21/07/2019",
     "account": "Insured Applidec",
