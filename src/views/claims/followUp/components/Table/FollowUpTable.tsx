@@ -1,33 +1,37 @@
 import { Card, CircularProgress, styled } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import { useContext } from 'react';
-import { PaymentsContext } from '../../context/payments/PaymentsContext';
+import { FollowUpContext } from '../../context/followUp/FollowUpContext';
 import CustomPagination from './CustomPagination';
 import TableHeader from './TableHeader';
 import { columns } from './columns/Columns';
 
-export const PaymentsTable = () => {
 
-  const { isLoading, paymentsGrid } = useContext(PaymentsContext);
+export const FollowUpTable = () => {
 
-  console.log("esto se mapea", paymentsGrid);
+  const { isLoading, followUpGrid } = useContext(FollowUpContext)
+
+  console.log("Fake data: ", followUpGrid);
+
 
   return (
     <CardTableContainer>
       {isLoading ? <><CircularProgress /></> :
         <>
-
           <TableHeader />
-        </>}
+        </>
+      }
       <DataGrid
         loading={isLoading}
         autoHeight
-        checkboxSelection
+
         disableSelectionOnClick
-        rows={paymentsGrid?.paymentsGridList.map(paymentItem => ({
-          ...paymentItem,
-          id: paymentItem.transactionId
+
+        rows={followUpGrid?.followUpGridList?.map(followUpItem => ({
+          ...followUpItem,
+          id: followUpItem.id
         })) || []}
+
         columns={columns}
         pagination
         pageSize={10}
@@ -35,10 +39,8 @@ export const PaymentsTable = () => {
         components={{
           Pagination: CustomPagination
         }}
-        className={'account-datagrid'}
 
-      // selectionModel={selectAllFlag ? selectAll : undefined}
-      // onSelectionModelChange={rows => setSelectedRows(rows)}
+      // className={'account-datagrid'}
       />
     </CardTableContainer>
   )
