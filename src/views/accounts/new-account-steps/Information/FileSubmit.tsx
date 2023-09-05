@@ -111,10 +111,12 @@ const FileSubmit: React.FC<UserFileProps> = ({
   const [openDelete, setOpenDelete] = useState(false)
   const [openDeleteRoot, setOpenDeleteRoot] = useState(false)
   const [fileIdToDelete, setFileIdToDelete] = useState<number>() //State with currend id selected to delete.
-  const [openList, setOpenList] = useState<boolean>(false)
+
+  // const [openList, setOpenList] = useState<boolean>(false)
 
   // Menu management
   const [openItemMenu, setOpenItemMenu] = useState<number | null>(null);
+  const [openFolderList, setOpenFolderList] = useState<string | null>(null);
   const [currentFile, setCurrentFile] = useState<responseFile | null>(null) // saves the row wehen user click on actions button
 
 
@@ -208,6 +210,7 @@ const FileSubmit: React.FC<UserFileProps> = ({
     e.preventDefault
     window.open(path, '_blank')
     setSelectedFile(null)
+    setOpenItemMenu(null)
   }
 
   const handleDownload = (e: any, index: number, file: responseFile) => {
@@ -216,6 +219,7 @@ const FileSubmit: React.FC<UserFileProps> = ({
     // const fileToDownload = file
     window.open(file.filePath, '_blank')
     setSelectedFile(null)
+    setOpenItemMenu(null)
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -250,8 +254,14 @@ const FileSubmit: React.FC<UserFileProps> = ({
 
   const handleMoveFolderInto = (e: any, pathId: string | null) => {
     e.preventDefault
-    setOpenList(true)
+
+    // setOpenList(true)
     console.log(pathId)
+    if (openFolderList ===  pathId) {
+      setOpenFolderList(null); // Si el menú está abierto, ciérralo
+    } else {
+      setOpenFolderList(pathId); // Si el menú está cerrado, ábrelo
+    }
   }
 
 
@@ -259,6 +269,7 @@ const FileSubmit: React.FC<UserFileProps> = ({
 
     if (openItemMenu === file.fileId) {
       setOpenItemMenu(null); // Si el menú está abierto, ciérralo
+      setOpenFolderList(null);
     } else {
       setOpenItemMenu(file.fileId); // Si el menú está cerrado, ábrelo
       setCurrentFile(file || null);
@@ -332,7 +343,10 @@ const FileSubmit: React.FC<UserFileProps> = ({
     // setOpen(false)
     findById(idAccountInit || Number(localStorage.getItem('idAccount')))
     setSuccessMoveFile(true)
-    setOpenList(false)
+
+    // setOpenList(false)
+    setOpenFolderList(null);
+    setOpenItemMenu(null)
 
     // console.log(reloadInfo)
   }
@@ -516,8 +530,8 @@ const FileSubmit: React.FC<UserFileProps> = ({
                               Delete
                               <Icon icon={'ic:outline-delete'} fontSize={24} color='rgba(87, 90, 111, 0.54)' />
                             </div>
+                            {openFolderList === fileElement.filePath &&
                             <div
-                              style={openList ? { display: 'block' } : { display: 'none' }}
                               className='menu-options'
                               id={'folder-' + fileElement.filePath}
                             >
@@ -533,7 +547,8 @@ const FileSubmit: React.FC<UserFileProps> = ({
                                   </div>
                                 )
                               })}
-                            </div>
+                            </div> }
+
                             <Modal
                               className='delete-modal'
                               open={openDeleteRoot}
@@ -750,8 +765,8 @@ const FileSubmit: React.FC<UserFileProps> = ({
                                               color='rgba(87, 90, 111, 0.54)'
                                             />
                                           </div>
+                                          {openFolderList === fileElement.filePath &&
                                           <div
-                                            style={openList ? { display: 'block' } : { display: 'none' }}
                                             className='menu-options'
                                             id={'folder-' + fileElement.filePath}
                                           >
@@ -768,7 +783,8 @@ const FileSubmit: React.FC<UserFileProps> = ({
                                                 </div>
                                               )
                                             })}
-                                          </div>
+                                          </div>}
+
                                           <Modal
                                             className='delete-modal'
                                             open={openDelete}
