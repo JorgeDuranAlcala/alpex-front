@@ -273,7 +273,7 @@ const FileSubmit: React.FC<UserFileProps> = ({
     e.preventDefault
     console.log(selectedFileParam)
     const fileB64: any = await fileToBase64(selectedFileParam ? selectedFileParam[0] : selectedFile)
-    const nameFile = selectedFileParam ? selectedFileParam[0].name.split('.')[0] : selectedFile?.name.split('.')[0]
+    const nameFile = selectedFileParam ? selectedFileParam[0].name : selectedFile?.name
     setUpload({
       accountId: Number(router.query.idAccount),
       folderId: idFolder,
@@ -448,7 +448,7 @@ const FileSubmit: React.FC<UserFileProps> = ({
 
                   return (
                     <div key={index} className='file-details'>
-                      <Typography className='file-name'>{fileElement.name}</Typography>
+                      <Typography className='file-name'>{fileElement.name.split('.')[0]}</Typography>
                       <div className='menu-btn'>
                         <IconButton
                           onClick={() => {
@@ -459,7 +459,11 @@ const FileSubmit: React.FC<UserFileProps> = ({
                         </IconButton>
                         <div
                           className='menu-options'
-                          style={{ display: 'none' }}
+                          style={
+                            optionValue === 'options-f-' + fileElement.fileId.toString()
+                              ? { display: 'block' }
+                              : { display: 'none' }
+                          }
                           id={'options-f-' + fileElement.fileId.toString()}
                         >
                           <div className='option' onClick={e => handlePreview(e, fileElement.filePath)}>
@@ -662,7 +666,7 @@ const FileSubmit: React.FC<UserFileProps> = ({
                                 {folder.files.map((fileElement, index) => {
                                   return (
                                     <div key={index} className='file-details'>
-                                      <Typography className='file-name'>{fileElement.name}</Typography>
+                                      <Typography className='file-name'>{fileElement.name.split('.')[0]}</Typography>
                                       <div className='menu-btn'>
                                         <IconButton
                                           onClick={() => {
