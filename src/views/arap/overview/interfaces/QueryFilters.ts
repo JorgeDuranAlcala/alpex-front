@@ -8,6 +8,6 @@ export interface QueryFilters {
   reinsurer: string;
   status: 'all' | ARAPStatus;
   transaction: 'all' | ARAPTransaction;
-  date: Date;
+  date: string;
   id: string;
 }
