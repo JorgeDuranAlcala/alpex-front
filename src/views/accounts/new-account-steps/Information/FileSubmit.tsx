@@ -111,10 +111,12 @@ const FileSubmit: React.FC<UserFileProps> = ({
   const [openDelete, setOpenDelete] = useState(false)
   const [openDeleteRoot, setOpenDeleteRoot] = useState(false)
   const [fileIdToDelete, setFileIdToDelete] = useState<number>() //State with currend id selected to delete.
-  const [openList, setOpenList] = useState<boolean>(false)
+
+  // const [openList, setOpenList] = useState<boolean>(false)
 
   // Menu management
   const [openItemMenu, setOpenItemMenu] = useState<number | null>(null);
+  const [openFolderList, setOpenFolderList] = useState<string | null>(null);
   const [currentFile, setCurrentFile] = useState<responseFile | null>(null) // saves the row wehen user click on actions button
 
 
@@ -208,14 +210,14 @@ const FileSubmit: React.FC<UserFileProps> = ({
     e.preventDefault
     window.open(path, '_blank')
     setSelectedFile(null)
+    setOpenItemMenu(null)
   }
 
   const handleDownload = (e: any, index: number, file: responseFile) => {
     e.preventDefault
-
-    // const fileToDownload = file
     window.open(file.filePath, '_blank')
     setSelectedFile(null)
+    setOpenItemMenu(null)
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -250,8 +252,11 @@ const FileSubmit: React.FC<UserFileProps> = ({
 
   const handleMoveFolderInto = (e: any, pathId: string | null) => {
     e.preventDefault
-    setOpenList(true)
-    console.log(pathId)
+    if (openFolderList ===  pathId) {
+      setOpenFolderList(null); // Si el menú está abierto, ciérralo
+    } else {
+      setOpenFolderList(pathId); // Si el menú está cerrado, ábrelo
+    }
   }
 
 
@@ -259,6 +264,7 @@ const FileSubmit: React.FC<UserFileProps> = ({
 
     if (openItemMenu === file.fileId) {
       setOpenItemMenu(null); // Si el menú está abierto, ciérralo
+      setOpenFolderList(null);
     } else {
       setOpenItemMenu(file.fileId); // Si el menú está cerrado, ábrelo
       setCurrentFile(file || null);
@@ -269,23 +275,6 @@ const FileSubmit: React.FC<UserFileProps> = ({
       console.log('optionvalue', optionValue)
     }
   };
-
-  // const clickOpenOptions = (file: responseFile) => {
-  //   console.log(file)
-  //   const idOptions = 'options-f-' + file.fileId
-  //   const menuOptions = document.getElementById(idOptions)
-  //   console.log(menuOptions?.id)
-
-  //   setIdFolderDelete(idOptions)
-  //   console.log('folderdelete', idFolderDelete)
-  //   if (menuOptions) {
-  //     if (menuOptions?.style.display === 'none') {
-  //       menuOptions.style.display = 'block'
-  //     } else {
-  //       menuOptions.style.display = 'none'
-  //     }
-  //   }
-  // }
 
   const handleInfoToFolder = async (
     e: any,
@@ -310,8 +299,6 @@ const FileSubmit: React.FC<UserFileProps> = ({
     }
 
     setSelectedFile(null)
-
-    // setOpenFolder(false)
     findById(idAccountInit || Number(localStorage.getItem('idAccount')))
     setSuccessUploadFolder(true)
   }
@@ -324,16 +311,18 @@ const FileSubmit: React.FC<UserFileProps> = ({
 
   const handleMoveFileToFolder = async (e: any, file: responseFile, idFolder: number) => {
     e.preventDefault
+
     const idFileMove = JSON.stringify(file.fileId)
+
     setmoveToFolder({ destinationFolderId: idFolder, fileId: Number(idFileMove) })
 
-    // console.log(moveFile)
-
-    // setOpen(false)
     findById(idAccountInit || Number(localStorage.getItem('idAccount')))
-    setSuccessMoveFile(true)
-    setOpenList(false)
 
+    setSuccessMoveFile(true)
+    setOpenFolderList(null);
+    setOpenItemMenu(null)
+
+    // console.log(moveFile)
     // console.log(reloadInfo)
   }
 
@@ -460,7 +449,6 @@ const FileSubmit: React.FC<UserFileProps> = ({
     <Fragment>
       <CustomAlert {...badgeData} />
       <div className='upload-btn'>
-        {/* <form id="form-file-upload" onSubmit={(e) => e.preventDefault()}> */}
         <input
           ref={inputRef}
           type='file'
@@ -516,8 +504,8 @@ const FileSubmit: React.FC<UserFileProps> = ({
                               Delete
                               <Icon icon={'ic:outline-delete'} fontSize={24} color='rgba(87, 90, 111, 0.54)' />
                             </div>
+                            {openFolderList === fileElement.filePath &&
                             <div
-                              style={openList ? { display: 'block' } : { display: 'none' }}
                               className='menu-options'
                               id={'folder-' + fileElement.filePath}
                             >
@@ -533,7 +521,8 @@ const FileSubmit: React.FC<UserFileProps> = ({
                                   </div>
                                 )
                               })}
-                            </div>
+                            </div> }
+
                             <Modal
                               className='delete-modal'
                               open={openDeleteRoot}
@@ -750,8 +739,8 @@ const FileSubmit: React.FC<UserFileProps> = ({
                                               color='rgba(87, 90, 111, 0.54)'
                                             />
                                           </div>
+                                          {openFolderList === fileElement.filePath &&
                                           <div
-                                            style={openList ? { display: 'block' } : { display: 'none' }}
                                             className='menu-options'
                                             id={'folder-' + fileElement.filePath}
                                           >
@@ -768,7 +757,8 @@ const FileSubmit: React.FC<UserFileProps> = ({
                                                 </div>
                                               )
                                             })}
-                                          </div>
+                                          </div>}
+
                                           <Modal
                                             className='delete-modal'
                                             open={openDelete}
