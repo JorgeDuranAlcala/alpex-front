@@ -25,9 +25,7 @@ export const SwitcherFilterMenus = ({ field, handleClose }: IFilterMenu) => {
       <FilterMenuTransactionId handleClose={handleClose} />
     ),
     [EFieldColumn.CAPABILITY_NAME]: (
-      <div onClick={handleClose}>
-        <FilterMenuCapabilityName />
-      </div>
+      <FilterMenuCapabilityName handleClose={handleClose} />
     ),
     [EFieldColumn.STATUS]: (
       <div onClick={handleClose}>

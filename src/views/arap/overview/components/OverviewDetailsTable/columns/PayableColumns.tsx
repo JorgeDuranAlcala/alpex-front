@@ -111,7 +111,7 @@ export const columns: GridColumns<PayableColumn> = [
     flex: 0.1,
     field: EFieldColumn.ORIGIN_ACCT,
     headerName: 'ORIGIN ACCT.',
-    minWidth: 100,
+    minWidth: 150,
     type: 'string',
     align: 'left',
     disableColumnMenu: true,

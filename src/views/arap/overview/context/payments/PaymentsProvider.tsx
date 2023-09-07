@@ -97,10 +97,7 @@ export const PaymentsProvider = ({ children }: { children: ReactNode }) => {
       setIsLoading(false);
     }, 500);
 
-    setPaymentsGrid({
-      ...paymentsGrid,
-      filters: [...tempFilters]
-    })
+
   }
 
   return (

@@ -1,7 +1,7 @@
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 
+import { InputSelectProps } from '@/views/arap/_commons/interfaces/InputSelectProps';
 import { useGetAll as useBrokerGetAll } from 'src/hooks/catalogs/broker';
-import { InputSelectProps } from '../../../interfaces/InputSelectProps';
 
 export const SelectBroker = ({ selectedValue, onChange }: InputSelectProps) => {
 

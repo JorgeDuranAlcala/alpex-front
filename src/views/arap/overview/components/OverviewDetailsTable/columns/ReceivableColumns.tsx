@@ -141,7 +141,7 @@ export const columns: GridColumns<ReceivableColumn> = [
     ),
     renderCell: ({ row }) => (
       <Typography sx={{ color: colors.text.secondary, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
-        {row.inst}
+        {row.deposit_acc}
       </Typography>
     )
   },
