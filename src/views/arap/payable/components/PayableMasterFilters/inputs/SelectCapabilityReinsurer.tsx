@@ -1,22 +1,25 @@
-import { useGetAllReinsuranceCompanies } from '@/hooks/catalogs/reinsuranceCompany';
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
+
+import { useGetAllReinsuranceCompanies } from '@/hooks/catalogs/reinsuranceCompany';
 
 import { InputSelectProps } from '@/views/arap/_commons/interfaces/InputSelectProps';
 
-export const SelectReinsurer = ({ selectedValue, onChange }: InputSelectProps) => {
+export const SelectCapabilityReinsurer = ({ selectedValue, onChange, isDisabled }: InputSelectProps) => {
 
   const { reinsuranceCompany: reinsurers } = useGetAllReinsuranceCompanies();
 
+
   return (
     <FormControl fullWidth sx={{ mb: 2, mt: 2 }} >
-      <InputLabel>Reinsurer</InputLabel>
+      <InputLabel>Capability</InputLabel>
 
       <Select
-        name='reinsurer'
-        label='Select Reinsurer'
+        name='capability'
+        label='Select Capability'
         value={selectedValue}
         onChange={onChange}
-        labelId='reinsurer'
+        labelId='capability'
+        disabled={isDisabled}
       >
         <MenuItem value="all">
           ALL
