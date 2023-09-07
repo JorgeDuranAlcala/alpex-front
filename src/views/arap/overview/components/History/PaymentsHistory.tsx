@@ -65,6 +65,19 @@ export const PaymentsHistory = ({ transactionId }: PaymentsHistoryProps) => {
       <ColumnConnector />
 
       <ColumnItemTextsContainer>
+        <ItemTitle>Reinsurer Payment</ItemTitle>
+        <ItemSubtitle>{paymentsHistory.reinsurerPayments.filter(item => item.isChecked).length} / {paymentsHistory.reinsurerPayments.length}</ItemSubtitle>
+
+        <VerticalChecks items={paymentsHistory.reinsurerPayments.map(item => ({
+          ...item,
+          title: item.name,
+          date: formatDateTemplate(item.paymentDate),
+        }))} />
+      </ColumnItemTextsContainer>
+
+      <ColumnConnector />
+
+      <ColumnItemTextsContainer>
         <ItemTitle>Endorsements</ItemTitle>
         <ItemSubtitle>{paymentsHistory.endorsements.filter(item => item.isChecked).length} / {paymentsHistory.endorsements.length}</ItemSubtitle>
 
