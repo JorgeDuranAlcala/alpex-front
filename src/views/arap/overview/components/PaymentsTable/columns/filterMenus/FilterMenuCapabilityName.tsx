@@ -1,56 +1,71 @@
+// ** React Imports
+import { useContext, useRef } from 'react'
+
 // ** MUI Imports
-import MenuItem from '@mui/material/MenuItem'
+import Box from '@mui/material/Box'
+import Input from '@mui/material/Input'
+import InputAdornment from '@mui/material/InputAdornment'
+
+// ** Icon Imports
+import Icon from 'src/@core/components/icon'
 
 
-// ** Custom utilities
-import { OptionsARAPCapabilityName } from '@/views/arap/overview/constants/OptionsARAPCapabilityName'
 import { PaymentsContext } from '@/views/arap/overview/context/payments/PaymentsContext'
-import { ARAPCapabilityName } from '@/views/arap/overview/interfaces/QueryFilters'
-import { useContext } from 'react'
+import { EFieldColumn } from '../efieldColumn'
 
-
-interface FilterMenuOptionProps {
-  value: ARAPCapabilityName;
-  text: string;
+interface FilterMenuCapabilityNameProps {
   handleClose?: () => void
 }
+const FilterMenuCapabilityName = ({ handleClose }: FilterMenuCapabilityNameProps) => {
 
-const FilterMenuOption: React.FC<FilterMenuOptionProps> = ({ value, text }) => {
-  const { handleChangeFilters } = useContext(PaymentsContext);
+  const { handleChangeFilters, handleDeleteFilters } = useContext(PaymentsContext);
+  const searchTimeOutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const handleClick = () => {
 
-    handleChangeFilters({
-      type: 'capabilityName',
-      value,
-      text
-    });
 
+  const handleOnChangeSearch = (value: string) => {
+    if (searchTimeOutRef.current) {
+
+      clearTimeout(searchTimeOutRef.current);
+    }
+    searchTimeOutRef.current = setTimeout(() => {
+      if (value === '') handleDeleteFilters(EFieldColumn.CAPABILITY_NAME)
+      else
+        handleChangeFilters({
+          type: EFieldColumn.CAPABILITY_NAME,
+          value: `${value}`,
+          text: `${value}`
+        })
+
+    }, 500);
+  }
+
+  const handleCloseOnEnter = (key: string) => {
+    if (handleClose && key === 'Enter') {
+
+      handleClose();
+    }
   }
 
   return (
-    <>
-      <MenuItem
-        className='account-menu-item'
-        sx={{ padding: '14px 10px', borderRadius: '0' }}
-        onClick={() => {
-          handleClick()
+    <Box component={'li'} sx={{ padding: '3px 30px', display: 'flex', alignItems: 'center', width: '100%' }}>
+      <Input
+        placeholder='Search by Capability Name'
+        onChange={e => handleOnChangeSearch(e.target.value)}
+        onKeyDown={e => handleCloseOnEnter(e.key)}
+        sx={{
+          fontFamily: 'Inter',
+          fontSize: '16px',
+          width: '100%',
+          '&:before, &:after': { display: 'none' }
         }}
-      >
-        {text}
-      </MenuItem>
-    </>
-  )
-}
-
-const FilterMenuCapabilityName = ({ }) => {
-  return (
-    <>
-      {OptionsARAPCapabilityName.map((item) => (
-
-        <FilterMenuOption key={item.value} value={item.value} text={item.text} />
-      ))}
-    </>
+        startAdornment={
+          <InputAdornment position='start' sx={{ color: 'text.disabled' }}>
+            <Icon icon='mdi:magnify' fontSize='1.375rem' />
+          </InputAdornment>
+        }
+      />
+    </Box>
   )
 }
 

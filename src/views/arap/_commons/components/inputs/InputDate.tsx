@@ -9,10 +9,10 @@ import {
 } from '@mui/material';
 import { ForwardedRef, forwardRef } from 'react';
 import DatePicker from 'react-datepicker';
-import type { InputDateProps } from '../../../interfaces/InputDate';
+import type { InputDateProps } from '../../interfaces/InputDateProps';
 
 
-export const InputDate = ({ value, onChange }: InputDateProps) => {
+export const InputDate = ({ value, onChange, isDisabled }: InputDateProps) => {
   return (
 
     <Grid item xs={12} sm={12} sx={{ width: '100%' }}>
@@ -23,6 +23,7 @@ export const InputDate = ({ value, onChange }: InputDateProps) => {
           id='date'
           customInput={<CustomInput label='Date' sx={{ mb: 2, mt: 2, width: '100%' }} />}
           onChange={onChange}
+          disabled={isDisabled}
 
           // showTimeSelect
           showMonthDropdown
