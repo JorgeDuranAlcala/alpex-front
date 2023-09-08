@@ -321,7 +321,7 @@ export enum DATA_PROPERTIES_ROUTES {
 // ====
 
 export enum DOCUMENTS_ROUTES {
-  GETBYACCOUNTID = 'documents/get/byAccountId',
+  GETBYACCOUNTID = 'documents/get/by-section',
   MOVEFILE = 'documents/move/file',
   RENAMEFOLDER = 'documents/rename/folder',
   DELETEFILE = 'documents/delete/file',

@@ -628,8 +628,18 @@ const Information: React.FC<InformationProps> = ({
           getIdAccount(res.account.id)
           setAccountId(res.account.id)
           await localStorage.setItem('idAccount', String(res.account.id))
-          createFolder({ folderName: 'Final Slip', accountId: Number(res.account.id) })
-          createFolder({ folderName: 'root', accountId: Number(res.account.id) })
+          createFolder({
+            folderName: 'Final Slip',
+            idRelDocs: {
+              accountId: Number(res.account.id)
+            }
+          })
+          createFolder({
+            folderName: 'root',
+            idRelDocs: {
+              accountId: Number(res.account.id)
+            }
+          })
           if (discountTemp.length > 0) {
             await addDiscounts(discountTemp)
             triggerFunction()
