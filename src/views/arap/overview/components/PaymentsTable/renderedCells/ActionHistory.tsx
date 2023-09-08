@@ -23,7 +23,7 @@ export const ActionHistory = ({ transactionId }: ActionHistoryProps) => {
     <>
       <Button onClick={handleClick} variant="outlined">History</Button>
 
-      <Dialog open={isOpenModal} onClose={handleClose} fullWidth maxWidth="lg" >
+      <Dialog open={isOpenModal} onClose={handleClose} fullWidth maxWidth="xl" >
 
         <Box>
           <DialogTitle>

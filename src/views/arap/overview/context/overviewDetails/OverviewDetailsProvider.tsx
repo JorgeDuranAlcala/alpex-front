@@ -198,14 +198,12 @@ export const OverViewDetailsProvider = ({ children }: { children: ReactNode }) =
     const detailsGrid = payableGrid || receivableGrid || differenceGrid
 
     if (!detailsGrid) return;
-    if (payableGrid!.payableGridList.length === 0) return;
-    if (receivableGrid!.receivableGridList.length === 0) return;
-    if (differenceGrid!.differenceGridList.length === 0) return;
 
     setIsLoading(true);
 
     switch (detailsType) {
       case 'Payable':
+        if (payableGrid!.payableGridList.length === 0) return;
         const tempPayableFilters: Filter[] = payableGrid!.filters || [];
 
         // Todo: reemplazar este Timeout por el servicio que se implementará
@@ -220,6 +218,8 @@ export const OverViewDetailsProvider = ({ children }: { children: ReactNode }) =
         break;
 
       case 'Receivable':
+
+        if (receivableGrid!.receivableGridList.length === 0) return;
         const tempReceivableFilters: Filter[] = receivableGrid!.filters || [];
 
         // Todo: reemplazar este Timeout por el servicio que se implementará
@@ -234,6 +234,8 @@ export const OverViewDetailsProvider = ({ children }: { children: ReactNode }) =
         break;
 
       case 'Difference':
+
+        if (differenceGrid!.differenceGridList.length === 0) return;
         const tempDifferenceFilters: Filter[] = differenceGrid!.filters || [];
 
         // Todo: reemplazar este Timeout por el servicio que se implementará
@@ -261,14 +263,12 @@ export const OverViewDetailsProvider = ({ children }: { children: ReactNode }) =
     const detailsGrid = payableGrid || receivableGrid || differenceGrid
 
     if (!detailsGrid) return;
-    if (payableGrid!.payableGridList.length === 0) return;
-    if (receivableGrid!.receivableGridList.length === 0) return;
-    if (differenceGrid!.differenceGridList.length === 0) return;
 
     setIsLoading(true);
 
     switch (detailsType) {
       case 'Payable':
+        if (payableGrid!.payableGridList.length === 0) return;
         const tempPayableFilters: Filter[] = payableGrid!.filters.filter(filterItem => filterItem.type !== type);
 
         // Todo: reemplazar este Timeout por el servicio que se implementará
@@ -283,6 +283,7 @@ export const OverViewDetailsProvider = ({ children }: { children: ReactNode }) =
         break;
 
       case 'Receivable':
+        if (receivableGrid!.receivableGridList.length === 0) return;
         const tempReceivableFilters: Filter[] = receivableGrid!.filters.filter(filterItem => filterItem.type !== type);
 
         // Todo: reemplazar este Timeout por el servicio que se implementará
@@ -297,6 +298,7 @@ export const OverViewDetailsProvider = ({ children }: { children: ReactNode }) =
         break;
 
       case 'Difference':
+        if (differenceGrid!.differenceGridList.length === 0) return;
         const tempDifferenceFilters: Filter[] = differenceGrid!.filters.filter(filterItem => filterItem.type !== type);
 
         // Todo: reemplazar este Timeout por el servicio que se implementará

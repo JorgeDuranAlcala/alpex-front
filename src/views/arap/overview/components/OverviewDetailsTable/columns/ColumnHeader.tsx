@@ -21,6 +21,7 @@ import { EFieldColumn } from './efieldColumn'
 
 // import { SwitcherFilterMenus } from './filterMenus/SwitcherFilterMenus'
 import { DetailsType } from '../../../interfaces/overview/DetailsType'
+import { SwitcherFilterMenus } from './filterMenus/SwitchFilterMenus'
 
 interface IColunmHeader {
   colDef: GridStateColDef
@@ -105,7 +106,7 @@ const ColumnHeader: React.FC<IColunmHeader> = ({ colDef, detailsType, showIcon =
         }}
         PaperProps={{ style: { minWidth: widthMenu, borderRadius: '10px' } }}
       >
-        {/* <SwitcherFilterMenus field={field} handleClose={handleClose} /> */}
+        <SwitcherFilterMenus field={field} handleClose={handleClose} detailsType={detailsType} />
       </Menu>
     </Box>
   )
