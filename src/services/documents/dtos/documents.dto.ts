@@ -1,6 +1,11 @@
+export interface IdRelDocs {
+  accountId?: number
+  installmentId?: number
+  securityId?: number
+}
 export interface CreateFolder {
   folderName: string
-  accountId: number
+  idRelDocs: IdRelDocs
 }
 
 export interface responseFolder {
@@ -53,9 +58,15 @@ export interface DeleteFolder {
   folderId: number
 }
 
+export type DocType = 'Information' | 'General' | 'Logo'
+export type Sections = 'accounts' | 'installments' | 'securities'
 export interface UploadFile {
-  accountId: number
   folderId: number
-  documentType: string
+  documentType: DocType
   document: string | any
+}
+
+export interface GetFolders {
+  section: Sections
+  id: number
 }
