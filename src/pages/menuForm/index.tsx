@@ -22,7 +22,7 @@ const MenuForm = ({ idAccountInit }: { idAccountInit?: number | null }) => {
   const { getInfoDoctosByIdAccount } = useGetInfoDoctosByIdAccount()
   const { deleteInformationDocument } = useDeleteInformationDocument()
   const theme = useTheme()
-  const { foldersAccount, setIdUser } = useGetFolders()
+  const { foldersAccount, setInputGetFolder } = useGetFolders()
 
   //States
   const [doctoIdByName, setDoctoIdByName] = useState({})
@@ -36,7 +36,10 @@ const MenuForm = ({ idAccountInit }: { idAccountInit?: number | null }) => {
 
   const handleSidebarMenu = () => {
     setSidebar(!sidebar)
-    setIdUser(Number(localStorage.getItem('idAccount')))
+    setInputGetFolder({
+      id: Number(localStorage.getItem('idAccount')),
+      section: 'accounts'
+    })
     console.log('Hola')
   }
 

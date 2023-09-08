@@ -8,6 +8,7 @@ import {
   DeleteFolder,
   MoveFile,
   RenameFolder,
+  Sections,
   UploadFile,
   responseFolder,
   responseFoldersByAccount
@@ -17,13 +18,14 @@ import {
  *  service responsible of the reports methods
  */
 class DocumentsServices {
-  async getDocumentsById(accountId: number | undefined): Promise<responseFoldersByAccount[]> {
+  async getDocumentsById(section: Sections, id: number | undefined): Promise<responseFoldersByAccount[]> {
     try {
-      const { data } = await AppAlpexApiGateWay.get<Promise<responseFoldersByAccount[]>>(
-        `${DOCUMENTS_ROUTES.GETBYACCOUNTID}/${accountId}`
+      const response = await AppAlpexApiGateWay.get<Promise<responseFoldersByAccount[]>>(
+        `${DOCUMENTS_ROUTES.GETBYACCOUNTID}`,
+        { params: { section, id } }
       )
 
-      return data
+      return response.data
     } catch (error) {
       const message = String(error)
       throw new Error(message)
