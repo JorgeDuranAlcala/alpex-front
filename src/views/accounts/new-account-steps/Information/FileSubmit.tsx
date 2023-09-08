@@ -36,7 +36,7 @@ import { useRouter } from 'next/router'
 import Icon from 'src/@core/components/icon'
 
 const Accordion = styled((props: AccordionProps) => <MuiAccordion disableGutters elevation={0} square {...props} />)(
-  ({ }) => ({
+  ({}) => ({
     border: 'none',
     '&:not(:last-child)': {
       borderBottom: 0
@@ -115,10 +115,9 @@ const FileSubmit: React.FC<UserFileProps> = ({
   // const [openList, setOpenList] = useState<boolean>(false)
 
   // Menu management
-  const [openItemMenu, setOpenItemMenu] = useState<number | null>(null);
-  const [openFolderList, setOpenFolderList] = useState<string | null>(null);
+  const [openItemMenu, setOpenItemMenu] = useState<number | null>(null)
+  const [openFolderList, setOpenFolderList] = useState<string | null>(null)
   const [currentFile, setCurrentFile] = useState<responseFile | null>(null) // saves the row wehen user click on actions button
-
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [reloadInfo, setReloadInfo] = useState<any>()
@@ -130,7 +129,7 @@ const FileSubmit: React.FC<UserFileProps> = ({
   const [optionValue, setOptionValue] = useState<string | undefined>('')
   const router = useRouter()
   const { folders, createFolder, successAddFolder, setSuccessAddFolder } = useAddFolder()
-  const { foldersAccount, setIdUser, findById } = useGetFolders()
+  const { foldersAccount, setInputGetFolder, findById } = useGetFolders()
   const { uploadFile, setUpload, successUploadFolder, setSuccessUploadFolder } = useUploadFile()
   const { removeFile, setRemove, successDeleteFile, setSuccessDeleteFile } = useRemoveFile()
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -196,7 +195,7 @@ const FileSubmit: React.FC<UserFileProps> = ({
   }
 
   const onButtonClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    console.log("on add file click")
+    console.log('on add file click')
     console.log(idAccountInit)
     e.preventDefault()
     console.log(e)
@@ -224,11 +223,13 @@ const FileSubmit: React.FC<UserFileProps> = ({
   const handleRemoveFileRoot = async (e: any) => {
     const idFileRemove = JSON.stringify(fileIdToDelete)
     await setRemove({ filesId: [Number(idFileRemove)] })
-    findById(idAccountInit || Number(localStorage.getItem('idAccount')))
+    findById({
+      id: idAccountInit || Number(localStorage.getItem('idAccount')),
+      section: 'accounts'
+    })
     setSuccessDeleteFile(true)
     setOpenDeleteRoot(false)
-    if (currentFile)
-      toggleMenu(currentFile)
+    if (currentFile) toggleMenu(currentFile)
   }
 
   const handleRemoveFile = async (e: any, file: responseFile) => {
@@ -239,42 +240,46 @@ const FileSubmit: React.FC<UserFileProps> = ({
     console.log(file)
     await setRemove({ filesId: [Number(idFileRemove)] })
     console.log(removeFile)
-    findById(idAccountInit || Number(localStorage.getItem('idAccount')))
+    findById({
+      id: idAccountInit || Number(localStorage.getItem('idAccount')),
+      section: 'accounts'
+    })
     setSuccessDeleteFile(true)
     setOpenDelete(false)
   }
 
   useEffect(() => {
     if (successDeleteFile) {
-      findById(idAccountInit || Number(localStorage.getItem('idAccount'))).then(() => setSuccessDeleteFile(false))
+      findById({
+        id: idAccountInit || Number(localStorage.getItem('idAccount')),
+        section: 'accounts'
+      }).then(() => setSuccessDeleteFile(false))
     }
   }, [successDeleteFile])
 
   const handleMoveFolderInto = (e: any, pathId: string | null) => {
     e.preventDefault
-    if (openFolderList ===  pathId) {
-      setOpenFolderList(null); // Si el menú está abierto, ciérralo
+    if (openFolderList === pathId) {
+      setOpenFolderList(null) // Si el menú está abierto, ciérralo
     } else {
-      setOpenFolderList(pathId); // Si el menú está cerrado, ábrelo
+      setOpenFolderList(pathId) // Si el menú está cerrado, ábrelo
     }
   }
 
-
   const toggleMenu = (file: responseFile) => {
-
     if (openItemMenu === file.fileId) {
-      setOpenItemMenu(null); // Si el menú está abierto, ciérralo
-      setOpenFolderList(null);
+      setOpenItemMenu(null) // Si el menú está abierto, ciérralo
+      setOpenFolderList(null)
     } else {
-      setOpenItemMenu(file.fileId); // Si el menú está cerrado, ábrelo
-      setCurrentFile(file || null);
+      setOpenItemMenu(file.fileId) // Si el menú está cerrado, ábrelo
+      setCurrentFile(file || null)
       const idOptions = 'options-f-' + file.fileId
       const menuOptions = document.getElementById(idOptions)
       setIdFolderDelete(idOptions)
       setOptionValue(menuOptions?.id)
       console.log('optionvalue', optionValue)
     }
-  };
+  }
 
   const handleInfoToFolder = async (
     e: any,
@@ -287,7 +292,6 @@ const FileSubmit: React.FC<UserFileProps> = ({
     const fileB64: any = await fileToBase64(selectedFileParam ? selectedFileParam[0] : selectedFile)
     const nameFile = selectedFileParam ? selectedFileParam[0].name : selectedFile?.name
     setUpload({
-      accountId: idAccountInit || Number(router.query.idAccount),
       folderId: idFolder,
       documentType: 'General',
       document: { type: selectedFile?.type, name: nameFile, base64: fileB64.split(',')[1] }
@@ -299,13 +303,19 @@ const FileSubmit: React.FC<UserFileProps> = ({
     }
 
     setSelectedFile(null)
-    findById(idAccountInit || Number(localStorage.getItem('idAccount')))
+    findById({
+      id: idAccountInit || Number(localStorage.getItem('idAccount')),
+      section: 'accounts'
+    })
     setSuccessUploadFolder(true)
   }
 
   useEffect(() => {
     if (successUploadFolder) {
-      findById(idAccountInit || Number(localStorage.getItem('idAccount'))).then(() => setSuccessUploadFolder(false))
+      findById({
+        id: idAccountInit || Number(localStorage.getItem('idAccount')),
+        section: 'accounts'
+      }).then(() => setSuccessUploadFolder(false))
     }
   }, [successUploadFolder])
 
@@ -316,10 +326,13 @@ const FileSubmit: React.FC<UserFileProps> = ({
 
     setmoveToFolder({ destinationFolderId: idFolder, fileId: Number(idFileMove) })
 
-    findById(idAccountInit || Number(localStorage.getItem('idAccount')))
+    findById({
+      id: idAccountInit || Number(localStorage.getItem('idAccount')),
+      section: 'accounts'
+    })
 
     setSuccessMoveFile(true)
-    setOpenFolderList(null);
+    setOpenFolderList(null)
     setOpenItemMenu(null)
 
     // console.log(moveFile)
@@ -328,14 +341,19 @@ const FileSubmit: React.FC<UserFileProps> = ({
 
   useEffect(() => {
     if (successMoveFile) {
-      findById(idAccountInit || Number(localStorage.getItem('idAccount'))).then(() => setSuccessMoveFile(false))
+      findById({
+        id: idAccountInit || Number(localStorage.getItem('idAccount')),
+        section: 'accounts'
+      }).then(() => setSuccessMoveFile(false))
     }
   }, [successMoveFile])
 
   useEffect(() => {
-    setIdUser(idAccountInit || Number(localStorage.getItem('idAccount')))
-    if (idAccountInit)
-      findById(idAccountInit)
+    setInputGetFolder({
+      id: idAccountInit || Number(localStorage.getItem('idAccount')),
+      section: 'accounts'
+    })
+    if (idAccountInit) findById({ id: idAccountInit, section: 'accounts' })
     setReloadInfo(foldersAccount)
     console.log('🚀 ~ file: FileSubmit.tsx:304 ~ useEffect ~ foldersAccount:', foldersAccount)
   }, [router.query.idAccount, idAccountInit])
@@ -343,14 +361,25 @@ const FileSubmit: React.FC<UserFileProps> = ({
   const onAddFolder = (e: any) => {
     e.preventDefault
     const nameFolder = 'New Folder ' + foldersAccount.length
-    createFolder({ folderName: nameFolder, accountId: Number(localStorage.getItem('idAccount')) })
-    findById(idAccountInit || Number(localStorage.getItem('idAccount')))
+    createFolder({
+      folderName: nameFolder,
+      idRelDocs: {
+        accountId: Number(localStorage.getItem('idAccount'))
+      }
+    })
+    findById({
+      id: idAccountInit || Number(localStorage.getItem('idAccount')),
+      section: 'accounts'
+    })
     setSuccessAddFolder(true)
   }
 
   useEffect(() => {
     if (successAddFolder) {
-      findById(idAccountInit || Number(localStorage.getItem('idAccount'))).then(() => setSuccessAddFolder(false))
+      findById({
+        id: idAccountInit || Number(localStorage.getItem('idAccount')),
+        section: 'accounts'
+      }).then(() => setSuccessAddFolder(false))
     }
   }, [successAddFolder, folders])
 
@@ -408,13 +437,19 @@ const FileSubmit: React.FC<UserFileProps> = ({
       menu[i].classList.add('menu-dots-none')
     }
     console.log(removeFolder)
-    findById(idAccountInit || Number(localStorage.getItem('idAccount')))
+    findById({
+      id: idAccountInit || Number(localStorage.getItem('idAccount')),
+      section: 'accounts'
+    })
     setSuccessDeletefolder(true)
   }
 
   useEffect(() => {
     if (successDeleteFolder) {
-      findById(idAccountInit || Number(localStorage.getItem('idAccount'))).then(() => setSuccessDeletefolder(false))
+      findById({
+        id: idAccountInit || Number(localStorage.getItem('idAccount')),
+        section: 'accounts'
+      }).then(() => setSuccessDeletefolder(false))
     }
   }, [successDeleteFolder])
 
@@ -423,7 +458,10 @@ const FileSubmit: React.FC<UserFileProps> = ({
     const newNameFolder = renameValue
     console.log(folder)
     await setRename({ folderId: idFolderRename, newFolderName: newNameFolder })
-    await findById(idAccountInit || Number(localStorage.getItem('idAccount')))
+    await findById({
+      id: idAccountInit || Number(localStorage.getItem('idAccount')),
+      section: 'accounts'
+    })
     setSuccessRenameFolder(true)
     setRenameValue('')
     setIdFolderRename(null)
@@ -431,7 +469,10 @@ const FileSubmit: React.FC<UserFileProps> = ({
 
   useEffect(() => {
     if (successRenameFolder) {
-      findById(idAccountInit || Number(localStorage.getItem('idAccount'))).then(() => setSuccessRenameFolder(false))
+      findById({
+        id: idAccountInit || Number(localStorage.getItem('idAccount')),
+        section: 'accounts'
+      }).then(() => setSuccessRenameFolder(false))
     }
   }, [successRenameFolder])
 
@@ -480,48 +521,51 @@ const FileSubmit: React.FC<UserFileProps> = ({
                         </IconButton>
 
                         {openItemMenu === fileElement.fileId && (
-                          <div
-                            className='menu-options'
-                            id={'options-f-' + fileElement.fileId.toString()}
-                          >
+                          <div className='menu-options' id={'options-f-' + fileElement.fileId.toString()}>
                             <div className='option' onClick={e => handlePreview(e, fileElement.filePath)}>
                               Preview
                               <Icon icon={'ic:outline-remove-red-eye'} fontSize={24} color='rgba(87, 90, 111, 0.54)' />
                             </div>
                             <div className='option' onClick={e => handleMoveFolderInto(e, fileElement.filePath)}>
                               Move to Folder
-                              <Icon icon={'ic:baseline-drive-file-move'} fontSize={24} color='rgba(87, 90, 111, 0.54)' />
+                              <Icon
+                                icon={'ic:baseline-drive-file-move'}
+                                fontSize={24}
+                                color='rgba(87, 90, 111, 0.54)'
+                              />
                             </div>
                             <div className='option' onClick={e => handleDownload(e, index, fileElement)}>
                               Download
                               <Icon icon={'mdi:download'} fontSize={24} color='rgba(87, 90, 111, 0.54)' />
                             </div>
-                            <div className='option' onClick={() => {
-                              setFileIdToDelete(fileElement.fileId)
-                              setOpenDeleteRoot(true)
-                            }
-                            }>
+                            <div
+                              className='option'
+                              onClick={() => {
+                                setFileIdToDelete(fileElement.fileId)
+                                setOpenDeleteRoot(true)
+                              }}
+                            >
                               Delete
                               <Icon icon={'ic:outline-delete'} fontSize={24} color='rgba(87, 90, 111, 0.54)' />
                             </div>
-                            {openFolderList === fileElement.filePath &&
-                            <div
-                              className='menu-options'
-                              id={'folder-' + fileElement.filePath}
-                            >
-                              {foldersAccount.map((folder, index) => {
-                                return (
-                                  folder.folderName.split('_')[0] !== 'root' && <div
-                                    id={'option-' + index}
-                                    key={'option-' + index}
-                                    className='option'
-                                    onClick={e => handleMoveFileToFolder(e, fileElement, folder.folderId)}
-                                  >
-                                    { folder.folderName.split('_')[0]}
-                                  </div>
-                                )
-                              })}
-                            </div> }
+                            {openFolderList === fileElement.filePath && (
+                              <div className='menu-options' id={'folder-' + fileElement.filePath}>
+                                {foldersAccount.map((folder, index) => {
+                                  return (
+                                    folder.folderName.split('_')[0] !== 'root' && (
+                                      <div
+                                        id={'option-' + index}
+                                        key={'option-' + index}
+                                        className='option'
+                                        onClick={e => handleMoveFileToFolder(e, fileElement, folder.folderId)}
+                                      >
+                                        {folder.folderName.split('_')[0]}
+                                      </div>
+                                    )
+                                  )
+                                })}
+                              </div>
+                            )}
 
                             <Modal
                               className='delete-modal'
@@ -563,7 +607,6 @@ const FileSubmit: React.FC<UserFileProps> = ({
                             </Modal>
                           </div>
                         )}
-
                       </div>
                     </div>
                   )
@@ -575,252 +618,261 @@ const FileSubmit: React.FC<UserFileProps> = ({
         <div>
           {foldersAccount && foldersAccount.length > 0
             ? foldersAccount
-              .filter(folder => folder.folderName.split('_')[0] !== 'root')
-              .map(
-                (
-                  folder: {
-                    folderName: string
-                    files: any[]
-                  },
-                  index
-                ) => {
-                  return (
-                    <div key={'folder' + index}>
-                      <List component='nav'>
-                        <Icon
-                          icon='mi:options-vertical'
-                          className='icon-dots'
-                          color='#FFFFFF'
-                          id={index + '-dots'}
-                          onClick={e => clickDots(e)}
-                        />
-                        <div className={`${index}-dots-menu print-options menu-dots-none`}>
-                          <div
-                            key='renombrar'
-                            className='language'
-                            onClick={() => {
-                              renameFolderFunction(folder, index)
-                            }}
-                          >
-                            Rename
-                          </div>
-                          <div
-                            key='eliminar'
-                            className='language'
-                            onClick={() => {
-                              deleteFolder(folder, index)
-                            }}
-                          >
-                            Delete
-                          </div>
-                        </div>
-                        <Modal
-                          className='delete-modal'
-                          open={openRename}
-                          onClose={() => {
-                            setOpenRename(false)
-                          }}
-                        >
-                          <Box className='modal-wrapper'>
-                            <HeaderTitleModal>
-                              <Typography variant='h6'>New folder name</Typography>
-                              <ButtonClose
-                                onClick={() => {
-                                  setOpenRename(false)
-                                }}
-                              >
-                                <CloseIcon />
-                              </ButtonClose>
-                            </HeaderTitleModal>
-                            <TextField
-                              fullWidth
-                              autoFocus
-                              value={renameValue}
-                              defaultValue=''
-                              onChange={handleInputChange}
-                              label='Rename folder'
-                              id={'rename-folder-' + index}
-                            />
-                            <Button
-                              style={{ marginTop: '24px' }}
-                              className='header-modal-btn'
-                              variant='contained'
-                              onClick={e => handleRenameFolder(e, folder)}
-                            >
-                              RENAME
-                            </Button>
-                            <Button
-                              className='close-modal header-modal-btn'
+                .filter(folder => folder.folderName.split('_')[0] !== 'root')
+                .map(
+                  (
+                    folder: {
+                      folderName: string
+                      files: any[]
+                    },
+                    index
+                  ) => {
+                    return (
+                      <div key={'folder' + index}>
+                        <List component='nav'>
+                          <Icon
+                            icon='mi:options-vertical'
+                            className='icon-dots'
+                            color='#FFFFFF'
+                            id={index + '-dots'}
+                            onClick={e => clickDots(e)}
+                          />
+                          <div className={`${index}-dots-menu print-options menu-dots-none`}>
+                            <div
+                              key='renombrar'
+                              className='language'
                               onClick={() => {
-                                setOpenDelete(false)
+                                renameFolderFunction(folder, index)
                               }}
                             >
-                              CANCEL
-                            </Button>
-                          </Box>
-                        </Modal>
-                        <Accordion
-                          expanded={expanded === 'panel' + index}
-                          onChange={handleChange('panel' + index)}
-                          style={{ boxShadow: 'none', borderTop: 'none' }}
-                        >
-                          <AccordionSummary
-                            aria-controls={'panel' + index + 'd-content'}
-                            id={'panel' + index + 'd-header'}
-                            style={{ padding: '0' }}
-                            className='final-slip'
-                          >
-                            <ListItemButton
-                              sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}
+                              Rename
+                            </div>
+                            <div
+                              key='eliminar'
+                              className='language'
+                              onClick={() => {
+                                deleteFolder(folder, index)
+                              }}
                             >
-                              <Typography sx={{ color: '#FFF' }}>{folder.folderName.split('_')[0]} </Typography>
-                            </ListItemButton>
-                          </AccordionSummary>
-                          <AccordionDetails>
-                            {folder.files.length <= 0 && (
-                              <List component='div' disablePadding>
-                                <ListItem disablePadding>
-                                  <ListItemButton sx={{ pl: 8 }}>
-                                    <ListItemIcon sx={{ mr: 4 }}></ListItemIcon>
-                                    <ListItemText primary='Scheduled' />
-                                  </ListItemButton>
-                                </ListItem>
-                              </List>
-                            )}
-                            <div className='uploaded-files'>
-                              {folder.files.map((fileElement, index) => {
-                                const currentFolder = folder.folderName.split('_')[0]
+                              Delete
+                            </div>
+                          </div>
+                          <Modal
+                            className='delete-modal'
+                            open={openRename}
+                            onClose={() => {
+                              setOpenRename(false)
+                            }}
+                          >
+                            <Box className='modal-wrapper'>
+                              <HeaderTitleModal>
+                                <Typography variant='h6'>New folder name</Typography>
+                                <ButtonClose
+                                  onClick={() => {
+                                    setOpenRename(false)
+                                  }}
+                                >
+                                  <CloseIcon />
+                                </ButtonClose>
+                              </HeaderTitleModal>
+                              <TextField
+                                fullWidth
+                                autoFocus
+                                value={renameValue}
+                                defaultValue=''
+                                onChange={handleInputChange}
+                                label='Rename folder'
+                                id={'rename-folder-' + index}
+                              />
+                              <Button
+                                style={{ marginTop: '24px' }}
+                                className='header-modal-btn'
+                                variant='contained'
+                                onClick={e => handleRenameFolder(e, folder)}
+                              >
+                                RENAME
+                              </Button>
+                              <Button
+                                className='close-modal header-modal-btn'
+                                onClick={() => {
+                                  setOpenDelete(false)
+                                }}
+                              >
+                                CANCEL
+                              </Button>
+                            </Box>
+                          </Modal>
+                          <Accordion
+                            expanded={expanded === 'panel' + index}
+                            onChange={handleChange('panel' + index)}
+                            style={{ boxShadow: 'none', borderTop: 'none' }}
+                          >
+                            <AccordionSummary
+                              aria-controls={'panel' + index + 'd-content'}
+                              id={'panel' + index + 'd-header'}
+                              style={{ padding: '0' }}
+                              className='final-slip'
+                            >
+                              <ListItemButton
+                                sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}
+                              >
+                                <Typography sx={{ color: '#FFF' }}>{folder.folderName.split('_')[0]} </Typography>
+                              </ListItemButton>
+                            </AccordionSummary>
+                            <AccordionDetails>
+                              {folder.files.length <= 0 && (
+                                <List component='div' disablePadding>
+                                  <ListItem disablePadding>
+                                    <ListItemButton sx={{ pl: 8 }}>
+                                      <ListItemIcon sx={{ mr: 4 }}></ListItemIcon>
+                                      <ListItemText primary='Scheduled' />
+                                    </ListItemButton>
+                                  </ListItem>
+                                </List>
+                              )}
+                              <div className='uploaded-files'>
+                                {folder.files.map((fileElement, index) => {
+                                  const currentFolder = folder.folderName.split('_')[0]
 
-                                return (
-                                  <div key={index} className='file-details'>
-                                    <Typography className='file-name'>{fileElement.name}</Typography>
-                                    <div className='menu-btn'>
-                                      <IconButton
-                                        onClick={() => {
-                                          // clickOpenOptions(fileElement)
-                                          toggleMenu(fileElement)
-                                        }}
-                                      >
-                                        <Icon icon='mdi:dots-vertical' fontSize={20} />
-                                      </IconButton>
-                                      {openItemMenu === fileElement.fileId && (
-                                        <div
-                                          className='menu-options'
-                                          id={'options-f-' + fileElement.fileId.toString()}
+                                  return (
+                                    <div key={index} className='file-details'>
+                                      <Typography className='file-name'>{fileElement.name}</Typography>
+                                      <div className='menu-btn'>
+                                        <IconButton
+                                          onClick={() => {
+                                            // clickOpenOptions(fileElement)
+                                            toggleMenu(fileElement)
+                                          }}
                                         >
-                                          <div className='option' onClick={e => handlePreview(e, fileElement.filePath)}>
-                                            Preview
-                                            <Icon
-                                              icon={'ic:outline-remove-red-eye'}
-                                              fontSize={24}
-                                              color='rgba(87, 90, 111, 0.54)'
-                                            />
-                                          </div>
-                                          <div
-                                            className='option'
-                                            onClick={e => handleMoveFolderInto(e, fileElement.filePath)}
-                                          >
-                                            Move to Folder
-                                            <Icon
-                                              icon={'ic:baseline-drive-file-move'}
-                                              fontSize={24}
-                                              color='rgba(87, 90, 111, 0.54)'
-                                            />
-                                          </div>
-                                          <div className='option' onClick={e => handleDownload(e, index, fileElement)}>
-                                            Download
-                                            <Icon icon={'mdi:download'} fontSize={24} color='rgba(87, 90, 111, 0.54)' />
-                                          </div>
-                                          <div className='option' onClick={() => setOpenDelete(true)}>
-                                            Delete
-                                            <Icon
-                                              icon={'ic:outline-delete'}
-                                              fontSize={24}
-                                              color='rgba(87, 90, 111, 0.54)'
-                                            />
-                                          </div>
-                                          {openFolderList === fileElement.filePath &&
+                                          <Icon icon='mdi:dots-vertical' fontSize={20} />
+                                        </IconButton>
+                                        {openItemMenu === fileElement.fileId && (
                                           <div
                                             className='menu-options'
-                                            id={'folder-' + fileElement.filePath}
+                                            id={'options-f-' + fileElement.fileId.toString()}
                                           >
-                                            {foldersAccount.map((folder, index) => {
+                                            <div
+                                              className='option'
+                                              onClick={e => handlePreview(e, fileElement.filePath)}
+                                            >
+                                              Preview
+                                              <Icon
+                                                icon={'ic:outline-remove-red-eye'}
+                                                fontSize={24}
+                                                color='rgba(87, 90, 111, 0.54)'
+                                              />
+                                            </div>
+                                            <div
+                                              className='option'
+                                              onClick={e => handleMoveFolderInto(e, fileElement.filePath)}
+                                            >
+                                              Move to Folder
+                                              <Icon
+                                                icon={'ic:baseline-drive-file-move'}
+                                                fontSize={24}
+                                                color='rgba(87, 90, 111, 0.54)'
+                                              />
+                                            </div>
+                                            <div
+                                              className='option'
+                                              onClick={e => handleDownload(e, index, fileElement)}
+                                            >
+                                              Download
+                                              <Icon
+                                                icon={'mdi:download'}
+                                                fontSize={24}
+                                                color='rgba(87, 90, 111, 0.54)'
+                                              />
+                                            </div>
+                                            <div className='option' onClick={() => setOpenDelete(true)}>
+                                              Delete
+                                              <Icon
+                                                icon={'ic:outline-delete'}
+                                                fontSize={24}
+                                                color='rgba(87, 90, 111, 0.54)'
+                                              />
+                                            </div>
+                                            {openFolderList === fileElement.filePath && (
+                                              <div className='menu-options' id={'folder-' + fileElement.filePath}>
+                                                {foldersAccount.map((folder, index) => {
+                                                  return (
+                                                    folder.folderName.split('_')[0] !== currentFolder && (
+                                                      <div
+                                                        id={'option-' + index}
+                                                        className='option'
+                                                        onClick={e =>
+                                                          handleMoveFileToFolder(e, fileElement, folder.folderId)
+                                                        }
+                                                      >
+                                                        {folder.folderName.split('_')[0]}
+                                                      </div>
+                                                    )
+                                                  )
+                                                })}
+                                              </div>
+                                            )}
 
-                                              return (
-                                                folder.folderName.split('_')[0] !== currentFolder &&
-                                                <div
-                                                  id={'option-' + index}
-                                                  className='option'
-                                                  onClick={e => handleMoveFileToFolder(e, fileElement, folder.folderId)}
+                                            <Modal
+                                              className='delete-modal'
+                                              open={openDelete}
+                                              onClose={() => {
+                                                setOpenDelete(false)
+                                              }}
+                                            >
+                                              <Box className='modal-wrapper'>
+                                                <HeaderTitleModal>
+                                                  <Typography variant='h6'>
+                                                    Are you sure you want to delete this file?
+                                                  </Typography>
+                                                  <ButtonClose
+                                                    onClick={() => {
+                                                      setOpenDelete(false)
+                                                    }}
+                                                  >
+                                                    <CloseIcon />
+                                                  </ButtonClose>
+                                                </HeaderTitleModal>
+                                                <div className='delete-modal-text'>This action can’t be undone.</div>
+                                                <Button
+                                                  className='header-modal-btn'
+                                                  variant='contained'
+                                                  id={'delete-folder-' + fileElement.fileId}
+                                                  onClick={e => handleRemoveFile(e, fileElement)}
                                                 >
-                                                  {folder.folderName.split('_')[0]}
-                                                </div>
-                                              )
-                                            })}
-                                          </div>}
-
-                                          <Modal
-                                            className='delete-modal'
-                                            open={openDelete}
-                                            onClose={() => {
-                                              setOpenDelete(false)
-                                            }}
-                                          >
-                                            <Box className='modal-wrapper'>
-                                              <HeaderTitleModal>
-                                                <Typography variant='h6'>
-                                                  Are you sure you want to delete this file?
-                                                </Typography>
-                                                <ButtonClose
+                                                  DELETE
+                                                </Button>
+                                                <Button
+                                                  className='close-modal header-modal-btn'
                                                   onClick={() => {
                                                     setOpenDelete(false)
                                                   }}
                                                 >
-                                                  <CloseIcon />
-                                                </ButtonClose>
-                                              </HeaderTitleModal>
-                                              <div className='delete-modal-text'>This action can’t be undone.</div>
-                                              <Button
-                                                className='header-modal-btn'
-                                                variant='contained'
-                                                id={'delete-folder-' + fileElement.fileId}
-                                                onClick={e => handleRemoveFile(e, fileElement)}
-                                              >
-                                                DELETE
-                                              </Button>
-                                              <Button
-                                                className='close-modal header-modal-btn'
-                                                onClick={() => {
-                                                  setOpenDelete(false)
-                                                }}
-                                              >
-                                                CANCEL
-                                              </Button>
-                                            </Box>
-                                          </Modal>
-                                        </div>
-                                      )}
-
+                                                  CANCEL
+                                                </Button>
+                                              </Box>
+                                            </Modal>
+                                          </div>
+                                        )}
+                                      </div>
                                     </div>
-                                  </div>
-                                )
-                              })}
-                            </div>
-                          </AccordionDetails>
-                        </Accordion>
+                                  )
+                                })}
+                              </div>
+                            </AccordionDetails>
+                          </Accordion>
 
-                        {/* <Collapse key={'coll-' + index} in={open} timeout='auto' unmountOnExit></Collapse> */}
-                      </List>
-                    </div>
-                  )
-                }
-              )
+                          {/* <Collapse key={'coll-' + index} in={open} timeout='auto' unmountOnExit></Collapse> */}
+                        </List>
+                      </div>
+                    )
+                  }
+                )
             : null}
         </div>
         {/* Buttom actions, render de actions */}
         <div className='actions-icons' style={isPayments ? { marginLeft: '0' } : {}}>
           <Tooltip title='Upload'>
-            <IconButton className="disabled" onClick={e => onButtonClick(e)} >
+            <IconButton className='disabled' onClick={e => onButtonClick(e)}>
               <Icon icon='mdi:upload' color={'#2535A8'} />
             </IconButton>
           </Tooltip>
