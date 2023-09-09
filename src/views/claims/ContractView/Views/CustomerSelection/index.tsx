@@ -1,8 +1,8 @@
 //Import MUI Material
 
-import { Box, FormControl, Grid, InputLabel, Select } from '@mui/material'
+import { Box, Button, FormControl, Grid, InputLabel, Select } from '@mui/material'
 import TextField from '@mui/material/TextField'
-import CustomInput from '../CustomInput'
+import CustomInput from '../../Components/CustomInput'
 
 //Import Styled Components
 import { ContainerInputs, ContainerInstallments, TitleInputs } from '@/styles/Claims/ContractStyles/contractStyles'
@@ -11,10 +11,11 @@ import { ContainerInputs, ContainerInstallments, TitleInputs } from '@/styles/Cl
 import DatePickerWrapper from '@/@core/styles/libs/react-datepicker'
 
 import { Status } from '@/views/arap/overview/components/PaymentsTable/renderedCells/Status'
+import Icon from 'src/@core/components/icon'
 
 import DatePicker from 'react-datepicker'
 import { NumericFormat } from 'react-number-format'
-import PickersTime from '../PickerTime'
+import PickersTime from '../../Components/PickerTime'
 
 const CustomerSelection = () => {
   return (
@@ -23,7 +24,7 @@ const CustomerSelection = () => {
         <Grid item xs={12} sm={6} md={4}>
           <ContainerInputs>
             <TitleInputs>Client</TitleInputs>
-            <FormControl fullWidth sx={{ gap: '12px' }}>
+            <FormControl fullWidth>
               <InputLabel>Name of Client</InputLabel>
               <Select
                 name='economicSector'
@@ -272,6 +273,22 @@ const CustomerSelection = () => {
                 labelId='economic-sector'
               ></Select>
             </FormControl>
+          </ContainerInputs>
+        </Grid>
+        <Grid item xs={12} sm={6} md={4}>
+          <ContainerInputs>
+            <TitleInputs>Contract Files</TitleInputs>
+          </ContainerInputs>
+        </Grid>
+        <Grid item xs={12} sm={6} md={4}>
+          <ContainerInputs>
+            <TitleInputs>Endorsements</TitleInputs>
+            <Box>
+              <Button>
+                View Endorsementys &nbsp;
+                <Icon icon={'lucide:eye'} />
+              </Button>
+            </Box>
           </ContainerInputs>
         </Grid>
       </Grid>
