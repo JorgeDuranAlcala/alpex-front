@@ -1,3 +1,4 @@
+import TextareaAutosize from '@mui/base/TextareaAutosize'
 import { Typography, styled } from '@mui/material'
 
 const TitleContract = styled(Typography)(() => ({
@@ -34,4 +35,29 @@ const ContainerInstallments = styled('div')({
   alignItems: 'center'
 })
 
-export { ContainerInputs, ContainerInstallments, TitleContract, TitleInputs }
+const StyledTextarea = styled(TextareaAutosize)(
+  () => `
+  width: 100%;
+  font-family: IBM Plex Sans, sans-serif;
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 1.5;
+  padding: 12px;
+
+  &:hover {
+    border-color: '#2535a8';
+  }
+
+  &:focus {
+    outline: none;
+border-color: #2535a8;
+  }
+
+  // firefox
+  &:focus-visible {
+    outline: 0;
+  }
+`
+)
+
+export { ContainerInputs, ContainerInstallments, StyledTextarea, TitleContract, TitleInputs }

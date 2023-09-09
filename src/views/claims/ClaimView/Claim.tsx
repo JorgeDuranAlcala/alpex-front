@@ -1,16 +1,16 @@
 import AcordionCard from '../Components/AcordionCard'
 import ButtonSave from '../Components/ButtonSave'
-import CustomerSelection from './Views/CustomerSelection'
+import ClaimRegister from './Views/ClaimRegister'
 
-const Contract = () => {
+const Claim = () => {
   return (
     <>
-      <AcordionCard title={'Contract'}>
-        <CustomerSelection />
+      <AcordionCard title={'Claim'}>
+        <ClaimRegister />
         <ButtonSave />
       </AcordionCard>
     </>
   )
 }
 
-export default Contract
+export default Claim
