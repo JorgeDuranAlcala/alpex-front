@@ -8,8 +8,8 @@ import InputAdornment from '@mui/material/InputAdornment'
 import TextField from '@mui/material/TextField'
 
 //hooks
-import { useAddAccountComment, useGetAccountComments } from '@/hooks/comments/'
-import { CommentDto } from '@/services/comments/dto/comment.dto'
+import { useAddComment, useGetAccountComments } from '@/hooks/comments/'
+import { ResCommentDto } from '@/services/comments/dto/comment.dto'
 
 interface CommentSectionProps {
   disable?: boolean
@@ -34,7 +34,7 @@ const CommentSection = ({ disable = false, step }: CommentSectionProps) => {
   // const [disable, setDisable] = useState(false)
   const [currentComment, setCurrentComment] = useState('')
   const { getAccountComments } = useGetAccountComments()
-  const { addAccountComment } = useAddAccountComment()
+  const { addComment } = useAddComment()
   const [commentGroups, setCommentGroup] = useState<CommentGroup[]>([])
 
   //disable buttons
@@ -105,7 +105,7 @@ const CommentSection = ({ disable = false, step }: CommentSectionProps) => {
     setDisableSaveCommentBtn(true)
     const idAccountCache = Number(localStorage.getItem('idAccount'))
     if (currentComment !== '') {
-      await addAccountComment({
+      await addComment({
         idAccount: idAccountCache,
         comment: currentComment
       })
@@ -123,7 +123,7 @@ const CommentSection = ({ disable = false, step }: CommentSectionProps) => {
     }
   }
 
-  const groupComments = (comments: CommentDto[]) => {
+  const groupComments = (comments: ResCommentDto[]) => {
     setCommentGroup([])
     const commentGroupsTemp: CommentGroup[] = []
     for (const comment of comments) {

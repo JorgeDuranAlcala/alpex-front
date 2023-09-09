@@ -1,2 +1,2 @@
-export * from './useAddAccountComment'
+export * from './useAddComment'
 export * from './useFindAccountComments'
