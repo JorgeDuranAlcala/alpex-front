@@ -6,7 +6,10 @@ export const useGetFolders = () => {
   const [foldersAccount, setfoldersAccount] = useState<responseFoldersByAccount[]>([])
   const [inputGetFolder, setInputGetFolder] = useState<GetFolders>()
   const findById = async (input: GetFolders) => {
-    await DocumentsServices.getDocumentsById(input.section, input.id).then(setfoldersAccount)
+    const result = await DocumentsServices.getDocumentsById(input.section, input.id).then(data => data)
+    setfoldersAccount(result)
+
+    return result
   }
   useEffect(() => {
     inputGetFolder && findById(inputGetFolder)
