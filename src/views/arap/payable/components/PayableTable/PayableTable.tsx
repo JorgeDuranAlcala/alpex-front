@@ -31,7 +31,7 @@ export const PayableTable = () => {
           data: payableGrid ? payableGrid.payableGridList : [],
           groupByColumnName: 'capability_name',
           collapsibleRow: (key, rows) => (
-            <Link href={`#${rows[0].capability_id}`} >
+            <Link href={`payables/reinsurer?id=${rows[0].capability_id}`} >
               <TextBody2 sx={{ color: '#2535A8' }}>
                 {key}
               </TextBody2>

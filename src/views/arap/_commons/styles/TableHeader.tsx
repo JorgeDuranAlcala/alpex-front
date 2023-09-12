@@ -46,6 +46,16 @@ export const Subtitle = styled(Typography)(() => ({
   letterSpacing: '0.15px',
 })) as typeof Typography;
 
+export const Subtitle_1 = styled(Typography)(() => ({
+  fontFeatureSettings: '"clig" off, "liga" off',
+  fontFamily: 'Inter',
+  fontSize: '16px',
+  fontStyle: 'normal',
+  fontWeight: 400,
+  lineHeight: '175%',
+  letterSpacing: '0.15px',
+})) as typeof Typography;
+
 export const Caption = styled(Typography)(() => ({
   fontFeatureSettings: '"clig" off, "liga" off',
   fontFamily: 'Inter',
