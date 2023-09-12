@@ -25,9 +25,11 @@ export enum ACCOUNT_ROUTES {
 }
 
 //Comentario
-export enum ACCOUNT_COMMENTS {
-  ADD_ACCOUNT_COMMENT = 'comments/account/add',
-  GET_ACCOUNT_COMMENTS = 'comments/account'
+export enum COMMENTS {
+  ADD_COMMENT = 'comments/add',
+  GET_ACCOUNT_COMMENTS = 'comments/account',
+  GET_INSTALLMENT_COMMENTS = 'comments/installment',
+  GET_SECURITY_COMMENTS = 'comments/security'
 }
 
 //Account History Log
@@ -321,7 +323,7 @@ export enum DATA_PROPERTIES_ROUTES {
 // ====
 
 export enum DOCUMENTS_ROUTES {
-  GETBYACCOUNTID = 'documents/get/byAccountId',
+  GETBYACCOUNTID = 'documents/get/by-section',
   MOVEFILE = 'documents/move/file',
   RENAMEFOLDER = 'documents/rename/folder',
   DELETEFILE = 'documents/delete/file',
