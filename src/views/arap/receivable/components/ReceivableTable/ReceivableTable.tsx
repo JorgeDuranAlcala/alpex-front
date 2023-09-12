@@ -30,7 +30,7 @@ export const ReceivableTable = () => {
           data: receivableGrid ? receivableGrid.receivableGridList : [],
           groupByColumnName: 'capability_name',
           collapsibleRow: (key, rows) => (
-            <Link href={`#${rows[0].capability_id}`} >
+            <Link href={`receivables/broker?id=${rows[0].capability_id}`} >
               <TextBody2 sx={{ color: '#2535A8' }}>
                 {key}
               </TextBody2>
