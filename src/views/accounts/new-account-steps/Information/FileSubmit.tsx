@@ -180,7 +180,6 @@ const FileSubmit: React.FC<UserFileProps> = ({
         }, 3000)
       }, 500)
     } else {
-
       setFile([...file, ...rawFiles])
 
       // setUserFile([...file, ...rawFiles])
@@ -202,11 +201,13 @@ const FileSubmit: React.FC<UserFileProps> = ({
           idRelDocs: {
             accountId: idAccountInit || Number(localStorage.getItem('idAccount'))
           }
-        })       
+        })
         const accountId = idAccountInit || Number(localStorage.getItem('idAccount'))
-        folderRoot = (await findById({id: accountId, section: 'accounts' })).find(folder => folder.folderName.split('_')[0] === 'root')        
+        folderRoot = (await findById({ id: accountId, section: 'accounts' })).find(
+          folder => folder.folderName.split('_')[0] === 'root'
+        )
         if (folderRoot) {
-          handleInfoToFolder(e, [...file, ...rawFiles].length - 1, 'General', folderRoot.folderId, rawFiles);
+          handleInfoToFolder(e, [...file, ...rawFiles].length - 1, 'General', folderRoot.folderId, rawFiles)
         }
       }
     }
@@ -372,7 +373,7 @@ const FileSubmit: React.FC<UserFileProps> = ({
       section: 'accounts'
     })
     if (idAccountInit) findById({ id: idAccountInit, section: 'accounts' })
-    setReloadInfo(foldersAccount)    
+    setReloadInfo(foldersAccount)
   }, [router.query.idAccount, idAccountInit])
 
   const onAddFolder = (e: any) => {
@@ -712,7 +713,7 @@ const FileSubmit: React.FC<UserFileProps> = ({
                               <Button
                                 className='close-modal header-modal-btn'
                                 onClick={() => {
-                                  setOpenDelete(false)
+                                  setOpenRename(false)
                                 }}
                               >
                                 CANCEL
