@@ -1,4 +1,5 @@
 import { Box, styled } from '@mui/material'
+import { InsuredSelectorProvider } from '../_commons/context/InsuredSelector/InsuredSelectorProvider'
 import { BrokerCardHeader } from './components/BrokerCardHeader'
 import { BrokerDetails } from './components/BrokerDetails'
 
@@ -12,9 +13,11 @@ const ViewContainer = styled(Box)(() => ({
 
 export const BrokerDetailsView = () => {
   return (
-    <ViewContainer>
-      <BrokerCardHeader />
-      <BrokerDetails />
-    </ViewContainer>
+    <InsuredSelectorProvider>
+      <ViewContainer>
+        <BrokerCardHeader />
+        <BrokerDetails />
+      </ViewContainer>
+    </InsuredSelectorProvider>
   )
 }

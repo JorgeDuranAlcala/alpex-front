@@ -12,27 +12,33 @@ export const ReinsurerCardHeader = () => {
   const { selectedPaymentSchedule, nextPaymentDate, handlePaymentScheduleChange } = usePaymentSchedule()
 
   if (!selectedPaymentSchedule) {
-    handlePaymentScheduleChange(reinsurerDetails?.selected_payment_schedule || 'monthly', 'reinsurance')
+    if (reinsurerDetails) {
+      handlePaymentScheduleChange(reinsurerDetails.selected_payment_schedule || 'monthly', 'reinsurance')
 
-    console.log('changePaymentSheduleOption!')
+      console.log('changePaymentSheduleOption!')
+    }
 
     return null
   }
 
-  return reinsurerDetails ? (
+  return (
     <InfoCardHeader
       isLoading={isLoading}
-      logo={reinsurerDetails.logo_url}
-      name={reinsurerDetails.name}
-      addressString={reinsurerDetails.address_string}
-      phone={reinsurerDetails.phone}
-      email={reinsurerDetails.email}
+      logo={reinsurerDetails?.logo_url}
+      name={reinsurerDetails?.name || 'Unknown Reinsurer Name'}
+      addressString={reinsurerDetails?.address_string}
+      phone={reinsurerDetails?.phone}
+      email={reinsurerDetails?.email}
       inputsComponents={
         <>
-          <SelectPaymentSchedule
-            selectedValue={selectedPaymentSchedule}
-            onChange={value => handlePaymentScheduleChange(value.target.value as PaymentScheduleOption, 'reinsurance')}
-          />
+          {selectedPaymentSchedule ? (
+            <SelectPaymentSchedule
+              selectedValue={selectedPaymentSchedule}
+              onChange={value =>
+                handlePaymentScheduleChange(value.target.value as PaymentScheduleOption, 'reinsurance')
+              }
+            />
+          ) : null}
 
           {nextPaymentDate ? <InputDate value={nextPaymentDate} onChange={() => null} isDisabled={true} /> : null}
         </>
@@ -47,5 +53,5 @@ export const ReinsurerCardHeader = () => {
         </>
       }
     />
-  ) : null
+  )
 }

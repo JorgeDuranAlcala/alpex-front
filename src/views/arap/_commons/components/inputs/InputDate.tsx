@@ -1,31 +1,21 @@
+import DatePickerWrapper from '@/@core/styles/libs/react-datepicker'
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
+import { Grid, InputAdornment, SxProps, TextField, Theme } from '@mui/material'
+import { ForwardedRef, forwardRef } from 'react'
+import DatePicker from 'react-datepicker'
+import type { InputDateProps } from '../../interfaces/InputDateProps'
 
-
-import DatePickerWrapper from '@/@core/styles/libs/react-datepicker';
-import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
-import {
-  Grid,
-  InputAdornment, SxProps, TextField,
-  Theme
-} from '@mui/material';
-import { ForwardedRef, forwardRef } from 'react';
-import DatePicker from 'react-datepicker';
-import type { InputDateProps } from '../../interfaces/InputDateProps';
-
-
-export const InputDate = ({ value, onChange, isDisabled }: InputDateProps) => {
+export const InputDate = ({ value, onChange, isDisabled, sx = { mb: 2, mt: 2, width: '100%' } }: InputDateProps) => {
   return (
-
     <Grid item xs={12} sm={12} sx={{ width: '100%' }}>
       <DatePickerWrapper className='information-datepicker'>
         <DatePicker
           selected={new Date(value)}
           shouldCloseOnSelect
           id='date'
-          customInput={<CustomInput label='Date' sx={{ mb: 2, mt: 2, width: '100%' }} />}
+          customInput={<CustomInput label='Date' sx={sx} />}
           onChange={onChange}
           disabled={isDisabled}
-
-          // showTimeSelect
           showMonthDropdown
           showYearDropdown
           showDisabledMonthNavigation
