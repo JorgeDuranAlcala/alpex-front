@@ -12,21 +12,22 @@ export const BrokerCardHeader = () => {
   const { selectedPaymentSchedule, nextPaymentDate, handlePaymentScheduleChange } = usePaymentSchedule()
 
   if (!selectedPaymentSchedule) {
-    handlePaymentScheduleChange(brokerDetails?.selected_payment_schedule || 'monthly', 'broker')
-
-    console.log('changePaymentSheduleOption!')
+    if (brokerDetails) {
+      handlePaymentScheduleChange(brokerDetails.selected_payment_schedule || 'monthly', 'broker')
+      console.log('changePaymentSheduleOption!')
+    }
 
     return null
   }
 
-  return brokerDetails ? (
+  return (
     <InfoCardHeader
       isLoading={isLoading}
-      logo={brokerDetails.logo_url}
-      name={brokerDetails.name}
-      addressString={brokerDetails.address_string}
-      phone={brokerDetails.phone}
-      email={brokerDetails.email}
+      logo={brokerDetails?.logo_url}
+      name={brokerDetails?.name || 'Unknown Broker Name'}
+      addressString={brokerDetails?.address_string}
+      phone={brokerDetails?.phone}
+      email={brokerDetails?.email}
       inputsComponents={
         <>
           <SelectPaymentSchedule
@@ -47,5 +48,5 @@ export const BrokerCardHeader = () => {
         </>
       }
     />
-  ) : null
+  )
 }
