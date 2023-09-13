@@ -6,11 +6,11 @@ import { DetailsLoadingCenter } from '../loadings/DetailsLoadingCenter'
 
 interface InfoCardHeaderProps {
   isLoading: boolean
-  logo: string | null
+  logo?: string | null
   name: string
-  addressString: string | null
-  phone: string | null
-  email: string | null
+  addressString?: string | null
+  phone?: string | null
+  email?: string | null
   inputsComponents: ReactNode
   actionButtonsComponent: ReactNode
 }
