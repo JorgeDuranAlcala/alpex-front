@@ -1,11 +1,11 @@
 // ** MUI ImportsuseMultiTabButtons'
-import { OverviewView } from '@/views/claims/followUp/FollowUpView'
 import Grid from '@mui/material/Grid'
+import CrmTableHistory from '../../../Components/TableHistory'
 
 const OverView = () => {
   return (
     <Grid item xs={12}>
-      <OverviewView />
+      <CrmTableHistory />
     </Grid>
   )
 }

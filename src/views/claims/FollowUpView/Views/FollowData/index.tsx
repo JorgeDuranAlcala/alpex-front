@@ -48,7 +48,7 @@ const FollowData = () => {
           </ContainerInputs>
         </Grid>
       </Grid>
-      <Box sx={{ marginTop: '20px', textAlign: 'start' }}>
+      <Box sx={{ marginTop: '40px', textAlign: 'start' }}>
         <Button className='create-contact-btn'>
           ADD FILE
           <div className='btn-icon'>
