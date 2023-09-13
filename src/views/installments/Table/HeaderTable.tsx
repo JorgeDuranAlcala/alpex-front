@@ -33,7 +33,6 @@ const HeaderTable = () => {
       <Grid container spacing={{ xs: 1, sm: 1, md: 1 }} sx={{ alignItems: 'center' }}>
         <Grid item xs={12} sm={2} md={2}>
           <ContainerTitle>
-            |
             <Typography
               variant='h6'
               sx={{ fontFamily: 'Inter', color: 'rgba(68,72,84,0.87)', letterSpacing: '0.15px' }}
