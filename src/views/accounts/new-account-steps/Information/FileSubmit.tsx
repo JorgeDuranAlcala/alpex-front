@@ -145,7 +145,7 @@ const FileSubmit: React.FC<UserFileProps> = ({
     status: 'error'
   })
 
-  const onFileChange = function (e: any) {
+  const onFileChange = async function (e: any) {
     e.preventDefault()
     const rawFiles = e.target.files
     const fileSize = rawFiles?.[0]?.size
@@ -185,11 +185,29 @@ const FileSubmit: React.FC<UserFileProps> = ({
 
       // setUserFile([...file, ...rawFiles])
 
-      const folderRoot = foldersAccount.find(folder => folder.folderName.split('_')[0] === 'root')
+      let folderRoot = foldersAccount.find(folder => folder.folderName.split('_')[0] === 'root')
       if (folderRoot) {
         // debugger
 
         handleInfoToFolder(e, [...file, ...rawFiles].length - 1, 'General', folderRoot.folderId, rawFiles)
+      } else {
+        await createFolder({
+          folderName: 'Final Slip',
+          idRelDocs: {
+            accountId: idAccountInit || Number(localStorage.getItem('idAccount'))
+          }
+        })
+        await createFolder({
+          folderName: 'root',
+          idRelDocs: {
+            accountId: idAccountInit || Number(localStorage.getItem('idAccount'))
+          }
+        })       
+        const accountId = idAccountInit || Number(localStorage.getItem('idAccount'))
+        folderRoot = (await findById({id: accountId, section: 'accounts' })).find(folder => folder.folderName.split('_')[0] === 'root')        
+        if (folderRoot) {
+          handleInfoToFolder(e, [...file, ...rawFiles].length - 1, 'General', folderRoot.folderId, rawFiles);
+        }
       }
     }
   }
@@ -354,8 +372,7 @@ const FileSubmit: React.FC<UserFileProps> = ({
       section: 'accounts'
     })
     if (idAccountInit) findById({ id: idAccountInit, section: 'accounts' })
-    setReloadInfo(foldersAccount)
-    console.log('🚀 ~ file: FileSubmit.tsx:304 ~ useEffect ~ foldersAccount:', foldersAccount)
+    setReloadInfo(foldersAccount)    
   }, [router.query.idAccount, idAccountInit])
 
   const onAddFolder = (e: any) => {
