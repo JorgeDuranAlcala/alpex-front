@@ -240,7 +240,16 @@ export enum INSTALLMENT_ROUTERS {
   GET_ALL = 'account/installment/',
   ADD = 'account/installment/add',
   UPDATE = 'account/installment/update',
-  DELETE = 'account/installment/delete'
+  DELETE = 'account/installment/delete',
+  COUNT_INSTALLMENTS = 'payment/installments/count',
+  FILTER_INSTALMENTS = 'payment/installments/filter',
+  FILTER_REINSURERS = 'payment/reinsurers/filter',
+  FILTER_BROKER_TRAKER = 'payment/accounts/filter',
+  COUNT_INSTALLMENTS_BY_BROKER = 'payment/installments/count-broker',
+  INSTALLMENT_HEADER = 'payment/installment/header',
+  INSTALLMENT_BY_ACCOUNT = 'payment/installments',
+  RECORD_BROKER_PAYMENT = 'payment/broker/record-payment',
+  RECORD_REINSURER_PAYMENT = 'payment/reinsurer/record-payment'
 }
 
 export enum ACCOUNT_STATUS_ROUTERS {
