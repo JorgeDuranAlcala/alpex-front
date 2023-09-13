@@ -1,6 +1,6 @@
 import { INSTALLMENT_ROUTERS } from 'src/configs/api'
 import { AppAlpexApiGateWay } from '../app.alpex.api-getway'
-import { InstallmentDto } from './dtos/installments.dto'
+import { CountInstallmentsDto, InstallmentDto } from './dtos/installments.dto'
 
 class SecurityService {
   async addInstallments(securitiesIn: Partial<InstallmentDto>[]): Promise<InstallmentDto[]> {
@@ -38,6 +38,18 @@ class SecurityService {
   async delete(update: Omit<InstallmentDto, 'id'>[]): Promise<InstallmentDto[]> {
     try {
       const { data } = await AppAlpexApiGateWay.put<Promise<InstallmentDto[]>>(INSTALLMENT_ROUTERS.DELETE, update)
+
+      return data
+    } catch (error) {
+      throw error
+    }
+  }
+
+  async countInstallment(): Promise<CountInstallmentsDto> {
+    try {
+      const { data } = await AppAlpexApiGateWay.get<Promise<CountInstallmentsDto>>(
+        INSTALLMENT_ROUTERS.COUNT_INSTALLMENTS
+      )
 
       return data
     } catch (error) {
