@@ -403,7 +403,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
   // * END -  Actualizar los datos del formulario en Redux + + + + + + + + + + + + + +
 
   return (
-    <Grid container xs={12} sm={12}>
+    <Grid container>
       <CustomAlert {...badgeData} />
       <GeneralContainer>
         <TitleContainer>

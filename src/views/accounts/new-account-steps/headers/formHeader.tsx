@@ -278,7 +278,11 @@ const FormHeader = ({
 
   const formatDateFromUTC = (date: Date | null): string => {
     if (date) {
-      const fecha = new Date(new Date(date).toLocaleString('en-US', { timeZone: 'MST' }))
+      // console.log('fechaBefore', date)
+
+      const fecha = new Date(date.toString().replace('Z', ''))
+      // console.log('fecha', fecha)
+
       const options: Intl.DateTimeFormatOptions = {
         day: '2-digit',
         month: '2-digit',
