@@ -115,7 +115,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
     error100Percent: false
   })
 
-  const [isUpdatedInfoByUser, setIsUpdatedInfoByUser] = useState(false);
+  const [isUpdatedInfoByUser, setIsUpdatedInfoByUser] = useState(false)
   const { addInstallments } = useAddInstallments()
   const accountData = useAppSelector(state => state.accounts)
   const idAccount = accountData?.formsData?.form1?.id
@@ -391,12 +391,10 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
   }, [installmentsList])
 
   useEffect(() => {
-
     if (isUpdatedInfoByUser) {
-      setDisableSaveBtn(false);
+      setDisableSaveBtn(false)
     }
   }, [isUpdatedInfoByUser])
-
 
   // * INIT -  Actualizar los datos del formulario en Redux + + + + + + + + + + + + + +
 
@@ -405,7 +403,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
   // * END -  Actualizar los datos del formulario en Redux + + + + + + + + + + + + + +
 
   return (
-    <Grid container xs={12} sm={12}>
+    <Grid container>
       <CustomAlert {...badgeData} />
       <GeneralContainer>
         <TitleContainer>
