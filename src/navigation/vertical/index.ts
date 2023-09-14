@@ -158,17 +158,17 @@ const navigation = (): VerticalNavItemsType => {
           path: '/claims/followUp',
           subject: 'claims',
           action: 'viewFollowUpClaims'
-        },
-
-        {
-          title: 'Preview'
-        },
-        {
-          title: 'Edit'
-        },
-        {
-          title: 'Add'
         }
+
+        // {
+        //   title: 'Preview'
+        // },
+        // {
+        //   title: 'Edit'
+        // },
+        // {
+        //   title: 'Add'
+        // }
       ]
     },
     {
