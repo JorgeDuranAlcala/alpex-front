@@ -1259,6 +1259,12 @@
   }
 }
 
+.form-second-claims {
+  @media (max-width: 900px) {
+    display: flex;
+  }
+}
+
 .container-total-installments {
   display: flex;
 
