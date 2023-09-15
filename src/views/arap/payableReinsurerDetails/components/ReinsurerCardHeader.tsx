@@ -40,7 +40,7 @@ export const ReinsurerCardHeader = () => {
             />
           ) : null}
 
-          {nextPaymentDate ? <InputDate value={nextPaymentDate} onChange={() => null} isDisabled={true} /> : null}
+          {nextPaymentDate ? <InputDate label="Next Payment Date" value={nextPaymentDate} onChange={() => null} isDisabled={true} /> : null}
         </>
       }
       actionButtonsComponent={

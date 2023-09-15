@@ -35,7 +35,9 @@ export const BrokerCardHeader = () => {
             onChange={value => handlePaymentScheduleChange(value.target.value as PaymentScheduleOption, 'broker')}
           />
 
-          {nextPaymentDate ? <InputDate value={nextPaymentDate} onChange={() => null} isDisabled={true} /> : null}
+          {nextPaymentDate ? (
+            <InputDate label='Next Payment Date' value={nextPaymentDate} onChange={() => null} isDisabled={true} />
+          ) : null}
         </>
       }
       actionButtonsComponent={

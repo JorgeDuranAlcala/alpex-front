@@ -1,22 +1,18 @@
-
-import { InputDate } from '@/views/arap/_commons/components/inputs/InputDate';
-import { Box, CircularProgress, styled } from '@mui/material';
-import { useReceivableMasterFilters } from '../../hooks/useReceivableMasterFilters';
-import { SelectCapabilityBroker } from './inputs/SelectCapabilityBroker';
+import { InputDate } from '@/views/arap/_commons/components/inputs/InputDate'
+import { Box, CircularProgress, styled } from '@mui/material'
+import { useReceivableMasterFilters } from '../../hooks/useReceivableMasterFilters'
+import { SelectCapabilityBroker } from './inputs/SelectCapabilityBroker'
 
 export const ReceivableMasterFilters = () => {
-
-  const { isLoading, receivableFilters, handleSelectChange, handleDateChange } = useReceivableMasterFilters();
+  const { isLoading, receivableFilters, handleSelectChange, handleDateChange } = useReceivableMasterFilters()
 
   return (
     <FiltersContainer>
-
       {isLoading ? (
         <Box>
           <CircularProgress size={35} />
         </Box>
-      )
-        : null}
+      ) : null}
 
       <SelectCapabilityBroker
         selectedValue={receivableFilters.capability}
@@ -25,18 +21,22 @@ export const ReceivableMasterFilters = () => {
       />
 
       <InputDate
+        label='Next Payment Date'
         value={receivableFilters.date}
-        onChange={(date) => handleDateChange(date)}
+        onChange={date => handleDateChange(date)}
         isDisabled={isLoading}
       />
-
     </FiltersContainer>
   )
 }
 
-const FiltersContainer = styled(Box)(({ }) => ({
+const FiltersContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   gap: '16px',
-}));
 
+  [theme.breakpoints.down('sm')]: {
+    flexDirection: 'column',
+    gap: '8px'
+  }
+}))
