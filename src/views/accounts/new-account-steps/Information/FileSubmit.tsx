@@ -154,6 +154,9 @@ const FileSubmit: React.FC<UserFileProps> = ({
     console.log('sizes')
     console.log(fileSize)
     console.log(maxFileSize)
+    if (!fileSize) {
+      return
+    }
     if (fileSize > maxFileSize) {
       setTimeout(() => {
         setBadgeData({
@@ -186,8 +189,6 @@ const FileSubmit: React.FC<UserFileProps> = ({
 
       let folderRoot = foldersAccount.find(folder => folder.folderName.split('_')[0] === 'root')
       if (folderRoot) {
-        // debugger
-
         handleInfoToFolder(e, [...file, ...rawFiles].length - 1, 'General', folderRoot.folderId, rawFiles)
       } else {
         await createFolder({
@@ -246,7 +247,6 @@ const FileSubmit: React.FC<UserFileProps> = ({
       id: idAccountInit || Number(localStorage.getItem('idAccount')),
       section: 'accounts'
     })
-    setSuccessDeleteFile(true)
     setOpenDeleteRoot(false)
     if (currentFile) toggleMenu(currentFile)
   }
@@ -263,7 +263,6 @@ const FileSubmit: React.FC<UserFileProps> = ({
       id: idAccountInit || Number(localStorage.getItem('idAccount')),
       section: 'accounts'
     })
-    setSuccessDeleteFile(true)
     setOpenDelete(false)
   }
 
@@ -322,11 +321,6 @@ const FileSubmit: React.FC<UserFileProps> = ({
     }
 
     setSelectedFile(null)
-    findById({
-      id: idAccountInit || Number(localStorage.getItem('idAccount')),
-      section: 'accounts'
-    })
-    setSuccessUploadFolder(true)
   }
 
   useEffect(() => {
@@ -344,18 +338,8 @@ const FileSubmit: React.FC<UserFileProps> = ({
     const idFileMove = JSON.stringify(file.fileId)
 
     setmoveToFolder({ destinationFolderId: idFolder, fileId: Number(idFileMove) })
-
-    findById({
-      id: idAccountInit || Number(localStorage.getItem('idAccount')),
-      section: 'accounts'
-    })
-
-    setSuccessMoveFile(true)
     setOpenFolderList(null)
     setOpenItemMenu(null)
-
-    // console.log(moveFile)
-    // console.log(reloadInfo)
   }
 
   useEffect(() => {
@@ -385,11 +369,6 @@ const FileSubmit: React.FC<UserFileProps> = ({
         accountId: Number(localStorage.getItem('idAccount'))
       }
     })
-    findById({
-      id: idAccountInit || Number(localStorage.getItem('idAccount')),
-      section: 'accounts'
-    })
-    setSuccessAddFolder(true)
   }
 
   useEffect(() => {
@@ -455,11 +434,6 @@ const FileSubmit: React.FC<UserFileProps> = ({
       menu[i].classList.add('menu-dots-none')
     }
     console.log(removeFolder)
-    findById({
-      id: idAccountInit || Number(localStorage.getItem('idAccount')),
-      section: 'accounts'
-    })
-    setSuccessDeletefolder(true)
   }
 
   useEffect(() => {
@@ -476,11 +450,6 @@ const FileSubmit: React.FC<UserFileProps> = ({
     const newNameFolder = renameValue
     console.log(folder)
     await setRename({ folderId: idFolderRename, newFolderName: newNameFolder })
-    await findById({
-      id: idAccountInit || Number(localStorage.getItem('idAccount')),
-      section: 'accounts'
-    })
-    setSuccessRenameFolder(true)
     setRenameValue('')
     setIdFolderRename(null)
   }
