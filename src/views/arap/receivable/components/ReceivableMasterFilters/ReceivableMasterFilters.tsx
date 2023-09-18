@@ -1,10 +1,12 @@
+import { ActionButton } from '@/views/arap/_commons/components/buttons/ActionButton'
 import { InputDate } from '@/views/arap/_commons/components/inputs/InputDate'
-import { Box, CircularProgress, styled } from '@mui/material'
+import { Box, CircularProgress, Tooltip, styled } from '@mui/material'
 import { useReceivableMasterFilters } from '../../hooks/useReceivableMasterFilters'
 import { SelectCapabilityBroker } from './inputs/SelectCapabilityBroker'
 
 export const ReceivableMasterFilters = () => {
-  const { isLoading, receivableFilters, handleSelectChange, handleDateChange } = useReceivableMasterFilters()
+  const { isLoading, receivableFilters, handleSelectChange, handleDateChange, handleDownloadData } =
+    useReceivableMasterFilters()
 
   return (
     <FiltersContainer>
@@ -14,16 +16,21 @@ export const ReceivableMasterFilters = () => {
         </Box>
       ) : null}
 
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: '16px', width: '100%' }}>
+        {!isLoading ? (
+          <Tooltip title='Export to .xlsx' placement='top' arrow>
+            <div>
+              <ActionButton onClick={handleDownloadData} icon='ic:baseline-download' fontSize={32} />
+            </div>
+          </Tooltip>
+        ) : null}
+
+        <InputDate value={receivableFilters.date} onChange={date => handleDateChange(date)} isDisabled={isLoading} />
+      </Box>
+
       <SelectCapabilityBroker
         selectedValue={receivableFilters.capability}
         onChange={handleSelectChange}
-        isDisabled={isLoading}
-      />
-
-      <InputDate
-        label='Next Payment Date'
-        value={receivableFilters.date}
-        onChange={date => handleDateChange(date)}
         isDisabled={isLoading}
       />
     </FiltersContainer>
