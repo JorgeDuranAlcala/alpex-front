@@ -1,10 +1,12 @@
+import { ActionButton } from '@/views/arap/_commons/components/buttons/ActionButton'
 import { InputDate } from '@/views/arap/_commons/components/inputs/InputDate'
-import { Box, CircularProgress, styled } from '@mui/material'
+import { Box, CircularProgress, Tooltip, styled } from '@mui/material'
 import { usePayableMasterFilters } from '../../hooks/usePayableMasterFilters'
 import { SelectCapabilityReinsurer } from './inputs/SelectCapabilityReinsurer'
 
 export const PayableMasterFilters = () => {
-  const { isLoading, payableFilters, handleSelectChange, handleDateChange } = usePayableMasterFilters()
+  const { isLoading, payableFilters, handleSelectChange, handleDateChange, handleDownloadData } =
+    usePayableMasterFilters()
 
   return (
     <FiltersContainer>
@@ -13,7 +15,18 @@ export const PayableMasterFilters = () => {
           <CircularProgress size={35} />
         </Box>
       ) : null}
-      <InputDate value={payableFilters.date} onChange={date => handleDateChange(date)} isDisabled={isLoading} />
+
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: '16px', width: '100%' }}>
+        {!isLoading ? (
+          <Tooltip title='Export to .xlsx' placement='top' arrow>
+            <div>
+              <ActionButton onClick={handleDownloadData} icon='ic:baseline-download' fontSize={32} />
+            </div>
+          </Tooltip>
+        ) : null}
+
+        <InputDate value={payableFilters.date} onChange={date => handleDateChange(date)} isDisabled={isLoading} />
+      </Box>
 
       <SelectCapabilityReinsurer
         selectedValue={payableFilters.capability}
