@@ -38,7 +38,7 @@ const ContainerInstallments = styled('div')({
 const StyledTextarea = styled(TextareaAutosize)(
   () => `
   width: 100%;
-  font-family: IBM Plex Sans, sans-serif;
+  font-family: "Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji";
   font-size: 0.875rem;
   font-weight: 400;
   line-height: 1.5;

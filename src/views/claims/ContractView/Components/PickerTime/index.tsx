@@ -10,7 +10,13 @@ import { DateType } from 'src/types/forms/reactDatepickerTypes'
 // ** Custom Component Imports
 import CustomInput from '../CustomInput'
 
-const PickersTime = ({ popperPlacement }: { popperPlacement?: ReactDatePickerProps['popperPlacement'] }) => {
+const PickersTime = ({
+  popperPlacement,
+  textPlace
+}: {
+  popperPlacement?: ReactDatePickerProps['popperPlacement']
+  textPlace?: string
+}) => {
   // ** States
   const [time, setTime] = useState<DateType>(new Date())
 
@@ -25,7 +31,7 @@ const PickersTime = ({ popperPlacement }: { popperPlacement?: ReactDatePickerPro
         id='time-only-picker'
         popperPlacement={popperPlacement}
         onChange={(date: Date) => setTime(date)}
-        customInput={<CustomInput label='Time Only' sx={{ width: '100%' }} />}
+        customInput={<CustomInput label={textPlace || 'Time Only'} sx={{ width: '100%' }} />}
       />
     </>
   )

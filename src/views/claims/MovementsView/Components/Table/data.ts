@@ -1,6 +1,6 @@
 const data = [
   {
-    accountId: 0,
+    numberId: 0,
     type: 'New Reserve',
     amount: '$100,000',
     date: '22/08/2023',
@@ -8,7 +8,7 @@ const data = [
     actions: ''
   },
   {
-    accountId: 1,
+    numberId: 1,
     type: 'New Reserve',
     amount: '$35,000',
     date: '22/08/2023',
@@ -16,7 +16,7 @@ const data = [
     actions: ''
   },
   {
-    accountId: 3,
+    numberId: 3,
     type: 'New Reserve',
     amount: '$3,000',
     date: '21/08/2023',
@@ -24,7 +24,7 @@ const data = [
     actions: ''
   },
   {
-    accountId: 4,
+    numberId: 4,
     type: 'New Reserve',
     amount: '$16,000',
     date: '21/08/2023',
@@ -32,7 +32,7 @@ const data = [
     actions: ''
   },
   {
-    accountId: 5,
+    numberId: 5,
     type: 'New Reserve',
     amount: '$10,000',
     date: '20/08/2023',

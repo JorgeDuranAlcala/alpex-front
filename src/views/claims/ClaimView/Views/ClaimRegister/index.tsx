@@ -1,10 +1,11 @@
 import { ContainerInputs, StyledTextarea, TitleInputs } from '@/styles/Claims/ContractStyles/contractStyles'
-import { Box, FormControl, Grid, InputLabel, Select, TextField, Typography } from '@mui/material'
+import { Box, Button, FormControl, Grid, InputLabel, Select, TextField, Typography } from '@mui/material'
 
 // ** Third Party Imports
 import DatePickerWrapper from '@/@core/styles/libs/react-datepicker'
 import CustomInput from '@/views/claims/ContractView/Components/CustomInput'
 import DatePicker from 'react-datepicker'
+import Icon from 'src/@core/components/icon'
 
 const ClaimRegister = () => {
   const handlechangeValue = (event: KeyboardEvent) => {
@@ -26,7 +27,7 @@ const ClaimRegister = () => {
               <DatePicker
                 shouldCloseOnSelect
                 id='reception-date'
-                customInput={<CustomInput label='Date of Ocurrence of the Claim' sx={{ width: '100%' }} />}
+                customInput={<CustomInput label='Date of Occurrence of the Claim' sx={{ width: '100%' }} />}
                 showTimeSelect
                 showMonthDropdown
                 showYearDropdown
@@ -142,6 +143,14 @@ const ClaimRegister = () => {
           </ContainerInputs>
         </Grid>
       </Grid>
+      <Box sx={{ marginTop: '40px', textAlign: 'start' }}>
+        <Button className='create-contact-btn'>
+          ADD FILES
+          <div className='btn-icon'>
+            <Icon icon='mdi:plus-circle-outline' />
+          </div>
+        </Button>
+      </Box>
     </Box>
   )
 }

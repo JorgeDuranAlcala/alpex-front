@@ -23,7 +23,7 @@ import { brokers, data } from './data'
 // ** Custom Hooks imports
 
 interface INearlyPaymentStatus {
-  accountId: number
+  numberId: number
   type: string
   amount: string
   date: string
@@ -43,8 +43,8 @@ const onAction = async (id: number) => {
 const column: GridColumns<INearlyPaymentStatus> = [
   {
     flex: 0.1,
-    field: 'accountId',
-    headerName: 'ACCOUNT ID',
+    field: 'numberid',
+    headerName: 'NUMBER',
     minWidth: 150,
     maxWidth: 150,
     type: 'string',
@@ -69,7 +69,7 @@ const column: GridColumns<INearlyPaymentStatus> = [
       )
     },
     renderCell: ({ row }) => (
-      <Typography sx={{ fontSize: fonts.size.px14, fontFamily: fonts.inter }}>{`#${row.accountId}`}</Typography>
+      <Typography sx={{ fontSize: fonts.size.px14, fontFamily: fonts.inter }}>{`#${row.numberId}`}</Typography>
     )
   },
   {
@@ -245,7 +245,7 @@ const column: GridColumns<INearlyPaymentStatus> = [
         <Link
           sx={{ cursor: 'pointer' }}
           onClick={() => {
-            onAction(row.accountId)
+            onAction(row.numberId)
           }}
         >
           <Button
@@ -280,7 +280,7 @@ const Table = () => {
         columns={column}
         pagination
         pageSize={4}
-        getRowId={(row: any) => row.accountId}
+        getRowId={(row: any) => row.numberId}
         components={{
           Pagination: CustomPagination
         }}
