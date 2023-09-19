@@ -18,6 +18,10 @@ import { NumericFormat } from 'react-number-format'
 import PickersTime from '../../Components/PickerTime'
 
 const CustomerSelection = () => {
+  const handlechangeValue = (event: KeyboardEvent) => {
+    event.preventDefault()
+  }
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <Grid container spacing={{ xs: 5, sm: 5, md: 5 }}>
@@ -26,14 +30,7 @@ const CustomerSelection = () => {
             <TitleInputs>Client</TitleInputs>
             <FormControl fullWidth>
               <InputLabel>Name of Client</InputLabel>
-              <Select
-                name='economicSector'
-                label='Name of Client'
-                defaultValue={''}
-                // value={String(basicInfo.economicSector)}
-                // onChange={handleSelectChange}
-                labelId='economic-sector'
-              ></Select>
+              <Select name='economicSector' label='Name of Client' defaultValue={''} labelId='economic-sector'></Select>
             </FormControl>
           </ContainerInputs>
         </Grid>
@@ -42,14 +39,7 @@ const CustomerSelection = () => {
             <TitleInputs>Payment Satus</TitleInputs>
             <FormControl fullWidth>
               <InputLabel>Status</InputLabel>
-              <Select
-                name='economicSector'
-                label='Status'
-                defaultValue={''}
-                // value={String(basicInfo.economicSector)}
-                // onChange={handleSelectChange}
-                labelId='economic-sector'
-              ></Select>
+              <Select name='economicSector' label='Status' defaultValue={''} labelId='economic-sector'></Select>
             </FormControl>
           </ContainerInputs>
         </Grid>
@@ -97,6 +87,7 @@ const CustomerSelection = () => {
                   timeFormat='HH:mm'
                   timeIntervals={15}
                   dateFormat='dd/MM/yyyy h:mm aa'
+                  onChange={() => handlechangeValue}
                 />
               </DatePickerWrapper>
               <Box sx={{ width: '23.77%' }}>
@@ -116,6 +107,7 @@ const CustomerSelection = () => {
                   timeFormat='HH:mm'
                   timeIntervals={15}
                   dateFormat='dd/MM/yyyy h:mm aa'
+                  onChange={() => handlechangeValue}
                 />
               </DatePickerWrapper>
               <Box sx={{ width: '23.77%' }}>
@@ -135,6 +127,7 @@ const CustomerSelection = () => {
                   timeFormat='HH:mm'
                   timeIntervals={15}
                   dateFormat='dd/MM/yyyy h:mm aa'
+                  onChange={() => handlechangeValue}
                 />
               </DatePickerWrapper>
               <Box sx={{ width: '23.77%' }}>
@@ -208,6 +201,7 @@ const CustomerSelection = () => {
                 timeFormat='HH:mm'
                 timeIntervals={15}
                 dateFormat='dd/MM/yyyy h:mm aa'
+                onChange={() => handlechangeValue}
               />
             </DatePickerWrapper>
             <DatePickerWrapper className='information-datepicker'>
@@ -222,6 +216,7 @@ const CustomerSelection = () => {
                 timeFormat='HH:mm'
                 timeIntervals={15}
                 dateFormat='dd/MM/yyyy h:mm aa'
+                onChange={() => handlechangeValue}
               />
             </DatePickerWrapper>
             <DatePickerWrapper className='information-datepicker'>
@@ -241,21 +236,12 @@ const CustomerSelection = () => {
                 name='lineOfBusiness'
                 label='Line of Business'
                 defaultValue={''}
-                // value={String(basicInfo.economicSector)}
-                // onChange={handleSelectChange}
                 labelId='economic-sector'
               ></Select>
             </FormControl>
             <FormControl fullWidth>
               <InputLabel>Subranch</InputLabel>
-              <Select
-                name='subranch'
-                label='Subranch'
-                defaultValue={''}
-                // value={String(basicInfo.economicSector)}
-                // onChange={handleSelectChange}
-                labelId='economic-sector'
-              ></Select>
+              <Select name='subranch' label='Subranch' defaultValue={''} labelId='economic-sector'></Select>
             </FormControl>
           </ContainerInputs>
         </Grid>
@@ -264,14 +250,7 @@ const CustomerSelection = () => {
             <TitleInputs>Currency</TitleInputs>
             <FormControl fullWidth>
               <InputLabel>Currency</InputLabel>
-              <Select
-                name='currency'
-                label='Currency'
-                defaultValue={''}
-                // value={String(basicInfo.economicSector)}
-                // onChange={handleSelectChange}
-                labelId='economic-sector'
-              ></Select>
+              <Select name='currency' label='Currency' defaultValue={''} labelId='economic-sector'></Select>
             </FormControl>
           </ContainerInputs>
         </Grid>

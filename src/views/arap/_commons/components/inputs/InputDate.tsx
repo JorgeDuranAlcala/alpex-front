@@ -5,7 +5,13 @@ import { ForwardedRef, forwardRef } from 'react'
 import DatePicker from 'react-datepicker'
 import type { InputDateProps } from '../../interfaces/InputDateProps'
 
-export const InputDate = ({ value, onChange, isDisabled, sx = { mb: 2, mt: 2, width: '100%' } }: InputDateProps) => {
+export const InputDate = ({
+  value,
+  onChange,
+  isDisabled,
+  label = 'Date',
+  sx = { mb: 2, mt: 2, width: '100%' }
+}: InputDateProps) => {
   return (
     <Grid item xs={12} sm={12} sx={{ width: '100%' }}>
       <DatePickerWrapper className='information-datepicker'>
@@ -13,7 +19,7 @@ export const InputDate = ({ value, onChange, isDisabled, sx = { mb: 2, mt: 2, wi
           selected={new Date(value)}
           shouldCloseOnSelect
           id='date'
-          customInput={<CustomInput label='Date' sx={sx} />}
+          customInput={<CustomInput label={label} sx={sx} />}
           onChange={onChange}
           disabled={isDisabled}
           showMonthDropdown

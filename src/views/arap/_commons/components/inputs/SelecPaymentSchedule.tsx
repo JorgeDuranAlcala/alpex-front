@@ -14,6 +14,9 @@ export const SelectPaymentSchedule = ({ selectedValue, onChange }: InputSelectPr
         value={selectedValue}
         onChange={onChange}
         labelId='broker'
+        sx={{
+          textTransform: 'capitalize'
+        }}
       >
         {paymentScheduleOptions.length > 0 ? (
           paymentScheduleOptions.map(option => {
@@ -22,9 +25,7 @@ export const SelectPaymentSchedule = ({ selectedValue, onChange }: InputSelectPr
                 key={option}
                 value={option}
                 sx={{
-                  '::first-letter': {
-                    textTransform: 'uppercase'
-                  }
+                  textTransform: 'capitalize'
                 }}
               >
                 {option}

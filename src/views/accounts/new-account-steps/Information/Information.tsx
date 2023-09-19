@@ -596,6 +596,7 @@ const Information: React.FC<InformationProps> = ({
           await uploadDoctos(idAccount)
           await updateDiscount()
           dispatch(updateFormsData({ form1: { basicInfo, placementStructure, userFile, id: idAccount } }))
+          console.log('updateInfo', updateInfo)
           getIdAccount(idAccount)
 
           // setDisableSave(false)
@@ -689,7 +690,7 @@ const Information: React.FC<InformationProps> = ({
         makeSaveValidations,
         makeValidations,
         nextClicked,
-        saveClicked,
+        saveClicked
       })
       if (valid && makeSaveValidations) {
         if (nextClicked) setValidatedForms(prevCount => prevCount + 1)
@@ -879,9 +880,9 @@ const Information: React.FC<InformationProps> = ({
 
   useEffect(() => {
     if (updateInfo) {
-      setDisableSave(false);
+      setDisableSave(false)
     } else {
-      setDisableSave(true);
+      setDisableSave(true)
     }
   }, [updateInfo])
 

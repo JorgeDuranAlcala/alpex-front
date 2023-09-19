@@ -107,7 +107,7 @@ const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
   //state para lo botones
   const [disableBoundBtn, setDisableBoundBtn] = useState(ability?.cannot('addBound', 'account'))
 
-  const [isUpdatedInfoByUser, setIsUpdatedInfoByUser] = useState(false);
+  const [isUpdatedInfoByUser, setIsUpdatedInfoByUser] = useState(false)
   const [disableSaveBtn, setDisableSaveBtn] = useState<boolean>(true)
   const [showErrors, setShowErrors] = useState<boolean>(false)
   const [formErrors, setFormErrors] = useState<boolean[]>([])
@@ -137,7 +137,7 @@ const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
     // console.log('coverageSelect', coverageSelect);
 
     setCoverageSelected([...coverageSelected, coverageSelect])
-    setIsUpdatedInfoByUser(true);
+    setIsUpdatedInfoByUser(true)
   }
 
   const handleAddCoverage = (value: number, label: string) => {
@@ -188,7 +188,7 @@ const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
     })
 
     if (coverageDelete) {
-      setCoverageSelected([...coverageDelete]);
+      setCoverageSelected([...coverageDelete])
 
       setIsUpdatedInfoByUser(true)
     }
@@ -357,9 +357,8 @@ const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
   }, [subLimits, accountData, coverages])
 
   useEffect(() => {
-
     if (isUpdatedInfoByUser) {
-      setDisableSaveBtn(false);
+      setDisableSaveBtn(false)
     }
   }, [isUpdatedInfoByUser])
 

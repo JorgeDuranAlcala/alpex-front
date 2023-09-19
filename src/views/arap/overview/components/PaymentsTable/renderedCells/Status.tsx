@@ -30,6 +30,7 @@ export const Status = ({ status, fontSize, padding }: StatusProps) => {
       sx={{
         backgroundColor: statusColors[status],
         minWidth: '100%',
+        width: '100%',
         padding: padding,
         textAlign: 'center',
         paddingLeft: '0px',

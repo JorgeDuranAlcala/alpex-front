@@ -177,7 +177,7 @@ const CreatedAccount = () => {
             onIsNewAccountChange={handleIsNewAccountChange}
             disableSectionCtrl={disableFormsSections.information}
             onStepChange={handleStepChange}
-            getIdAccount={(idAccount: number) => setAccountId(idAccount)}
+            getIdAccount={(idAccount: number) => getAccountById(idAccount)}
           />
         )
       case 2:
@@ -274,6 +274,8 @@ const CreatedAccount = () => {
       </Box>
     )
   }
+
+  console.log('accountDetails', accountDetails)
 
   return (
     <AccountsTableContextProvider>
