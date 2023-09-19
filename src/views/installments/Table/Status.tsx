@@ -8,7 +8,7 @@ import Typography from '@mui/material/Typography'
 import { ContainerStatus } from 'src/styles/Dashboard/Table/Status'
 import fonts from 'src/views/accounts/font'
 
-interface IStatus {
+export interface IStatus {
   [key: string]: ReactElement
 }
 
@@ -16,10 +16,22 @@ interface IStatusProps {
   status: string
 }
 
+export enum EStatus {
+  UNPAID = 'Unpaid',
+  PAID = 'Paid',
+  PENDING = 'Pending'
+}
+
+export enum EStatusString {
+  UNPAID = 'Unpaid',
+  PAID = 'Paid',
+  PENDING = 'Pending'
+}
+
 const Status: React.FC<IStatusProps> = ({ status }) => {
   const theme = useTheme()
   const statusComponents: IStatus = {
-    Unpaid: (
+    [EStatus.UNPAID]: (
       <>
         <ContainerStatus sx={{ backgroundColor: theme.palette.error.main }}>
           <Typography
@@ -30,12 +42,12 @@ const Status: React.FC<IStatusProps> = ({ status }) => {
               fontWeight: 400
             }}
           >
-            Unpaid
+            {EStatusString.UNPAID}
           </Typography>
         </ContainerStatus>
       </>
     ),
-    Paid: (
+    [EStatus.PAID]: (
       <>
         <ContainerStatus sx={{ backgroundColor: theme.palette.success.main }}>
           <Typography
@@ -46,12 +58,12 @@ const Status: React.FC<IStatusProps> = ({ status }) => {
               fontWeight: 400
             }}
           >
-            Paid
+            {EStatusString.PAID}
           </Typography>
         </ContainerStatus>
       </>
     ),
-    Pending: (
+    [EStatus.PENDING]: (
       <>
         <ContainerStatus sx={{ backgroundColor: '#FFB446' }}>
           <Typography
@@ -62,7 +74,7 @@ const Status: React.FC<IStatusProps> = ({ status }) => {
               fontWeight: 400
             }}
           >
-            Pending
+            {EStatusString.PENDING}
           </Typography>
         </ContainerStatus>
       </>
