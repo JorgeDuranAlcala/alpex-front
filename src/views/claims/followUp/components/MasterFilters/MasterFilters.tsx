@@ -38,8 +38,8 @@ export const MasterFilters = () => {
         <Grid item xs={12} sm={3.75} md={4.3}>
           <div className='search-wrapper'>
             <input
-              className='input-search'
-              placeholder='Search'
+              className='input-search icon-search padd-right'
+              placeholder='Claim number'
               style={{ fontFamily: inter, width: '100%', marginRight: '0px' }}
               onChange={handleTextChange}
             />

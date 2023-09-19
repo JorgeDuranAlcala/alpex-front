@@ -26,9 +26,10 @@ const ButtonAddMovement = () => {
   }
 
   return (
-    <Box sx={{ marginTop: '20px', textAlign: 'end' }}>
+    <Box className='alignBox' sx={{ marginTop: '20px' }}>
       <Grid item xs={12} sm={3} md={2}>
         <Select
+          className='fullSelect'
           sx={{ mr: 4, mb: 2, width: 'auto', height: '42px' }}
           multiple
           displayEmpty

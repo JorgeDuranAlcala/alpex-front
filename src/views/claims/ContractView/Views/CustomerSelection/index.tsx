@@ -36,7 +36,7 @@ const CustomerSelection = () => {
         </Grid>
         <Grid item xs={12} sm={6} md={4}>
           <ContainerInputs>
-            <TitleInputs>Payment Satus</TitleInputs>
+            <TitleInputs>Payment Status</TitleInputs>
             <FormControl fullWidth>
               <InputLabel>Status</InputLabel>
               <Select name='economicSector' label='Status' defaultValue={''} labelId='economic-sector'></Select>
@@ -65,7 +65,7 @@ const CustomerSelection = () => {
         </Grid>
         <Grid item xs={12} sm={6} md={4}>
           <ContainerInputs>
-            <TitleInputs>Contact Number</TitleInputs>
+            <TitleInputs>Contract Number</TitleInputs>
             <FormControl fullWidth>
               <TextField autoFocus name='contractNumber' label='Contract ID' value={'00000'} disabled />
             </FormControl>
@@ -220,10 +220,10 @@ const CustomerSelection = () => {
               />
             </DatePickerWrapper>
             <DatePickerWrapper className='information-datepicker'>
-              <PickersTime />
+              <PickersTime textPlace={'Starting Time'} />
             </DatePickerWrapper>
             <DatePickerWrapper className='information-datepicker'>
-              <PickersTime />
+              <PickersTime textPlace={'Expiration Time'} />
             </DatePickerWrapper>
           </ContainerInputs>
         </Grid>
@@ -264,7 +264,7 @@ const CustomerSelection = () => {
             <TitleInputs>Endorsements</TitleInputs>
             <Box>
               <Button>
-                View Endorsementys &nbsp;
+                View Endorsements &nbsp;
                 <Icon icon={'lucide:eye'} />
               </Button>
             </Box>
