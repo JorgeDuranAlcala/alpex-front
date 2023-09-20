@@ -10,6 +10,8 @@ export const PaymentsTable = () => {
 
   const { isLoading, paymentsGrid } = useContext(PaymentsContext);
 
+  console.log("esto se mapea", paymentsGrid);
+
   return (
     <CardTableContainer>
       {isLoading ? <><CircularProgress /></> :

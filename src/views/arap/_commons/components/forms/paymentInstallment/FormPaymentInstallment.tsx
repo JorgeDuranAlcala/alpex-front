@@ -52,7 +52,12 @@ export const FormPaymentInstallment = () => {
                   minimumFractionDigits: 2
                 })}`}
               />
-              <InputDate isDisabled={true} value={installment.settlementDueDate} onChange={() => null} />
+              <InputDate
+                label='Settlement due date'
+                isDisabled={true}
+                value={installment.settlementDueDate}
+                onChange={() => null}
+              />
             </Box>
           </Grid>
         ))}

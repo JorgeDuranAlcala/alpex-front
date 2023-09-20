@@ -134,6 +134,7 @@ const navigation = (): VerticalNavItemsType => {
 
           // path: '/apps/invoice/list'
         },
+
         {
           title: 'Preview'
         },
@@ -152,19 +153,22 @@ const navigation = (): VerticalNavItemsType => {
       action: 'read',
       children: [
         {
-          title: 'List'
-
-          // path: '/apps/invoice/list'
-        },
-        {
-          title: 'Preview'
-        },
-        {
-          title: 'Edit'
-        },
-        {
-          title: 'Add'
+          title: 'Follow-up',
+          icon: 'ic:baseline-warning',
+          path: '/claims/followUp',
+          subject: 'claims',
+          action: 'viewFollowUpClaims'
         }
+
+        // {
+        //   title: 'Preview'
+        // },
+        // {
+        //   title: 'Edit'
+        // },
+        // {
+        //   title: 'Add'
+        // }
       ]
     },
     {

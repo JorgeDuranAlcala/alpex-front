@@ -1,15 +1,13 @@
-import colors from '@/views/accounts/colors';
-import fonts from '@/views/accounts/font';
-import { Box, Typography } from '@mui/material';
-import { GRID_CHECKBOX_SELECTION_COL_DEF, GridColumns } from '@mui/x-data-grid';
-import Link from 'next/link';
-import { PaymentColumn } from '../../../interfaces/payments/PaymentsGrid';
-import { ActionHistory } from '../renderedCells/ActionHistory';
-import { Status } from '../renderedCells/Status';
-import ColumnHeader from './ColumnHeader';
-import { EFieldColumn } from './efieldColumn';
-
-
+import colors from '@/views/accounts/colors'
+import fonts from '@/views/accounts/font'
+import { Box, Typography } from '@mui/material'
+import { GRID_CHECKBOX_SELECTION_COL_DEF, GridColumns } from '@mui/x-data-grid'
+import Link from 'next/link'
+import { PaymentColumn } from '../../../interfaces/payments/PaymentsGrid'
+import { ActionHistory } from '../renderedCells/ActionHistory'
+import { Status } from '../renderedCells/Status'
+import ColumnHeader from './ColumnHeader'
+import { EFieldColumn } from './efieldColumn'
 
 export const columns: GridColumns<PaymentColumn> = [
   {
@@ -27,17 +25,8 @@ export const columns: GridColumns<PaymentColumn> = [
     disableColumnMenu: true,
     sortable: false,
     headerClassName: 'account-column-header',
-    renderHeader: ({ colDef }) => (
-      <ColumnHeader colDef={colDef} type={EFieldColumn.TRANSACTION_ID} />
-    ),
-    renderCell: ({ row }) => (
-      <Link
-
-        // sx={{ color: colors.primary.main, fontSize: fonts.size.px14, fontFamily: fonts.inter }}
-
-        href={`#${row.transactionId}`}
-      >{row.transactionId}</Link>
-    )
+    renderHeader: ({ colDef }) => <ColumnHeader colDef={colDef} type={EFieldColumn.TRANSACTION_ID} />,
+    renderCell: ({ row }) => <Link href={`#${row.transactionId}`}>{row.transactionId}</Link>
   },
   {
     flex: 0.1,
@@ -49,9 +38,7 @@ export const columns: GridColumns<PaymentColumn> = [
     disableColumnMenu: true,
     sortable: false,
     headerClassName: 'account-column-header',
-    renderHeader: ({ colDef }) => (
-      <ColumnHeader colDef={colDef} type={EFieldColumn.CAPABILITY_NAME} />
-    ),
+    renderHeader: ({ colDef }) => <ColumnHeader colDef={colDef} type={EFieldColumn.CAPABILITY_NAME} />,
     renderCell: ({ row }) => (
       <Typography sx={{ color: colors.text.secondary, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
         {row.capabilityName}
@@ -62,22 +49,17 @@ export const columns: GridColumns<PaymentColumn> = [
     flex: 0.1,
     field: EFieldColumn.STATUS,
     headerName: 'STATUS',
-    minWidth: 120,
-    maxWidth: 120,
+    minWidth: 110,
+    maxWidth: 110,
     type: 'string',
     align: 'left',
     cellClassName: 'account-column-cell-pl-0',
     disableColumnMenu: true,
     sortable: false,
     headerClassName: 'account-column-header',
-    renderHeader: ({ colDef }) => (
-      <ColumnHeader
-        colDef={colDef}
-        type={EFieldColumn.STATUS}
-      />
-    ),
+    renderHeader: ({ colDef }) => <ColumnHeader colDef={colDef} type={EFieldColumn.STATUS} />,
     renderCell: ({ row }) => (
-      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
         <Status status={row.status} />
       </Box>
     )
@@ -93,11 +75,16 @@ export const columns: GridColumns<PaymentColumn> = [
     disableColumnMenu: true,
     sortable: false,
     headerClassName: 'account-column-header',
-    renderHeader: ({ colDef }) => (
-      <ColumnHeader colDef={colDef} type={EFieldColumn.TRANSACTION} />
-    ),
+    renderHeader: ({ colDef }) => <ColumnHeader colDef={colDef} type={EFieldColumn.TRANSACTION} />,
     renderCell: ({ row }) => (
-      <Typography sx={{ color: colors.text.secondary, fontSize: fonts.size.px14, fontFamily: fonts.inter, textTransform: 'capitalize' }}>
+      <Typography
+        sx={{
+          color: colors.text.secondary,
+          fontSize: fonts.size.px14,
+          fontFamily: fonts.inter,
+          textTransform: 'capitalize'
+        }}
+      >
         {row.transaction}
       </Typography>
     )
@@ -112,14 +99,14 @@ export const columns: GridColumns<PaymentColumn> = [
     disableColumnMenu: true,
     sortable: false,
     headerClassName: 'account-column-header',
-    renderHeader: ({ colDef }) => (
-      <ColumnHeader colDef={colDef} type={EFieldColumn.AMOUNT} />
-    ),
+    renderHeader: ({ colDef }) => <ColumnHeader colDef={colDef} type={EFieldColumn.AMOUNT} />,
     renderCell: ({ row }) => (
       <Typography sx={{ color: colors.text.secondary, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
-        ${row.amount.toLocaleString('en-US', {
-          minimumFractionDigits: 2,
-        })} {row.currency}
+        $
+        {row.amount.toLocaleString('en-US', {
+          minimumFractionDigits: 2
+        })}{' '}
+        {row.currency}
       </Typography>
     )
   },
@@ -133,15 +120,12 @@ export const columns: GridColumns<PaymentColumn> = [
     disableColumnMenu: true,
     sortable: false,
     headerClassName: 'account-column-header',
-    renderHeader: ({ colDef }) => (
-      <ColumnHeader colDef={colDef} type={EFieldColumn.TRANSACTION_DATE} />
-    ),
+    renderHeader: ({ colDef }) => <ColumnHeader colDef={colDef} type={EFieldColumn.TRANSACTION_DATE} />,
     renderCell: ({ row }) => {
       if (!row || !row.transactionDate) return
 
-
       // const transactionDate = formatDateTemplate(row.transactionDate);
-      const transactionDate = row.transactionDate;
+      const transactionDate = row.transactionDate
 
       return (
         <Typography sx={{ color: colors.text.secondary, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
@@ -159,8 +143,6 @@ export const columns: GridColumns<PaymentColumn> = [
     disableColumnMenu: true,
     cellClassName: 'account-column-cell-pl-0',
     renderHeader: ({ colDef }) => <ColumnHeader colDef={colDef} showIcon={false} />,
-    renderCell: ({ row }) => (
-      <ActionHistory transactionId={row.transactionId} />
-    )
+    renderCell: ({ row }) => <ActionHistory transactionId={row.transactionId} />
   }
-];
+]

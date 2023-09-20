@@ -12,6 +12,12 @@ interface FormAccountingStructureProps {
   by: InsuredBy
 }
 
+// Todo: verificar  accountingStructure.netPremiumReinsurance para broker
+/* * Probablemente el campo accountingStructure.netPremium será eliminado
+     debido a una confusión en las definiciones, si es así,
+     quitar la condición en los inputs de NetPremiumReinsurance
+     en este mismo archivo para dejar solo 1 input.
+*/
 export const FormAccountingStructure = ({ by }: FormAccountingStructureProps) => {
   const { isLoading, accountingStructure, getDataByInsuredId } = useAccountingStructure()
 
@@ -35,8 +41,8 @@ export const FormAccountingStructure = ({ by }: FormAccountingStructureProps) =>
             />
           ) : by === 'broker' ? (
             <DisabledTextField
-              label='Net Premium'
-              value={accountingStructure.netPremium.toLocaleString('en-US', {
+              label='Net Reinsurance Premium'
+              value={accountingStructure.netPremiumReinsurance.toLocaleString('en-US', {
                 maximumFractionDigits: 2,
                 minimumFractionDigits: 2
               })}
