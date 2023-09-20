@@ -189,7 +189,10 @@ const navigation = (): VerticalNavItemsType => {
           // path: '/apps/invoice/list'
         },
         {
-          title: 'Claims/claims'
+          title: 'Claims',
+          path: '/catalogues/claims',
+          subject: 'catalogues',
+          action: 'read',
         }
       ]
     },
