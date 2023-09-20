@@ -1,6 +1,8 @@
+import { useState } from 'react'
+
 //Import MUI Material
 
-import { Box, Button, FormControl, Grid, InputLabel, Select } from '@mui/material'
+import { Box, Button, FormControl, Grid, InputLabel, Modal, Select, Typography } from '@mui/material'
 import TextField from '@mui/material/TextField'
 import CustomInput from '../../Components/CustomInput'
 
@@ -17,10 +19,17 @@ import DatePicker from 'react-datepicker'
 import { NumericFormat } from 'react-number-format'
 import PickersTime from '../../Components/PickerTime'
 
+import Stack from '@mui/material/Stack'
+
+import CloseIcon from '@mui/icons-material/Close'
+import { ButtonClose, HeaderTitleModal } from 'src/styles/Dashboard/ModalReinsurers/modalReinsurers'
+import CollapsibleTable from '../../Components/TableModal/TableModal'
+
 const CustomerSelection = () => {
   const handlechangeValue = (event: KeyboardEvent) => {
     event.preventDefault()
   }
+  const [openEndorsement, setOpenEndorsement] = useState(false)
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -263,11 +272,44 @@ const CustomerSelection = () => {
           <ContainerInputs>
             <TitleInputs>Endorsements</TitleInputs>
             <Box>
-              <Button>
+              <Button onClick={() => setOpenEndorsement(true)}>
                 View Endorsements &nbsp;
                 <Icon icon={'lucide:eye'} />
               </Button>
             </Box>
+            <Modal
+              className='history-modal'
+              open={openEndorsement}
+              onClose={() => {
+                setOpenEndorsement(false)
+              }}
+            >
+              <Box className='modal-wrapper modal-endorsements'>
+                <HeaderTitleModal>
+                  <Typography variant='h6'>Endorsements</Typography>
+                  <ButtonClose
+                    onClick={() => {
+                      setOpenEndorsement(false)
+                    }}
+                  >
+                    <CloseIcon />
+                  </ButtonClose>
+                </HeaderTitleModal>
+                <Box>
+                  <CollapsibleTable />
+                </Box>
+                <Stack spacing={2} direction={{ xs: 'column', sm: 'column', md: 'row-reverse' }}>
+                  <Button
+                    variant='contained'
+                    onClick={() => {
+                      setOpenEndorsement(false)
+                    }}
+                  >
+                    Ok
+                  </Button>
+                </Stack>
+              </Box>
+            </Modal>
           </ContainerInputs>
         </Grid>
       </Grid>
