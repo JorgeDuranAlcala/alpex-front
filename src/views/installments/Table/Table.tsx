@@ -20,6 +20,7 @@ import CustomPagination from './CustomPagination'
 import { Link } from '@mui/material'
 import UserThemeOptions from 'src/layouts/UserThemeOptions'
 import { useAppDispatch, useAppSelector } from 'src/store'
+import { updateFormsData } from 'src/store/apps/accounts'
 import { fetchInstallments } from 'src/store/apps/installments'
 import HeaderTable from './HeaderTable'
 import Status from './Status'
@@ -55,8 +56,19 @@ const Table = () => {
 
   const inter = userThemeConfig.typography?.fontFamilyInter
 
-  const onAction = async (id: number) => {
-    localStorage.setItem('idAccountIntallments', String(id))
+  const onAction = async (id: number, idInstallment: number) => {
+    dispatch(
+      updateFormsData({
+        form1: {
+          basicInfo: {},
+          placementStructure: {},
+          userFile: {},
+          id
+        }
+      })
+    )
+    localStorage.setItem('idAccount', String(id))
+    localStorage.setItem('idAccountInstallment', String(idInstallment))
     router.push(`/installments/payment-record/?&id=${String(id)}`)
   }
 
@@ -285,7 +297,7 @@ const Table = () => {
           <Link
             sx={{ cursor: 'pointer' }}
             onClick={() => {
-              onAction(row.idAccount)
+              onAction(row.idAccount, row.idInstallment)
             }}
           >
             <Button

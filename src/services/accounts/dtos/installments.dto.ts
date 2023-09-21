@@ -23,3 +23,16 @@ export interface CountInstallmentsDto {
 export interface filterInstallmentsDto {
   results: JSON
 }
+
+export interface installmentsHeaderDto {
+  insured: string
+  idAccount: number
+  status: string
+  broker: string
+  lineOfBusiness: string
+  dueDate: string
+  balanceDue: number
+  installmentOrder: string
+  balance: number
+  totalDebt: number
+}
