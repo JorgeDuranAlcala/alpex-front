@@ -63,7 +63,7 @@ const Form = ({
 
   const { dispatch, state } = React.useContext(DynamicContext);
   const router = useRouter();
-  const initialValues = state.banks.find(b => b.id == id);
+  const initialValues = state.banks.find((b: any) => b.id === id);
 
   const onSubmit = (data: any) => {
     dispatch({ type: DynamicActionTypes.UPDATE_BANK, payload: {...data, id: initialValues.id}});
