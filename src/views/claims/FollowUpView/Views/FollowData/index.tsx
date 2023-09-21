@@ -1,5 +1,5 @@
-import { ContainerInputs, StyledTextarea, TitleInputs } from '@/styles/Claims/ContractStyles/contractStyles'
-import { Box, Button, FormControl, Grid, InputLabel, Select } from '@mui/material'
+import { ContainerInputs } from '@/styles/Claims/ContractStyles/contractStyles'
+import { Box, Button, FormControl, Grid, InputLabel, Select, TextField } from '@mui/material'
 
 // ** Third Party Imports
 import DatePickerWrapper from '@/@core/styles/libs/react-datepicker'
@@ -11,11 +11,11 @@ const FollowData = () => {
   return (
     <Box sx={{ flexGrow: 1 }}>
       <Grid container spacing={{ xs: 5, sm: 5, md: 5 }}>
-        <Grid item xs={12} sm={12} md={12}>
+        <Grid item xs={12} sm={12} md={12} marginTop={4}>
           <ContainerInputs>
-            <TitleInputs>Note</TitleInputs>
             <FormControl fullWidth>
-              <StyledTextarea />
+              {/* <StyledTextarea placeholder='Note' /> */}
+              <TextField id='outlined-multiline-static' label='Note' multiline rows={1} defaultValue='' />
             </FormControl>
           </ContainerInputs>
         </Grid>
