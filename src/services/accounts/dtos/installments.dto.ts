@@ -20,3 +20,6 @@ export interface CountInstallmentsDto {
   totalInstallments: number
   totalBalanceDue: number
 }
+export interface filterInstallmentsDto {
+  results: JSON
+}
