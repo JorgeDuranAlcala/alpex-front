@@ -1,5 +1,5 @@
 import { FormSection } from 'src/styles/Forms/FormSection'
-import { StyledDescription, StyledSubtitle, StyledTitle } from 'src/views/custom/typography'
+import { StyledTitle } from 'src/views/custom/typography'
 import BankForm from './Form'
 
 interface IAddBank {
@@ -7,7 +7,7 @@ interface IAddBank {
   subTitle: string;
 }
 
-const AddBank = ({ title, subTitle }: IAddBank) => {
+const AddBank = ({ title }: IAddBank) => {
 
   return (
     <>

@@ -1,5 +1,5 @@
 import { useEffect, useState, useContext } from 'react'
-import { AdjusterDto, AdjusterInfoDto, AdjusterPaginationDto } from 'src/services/catalogs/dtos/adjuster.dto'
+import { AdjusterInfoDto, AdjusterPaginationDto } from 'src/services/catalogs/dtos/adjuster.dto'
 import { CataloguesClaimsContext } from 'src/context/catalogues-claims/reducer'
 
 const initialState: AdjusterPaginationDto = {
@@ -29,6 +29,9 @@ const useGetAllPagination = () => {
   const { state: { adjusters } } = useContext(CataloguesClaimsContext);
   const [adjusterInfoPage, setAdjusterInfoPage] = useState(initialStateInfo)
 
+  useEffect(() => {
+    setAdjusterInfoPage(initialStateInfo)
+  }, [])
 
   return {
     adjusterPagination,

@@ -1,5 +1,5 @@
 import { FormSection } from 'src/styles/Forms/FormSection'
-import { StyledDescription, StyledSubtitle, StyledTitle } from 'src/views/custom/typography'
+import { StyledTitle } from 'src/views/custom/typography'
 import ExpertForm from './Form'
 
 interface IAddExpert {
@@ -7,7 +7,7 @@ interface IAddExpert {
   subTitle: string;
 }
 
-const AddExpert = ({ title, subTitle }: IAddExpert) => {
+const AddExpert = ({ title }: IAddExpert) => {
 
   return (
     <>

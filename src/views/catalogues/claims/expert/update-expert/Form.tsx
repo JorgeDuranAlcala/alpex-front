@@ -13,9 +13,8 @@ import {
 } from '@mui/material';
 import { CataloguesClaimsContext } from 'src/context/catalogues-claims/reducer';
 import CataloguesClaimsActionTypes from 'src/context/catalogues-claims/actionTypes';
-// ** Icon Imports
-import Icon from 'src/@core/components/icon'
-import { IExpert } from 'src/views/catalogues/claims/expert'
+
+//import { IExpert } from 'src/views/catalogues/claims/expert'
 
 // ** Hooks
 import { useRouter } from 'next/router'

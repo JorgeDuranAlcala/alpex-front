@@ -1,15 +1,14 @@
-import { useEffect, useState, useContext } from 'react';
+import { useContext } from 'react';
 import { FormSection } from 'src/styles/Forms/FormSection'
-import { StyledDescription, StyledSubtitle, StyledTitle } from 'src/views/custom/typography'
+import { StyledTitle } from 'src/views/custom/typography'
 import BankForm from './Form'
-import { DynamicContext, bankByIdSelector } from 'src/context/dynamic/reducer';
+import { DynamicContext } from 'src/context/dynamic/reducer';
 import { useRouter } from 'next/router'
 
 
 const UpdateBank = () => {
 
     const router = useRouter()
-    const [bank, setBank] = useState<any>(null)
     const { state } = useContext(DynamicContext);
     const id = router.query.id && (parseInt(router.query.id.toString()))
     const bankData = state.banks.find(b => b.id == id);

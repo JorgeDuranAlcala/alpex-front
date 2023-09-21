@@ -12,11 +12,8 @@ import {
   InputLabel, Select, MenuItem
 } from '@mui/material';
 import { CataloguesClaimsContext } from 'src/context/catalogues-claims/reducer';
-import { IAdjuster } from 'src/views/catalogues/claims/adjuster'
 import CataloguesClaimsActionTypes from 'src/context/catalogues-claims/actionTypes';
 
-// ** Icon Imports
-import Icon from 'src/@core/components/icon'
 
 // ** Hooks
 import { useRouter } from 'next/router'

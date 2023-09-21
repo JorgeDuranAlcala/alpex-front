@@ -1,6 +1,6 @@
 import { useEffect, useState, useContext } from 'react'
-import { ExpertsInfoDto, ExpertsInfoDto, ExpertPaginationDto } from 'src/services/catalogs/dtos/expert.dto'
-import { CataloguesClaimsContext }from 'src/context/catalogues-claims/reducer'
+import { ExpertsInfoDto, ExpertPaginationDto } from 'src/services/catalogs/dtos/expert.dto'
+import { CataloguesClaimsContext } from 'src/context/catalogues-claims/reducer'
 
 const initialState: ExpertPaginationDto = {
   filters: [],
@@ -27,8 +27,12 @@ const initialStateInfo: ExpertsInfoDto = {
 const useGetAllPagination = () => {
   const [expertPagination, setExpertPagination] = useState(initialState)
   const { state: { experts } } = useContext(CataloguesClaimsContext);
-  const [expertInfoPage, setExpertInfoPage] = useState(initialStateInfo)
+  const [expertInfoPage, setExpertInfoPage] = useState(initialStateInfo);
 
+
+  useEffect(() => {
+    setExpertInfoPage(initialStateInfo)
+  }, [])
 
   return {
     expertPagination,

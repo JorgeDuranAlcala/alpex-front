@@ -3,7 +3,7 @@
 // import { AccountsTableContextProvider } from 'src/context/accounts/Table/reducer'
 import Card from '@mui/material/Card'
 import Grid from '@mui/material/Grid'
-// ** Custom Components Imports
+
 import AddExpertView from 'src/views/catalogues/claims/expert/add-expert/'
 
 const AddExpert = () => {

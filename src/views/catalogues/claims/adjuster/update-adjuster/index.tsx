@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { FormSection } from 'src/styles/Forms/FormSection'
-import { StyledDescription, StyledSubtitle, StyledTitle } from 'src/views/custom/typography'
+import { StyledTitle } from 'src/views/custom/typography'
 import UpdateAdjusterForm from './Form'
 import { CataloguesClaimsContext, adjusterByIdSelector } from 'src/context/catalogues-claims/reducer';
 import { useRouter } from 'next/router'
