@@ -9,6 +9,7 @@ import BrokerTable from 'src/views/catalogues/dynamic/broker-table'
 import CedantsTable from 'src/views/catalogues/dynamic/cedants-table'
 import CountriesCurrencies from 'src/views/catalogues/dynamic/countries-currencies'
 import RetroCedantsTable from 'src/views/catalogues/dynamic/retrocedants-table'
+import BankTable from 'src/views/catalogues/dynamic/bank-table'
 import TypesOfLimit from 'src/views/catalogues/dynamic/types-of-limit'
 import CataloguesTabs from '../../../views/catalogues/dynamic/CataloguesTabs'
 
@@ -29,7 +30,7 @@ const CataloguesTabView = () => {
       {activeTab == 4 ? <RetroCedantsTable /> : ''}
       {activeTab == 5 ? <CountriesCurrencies /> : ''}
       {activeTab == 6 ? <TypesOfLimit /> : ''}
-
+      {activeTab == 7 ? <BankTable /> : ''}
     </>
 
   )

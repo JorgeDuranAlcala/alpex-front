@@ -1,0 +1,10 @@
+enum CataloguesClaimsActionTypes {
+    SET_ADJUSTER = 'SET_ADJUSTER',
+    UPDATE_ADJUSTER = 'UPDATE_ADJUSTER',
+    REMOVE_ADJUSTER = 'REMOVE_ADJUSTER',
+    UPDATE_EXPERT = 'UPDATE_EXPERT',
+    SET_EXPERT = 'SET_EXPERT',
+    REMOVE_EXPERT = 'REMOVE_EXPERT' 
+}
+
+export default CataloguesClaimsActionTypes
