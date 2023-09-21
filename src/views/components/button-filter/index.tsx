@@ -16,8 +16,9 @@ interface IDataFilter {
   date?: boolean
   insured?: boolean
   endorsement?: boolean
+  filterName?: string | undefined
 }
-const ButtonFilter = ({ dataFilter, date, insured, endorsement }: IDataFilter) => {
+const ButtonFilter = ({ dataFilter, date, insured, endorsement, filterName }: IDataFilter) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
 
   // const [menu, setMenu] = React.useState('');
@@ -90,7 +91,7 @@ const ButtonFilter = ({ dataFilter, date, insured, endorsement }: IDataFilter) =
         {date ? (
           <DatePickerFilter />
         ) : insured ? (
-          <SearchInput />
+          <SearchInput filterName={filterName} />
         ) : (
           dataFilter?.map((option, index) => (
             <MenuItem

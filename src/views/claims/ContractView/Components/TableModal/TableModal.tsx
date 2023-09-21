@@ -37,12 +37,10 @@ function Row(props: { row: ReturnType<typeof createData> }) {
   return (
     <Fragment>
       <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
-        <TableCell>
+        <TableCell component='th' scope='row' align='left'>
           <IconButton aria-label='expand row' size='small' onClick={() => setOpen(!open)}>
             {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           </IconButton>
-        </TableCell>
-        <TableCell component='th' scope='row'>
           {row.name}
         </TableCell>
         <TableCell align='left'>{row.calories}</TableCell>
@@ -126,18 +124,17 @@ export default function CollapsibleTable() {
         <Table aria-label='collapsible table'>
           <TableHead style={{ backgroundColor: '#4C4E640A' }}>
             <TableRow>
-              <TableCell />
               <TableCell width={'auto'} align='left'>
                 Type of endorsement
-                <ButtonFilter dataFilter={brokers} insured endorsement />
+                <ButtonFilter dataFilter={brokers} insured endorsement filterName='Search by Endorsement' />
               </TableCell>
               <TableCell align='left'>
                 Date of Creation
-                <ButtonFilter dataFilter={brokers} insured endorsement />
+                <ButtonFilter dataFilter={brokers} endorsement date />
               </TableCell>
               <TableCell align='left'>
                 Fields modified
-                <ButtonFilter dataFilter={brokers} insured endorsement />
+                <ButtonFilter dataFilter={brokers} insured endorsement filterName='Search by Fields Modified' />
               </TableCell>
               <TableCell align='left'>Actions</TableCell>
             </TableRow>

@@ -43,6 +43,7 @@ const StyledTextarea = styled(TextareaAutosize)(
   font-weight: 400;
   line-height: 1.5;
   padding: 12px;
+  color: #4D5062DE;
 
   &:hover {
     border-color: '#2535a8';
