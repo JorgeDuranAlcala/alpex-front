@@ -1,6 +1,6 @@
 import { useEffect, useState, useContext } from 'react'
-import { BankInfoDto, BankPaginationDto } from 'src/services/catalogs/dtos/expert.dto'
-import { DynamicContext }from 'src/context/dynamic/reducer'
+import { BankInfoDto, BankPaginationDto } from 'src/services/catalogs/dtos/bank.dto'
+import { DynamicContext } from 'src/context/dynamic/reducer'
 
 const initialState: BankPaginationDto = {
   filters: [],
@@ -29,6 +29,9 @@ const useGetAllPagination = () => {
   const { state: { banks } } = useContext(DynamicContext);
   const [bankInfoPage, setBankInfoPage] = useState(initialStateInfo)
 
+  useEffect(() => {
+    setBankInfoPage(initialStateInfo)
+  }, [])
 
   return {
     banksPagination,

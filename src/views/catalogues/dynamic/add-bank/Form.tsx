@@ -16,8 +16,6 @@ import DynamicActionTypes from 'src/context/dynamic/actionTypes';
 
 import { useRouter } from 'next/router'
 
-// ** Icon Imports
-import Icon from 'src/@core/components/icon'
 
 const schema = yup.object().shape({
   capacity: yup.string().required('Este campo es obligatorio'),

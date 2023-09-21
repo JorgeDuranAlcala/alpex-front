@@ -11,15 +11,13 @@ import {
   FormHelperText,
   InputLabel, Select, MenuItem
 } from '@mui/material';
-// ** context
+
 import { CataloguesClaimsContext } from 'src/context/catalogues-claims/reducer';
 import CataloguesClaimsActionTypes from 'src/context/catalogues-claims/actionTypes';
 
 // ** Hooks
 import { useRouter } from 'next/router'
 
-// ** Icon Imports
-import Icon from 'src/@core/components/icon'
 
 const schema = yup.object().shape({
   siglas: yup.string().required('Siglas is required'),

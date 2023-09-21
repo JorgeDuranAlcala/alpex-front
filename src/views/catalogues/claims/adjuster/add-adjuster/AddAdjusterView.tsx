@@ -1,5 +1,5 @@
 import { FormSection } from 'src/styles/Forms/FormSection'
-import { StyledDescription, StyledSubtitle, StyledTitle } from 'src/views/custom/typography'
+import {StyledTitle } from 'src/views/custom/typography'
 import AdjusterForm from './Form'
 
 interface IAddAdjuster {
@@ -7,7 +7,7 @@ interface IAddAdjuster {
   subTitle: string;
 }
 
-const AddAdjuster = ({ title, subTitle }: IAddAdjuster) => {
+const AddAdjuster = ({ title  }: IAddAdjuster) => {
 
   return (
     <>

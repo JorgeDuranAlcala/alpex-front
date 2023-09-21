@@ -9,7 +9,7 @@ import { useRouter } from 'next/router'
 import CloseIcon from '@mui/icons-material/Close'
 import { Box, Button, Modal, Typography } from '@mui/material'
 import IconButton from '@mui/material/IconButton'
-import { DataGrid, GRID_CHECKBOX_SELECTION_COL_DEF, GridColumns, GridRowParams } from '@mui/x-data-grid'
+import { DataGrid, GRID_CHECKBOX_SELECTION_COL_DEF, GridColumns } from '@mui/x-data-grid'
 import { ButtonClose, HeaderTitleModal } from 'src/styles/modal/modal.styled'
 
 // ** Icon Imports
@@ -63,15 +63,9 @@ const BanksTable = () => {
     banksPagination,
     setBanksPagination,
     banks,
-    bankInfoPage,
-    setBankInfoPage
+    bankInfoPage
    } = useGetAllPagination()
 
-  // Handle Alerts
-  const [showAlert, setShowAlert] = useState(true)
-  const [alertType, setAlertType] = useState('')
-  const [alertText, setAlertText] = useState('')
-  const [alertIcon, setAlertIcon] = useState('')
 
   // context
 
@@ -227,32 +221,6 @@ const BanksTable = () => {
     setBanksList(banks || [])
   }, [banks])
 
-  const triggerAlert = (type: string, text: string) => {
-    setAlertType(type)
-
-    switch (type) {
-      case 'success-alert':
-        setAlertText(text)
-        setAlertIcon('mdi:check-circle-outline')
-        break
-      case 'error-alert':
-        setAlertText('UNKNOWN ERROR, TRY AGAIN')
-        setAlertIcon('mdi:alert-circle-outline')
-        break
-      case 'warn-alert':
-        setAlertText('NO INTERNET CONNECTION')
-        setAlertIcon('mdi:alert-outline')
-        break
-      default:
-        break
-    }
-
-    setShowAlert(true)
-
-    setTimeout(() => {
-      setShowAlert(false)
-    }, 5000)
-  }
 
   const handleSelectEdit = (id: string | null) => {
     router.push({ pathname: '/catalogues/dynamic/update-bank', query: { id } })
@@ -283,21 +251,11 @@ const BanksTable = () => {
   return (
     <>
       <div className='outter-wrapper'>
-        {/* TODO:  */}
-        {showAlert && (
-          <div className={`${alertType} catalogue-item-alert`}>
-            <div className='btn-icon'>
-              <Icon icon={alertIcon} />
-            </div>
-            {alertText}
-          </div>
-        )}
         <TableHeader
           onDeleteRows={() => {
             setOpenDeleteRows(true)
           }}
           deleteBtn={selectedRows.length > 0 ? true : false}
-          onSearch={() => {}}
           textBtn='ADD BANK ACCOUNT'
           onClickBtn={() => router.push('/catalogues/dynamic/add-bank')}
         />

@@ -3,7 +3,7 @@
 // import { AccountsTableContextProvider } from 'src/context/accounts/Table/reducer'
 import Card from '@mui/material/Card'
 import Grid from '@mui/material/Grid'
-// ** Custom Components Imports
+
 import AddBankView from 'src/views/catalogues/dynamic/add-bank'
 
 const AddBank = () => {

@@ -52,11 +52,7 @@ const AdjusterTable = () => {
     adjusterInfoPage
    } = useGetAllPagination()
 
-  // Handle Alerts
-  const [showAlert, setShowAlert] = useState(true)
-  const [alertType, setAlertType] = useState('')
-  const [alertText, setAlertText] = useState('')
-  const [alertIcon, setAlertIcon] = useState('')
+
 
   const router = useRouter()
 
@@ -264,36 +260,11 @@ const AdjusterTable = () => {
     setAdjusterList(adjusters || [])
   }, [adjusters])
 
-  const triggerAlert = (type: string, text: string) => {
-    setAlertType(type)
-
-    switch (type) {
-      case 'success-alert':
-        setAlertText(text)
-        setAlertIcon('mdi:check-circle-outline')
-        break
-      case 'error-alert':
-        setAlertText('UNKNOWN ERROR, TRY AGAIN')
-        setAlertIcon('mdi:alert-circle-outline')
-        break
-      case 'warn-alert':
-        setAlertText('NO INTERNET CONNECTION')
-        setAlertIcon('mdi:alert-outline')
-        break
-      default:
-        break
-    }
-
-    setShowAlert(true)
-
-    setTimeout(() => {
-      setShowAlert(false)
-    }, 5000)
-  }
 
   const handleSelectEdit = (id: string | null) => {
     router.push({ pathname: '/catalogues/claims/update-adjusters', query: { id } })
   }
+  
 
 
   const deleteRows = async () => {
@@ -321,21 +292,11 @@ const AdjusterTable = () => {
   return (
     <>
       <div className='outter-wrapper'>
-        {/* TODO:  */}
-        {showAlert && (
-          <div className={`${alertType} catalogue-item-alert`}>
-            <div className='btn-icon'>
-              <Icon icon={alertIcon} />
-            </div>
-            {alertText}
-          </div>
-        )}
         <TableHeader
           onDeleteRows={() => {
             setOpenDeleteRows(true)
           }}
           deleteBtn={selectedRows.length > 0 ? true : false}
-          onSearch={() => {}}
           textBtn='ADD ADJUSTER'
           onClickBtn={() => router.push('/catalogues/claims/add-adjusters')}
         />
