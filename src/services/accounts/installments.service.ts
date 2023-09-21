@@ -2,7 +2,7 @@ import { INSTALLMENT_ROUTERS } from 'src/configs/api'
 import { IInstallmentState } from 'src/types/apps/installmentsTypes'
 import { AppAlpexApiGateWay } from '../app.alpex.api-getway'
 import { queryBuilder } from '../helper/queryBuilder'
-import { CountInstallmentsDto, InstallmentDto } from './dtos/installments.dto'
+import { CountInstallmentsDto, InstallmentDto, installmentsHeaderDto } from './dtos/installments.dto'
 
 class InstallmentService {
   async addInstallments(securitiesIn: Partial<InstallmentDto>[]): Promise<InstallmentDto[]> {
@@ -69,6 +69,18 @@ class InstallmentService {
     } catch (error) {
       const errMessage = String(error)
       throw new Error(errMessage)
+    }
+  }
+
+  async installmentHeader(idAccount: number, idInstallment: number): Promise<installmentsHeaderDto> {
+    try {
+      const { data } = await AppAlpexApiGateWay.get<Promise<installmentsHeaderDto>>(
+        `${INSTALLMENT_ROUTERS.INSTALLMENT_HEADER}/?&idAccount=${idAccount}&idInstallment=${idInstallment}`
+      )
+
+      return data
+    } catch (error) {
+      throw error
     }
   }
 }

@@ -21,6 +21,9 @@ import UserThemeOptions from 'src/layouts/UserThemeOptions'
 import HeaderTable from './HeaderTable'
 import { brokers, data } from './data'
 
+// ** Next Import
+import { useRouter } from 'next/router'
+
 // ** Custom Hooks imports
 
 interface INearlyPaymentStatus {
@@ -34,11 +37,6 @@ interface INearlyPaymentStatus {
 const userThemeConfig: any = Object.assign({}, UserThemeOptions())
 
 const inter = userThemeConfig.typography?.fontFamilyInter
-
-const onAction = async (id: number) => {
-  localStorage.setItem('idAccountIntallments', String(id))
-  window.location.href = `/installments/payment-record/?&id=${String(id)}`
-}
 
 const column: GridColumns<INearlyPaymentStatus> = [
   {
@@ -235,6 +233,9 @@ const column: GridColumns<INearlyPaymentStatus> = [
 ]
 
 const Table = () => {
+  // ** Hooks
+  const router = useRouter()
+
   return (
     <>
       <HeaderTable />
@@ -252,6 +253,11 @@ const Table = () => {
       />
     </>
   )
+}
+
+const onAction = async (id: number) => {
+  localStorage.setItem('idAccount', String(id))
+  router.push(`/installments/payment-record/?&id=${String(id)}`)
 }
 
 export default Table
