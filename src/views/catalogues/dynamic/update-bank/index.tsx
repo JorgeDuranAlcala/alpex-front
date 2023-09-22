@@ -10,7 +10,7 @@ const UpdateBank = () => {
 
     const router = useRouter()
     const { state } = useContext(DynamicContext);
-    const id = router.query.id && router.query.id.toString()
+    const id = (router.query.id && router.query.id.toString()) as string;
     const bankData = state.banks.find(b => b.id == (id as string));
     if(!bankData) router.back();
 

@@ -8,7 +8,7 @@ import { useRouter } from 'next/router'
 const UpdateExpert = () => {
 
     const router = useRouter()
-    const id = router.query.id && router.query.id.toString()
+    const id = (router.query.id && router.query.id.toString()) as string;
   
     const { state } = React.useContext(CataloguesClaimsContext);
     const expertData = expertByIdSelector(state, id as string);
