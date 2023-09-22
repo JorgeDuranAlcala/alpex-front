@@ -22,7 +22,7 @@ const MenuForm = ({ idAccountInit }: { idAccountInit?: number | null }) => {
   const { getInfoDoctosByIdAccount } = useGetInfoDoctosByIdAccount()
   const { deleteInformationDocument } = useDeleteInformationDocument()
   const theme = useTheme()
-  const { foldersAccount, setIdUser } = useGetFolders()
+  const { foldersAccount, setInputGetFolder } = useGetFolders()
 
   //States
   const [doctoIdByName, setDoctoIdByName] = useState({})
@@ -36,7 +36,10 @@ const MenuForm = ({ idAccountInit }: { idAccountInit?: number | null }) => {
 
   const handleSidebarMenu = () => {
     setSidebar(!sidebar)
-    setIdUser(Number(localStorage.getItem('idAccount')))
+    setInputGetFolder({
+      id: Number(localStorage.getItem('idAccount')),
+      section: 'accounts'
+    })
     console.log('Hola')
   }
 
@@ -107,82 +110,7 @@ const MenuForm = ({ idAccountInit }: { idAccountInit?: number | null }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userFileToDelete])
 
-  // const uploadDoctos = async (idAccount: number) => {
-  //   const formatedDoctos = await formatInformationDoctos(userFile, idAccount, 1, doctoIdByName)
-  //   const newDoctoIdByName: any = {}
 
-  //   await delayMs(1000)
-  //   if (formatedDoctos.length === 0) {
-  //     setBadgeData({
-  //       message: '',
-  //       status: undefined,
-  //       icon: undefined,
-  //       open: false
-  //     })
-
-  //     return
-  //   }
-
-  //   setBadgeData({
-  //     message: `UPDATING DOCUMENTS`,
-  //     status: 'secondary',
-  //     open: true,
-  //     icon: <CircularProgress size={20} color='primary' />,
-  //     backgroundColor: '#828597',
-  //     theme: 'info',
-  //     disableAutoHide: true
-  //   })
-
-  //   for (const docto of formatedDoctos) {
-  //     const res = await uploadInformationDocument(docto)
-  //     const createdDoctoData = res?.createdDoctoDB
-  //     if (createdDoctoData) {
-  //       newDoctoIdByName[createdDoctoData.name] = createdDoctoData.id
-  //     }
-
-  //     if (!res) {
-  //       setBadgeData({
-  //         message: `ERROR UPDATING DOCUMENT: ${docto.name}`,
-  //         theme: 'error',
-  //         open: true,
-  //         status: 'error',
-  //         icon: (
-  //           <Icon
-  //             style={{
-  //               color: '#FF4D49',
-  //               marginTop: '-1px'
-  //             }}
-  //             icon='jam:alert'
-  //           />
-  //         ),
-  //         disableAutoHide: true
-  //       })
-  //     } else {
-  //       setBadgeData({
-  //         message: `DOC: "${docto.name.toUpperCase()}", SAVED SUCCESSFULLY`,
-  //         status: 'success',
-  //         open: true,
-  //         icon: <Icon icon='ic:baseline-check-circle' />,
-  //         theme: 'success',
-  //         disableAutoHide: true
-  //       })
-  //     }
-
-  //     await delayMs(800)
-  //   }
-
-  //   setBadgeData({
-  //     message: '',
-  //     status: undefined,
-  //     icon: undefined,
-  //     open: false
-  //   })
-
-  //   setDoctoIdByName({
-  //     ...doctoIdByName,
-  //     ...newDoctoIdByName
-  //   })
-  // }
 
   return (
     <>

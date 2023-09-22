@@ -24,7 +24,7 @@ export const TaxesAmount = ({
   operationSecurity,
   view
 }: TaxesAmountProps) => {
-  const { activeErros, securities, calculateSecurities } = useContext(SecurityContext)
+  const { activeErros, securities, calculateSecurities, setIsUpdatedInfoByUser } = useContext(SecurityContext)
 
   const handleChangeTaxesAmount = (value: number) => {
     clearInterval(typingTimer)
@@ -41,6 +41,7 @@ export const TaxesAmount = ({
       }
       validateForm(tempSecurities[index])
       calculateSecurities(tempSecurities)
+      setIsUpdatedInfoByUser(true)
 
       // Limpiar el intervalo
       clearInterval(typingTimer)

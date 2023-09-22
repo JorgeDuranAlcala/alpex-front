@@ -1,7 +1,7 @@
 import { useGetAllReinsuranceCompanies } from '@/hooks/catalogs/reinsuranceCompany';
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 
-import { InputSelectProps } from '../../../interfaces/InputSelectProps';
+import { InputSelectProps } from '@/views/arap/_commons/interfaces/InputSelectProps';
 
 export const SelectReinsurer = ({ selectedValue, onChange }: InputSelectProps) => {
 

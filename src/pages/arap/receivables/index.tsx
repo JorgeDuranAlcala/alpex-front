@@ -1,4 +1,5 @@
-// ** MUI ImportsuseMultiTabButtons'
+
+import { ReceivableView } from '@/views/arap/receivable/ReceivableView'
 import Grid from '@mui/material/Grid'
 
 const Receivables = () => {
@@ -7,7 +8,7 @@ const Receivables = () => {
 
   return (
     <Grid item xs={12}>
-      <h1>Receivables view works</h1>
+      <ReceivableView />
     </Grid>
   )
 }

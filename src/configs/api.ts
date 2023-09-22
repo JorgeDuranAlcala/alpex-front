@@ -25,9 +25,11 @@ export enum ACCOUNT_ROUTES {
 }
 
 //Comentario
-export enum ACCOUNT_COMMENTS {
-  ADD = 'account/comment',
-  GET_ALL = 'account/comments'
+export enum COMMENTS {
+  ADD_COMMENT = 'comments/add',
+  GET_ACCOUNT_COMMENTS = 'comments/account',
+  GET_INSTALLMENT_COMMENTS = 'comments/installment',
+  GET_SECURITY_COMMENTS = 'comments/security'
 }
 
 //Account History Log
@@ -238,7 +240,16 @@ export enum INSTALLMENT_ROUTERS {
   GET_ALL = 'account/installment/',
   ADD = 'account/installment/add',
   UPDATE = 'account/installment/update',
-  DELETE = 'account/installment/delete'
+  DELETE = 'account/installment/delete',
+  COUNT_INSTALLMENTS = 'payment/installments/count',
+  FILTER_INSTALMENTS = 'payment/installments/filter',
+  FILTER_REINSURERS = 'payment/reinsurers/filter',
+  FILTER_BROKER_TRAKER = 'payment/accounts/filter',
+  COUNT_INSTALLMENTS_BY_BROKER = 'payment/installments/count-broker',
+  INSTALLMENT_HEADER = 'payment/installment/header',
+  INSTALLMENT_BY_ACCOUNT = 'payment/installments',
+  RECORD_BROKER_PAYMENT = 'payment/broker/record-payment',
+  RECORD_REINSURER_PAYMENT = 'payment/reinsurer/record-payment'
 }
 
 export enum ACCOUNT_STATUS_ROUTERS {
@@ -301,8 +312,27 @@ export enum DEBIT_NOTE_ROUTES {
   DOWNLOAD = 'reports/debit-note'
 }
 
+// ==== DYNAMIC DATA
+
+export enum DATA_DASHBOARD_ROUTES {
+  GET_PRIORITY_PROPERTIES = 'buildings/all',
+  GET_CAPACITY_PER_STATES = 'buildings/top-five',
+  GET_EARTHQUAKES_DATA = 'data/earthquakes/earthquake-detected'
+}
+
+export enum DATA_MAPS_ROUTES {
+  GET_ALL_PROPERTIES = 'buildings/all'
+}
+
+// ==== ACCOUNT
+export enum DATA_PROPERTIES_ROUTES {
+  GET_BY_ID = 'buildings/data/get-property-details'
+}
+
+// ====
+
 export enum DOCUMENTS_ROUTES {
-  GETBYACCOUNTID = 'documents/get/byAccountId',
+  GETBYACCOUNTID = 'documents/get/by-section',
   MOVEFILE = 'documents/move/file',
   RENAMEFOLDER = 'documents/rename/folder',
   DELETEFILE = 'documents/delete/file',
