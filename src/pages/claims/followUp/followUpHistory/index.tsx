@@ -11,7 +11,7 @@ const OverViewHistory = () => {
   return (
     <Grid item xs={12}>
       <Button
-        style={{ color: '#4D5062DE', textTransform: 'none', marginBottom: '24px' }}
+        className='global-btn-multi'
         startIcon={<Icon icon='mdi:arrow-left' />}
         onClick={() => router.push('/claims/CustomerIdentification/')}
       >

@@ -34,3 +34,17 @@ code[class*='language-'] {
 div[role='presentation']:has(div.custom-menu-paper-select-anchor):has(ul[role='listbox']) {
   display: none !important;
 }
+
+.global-btn-multi {
+  color: rgba(77, 80, 98, 0.87) !important;
+  text-transform: none !important;
+  margin-bottom: 24px !important;
+  position: absolute !important;
+  top: 10px !important;
+}
+
+@media (max-width: 1199px) {
+  .global-btn-multi {
+    margin-left: 32px !important;
+  }
+}
