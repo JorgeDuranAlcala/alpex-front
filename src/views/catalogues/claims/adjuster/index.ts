@@ -11,7 +11,7 @@ export interface IAdjuster {
     colonia: string;
     municipio: string;
     cp: number;
-    telefono: number;
+    telefono: string;
     correoContacto: string;
     nombreContacto: string;
     contactoReporte: string;

@@ -19,6 +19,7 @@ import CataloguesClaimsActionTypes from 'src/context/catalogues-claims/actionTyp
 import { useRouter } from 'next/router'
 
 
+// Schema
 const schema = yup.object().shape({
   siglas: yup.string().required('Siglas is required'),
   razonSocial: yup.string().required('Razón Social is required'),
@@ -97,7 +98,9 @@ const Form = () => {
                           )}
                         />
                         {errors.siglas && (
-                          <FormHelperText sx={{ color: 'error.main' }}>{errors.siglas.message}</FormHelperText>
+                         <FormHelperText sx={{ color: 'error.main' }}>
+                           {errors.siglas && typeof errors.siglas.message === 'string' && errors.siglas.message}
+                          </FormHelperText>
                         )}
                 </FormControl>
               </Grid>
@@ -125,7 +128,9 @@ const Form = () => {
                           )}
                         />
                         {errors.razonSocial && (
-                          <FormHelperText sx={{ color: 'error.main' }}>{errors.razonSocial.message}</FormHelperText>
+                          <FormHelperText sx={{ color: 'error.main' }}>
+                            {errors.razonSocial && typeof errors.razonSocial.message === 'string' && errors.razonSocial.message}
+                          </FormHelperText>
                         )}
                 </FormControl>
               </Grid>
@@ -152,7 +157,9 @@ const Form = () => {
                       )}
                     />
                     {errors.proveedor && (
-                      <FormHelperText sx={{ color: 'error.main' }}>{errors.proveedor.message}</FormHelperText>
+           <FormHelperText sx={{ color: 'error.main' }}>
+           {errors.proveedor && typeof errors.proveedor.message === 'string' && errors.proveedor.message}
+         </FormHelperText>
                     )}
                 </FormControl>
               </Grid>
@@ -180,7 +187,9 @@ const Form = () => {
                       )}
                     />
                     {errors.rfc && (
-                      <FormHelperText sx={{ color: 'error.main' }}>{errors.rfc.message}</FormHelperText>
+                     <FormHelperText sx={{ color: 'error.main' }}>
+                       {errors.rfc && typeof errors.rfc.message === 'string' && errors.rfc.message}
+                      </FormHelperText>
                     )}
                 </FormControl>
               </Grid>
@@ -208,7 +217,9 @@ const Form = () => {
                       )}
                     />
                     {errors.calle && (
-                      <FormHelperText sx={{ color: 'error.main' }}>{errors.calle.message}</FormHelperText>
+                      <FormHelperText sx={{ color: 'error.main' }}>
+                        {errors.calle && typeof errors.calle.message === 'string' && errors.calle.message}
+                      </FormHelperText>
                     )}
                 </FormControl>
               </Grid>
@@ -237,7 +248,9 @@ const Form = () => {
                       )}
                     />
                     {errors.noExterior && (
-                      <FormHelperText sx={{ color: 'error.main' }}>{errors.noExterior.message}</FormHelperText>
+                      <FormHelperText sx={{ color: 'error.main' }}>
+                         {errors.noExterior && typeof errors.noExterior.message === 'string' && errors.noExterior.message}
+                      </FormHelperText>
                     )}
                 </FormControl>
               </Grid>
@@ -266,7 +279,9 @@ const Form = () => {
                       )}
                     />
                     {errors.noInterior && (
-                      <FormHelperText sx={{ color: 'error.main' }}>{errors.noInterior.message}</FormHelperText>
+                     <FormHelperText sx={{ color: 'error.main' }}>
+                        {errors.noInterior && typeof errors.noInterior.message === 'string' && errors.noInterior.message}
+                      </FormHelperText>
                     )}
                 </FormControl>
               </Grid>
@@ -294,7 +309,9 @@ const Form = () => {
                       )}
                     />
                     {errors.colonia && (
-                      <FormHelperText sx={{ color: 'error.main' }}>{errors.colonia.message}</FormHelperText>
+                      <FormHelperText sx={{ color: 'error.main' }}>
+                        {errors.colonia && typeof errors.colonia.message === 'string' && errors.colonia.message}
+                      </FormHelperText>
                     )}
                 </FormControl>
               </Grid>
@@ -322,7 +339,9 @@ const Form = () => {
                       )}
                     />
                     {errors.municipio && (
-                      <FormHelperText sx={{ color: 'error.main' }}>{errors.municipio.message}</FormHelperText>
+                      <FormHelperText sx={{ color: 'error.main' }}>
+                        {errors.municipio && typeof errors.municipio.message === 'string' && errors.municipio.message}
+                      </FormHelperText>
                     )}
                 </FormControl>
               </Grid>
@@ -341,7 +360,9 @@ const Form = () => {
                     )}
                   />
                   {errors.estado && (
-                    <FormHelperText sx={{ color: 'error.main' }}>{errors.estado.message}</FormHelperText>
+                   <FormHelperText sx={{ color: 'error.main' }}>
+                       {errors.estado && typeof errors.estado.message === 'string' && errors.estado.message}
+                    </FormHelperText>                 
                   )}
                 </FormControl>
               </Grid>
@@ -370,7 +391,9 @@ const Form = () => {
                       )}
                     />
                     {errors.cp && (
-                      <FormHelperText sx={{ color: 'error.main' }}>{errors.cp.message}</FormHelperText>
+                      <FormHelperText sx={{ color: 'error.main' }}>
+                        {errors.cp && typeof errors.cp.message === 'string' && errors.cp.message}
+                      </FormHelperText>
                     )}
                 </FormControl>
               </Grid>
@@ -399,7 +422,9 @@ const Form = () => {
                       )}
                     />
                     {errors.telefono && (
-                      <FormHelperText sx={{ color: 'error.main' }}>{errors.telefono.message}</FormHelperText>
+                      <FormHelperText sx={{ color: 'error.main' }}>
+                        {errors.telefono && typeof errors.telefono.message === 'string' && errors.telefono.message}
+                      </FormHelperText>
                     )}
                 </FormControl>
               </Grid>
@@ -427,7 +452,9 @@ const Form = () => {
                       )}
                     />
                     {errors.correoContacto && (
-                      <FormHelperText sx={{ color: 'error.main' }}>{errors.correoContacto.message}</FormHelperText>
+                      <FormHelperText sx={{ color: 'error.main' }}>
+                        {errors.correoContacto && typeof errors.correoContacto.message === 'string' && errors.correoContacto.message}
+                      </FormHelperText>
                     )}
                 </FormControl>
               </Grid>
@@ -455,7 +482,9 @@ const Form = () => {
                       )}
                     />
                     {errors.nombreContacto && (
-                      <FormHelperText sx={{ color: 'error.main' }}>{errors.nombreContacto.message}</FormHelperText>
+                      <FormHelperText sx={{ color: 'error.main' }}>
+                          {errors.nombreContacto && typeof errors.nombreContacto.message === 'string' && errors.nombreContacto.message}
+                      </FormHelperText>
                     )}
                 </FormControl>
               </Grid>
@@ -483,7 +512,9 @@ const Form = () => {
                       )}
                     />
                     {errors.contactoReporte && (
-                      <FormHelperText sx={{ color: 'error.main' }}>{errors.contactoReporte.message}</FormHelperText>
+                      <FormHelperText sx={{ color: 'error.main' }}>
+                        {errors.contactoReporte && typeof errors.contactoReporte.message === 'string' && errors.contactoReporte.message}
+                      </FormHelperText>
                     )}
                 </FormControl>
               </Grid>        
@@ -515,7 +546,9 @@ const Form = () => {
                       )}
                     />
                     {errors.fechaContrato && (
-                      <FormHelperText sx={{ color: 'error.main' }}>{errors.fechaContrato.message}</FormHelperText>
+                      <FormHelperText sx={{ color: 'error.main' }}>
+                        {errors.fechaContrato && typeof errors.fechaContrato.message === 'string' && errors.fechaContrato.message}
+                      </FormHelperText>
                     )}
                 </FormControl>
               </Grid>
@@ -531,8 +564,7 @@ const Form = () => {
                         value={value}
                         onBlur={onBlur}
                         onChange={onChange}
-                        error={Boolean(errors?.observaciones)}
-                        helperText={errors?.observaciones?.message}
+                        error={Boolean(errors.observaciones)}
                         fullWidth
                         sx={{
                           '& .MuiOutlinedInput-root.Mui-focused  .MuiOutlinedInput-notchedOutline': {
@@ -543,8 +575,10 @@ const Form = () => {
                       />
                     )}
                   />
-                  {errors?.observaciones && (
-                    <FormHelperText sx={{ color: 'error.main' }}>{errors?.observaciones.message}</FormHelperText>
+                  {errors.observaciones && (
+                    <FormHelperText sx={{ color: 'error.main' }}>
+                      {errors.observaciones && typeof errors.observaciones.message === 'string' && errors.observaciones.message}
+                    </FormHelperText>
                   )}
                 </FormControl>
               </Grid>
