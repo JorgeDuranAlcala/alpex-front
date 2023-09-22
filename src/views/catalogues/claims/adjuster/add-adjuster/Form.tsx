@@ -19,6 +19,7 @@ import CataloguesClaimsActionTypes from 'src/context/catalogues-claims/actionTyp
 import { useRouter } from 'next/router'
 
 
+// Schema
 const schema = yup.object().shape({
   siglas: yup.string().required('Siglas is required'),
   razonSocial: yup.string().required('Razón Social is required'),
