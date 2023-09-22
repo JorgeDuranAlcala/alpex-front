@@ -4,6 +4,7 @@ export interface IExpert {
     razonSocial: string;
     proveedor: string;
     rfc: string;
+    cp: number;
     calle: string;
     noExterior: number;
     noInterior: number;
