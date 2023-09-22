@@ -46,7 +46,6 @@ const initialValues: SublimitDto = {
   idCDeductiblePer: 0,
   active: true,
   idCCoverage: null,
-  idEndorsement: null,
   title: '',
   idAccount: 0
 }
@@ -91,9 +90,6 @@ interface SublimitsProps {
 }
 
 const Sublimits = ({ onStepChange, disableSectionCtrl }: SublimitsProps) => {
-
-
-
   const router = useRouter()
   const idAccountRouter = Number(router?.query?.idAccount)
 
@@ -111,7 +107,7 @@ const Sublimits = ({ onStepChange, disableSectionCtrl }: SublimitsProps) => {
 
   //* Custom hooks
   const { account, setAccountId, setAccount } = useGetAccountById()
-  const { coverages, getAllCoverages, setAccountIdCoverage } = useGetAllCoverage();
+  const { coverages, getAllCoverages, setAccountIdCoverage } = useGetAllCoverage()
 
   const handleSelectedCoverage = (coverageSelect: CoverageDto) => {
     setCoverageSelected([...coverageSelected, coverageSelect])
@@ -240,21 +236,31 @@ const Sublimits = ({ onStepChange, disableSectionCtrl }: SublimitsProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [account])
 
-
-
   //? Con esto se cargan los datos para sublimits
   useEffect(() => {
-    if (coverageSelected.length === 0) {
-      setAccountIdCoverage(accountData.formsData.form1?.id)
+    const id = Number(router.query?.idAccount || accountData.formsData.form1?.id || localStorage.getItem('idAccount'))
 
-      getAllCoverages(accountData.formsData.form1?.id)
-      const coveragesFiltered = coverages.filter((elemento: any) => { return subLimits.some(filtroItem => filtroItem.idCCoverage.id === elemento.id) });
+    if (id) {
+      setAccountIdCoverage(id)
+      getAllCoverages(id)
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router.query?.idAccount, subLimits])
+
+  useEffect(() => {
+    if (coverageSelected.length === 0) {
+      const coveragesFiltered = coverages.filter((elemento: any) => {
+        return subLimits.some(filtroItem => filtroItem.idCCoverage.id === elemento.id)
+      })
 
       setCoverageSelected(coveragesFiltered)
 
+      // console.log("Retornamos estos datos -> ", coveragesFiltered, coverages);
     }
-  }, [subLimits])
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [subLimits, accountData, coverages])
 
   return (
     <CardContent>

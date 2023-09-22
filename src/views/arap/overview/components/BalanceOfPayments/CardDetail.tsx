@@ -1,12 +1,12 @@
-import { Box, Button, Typography, styled } from '@mui/material';
-import Link from 'next/link';
+import { Box, Button, Typography, styled } from '@mui/material'
+import Link from 'next/link'
 
 interface CardDetailProps {
-  title: string;
-  amount: number;
-  currency: string;
-  footerDescription: string;
-  href: string;
+  title: string
+  amount: number
+  currency: string
+  footerDescription: string
+  href: string
 }
 
 export const CardDetail = ({ title, amount, currency, footerDescription, href }: CardDetailProps) => {
@@ -15,16 +15,18 @@ export const CardDetail = ({ title, amount, currency, footerDescription, href }:
       <TitleContainer>
         <TitleText>{title}</TitleText>
         <Link href={href}>
-          <Button color="primary" variant="text">DETAILS</Button>
+          <Button color='primary' variant='text'>
+            DETAILS
+          </Button>
         </Link>
       </TitleContainer>
-      <AmountText>$ {amount} {currency}</AmountText>
+      <AmountText>
+        $ {amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} {currency}
+      </AmountText>
       <FooterDescriptionText>{footerDescription}</FooterDescriptionText>
     </CardDetailContainer>
   )
 }
-
-
 
 const CardDetailContainer = styled(Box)(() => ({
   display: 'flex',
@@ -35,14 +37,14 @@ const CardDetailContainer = styled(Box)(() => ({
   borderRadius: '4px',
   padding: '16px 16px',
   width: '100%',
-  maxWidth: '304px',
-}));
+  maxWidth: '304px'
+}))
 
 const TitleContainer = styled(Box)(() => ({
   display: 'flex',
   justifyContent: 'space-between',
-  alignItems: 'center',
-}));
+  alignItems: 'center'
+}))
 
 const TitleText = styled(Typography)(() => ({
   fontSize: '12px',
@@ -52,9 +54,8 @@ const TitleText = styled(Typography)(() => ({
   letterSpacing: '0.4px',
   color: 'rgba(77, 80, 98, 0.87)',
 
-  fontFeatureSettings: '"clig" off, "liga" off',
-})) as typeof Typography;
-
+  fontFeatureSettings: '"clig" off, "liga" off'
+})) as typeof Typography
 
 const AmountText = styled(Typography)(() => ({
   fontSize: '20px',
@@ -64,9 +65,8 @@ const AmountText = styled(Typography)(() => ({
   letterSpacing: '0.15px',
   color: 'rgba(77, 80, 98, 0.87)',
 
-  fontFeatureSettings: '"clig" off, "liga" off',
-})) as typeof Typography;
-
+  fontFeatureSettings: '"clig" off, "liga" off'
+})) as typeof Typography
 
 const FooterDescriptionText = styled(Typography)(() => ({
   fontSize: '12px',
@@ -76,5 +76,5 @@ const FooterDescriptionText = styled(Typography)(() => ({
   letterSpacing: '0.15px',
   color: 'rgba(77, 80, 98, 0.68)',
 
-  fontFeatureSettings: '"clig" off, "liga" off',
-})) as typeof Typography;
+  fontFeatureSettings: '"clig" off, "liga" off'
+})) as typeof Typography

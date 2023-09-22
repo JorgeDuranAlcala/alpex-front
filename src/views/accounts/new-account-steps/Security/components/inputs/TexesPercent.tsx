@@ -23,7 +23,7 @@ export const TaxesPercent = ({
 
   view
 }: TaxesPercentProps) => {
-  const { activeErros, securities, calculateSecurities } = useContext(SecurityContext)
+  const { activeErros, securities, calculateSecurities, setIsUpdatedInfoByUser } = useContext(SecurityContext)
 
   const { achievedMessageError, checkIsPercentageAchieved } = usePercentageAchieved()
 
@@ -37,6 +37,7 @@ export const TaxesPercent = ({
     }
     validateForm(tempSecurities[index])
     calculateSecurities(tempSecurities)
+    setIsUpdatedInfoByUser(true)
   }
 
   useEffect(() => {

@@ -1,8 +1,8 @@
 
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 
+import { InputSelectProps } from '@/views/arap/_commons/interfaces/InputSelectProps';
 import { OptionsARAPTransaction as options } from '../../../constants/OptionsARAPTransaction';
-import { InputSelectProps } from '../../../interfaces/InputSelectProps';
 
 export const SelectTransaction = ({ selectedValue, onChange }: InputSelectProps) => {
 

@@ -13,7 +13,7 @@ interface SwitchTaxesProps extends Omit<ISecurityInputProps, 'value' | 'errorMes
 }
 
 export const SwitchTaxes = ({ index, validateForm, isChecked, setIsTaxesEnabled, view }: SwitchTaxesProps) => {
-  const { securities, calculateSecurities } = useContext(SecurityContext)
+  const { securities, calculateSecurities, setIsUpdatedInfoByUser } = useContext(SecurityContext)
 
   const handleSwitch = () => {
     const tempSecurities = [...securities]
@@ -27,6 +27,7 @@ export const SwitchTaxes = ({ index, validateForm, isChecked, setIsTaxesEnabled,
     setIsTaxesEnabled(() => !isChecked)
     validateForm(tempSecurities[index])
     calculateSecurities(tempSecurities)
+    setIsUpdatedInfoByUser(true)
   }
 
   return (

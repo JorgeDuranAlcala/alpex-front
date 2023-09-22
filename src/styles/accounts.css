@@ -156,7 +156,7 @@
 
 .print-options {
   position: absolute;
-  top: 105%;
+  top: 60px;
   width: 180px;
   background-color: white;
   padding: 15px 0;
@@ -193,6 +193,10 @@
 
 .modal-download {
   width: 30%;
+}
+
+.modal-endorsements {
+  width: 75%;
 }
 
 .box-form .form-element {
@@ -565,6 +569,10 @@
   display: none !important;
 }
 
+.alignBox {
+  text-align: end;
+}
+
 @media (max-width: 800px) {
   .information .form-col {
     width: 45%;
@@ -578,6 +586,12 @@
 @media (max-width: 600px) {
   .upload-btn .file-details {
     width: 46%;
+  }
+  .fullSelect {
+    width: 100% !important;
+  }
+  .alignBox {
+    text-align: center;
   }
 }
 
@@ -1256,6 +1270,12 @@
 
   @media (max-width: 900px) {
     display: none;
+  }
+}
+
+.form-second-claims {
+  @media (max-width: 900px) {
+    display: flex;
   }
 }
 
