@@ -9,7 +9,8 @@ import {
   Container,
   FormControl,
   FormHelperText,
-  InputLabel, Select, MenuItem
+  InputLabel, Select, MenuItem,
+  Typography
 } from '@mui/material';
 import { DynamicContext } from 'src/context/dynamic/reducer';
 import DynamicActionTypes from 'src/context/dynamic/actionTypes';
@@ -70,6 +71,14 @@ const Form = ({
     dispatch({ type: DynamicActionTypes.UPDATE_BANK, payload: {...data, id: initialValues.id}});
     router.back();
   };
+
+  if(!initialValues) return (
+    <>
+      <Container>
+          <Typography variant="h4">No Existe una Bank Account con ese ID</Typography>
+      </Container>
+    </>
+  )
 
   return (
     <>

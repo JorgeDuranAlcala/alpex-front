@@ -9,7 +9,8 @@ import {
   Container,
   FormControl,
   FormHelperText,
-  InputLabel, Select, MenuItem
+  InputLabel, Select, MenuItem,
+  Typography
 } from '@mui/material';
 import { CataloguesClaimsContext } from 'src/context/catalogues-claims/reducer';
 import CataloguesClaimsActionTypes from 'src/context/catalogues-claims/actionTypes';
@@ -75,6 +76,14 @@ const Form = ({
     dispatch({ type: CataloguesClaimsActionTypes.UPDATE_ADJUSTER, payload: {...data, id: initialValues.id}})
     router.back()
   };
+
+  if(!initialValues) return (
+    <>
+      <Container>
+          <Typography variant="h4">No Existe una Bank Account con ese ID</Typography>
+      </Container>
+    </>
+  )
 
   return (
     <>
