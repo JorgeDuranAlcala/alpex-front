@@ -35,4 +35,4 @@ jobs:
           NEXT_PUBLIC_ALPEX_API_TOKEN: ${{ secrets.NEXT_PUBLIC_ALPEX_API_TOKEN }}
           NEXT_PUBLIC_APP_ALPEX_API_GATEWAY: ${{ secrets.NEXT_PUBLIC_APP_ALPEX_API_GATEWAY }}
           NEXT_PUBLIC_ALPEX_ID_GOOGLE_ANALYTICS: ${{ secrets.NEXT_PUBLIC_ALPEX_ID_GOOGLE_ANALYTICS }}
-        run: echo "google secret, ${{ env.NEXT_PUBLIC_ALPEX_ID_GOOGLE_ANALYTICS }}" && yarn build --if-present
+        run: yarn build
