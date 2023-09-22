@@ -5,17 +5,19 @@ import { overviewPaymentsAdapterQueries } from '@/views/arap/services/getArapAll
 import { ReactNode, useRef, useState } from 'react'
 import { QueryFilters } from '../../interfaces/QueryFilters'
 import { PaymentsGrid } from '../../interfaces/payments/PaymentsGrid'
+import { extractOverviewPaymentTableFilters } from '../../utils/extractOverviewPaymentTableFilters'
 import { PaymentsContext } from './PaymentsContext'
 
 export const PaymentsProvider = ({ children }: { children: ReactNode }) => {
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [paymentsGrid, setPaymentsGrid] = useState<PaymentsGrid | null>(null)
-  const tempQueryFilters = useRef<QueryFilters | null>(null)
+  const tempQueryFiltersRef = useRef<QueryFilters | null>(null)
+  const tempFiltersRef = useRef<Filter[]>([])
 
   const loadPaymentsGrid = async (queryFilters: QueryFilters) => {
     setIsLoading(true)
     console.log('loadPayments by queryFilters', queryFilters)
-    tempQueryFilters.current = queryFilters
+    tempQueryFiltersRef.current = queryFilters
 
     const filters = overviewPaymentsAdapterQueries(queryFilters)
     const payments = await getArapAllService(filters)
@@ -25,7 +27,7 @@ export const PaymentsProvider = ({ children }: { children: ReactNode }) => {
       paymentsGridList: paymentsAdapted.paymentsGridList,
       info: paymentsAdapted.info,
       isLoading: paymentsAdapted.isLoading,
-      filters: paymentsAdapted.filters
+      filters: [...paymentsAdapted.filters, ...tempFiltersRef.current]
     })
 
     setIsLoading(false)
@@ -34,11 +36,11 @@ export const PaymentsProvider = ({ children }: { children: ReactNode }) => {
   const onChangePage = (page: number) => {
     console.log('onChangePage', page)
 
-    if (!tempQueryFilters.current) return
+    if (!tempQueryFiltersRef.current) return
     if (!paymentsGrid) return
 
     loadPaymentsGrid({
-      ...tempQueryFilters.current,
+      ...tempQueryFiltersRef.current,
       page
     })
   }
@@ -48,38 +50,41 @@ export const PaymentsProvider = ({ children }: { children: ReactNode }) => {
 
     if (!paymentsGrid) return
     if (paymentsGrid.paymentsGridList.length === 0) return
+    if (!tempQueryFiltersRef.current) return
 
-    setIsLoading(true)
+    // const tempFilters: Filter[] = paymentsGrid.filters || []
 
-    const tempFilters: Filter[] = paymentsGrid.filters || []
+    const tempFilters: Filter[] = paymentsGrid.filters.filter(filterItem => filterItem.type !== filters.type)
 
-    // Todo: reemplazar este Timeout por el servicio que se implementará
-    setTimeout(() => {
-      setPaymentsGrid({
-        ...paymentsGrid,
-        filters: [...tempFilters, filters]
-      })
+    if (tempFilters.length === 0) {
+      tempFilters.push(filters)
+    }
 
-      setIsLoading(false)
-    }, 500)
+    tempFiltersRef.current = [...tempFilters]
+
+    // console.log(extractOverviewPaymentTableFilters(tempFilters))
+
+    loadPaymentsGrid({
+      ...tempQueryFiltersRef.current,
+      ...extractOverviewPaymentTableFilters(tempFilters)
+    })
   }
 
   const handleDeleteFilters = (type: string) => {
     if (!paymentsGrid) return
-    if (paymentsGrid.paymentsGridList.length === 0) return
 
-    setIsLoading(true)
+    // if (paymentsGrid.paymentsGridList.length === 0) return
 
     const tempFilters: Filter[] = paymentsGrid.filters.filter(filterItem => filterItem.type !== type)
 
-    // Todo: reemplazar este Timeout por el servicio que se implementará
-    setTimeout(() => {
-      setPaymentsGrid({
-        ...paymentsGrid,
-        filters: [...tempFilters]
-      })
-      setIsLoading(false)
-    }, 500)
+    tempFiltersRef.current = [...tempFilters]
+
+    // console.log(extractOverviewPaymentTableFilters(tempFilters))
+
+    loadPaymentsGrid({
+      ...tempQueryFiltersRef.current,
+      ...extractOverviewPaymentTableFilters(tempFilters)
+    })
   }
 
   return (

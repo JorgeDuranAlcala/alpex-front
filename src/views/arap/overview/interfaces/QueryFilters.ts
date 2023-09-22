@@ -7,8 +7,11 @@ export interface QueryFilters {
   broker: string
   reinsurer: string
   status: 'all' | ARAPStatus
-  transaction: 'all' | ARAPTransaction
+  transactionType: 'all' | ARAPTransactionValue
   date: string
-  id: string
+  id?: string
+  transaction?: string
   page?: number
+  amount?: number
+  capabilityName?: string
 }
