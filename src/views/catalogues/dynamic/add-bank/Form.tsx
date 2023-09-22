@@ -79,7 +79,9 @@ const Form = () => {
                     )}
                   />
                   {errors.capacity && (
-                    <FormHelperText sx={{ color: 'error.main' }}>{errors.capacity.message}</FormHelperText>
+                    <FormHelperText sx={{ color: 'error.main' }}>
+                        {errors.capacity && typeof errors.capacity.message === 'string' && errors.capacity.message}
+                    </FormHelperText>
                   )}
                 </FormControl>
               </Grid>
@@ -99,7 +101,9 @@ const Form = () => {
                     )}
                   />
                   {errors.location && (
-                    <FormHelperText sx={{ color: 'error.main' }}>{errors.location.message}</FormHelperText>
+                    <FormHelperText sx={{ color: 'error.main' }}>
+  {errors.location && typeof errors.location.message === 'string' && errors.location.message}
+</FormHelperText>
                   )}
                 </FormControl>
               </Grid>
@@ -127,7 +131,9 @@ const Form = () => {
                       )}
                     />
                     {errors.bank && (
-                      <FormHelperText sx={{ color: 'error.main' }}>{errors.bank.message}</FormHelperText>
+ <FormHelperText sx={{ color: 'error.main' }}>
+ {errors.bank && typeof errors.bank.message === 'string' && errors.bank.message}
+</FormHelperText>
                     )}
                 </FormControl>
               </Grid>
@@ -155,7 +161,10 @@ const Form = () => {
                       )}
                     />
                     {errors.beneficiary && (
-                      <FormHelperText sx={{ color: 'error.main' }}>{errors.beneficiary.message}</FormHelperText>
+                      <FormHelperText sx={{ color: 'error.main' }}>
+  {errors.beneficiary && typeof errors.beneficiary.message === 'string' && errors.beneficiary.message}
+</FormHelperText>
+
                     )}
                 </FormControl>
               </Grid>
@@ -184,7 +193,9 @@ const Form = () => {
                       )}
                     />
                     {errors.accountNumber && (
-                      <FormHelperText sx={{ color: 'error.main' }}>{errors.accountNumber.message}</FormHelperText>
+ <FormHelperText sx={{ color: 'error.main' }}>
+ {errors.accountNumber && typeof errors.accountNumber.message === 'string' && errors.accountNumber.message}
+</FormHelperText>
                     )}
                 </FormControl>
               </Grid>
@@ -213,7 +224,9 @@ const Form = () => {
                       )}
                     />
                     {errors.swift && (
-                      <FormHelperText sx={{ color: 'error.main' }}>{errors.swift.message}</FormHelperText>
+                      <FormHelperText sx={{ color: 'error.main' }}>
+                        {errors.swift && typeof errors.swift.message === 'string' && errors.swift.message}
+                    </FormHelperText>
                     )}
                 </FormControl>
               </Grid>
@@ -242,7 +255,9 @@ const Form = () => {
                       )}
                     />
                     {errors.aba && (
-                      <FormHelperText sx={{ color: 'error.main' }}>{errors.aba.message}</FormHelperText>
+                     <FormHelperText sx={{ color: 'error.main' }}>
+                        {errors.aba && typeof errors.aba.message === 'string' && errors.aba.message}
+                      </FormHelperText>
                     )}
                 </FormControl>
               </Grid>
@@ -271,7 +286,9 @@ const Form = () => {
                       )}
                     />
                     {errors.clabe && (
-                      <FormHelperText sx={{ color: 'error.main' }}>{errors.clabe.message}</FormHelperText>
+                      <FormHelperText sx={{ color: 'error.main' }}>
+                        {errors.clabe && typeof errors.clabe.message === 'string' && errors.clabe.message}
+                      </FormHelperText>
                     )}
                 </FormControl>
               </Grid>
@@ -291,7 +308,9 @@ const Form = () => {
                     )}
                   />
                   {errors.currency && (
-                    <FormHelperText sx={{ color: 'error.main' }}>{errors.currency.message}</FormHelperText>
+                    <FormHelperText sx={{ color: 'error.main' }}>
+                    {errors.currency && typeof errors.currency.message === 'string' && errors.currency.message}
+                  </FormHelperText>
                   )}
                 </FormControl>
               </Grid>
@@ -320,7 +339,9 @@ const Form = () => {
                       )}
                     />
                     {errors.intermediary && (
-                      <FormHelperText sx={{ color: 'error.main' }}>{errors.intermediary.message}</FormHelperText>
+                     <FormHelperText sx={{ color: 'error.main' }}>
+                     {errors.intermediary && typeof errors.intermediary.message === 'string' && errors.intermediary.message}
+                   </FormHelperText>
                     )}
                 </FormControl>
               </Grid>
@@ -348,7 +369,9 @@ const Form = () => {
                       )}
                     />
                     {errors.furtherAccountInfo && (
-                      <FormHelperText sx={{ color: 'error.main' }}>{errors.furtherAccountInfo.message}</FormHelperText>
+                      <FormHelperText sx={{ color: 'error.main' }}>
+                      {errors.furtherAccountInfo && typeof errors.furtherAccountInfo.message === 'string' && errors.furtherAccountInfo.message}
+                    </FormHelperText>
                     )}
                 </FormControl>
               </Grid>

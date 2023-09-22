@@ -289,6 +289,11 @@ const AdjusterTable = () => {
     })
   }
 
+  const onSearchAdjuster = (value: string) => {
+    /* TODO */
+    console.log("SEARCH", value)
+  }
+
   return (
     <>
       <div className='outter-wrapper'>
@@ -296,6 +301,7 @@ const AdjusterTable = () => {
           onDeleteRows={() => {
             setOpenDeleteRows(true)
           }}
+          onSearch={onSearchAdjuster}
           deleteBtn={selectedRows.length > 0 ? true : false}
           textBtn='ADD ADJUSTER'
           onClickBtn={() => router.push('/catalogues/claims/add-adjusters')}

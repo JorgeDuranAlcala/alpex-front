@@ -287,6 +287,11 @@ const ExpertTable = () => {
     })
   }
 
+  const onSearchExpert = (value: string) => {
+    /* TODO */
+    console.log("SEARCH", value)
+  }
+
   return (
     <>
       <div className='outter-wrapper'>
@@ -294,6 +299,7 @@ const ExpertTable = () => {
           onDeleteRows={() => {
             setOpenDeleteRows(true)
           }}
+          onSearch={onSearchExpert}
           deleteBtn={selectedRows.length > 0 ? true : false}
           textBtn='ADD EXPERT'
           onClickBtn={() => router.push('/catalogues/claims/add-experts')}
