@@ -14,7 +14,7 @@ const UpdateAdjuster = () => {
     const adjusterData = adjusterByIdSelector(state, id as string);
     if(!adjusterData) router.back();
 
-    const title = `Edit ${adjusterData.siglas} Account`
+    const title = adjusterData && `Edit ${adjusterData.siglas} Account`
 
   return (
     <>

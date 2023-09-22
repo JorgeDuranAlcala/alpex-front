@@ -13,7 +13,7 @@ const UpdateExpert = () => {
     const { state } = React.useContext(CataloguesClaimsContext);
     const expertData = expertByIdSelector(state, id as string);
     if(!expertData) router.back();
-    const title = `Edit ${expertData.siglas} Account`
+    const title = expertData && `Edit ${expertData.siglas} Account`
 
   return (
     <>

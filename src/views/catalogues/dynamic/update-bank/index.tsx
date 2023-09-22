@@ -14,7 +14,7 @@ const UpdateBank = () => {
     const bankData = state.banks.find(b => b.id == (id as string));
     if(!bankData) router.back();
 
-    const title = `Edit ${bankData?.bank} Account`;
+    const title = bankData && `Edit ${bankData?.bank} Account`;
 
 
   return (
