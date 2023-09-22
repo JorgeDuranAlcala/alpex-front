@@ -1,7 +1,7 @@
 
+import { InputDate } from '@/views/arap/_commons/components/inputs/InputDate';
 import { Box, styled } from '@mui/material';
 import { useMasterFilters } from '../../hooks/useMasterFilters';
-import { InputDate } from './inputs/InputDate';
 import { SelectBroker } from './inputs/SelectBroker';
 import { SelectReinsurer } from './inputs/SelectReinsurer';
 import { SelectStatus } from './inputs/SelectStatus';

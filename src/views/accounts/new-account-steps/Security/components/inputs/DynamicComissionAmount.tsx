@@ -22,7 +22,7 @@ export const DynamicComissionAmount = ({
   operationSecurity,
   view
 }: DynamicComissionAmountProps) => {
-  const { activeErros, securities, calculateSecurities } = useContext(SecurityContext)
+  const { activeErros, securities, calculateSecurities, setIsUpdatedInfoByUser } = useContext(SecurityContext)
 
   const handleChangeDynamicComissionAmount = (value: number) => {
     clearInterval(typingTimer)
@@ -40,6 +40,7 @@ export const DynamicComissionAmount = ({
 
       validateForm(tempSecurities[index])
       calculateSecurities(tempSecurities)
+      setIsUpdatedInfoByUser(true)
 
       // Limpiar el intervalo
       clearInterval(typingTimer)

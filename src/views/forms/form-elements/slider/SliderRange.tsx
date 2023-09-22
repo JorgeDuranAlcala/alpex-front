@@ -12,6 +12,7 @@ const SliderRange = () => {
       valueLabelDisplay='auto'
       getAriaValueText={valuetext}
       aria-labelledby='range-slider'
+      
     />
   )
 }

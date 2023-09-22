@@ -19,7 +19,7 @@ export const GrossPremiumPerShareAmount = ({
   operationSecurity,
   view
 }: GrossPremiumPerShareAmountProps) => {
-  const { activeErros, securities } = useContext(SecurityContext)
+  const { activeErros, securities, setIsUpdatedInfoByUser } = useContext(SecurityContext)
 
   const handleChangeGrossPremiumPerShareAmount = (value: number) => {
     console.log('gross Premium PerShare value', { value, index, validateForm, operationSecurity })
@@ -35,6 +35,7 @@ export const GrossPremiumPerShareAmount = ({
       discounts: tempSecurities[index].discounts.map(discount => ({ ...discount, isChangeAmount: false }))
     }
     validateForm(tempSecurities[index])
+    setIsUpdatedInfoByUser(true)
   }
 
   return (

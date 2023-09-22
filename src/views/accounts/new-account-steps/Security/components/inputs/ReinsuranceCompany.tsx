@@ -27,7 +27,7 @@ export const ReinsuranceCompany = ({
   setIsGross,
   view
 }: ReinsuranceCompanyProps) => {
-  const { activeErros, information, securities, calculateSecurities } = useContext(SecurityContext)
+  const { activeErros, information, securities, calculateSecurities, setIsUpdatedInfoByUser } = useContext(SecurityContext)
 
   const handleChangeCompany = (e: SelectChangeEvent<string> | any): void => {
     const avaliableCompanies: ReinsuranceCompanyDto | undefined = avaliableReinsurers
@@ -55,6 +55,7 @@ export const ReinsuranceCompany = ({
       validateForm(tempSecurities[index])
       calculateSecurities(tempSecurities)
       setIsGross(() => avaliableCompanies.special)
+      setIsUpdatedInfoByUser(true)
     }
   }
 

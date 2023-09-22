@@ -11,7 +11,7 @@ interface SharePercentProps extends ISecurityInputProps {
 }
 
 export const SharePercent = ({ index, value, errorMessage, validateForm, view }: SharePercentProps) => {
-  const { activeErros, securities, calculateSecurities } = useContext(SecurityContext)
+  const { activeErros, securities, calculateSecurities, setIsUpdatedInfoByUser } = useContext(SecurityContext)
 
   const handleChangeSharePercent = (value: number) => {
     const tempSecurities = [...securities]
@@ -26,6 +26,7 @@ export const SharePercent = ({ index, value, errorMessage, validateForm, view }:
     }
     validateForm(tempSecurities[index])
     calculateSecurities(tempSecurities)
+    setIsUpdatedInfoByUser(true)
   }
 
   return (

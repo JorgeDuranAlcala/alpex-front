@@ -16,7 +16,7 @@ export const useMasterFilters = () => {
     reinsurer: 'all',
     status: 'all',
     transaction: 'all',
-    date: new Date(),
+    date: new Date().toISOString(),
     id: '',
   });
 
@@ -73,7 +73,7 @@ export const useMasterFilters = () => {
 
     setQueryFilters({
       ...queryFilters,
-      date,
+      date: date.toISOString(),
     });
   }
 

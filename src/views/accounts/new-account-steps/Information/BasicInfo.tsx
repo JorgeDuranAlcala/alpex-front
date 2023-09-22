@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { ForwardedRef, forwardRef, useEffect, useState } from 'react' //ReactNode
+import React, { ForwardedRef, forwardRef, useEffect, useState } from 'react'; //ReactNode
 
 // ** MUI Imports
-import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import {
   Autocomplete,
   FormControl,
@@ -18,28 +18,28 @@ import {
   SxProps,
   TextField,
   Theme
-} from '@mui/material'
-import { SelectChangeEvent } from '@mui/material/Select' //SelectChangeEvent
+} from '@mui/material';
+import { SelectChangeEvent } from '@mui/material/Select'; //SelectChangeEvent
 
 //Components
-import { ContactModal } from '@/views/accounts/new-account-steps/Information/ContactModal'
+import { ContactModal } from '@/views/accounts/new-account-steps/Information/ContactModal';
 
 //hooks para base info y  modal contac
-import { useGetAllCountries as useCountryGetAll } from 'src/hooks/catalogs/country'
+import { useGetAllCountries as useCountryGetAll } from 'src/hooks/catalogs/country';
 
 // ** Third Party Imports
 // import { SelectAnchor } from '@/@core-custom/inputs/SelectAnchor';
-import DatePickerWrapper from '@/@core/styles/libs/react-datepicker'
-import { ROLES } from '@/configs/api'
-import { useGetAllEconomicSectors } from '@/hooks/catalogs/economic-sector'
-import DatePicker from 'react-datepicker'
-import { useGetAll as useBrokerGetAll } from 'src/hooks/catalogs/broker'
-import { useGetAllByIdBroker } from 'src/hooks/catalogs/broker-contact/'
-import { useGetAll as useCedantGetAll } from 'src/hooks/catalogs/cedant'
-import { useGetAllByCedant } from 'src/hooks/catalogs/cedant-contact'
-import { useGetAllLineOfBussines } from 'src/hooks/catalogs/lineOfBussines'
-import { useGetAllRiskActivities } from 'src/hooks/catalogs/riskActivity'
-import { useGetByIdRole } from 'src/hooks/catalogs/users/'
+import DatePickerWrapper from '@/@core/styles/libs/react-datepicker';
+import { ROLES } from '@/configs/api';
+import { useGetAllEconomicSectors } from '@/hooks/catalogs/economic-sector';
+import DatePicker from 'react-datepicker';
+import { useGetAll as useBrokerGetAll } from 'src/hooks/catalogs/broker';
+import { useGetAllByIdBroker } from 'src/hooks/catalogs/broker-contact/';
+import { useGetAll as useCedantGetAll } from 'src/hooks/catalogs/cedant';
+import { useGetAllByCedant } from 'src/hooks/catalogs/cedant-contact';
+import { useGetAllLineOfBussines } from 'src/hooks/catalogs/lineOfBussines';
+import { useGetAllRiskActivities } from 'src/hooks/catalogs/riskActivity';
+import { useGetByIdRole } from 'src/hooks/catalogs/users/';
 
 interface PickerProps {
   label?: string
@@ -165,8 +165,8 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
   const [bussinesFields, setBussinesFields] = useState(true)
 
   //Industry code managing
-  const [industryCodeValue, setIndustryCodeValue] = useState<string | number | null | undefined>(basicInfo.industryCode)
-  const [inputValue, setInputValue] = useState<string | undefined>('')
+  const [industryCodeValue, setIndustryCodeValue] = useState<string | number | null | undefined>(basicInfo.industryCode || null)
+  // const [inputValue, setInputValue] = useState<string | undefined>('')
   const [industryCodeOptions, setIndustryCodeOptions] = useState<string[]>([])
 
   //Error control
@@ -453,8 +453,7 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               autoFocus
               name='insured'
               label='Insured'
-              defaultValue=''
-              value={basicInfo.insured}
+              value={basicInfo.insured || ''}
               onChange={handleInputChange}
               error={!!errors.insuredError}
               helperText={getErrorMessage('insuredError')}
@@ -755,10 +754,10 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
               onChange={(event: any, newValue: string | number | null | undefined) => {
                 handleChangeIndustryCode(String(newValue))
               }}
-              inputValue={inputValue}
-              onInputChange={(event, newInputValue) => {
-                setInputValue(newInputValue)
-              }}
+              // inputValue={inputValue}
+              // onInputChange={(event, newInputValue) => {
+              //   setInputValue(newInputValue)
+              // }}
               id='controllable-states-demo'
               options={industryCodeOptions}
               sx={{ width: '100%' }}
@@ -953,9 +952,8 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
                 leadUnderwriters.map(leadUnderwriter => {
                   return (
                     <MenuItem key={leadUnderwriter.id} value={leadUnderwriter.id}>
-                      {`${leadUnderwriter.name} ${leadUnderwriter.surname || ''} ${
-                        leadUnderwriter.secondSurname || ''
-                      }`}
+                      {`${leadUnderwriter.name} ${leadUnderwriter.surname || ''} ${leadUnderwriter.secondSurname || ''
+                        }`}
                     </MenuItem>
                   )
                 })
@@ -981,9 +979,8 @@ const BasicInfo: React.FC<BasicInfoProps> = ({
                 technicalAssistants.map(technicalAssistant => {
                   return (
                     <MenuItem key={technicalAssistant.id} value={technicalAssistant.id}>
-                      {`${technicalAssistant.name} ${technicalAssistant.surname || ''} ${
-                        technicalAssistant.secondSurname || ''
-                      }`}
+                      {`${technicalAssistant.name} ${technicalAssistant.surname || ''} ${technicalAssistant.secondSurname || ''
+                        }`}
                     </MenuItem>
                   )
                 })
