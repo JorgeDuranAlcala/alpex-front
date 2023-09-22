@@ -25,7 +25,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
-      - name: Set environment variables
+      - name: Set environment variables and build app
         env:
           NEXT_PUBLIC_JWT_EXPIRATION: ${{ secrets.NEXT_PUBLIC_JWT_EXPIRATION }}
           NEXT_PUBLIC_JWT_SECRET: ${{ secrets.NEXT_PUBLIC_JWT_SECRET }}
@@ -34,5 +34,5 @@ jobs:
           NEXT_PUBLIC_APP_ALPEX_API_GATEWAY: ${{ secrets.NEXT_PUBLIC_APP_ALPEX_API_GATEWAY }}
           NEXT_PUBLIC_ALPEX_ID_GOOGLE_ANALYTICS: ${{ secrets.NEXT_PUBLIC_ALPEX_ID_GOOGLE_ANALYTICS }}
         run: echo "variables set"
-      - run: yarn install
-      - run: yarn build --if-present
+        run: yarn install
+        run: yarn build --if-present
