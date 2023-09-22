@@ -10,8 +10,8 @@ const UpdateBank = () => {
 
     const router = useRouter()
     const { state } = useContext(DynamicContext);
-    const id = router.query.id && (parseInt(router.query.id.toString()))
-    const bankData = state.banks.find(b => b.id == id);
+    const id = router.query.id && router.query.id.toString()
+    const bankData = state.banks.find(b => b.id == (id as string));
     if(!bankData) router.back();
 
     const title = `Edit ${bankData?.bank} Account`;
