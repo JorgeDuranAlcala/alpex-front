@@ -29,11 +29,10 @@ interface IColunmHeader {
 
 const ColumnHeader: React.FC<IColunmHeader> = ({ colDef, showIcon = true, type }) => {
   // ** Props
-  const { headerName, field } = colDef;
+  const { headerName, field } = colDef
 
-  const { paymentsGrid } = useContext(PaymentsContext);
-  const filtersActive = paymentsGrid?.filters || [];
-
+  const { paymentsGrid } = useContext(PaymentsContext)
+  const filtersActive = paymentsGrid?.filters || []
 
   // ** State
   const [anchorEl, setAnchorEl] = useState(null)
@@ -41,9 +40,9 @@ const ColumnHeader: React.FC<IColunmHeader> = ({ colDef, showIcon = true, type }
   const [widthMenu, setWidthMenu] = useState(0)
   const columnHeaderRef = useRef(null)
 
-  const activeButtons = filtersActive.map(f => f?.type);
+  const activeButtons = filtersActive.map(f => f?.type)
 
-  const isActiveButton = activeButtons?.find(active => active === type);
+  const isActiveButton = activeButtons?.find(active => active === type)
 
   // console.log('isActiveButton', isActiveButton)
   // console.log('activeButtons', activeButtons)
@@ -84,11 +83,7 @@ const ColumnHeader: React.FC<IColunmHeader> = ({ colDef, showIcon = true, type }
       </Typography>
       {showIcon && (
         <IconButton size='small' onClick={handleOnClick}>
-          <Icon
-            icon='mdi:filter-variant'
-            fontSize={20}
-            color={isActiveButton ? '#2535A8' : undefined}
-          />
+          <Icon icon='mdi:filter-variant' fontSize={20} color={isActiveButton ? '#2535A8' : undefined} />
         </IconButton>
       )}
       <Menu

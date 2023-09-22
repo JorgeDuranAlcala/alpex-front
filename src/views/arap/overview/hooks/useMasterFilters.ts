@@ -1,15 +1,14 @@
-import { SelectChangeEvent } from '@mui/material';
-import { ChangeEvent, useContext, useEffect, useRef, useState } from 'react';
-import { MasterFiltersContext } from '../context/masterFilters/MasterFiltersContext';
-import type { ARAPStatus, ARAPTransaction, QueryFilters } from '../interfaces/QueryFilters';
+import { SelectChangeEvent } from '@mui/material'
+import { ChangeEvent, useContext, useEffect, useRef, useState } from 'react'
+import { MasterFiltersContext } from '../context/masterFilters/MasterFiltersContext'
+import type { ARAPStatus, ARAPTransaction, QueryFilters } from '../interfaces/QueryFilters'
 
-
-let timeoutService: ReturnType<typeof setTimeout> | null = null;
+let timeoutService: ReturnType<typeof setTimeout> | null = null
 
 export const useMasterFilters = () => {
-
-  const { updateFilters } = useContext(MasterFiltersContext);
-  const isCallServiceOnChangeHandler = useRef<boolean>(false);
+  const { updateFilters } = useContext(MasterFiltersContext)
+  const isCallServiceOnChangeHandler = useRef<boolean>(false)
+  const isCallServiceWithTimeout = useRef<boolean>(false)
 
   const [queryFilters, setQueryFilters] = useState<QueryFilters>({
     broker: 'all',
@@ -17,115 +16,116 @@ export const useMasterFilters = () => {
     status: 'all',
     transaction: 'all',
     date: new Date().toISOString(),
-    id: '',
-  });
+    id: ''
+  })
 
   const handleSelectChange = (event: SelectChangeEvent<string>) => {
-    isCallServiceOnChangeHandler.current = true;
+    isCallServiceOnChangeHandler.current = true
+    isCallServiceWithTimeout.current = false
 
     // console.log(event.target);
 
-    const target = event.target;
-    const name = target.name;
-    const value = target.value;
+    const target = event.target
+    const name = target.name
+    const value = target.value
 
     if (name === 'broker') {
       setQueryFilters({
         ...queryFilters,
-        broker: value,
-      });
+        broker: value
+      })
 
-      return;
+      return
     }
 
     if (name === 'reinsurer') {
       setQueryFilters({
         ...queryFilters,
-        reinsurer: value,
-      });
+        reinsurer: value
+      })
 
-      return;
+      return
     }
 
     if (name === 'status') {
       setQueryFilters({
         ...queryFilters,
-        status: value as ARAPStatus,
-      });
+        status: value as ARAPStatus
+      })
 
-      return;
+      return
     }
 
     if (name === 'transaction') {
       setQueryFilters({
         ...queryFilters,
-        transaction: value as ARAPTransaction,
-      });
+        transaction: value as ARAPTransaction
+      })
 
-      return;
+      return
     }
   }
 
   const handleDateChange = (date: Date | null) => {
-    if (!date) return;
+    if (!date) return
 
-    isCallServiceOnChangeHandler.current = true;
+    isCallServiceOnChangeHandler.current = true
+    isCallServiceWithTimeout.current = false
 
     setQueryFilters({
       ...queryFilters,
-      date: date.toISOString(),
-    });
+      date: date.toISOString()
+    })
   }
 
   const handleTextChange = (event: ChangeEvent<HTMLInputElement>) => {
-
-    isCallServiceOnChangeHandler.current = true;
+    isCallServiceOnChangeHandler.current = true
+    isCallServiceWithTimeout.current = true
 
     // console.log(event.target);
-    const target = event.target;
-    const name = target.name;
-    const value = target.value;
-
+    const target = event.target
+    const name = target.name
+    const value = target.value
 
     if (name === 'id') {
       setQueryFilters(prev => ({
         ...prev,
-        id: value,
-      }));
+        id: value
+      }))
     }
   }
 
   const callToFilterService = () => {
-    updateFilters(queryFilters);
+    updateFilters(queryFilters)
   }
 
   useEffect(() => {
-    console.log('queryChanged');
+    console.log('queryChanged')
 
-    if (timeoutService) clearTimeout(timeoutService);
+    if (timeoutService) clearTimeout(timeoutService)
 
-    timeoutService = setTimeout(() => {
+    if (isCallServiceWithTimeout.current) {
+      timeoutService = setTimeout(() => {
+        if (!isCallServiceOnChangeHandler.current) return
 
-      if (!isCallServiceOnChangeHandler.current) return;
-
-      callToFilterService();
-
-    }, 500);
+        callToFilterService()
+      }, 500)
+    } else {
+      if (!isCallServiceOnChangeHandler.current) return
+      callToFilterService()
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [queryFilters]);
-
+  }, [queryFilters])
 
   useEffect(() => {
-    callToFilterService();
+    callToFilterService()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-
-
 
   return {
     queryFilters,
     handleSelectChange,
     handleDateChange,
-    handleTextChange,
+    handleTextChange
   }
 }
