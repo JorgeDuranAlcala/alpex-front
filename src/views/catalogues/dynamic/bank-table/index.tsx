@@ -248,6 +248,12 @@ const BanksTable = () => {
     })
   }
 
+  
+  const onSearchBank = (value: string) => {
+    /* TODO */
+    console.log("SEARCH", value)
+  }
+
   return (
     <>
       <div className='outter-wrapper'>
@@ -255,6 +261,7 @@ const BanksTable = () => {
           onDeleteRows={() => {
             setOpenDeleteRows(true)
           }}
+          onSearch={onSearchBank}
           deleteBtn={selectedRows.length > 0 ? true : false}
           textBtn='ADD BANK ACCOUNT'
           onClickBtn={() => router.push('/catalogues/dynamic/add-bank')}
