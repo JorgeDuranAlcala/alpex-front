@@ -66,6 +66,7 @@ const Form = ({
   const initialValues = state.banks.find((b: any) => b.id === id);
 
   const onSubmit = (data: any) => {
+    if(!initialValues) return;
     dispatch({ type: DynamicActionTypes.UPDATE_BANK, payload: {...data, id: initialValues.id}});
     router.back();
   };

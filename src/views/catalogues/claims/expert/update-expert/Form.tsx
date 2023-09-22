@@ -71,6 +71,7 @@ const Form = ({
   const initialValues = state.experts.find(exp => exp.id == id );
 
   const onSubmit = (data: any) => {
+    if(!initialValues) return;
     dispatch({ type: CataloguesClaimsActionTypes.UPDATE_EXPERT, payload: {...data, id: initialValues.id}})
     router.back()
   };

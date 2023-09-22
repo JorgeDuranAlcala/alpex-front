@@ -71,6 +71,7 @@ const Form = ({
 
 
   const onSubmit = (data: any) => {
+    if(!initialValues) return;
     dispatch({ type: CataloguesClaimsActionTypes.UPDATE_ADJUSTER, payload: {...data, id: initialValues.id}})
     router.back()
   };
