@@ -40,9 +40,9 @@ export interface IBank {
     location: 'MX' | 'USA';
     bank: string;
     beneficiary: string;
-    accountNumber: number;
+    accountNumber: string;
     swift: string;
-    aba: number;
+    aba: string;
     clabe: string;
     currency: string;
     intermediary: string;
