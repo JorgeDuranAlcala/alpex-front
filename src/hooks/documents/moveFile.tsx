@@ -16,6 +16,7 @@ export const useMoveFile = () => {
       })
       .catch(error => {
         throw error
+        setSuccessMoveFile(false)
       })
   }, [moveToFolder])
 

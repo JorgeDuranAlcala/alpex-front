@@ -19,7 +19,6 @@ export interface SecurityModel extends SecurityDto {
   idCReinsuranceCompany: ReinsuranceCompanyDto
   idCRetroCedant: RetroCedantDto | null
   idCRetroCedantContact: RetroCedantContactDto | null
-  idEndorsement: number
   idAccount: number
   receivedNetPremium: number
   distributedNetPremium: number
@@ -70,7 +69,6 @@ export class SecurityMapper {
         security.idCReinsuranceCompanyBinder && security.idCReinsuranceCompanyBinder.hasOwnProperty('id')
           ? security.idCReinsuranceCompanyBinder
           : null,
-      idEndorsement: security.idEndorsement,
       idAccount: idAccount,
       receivedNetPremium: 0,
       distributedNetPremium: 0,

@@ -34,6 +34,15 @@
   background: linear-gradient(0deg, #fdb528, #fdb528), linear-gradient(0deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1));
 }
 
+.unpaid-status {
+  color: #ffffff;
+  width: Fill (72px);
+  height: Hug (32px);
+  padding: 4px 12px 4px 12px;
+  border-radius: 16px;
+  background: linear-gradient(0deg, #ff4d49, #ff4d49), linear-gradient(0deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1));
+}
+
 .paid-status {
   color: #ffffff;
   width: Fill (72px);
