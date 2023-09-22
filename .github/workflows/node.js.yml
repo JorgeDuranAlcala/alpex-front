@@ -25,6 +25,8 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
+      - name: install app
+        run: yarn install        
       - name: Set environment variables and build app
         env:
           NEXT_PUBLIC_JWT_EXPIRATION: ${{ secrets.NEXT_PUBLIC_JWT_EXPIRATION }}
@@ -33,7 +35,4 @@ jobs:
           NEXT_PUBLIC_ALPEX_API_TOKEN: ${{ secrets.NEXT_PUBLIC_ALPEX_API_TOKEN }}
           NEXT_PUBLIC_APP_ALPEX_API_GATEWAY: ${{ secrets.NEXT_PUBLIC_APP_ALPEX_API_GATEWAY }}
           NEXT_PUBLIC_ALPEX_ID_GOOGLE_ANALYTICS: ${{ secrets.NEXT_PUBLIC_ALPEX_ID_GOOGLE_ANALYTICS }}
-        run: echo "google secret, ${{ env.NEXT_PUBLIC_ALPEX_ID_GOOGLE_ANALYTICS }}"
-      - run: yarn install
-      - name: build app
         run: echo "google secret, ${{ env.NEXT_PUBLIC_ALPEX_ID_GOOGLE_ANALYTICS }}" && yarn build --if-present
