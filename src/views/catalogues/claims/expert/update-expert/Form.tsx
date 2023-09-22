@@ -569,8 +569,7 @@ const Form = ({
                         value={value}
                         onBlur={onBlur}
                         onChange={onChange}
-                        error={Boolean(errors?.observaciones)}
-                        helperText={errors?.observaciones?.message}
+                        error={Boolean(errors.observaciones)}
                         fullWidth
                         sx={{
                           '& .MuiOutlinedInput-root.Mui-focused  .MuiOutlinedInput-notchedOutline': {
