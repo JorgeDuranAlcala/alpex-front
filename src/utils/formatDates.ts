@@ -19,6 +19,18 @@ export const formatDateAmericanTemplate = (date: Date): string => {
   return `${year}-${month}-${day}`
 }
 
+export const getDateFromAmericanTemplate = (date: string): Date => {
+  if (!date.includes('-')) {
+    return new Date()
+  }
+  const dateSplitted = date.split('-')
+  const year = parseInt(dateSplitted[0], 10)
+  const month = parseInt(dateSplitted[1], 10) - 1
+  const day = parseInt(dateSplitted[2], 10)
+
+  return new Date(year, month, day)
+}
+
 export const setDateFilterQuery = (rawFilter: any, filtersArray: any[], nameDate: string) => {
   if (rawFilter.subtype === 'fulldate') {
     filtersArray.push({

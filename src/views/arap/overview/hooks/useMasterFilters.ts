@@ -73,10 +73,6 @@ export const useMasterFilters = () => {
     isCallServiceOnChangeHandler.current = true
     isCallServiceWithTimeout.current = false
 
-    console.log(date)
-    console.log(date.toDateString())
-    console.log(formatDateAmericanTemplate(date))
-
     setQueryFilters({
       ...queryFilters,
       date: formatDateAmericanTemplate(date)

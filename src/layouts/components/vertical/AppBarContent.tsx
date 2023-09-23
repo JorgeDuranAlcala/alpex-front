@@ -140,12 +140,12 @@ const AppBarContent = (props: Props) => {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          height: '64px',
+          height: '64px'
 
           // backgroundColor: 'lightcoral'
         }}
       >
-        <Box className='actions-left' sx={{ mr: 2, display: 'flex', alignItems: 'center' }}>
+        <Box className='actions-left' sx={{ mr: 2, display: 'flex', alignItems: 'center', width: '100%' }}>
           {hidden && !settings.navHidden ? (
             <IconButton color='inherit' sx={{ ml: -2.75 }} onClick={toggleNavVisibility}>
               <Icon icon='mdi:menu' />
@@ -155,6 +155,9 @@ const AppBarContent = (props: Props) => {
 
           {/* <MultiTabButtons /> */}
 
+          <Box id='header-toolbar' sx={{ width: '100%', height: '100%', backgroundColor: 'lightcoral', opacity: 0 }}>
+            {'-'}
+          </Box>
         </Box>
 
         <Box className='actions-right' sx={{ display: 'flex', alignItems: 'center' }}>
