@@ -6,6 +6,7 @@ import { OptionsARAPTransaction } from '@/views/arap/overview/constants/OptionsA
 import { PaymentsContext } from '@/views/arap/overview/context/payments/PaymentsContext'
 import { ARAPTransactionValue } from '@/views/arap/overview/interfaces/QueryFilters'
 import { useContext } from 'react'
+import { EFieldColumn } from '../efieldColumn'
 
 interface FilterMenuOptionProps {
   value: ARAPTransactionValue
@@ -18,7 +19,7 @@ const FilterMenuOption: React.FC<FilterMenuOptionProps> = ({ value, text }) => {
 
   const handleClick = () => {
     handleChangeFilters({
-      type: 'transaction',
+      type: EFieldColumn.TRANSACTION_TYPE,
       value,
       text
     })

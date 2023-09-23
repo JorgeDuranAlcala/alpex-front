@@ -1,32 +1,26 @@
-import { ReactElement } from "react"
-import { EFieldColumn } from "../efieldColumn"
+import { ReactElement } from 'react'
+import { EFieldColumn } from '../efieldColumn'
 
-import FilterMenuAmount from "./FilterMenuAmount"
-import FilterMenuCapabilityName from "./FilterMenuCapabilityName"
-import FilterMenuStatus from "./FilterMenuStatus"
-import FilterMenuTransaction from "./FilterMenuTransaction"
-import FilterMenuTransactionDate from "./FilterMenuTransactionDate"
-import FilterMenuTransactionId from "./FilterMenuTransactionId"
+import FilterMenuAmount from './FilterMenuAmount'
+import FilterMenuCapabilityName from './FilterMenuCapabilityName'
+import FilterMenuStatus from './FilterMenuStatus'
+import FilterMenuTransaction from './FilterMenuTransaction'
+import FilterMenuTransactionDate from './FilterMenuTransactionDate'
+import FilterMenuTransactionId from './FilterMenuTransactionId'
 
 export interface IComponents {
   [key: string]: ReactElement
 }
 
 interface IFilterMenu {
-  field: string,
-  handleClose?: () => void,
+  field: string
+  handleClose?: () => void
 }
 
-
 export const SwitcherFilterMenus = ({ field, handleClose }: IFilterMenu) => {
-
   const FilterMenuComponents: IComponents = {
-    [EFieldColumn.TRANSACTION_ID]: (
-      <FilterMenuTransactionId handleClose={handleClose} />
-    ),
-    [EFieldColumn.CAPABILITY_NAME]: (
-      <FilterMenuCapabilityName handleClose={handleClose} />
-    ),
+    [EFieldColumn.TRANSACTION_ID]: <FilterMenuTransactionId handleClose={handleClose} />,
+    [EFieldColumn.CAPABILITY_NAME]: <FilterMenuCapabilityName handleClose={handleClose} />,
     [EFieldColumn.STATUS]: (
       <div onClick={handleClose}>
         <FilterMenuStatus />
@@ -37,15 +31,8 @@ export const SwitcherFilterMenus = ({ field, handleClose }: IFilterMenu) => {
         <FilterMenuTransaction />
       </div>
     ),
-    [EFieldColumn.AMOUNT]: (
-      <FilterMenuAmount handleClose={handleClose} />
-    ),
-    [EFieldColumn.TRANSACTION_DATE]: (
-      <div onClick={handleClose}>
-        <FilterMenuTransactionDate />
-      </div>
-    ),
-
+    [EFieldColumn.AMOUNT]: <FilterMenuAmount handleClose={handleClose} />,
+    [EFieldColumn.TRANSACTION_DATE]: <FilterMenuTransactionDate handleClose={handleClose} />
   }
 
   return FilterMenuComponents[field]

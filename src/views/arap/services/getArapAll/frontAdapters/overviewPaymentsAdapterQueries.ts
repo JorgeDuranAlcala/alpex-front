@@ -22,12 +22,24 @@ export const overviewPaymentsAdapterQueries = (queryParams: QueryFilters): GetAr
     paramsToSend.status = Number(queryParams.status)
   }
 
-  if (queryParams.transaction !== 'all') {
-    paramsToSend.transaction = Number(queryParams.transaction)
+  if (queryParams.transaction) {
+    paramsToSend.transaction = queryParams.transaction
+  }
+
+  if (queryParams.transactionType !== 'all') {
+    paramsToSend.transactionType = queryParams.transactionType
   }
 
   if (queryParams.page) {
     paramsToSend.page = queryParams.page
+  }
+
+  if (queryParams.amount) {
+    paramsToSend.amount = Number(queryParams.amount)
+  }
+
+  if (queryParams.capabilityName) {
+    paramsToSend.capabilityName = queryParams.capabilityName
   }
 
   return paramsToSend

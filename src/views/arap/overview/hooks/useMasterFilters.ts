@@ -1,7 +1,8 @@
+import { formatDateAmericanTemplate } from '@/utils/formatDates'
 import { SelectChangeEvent } from '@mui/material'
 import { ChangeEvent, useContext, useEffect, useRef, useState } from 'react'
 import { MasterFiltersContext } from '../context/masterFilters/MasterFiltersContext'
-import type { ARAPStatus, ARAPTransaction, QueryFilters } from '../interfaces/QueryFilters'
+import type { ARAPStatus, ARAPTransactionValue, QueryFilters } from '../interfaces/QueryFilters'
 
 let timeoutService: ReturnType<typeof setTimeout> | null = null
 
@@ -14,8 +15,8 @@ export const useMasterFilters = () => {
     broker: 'all',
     reinsurer: 'all',
     status: 'all',
-    transaction: 'all',
-    date: new Date().toISOString(),
+    transactionType: 'all',
+    date: new Date().toISOString().split('T')[0],
     id: ''
   })
 
@@ -56,10 +57,10 @@ export const useMasterFilters = () => {
       return
     }
 
-    if (name === 'transaction') {
+    if (name === 'transactionType') {
       setQueryFilters({
         ...queryFilters,
-        transaction: value as ARAPTransaction
+        transactionType: value as ARAPTransactionValue
       })
 
       return
@@ -74,7 +75,7 @@ export const useMasterFilters = () => {
 
     setQueryFilters({
       ...queryFilters,
-      date: date.toISOString()
+      date: formatDateAmericanTemplate(date)
     })
   }
 

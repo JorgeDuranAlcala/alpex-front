@@ -1,4 +1,5 @@
 import { Box, styled } from '@mui/material'
+import { ArapBreadcrumbs } from '../_commons/components/breadcrumbs/ArapBreadcrumbs'
 import { InsuredSelectorProvider } from '../_commons/context/InsuredSelector/InsuredSelectorProvider'
 import { BrokerCardHeader } from './components/BrokerCardHeader'
 import { BrokerDetails } from './components/BrokerDetails'
@@ -15,6 +16,7 @@ export const BrokerDetailsView = () => {
   return (
     <InsuredSelectorProvider>
       <ViewContainer>
+        <ArapBreadcrumbs />
         <BrokerCardHeader />
         <BrokerDetails />
       </ViewContainer>
