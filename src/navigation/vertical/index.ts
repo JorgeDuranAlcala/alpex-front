@@ -158,17 +158,17 @@ const navigation = (): VerticalNavItemsType => {
           path: '/claims/followUp',
           subject: 'claims',
           action: 'viewFollowUpClaims'
-        },
-
-        {
-          title: 'Preview'
-        },
-        {
-          title: 'Edit'
-        },
-        {
-          title: 'Add'
         }
+
+        // {
+        //   title: 'Preview'
+        // },
+        // {
+        //   title: 'Edit'
+        // },
+        // {
+        //   title: 'Add'
+        // }
       ]
     },
     {
@@ -193,7 +193,10 @@ const navigation = (): VerticalNavItemsType => {
           // path: '/apps/invoice/list'
         },
         {
-          title: 'Claims/claims'
+          title: 'Claims',
+          path: '/catalogues/claims',
+          subject: 'catalogues',
+          action: 'read',
         }
       ]
     },

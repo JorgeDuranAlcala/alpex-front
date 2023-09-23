@@ -15,37 +15,37 @@ const HeaderTable = () => {
             sx={{ display: 'flex', flexDirection: 'row', alingItems: 'center' }}
           >
             <Grid item xs={12} sm={2} md={2}>
-              <div className='form-secondContainer-second'>
+              <div className='form-secondContainer-second form-second-claims'>
                 <span className='form-secondContainer-header-title'>Reserve</span>
                 <span className='form-secondContainer-header-subtitle'>$0 USD</span>
               </div>
             </Grid>
             <Grid item xs={12} sm={2} md={2}>
-              <div className='form-secondContainer-second'>
+              <div className='form-secondContainer-second form-second-claims'>
                 <span className='form-secondContainer-header-title'>Salvage</span>
                 <span className='form-secondContainer-header-subtitle'>$0 USD</span>
               </div>
             </Grid>
             <Grid item xs={12} sm={2} md={2}>
-              <div className='form-secondContainer-second'>
+              <div className='form-secondContainer-second form-second-claims'>
                 <span className='form-secondContainer-header-title'>Claim Payment</span>
                 <span className='form-secondContainer-header-subtitle'>$0 USD</span>
               </div>
             </Grid>
             <Grid item xs={12} sm={2} md={2}>
-              <div className='form-secondContainer-second'>
+              <div className='form-secondContainer-second form-second-claims'>
                 <span className='form-secondContainer-header-title'>Suppliers Payment</span>
                 <span className='form-secondContainer-header-subtitle'>$0 USD</span>
               </div>
             </Grid>
             <Grid item xs={12} sm={2} md={2}>
-              <div className='form-secondContainer-second'>
+              <div className='form-secondContainer-second form-second-claims'>
                 <span className='form-secondContainer-header-title'>Recovery MXN</span>
                 <span className='form-secondContainer-header-subtitle'>$0 MXN</span>
               </div>
             </Grid>
             <Grid item xs={12} sm={2} md={2}>
-              <div className='form-secondContainer-second'>
+              <div className='form-secondContainer-second form-second-claims'>
                 <span className='form-secondContainer-header-title'>Recovery USD</span>
                 <span className='form-secondContainer-header-subtitle'>$0 USD</span>
               </div>

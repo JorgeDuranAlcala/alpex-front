@@ -71,6 +71,12 @@ const CataloguesTabs = ({ changeTab = 1, onTabChange }: TabsProps) => {
           >
             <div className="tab-name">TYPES OF LIMIT</div>
           </div>
+          <div
+            className={activeTab == 7 ? "tab-btn active" : "tab-btn"}
+            onClick={() => handleTabClick(7)}
+          >
+            <div className="tab-name">BANK ACCOUNTS</div>
+          </div>
         </div>
         <div
           className='mobile-btns'
@@ -100,6 +106,9 @@ const CataloguesTabs = ({ changeTab = 1, onTabChange }: TabsProps) => {
             </div>
             <div className='tab-mobile' onClick={() =>{setTabMobile(6)}}>
               Types of Limit
+            </div>
+            <div className='tab-mobile' onClick={() =>{setTabMobile(7)}}>
+              BANK ACCOUNTS
             </div>
           </div>
         ) : (

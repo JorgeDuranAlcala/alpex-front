@@ -15,8 +15,10 @@ interface IDataFilter {
   dataFilter: string[]
   date?: boolean
   insured?: boolean
+  endorsement?: boolean
+  filterName?: string | undefined
 }
-const ButtonFilter = ({ dataFilter, date, insured }: IDataFilter) => {
+const ButtonFilter = ({ dataFilter, date, insured, endorsement, filterName }: IDataFilter) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
 
   // const [menu, setMenu] = React.useState('');
@@ -43,15 +45,27 @@ const ButtonFilter = ({ dataFilter, date, insured }: IDataFilter) => {
   return (
     <>
       <IconButton
-        style={{
-          width: '40px',
-          height: '40px',
-          justifyContent: 'center',
-          display: 'flex',
-          alignItems: 'center',
-          position: 'absolute',
-          right: '5px'
-        }}
+        style={
+          endorsement
+            ? {
+                width: '40px',
+                height: '40px',
+                justifyContent: 'center',
+                display: 'flex',
+                alignItems: 'center',
+                float: 'right',
+                right: '5px'
+              }
+            : {
+                width: '40px',
+                height: '40px',
+                justifyContent: 'center',
+                display: 'flex',
+                alignItems: 'center',
+                position: 'absolute',
+                right: '5px'
+              }
+        }
         onClick={handleClick}
       >
         <Icon icon='mdi:filter-variant' fontSize={20} color={anchorEl ? '#26C6F9' : undefined} />
@@ -77,7 +91,7 @@ const ButtonFilter = ({ dataFilter, date, insured }: IDataFilter) => {
         {date ? (
           <DatePickerFilter />
         ) : insured ? (
-          <SearchInput />
+          <SearchInput filterName={filterName} />
         ) : (
           dataFilter?.map((option, index) => (
             <MenuItem
