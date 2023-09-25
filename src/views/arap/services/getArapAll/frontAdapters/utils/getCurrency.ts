@@ -9,7 +9,9 @@ export const getCurrency = ({ transactionId, result }: GetDependingOnTransaction
   }
 
   if (transactionId.includes(transactionIdRefs.REC)) {
-    // pendiente por definir...
+    if (result.securities && result.securities.length > 0) {
+      return result.securities[0].idAccount.informations[0].currency
+    }
   }
 
   if (transactionId.includes(transactionIdRefs.DYN)) {

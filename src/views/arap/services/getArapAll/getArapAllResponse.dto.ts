@@ -121,6 +121,7 @@ export interface Security {
   frontingFeeAmount: string
   grossPremiumPerShare: string
   id: number
+  idAccount: IDAccount
   idCReinsuranceCompany: ID
   idPaymentStatus: IDPaymentStatus
   isGross: boolean
