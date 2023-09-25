@@ -1,27 +1,21 @@
 // ** MUI Imports
-import Card from '@mui/material/Card'
-import Grid from '@mui/material/Grid'
+import { Container } from 'src/styles/Dashboard/dashboard'
 
 // ** Custom Components Imports
-// import Table from 'src/views/accounts/Table'
+import PropertiesMap from '@/views/dynamic-data/maps/PopertiesMap'
 
-const PopertiesMap = () => {
+const MapProperties = () => {
 
   return (
-
-      <Grid item xs={12}>
-      <Card>
-        map properties
-      </Card>
-    </Grid>
-
+    <Container>
+      <PropertiesMap />
+    </Container>
   )
 }
 
-PopertiesMap.acl = {
+MapProperties.acl = {
   action: 'viewMapPropertiesData',
   subject: 'dynamicData'
 }
 
-export default PopertiesMap
-
+export default MapProperties

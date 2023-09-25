@@ -46,7 +46,6 @@ export interface InformationDto {
   premiumWithTaxes: number
   premiumWithOutDiscounts: number
   typeLogo: number | null
-  idEndorsement?: number | null
 }
 
 export interface InformationDetailsDto {

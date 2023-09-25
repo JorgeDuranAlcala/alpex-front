@@ -16,7 +16,6 @@ import {
   SubContainerHeaderData
 } from '@/styles/Payments/PaymnetsInstallments/paymentsInstallments'
 import ActionsHeader2 from '@/views/accounts/new-account-steps/headers/ActionsHeader'
-import StatusSelect from '@/views/custom/select/StatusSelect'
 import {
   Box,
   Button,
@@ -32,14 +31,17 @@ import {
 } from '@mui/material'
 import { useEffect, useState } from 'react'
 import Icon from 'src/@core/components/icon'
-import { useAppSelector } from 'src/store'
 import StatusInstallment from '../components/StatusInstallment'
 import ActionsHeader from './ActionsHeader'
 import { ModalTxtImg } from './modals/ModalTxtImg'
 import { ModalUploadImg } from './modals/ModalUploadImg'
 
 // ** MUI Imports
+// ** Redux
 
+// ** Next
+
+// ** Custom hooks
 /* eslint-disable */
 
 interface IActionsHeaderProps {
@@ -60,6 +62,7 @@ interface InstallmentHeaderProps {
   accountDetails: any
   setAccountId: any
   isDataSheet?: boolean
+  installmentDetails: any
 }
 
 //Pending types
@@ -126,6 +129,7 @@ const ModalUploadImage = ({ accountId }: any) => {
   }
 
   return (
+    //TODO Cuando se tenga la funcionalidad de logos sustituir este menu
     <>
       <div className='header-form-main'>
         <Button
@@ -202,20 +206,26 @@ const InstallmentHeader = ({
   setTypeofAccount,
   setEditInfo,
   accountDetails,
-  setAccountId,
-  isDataSheet
+  isDataSheet,
+  installmentDetails
 }: InstallmentHeaderProps) => {
+  const [accountId, setAccountId] = useState<number | null>(null)
+  const [insured, setInsured] = useState<string | null>(null)
   const [status, setStatus] = useState('')
-  const account = useAppSelector(state => state.accounts?.formsData?.form1)
+
+  useEffect(() => {
+    if (accountDetails?.informations?.length > 0) {
+      setInsured(accountDetails?.informations[0]?.insured)
+      setAccountId(accountDetails?.id)
+    }
+  }, [accountDetails])
 
   const formaterAmount = (amount: number) => {
-    if (amount) {
-      return amount.toLocaleString('en-US', {
-        style: 'decimal',
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-        useGrouping: true
-      })
+    const currency = accountDetails?.informations[0]?.currency
+    if (amount && currency) {
+      const convert = new Intl.NumberFormat('en', { style: 'currency', currency: currency })
+      const formatTotalBalanceDue = convert.format(amount || 0)
+      return formatTotalBalanceDue
     }
   }
 
@@ -244,12 +254,8 @@ const InstallmentHeader = ({
   }
 
   useEffect(() => {
-    account && setAccountId(account.id)
-  }, [account])
-
-  useEffect(() => {
-    accountDetails && setStatus(accountDetails.status)
-  }, [accountDetails])
+    installmentDetails && setStatus(installmentDetails.status)
+  }, [installmentDetails])
 
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null)
   const [placement, setPlacement] = useState<PopperPlacementType | undefined>(undefined)
@@ -274,11 +280,11 @@ const InstallmentHeader = ({
                     }
                   }}
                 >
-                  <ModalUploadImage accountId={account?.id} />
+                  <ModalUploadImage accountId={accountDetails?.id} />
                 </Box>
                 <FormHeaderInfoProfiletext>
-                  <span className='form-header-info-profile-txt-title'>Quality Insurance México</span>
-                  <span className='form-header-info-profile-num'>#{account?.id}</span>
+                  <span className='form-header-info-profile-txt-title'>{insured}</span>
+                  <span className='form-header-info-profile-num'>#{accountDetails?.id}</span>
                 </FormHeaderInfoProfiletext>
               </FormHeaderInfoProfileContainer>
               <ContainerAmountLastUpdate>
@@ -288,8 +294,7 @@ const InstallmentHeader = ({
                   <span className='form-header-money-data-txt'>Total debit</span>
                 )}
                 <span className='form-header-money-data-num'>
-                  ${account && formaterAmount(account?.placementStructure?.netPremium)}{' '}
-                  {account?.placementStructure?.currency}
+                  {formaterAmount(accountDetails?.informations[0]?.netPremium)}
                 </span>
                 <FormHeaderMoneyDataDate>
                   Last Update: {accountDetails && formatDateFromUTC(accountDetails?.informations[0]?.updatedAt)}
@@ -313,9 +318,8 @@ const InstallmentHeader = ({
                           }}
                         >
                           <span className='form-secondContainer-header-title'>Status</span>
-                          <StatusSelect margin={0} initialStatus='PENDING' setSelectedStatus={setStatus} />
-                        </SecondContainer>
-
+                          <StatusInstallment status={status} />
+                        </SecondContainer>{' '}
                         <SecondContainer
                           sx={{
                             width: '31%',
@@ -325,7 +329,9 @@ const InstallmentHeader = ({
                           }}
                         >
                           <span className='form-secondContainer-header-title'>Line of Business</span>
-                          <span className='form-secondContainer-header-subtitle'>Line of Business</span>
+                          <span className='form-secondContainer-header-subtitle'>
+                            {installmentDetails?.lineOfBusiness}
+                          </span>
                         </SecondContainer>
                         <SecondContainer
                           sx={{
@@ -336,7 +342,10 @@ const InstallmentHeader = ({
                           }}
                         >
                           <span className='form-secondContainer-header-title'>Reception Date</span>
-                          <span className='form-secondContainer-header-subtitle'>13 / 03 / 2023</span>
+                          <span className='form-secondContainer-header-subtitle'>
+                            {' '}
+                            {accountDetails && formatDateFromUTC(accountDetails?.informations[0]?.effectiveDate)}
+                          </span>
                         </SecondContainer>
                       </FirstContainer>
                       <SecondContainer
@@ -353,7 +362,7 @@ const InstallmentHeader = ({
                       <SecondContainer sx={{ justifyContent: 'flex-end', paddingBottom: '5px' }}>
                         <ContainerActionsHeader>
                           <ActionsHeader2
-                            accountId={account?.id}
+                            accountId={accountDetails?.id}
                             setEditInfo={setEditInfo}
                             accountStatus='PENDING'
                             sideHeader={true}
@@ -367,43 +376,54 @@ const InstallmentHeader = ({
                         <Grid item xs={12} sm={2} md={1.2}>
                           <div className='form-secondContainer-second'>
                             <span className='form-secondContainer-header-title'>Status</span>
-                            <StatusInstallment status={'Pending'} />
+                            <StatusInstallment status={status} />
                           </div>
                         </Grid>
                         <Grid item xs={12} sm={3} md={2}>
                           <div className='form-secondContainer-second'>
                             <span className='form-secondContainer-header-title'>Broker Name</span>
-                            <span className='form-secondContainer-header-subtitle'>Broker Name</span>
+                            <span className='form-secondContainer-header-subtitle'>{installmentDetails?.broker}</span>
                           </div>
                         </Grid>
                         <Grid item xs={12} sm={3.5} md={2.3}>
                           <div className='form-secondContainer-second'>
                             <span className='form-secondContainer-header-title'>Line of Business</span>
-                            <span className='form-secondContainer-header-subtitle'>Line of Business</span>
+                            <span className='form-secondContainer-header-subtitle'>
+                              {' '}
+                              {installmentDetails?.lineOfBusiness}
+                            </span>
                           </div>
                         </Grid>
                         <Grid item xs={12} sm={3.3} md={2}>
                           <div className='form-secondContainer-second'>
                             <span className='form-secondContainer-header-title'>Due Date</span>
-                            <span className='form-secondContainer-header-subtitle'>10 / 01 / 2023</span>
+                            <span className='form-secondContainer-header-subtitle'>
+                              {formatDateFromUTC(installmentDetails?.dueDate)}
+                            </span>
                           </div>
                         </Grid>
                         <Grid item xs={12} sm={3.3} md={2}>
                           <div className='form-secondContainer-second'>
                             <span className='form-secondContainer-header-title'>Balance Due</span>
-                            <span className='form-secondContainer-header-subtitle'>$100,000 USD</span>
+                            <span className='form-secondContainer-header-subtitle'>
+                              {formaterAmount(installmentDetails?.balanceDue)}
+                            </span>
                           </div>
                         </Grid>
                         <Grid item xs={12} sm={2.5} md={1.2}>
                           <div className='form-secondContainer-second'>
                             <span className='form-secondContainer-header-title'>Installments</span>
-                            <span className='form-secondContainer-header-subtitle'>1/4</span>
+                            <span className='form-secondContainer-header-subtitle'>
+                              {installmentDetails?.installmentOrder}
+                            </span>
                           </div>
                         </Grid>
                         <Grid item xs={12} sm={2} md={1.3}>
                           <div className='form-secondContainer-second'>
                             <span className='form-secondContainer-header-title'>Balance</span>
-                            <span className='form-secondContainer-header-subtitle'>$0 USD</span>
+                            <span className='form-secondContainer-header-subtitle'>
+                              {formaterAmount(installmentDetails?.balance) || '$ 0.00'}
+                            </span>
                           </div>
                         </Grid>
                         <Grid
@@ -425,7 +445,7 @@ const InstallmentHeader = ({
                         >
                           <ContainerActionsHeader>
                             <ActionsHeader
-                              accountId={account?.id}
+                              accountId={accountDetails?.id}
                               setEditInfo={setEditInfo}
                               accountStatus='PENDING'
                               sideHeader={true}

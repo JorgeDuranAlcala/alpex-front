@@ -24,7 +24,7 @@ export const SelectRetroCedant = ({
   setIdRetroCedant,
   view
 }: SelectRetroCedantProps) => {
-  const { activeErros, securities, calculateSecurities } = useContext(SecurityContext)
+  const { activeErros, securities, calculateSecurities, setIsUpdatedInfoByUser } = useContext(SecurityContext)
   const [retroCedantId, setRetroCedantId] = useState<string>(String(value) || '')
 
   // const [counter, setCounter] = useState(1)
@@ -42,6 +42,7 @@ export const SelectRetroCedant = ({
       validateForm(tempSecurities[index])
       setIdRetroCedant(retroCedant.id)
       calculateSecurities(tempSecurities)
+      setIsUpdatedInfoByUser(true)
     }
   }
 

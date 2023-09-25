@@ -1,49 +1,28 @@
-
-import { Box, styled } from '@mui/material';
-import { useMasterFilters } from '../../hooks/useMasterFilters';
-import { InputDate } from './inputs/InputDate';
-import { SelectBroker } from './inputs/SelectBroker';
-import { SelectReinsurer } from './inputs/SelectReinsurer';
-import { SelectStatus } from './inputs/SelectStatus';
-import { SelectTransaction } from './inputs/SelectTransaction';
-import { TextId } from './inputs/TextId';
+import { InputDate } from '@/views/arap/_commons/components/inputs/InputDate'
+import { Box, styled } from '@mui/material'
+import { useMasterFilters } from '../../hooks/useMasterFilters'
+import { SelectBroker } from './inputs/SelectBroker'
+import { SelectReinsurer } from './inputs/SelectReinsurer'
+import { SelectStatus } from './inputs/SelectStatus'
+import { SelectTransaction } from './inputs/SelectTransaction'
+import { TextId } from './inputs/TextId'
 
 export const MasterFilters = () => {
-
-  const { queryFilters, handleSelectChange, handleDateChange, handleTextChange } = useMasterFilters();
+  const { queryFilters, handleSelectChange, handleDateChange, handleTextChange } = useMasterFilters()
 
   return (
     <FiltersContainer>
-      <SelectBroker
-        selectedValue={queryFilters.broker}
-        onChange={handleSelectChange}
-      />
+      <SelectBroker selectedValue={queryFilters.broker} onChange={handleSelectChange} />
 
-      <SelectReinsurer
-        selectedValue={queryFilters.reinsurer}
-        onChange={handleSelectChange}
-      />
+      <SelectReinsurer selectedValue={queryFilters.reinsurer} onChange={handleSelectChange} />
 
-      <SelectStatus
-        selectedValue={queryFilters.status}
-        onChange={handleSelectChange}
-      />
+      <SelectStatus selectedValue={queryFilters.status} onChange={handleSelectChange} />
 
-      <SelectTransaction
-        selectedValue={queryFilters.transaction}
-        onChange={handleSelectChange}
-      />
+      <SelectTransaction selectedValue={queryFilters.transactionType} onChange={handleSelectChange} />
 
-      <InputDate
-        value={queryFilters.date}
-        onChange={(date) => handleDateChange(date)}
-      />
+      <InputDate value={queryFilters.date} onChange={date => handleDateChange(date)} />
 
-      <TextId
-        value={queryFilters.id}
-        onChange={handleTextChange}
-      />
-
+      <TextId value={queryFilters.id || ''} onChange={handleTextChange} />
     </FiltersContainer>
   )
 }
@@ -54,7 +33,6 @@ const FiltersContainer = styled(Box)(({ theme }) => ({
   gap: '29px',
 
   [theme.breakpoints.down('md')]: {
-    flexWrap: 'wrap',
+    flexWrap: 'wrap'
   }
-}));
-
+}))

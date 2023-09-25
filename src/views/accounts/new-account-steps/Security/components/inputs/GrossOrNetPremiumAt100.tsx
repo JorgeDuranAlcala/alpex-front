@@ -19,7 +19,7 @@ export const GrossOrNetPremiumAt100 = ({
   validateForm,
   view
 }: GrossOrNetPremiumAt100Props) => {
-  const { activeErros, securities, calculateSecurities } = useContext(SecurityContext)
+  const { activeErros, securities, calculateSecurities, setIsUpdatedInfoByUser } = useContext(SecurityContext)
 
   const { activeView, $inputRef, openModalSecondView, isOpenModal, isOpenModalUndo } = useContext(SecondViewContext)
 
@@ -45,6 +45,7 @@ export const GrossOrNetPremiumAt100 = ({
     }
     validateForm(tempSecurities[index])
     calculateSecurities(tempSecurities)
+    setIsUpdatedInfoByUser(true)
   }
 
   useEffect(() => {
