@@ -1,8 +1,8 @@
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material'
 
 import { InputSelectProps } from '@/views/arap/_commons/interfaces/InputSelectProps'
-import { optionsPaymentStatusAdapter } from '@/views/arap/services/getPaymentStatus/frontAdapters/optionsPaymentStatusAdapter'
-import { getPaymentStatusService } from '@/views/arap/services/getPaymentStatus/getPaymentStatusService'
+import { optionsPaymentStatusAdapter } from '@/views/arap/overview/services/getPaymentStatus/frontAdapters/optionsPaymentStatusAdapter'
+import { getPaymentStatusService } from '@/views/arap/overview/services/getPaymentStatus/getPaymentStatusService'
 import { useEffect, useState } from 'react'
 
 export const SelectStatus = ({ selectedValue, onChange }: InputSelectProps) => {

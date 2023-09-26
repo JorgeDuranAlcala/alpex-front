@@ -3,8 +3,8 @@ import MenuItem from '@mui/material/MenuItem'
 
 // ** Custom utilities
 import { PaymentsContext } from '@/views/arap/overview/context/payments/PaymentsContext'
-import { optionsPaymentStatusAdapter } from '@/views/arap/services/getPaymentStatus/frontAdapters/optionsPaymentStatusAdapter'
-import { getPaymentStatusService } from '@/views/arap/services/getPaymentStatus/getPaymentStatusService'
+import { optionsPaymentStatusAdapter } from '@/views/arap/overview/services/getPaymentStatus/frontAdapters/optionsPaymentStatusAdapter'
+import { getPaymentStatusService } from '@/views/arap/overview/services/getPaymentStatus/getPaymentStatusService'
 import { useContext, useEffect, useState } from 'react'
 
 interface IFilterMenuStatusOptionProps {

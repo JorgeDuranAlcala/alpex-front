@@ -1,8 +1,5 @@
-
-
-export interface PayableFilters {
+export interface GetReceivablesAllParamsToSend {
   date: string;
-  capability: string;
   accountId?: number;
   capabilityId?: number;
   capabilityName?: string;
