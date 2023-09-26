@@ -1,7 +1,8 @@
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
-import { broker_info_mock } from '../../mocks/broker_info_mock'
 import { BrokerInfo } from '../interfaces/brokerInfo'
+import { receivableBrokerIdAdapter } from '../services/getReceivableBrokerId/frontAdapters/ReceivableBrokerIdAdapter'
+import { getReceivableBrokerIdService } from '../services/getReceivableBrokerId/getReceivableBrokerIdService'
 
 export const useBrokerDetails = () => {
   const router = useRouter()
@@ -11,16 +12,19 @@ export const useBrokerDetails = () => {
 
   const { id } = router.query
 
-  useEffect(() => {
-    setIsLoading(true)
+  const getReceivableBrokerIdAsync = async (id:number) => {
+    const brokerInfo = await getReceivableBrokerIdService({capabilityId: +id})
 
-    // Todo: reemplazar este timeout por el servicio que se implementará
-    setTimeout(() => {
-      if (id) {
-        setBrokerDetails(broker_info_mock)
-        setIsLoading(false)
-      }
-    }, 500)
+    const brokerDetailsAdapted = receivableBrokerIdAdapter(brokerInfo)
+    setBrokerDetails(brokerDetailsAdapted)
+    setIsLoading(false)
+  }
+
+  useEffect(() => {
+    if (id) {
+      setIsLoading(true)
+      getReceivableBrokerIdAsync(+id)
+    }
   }, [id])
 
   return {

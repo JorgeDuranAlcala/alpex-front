@@ -99,6 +99,13 @@ const InfoTextsContainer = styled(Box)(({ theme }) => ({
 
   color: 'rgba(77, 80, 98, 0.87)',
 
+  minWidth: '200px',
+  
+  // ? this selector is the email
+  '>p:nth-child(3)': {
+    textAlign: 'right',
+  },
+
   [theme.breakpoints.down('sm')]: {
     alignItems: 'flex-start'
   }

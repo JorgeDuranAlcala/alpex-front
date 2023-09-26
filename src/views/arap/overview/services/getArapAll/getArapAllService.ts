@@ -1,5 +1,5 @@
 import { AppAlpexApiGateWay } from '@/services/app.alpex.api-getway'
-import { ARAP_API_ROUTES } from '../_config/arapApiRoutes'
+import { ARAP_API_ROUTES } from '@/views/arap/_commons/services/_config'
 import { GetArapAllParamsToSend } from './getArapAllParamsToSend'
 import { GetArapAllResponseDto } from './getArapAllResponse.dto'
 
