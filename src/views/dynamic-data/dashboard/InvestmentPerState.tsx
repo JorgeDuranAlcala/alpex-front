@@ -3,37 +3,88 @@ import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
 import CardHeader from '@mui/material/CardHeader'
 import { useTheme } from '@mui/material/styles'
+import Tooltip from '@mui/material/Tooltip'
+
+// ** Icon Imports
+import Icon from 'src/@core/components/icon'
 
 // ** Third Party Imports
+import ReactApexcharts from '@/@core/components/react-apexcharts'
 import { ApexOptions } from 'apexcharts'
 
 // ** Custom Components Imports
-import OptionsMenu from 'src/@core/components/option-menu'
-import ReactApexcharts from 'src/@core/components/react-apexcharts'
+// import OptionsMenu from 'src/@core/components/option-menu'
 
 // ** Util Import
-import { InvestmentPerStateDto } from '@/services/dynamic-data/dtos/dashboard.dto'
 import { hexToRGBA } from 'src/@core/utils/hex-to-rgba'
 
+// ** Import hooks
+import { useGetInvestmentPerState } from '@/hooks/dynamic-data/dashboard'
 
+//Dto imports
+// import { InvestmentPerStateDto } from '@/services/dynamic-data/dtos/dashboard.dto'
+
+// ** Helper imports
+import { fromStateToAbbr } from '@/services/helper/fromStateToAbbr'
+
+import { useEffect, useState } from 'react'
 
 const InvestmentPerState = () => {
   // ** Hook
   const theme = useTheme()
 
-  const info: InvestmentPerStateDto ={
-    totalBuildings: '142,000',
-    name: 'Sales',
-    data: [14165, 12859, 10375, 8567, 6880],
-    categories: ['CX','NL','YU','EM','PU']
+  const {getInvestmentPerState} = useGetInvestmentPerState()
+  const [totalValfis, setTotalValfis] = useState<string | number>(0)
+  const [categories, setCategories] = useState<string[]>([])
+  const [series, setSeries] = useState<any[]>([
+    {
+      name: 'VALFIS',
+      data: []
+    }
+  ])
+
+  const setDataInformation = async () => {
+    const data = await getInvestmentPerState()
+
+    if (!data) return
+
+    const totalList: any[] = []
+    const statesList: string[]= []
+
+    data.dataPerState.forEach((item: { totalValfis: any; state: any }) => {
+      totalList.push(item.totalValfis);
+      statesList.push(fromStateToAbbr(item.state));
+    });
+
+    const newSeries = [
+      {
+      name: 'VALFIS',
+      data: totalList || [],
+      }
+    ]
+
+    setSeries(newSeries)
+    setTotalValfis(data.totalValfis)
+    setCategories(statesList)
   }
 
-  const series = [
-    {
-      name: info.name,
-      data: info.data
-    }
-  ]
+  useEffect(() => {
+    setDataInformation()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // const info: InvestmentPerStateDto = {
+  //   totalValfis: '142,000',
+  //   name: 'Sales',
+  //   data: [14165, 12859, 10375, 8567, 6880],
+  //   categories: ['CX', 'NL', 'YU', 'EM', 'PU']
+  // }
+  // const series = [
+  //   {
+  //     name: info.name,
+  //     data: info.data
+  //   }
+  // ]
 
   const options: ApexOptions = {
     chart: {
@@ -59,7 +110,17 @@ const InvestmentPerState = () => {
       style: {
         fontWeight: 500,
         fontSize: '0.875rem'
-      }
+      },
+      formatter: val => {
+        const value= Number(val)
+        if (value >= 1000000) {
+          return value % 1000000 === 0 ? `${(value / 1000000)}M` : `${(value / 1000000).toFixed(1)}M`;
+        } else if (value >= 1000) {
+          return value % 1000 === 0 ? `${(value / 1000)}K` : `${(value / 1000).toFixed(1)}K`;
+        } else {
+          return Math.round(value).toString();
+        }
+      },
     },
     grid: {
       strokeDashArray: 8,
@@ -96,9 +157,9 @@ const InvestmentPerState = () => {
     xaxis: {
       axisTicks: { show: false },
       axisBorder: { show: false },
-      categories: info.categories,
+      categories: categories,
       labels: {
-        formatter: val => `${Number(val) / 1000}k`,
+        formatter: val => `${Number(val) / 1000000}M`,
         style: {
           fontSize: '0.875rem',
           colors: theme.palette.text.disabled
@@ -117,18 +178,21 @@ const InvestmentPerState = () => {
     }
   }
 
+
   return (
-    <Card>
+    <Card className='investment-per-state'>
       <CardHeader
-        title='Sales Country'
-        subheader='Total $42,580 Sales'
+        title='Capacity per State'
+        subheader={`Total VALFIS sum $${(Number(totalValfis)/1000000).toFixed(1)}M`}
+        sx= {{position: 'relative'}}
         subheaderTypographyProps={{ sx: { lineHeight: 1.429 } }}
         titleTypographyProps={{ sx: { letterSpacing: '0.15px' } }}
         action={
-          <OptionsMenu
-            options={['Last 28 Days', 'Last Month', 'Last Year']}
-            iconButtonProps={{ size: 'small', className: 'card-more-options' }}
-          />
+          <div className='icon-wrapper'>
+            <Tooltip arrow title='Sum of replacement cost estimations per state' placement='top'>
+              <div className='tooltip-content' style={{ color: 'rgba(87, 90, 111, 0.54)' }}><Icon icon='mdi:information-outline' /></div>
+            </Tooltip>
+          </div>
         }
       />
       <CardContent

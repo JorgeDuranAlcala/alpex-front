@@ -8,7 +8,8 @@ export const ButtonAddDiscount = ({ view, formIndex }: { view: number; formIndex
   const {
     securities,
 
-    calculateSecurities
+    calculateSecurities,
+    setIsUpdatedInfoByUser
   } = useContext(SecurityContext)
 
   const addDiscount = () => {
@@ -28,6 +29,7 @@ export const ButtonAddDiscount = ({ view, formIndex }: { view: number; formIndex
         }
       ]
       calculateSecurities(securitiesTemp)
+      setIsUpdatedInfoByUser(true)
     }
   }
 

@@ -18,10 +18,25 @@ export interface SalesThisMonthDto {
 }
 
 export interface InvestmentPerStateDto {
-  totalBuildings: number | string
+  totalValfis: number | string
   name: string
   data: number[]
   categories: string[]
 }
 
+export interface IProperty {
+  id: string
+  valfis: string
+  nomEnt: string
+  nomMun: string
+  type: string
+  zonacresta: string
+}
 
+export interface IEarthquakeDetailDto{
+  magnitude: string
+  depth: string
+  epicenter: string
+  coordinatesCenter: string
+  dateTime: string
+}

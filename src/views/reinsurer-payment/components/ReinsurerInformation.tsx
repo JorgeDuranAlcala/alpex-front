@@ -1,6 +1,8 @@
 import { Grid } from '@mui/material'
 import TextField from '@mui/material/TextField'
 
+import { IS_DEMO } from 'src/utils/isDemo'
+
 interface ReinsurerInfo {
   margin?: number
 }
@@ -83,7 +85,7 @@ export default function ReinsurerInfo({}: any) {
               fullWidth
               autoFocus
               name='dynamicPercent'
-              label='Dynamic Commission %'
+              label={`${!IS_DEMO ? "Dynamic" : ""} Commission %`}
               defaultValue=''
               value=''
             />
@@ -95,7 +97,7 @@ export default function ReinsurerInfo({}: any) {
               fullWidth
               autoFocus
               name='dynamicCommission'
-              label='Dynamic Commission'
+              label={`${!IS_DEMO ? "Dynamic" : ""} Commission`}
               defaultValue=''
               value=''
             />

@@ -44,12 +44,16 @@ import Loader from 'src/layouts/components/Loader'
 // ** Contexts
 import { SettingsConsumer, SettingsProvider } from 'src/@core/context/settingsContext'
 import { AuthProvider } from 'src/context/AuthContext'
+import CataloguesClaimsContextProvider from 'src/context/catalogues-claims/reducer'
+import DynamicContextProvider from 'src/context/dynamic/reducer'
 
 // ** Styled Components
 import ReactHotToast from 'src/@core/styles/libs/react-hot-toast'
 
 // ** Utils Imports
 import { createEmotionCache } from 'src/@core/utils/create-emotion-cache'
+
+import { IS_DEMO } from 'src/utils/isDemo'
 
 // ** Prismjs Styles
 import 'prismjs'
@@ -65,6 +69,7 @@ import 'src/iconify-bundle/icons-bundle-react'
 // ** Global css styles
 import 'src/styles/accounts.css'
 import 'src/styles/catalogues.css'
+import 'src/styles/dynamic-data.css'
 import 'src/styles/installments.css'
 import '../../styles/forgottenpassword.css'
 import '../../styles/globals.css'
@@ -152,40 +157,44 @@ const App = (props: ExtendedAppProps) => {
 
   return (
     <Provider store={store}>
-      <CacheProvider value={emotionCache}>
-        <Head>
-          <title>{`${themeConfig.templateName} - Dynamic Re | Your Underwriting Powerhouse`}</title>
-          <meta
-            name='description'
-            content={`${themeConfig.templateName} We provide property facultative and treaty reinsurance to brokers and insurance companies operating in Latin America and the Caribbean`}
-          />
-          <meta name='image' content='https://dynamicreinsurance.com/images/MexicoCity.jpg' />
-          <meta name='viewport' content='initial-scale=1, width=device-width' />
-        </Head>
+        <CataloguesClaimsContextProvider>
+          <DynamicContextProvider>
+            <CacheProvider value={emotionCache}>
+              <Head>
+                <title>{`${(themeConfig.templateName === "Alpex" && !IS_DEMO) ? themeConfig.templateName : ""  } - ${!IS_DEMO ? "Dynamic Re |" : ""} Your Underwriting Powerhouse`}</title>
+                <meta
+                  name='description'
+                  content={`${themeConfig.templateName} We provide property facultative and treaty reinsurance to brokers and insurance companies operating in Latin America and the Caribbean`}
+                />
+                <meta name='image' content='https://dynamicreinsurance.com/images/MexicoCity.jpg' />
+                <meta name='viewport' content='initial-scale=1, width=device-width' />
+              </Head>
 
-        <AuthProvider>
-          <SettingsProvider {...(setConfig ? { pageSettings: setConfig() } : {})}>
-            <SettingsConsumer>
-              {({ settings }) => {
-                return (
-                  <ThemeComponent settings={settings}>
-                    <WindowWrapper>
-                      <Guard authGuard={authGuard} guestGuard={guestGuard}>
-                        <AclGuard aclAbilities={aclAbilities} guestGuard={guestGuard}>
-                          {getLayout(<Component {...pageProps} />)}
-                        </AclGuard>
-                      </Guard>
-                    </WindowWrapper>
-                    <ReactHotToast>
-                      <Toaster position={settings.toastPosition} toastOptions={{ className: 'react-hot-toast' }} />
-                    </ReactHotToast>
-                  </ThemeComponent>
-                )
-              }}
-            </SettingsConsumer>
-          </SettingsProvider>
-        </AuthProvider>
-      </CacheProvider>
+              <AuthProvider>
+                <SettingsProvider {...(setConfig ? { pageSettings: setConfig() } : {})}>
+                  <SettingsConsumer>
+                    {({ settings }) => {
+                      return (
+                        <ThemeComponent settings={settings}>
+                          <WindowWrapper>
+                            <Guard authGuard={authGuard} guestGuard={guestGuard}>
+                              <AclGuard aclAbilities={aclAbilities} guestGuard={guestGuard}>
+                                {getLayout(<Component {...pageProps} />)}
+                              </AclGuard>
+                            </Guard>
+                          </WindowWrapper>
+                          <ReactHotToast>
+                            <Toaster position={settings.toastPosition} toastOptions={{ className: 'react-hot-toast' }} />
+                          </ReactHotToast>
+                        </ThemeComponent>
+                      )
+                    }}
+                  </SettingsConsumer>
+                </SettingsProvider>
+              </AuthProvider>
+            </CacheProvider>
+        </DynamicContextProvider>
+      </CataloguesClaimsContextProvider>
     </Provider>
   )
 }

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 // ** MUI Imports
 import { FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material'
@@ -9,6 +9,12 @@ import FormHeader from 'src/views/installments/Header/headerInstallment'
 
 import { AccountsTableContextProvider } from '@/context/accounts/Table/reducer'
 import { useGetAccountById } from '@/hooks/accounts/forms'
+import { useGetActualInstallment } from '@/hooks/accounts/installments'
+
+// ** Next
+import { useRouter } from 'next/router';
+
+import { IS_DEMO } from 'src/utils/isDemo'
 
 // import UserList from 'src/pages/apps/user/list'
 
@@ -21,6 +27,19 @@ const DataSheet = () => {
 
   // ** Hooks header
   const { account: accountDetails, setAccountId } = useGetAccountById()
+  const { actualInstallment: installmentDetails, setAccountIdInstallment, setInstallmentId } = useGetActualInstallment()
+  const router = useRouter()
+  useEffect(() => {
+    if (router.query.id) {
+      setAccountId(Number(router.query.id))
+      setAccountIdInstallment(Number(router.query.id))
+      setInstallmentId(Number(localStorage.getItem('idAccountInstallment')))
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router.query.id])
+
+  console.log({ accountDetails })
 
   const [, setEditInfo] = useState(true)
 
@@ -31,6 +50,7 @@ const DataSheet = () => {
           isNewAccount
           setEditInfo={setEditInfo}
           accountDetails={accountDetails}
+          installmentDetails={installmentDetails}
           setAccountId={setAccountId}
           isDataSheet
         />
@@ -256,7 +276,7 @@ const DataSheet = () => {
                         fullWidth
                         autoFocus
                         name='dynamicPercent'
-                        label='Dynamic Commission %'
+                        label={`${!IS_DEMO ? "Dynamic" : ""} Commission %`}
                         defaultValue=''
                         value=''
                       />
@@ -268,7 +288,7 @@ const DataSheet = () => {
                         fullWidth
                         autoFocus
                         name='dynamicCommission'
-                        label='Dynamic Commission'
+                        label={`${!IS_DEMO ? "Dynamic" : ""} Commission`}
                         defaultValue=''
                         value=''
                       />
@@ -370,7 +390,7 @@ const DataSheet = () => {
                         fullWidth
                         autoFocus
                         name='dynamicPercent'
-                        label='Dynamic Commission %'
+                        label={`${!IS_DEMO ? "Dynamic" : ""} Commission %`}
                         defaultValue=''
                         value=''
                       />
@@ -382,7 +402,7 @@ const DataSheet = () => {
                         fullWidth
                         autoFocus
                         name='dynamicCommission'
-                        label='Dynamic Commission'
+                        label={`${!IS_DEMO ? "Dynamic" : ""} Commission`}
                         defaultValue=''
                         value=''
                       />

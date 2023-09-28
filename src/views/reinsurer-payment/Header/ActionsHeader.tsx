@@ -17,6 +17,8 @@ import { useEffect, useState } from 'react'
 import Icon from 'src/@core/components/icon'
 import { ButtonClose, HeaderTitleModal } from 'src/styles/Dashboard/ModalReinsurers/modalReinsurers'
 
+import { IS_DEMO } from 'src/utils/isDemo'
+
 interface IActionsHeaderProps {
   accountId?: number
   accountStatus: string
@@ -219,7 +221,7 @@ const ActionsHeader: React.FC<IActionsHeaderProps> = ({ accountId, sideHeader })
                               name='dynamicCommision'
                             />
                           }
-                          label='Dynamic Commision'
+                          label={`${!IS_DEMO ? "Dynamic" : ""} Commission`}
                         />
                         <FormControlLabel
                           control={<Checkbox checked={taxes} onChange={handleChangeChecks} name='taxes' />}

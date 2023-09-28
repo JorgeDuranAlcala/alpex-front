@@ -15,7 +15,7 @@ export const PremiumPerShareAmount = ({
   validateForm,
   view
 }: PremiumPerShareAmountProps) => {
-  const { activeErros, securities } = useContext(SecurityContext)
+  const { activeErros, securities, setIsUpdatedInfoByUser } = useContext(SecurityContext)
 
   const handleChangePremiumPerShareAmount = (value: number) => {
     //todo @omar persistir valor
@@ -30,6 +30,7 @@ export const PremiumPerShareAmount = ({
       discounts: tempSecurities[index].discounts.map(discount => ({ ...discount, isChangeAmount: false }))
     }
     validateForm(tempSecurities[index])
+    setIsUpdatedInfoByUser(true)
 
     // calculateSecurities(tempSecurities)
   }

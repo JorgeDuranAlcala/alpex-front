@@ -6,7 +6,7 @@ import { PaymentsProvider } from "./context/payments/PaymentsProvider"
 import { BalanceOfPayments } from "./components/BalanceOfPayments/BalanceOfPayments"
 import { HeaderCard } from "./components/HeaderCard"
 import { MasterFilters } from "./components/MasterFilters/MasterFilters"
-import { PaymentsTable } from "./components/Table/PaymentsTable"
+import { PaymentsTable } from "./components/PaymentsTable/PaymentsTable"
 
 const ViewContainer = styled(Box)(() => ({
   display: 'flex',

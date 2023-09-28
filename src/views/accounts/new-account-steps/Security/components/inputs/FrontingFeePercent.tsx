@@ -24,7 +24,7 @@ export const FrontingFeePercent = ({
   validateForm,
   view
 }: FrontingFeePercentProps) => {
-  const { activeErros, securities, calculateSecurities } = useContext(SecurityContext)
+  const { activeErros, securities, calculateSecurities, setIsUpdatedInfoByUser } = useContext(SecurityContext)
 
   const { achievedMessageError, checkIsPercentageAchieved } = usePercentageAchieved()
 
@@ -37,6 +37,7 @@ export const FrontingFeePercent = ({
     }
     validateForm(tempSecurities[index])
     calculateSecurities(tempSecurities)
+    setIsUpdatedInfoByUser(true)
   }
 
   useEffect(() => {

@@ -1,22 +1,22 @@
 import { useGetAccountById } from '@/hooks/accounts/forms'
+import { useUpdateAccountsStatus } from '@/hooks/accounts/status'
 import { useAddSublimits, useDeleteSublimits, useUpdateSublimits } from '@/hooks/accounts/sublimit'
+import UserThemeOptions from '@/layouts/UserThemeOptions'
 import { AbilityContext } from '@/layouts/components/acl/Can'
 import { SublimitDto } from '@/services/accounts/dtos/sublimit.dto'
 import { CoverageDto } from '@/services/catalogs/dtos/coverage.dto'
 import { useAppSelector } from '@/store'
 import { NextContainer } from '@/styles/Forms/Sublimits'
 import CustomAlert, { IAlert } from '@/views/custom/alerts'
+import SaveIcon from '@mui/icons-material/Save'
 import { Button, CardContent, Grid } from '@mui/material'
 import CircularProgress from '@mui/material/CircularProgress'
 import Typography from '@mui/material/Typography'
-import { useContext, useEffect, useState } from 'react' //useContext
+import { useRouter } from 'next/router'
+import { useContext, useEffect, useState } from 'react'; //useContext
 import InputLimit from './components/InputLimit/InputLimit'
 import SelectCoverage from './components/SelectCoverage/SelectCoverage'
 import { GenericCard } from './components/SublimitsCards'
-import { useRouter } from 'next/router'
-import { useUpdateAccountsStatus } from '@/hooks/accounts/status'
-import UserThemeOptions from '@/layouts/UserThemeOptions'
-import SaveIcon from '@mui/icons-material/Save'
 
 import CheckIcon from '@mui/icons-material/Check'
 
@@ -43,7 +43,6 @@ const initialValues: SublimitDto = {
   idCDeductiblePer: 0,
   active: true,
   idCCoverage: null,
-  idEndorsement: null,
   title: '',
   idAccount: 0
 }
@@ -89,7 +88,7 @@ interface SublimitsProps {
 // getAccountByIdHeader
 
 const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
-  const router = useRouter();
+  const router = useRouter()
   const [badgeData, setBadgeData] = useState<IAlert>({
     message: '',
     theme: 'success',
@@ -107,7 +106,9 @@ const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
 
   //state para lo botones
   const [disableBoundBtn, setDisableBoundBtn] = useState(ability?.cannot('addBound', 'account'))
-  const [disableSaveBtn, setDisableSaveBtn] = useState<boolean>(false)
+
+  const [isUpdatedInfoByUser, setIsUpdatedInfoByUser] = useState(false)
+  const [disableSaveBtn, setDisableSaveBtn] = useState<boolean>(true)
   const [showErrors, setShowErrors] = useState<boolean>(false)
   const [formErrors, setFormErrors] = useState<boolean[]>([])
   const { account, setAccountId, getAccountById } = useGetAccountById()
@@ -136,6 +137,7 @@ const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
     // console.log('coverageSelect', coverageSelect);
 
     setCoverageSelected([...coverageSelected, coverageSelect])
+    setIsUpdatedInfoByUser(true)
   }
 
   const handleAddCoverage = (value: number, label: string) => {
@@ -187,6 +189,8 @@ const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
 
     if (coverageDelete) {
       setCoverageSelected([...coverageDelete])
+
+      setIsUpdatedInfoByUser(true)
     }
     getAllCoverages(accountData.formsData.form1?.id)
   }
@@ -254,12 +258,13 @@ const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
         getAccountData().then(console.log)
 
         setDisableBoundBtn(false)
-        setDisableSaveBtn(false)
+        setIsUpdatedInfoByUser(false)
       })
       .catch(reason => {
         console.log({ reason })
 
         setDisableBoundBtn(false)
+        setIsUpdatedInfoByUser(false)
         setDisableSaveBtn(false)
       })
 
@@ -333,19 +338,30 @@ const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
     const id = Number(router.query?.idAccount || accountData.formsData.form1?.id || localStorage.getItem('idAccount'))
     if (id) {
       setAccountIdCoverage(id)
-  
+
       getAllCoverages(id)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.query?.idAccount, accountData])
-  useEffect(() => {  
+  useEffect(() => {
     if (coverageSelected.length === 0) {
-      const coveragesFiltered = coverages.filter((elemento: any) => { return subLimits.some(filtroItem => filtroItem.idCCoverage.id === elemento.id) });      
-      setCoverageSelected(coveragesFiltered)      
+      const coveragesFiltered = coverages.filter((elemento: any) => {
+        return subLimits.some(filtroItem => filtroItem.idCCoverage.id === elemento.id)
+      })
+      setCoverageSelected(coveragesFiltered)
 
       // console.log("Retornamos estos datos -> ", coveragesFiltered, coverages);
     }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [subLimits, accountData, coverages])
+
+  useEffect(() => {
+    if (isUpdatedInfoByUser) {
+      setDisableSaveBtn(false)
+    }
+  }, [isUpdatedInfoByUser])
+
   console.log({ subLimits, coverageSelected })
 
   return (
@@ -378,6 +394,7 @@ const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
                     <Grid item xs={12} sm={12} md={6} lg={4} key={index}>
                       <GenericCard
                         selectedCoverages={coverageSelected}
+                        setIsUpdatedInfoByUser={setIsUpdatedInfoByUser}
                         subLimit={subLimit}
                         setSubLimits={setSubLimits}
                         subLimits={subLimits}
@@ -401,7 +418,7 @@ const Sublimits = ({ getAccountByIdHeader }: SublimitsProps) => {
           variant='contained'
           color='success'
           sx={{ mr: 2, fontFamily: inter, fontSize: size, letterSpacing: '0.4px' }}
-          disabled={disableSaveBtn || account?.status.toLowerCase() === 'bound' ? true : false}
+          disabled={disableSaveBtn || account?.status.toLowerCase() === 'bound' ? true : false || !isUpdatedInfoByUser}
           onClick={handleClickSave}
         >
           <SaveIcon /> &nbsp; Save changes

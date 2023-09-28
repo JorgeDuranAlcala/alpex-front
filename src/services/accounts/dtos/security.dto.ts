@@ -39,7 +39,6 @@ export interface SecurityDto {
   idCReinsuranceCompanyBinder: ReinsuranceCompanyBinderDto | null
   idCRetroCedant: RetroCedantDto | null
   idCRetroCedantContact: RetroCedantContactDto | null
-  idEndorsement: number
   idAccount: number
   isGross: boolean
   recievedNetPremium: number
@@ -146,6 +145,7 @@ export type SecurityContextDto = {
   setAllErrors: React.Dispatch<React.SetStateAction<boolean[]>>
   setCurrentView: React.Dispatch<React.SetStateAction<number>>
   calculateSecurities: (securities: SecurityDto[], view?: number) => void
+  setIsUpdatedInfoByUser: React.Dispatch<React.SetStateAction<boolean>>
 }
 export type SecurityProps = {
   onStepChange: (step: number) => void

@@ -1,20 +1,23 @@
-import { responseFoldersByAccount } from '@/services/documents/dtos/documents.dto'
+import { GetFolders, responseFoldersByAccount } from '@/services/documents/dtos/documents.dto'
 import { useEffect, useState } from 'react'
 import DocumentsServices from 'src/services/documents/documents.service'
 
 export const useGetFolders = () => {
   const [foldersAccount, setfoldersAccount] = useState<responseFoldersByAccount[]>([])
-  const [idUser, setIdUser] = useState<null | number>(null)
-  const findById = async (idUser: number) => {
-    await DocumentsServices.getDocumentsById(idUser).then(setfoldersAccount)
+  const [inputGetFolder, setInputGetFolder] = useState<GetFolders>()
+  const findById = async (input: GetFolders) => {
+    const result = await DocumentsServices.getDocumentsById(input.section, input.id).then(data => data)
+    setfoldersAccount(result)
+
+    return result
   }
   useEffect(() => {
-    idUser && findById(idUser)
-  }, [idUser])
+    inputGetFolder && findById(inputGetFolder)
+  }, [inputGetFolder])
 
   return {
     foldersAccount,
-    setIdUser,
+    setInputGetFolder,
     findById
   }
 }

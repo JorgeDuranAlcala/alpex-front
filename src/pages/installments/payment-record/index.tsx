@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 // ** MUI Imports
 import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp'
@@ -13,8 +13,16 @@ import { styled } from '@mui/material/styles'
 
 import FormHeader from 'src/views/installments/Header/headerInstallment'
 
+// ** Next
+import { useRouter } from 'next/router'
+
+// ** Redux
 import { AccountsTableContextProvider } from '@/context/accounts/Table/reducer'
+
+// ** Custom hooks
 import { useGetAccountById } from '@/hooks/accounts/forms'
+import { useGetActualInstallment } from '@/hooks/accounts/installments'
+
 import { ContainerPadd } from '@/styles/Payments/PaymnetsInstallments/paymentsInstallments'
 import { FormHeaderMoneyData } from '@/styles/Payments/ReinsurerPayment/reinsurerPayment'
 import DetailInstallment from '@/views/installments/components/DetailsInstallment'
@@ -61,12 +69,21 @@ const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
 }))
 
 const PaymentRecord = () => {
-  // ** Hooks
-
-  // ** Redux
-
-  // ** Hooks header
+  // Custom Hooks
   const { account: accountDetails, setAccountId } = useGetAccountById()
+  const { actualInstallment: installmentDetails, setAccountIdInstallment, setInstallmentId } = useGetActualInstallment()
+  const router = useRouter()
+  useEffect(() => {
+    if (router.query.id) {
+      setAccountId(Number(router.query.id))
+      setAccountIdInstallment(Number(router.query.id))
+      setInstallmentId(Number(localStorage.getItem('idAccountInstallment')))
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router.query.id])
+
+  console.log({ accountDetails })
 
   const [, setEditInfo] = useState(true)
 
@@ -83,6 +100,7 @@ const PaymentRecord = () => {
           isNewAccount
           setEditInfo={setEditInfo}
           accountDetails={accountDetails}
+          installmentDetails={installmentDetails}
           setAccountId={setAccountId}
           isDataSheet={false}
         />

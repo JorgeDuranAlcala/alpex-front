@@ -177,7 +177,7 @@ const CreatedAccount = () => {
             onIsNewAccountChange={handleIsNewAccountChange}
             disableSectionCtrl={disableFormsSections.information}
             onStepChange={handleStepChange}
-            getIdAccount={(idAccount: number) => setAccountId(idAccount)}
+            getIdAccount={(idAccount: number) => getAccountById(idAccount)}
           />
         )
       case 2:
@@ -275,6 +275,8 @@ const CreatedAccount = () => {
     )
   }
 
+  console.log('accountDetails', accountDetails)
+
   return (
     <AccountsTableContextProvider>
       <Grid className='new-account' item xs={12}>
@@ -292,9 +294,7 @@ const CreatedAccount = () => {
           </Card>
 
           {/* </ChangeStepForm> */}
-          <div style={{ display: 'none' }}>
-            <MenuForm />
-          </div>
+          <MenuForm />
         </div>
         <Card sx={{ '@media (min-width:809px)': { display: 'none' } }}>
           <div style={{ display: 'flex', height: '50px', padding: '14px', alignItems: 'center' }}>
