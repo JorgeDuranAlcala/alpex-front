@@ -64,7 +64,7 @@ const column: GridColumns<INearlyPaymentStatus> = [
           >
             {headerName}
           </Typography>
-          <ButtonFilter dataFilter={brokers} insured />
+          <ButtonFilter dataFilter={brokers} insured filterName='Search by Number' />
         </Box>
       )
     },
@@ -95,7 +95,7 @@ const column: GridColumns<INearlyPaymentStatus> = [
           >
             {headerName}
           </Typography>
-          <ButtonFilter dataFilter={brokers} insured />
+          <ButtonFilter dataFilter={brokers} insured filterName='Search by Type' />
         </Box>
       )
     },
@@ -131,7 +131,7 @@ const column: GridColumns<INearlyPaymentStatus> = [
           >
             {headerName}
           </Typography>
-          <ButtonFilter dataFilter={brokers} insured />
+          <ButtonFilter dataFilter={brokers} insured filterName='Search by Amount' />
         </Box>
       )
     },
@@ -203,7 +203,7 @@ const column: GridColumns<INearlyPaymentStatus> = [
           >
             {headerName}
           </Typography>
-          <ButtonFilter dataFilter={brokers} date />
+          <ButtonFilter dataFilter={brokers} insured filterName='Search by Currency' />
         </Box>
       )
     },

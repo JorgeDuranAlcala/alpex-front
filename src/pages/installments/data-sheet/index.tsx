@@ -12,7 +12,9 @@ import { useGetAccountById } from '@/hooks/accounts/forms'
 import { useGetActualInstallment } from '@/hooks/accounts/installments'
 
 // ** Next
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/router';
+
+import { IS_DEMO } from 'src/utils/isDemo'
 
 // import UserList from 'src/pages/apps/user/list'
 
@@ -274,7 +276,7 @@ const DataSheet = () => {
                         fullWidth
                         autoFocus
                         name='dynamicPercent'
-                        label='Dynamic Commission %'
+                        label={`${!IS_DEMO ? "Dynamic" : ""} Commission %`}
                         defaultValue=''
                         value=''
                       />
@@ -286,7 +288,7 @@ const DataSheet = () => {
                         fullWidth
                         autoFocus
                         name='dynamicCommission'
-                        label='Dynamic Commission'
+                        label={`${!IS_DEMO ? "Dynamic" : ""} Commission`}
                         defaultValue=''
                         value=''
                       />
@@ -388,7 +390,7 @@ const DataSheet = () => {
                         fullWidth
                         autoFocus
                         name='dynamicPercent'
-                        label='Dynamic Commission %'
+                        label={`${!IS_DEMO ? "Dynamic" : ""} Commission %`}
                         defaultValue=''
                         value=''
                       />
@@ -400,7 +402,7 @@ const DataSheet = () => {
                         fullWidth
                         autoFocus
                         name='dynamicCommission'
-                        label='Dynamic Commission'
+                        label={`${!IS_DEMO ? "Dynamic" : ""} Commission`}
                         defaultValue=''
                         value=''
                       />

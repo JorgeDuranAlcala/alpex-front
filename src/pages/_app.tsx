@@ -53,6 +53,8 @@ import ReactHotToast from 'src/@core/styles/libs/react-hot-toast'
 // ** Utils Imports
 import { createEmotionCache } from 'src/@core/utils/create-emotion-cache'
 
+import { IS_DEMO } from 'src/utils/isDemo'
+
 // ** Prismjs Styles
 import 'prismjs'
 import 'prismjs/components/prism-jsx'
@@ -159,7 +161,7 @@ const App = (props: ExtendedAppProps) => {
           <DynamicContextProvider>
             <CacheProvider value={emotionCache}>
               <Head>
-                <title>{`${themeConfig.templateName} - Dynamic Re | Your Underwriting Powerhouse`}</title>
+                <title>{`${(themeConfig.templateName === "Alpex" && !IS_DEMO) ? themeConfig.templateName : ""  } - ${!IS_DEMO ? "Dynamic Re |" : ""} Your Underwriting Powerhouse`}</title>
                 <meta
                   name='description'
                   content={`${themeConfig.templateName} We provide property facultative and treaty reinsurance to brokers and insurance companies operating in Latin America and the Caribbean`}

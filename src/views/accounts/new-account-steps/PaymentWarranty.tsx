@@ -48,6 +48,8 @@ import { NumericFormat } from 'react-number-format'
 import { InstallmentDto } from 'src/services/accounts/dtos/installments.dto'
 import { DisableForm } from './_commons/DisableForm'
 
+import { IS_DEMO } from 'src/utils/isDemo'
+
 interface InstallmentErrors {
   errorFieldRequired: boolean
   erorrRangeInstallments: boolean
@@ -439,7 +441,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
                     thousandSeparator=','
                     customInput={TextField}
                     id='DynamicNetPremium'
-                    label='Dynamic net premium'
+                    label={`${!IS_DEMO ? "Dynamic" : ""} net premium`}
                     multiline
                     variant='outlined'
                     value={account ? account?.securitiesTotal[0]?.receivedNetPremium : ' '}

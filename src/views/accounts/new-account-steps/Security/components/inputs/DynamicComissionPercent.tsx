@@ -6,6 +6,8 @@ import * as yup from 'yup'
 import { SecurityContext } from '../../SecurityView'
 import { ISecurityInputProps } from '../../interfaces/ISecurityInputProps.interface'
 
+import { IS_DEMO } from 'src/utils/isDemo'
+
 // ! only if we want specific props
 // interface DynamicComissionPercentProps extends ISecurityInputProps {
 //
@@ -39,7 +41,7 @@ export const DynamicComissionPercent = ({
     <FormControl fullWidth sx={{ mb: 2 }}>
       <NumericFormat
         autoFocus
-        label='Dynamic comission %'
+        label={`${!IS_DEMO ? "Dynamic" : ""} comission %`}
         value={Number(value)}
         onValueChange={(values, sourceInfo) => {
           if (sourceInfo.event) handleChangeDynamicComissionPercent(Number(values.floatValue))

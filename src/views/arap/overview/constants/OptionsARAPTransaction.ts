@@ -1,17 +1,21 @@
-import { ARAPTransaction } from "../interfaces/QueryFilters";
+import { ARAPTransactionValue } from '../interfaces/QueryFilters'
 
 interface OptionsARAPTransactionProps {
-  value: ARAPTransaction;
-  text: string;
+  value: ARAPTransactionValue
+  text: string
 }
 
-export const OptionsARAPTransaction: OptionsARAPTransactionProps[] = [{
-  value: 'claim',
-  text: 'Claim',
-}, {
-  value: 'reinsurer pay',
-  text: 'Reinsurer Pay',
-}, {
-  value: 'broker pay',
-  text: 'Broker Pay',
-}]
+export const OptionsARAPTransaction: OptionsARAPTransactionProps[] = [
+  {
+    value: 'DYN',
+    text: 'Claim'
+  },
+  {
+    value: 'INST',
+    text: 'Reinsurer Pay'
+  },
+  {
+    value: 'REC',
+    text: 'Broker Pay'
+  }
+]
