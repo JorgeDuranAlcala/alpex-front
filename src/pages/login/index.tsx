@@ -36,6 +36,8 @@ import { CircularProgress } from '@mui/material'
 import BlankLayout from 'src/@core/layouts/BlankLayout'
 import Footer from 'src/layouts/components/footer'
 
+import { IS_DEMO } from 'src/utils/isDemo'
+
 // ** Styled Components
 const FormControlLabel = styled(MuiFormControlLabel)<FormControlLabelProps>(({ theme }) => ({
   '& .MuiFormControlLabel-label': {
@@ -111,7 +113,7 @@ const LoginPage = () => {
       <div className='login-form'>
         <div className='form-row title-form'>
           <div className='logo'>
-            <img alt='logo' src='/images/logos/logo-alpex.svg' />
+            {!IS_DEMO && <img alt='logo' src='/images/logos/logo-alpex.svg' />}
           </div>
         </div>
         <div className='form-row directions'>Login with your email and password.</div>
