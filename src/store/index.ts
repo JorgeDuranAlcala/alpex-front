@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux'
 
 // ** Reducers
 
+import brokerTracker from '@/store/apps/installments/brokerTracker'
 import { TypedUseSelectorHook, useDispatch } from 'react-redux'
 import accounts from 'src/store/apps/accounts'
 import stepFormSlice from 'src/store/apps/accounts/stepFormsSlice'
@@ -39,7 +40,8 @@ export const store = configureStore({
     multiTabButtonsSlice,
     stepFormSlice,
     endorsement,
-    installments
+    installments,
+    brokerTracker
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({

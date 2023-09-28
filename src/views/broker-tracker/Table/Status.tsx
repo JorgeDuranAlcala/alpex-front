@@ -8,7 +8,7 @@ import Typography from '@mui/material/Typography'
 import { ContainerStatus } from 'src/styles/Dashboard/Table/Status'
 import fonts from 'src/views/accounts/font'
 
-interface IStatus {
+export interface IStatus {
   [key: string]: ReactElement
 }
 
