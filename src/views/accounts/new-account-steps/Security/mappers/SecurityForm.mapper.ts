@@ -1,4 +1,4 @@
-import { SecurityDto } from '@/services/accounts/dtos/security.dto'
+import { SecurityDto, SecurityUpdateDto } from '@/services/accounts/dtos/security.dto'
 import { ReinsuranceCompanyBinderDto } from '@/services/catalogs/dtos/ReinsuranceCompanyBinder.dto'
 import { ReinsuranceCompanyDto } from '@/services/catalogs/dtos/ReinsuranceCompanyDto'
 import { RetroCedantDto } from '@/services/catalogs/dtos/RetroCedantDto'
@@ -45,10 +45,64 @@ export interface SecurityModel extends SecurityDto {
   isChangeDynamicCommissionAmount: boolean
 }
 export class SecurityMapper {
+  static securityToSecurityUpdateForm(security: SecurityDto, idAccount: number): SecurityUpdateDto {
+    return {
+      id: security.id,
+      netPremiumAt100: new Decimal(+security.netPremiumAt100).toNumber() || 0,
+      share: new Decimal(+security.share).toNumber() || 0,
+      frontingFeeActive: security.frontingFeeActive,
+      dynamicCommission: new Decimal(+security.dynamicCommission).toNumber() || 0,
+      frontingFee: new Decimal(+security.frontingFee).toNumber() || 0,
+      netReinsurancePremium: new Decimal(+security.netReinsurancePremium).toNumber(),
+      taxes: new Decimal(+security.taxes).toNumber() || 0,
+      reinsuranceBrokerage: new Decimal(+security.reinsuranceBrokerage).toNumber() || 0,
+      active: true,
+      idCReinsuranceCompany: security.idCReinsuranceCompany,
+      idCRetroCedant:
+        security.idCRetroCedant && security.idCRetroCedant.hasOwnProperty('id') ? security.idCRetroCedant : null,
+      idCRetroCedantContact:
+        security.idCRetroCedantContact && security.idCRetroCedantContact.hasOwnProperty('id')
+          ? security.idCRetroCedantContact
+          : null,
+
+      idCReinsuranceCompanyBinder:
+        security.idCReinsuranceCompanyBinder && security.idCReinsuranceCompanyBinder.hasOwnProperty('id')
+          ? security.idCReinsuranceCompanyBinder
+          : null,
+      idAccount: idAccount,
+      receivedNetPremium: 0,
+      distributedNetPremium: 0,
+      difference: 0,
+      discounts:
+        security.discounts &&
+        security.discounts.map(discount => ({
+          percentage: new Decimal(+discount.percentage).toNumber() || 0,
+          amount: new Decimal(+discount.amount).toNumber() || 0,
+          isChangeAmount: discount?.amount ? true : false,
+          active: discount.active
+        })),
+      shareAmount: new Decimal(+security.shareAmount).toNumber() || 0,
+      premiumPerShareAmount: new Decimal(+security.premiumPerShareAmount).toNumber() || 0,
+      taxesActive: security.taxesActive,
+      dynamicCommissionAmount: new Decimal(+security.dynamicCommissionAmount).toNumber() || 0,
+      frontingFeeAmount: new Decimal(+security.frontingFeeAmount).toNumber() || 0,
+      grossPremiumPerShare: new Decimal(+security.grossPremiumPerShare).toNumber() || 0,
+
+      taxesAmount: new Decimal(+security.taxesAmount).toNumber() || 0,
+      brokerAgeAmount: new Decimal(+security.brokerAgeAmount).toNumber() || 0,
+
+      consecutive: security.consecutive,
+      view: security.view,
+      isGross: security.isGross,
+      totalAmountOfDiscounts: new Decimal(+security.totalAmountOfDiscounts).toNumber() || 0
+    }
+  }
+
   static securityToSecurityForm(security: SecurityDto, idAccount: number): SecurityModel {
     return {
       id: security.id,
-      premiumPerShare: new Decimal(+security.premiumPerShare).toNumber() || 0,
+
+      premiumPerShare: new Decimal(+security?.premiumPerShare).toNumber() || 0,
       netPremiumAt100: new Decimal(+security.netPremiumAt100).toNumber() || 0,
       share: new Decimal(+security.share).toNumber() || 0,
       frontingFeeActive: security.frontingFeeActive,
