@@ -25,12 +25,10 @@ export const PaymentsProvider = ({ children }: { children: ReactNode }) => {
 
     tempQueryFiltersRef.current = queryFilters
 
-    console.log( queryFilters)
     const filters = overviewPaymentsAdapterQueries(queryFilters)
     const payments = await getArapAllService(filters)
     const paymentsAdapted = overviewPaymentsAdapter(payments)
     const parsedFilters = transformToTableFilters(queryFilters);
-    console.log(parsedFilters)
     
     setPaymentsGrid({
       paymentsGridList: paymentsAdapted.paymentsGridList,

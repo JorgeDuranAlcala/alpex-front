@@ -8,16 +8,20 @@ import { DifferenceGrid } from '@/views/arap/overview/interfaces/overview/Differ
 import { PayableGrid } from '@/views/arap/overview/interfaces/overview/PayableGrid'
 import { ReceivableGrid } from '@/views/arap/overview/interfaces/overview/ReceivableGrid'
 
-// Todo: eliminar mocks después de implementar los servicios
-import { overview_differences_mock } from '@/views/arap/mocks/overview_differences_mock'
-import { overview_payables_mock } from '@/views/arap/mocks/overview_payables_mock'
-import { overview_receivables_mock } from '@/views/arap/mocks/overview_receivables_mock'
+import { useOverviewDetailsQueriesAdapter } from '../../services/_common/hooks/useOverviewDetailsQueriesAdapter'
+import { overviewDifferencesAdapter } from '../../services/getOverviewDifference/frontAdapters/overviewDifferencesAdapter'
+import { getOverviewDifferenceAllService } from '../../services/getOverviewDifference/getOverviewDifferenceAllService'
+import { overviewPayablesAdapter } from '../../services/getOverviewPayableAll/frontAdapters/overviewPayablesAdapter'
+import { getOverviewPayableAllService } from '../../services/getOverviewPayableAll/getOverviewPayableAllService'
+import { overviewReceivablesAdapter } from '../../services/getOverviewReceivableAll/frontAdapters/overviewReceivablesAdapter'
+import { getOverviewReceivableAllService } from '../../services/getOverviewReceivableAll/getOverviewReceivableAllService'
 import { GetInfoPagination, GetTotalAmount, OverviewDetailsContext } from './OverviewDetailsContext'
 
 const SWITCH_DETAILS_ERROR = 'Error: no details type provided'
 
 export const OverViewDetailsProvider = ({ children }: { children: ReactNode }) => {
   const router = useRouter()
+  const {getParamsToSend} = useOverviewDetailsQueriesAdapter()
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [payableGrid, setPayableGrid] = useState<PayableGrid | null>(null)
   const [receivableGrid, setReceivableGrid] = useState<ReceivableGrid | null>(null)
@@ -56,88 +60,54 @@ export const OverViewDetailsProvider = ({ children }: { children: ReactNode }) =
     }
   }
 
-  const loadPayableGrid = () => {
+  const loadPayableGrid = async () => {
     const queryFilters = getQueryFilters()
     console.log('queryFilters', queryFilters)
 
-    // Todo: reemplazar este Timeout por el servicio que se implementará
-    setTimeout(() => {
-      const infoPages = {
-        count: overview_payables_mock.length,
-        page: 1,
-        take: 10,
-        pages: Math.ceil(overview_payables_mock.length / 10),
-        next: null,
-        prev: null
-      }
+    const paramsToSend = getParamsToSend(queryFilters);
+    const payables = await getOverviewPayableAllService(paramsToSend);
+    const payablesAdapted = overviewPayablesAdapter(payables, {
+      totalAmount: router.query.totalAmount ? +router.query.totalAmount : 0,
+      currency: router.query.currency  ? router.query.currency as string: 'unknown'
+    })
 
-      setPayableGrid({
-        payableGridList: overview_payables_mock,
-        totalAmount: 1_000_000,
-        totalAmountCurrency: 'USD',
-        info: infoPages,
-        isLoading: false,
-        filters: []
-      })
+    setPayableGrid(payablesAdapted);
 
-      setIsLoading(false)
-    }, 500)
+    setIsLoading(false);
+
   }
 
-  const loadReceivableGrid = () => {
+  const loadReceivableGrid = async () => {
     const queryFilters = getQueryFilters()
     console.log('queryFilters', queryFilters)
 
-    // Todo: reemplazar este Timeout por el servicio que se implementará
-    setTimeout(() => {
-      const infoPages = {
-        count: overview_receivables_mock.length,
-        page: 1,
-        take: 10,
-        pages: Math.ceil(overview_receivables_mock.length / 10),
-        next: null,
-        prev: null
-      }
+    const paramsToSend = getParamsToSend(queryFilters);
+    const receivables = await getOverviewReceivableAllService(paramsToSend);
+    const receivablesAdapted = overviewReceivablesAdapter(receivables, {
+      totalAmount: router.query.totalAmount ? +router.query.totalAmount : 0,
+      currency: router.query.currency  ? router.query.currency as string: 'unknown'
+    })
 
-      setReceivableGrid({
-        receivableGridList: overview_receivables_mock,
-        totalAmount: 1_000_000,
-        totalAmountCurrency: 'USD',
-        info: infoPages,
-        isLoading: false,
-        filters: []
-      })
+    setReceivableGrid(receivablesAdapted);
 
-      setIsLoading(false)
-    }, 500)
+    setIsLoading(false);
   }
 
-  const loadDifferenceGrid = () => {
+  const loadDifferenceGrid = async () => {
     const queryFilters = getQueryFilters()
     console.log('queryFilters', queryFilters)
+    
+    const paramsToSend = getParamsToSend(queryFilters);
+    const differences = await getOverviewDifferenceAllService(paramsToSend);
+    const differencesAdapted = overviewDifferencesAdapter(differences, {
+      totalAmount: router.query.totalAmount ? +router.query.totalAmount : 0,
+      currency: router.query.currency  ? router.query.currency as string: 'unknown'
+    })
 
-    // Todo: reemplazar este Timeout por el servicio que se implementará
-    setTimeout(() => {
-      const infoPages = {
-        count: overview_differences_mock.length,
-        page: 1,
-        take: 10,
-        pages: Math.ceil(overview_differences_mock.length / 10),
-        next: null,
-        prev: null
-      }
+    setDifferenceGrid(differencesAdapted);
 
-      setDifferenceGrid({
-        differenceGridList: overview_differences_mock,
-        totalAmount: 1_000_000,
-        totalAmountCurrency: 'USD',
-        info: infoPages,
-        isLoading: false,
-        filters: []
-      })
+    setIsLoading(false);
 
-      setIsLoading(false)
-    }, 500)
   }
 
   const onChangePage = (page: number, detailsType: DetailsType) => {
