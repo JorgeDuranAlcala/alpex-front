@@ -9,7 +9,7 @@ interface MasterFiltersContextProps {
   gridFilters: QueryFilters;
   updateFilters: (queryFilters: QueryFilters) => void;
   
-  // queryParams: string;
+  queryParams: string;
 }
 
 export const MasterFiltersContext = createContext({} as MasterFiltersContextProps);

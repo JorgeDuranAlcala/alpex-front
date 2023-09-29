@@ -20,8 +20,6 @@ export const MasterFilters = () => {
     ...((queryFilters.hasOwnProperty('id') && !gridFilters.hasOwnProperty('id')) ? {id: ''} : {})
   }
 
-  console.log(queryFilters)
-  console.log(gridFilters)
 
   return (
     <FiltersContainer>

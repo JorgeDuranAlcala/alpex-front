@@ -105,7 +105,6 @@ export const useMasterFilters = () => {
   }
 
   useEffect(() => {
-    console.log('queryChanged')
 
     if (timeoutService) clearTimeout(timeoutService)
 
@@ -126,19 +125,6 @@ export const useMasterFilters = () => {
     callToFilterService()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-
-  // useEffect(() => {
-    
-  //   isCallServiceOnChangeHandler.current = false
-
-  //   console.log('gridFilters', gridFilters)
-  //   setQueryFilters({
-  //     ...queryFilters,
-  //     ...gridFilters,
-  //   })
-
-
-  // }, [gridFilters])
 
   return {
     queryFilters,

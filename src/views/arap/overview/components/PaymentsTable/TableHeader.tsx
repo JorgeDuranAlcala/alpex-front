@@ -29,7 +29,7 @@ const TableHeader = () => {
     const dateText = text.replace(label, '')
     const dateSplitted = dateText.split('-')
 
-  return `${label}${dateSplitted[2]}/${dateSplitted[1]}/${dateSplitted[0]}`
+    return `${label}${dateSplitted[2]}/${dateSplitted[1]}/${dateSplitted[0]}`
   }
 
 

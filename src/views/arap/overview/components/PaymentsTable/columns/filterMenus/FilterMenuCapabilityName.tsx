@@ -1,5 +1,5 @@
 // ** React Imports
-import { useContext, useState } from 'react'
+import { useContext, useMemo, useState } from 'react'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -61,19 +61,21 @@ const FilterMenuCapabilityName = ({ handleClose }: FilterMenuCapabilityNameProps
     })
   }
 
-  const capabilityNameOptions: CapabilityNameOptions[] = [
+  const capabilityNameOptions: CapabilityNameOptions[] = useMemo(() => {
+    return [
     ...getBrokerOptions(brokers), 
     ...getReinsurerOptions(reinsurers)
   ].sort((a, b) => {
     return a.label.localeCompare(b.label)
   })
+  }, [brokers, reinsurers]) 
 
   
   const handleOnChangeSearch = (value: CapabilityNameOptions | null) => {
-    console.log('value', value)
     setSelectedValue(value);
     if (!value) {
       handleDeleteFilters(EFieldColumn.CAPABILITY_NAME)
+      
       return;
     }
 

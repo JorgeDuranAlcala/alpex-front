@@ -4,15 +4,16 @@ import { overviewPaymentsAdapter } from '@/views/arap/overview/services/getArapA
 import { overviewPaymentsAdapterQueries } from '@/views/arap/overview/services/getArapAll/frontAdapters/overviewPaymentsAdapterQueries'
 import { ReactNode, useRef, useState } from 'react'
 import { useMasterFiltersStorage } from '../../hooks/useMasterFiltersStorage'
+import { useOverviewPaymentsQueryFilters } from '../../hooks/useOverviewPaymentsQueryFilters'
 import { QueryFilters } from '../../interfaces/QueryFilters'
 import { PaymentsGrid } from '../../interfaces/payments/PaymentsGrid'
 import { extractOverviewPaymentTableFilters } from '../../utils/extractOverviewPaymentTableFilters'
-import { transformOverviewPaymentsQueryFiltersToTableFilters } from '../../utils/transformOverviewPaymentsQueryFiltersToTableFilters'
 import { PaymentsContext } from './PaymentsContext'
 
 export const PaymentsProvider = ({ children }: { children: ReactNode }) => {
   
   const {saveMasterFiltersSelectors, removeMasterFiltersSelector} = useMasterFiltersStorage();
+  const { transformToTableFilters } = useOverviewPaymentsQueryFilters();
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [paymentsGrid, setPaymentsGrid] = useState<PaymentsGrid | null>(null)
   const tempQueryFiltersRef = useRef<QueryFilters | null>(null)
@@ -24,10 +25,12 @@ export const PaymentsProvider = ({ children }: { children: ReactNode }) => {
 
     tempQueryFiltersRef.current = queryFilters
 
+    console.log( queryFilters)
     const filters = overviewPaymentsAdapterQueries(queryFilters)
     const payments = await getArapAllService(filters)
     const paymentsAdapted = overviewPaymentsAdapter(payments)
-    const parsedFilters = transformOverviewPaymentsQueryFiltersToTableFilters(queryFilters);
+    const parsedFilters = transformToTableFilters(queryFilters);
+    console.log(parsedFilters)
     
     setPaymentsGrid({
       paymentsGridList: paymentsAdapted.paymentsGridList,
