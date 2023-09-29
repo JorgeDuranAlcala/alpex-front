@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 
 // ** MUI Imports
 import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp'
-import { Button, FormControl, Stack, TextField } from '@mui/material'
+import { Button, FormControl, InputLabel, MenuItem, Select, Stack, TextField } from '@mui/material'
 import MuiAccordion, { AccordionProps } from '@mui/material/Accordion'
 import MuiAccordionDetails from '@mui/material/AccordionDetails'
 import MuiAccordionSummary, { AccordionSummaryProps } from '@mui/material/AccordionSummary'
@@ -86,11 +86,41 @@ const PaymentRecord = () => {
   console.log({ accountDetails })
 
   const [, setEditInfo] = useState(true)
-
-  const [expanded, setExpanded] = useState<string | false>('panel1')
+  const [distributeB, setDistributeB] = useState(false)
+  const [availableB, setAvailableB] = useState(0)
+  const [expanded, setExpanded] = useState<string | false>('')
+  const currentInst = 1
 
   const handleChange = (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
     setExpanded(newExpanded ? panel : false)
+  }
+
+  const handleTotalAmount = (e: any) => {
+    if (accountDetails?.informations[0]?.netPremium) {
+      if (
+        Number(e.target.value.replace('$', '').replaceAll(',', '')) >
+        Number(accountDetails?.informations[0]?.netPremium)
+      ) {
+        const available =
+          Number(e.target.value.replace('$', '').replaceAll(',', '')) -
+          Number(accountDetails?.informations[0]?.netPremium)
+        console.log(available)
+        setAvailableB(available)
+        setDistributeB(true)
+      } else {
+        setDistributeB(false)
+      }
+    }
+  }
+
+  const formaterAmount = (amount: number) => {
+    const currency = accountDetails?.informations[0]?.currency
+    if (amount && currency) {
+      const convert = new Intl.NumberFormat('en', { style: 'currency', currency: currency })
+      const formatTotalBalanceDue = convert.format(amount || 0)
+
+      return formatTotalBalanceDue
+    }
   }
 
   return (
@@ -113,6 +143,7 @@ const PaymentRecord = () => {
                   <Grid item xs={12} md={4} sm={6}>
                     <FormControl fullWidth>
                       <NumericFormat
+                        autoFocus
                         name='total'
                         allowLeadingZeros
                         thousandSeparator=','
@@ -123,178 +154,174 @@ const PaymentRecord = () => {
                         prefix={'$'}
                         decimalScale={2}
                         variant='outlined'
+                        onChange={e => handleTotalAmount(e)}
                       />
                     </FormControl>
                   </Grid>
                   <Grid item xs={12} md={4} sm={6}>
                     <FormControl fullWidth>
-                      <TextField
-                        fullWidth
-                        autoFocus
-                        name='currentInstallment'
-                        label='Current Installment'
-                        defaultValue=''
-                      />
+                      <TextField fullWidth name='currentInstallment' label='Current Installment' defaultValue='1' />
                     </FormControl>
                   </Grid>
                   <Grid item xs={12} md={4} sm={6}>
                     <FormControl fullWidth>
-                      <TextField
-                        fullWidth
-                        autoFocus
-                        name='typeOfPayment'
-                        label='Type Of Payment'
-                        value='Type Of Payment'
-                        disabled
-                      />
+                      <TextField fullWidth name='typeOfPayment' label='Type Of Payment' disabled />
                     </FormControl>
                   </Grid>
                 </Grid>
               </div>
-              <Grid container spacing={{ xs: 3, sm: 3, md: 3 }}>
-                <Grid item xs={12} sm={6} md={6}>
-                  <div className='title-installment'>Distribute balance</div>
-                </Grid>
-                <Grid item xs={12} sm={6} md={6}>
-                  <FormHeaderMoneyData>
-                    <span className='form-header-money-data-txt'>Available balance</span>
-                    <span className='form-header-money-data-num'>0</span>
-                  </FormHeaderMoneyData>
-                </Grid>
-              </Grid>
               <div className='wrapper-installments'>
                 <Grid container spacing={{ xs: 3, sm: 3, md: 3 }}>
                   <Grid item xs={12} md={4} sm={6}>
                     <FormControl fullWidth>
-                      <TextField
-                        fullWidth
-                        autoFocus
-                        name='installment1'
-                        label='Installment'
-                        defaultValue=''
-                        value='1'
-                      />
+                      <InputLabel id='controlled-select-label'>Bank Account</InputLabel>
+                      <Select label='Currency'>
+                        <MenuItem value=''>
+                          <em>Bank Account</em>
+                        </MenuItem>
+                        <MenuItem value={10}>Value 1</MenuItem>
+                        <MenuItem value={20}>Value 2</MenuItem>
+                        <MenuItem value={30}>Value 3</MenuItem>
+                      </Select>
                     </FormControl>
                   </Grid>
                   <Grid item xs={12} md={4} sm={6}>
-                    <div className='width-full'>
-                      <TextField fullWidth autoFocus name='balance1' label='Balance %' defaultValue='' value='' />
-                    </div>
+                    <FormControl fullWidth>
+                      <InputLabel id='controlled-select-label'>Currency</InputLabel>
+                      <Select label='Currency'>
+                        <MenuItem value=''>
+                          <em>Currency</em>
+                        </MenuItem>
+                        <MenuItem value={10}>Value 1</MenuItem>
+                        <MenuItem value={20}>Value 2</MenuItem>
+                        <MenuItem value={30}>Value 3</MenuItem>
+                      </Select>
+                    </FormControl>
                   </Grid>
                   <Grid item xs={12} md={4} sm={6}>
-                    <div className='width-full'>
-                      <TextField
-                        fullWidth
-                        autoFocus
-                        name='balanceAmmount1'
-                        label='Balance ammount'
-                        defaultValue=''
-                        value=''
-                      />
-                    </div>
+                    <FormControl fullWidth>
+                      <TextField fullWidth name='exchangeRate' label='Exchange Rate' value='Exchange Rate' />
+                    </FormControl>
                   </Grid>
                 </Grid>
               </div>
-              <div className='wrapper-installments'>
-                <Grid container spacing={{ xs: 3, sm: 3, md: 3 }}>
-                  <Grid item xs={12} md={4} sm={6}>
-                    <div className='width-full'>
-                      <TextField
-                        fullWidth
-                        autoFocus
-                        name='installment1'
-                        label='Installment'
-                        defaultValue=''
-                        value='2'
-                      />
-                    </div>
+              {distributeB ? (
+                <>
+                  <Grid container spacing={{ xs: 3, sm: 3, md: 3 }}>
+                    <Grid item xs={12} sm={6} md={6}>
+                      <div className='title-installment'>Distribute balance</div>
+                    </Grid>
+                    <Grid item xs={12} sm={6} md={6}>
+                      <FormHeaderMoneyData>
+                        <span className='form-header-money-data-txt'>Available balance</span>
+                        <span className='form-header-money-data-num'>{formaterAmount(availableB)}</span>
+                      </FormHeaderMoneyData>
+                    </Grid>
                   </Grid>
-                  <Grid item xs={12} md={4} sm={6}>
-                    <div className='width-full'>
-                      <TextField fullWidth autoFocus name='balance1' label='Balance %' defaultValue='' value='' />
+                  {currentInst !== 1 ? (
+                    <div className='wrapper-installments'>
+                      <Grid container spacing={{ xs: 3, sm: 3, md: 3 }}>
+                        <Grid item xs={12} md={4} sm={6}>
+                          <FormControl fullWidth>
+                            <TextField fullWidth name='installment1' label='Installment' defaultValue='' value='1' />
+                          </FormControl>
+                        </Grid>
+                        <Grid item xs={12} md={4} sm={6}>
+                          <div className='width-full'>
+                            <TextField fullWidth autoFocus name='balance1' label='Balance %' defaultValue='' value='' />
+                          </div>
+                        </Grid>
+                        <Grid item xs={12} md={4} sm={6}>
+                          <div className='width-full'>
+                            <TextField
+                              fullWidth
+                              name='balanceAmmount1'
+                              label='Balance ammount'
+                              defaultValue=''
+                              value=''
+                            />
+                          </div>
+                        </Grid>
+                      </Grid>
                     </div>
-                  </Grid>
-                  <Grid item xs={12} md={4} sm={6}>
-                    <div className='width-full'>
-                      <TextField
-                        fullWidth
-                        autoFocus
-                        name='balanceAmmount1'
-                        label='Balance ammount'
-                        defaultValue=''
-                        value=''
-                      />
-                    </div>
-                  </Grid>
-                </Grid>
-              </div>
-              <div className='wrapper-installments'>
-                <Grid container spacing={{ xs: 3, sm: 3, md: 3 }}>
-                  <Grid item xs={12} md={4} sm={6}>
-                    <div className='width-full'>
-                      <TextField
-                        fullWidth
-                        autoFocus
-                        name='installment1'
-                        label='Installment'
-                        defaultValue=''
-                        value='3'
-                      />
-                    </div>
-                  </Grid>
-                  <Grid item xs={12} md={4} sm={6}>
-                    <div className='width-full'>
-                      <TextField fullWidth autoFocus name='balance1' label='Balance %' defaultValue='' value='' />
-                    </div>
-                  </Grid>
-                  <Grid item xs={12} md={4} sm={6}>
-                    <div className='width-full'>
-                      <TextField
-                        fullWidth
-                        autoFocus
-                        name='balanceAmmount1'
-                        label='Balance ammount'
-                        defaultValue=''
-                        value=''
-                      />
-                    </div>
-                  </Grid>
-                </Grid>
-              </div>
-              <div className='wrapper-installments'>
-                <Grid container spacing={{ xs: 3, sm: 3, md: 3 }}>
-                  <Grid item xs={12} md={4} sm={6}>
-                    <div className='width-full'>
-                      <TextField
-                        fullWidth
-                        autoFocus
-                        name='installment1'
-                        label='Installment'
-                        defaultValue=''
-                        value='4'
-                      />
-                    </div>
-                  </Grid>
-                  <Grid item xs={12} md={4} sm={6}>
-                    <div className='width-full'>
-                      <TextField fullWidth autoFocus name='balance1' label='Balance %' defaultValue='' value='' />
-                    </div>
-                  </Grid>
-                  <Grid item xs={12} md={4} sm={6}>
-                    <div className='width-full'>
-                      <TextField
-                        fullWidth
-                        autoFocus
-                        name='balanceAmmount1'
-                        label='Balance ammount'
-                        defaultValue=''
-                        value=''
-                      />
-                    </div>
-                  </Grid>
-                </Grid>
-              </div>
-
+                  ) : null}
+                  <div className='wrapper-installments'>
+                    <Grid container spacing={{ xs: 3, sm: 3, md: 3 }}>
+                      <Grid item xs={12} md={4} sm={6}>
+                        <div className='width-full'>
+                          <TextField fullWidth name='installment1' label='Installment' defaultValue='' value='2' />
+                        </div>
+                      </Grid>
+                      <Grid item xs={12} md={4} sm={6}>
+                        <div className='width-full'>
+                          <TextField fullWidth autoFocus name='balance1' label='Balance %' defaultValue='' value='' />
+                        </div>
+                      </Grid>
+                      <Grid item xs={12} md={4} sm={6}>
+                        <div className='width-full'>
+                          <TextField
+                            fullWidth
+                            name='balanceAmmount1'
+                            label='Balance ammount'
+                            defaultValue=''
+                            value=''
+                          />
+                        </div>
+                      </Grid>
+                    </Grid>
+                  </div>
+                  <div className='wrapper-installments'>
+                    <Grid container spacing={{ xs: 3, sm: 3, md: 3 }}>
+                      <Grid item xs={12} md={4} sm={6}>
+                        <div className='width-full'>
+                          <TextField fullWidth name='installment1' label='Installment' defaultValue='' value='3' />
+                        </div>
+                      </Grid>
+                      <Grid item xs={12} md={4} sm={6}>
+                        <div className='width-full'>
+                          <TextField fullWidth autoFocus name='balance1' label='Balance %' defaultValue='' value='' />
+                        </div>
+                      </Grid>
+                      <Grid item xs={12} md={4} sm={6}>
+                        <div className='width-full'>
+                          <TextField
+                            fullWidth
+                            name='balanceAmmount1'
+                            label='Balance ammount'
+                            defaultValue=''
+                            value=''
+                          />
+                        </div>
+                      </Grid>
+                    </Grid>
+                  </div>
+                  <div className='wrapper-installments'>
+                    <Grid container spacing={{ xs: 3, sm: 3, md: 3 }}>
+                      <Grid item xs={12} md={4} sm={6}>
+                        <div className='width-full'>
+                          <TextField fullWidth name='installment1' label='Installment' defaultValue='' value='4' />
+                        </div>
+                      </Grid>
+                      <Grid item xs={12} md={4} sm={6}>
+                        <div className='width-full'>
+                          <TextField fullWidth autoFocus name='balance1' label='Balance %' defaultValue='' value='' />
+                        </div>
+                      </Grid>
+                      <Grid item xs={12} md={4} sm={6}>
+                        <div className='width-full'>
+                          <TextField
+                            fullWidth
+                            name='balanceAmmount1'
+                            label='Balance ammount'
+                            defaultValue=''
+                            value=''
+                          />
+                        </div>
+                      </Grid>
+                    </Grid>
+                  </div>
+                </>
+              ) : null}
               <Stack spacing={2} direction={{ xs: 'column', sm: 'column', md: 'row-reverse' }}>
                 <Button variant='contained'>Save Installments Payment</Button>
               </Stack>
