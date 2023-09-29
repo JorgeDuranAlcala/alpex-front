@@ -340,3 +340,33 @@ export enum DOCUMENTS_ROUTES {
   UPLOADFILE = 'documents/upload',
   CREATEFOLDER = 'documents/create/folder'
 }
+
+// ==== BANK
+
+export enum BANK_ROUTES {
+  GET = '/catalogs/bank-accounts/all?page=1&itemsPerPage=10',
+  GET_BY_ID = '',
+  ADD = '',
+  UPDATE = '',
+  DELETE_BY_ID = ''
+}
+
+// ==== ADJUSTER
+
+export enum ADJUSTER_ROUTES {
+  GET = '',
+  GET_BY_ID = '',
+  ADD = '',
+  UPDATE = '',
+  DELETE_BY_ID = ''
+}
+
+// ==== EXPERT
+
+export enum EXPERT_ROUTES {
+  GET = '',
+  GET_BY_ID = '',
+  ADD = '',
+  UPDATE = '',
+  DELETE_BY_ID = ''
+}

@@ -1,3 +1,17 @@
+export interface BankDto {
+    id: string
+    capacity: string;
+    location: string;
+    bank: string;
+    beneficiary: string;
+    accountNumber: string;
+    swift: string;
+    aba: string;
+    clabe: string;
+    currency: string;
+    intermediary: string;
+    furtherAccountInfo: string;
+}
 
 
 export interface BankDeleteDto {
