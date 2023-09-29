@@ -24,7 +24,7 @@ export const BalanceOfPayments = () => {
         <>
           <CardDetail
             title="Receivable"
-            href={`overview/receivable?${queryParams}`}
+            href={`overview/receivable?totalAmount=${balanceOfPayments.receivableAmount}&${queryParams}`}
             amount={balanceOfPayments.receivableAmount}
             currency={balanceOfPayments.currency}
             footerDescription='Total amount of money received per month'
@@ -34,7 +34,7 @@ export const BalanceOfPayments = () => {
 
           <CardDetail
             title="Payable"
-            href={`overview/payable?${queryParams}`}
+            href={`overview/payable?totalAmount=${balanceOfPayments.payableAmount}&${queryParams}`}
             amount={balanceOfPayments.payableAmount}
             currency={balanceOfPayments.currency}
             footerDescription='Total amount of money to be paid per month'
@@ -44,7 +44,7 @@ export const BalanceOfPayments = () => {
 
           <CardDetail
             title="Difference"
-            href={`overview/difference?${queryParams}`}
+            href={`overview/difference?totalAmount=${balanceOfPayments.differenceAmount}&${queryParams}`}
             amount={balanceOfPayments.differenceAmount}
             currency={balanceOfPayments.currency}
             footerDescription='Total amount of money left per month'

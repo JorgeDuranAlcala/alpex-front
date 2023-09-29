@@ -142,7 +142,8 @@ export const columns: GridColumns<PaymentColumn> = [
       const month = splittedDate[1]
       const date = splittedDate[2]
 
-      transactionDate = `${date}-${month}-${year}`
+      // transactionDate = `${date}-${month}-${year}`
+      transactionDate = `${date}/${month}/${year}`;
 
       return (
         <Typography sx={{ color: colors.text.secondary, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>

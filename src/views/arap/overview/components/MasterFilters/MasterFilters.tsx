@@ -1,5 +1,7 @@
 import { InputDate } from '@/views/arap/_commons/components/inputs/InputDate'
 import { Box, styled } from '@mui/material'
+import { useContext } from 'react'
+import { MasterFiltersContext } from '../../context/masterFilters/MasterFiltersContext'
 import { useMasterFilters } from '../../hooks/useMasterFilters'
 import { SelectBroker } from './inputs/SelectBroker'
 import { SelectReinsurer } from './inputs/SelectReinsurer'
@@ -9,20 +11,29 @@ import { TextId } from './inputs/TextId'
 
 export const MasterFilters = () => {
   const { queryFilters, handleSelectChange, handleDateChange, handleTextChange } = useMasterFilters()
+  
+  const { gridFilters } = useContext(MasterFiltersContext)
+
+  const selectedFilters = {
+    ...queryFilters,
+    ...gridFilters,
+    ...((queryFilters.hasOwnProperty('id') && !gridFilters.hasOwnProperty('id')) ? {id: ''} : {})
+  }
+
 
   return (
     <FiltersContainer>
-      <SelectBroker selectedValue={queryFilters.broker} onChange={handleSelectChange} />
+      <SelectBroker selectedValue={selectedFilters.broker} onChange={handleSelectChange} />
 
-      <SelectReinsurer selectedValue={queryFilters.reinsurer} onChange={handleSelectChange} />
+      <SelectReinsurer selectedValue={selectedFilters.reinsurer} onChange={handleSelectChange} />
 
-      <SelectStatus selectedValue={queryFilters.status} onChange={handleSelectChange} />
+      <SelectStatus selectedValue={selectedFilters.status} onChange={handleSelectChange} />
 
-      <SelectTransaction selectedValue={queryFilters.transactionType} onChange={handleSelectChange} />
+      <SelectTransaction selectedValue={selectedFilters.transactionType} onChange={handleSelectChange} />
 
-      <InputDate value={queryFilters.date} onChange={date => handleDateChange(date)} />
+      <InputDate value={selectedFilters.date} onChange={date => handleDateChange(date)} />
 
-      <TextId value={queryFilters.id || ''} onChange={handleTextChange} />
+      <TextId value={selectedFilters.id || ''} onChange={handleTextChange} />
     </FiltersContainer>
   )
 }

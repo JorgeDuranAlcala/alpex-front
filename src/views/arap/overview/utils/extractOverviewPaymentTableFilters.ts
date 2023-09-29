@@ -10,9 +10,10 @@ export const extractOverviewPaymentTableFilters = (filters: Filter[]): QueryFilt
     value: 'value'
   }
 
-  const handleFind = (match: string, defaultValue: any) => {
+  const handleFind = (match: string, defaultValue: any, key?: string) => {
     return findOrDefault({
       ...findIn,
+      ...(key ? { key } : {}),
       match,
       defaultValue
     })

@@ -49,7 +49,7 @@ export const columns: GridColumns<PayableColumn> = [
     sortable: false,
     headerClassName: 'account-column-header',
     renderHeader: ({ colDef }) => (
-      <ColumnHeader colDef={colDef} type={EFieldColumn.CAPABILITY_NAME} detailsType={DETAILS_TYPE} />
+      <ColumnHeader colDef={colDef} type={EFieldColumn.CAPABILITY_NAME} detailsType={DETAILS_TYPE} filterType='reinsurer' />
     ),
     renderCell: ({ row }) => (
       <Typography sx={{ color: colors.text.secondary, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
