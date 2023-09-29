@@ -1,10 +1,25 @@
 
-import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
+import { FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material';
 
 import { InputSelectProps } from '@/views/arap/_commons/interfaces/InputSelectProps';
 import { OptionsARAPTransaction as options } from '../../../constants/OptionsARAPTransaction';
+import { useMasterFiltersStorage } from '../../../hooks/useMasterFiltersStorage';
 
 export const SelectTransaction = ({ selectedValue, onChange }: InputSelectProps) => {
+
+  const {handleSaveMasterFilters} = useMasterFiltersStorage();
+
+  const handleOnChange = (e: SelectChangeEvent<string>) => {
+    
+    handleSaveMasterFilters({
+      items: options || [],
+      saveValue: e.target.value,
+      itemFieldFilter: 'value',
+      itemFieldValue: 'text',
+      type: 'transactionType'
+    })
+    onChange(e);
+  }
 
 
   return (
@@ -12,10 +27,10 @@ export const SelectTransaction = ({ selectedValue, onChange }: InputSelectProps)
       <InputLabel>Transaction</InputLabel>
 
       <Select
-        name='transaction'
+        name='transactionType'
         label='Select Transaction'
         value={selectedValue}
-        onChange={onChange}
+        onChange={handleOnChange}
         labelId='transaction'
       >
         <MenuItem value="all">

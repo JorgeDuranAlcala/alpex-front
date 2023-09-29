@@ -1,6 +1,7 @@
-import { ReactNode, useContext, useEffect, useRef, useState } from 'react'
+import { ReactNode, useContext, useEffect, useState } from 'react'
 import { BalanceOfPayments } from '../../interfaces/BalanceOfPayments'
 import { QueryFilters } from '../../interfaces/QueryFilters'
+import { extractOverviewPaymentTableFilters } from '../../utils/extractOverviewPaymentTableFilters'
 import { PaymentsContext } from '../payments/PaymentsContext'
 import { MasterFiltersContext } from './MasterFiltersContext'
 
@@ -8,7 +9,7 @@ export const MasterFiltersProvider = ({ children }: { children: ReactNode }) => 
   const { isLoading, loadPaymentsGrid, paymentsGrid } = useContext(PaymentsContext)
 
   const [balanceOfPayments, setBalanceOfPayments] = useState<BalanceOfPayments | null>(null)
-  const queryParams = useRef<string>('')
+  // const queryParams = useRef<string>('')
 
   const updateFilters = (queryFilters: QueryFilters) => {
     console.log(queryFilters)
@@ -27,13 +28,17 @@ export const MasterFiltersProvider = ({ children }: { children: ReactNode }) => 
     }
   }, [paymentsGrid?.info])
 
+  console.log('paymentsGridFilters', paymentsGrid)
+
   return (
     <MasterFiltersContext.Provider
       value={{
         isLoading,
         balanceOfPayments,
-        queryParams: queryParams.current,
-        updateFilters
+        gridFilters: extractOverviewPaymentTableFilters(paymentsGrid?.filters || []),
+        updateFilters,
+        
+        // queryParams: queryParams.current,
       }}
     >
       {children}

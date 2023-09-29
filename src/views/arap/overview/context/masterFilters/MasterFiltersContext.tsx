@@ -6,8 +6,10 @@ import { QueryFilters } from "../../interfaces/QueryFilters";
 interface MasterFiltersContextProps {
   isLoading: boolean;
   balanceOfPayments: BalanceOfPayments | null;
-  queryParams: string;
+  gridFilters: QueryFilters;
   updateFilters: (queryFilters: QueryFilters) => void;
+  
+  // queryParams: string;
 }
 
 export const MasterFiltersContext = createContext({} as MasterFiltersContextProps);

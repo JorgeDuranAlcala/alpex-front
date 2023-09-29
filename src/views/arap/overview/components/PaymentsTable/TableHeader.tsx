@@ -24,6 +24,14 @@ const TableHeader = () => {
     handleDeleteFilters(filter.type)
   }
 
+  const formatDateText = (text: string) => {
+    const label = 'Transaction Date: '
+    const dateText = text.replace(label, '')
+    const dateSplitted = dateText.split('-')
+
+  return `${label}${dateSplitted[2]}/${dateSplitted[1]}/${dateSplitted[0]}`
+  }
+
 
   return (
     <TableHeaderContainer>
@@ -43,7 +51,7 @@ const TableHeader = () => {
             (
               <Chip
                 key={index}
-                label={filter.text}
+                label={filter.type === 'date' ? formatDateText(filter.text) :filter.text}
                 sx={{
                   backgroundColor: '#174BC125',
                   marginRight: '6px',
@@ -53,9 +61,12 @@ const TableHeader = () => {
                   mb: 2
                 }}
                 onDelete={() => {
-                  handleDelete(filter)
+                  if (filter.type !== 'date') {
+
+                    handleDelete(filter)
+                  }
                 }}
-                deleteIcon={<Icon icon='mdi:close-circle' style={{ color: '2535A8' }} />}
+                deleteIcon={filter.type !== 'date' ? <Icon icon='mdi:close-circle' style={{ color: '2535A8' }} /> : <></>}
               />
             )
             )}
