@@ -5,12 +5,25 @@ import { MasterFiltersContext } from '../../context/masterFilters/MasterFiltersC
 import { CardDetail } from './CardDetail';
 
 
-
+interface LinktToProps {
+  to: string;
+  amount: number;
+  currency: string;
+}
 
 
 export const BalanceOfPayments = () => {
 
   const { isLoading, balanceOfPayments, queryParams } = useContext(MasterFiltersContext);
+
+  const linkTo = ({to, amount, currency}: LinktToProps) => {
+
+    const goTo = `overview/${to}?totalAmount=${amount}&currency=${currency}`
+
+    if (!queryParams) return goTo;
+
+    return `${goTo}&${queryParams}`
+  } 
 
   return (
     <CardsContainer>
@@ -24,7 +37,11 @@ export const BalanceOfPayments = () => {
         <>
           <CardDetail
             title="Receivable"
-            href={`overview/receivable?totalAmount=${balanceOfPayments.receivableAmount}&${queryParams}`}
+            href={linkTo({
+              to: 'receivable',
+              amount: balanceOfPayments.receivableAmount,
+              currency: balanceOfPayments.currency
+            })}
             amount={balanceOfPayments.receivableAmount}
             currency={balanceOfPayments.currency}
             footerDescription='Total amount of money received per month'
@@ -34,7 +51,11 @@ export const BalanceOfPayments = () => {
 
           <CardDetail
             title="Payable"
-            href={`overview/payable?totalAmount=${balanceOfPayments.payableAmount}&${queryParams}`}
+            href={linkTo({
+              to: 'payable',
+              amount: balanceOfPayments.payableAmount,
+              currency: balanceOfPayments.currency
+            })}
             amount={balanceOfPayments.payableAmount}
             currency={balanceOfPayments.currency}
             footerDescription='Total amount of money to be paid per month'
@@ -44,7 +65,11 @@ export const BalanceOfPayments = () => {
 
           <CardDetail
             title="Difference"
-            href={`overview/difference?totalAmount=${balanceOfPayments.differenceAmount}&${queryParams}`}
+            href={linkTo({
+              to: 'difference',
+              amount: balanceOfPayments.differenceAmount,
+              currency: balanceOfPayments.currency
+            })}
             amount={balanceOfPayments.differenceAmount}
             currency={balanceOfPayments.currency}
             footerDescription='Total amount of money left per month'

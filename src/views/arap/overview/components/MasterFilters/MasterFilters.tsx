@@ -1,8 +1,9 @@
-import { InputDate } from '@/views/arap/_commons/components/inputs/InputDate'
+
 import { Box, styled } from '@mui/material'
 import { useContext } from 'react'
 import { MasterFiltersContext } from '../../context/masterFilters/MasterFiltersContext'
 import { useMasterFilters } from '../../hooks/useMasterFilters'
+import { InputDateFilter } from './inputs/InputDateFilter'
 import { SelectBroker } from './inputs/SelectBroker'
 import { SelectReinsurer } from './inputs/SelectReinsurer'
 import { SelectStatus } from './inputs/SelectStatus'
@@ -31,7 +32,7 @@ export const MasterFilters = () => {
 
       <SelectTransaction selectedValue={selectedFilters.transactionType} onChange={handleSelectChange} />
 
-      <InputDate value={selectedFilters.date} onChange={date => handleDateChange(date)} />
+      <InputDateFilter value={selectedFilters.date} onChange={handleDateChange} />
 
       <TextId value={selectedFilters.id || ''} onChange={handleTextChange} />
     </FiltersContainer>

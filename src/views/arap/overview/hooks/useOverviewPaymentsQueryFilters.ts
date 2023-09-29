@@ -27,7 +27,7 @@ export const useOverviewPaymentsQueryFilters = () => {
     const savedFilters = getMasterFiltersSelectors();
     
     return Object.keys(queryFilters).map(key => {
-  
+
       if (keyFilters[key]) {
         return {
           type: key,
@@ -37,6 +37,16 @@ export const useOverviewPaymentsQueryFilters = () => {
         }
       } else {
   
+        if (key === 'date') {
+          const savedDate = savedFilters.filter(item => item.type === key)[0]?.value
+
+          return {
+            type: key,
+            value: savedDate || queryFilters[key],
+            text: textFilters[key] + savedDate || queryFilters[key]
+          }
+        }
+
         return {
           type: key,
           value: (queryFilters as {[key: string]: any })[key],
