@@ -54,6 +54,18 @@ export const useGetAccountById = () => {
     return getAccount
   }
 
+  const getInstallmentsByAccount = async (idAccount: number): Promise<InstallmentDto[]> => {
+    const getAccount = await AccountServices.getAccountById(idAccount)
+
+    if (getAccount) {
+      const idAccountStatus: number = getAccount.idAccountStatus as number
+      const statusKey = `status_${idAccountStatus}`
+      getAccount.status = account_status[statusKey as keyof typeof account_status]
+    }
+
+    return getAccount.installments
+  }
+
   useEffect(() => {
     // setAccount(undefined);
     setIsLoading(true)
@@ -92,6 +104,7 @@ export const useGetAccountById = () => {
     setAccountId,
     getAccountById,
     accountId,
-    setAccount
+    setAccount,
+    getInstallmentsByAccount
   }
 }

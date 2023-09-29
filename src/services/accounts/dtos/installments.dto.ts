@@ -20,6 +20,13 @@ export interface CountInstallmentsDto {
   totalInstallments: number
   totalBalanceDue: number
 }
+
+export interface CountInstallmentByBrokerDto {
+  pending: number
+  paid: number
+  totalDebt: number
+  currency: string
+}
 export interface filterInstallmentsDto {
   results: JSON
 }

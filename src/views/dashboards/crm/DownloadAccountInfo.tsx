@@ -12,6 +12,8 @@ import Icon from 'src/@core/components/icon'
 import UserThemeOptions from 'src/layouts/UserThemeOptions'
 import ReportServices from 'src/services/reports/report.service'
 
+import { IS_DEMO } from 'src/utils/isDemo'
+
 const DownloadAccountInfo = () => {
   // Notifications
   const [badgeData, setBadgeData] = useState<IAlert>({
@@ -54,7 +56,7 @@ const DownloadAccountInfo = () => {
         })
         await delayMs(1000)
 
-        const fileToDownload = new File([accountsBuffer], 'Template_Accounts_Info_Alpex.xlsx')
+        const fileToDownload = new File([accountsBuffer], `Template_Accounts_Info${!IS_DEMO ? "_Alpex" : ""}.xlsx`)
         const downloadUrl = URL.createObjectURL(fileToDownload)
         const link = document.createElement('a')
         link.href = downloadUrl
