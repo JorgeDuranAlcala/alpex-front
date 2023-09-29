@@ -1,17 +1,28 @@
 // ** React Imports
-import { useContext, useRef } from 'react'
+import { useContext, useMemo, useState } from 'react'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
-import Input from '@mui/material/Input'
-import InputAdornment from '@mui/material/InputAdornment'
 
 // ** Icon Imports
-import Icon from 'src/@core/components/icon'
 
 
 import { PaymentsContext } from '@/views/arap/overview/context/payments/PaymentsContext'
+
+
+import { useGetAllReinsuranceCompanies } from '@/hooks/catalogs/reinsuranceCompany'
+import { ReinsuranceCompanyDto } from '@/services/catalogs/dtos/ReinsuranceCompanyDto'
+import { BrokerDto } from '@/services/catalogs/dtos/broker.dto'
+import { Autocomplete, Chip, TextField } from '@mui/material'
+import { useGetAll as useBrokerGetAll } from 'src/hooks/catalogs/broker'
 import { EFieldColumn } from '../efieldColumn'
+
+interface CapabilityNameOptions {
+  id: string;
+  capability_id: number;
+  label: string;
+  type: 'broker' | 'reinsurer'
+}
 
 interface FilterMenuCapabilityNameProps {
   handleClose?: () => void
@@ -19,53 +30,118 @@ interface FilterMenuCapabilityNameProps {
 const FilterMenuCapabilityName = ({ handleClose }: FilterMenuCapabilityNameProps) => {
 
   const { handleChangeFilters, handleDeleteFilters } = useContext(PaymentsContext);
-  const searchTimeOutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  
+  const { brokers } = useBrokerGetAll();
+  const { reinsuranceCompany: reinsurers } = useGetAllReinsuranceCompanies();
+  const [selectedValue, setSelectedValue] = useState<CapabilityNameOptions | null>(null);
+  
 
-
-
-  const handleOnChangeSearch = (value: string) => {
-    if (searchTimeOutRef.current) {
-
-      clearTimeout(searchTimeOutRef.current);
-    }
-    searchTimeOutRef.current = setTimeout(() => {
-      if (value === '') handleDeleteFilters(EFieldColumn.CAPABILITY_NAME)
-      else
-        handleChangeFilters({
-          type: EFieldColumn.CAPABILITY_NAME,
-          value: `${value}`,
-          text: `${value}`
-        })
-
-    }, 500);
+  const getBrokerOptions = (brokers: BrokerDto[]):CapabilityNameOptions [] => {
+    return brokers.map(broker => {
+      return {
+        id: 'broker_'+ broker.id,
+        capability_id: broker.id,
+        label: broker.name,
+        type: 'broker'
+      }
+    })
   }
 
-  const handleCloseOnEnter = (key: string) => {
-    if (handleClose && key === 'Enter') {
+  const getReinsurerOptions = (reinsurers:  ReinsuranceCompanyDto[] | undefined):CapabilityNameOptions [] => {
 
+    if (!reinsurers) return [];
+
+    return reinsurers.map(reinsurer => {
+      return {
+        id: 'reinsurer_'+ reinsurer.id,
+        capability_id: reinsurer.id,
+        label: reinsurer.name,
+        type: 'reinsurer'
+      }
+    })
+  }
+
+  const capabilityNameOptions: CapabilityNameOptions[] = useMemo(() => {
+    return [
+    ...getBrokerOptions(brokers), 
+    ...getReinsurerOptions(reinsurers)
+  ].sort((a, b) => {
+    return a.label.localeCompare(b.label)
+  })
+  }, [brokers, reinsurers]) 
+
+  
+  const handleOnChangeSearch = (value: CapabilityNameOptions | null) => {
+    setSelectedValue(value);
+    if (!value) {
+      handleDeleteFilters(EFieldColumn.CAPABILITY_NAME)
+      
+      return;
+    }
+
+    handleChangeFilters({
+      type: value.type,
+      subtype: EFieldColumn.CAPABILITY_NAME,
+      value: value.capability_id,
+      text: `${value.label}`
+    })
+
+    if (handleClose) {
       handleClose();
     }
   }
 
+  // const handleCloseOnEnter = (key: string) => {
+  //   if (handleClose && key === 'Enter') {
+
+  //     handleClose();
+  //   }
+  // }
+
   return (
-    <Box component={'li'} sx={{ padding: '3px 30px', display: 'flex', alignItems: 'center', width: '100%' }}>
-      <Input
-        placeholder='Search by Capability Name'
-        onChange={e => handleOnChangeSearch(e.target.value)}
-        onKeyDown={e => handleCloseOnEnter(e.key)}
-        sx={{
-          fontFamily: 'Inter',
-          fontSize: '16px',
-          width: '100%',
-          '&:before, &:after': { display: 'none' }
+    <Autocomplete
+      id="capability-name-select"
+      sx={{ width: 300 }}
+      options={capabilityNameOptions}
+      isOptionEqualToValue={(option, value) => option.capability_id === value.capability_id}
+      autoHighlight
+      value={selectedValue}
+      onChange={(event: any, newValue: CapabilityNameOptions | null) => {
+        
+          handleOnChangeSearch(newValue);
         }}
-        startAdornment={
-          <InputAdornment position='start' sx={{ color: 'text.disabled' }}>
-            <Icon icon='mdi:magnify' fontSize='1.375rem' />
-          </InputAdornment>
-        }
-      />
-    </Box>
+      getOptionLabel={(option) => option.label }
+      renderOption={(props, option) => (
+        <Box component="li" sx={{ position: 'relative', }} {...props}>
+          <Chip 
+            size="small"
+            color='primary'
+            label={option.type} 
+            sx={{
+              position: 'absolute',
+              top: '5px',
+              right: 0, 
+              zIndex: 1,
+              opacity: 0.8
+            }}
+          />
+          <Box sx={{paddingTop: '25px' }}>
+
+          {option.label}
+          </Box>
+        </Box>
+      )}
+      renderInput={(params) => (
+        <TextField
+          {...params}
+          label="Choose a capability"
+          inputProps={{
+            ...params.inputProps,
+            autoComplete: 'new-password', // disable autocomplete and autofill
+          }}
+        />
+      )}
+    />
   )
 }
 

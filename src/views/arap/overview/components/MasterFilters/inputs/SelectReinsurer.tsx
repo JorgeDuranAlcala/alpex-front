@@ -1,11 +1,23 @@
 import { useGetAllReinsuranceCompanies } from '@/hooks/catalogs/reinsuranceCompany';
-import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
+import { FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material';
 
 import { InputSelectProps } from '@/views/arap/_commons/interfaces/InputSelectProps';
+import { useMasterFiltersStorage } from '../../../hooks/useMasterFiltersStorage';
 
 export const SelectReinsurer = ({ selectedValue, onChange }: InputSelectProps) => {
 
   const { reinsuranceCompany: reinsurers } = useGetAllReinsuranceCompanies();
+
+  const {handleSaveMasterFilters} = useMasterFiltersStorage();
+
+  const handleOnChange = (e: SelectChangeEvent<string>) => {
+    handleSaveMasterFilters({
+      items: reinsurers || [],
+      saveValue: +e.target.value,
+      type: 'reinsurer'
+    })
+    onChange(e);
+  }
 
   return (
     <FormControl fullWidth sx={{ mb: 2, mt: 2 }} >
@@ -15,7 +27,7 @@ export const SelectReinsurer = ({ selectedValue, onChange }: InputSelectProps) =
         name='reinsurer'
         label='Select Reinsurer'
         value={selectedValue}
-        onChange={onChange}
+        onChange={handleOnChange}
         labelId='reinsurer'
       >
         <MenuItem value="all">

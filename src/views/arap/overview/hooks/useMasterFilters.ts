@@ -11,14 +11,16 @@ export const useMasterFilters = () => {
   const isCallServiceOnChangeHandler = useRef<boolean>(false)
   const isCallServiceWithTimeout = useRef<boolean>(false)
 
+  
   const [queryFilters, setQueryFilters] = useState<QueryFilters>({
     broker: 'all',
     reinsurer: 'all',
-    status: 'all',
-    transactionType: 'all',
-    date: new Date().toISOString().split('T')[0],
-    id: ''
+    status:  'all',
+    transactionType:  'all',
+    date:  formatDateAmericanTemplate(new Date()),
+    id:  '',
   })
+
 
   const handleSelectChange = (event: SelectChangeEvent<string>) => {
     isCallServiceOnChangeHandler.current = true
@@ -29,6 +31,8 @@ export const useMasterFilters = () => {
     const target = event.target
     const name = target.name
     const value = target.value
+
+    
 
     if (name === 'broker') {
       setQueryFilters({
@@ -56,8 +60,8 @@ export const useMasterFilters = () => {
 
       return
     }
-
     if (name === 'transactionType') {
+
       setQueryFilters({
         ...queryFilters,
         transactionType: value as ARAPTransactionValue
@@ -101,7 +105,6 @@ export const useMasterFilters = () => {
   }
 
   useEffect(() => {
-    console.log('queryChanged')
 
     if (timeoutService) clearTimeout(timeoutService)
 

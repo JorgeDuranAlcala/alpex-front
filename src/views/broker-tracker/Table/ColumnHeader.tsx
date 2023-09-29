@@ -1,5 +1,5 @@
 // ** React Imports
-import { useContext, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -12,54 +12,36 @@ import { GridStateColDef } from '@mui/x-data-grid/models/colDef'
 import Icon from 'src/@core/components/icon'
 
 // ** Custom utilities
-// import FilterMenu from 'src/views/accounts/Table/FilterMenu'
-
-import { OverviewDetailsContext } from '@/views/arap/overview/context/overviewDetails/OverviewDetailsContext'
 import colors from 'src/views/accounts/colors'
 import fonts from 'src/views/accounts/font'
-import { EFieldColumn, FilterType } from './efieldColumn'
-
-// import { SwitcherFilterMenus } from './filterMenus/SwitcherFilterMenus'
-import { DetailsType } from '../../../interfaces/overview/DetailsType'
-import { SwitcherFilterMenus } from './filterMenus/SwitchFilterMenus'
+import FilterMenu from 'src/views/broker-tracker/Table/FilterMenu'
 
 interface IColunmHeader {
   colDef: GridStateColDef
-  detailsType: DetailsType
-  filterType?: FilterType
   action?: (field: string) => void
   showIcon?: boolean
-  type?: string
 }
 
-const ColumnHeader: React.FC<IColunmHeader> = ({ colDef, detailsType, filterType, showIcon = true, type }) => {
+const ColumnHeader: React.FC<IColunmHeader> = ({ colDef, action, showIcon = true }) => {
   // ** Props
-  const { headerName, field } = colDef;
-
-  const { getGridFilters } = useContext(OverviewDetailsContext);
-  const filtersActive = getGridFilters(detailsType);
-
+  const { headerName, field } = colDef
 
   // ** State
   const [anchorEl, setAnchorEl] = useState(null)
   const open = Boolean(anchorEl)
   const [widthMenu, setWidthMenu] = useState(0)
+
+  // ** Hooks
   const columnHeaderRef = useRef(null)
 
-  const activeButtons = filtersActive.map(f => f?.type);
-
-  const isActiveButton = activeButtons?.find(active => active === type);
-
-  // console.log('isActiveButton', isActiveButton)
-  // console.log('activeButtons', activeButtons)
   const handleClose = () => {
     setAnchorEl(null)
   }
 
   const handleOnClick = () => {
-    // if (!action) {
-    //   return
-    // }
+    if (!action) {
+      return
+    }
 
     const columnHeader: any = columnHeaderRef.current
 
@@ -67,19 +49,19 @@ const ColumnHeader: React.FC<IColunmHeader> = ({ colDef, detailsType, filterType
 
     const { width } = accountColumnHeader.getBoundingClientRect()
 
-    if (field === EFieldColumn.TRANSACTION_ID) {
-      setWidthMenu(450)
-    } else {
-      setWidthMenu(width)
-    }
-
+    setWidthMenu(width)
     setAnchorEl(accountColumnHeader)
   }
 
   return (
     <Box
       ref={columnHeaderRef}
-      sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative' }}
+      sx={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        position: 'relative'
+      }}
     >
       <Typography
         component={'span'}
@@ -89,11 +71,7 @@ const ColumnHeader: React.FC<IColunmHeader> = ({ colDef, detailsType, filterType
       </Typography>
       {showIcon && (
         <IconButton size='small' onClick={handleOnClick}>
-          <Icon
-            icon='mdi:filter-variant'
-            fontSize={20}
-            color={isActiveButton ? '#2535A8' : undefined}
-          />
+          <Icon icon='mdi:filter-variant' fontSize={20} />
         </IconButton>
       )}
       <Menu
@@ -107,12 +85,10 @@ const ColumnHeader: React.FC<IColunmHeader> = ({ colDef, detailsType, filterType
         }}
         PaperProps={{ style: { minWidth: widthMenu, borderRadius: '10px' } }}
       >
-        <SwitcherFilterMenus field={field} handleClose={handleClose} detailsType={detailsType} filterType={filterType} />
+        <FilterMenu field={field} />
       </Menu>
     </Box>
   )
 }
 
 export default ColumnHeader
-
-// rgba(87, 90, 111, 0.54)

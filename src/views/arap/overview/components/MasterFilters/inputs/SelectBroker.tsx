@@ -1,11 +1,22 @@
-import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
+import { FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material';
 
 import { InputSelectProps } from '@/views/arap/_commons/interfaces/InputSelectProps';
 import { useGetAll as useBrokerGetAll } from 'src/hooks/catalogs/broker';
+import { useMasterFiltersStorage } from '../../../hooks/useMasterFiltersStorage';
 
 export const SelectBroker = ({ selectedValue, onChange }: InputSelectProps) => {
 
   const { brokers } = useBrokerGetAll();
+  const {handleSaveMasterFilters} = useMasterFiltersStorage();
+
+  const handleOnChange = (e: SelectChangeEvent<string>) => {
+    handleSaveMasterFilters({
+      items: brokers,
+      saveValue: +e.target.value,
+      type: 'broker'
+    })
+    onChange(e);
+  }
 
   return (
     <FormControl fullWidth sx={{ mb: 2, mt: 2 }} >
@@ -15,7 +26,7 @@ export const SelectBroker = ({ selectedValue, onChange }: InputSelectProps) => {
         name='broker'
         label='Select Broker'
         value={selectedValue}
-        onChange={onChange}
+        onChange={handleOnChange}
         labelId='broker'
       >
         <MenuItem value="all">

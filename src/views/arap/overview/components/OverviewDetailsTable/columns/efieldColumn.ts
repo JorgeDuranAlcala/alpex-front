@@ -22,3 +22,5 @@ export enum EFieldColumn {
   // --- there are in common columns
 
 }
+
+export type FilterType = 'broker' | 'reinsurer';

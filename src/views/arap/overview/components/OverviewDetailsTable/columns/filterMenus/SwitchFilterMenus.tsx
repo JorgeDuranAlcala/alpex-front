@@ -1,12 +1,12 @@
 import { ReactElement } from "react"
-import { EFieldColumn } from "../efieldColumn"
+import { EFieldColumn, FilterType } from "../efieldColumn"
 
 import FilterMenuBroker from "./FilterMenuBroker"
-import FilterMenuCapabilityName from "./FilterMenuCapabilityName"
 import FilterMenuDate from "./FilterMenuDate"
 import FilterMenuInputText from "./FilterMenuInputText"
 
 import { DetailsType } from '../../../../interfaces/overview/DetailsType'
+import FilterMenuReinsurer from "./FilterMenuReinsurer"
 
 export interface IComponents {
   [key: string]: ReactElement
@@ -15,11 +15,12 @@ export interface IComponents {
 interface IFilterMenu {
   detailsType: DetailsType;
   field: string;
+  filterType?: FilterType;
   handleClose?: () => void;
 }
 
 
-export const SwitcherFilterMenus = ({ detailsType, field, handleClose }: IFilterMenu) => {
+export const SwitcherFilterMenus = ({ detailsType, field, filterType, handleClose }: IFilterMenu) => {
 
   const FilterMenuComponents: IComponents = {
 
@@ -65,11 +66,13 @@ export const SwitcherFilterMenus = ({ detailsType, field, handleClose }: IFilter
         handleClose={handleClose}
       />
     ),
-    [EFieldColumn.CAPABILITY_NAME]: (
-      <div onClick={handleClose}>
-        <FilterMenuCapabilityName detailsType={detailsType} />
-      </div>
-    ),
+    [EFieldColumn.CAPABILITY_NAME]: 
+      filterType === 'broker' ? 
+      <FilterMenuBroker detailsType={detailsType} handleClose={handleClose} />
+      : filterType === 'reinsurer' ? 
+      <FilterMenuReinsurer detailsType={detailsType} handleClose={handleClose} />
+      : <></>
+    ,
     [EFieldColumn.BROKER]: (
       <FilterMenuBroker detailsType={detailsType} handleClose={handleClose} />
     ),

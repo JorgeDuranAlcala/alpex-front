@@ -14,6 +14,8 @@ import { LayoutProps } from 'src/@core/layouts/types'
 import Icon from 'src/@core/components/icon'
 import UserThemeOptions from 'src/layouts/UserThemeOptions'
 
+import { IS_DEMO } from 'src/utils/isDemo'
+
 // ** Configs
 // import themeConfig from 'src/configs/themeConfig'
 
@@ -133,7 +135,8 @@ const VerticalNavHeader = (props: Props) => {
         userNavMenuBranding(props)
       ) : (
         <StyledLink href='/'>
-          <svg width='36' height='40' viewBox='0 0 36 40' fill='none' xmlns='http://www.w3.org/2000/svg'>
+
+    {  !IS_DEMO && <svg width='36' height='40' viewBox='0 0 36 40' fill='none' xmlns='http://www.w3.org/2000/svg'>
             <path
               d='M35.6628 40L30.0405 30.0573C27.9671 32.1379 25.3849 33.7074 22.499 34.573L25.5682 40H35.6628Z'
               fill='#2535A8'
@@ -148,13 +151,14 @@ const VerticalNavHeader = (props: Props) => {
               fill='#2D67EB'
             />
           </svg>
+        }
 
           <HeaderTitle variant='h6' sx={{ ...menuCollapsedStyles, ...(navCollapsed && !navHover ? {} : { ml: 2 }) }}>
             {/* {themeConfig.templateName} */}
             <Typography
               sx={{ fontFamily: product, color: colorLogo, fontSize: '20px', fontWeight: 700, letterSpacing: -0.8 }}
             >
-              Alpex
+              {!IS_DEMO ? "Alpex" : ""}
             </Typography>
           </HeaderTitle>
         </StyledLink>

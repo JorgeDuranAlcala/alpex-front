@@ -8,6 +8,8 @@ import UserThemeOptions from 'src/layouts/UserThemeOptions'
 // import useMediaQuery from '@mui/material/useMediaQuery'
 // import { Theme } from '@mui/material/styles'
 
+import { IS_DEMO } from 'src/utils/isDemo'
+
 interface Ifooter {
   isLogin: boolean
 }
@@ -37,7 +39,7 @@ const Footer = ({ isLogin }: Ifooter) => {
       {isLogin ? (
         <Typography
           sx={{ mr: 2, fontFamily: inter }}
-        >{`A Dynamic Reinsurance platform, © ${new Date().getFullYear()}`}</Typography>
+        >{`${!IS_DEMO ? "A Dynamic Reinsurance" : ""} platform, © ${new Date().getFullYear()}`}</Typography>
       ) : (
         <Typography sx={{ mr: 2, fontFamily: inter }}>
           {`© ${new Date().getFullYear()}, Made with `}

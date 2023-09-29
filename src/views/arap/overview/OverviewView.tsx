@@ -3,10 +3,12 @@ import { Box, styled } from "@mui/material"
 import { MasterFiltersProvider } from "./context/masterFilters/MasterFiltersProvider"
 import { PaymentsProvider } from "./context/payments/PaymentsProvider"
 
+import { useEffect } from "react"
 import { BalanceOfPayments } from "./components/BalanceOfPayments/BalanceOfPayments"
 import { HeaderCard } from "./components/HeaderCard"
 import { MasterFilters } from "./components/MasterFilters/MasterFilters"
 import { PaymentsTable } from "./components/PaymentsTable/PaymentsTable"
+import { useMasterFiltersStorage } from "./hooks/useMasterFiltersStorage"
 
 const ViewContainer = styled(Box)(() => ({
   display: 'flex',
@@ -17,6 +19,15 @@ const ViewContainer = styled(Box)(() => ({
 }))
 
 export const OverviewView = () => {
+
+  const {cleanMasterFiltersSelctors} = useMasterFiltersStorage()
+  useEffect(() => {
+    
+    return () => {
+      cleanMasterFiltersSelctors()
+    }
+  }, [])
+
   return (
     <PaymentsProvider>
       <MasterFiltersProvider>
