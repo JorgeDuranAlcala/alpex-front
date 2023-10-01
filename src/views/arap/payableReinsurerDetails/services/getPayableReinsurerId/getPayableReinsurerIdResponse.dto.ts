@@ -1,5 +1,6 @@
 export interface GetPayableReinsuredIdResponseDto {
     ReinsurerInfo: ReinsurerInfo[];
+    ReinsurerEstructureInfo: ReinsurerEstructureInfo[];
 }
 
 export interface ReinsurerInfo {
@@ -8,10 +9,14 @@ export interface ReinsurerInfo {
     address:             string;
     phone:               string;
     email:               string;
-    AccountingStructure: AccountingStructure;
+  }
+  
+  export interface ReinsurerEstructureInfo {
+    insuredId:           number;
+    insuredName:         string;
+    AccountingStructure: AccountingStructureResponseDto;
 }
-
-export interface AccountingStructure {
+export interface AccountingStructureResponseDto {
     date:                        Date;
     netPremiumReinsurance:       string;
     netPremium:                  string;

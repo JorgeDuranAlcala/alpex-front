@@ -5,9 +5,7 @@ import { GetReceivableBrokerIdResponseDto } from './getReceivableBrokerIdRespons
 
 export const getReceivableBrokerIdService = async (params: GetReceivableBrokerIdParamsToSend) => {
   try {
-    const { data } = await AppAlpexApiGateWay.get<GetReceivableBrokerIdResponseDto>(ARAP_API_ROUTES.RECEIVABLES_GET_BROKER_ID, {
-      params
-    })
+    const { data } = await AppAlpexApiGateWay.get<GetReceivableBrokerIdResponseDto>(ARAP_API_ROUTES.RECEIVABLES_GET_BROKER_ID + '/' + params.capabilityId)
 
     return data
   } catch (error) {
