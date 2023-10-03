@@ -16,13 +16,13 @@ export interface BankDto {
         country: string;
         createdAt: string;
         updatedAt: string;
-    };
+    } | undefined;
     idCLocation: {
         id: number;
         name: string;
         createdAt: string;
         active: boolean;
-    };
+    } | undefined;
     furtherAccountInfo: string;
     active: boolean,
     createdAt: string,
