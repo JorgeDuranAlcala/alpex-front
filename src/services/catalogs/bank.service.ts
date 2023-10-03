@@ -31,7 +31,7 @@ class BankService {
         'Authorization': 'Bearer ' + localStorage.getItem('accessToken'),
         'Content-type': "application/json",
         'Accept': "application/json",
-        'x-api-key': process.env.NEXT_PUBLIC_ALPEX_API_TOKEN
+        'x-api-key': `${process.env.NEXT_PUBLIC_ALPEX_API_TOKEN}`
       }
       const fetch_res = await fetch(`${process.env.NEXT_PUBLIC_APP_ALPEX_API_GATEWAY}/catalogs/bank-accounts/add`, { headers, method: 'POST', body: JSON.stringify(bank) })
       const data = await fetch_res.json()
@@ -49,7 +49,7 @@ class BankService {
         'Authorization': 'Bearer ' + localStorage.getItem('accessToken'),
         'Content-type': "application/json",
         'Accept': "application/json",
-        'x-api-key': process.env.NEXT_PUBLIC_ALPEX_API_TOKEN
+        'x-api-key': `${process.env.NEXT_PUBLIC_ALPEX_API_TOKEN}`
       }
       const fetch_res = await fetch(`${process.env.NEXT_PUBLIC_APP_ALPEX_API_GATEWAY}/catalogs/bank-accounts/update`, { headers, method: 'POST', body: JSON.stringify(updateData) })
       const data = await fetch_res.json()
