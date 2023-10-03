@@ -8,6 +8,7 @@ export const useUpdateBank = () => {
             
             return resp
         } catch (error) {
+            if(!(error instanceof Error)) return;
             throw error
         }
     }
