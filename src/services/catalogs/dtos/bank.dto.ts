@@ -1,16 +1,32 @@
 export interface BankDto {
-    id: string
+    id: number
     capacity: string;
-    location: string;
     bank: string;
     beneficiary: string;
     accountNumber: string;
     swift: string;
     aba: string;
     clabe: string;
-    currency: string;
     intermediary: string;
+    idCCurrency: {
+        id: number;
+        code: string;
+        name: string;
+        active: boolean;
+        country: string;
+        createdAt: string;
+        updatedAt: string;
+    };
+    idCLocation: {
+        id: number;
+        name: string;
+        createdAt: string;
+        active: boolean;
+    };
     furtherAccountInfo: string;
+    active: boolean,
+    createdAt: string,
+    updatedAt: string,
 }
 
 

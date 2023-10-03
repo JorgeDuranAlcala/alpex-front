@@ -6,7 +6,8 @@ import { queryBuilder } from '../helper/queryBuilder'
 class BankService {
   async getAll(): Promise<BankDto[]> {
     try {
-      const { data } = await AppAlpexApiGateWay.get<Promise<BankDto[]>>("/catalogs/bank-accounts/all?page=1&itemsPerPage=10")
+      const { data } = await AppAlpexApiGateWay.get<Promise<BankDto[]>>(`${BANK_ROUTES.GET}?itemsPerPage=100000&page=1`)
+
       return data
     } catch (error) {
       throw error
@@ -26,21 +27,32 @@ class BankService {
 
   async add(bank: Partial<BankDto>): Promise<BankDto> {
     try {
-      const { data } = await AppAlpexApiGateWay.post<Promise<BankDto>>(`${BANK_ROUTES.ADD}`, {
-        ...bank
-      })
+      const headers = {
+        'Authorization': 'Bearer ' + localStorage.getItem('accessToken'),
+        'Content-type': "application/json",
+        'Accept': "application/json",
+        'x-api-key': 'ZlExQKG0xPB673L3B6hClORm6oPaKcer'
+      }
+      const fetch_res = await fetch('https://dev.api.alpex.dynamicreinsurance.com/api/v1/catalogs/bank-accounts/add', { headers, method: 'POST', body: JSON.stringify(bank) })
+      const data = await fetch_res.json()
 
       return data
     } catch (error) {
+      console.log("error while posting: ", error.message)
       throw error
     }
   }
 
-  async updateById(id: number, update: Partial<BankDto>) {
+  async update(updateData: Partial<BankDto>) {
     try {
-      const { data } = await AppAlpexApiGateWay.put<Promise<BankDto>>(`${BANK_ROUTES.UPDATE}/${id}`, {
-        ...update
-      })
+      const headers = {
+        'Authorization': 'Bearer ' + localStorage.getItem('accessToken'),
+        'Content-type': "application/json",
+        'Accept': "application/json",
+        'x-api-key': 'ZlExQKG0xPB673L3B6hClORm6oPaKcer'
+      }
+      const fetch_res = await fetch('https://dev.api.alpex.dynamicreinsurance.com/api/v1/catalogs/bank-accounts/update', { headers, method: 'POST', body: JSON.stringify(updateData) })
+      const data = await fetch_res.json()
 
       return data
     } catch (error) {
@@ -60,8 +72,8 @@ class BankService {
 
   async getBanksPagination(bankData: BankPaginationDto, urlQ?: string) {
     try {
-      const url = urlQ ? urlQ : queryBuilder(bankData.filters, `${BANK_ROUTES.GET}`)
-      const { data } = await AppAlpexApiGateWay.get(`${url}&take=${bankData.info.take}&page=${bankData.info.page}`)
+      const url = urlQ ? urlQ : queryBuilder(bankData.filters, `/catalogs/bank-accounts/all`)
+      const { data } = await AppAlpexApiGateWay.get(`${url}&itemsPerPage=${bankData.info.take}&page=${bankData.info.page}`)
 
       return data
     } catch (error) {

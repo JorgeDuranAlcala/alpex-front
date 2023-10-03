@@ -5,6 +5,7 @@ export const useUpdateExpert = () => {
     const updateExpert = async (id: number, update: Partial<ExpertDto>) => {
         try {
             const resp = await ExpertService.updateById(id, update);
+
             return resp;
         } catch (error) {
             throw error;

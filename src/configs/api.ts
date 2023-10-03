@@ -344,11 +344,11 @@ export enum DOCUMENTS_ROUTES {
 // ==== BANK
 
 export enum BANK_ROUTES {
-  GET = '/catalogs/bank-accounts/all?page=1&itemsPerPage=10',
+  GET = '/catalogs/bank-accounts/all',
   GET_BY_ID = '',
-  ADD = '',
-  UPDATE = '',
-  DELETE_BY_ID = ''
+  ADD = '/catalogs/bank-accounts/add',
+  UPDATE = '/catalogs/bank-accounts/update',
+  DELETE_BY_ID = '/catalogs/bank-accounts/delete'
 }
 
 // ==== ADJUSTER
