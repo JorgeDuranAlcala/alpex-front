@@ -12,7 +12,11 @@ export const useReceivableMasterFilters = () => {
 
   const [receivableFilters, setReceivableFilters] = useState<ReceivableFilters>({
     capability: 'all',
-    date: new Date().toISOString()
+    date: new Date().toLocaleDateString('en-CA', {
+        year: 'numeric',
+        day: '2-digit',
+        month: '2-digit'
+      })
   })
 
   const handleSelectChange = (event: SelectChangeEvent<string>) => {

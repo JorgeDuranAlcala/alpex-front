@@ -3,31 +3,38 @@ import { getArapAllService } from '@/views/arap/overview/services/getArapAll'
 import { overviewPaymentsAdapter } from '@/views/arap/overview/services/getArapAll/frontAdapters/overviewPaymentsAdapter'
 import { overviewPaymentsAdapterQueries } from '@/views/arap/overview/services/getArapAll/frontAdapters/overviewPaymentsAdapterQueries'
 import { ReactNode, useRef, useState } from 'react'
+import { useMasterFiltersStorage } from '../../hooks/useMasterFiltersStorage'
+import { useOverviewPaymentsQueryFilters } from '../../hooks/useOverviewPaymentsQueryFilters'
 import { QueryFilters } from '../../interfaces/QueryFilters'
 import { PaymentsGrid } from '../../interfaces/payments/PaymentsGrid'
 import { extractOverviewPaymentTableFilters } from '../../utils/extractOverviewPaymentTableFilters'
 import { PaymentsContext } from './PaymentsContext'
 
 export const PaymentsProvider = ({ children }: { children: ReactNode }) => {
+  
+  const {saveMasterFiltersSelectors, removeMasterFiltersSelector} = useMasterFiltersStorage();
+  const { transformToTableFilters } = useOverviewPaymentsQueryFilters();
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [paymentsGrid, setPaymentsGrid] = useState<PaymentsGrid | null>(null)
   const tempQueryFiltersRef = useRef<QueryFilters | null>(null)
   const tempFiltersRef = useRef<Filter[]>([])
 
+
   const loadPaymentsGrid = async (queryFilters: QueryFilters) => {
     setIsLoading(true)
-    console.log('loadPayments by queryFilters', queryFilters)
+
     tempQueryFiltersRef.current = queryFilters
 
     const filters = overviewPaymentsAdapterQueries(queryFilters)
     const payments = await getArapAllService(filters)
     const paymentsAdapted = overviewPaymentsAdapter(payments)
-
+    const parsedFilters = transformToTableFilters(queryFilters);
+    
     setPaymentsGrid({
       paymentsGridList: paymentsAdapted.paymentsGridList,
       info: paymentsAdapted.info,
       isLoading: paymentsAdapted.isLoading,
-      filters: [...paymentsAdapted.filters, ...tempFiltersRef.current]
+      filters: [...paymentsAdapted.filters, ...parsedFilters,]
     })
 
     setIsLoading(false)
@@ -46,23 +53,22 @@ export const PaymentsProvider = ({ children }: { children: ReactNode }) => {
   }
 
   const handleChangeFilters = (filters: Filter) => {
-    console.log('handleChangeFilters', filters)
 
-    if (!paymentsGrid) return
-    if (paymentsGrid.paymentsGridList.length === 0) return
+    saveMasterFiltersSelectors({
+      label: filters.text,
+      value: filters.value,
+      type: filters.type
+    });
+
     if (!tempQueryFiltersRef.current) return
 
-    // const tempFilters: Filter[] = paymentsGrid.filters || []
-
-    const tempFilters: Filter[] = paymentsGrid.filters.filter(filterItem => filterItem.type !== filters.type)
-
-    if (tempFilters.length === 0) {
-      tempFilters.push(filters)
-    }
+    let tempFilters: Filter[] = paymentsGrid?.filters || [];
+    
+    tempFilters = paymentsGrid?.filters.filter(filterItem => filterItem.type !== filters.type) || []
+    tempFilters = [...tempFilters, filters];
+    
 
     tempFiltersRef.current = [...tempFilters]
-
-    // console.log(extractOverviewPaymentTableFilters(tempFilters))
 
     loadPaymentsGrid({
       ...tempQueryFiltersRef.current,
@@ -71,18 +77,23 @@ export const PaymentsProvider = ({ children }: { children: ReactNode }) => {
   }
 
   const handleDeleteFilters = (type: string) => {
-    if (!paymentsGrid) return
 
-    // if (paymentsGrid.paymentsGridList.length === 0) return
-
-    const tempFilters: Filter[] = paymentsGrid.filters.filter(filterItem => filterItem.type !== type)
+    console.log(type)
+    removeMasterFiltersSelector(type);
+    
+    const tempFilters: Filter[] = paymentsGrid?.filters.filter(filterItem => filterItem.type !== type) || []
 
     tempFiltersRef.current = [...tempFilters]
 
-    // console.log(extractOverviewPaymentTableFilters(tempFilters))
+    const tempQueryFilters = tempQueryFiltersRef.current;
+    const updateQueryFilters = tempQueryFilters ? { ...tempQueryFilters, [type]: '' } : undefined;
+
+    // console.log(tempFilters)
+    // console.log(tempQueryFilters)
+    // console.log(updateQueryFilters)
 
     loadPaymentsGrid({
-      ...tempQueryFiltersRef.current,
+      ...updateQueryFilters,
       ...extractOverviewPaymentTableFilters(tempFilters)
     })
   }

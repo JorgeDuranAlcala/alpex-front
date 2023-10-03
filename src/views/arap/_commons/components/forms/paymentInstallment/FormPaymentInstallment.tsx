@@ -1,6 +1,5 @@
 import { Box, Grid } from '@mui/material'
 import { useContext, useEffect, useRef } from 'react'
-import { formatDateAmericanTemplate } from '../../../../../../utils/formatDates'
 import { InsuredSelectorContext } from '../../../context/InsuredSelector/InsuredSelectorContext'
 import { usePaymentInstallment } from '../../../hooks/usePaymentInstallment'
 import { FormDetailsContainer } from '../../../styles/FormsDetails'
@@ -56,7 +55,7 @@ export const FormPaymentInstallment = () => {
               <InputDate
                 label='Settlement due date'
                 isDisabled={true}
-                value={formatDateAmericanTemplate(installment.settlementDueDate)}
+                value={installment.settlementDueDate.toISOString()}
                 onChange={() => null}
               />
             </Box>

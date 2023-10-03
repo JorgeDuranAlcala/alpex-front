@@ -1,12 +1,20 @@
 import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
+import { InsuredSelectorContext } from '../../_commons/context/InsuredSelector/InsuredSelectorContext'
 import { ReinsurerInfo } from '../interfaces/reinsurerInfo'
+import { payableReinsuranceAccountingStructureAdapter } from '../services/getPayableReinsurerId/frontAdapters/payableReinsuranceAccountingStructureAdapter'
+import { payableReinsuranceEstructureInfoAdapter } from '../services/getPayableReinsurerId/frontAdapters/payableReinsuranceEstrctureInfoAdapter'
 import { payableReinsuranceIdAdapter } from '../services/getPayableReinsurerId/frontAdapters/payableReinsuranceIdAdapter'
 import { getPayableReinsuredIdService } from '../services/getPayableReinsurerId/getPayableReinsuredIdService'
 
 export const useReinsurerDetails = () => {
-  const router = useRouter()
 
+  // ! INIT implementación temporal, se esperaba un servicio separado
+  const {TEMP_loadAccountingStructures} = useContext(InsuredSelectorContext);
+  
+  // ! END implementación temporal
+
+  const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const [reinsurerDetails, setReinsurerDetails] = useState<ReinsurerInfo | null>(null)
 
@@ -19,13 +27,29 @@ export const useReinsurerDetails = () => {
     console.log('reinsuredDetailsAdapted', reinsuredDetailsAdapted)
     setReinsurerDetails(reinsuredDetailsAdapted)
     setIsLoading(false)
+
+
+    // ! INIT implementación temporal
+    const estructureInfo = payableReinsuranceEstructureInfoAdapter(reinsuredInfo)
+
+    const accountingStructuresAdapted = estructureInfo.map(item => ({
+      insuredId: item.insuredId,
+      insuredName: item.insuredName,
+      ...payableReinsuranceAccountingStructureAdapter(item.AccountingStructure)
+    }));
+
+    TEMP_loadAccountingStructures(accountingStructuresAdapted);
+
+    // ! END implementación temporal
   }
 
   useEffect(() => {
     if (id) {
       setIsLoading(true)
-      console.log('id', id)
-        getPayableReinsuranceIdAsync(+id)
+      if (!isLoading) {
+        console.log('id', id)
+          getPayableReinsuranceIdAsync(+id)
+      }
     }
   }, [id])
 

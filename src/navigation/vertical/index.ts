@@ -203,7 +203,7 @@ const navigation = (): VerticalNavItemsType => {
     },
     {
       title: 'Configuration',
-      icon: 'mdi:settings-outline',
+      icon: 'mdi:settings-outline' ,
       subject: 'configuration',
       action: 'read',
       children: [
@@ -225,7 +225,7 @@ const navigation = (): VerticalNavItemsType => {
     },
     {
       title: `${!IS_DEMO ? "Dynamic " : ""}Data`,
-      icon: 'custom:dynamic-data',
+      icon: !IS_DEMO ? 'custom:dynamic-data' : 'mdi:database-outline',
       subject: 'dynamicData',
       action: 'read',
       children: [

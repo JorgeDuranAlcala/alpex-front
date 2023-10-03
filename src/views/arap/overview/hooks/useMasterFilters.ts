@@ -3,22 +3,39 @@ import { SelectChangeEvent } from '@mui/material'
 import { ChangeEvent, useContext, useEffect, useRef, useState } from 'react'
 import { MasterFiltersContext } from '../context/masterFilters/MasterFiltersContext'
 import type { ARAPStatus, ARAPTransactionValue, QueryFilters } from '../interfaces/QueryFilters'
+import { useMasterFiltersStorage } from './useMasterFiltersStorage'
 
 let timeoutService: ReturnType<typeof setTimeout> | null = null
 
 export const useMasterFilters = () => {
   const { updateFilters } = useContext(MasterFiltersContext)
+  const { getMasterFiltersSelectors } = useMasterFiltersStorage();
+  const masterFilters = getMasterFiltersSelectors();
+
   const isCallServiceOnChangeHandler = useRef<boolean>(false)
   const isCallServiceWithTimeout = useRef<boolean>(false)
-
+  const getValueFromStorage = (type:string): string | number | null => {
+    return masterFilters.find(item => item.type === type)?.value ?? null
+  }
+  const queryValues = {
+    broker: getValueFromStorage('broker'),
+    reinsurer: getValueFromStorage('reinsurer'),
+    status: getValueFromStorage('status') as ARAPStatus,
+    transactionType: getValueFromStorage('transactionType') as ARAPTransactionValue,
+    date: getValueFromStorage('date') as string,
+    id: getValueFromStorage('id') as string,
+  }
+  
   const [queryFilters, setQueryFilters] = useState<QueryFilters>({
-    broker: 'all',
-    reinsurer: 'all',
-    status: 'all',
-    transactionType: 'all',
-    date: new Date().toISOString().split('T')[0],
-    id: ''
+    broker: queryValues.broker?.toString() || 'all',
+    reinsurer: queryValues.reinsurer?.toString() || 'all',
+    status:  queryValues.status || 'all',
+    transactionType:  queryValues.transactionType || 'all',
+    date: queryValues.date ||  formatDateAmericanTemplate(new Date()),
+    id:  queryValues.id || '',
   })
+
+ 
 
   const handleSelectChange = (event: SelectChangeEvent<string>) => {
     isCallServiceOnChangeHandler.current = true
@@ -29,6 +46,8 @@ export const useMasterFilters = () => {
     const target = event.target
     const name = target.name
     const value = target.value
+
+    
 
     if (name === 'broker') {
       setQueryFilters({
@@ -56,8 +75,8 @@ export const useMasterFilters = () => {
 
       return
     }
-
     if (name === 'transactionType') {
+
       setQueryFilters({
         ...queryFilters,
         transactionType: value as ARAPTransactionValue
@@ -101,7 +120,6 @@ export const useMasterFilters = () => {
   }
 
   useEffect(() => {
-    console.log('queryChanged')
 
     if (timeoutService) clearTimeout(timeoutService)
 

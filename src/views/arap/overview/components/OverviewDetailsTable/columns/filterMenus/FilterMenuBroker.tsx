@@ -13,12 +13,13 @@ import { useGetAll as useBrokerGetAll } from 'src/hooks/catalogs/broker';
 
 
 interface FilterMenuBrokerProps {
+  auxFilterText?: string
   detailsType: DetailsType;
   handleClose?: () => void;
 
 }
 
-const FilterMenuBroker = ({ detailsType, handleClose }: FilterMenuBrokerProps) => {
+const FilterMenuBroker = ({ auxFilterText = 'Broker', detailsType, handleClose }: FilterMenuBrokerProps) => {
 
   const { handleChangeFilters } = useContext(OverviewDetailsContext);
   const { brokers } = useBrokerGetAll();
@@ -33,7 +34,7 @@ const FilterMenuBroker = ({ detailsType, handleClose }: FilterMenuBrokerProps) =
     handleChangeFilters({
       type: 'broker',
       value: selectedBroker.id,
-      text: selectedBroker.name
+      text: `${auxFilterText}: ${selectedBroker.name}`
     }, detailsType);
 
     if (handleClose) {

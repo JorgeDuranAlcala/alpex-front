@@ -5,7 +5,9 @@ export const timestampToOnlyDate = (date: string): string | undefined => {
 }
 
 export const formatDateTemplate = (date: string): string => {
+  console.log(date)
   const dateWithoutTime = date.split('T')[0]
+  console.log(dateWithoutTime)
   const dateSplitted = dateWithoutTime.split('-')
 
   return `${dateSplitted[2]}/${dateSplitted[1]}/${dateSplitted[0]}`
@@ -17,6 +19,14 @@ export const formatDateAmericanTemplate = (date: Date): string => {
   const day = String(date.getDate()).padStart(2, '0')
 
   return `${year}-${month}-${day}`
+}
+
+export const formatLatinAmericanTemplate = (date: Date): string => {
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+
+  return `${day}-$}/${month}-${year}`
 }
 
 export const getDateFromAmericanTemplate = (date: string): Date => {
