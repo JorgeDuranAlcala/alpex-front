@@ -1,3 +1,4 @@
+import { DynamicTooltip } from '@/@core-custom/tooltips/DynamicTooltip'
 import colors from '@/views/accounts/colors'
 import fonts from '@/views/accounts/font'
 import { Box, Typography } from '@mui/material'
@@ -29,10 +30,10 @@ export const columns: GridColumns<PaymentColumn> = [
     renderCell: ({ row }) => <Link href={`#${row.transactionId}`}>{row.transactionId}</Link>
   },
   {
-    flex: 0.1,
+    flex: 1,
     field: EFieldColumn.CAPABILITY_NAME,
     headerName: 'CAPABILITY NAME',
-    minWidth: 180,
+    minWidth: 280,
     type: 'string',
     align: 'left',
     disableColumnMenu: true,
@@ -40,9 +41,14 @@ export const columns: GridColumns<PaymentColumn> = [
     headerClassName: 'account-column-header',
     renderHeader: ({ colDef }) => <ColumnHeader colDef={colDef} type={EFieldColumn.CAPABILITY_NAME} />,
     renderCell: ({ row }) => (
-      <Typography sx={{ color: colors.text.secondary, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
-        {row.capabilityName}
-      </Typography>
+      <DynamicTooltip
+        name={row.capabilityName}
+        sx={{
+          color: colors.text.secondary,
+          fontSize: fonts.size.px14,
+          fontFamily: fonts.inter
+        }}
+      />
     )
   },
   {
@@ -125,7 +131,18 @@ export const columns: GridColumns<PaymentColumn> = [
       if (!row || !row.transactionDate) return
 
       // const transactionDate = formatDateTemplate(row.transactionDate);
-      const transactionDate = row.transactionDate
+      let transactionDate = row.transactionDate
+
+      if (row.transactionDate.includes('T')) {
+        transactionDate = row.transactionDate.split('T')[0]
+      }
+
+      const splittedDate = transactionDate.split('-')
+      const year = splittedDate[0]
+      const month = splittedDate[1]
+      const date = splittedDate[2]
+
+      transactionDate = `${date}-${month}-${year}`
 
       return (
         <Typography sx={{ color: colors.text.secondary, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>

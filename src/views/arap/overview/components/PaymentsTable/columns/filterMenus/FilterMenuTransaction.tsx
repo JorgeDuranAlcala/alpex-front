@@ -1,27 +1,25 @@
 // ** MUI Imports
 import MenuItem from '@mui/material/MenuItem'
 
-
 // ** Custom utilities
 import { OptionsARAPTransaction } from '@/views/arap/overview/constants/OptionsARAPTransaction'
 import { PaymentsContext } from '@/views/arap/overview/context/payments/PaymentsContext'
-import { ARAPTransaction } from '@/views/arap/overview/interfaces/QueryFilters'
+import { ARAPTransactionValue } from '@/views/arap/overview/interfaces/QueryFilters'
 import { useContext } from 'react'
-
+import { EFieldColumn } from '../efieldColumn'
 
 interface FilterMenuOptionProps {
-  value: ARAPTransaction;
-  text: string;
-  handleClose?: () => void;
+  value: ARAPTransactionValue
+  text: string
+  handleClose?: () => void
 }
 
 const FilterMenuOption: React.FC<FilterMenuOptionProps> = ({ value, text }) => {
-  const { handleChangeFilters } = useContext(PaymentsContext);
+  const { handleChangeFilters } = useContext(PaymentsContext)
 
   const handleClick = () => {
-
     handleChangeFilters({
-      type: 'transaction',
+      type: EFieldColumn.TRANSACTION_TYPE,
       value,
       text
     })
@@ -42,11 +40,10 @@ const FilterMenuOption: React.FC<FilterMenuOptionProps> = ({ value, text }) => {
   )
 }
 
-const FilterMenuTransaction = ({ }) => {
+const FilterMenuTransaction = ({}) => {
   return (
     <>
-      {OptionsARAPTransaction.map((item) => (
-
+      {OptionsARAPTransaction.map(item => (
         <FilterMenuOption key={item.value} value={item.value} text={item.text} />
       ))}
     </>

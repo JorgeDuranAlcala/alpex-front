@@ -8,6 +8,8 @@ import { SelectInsuredBy } from '../../inputs/SelectInsuredBy'
 import { AnimatedLoadingCenter } from '../../loadings/AnimatedLoadingCenter'
 import { AmountColumnInputs } from './AmountColumnInputs'
 
+import { IS_DEMO } from 'src/utils/isDemo'
+
 interface FormAccountingStructureProps {
   by: InsuredBy
 }
@@ -83,7 +85,7 @@ export const FormAccountingStructure = ({ by }: FormAccountingStructureProps) =>
 
         <Grid item xs={12} sm={12} md={4}>
           <AmountColumnInputs
-            label='Dynamic Commission'
+            label={`${!IS_DEMO ? "Dynamic" : ""} comission`}
             amountValue={accountingStructure.dynamicCommissionAmount}
             percentValue={accountingStructure.dynamicCommissionPercent}
           />

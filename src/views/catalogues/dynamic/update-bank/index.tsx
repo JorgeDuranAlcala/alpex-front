@@ -1,3 +1,4 @@
+
 import { useContext } from 'react';
 import { FormSection } from 'src/styles/Forms/FormSection'
 import { StyledTitle } from 'src/views/custom/typography'
@@ -10,8 +11,8 @@ const UpdateBank = () => {
 
     const router = useRouter()
     const { state } = useContext(DynamicContext);
-    const id = (router.query.id && router.query.id.toString()) as string;
-    const bankData = state.banks.find(b => b.id == (id as string));
+    const id = Number(router.query.id && router.query.id.toString());
+    const bankData = state.banks.find(b => b.id === (id as number));
     if(!bankData) router.back();
 
     const title = bankData && `Edit ${bankData?.bank} Account`;

@@ -1,9 +1,11 @@
 
 import { ReactNode, useState } from "react";
 import { Filter } from "../../_commons/interfaces/Grid";
-import { receivables_mock } from "../../mocks/receivables_mock";
 import { ReceivableFilters } from "../interfaces/ReceivableFilters";
 import { ReceivableGrid } from '../interfaces/ReceivableGrid';
+import { receivablesAdapter } from "../services/getReceivablesAll/frontAdapters/receivablesAdapter";
+import { receivablesFiltersAdapter } from "../services/getReceivablesAll/frontAdapters/receivablesFiltersAdapter";
+import { getReceivablesAllService } from "../services/getReceivablesAll/getReceivablesAllService";
 import { ReceivableContext } from './ReceivableContext';
 
 
@@ -15,32 +17,25 @@ export const ReceivableProvider = ({ children }: { children: ReactNode }) => {
 
 
 
-  const loadReceivableGrid = (filters: ReceivableFilters) => {
+  const loadReceivableGrid = async (receivableFilters: ReceivableFilters) => {
     setIsLoading(true);
 
-    console.log('filters', filters);
+    console.log('filters', receivableFilters);
 
-    // Todo: reemplazar este timeout por el servicio que se implementará
-    setTimeout(() => {
+    const filters = receivablesFiltersAdapter(receivableFilters);
+    const receivables = await getReceivablesAllService(filters);
+    const receivablesAdapted = receivablesAdapter(receivables);
 
-      const infoPages = {
-        count: receivables_mock.length,
-        page: 1,
-        take: 10,
-        pages: Math.ceil(receivables_mock.length / 10),
-        next: null,
-        prev: null,
-      }
-
+    
       setReceivableGrid({
-        receivableGridList: receivables_mock,
-        info: infoPages,
+        receivableGridList: receivablesAdapted.receivableGridList,
+        info: receivablesAdapted.info,
         isLoading: false,
-        filters: [],
+        filters: [...receivablesAdapted.filters],
       });
 
+
       setIsLoading(false);
-    }, 500);
 
 
   }

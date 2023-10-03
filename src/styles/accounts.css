@@ -197,6 +197,8 @@
 
 .modal-endorsements {
   width: 75%;
+  height: 485px;
+  overflow-y: auto;
 }
 
 .box-form .form-element {

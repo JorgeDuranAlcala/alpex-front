@@ -1,6 +1,10 @@
 import { useEffect, useState, useContext } from 'react'
 import { BankInfoDto, BankPaginationDto } from 'src/services/catalogs/dtos/bank.dto'
+import bankService from 'src/services/catalogs/bank.service'
+
 import { DynamicContext } from 'src/context/dynamic/reducer'
+import DynamicActionTypes from 'src/context/dynamic/actionTypes'
+
 
 const initialState: BankPaginationDto = {
   filters: [],
@@ -17,7 +21,7 @@ const initialState: BankPaginationDto = {
 const initialStateInfo: BankInfoDto = {
   count: 0,
   page: 1,
-  take: 5,
+  take: 10,
   pages: 0,
   next: '',
   prev: ''
@@ -26,19 +30,34 @@ const initialStateInfo: BankInfoDto = {
 
 const useGetAllPagination = () => {
   const [banksPagination, setBanksPagination] = useState(initialState)
-  const { state: { banks } } = useContext(DynamicContext);
-  const [bankInfoPage, setBankInfoPage] = useState(initialStateInfo)
+  const { state: { banks }, dispatch } = useContext(DynamicContext);
+  const [bankInfoPage, setBankInfoPage] = useState(initialStateInfo);
+
+  const getBanksPagination = async (bankPagination: BankPaginationDto) => {
+    try {
+      const banksCount = await bankService.getAll();
+      const fetched_banks = await bankService.getBanksPagination(bankPagination)
+      dispatch({ type: DynamicActionTypes.SET_MANY_BANK, payload: fetched_banks })
+      const pages = Math.ceil(banksCount.length / bankPagination.info.take)
+      setBankInfoPage({ ...bankPagination.info, count: banksCount.length, pages })
+    } catch (err) {
+      console.log("error", err)
+    }
+  }
+
+
 
   useEffect(() => {
-    setBankInfoPage(initialStateInfo)
-  }, [])
+    banksPagination && getBanksPagination(banksPagination)
+  }, [banksPagination])
 
   return {
     banksPagination,
     setBanksPagination,
     banks,
     bankInfoPage,
-    setBankInfoPage
+    setBankInfoPage,
+    getBanksPagination
   }
 }
 export default useGetAllPagination

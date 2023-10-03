@@ -1,7 +1,8 @@
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
-import { reinsurer_info_mock } from '../../mocks/reinsurer_info_mock'
 import { ReinsurerInfo } from '../interfaces/reinsurerInfo'
+import { payableReinsuranceIdAdapter } from '../services/getPayableReinsurerId/frontAdapters/payableReinsuranceIdAdapter'
+import { getPayableReinsuredIdService } from '../services/getPayableReinsurerId/getPayableReinsuredIdService'
 
 export const useReinsurerDetails = () => {
   const router = useRouter()
@@ -11,16 +12,21 @@ export const useReinsurerDetails = () => {
 
   const { id } = router.query
 
-  useEffect(() => {
-    setIsLoading(true)
+  const getPayableReinsuranceIdAsync = async (id:number) => {
+    const reinsuredInfo = await getPayableReinsuredIdService({capabilityId: +id})
 
-    // Todo: reemplazar este timeout por el servicio que se implementará
-    setTimeout(() => {
-      if (id) {
-        setReinsurerDetails(reinsurer_info_mock)
-        setIsLoading(false)
-      }
-    }, 500)
+    const reinsuredDetailsAdapted = payableReinsuranceIdAdapter(reinsuredInfo)
+    console.log('reinsuredDetailsAdapted', reinsuredDetailsAdapted)
+    setReinsurerDetails(reinsuredDetailsAdapted)
+    setIsLoading(false)
+  }
+
+  useEffect(() => {
+    if (id) {
+      setIsLoading(true)
+      console.log('id', id)
+        getPayableReinsuranceIdAsync(+id)
+    }
   }, [id])
 
   return {
