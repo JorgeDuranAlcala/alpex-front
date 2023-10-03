@@ -85,7 +85,8 @@ const Form = () => {
         toast.success('Bank Account created Successfully')
         reset();
       }
-    } catch(err) {
+    } catch(err: any) {
+      if(!(err instanceof Error)) return;
       toast.error('error: ' + err.message)
     }
   };

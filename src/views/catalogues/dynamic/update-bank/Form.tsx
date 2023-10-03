@@ -120,7 +120,8 @@ const Form = ({
         toast.success('Bank Account updated Successfully')
         reset(result)
       }
-    } catch(err) {
+    } catch(err: any) {
+      if(!(err instanceof Error)) return;
       toast.error('error: ' + err.message)
     }
   };
