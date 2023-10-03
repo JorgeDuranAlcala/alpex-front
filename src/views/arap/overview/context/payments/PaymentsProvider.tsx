@@ -88,9 +88,9 @@ export const PaymentsProvider = ({ children }: { children: ReactNode }) => {
     const tempQueryFilters = tempQueryFiltersRef.current;
     const updateQueryFilters = tempQueryFilters ? { ...tempQueryFilters, [type]: '' } : undefined;
 
-    console.log(tempFilters)
-    console.log(tempQueryFilters)
-    console.log(updateQueryFilters)
+    // console.log(tempFilters)
+    // console.log(tempQueryFilters)
+    // console.log(updateQueryFilters)
 
     loadPaymentsGrid({
       ...updateQueryFilters,

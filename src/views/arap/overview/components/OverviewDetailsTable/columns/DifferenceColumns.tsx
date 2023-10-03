@@ -5,6 +5,7 @@ import { GRID_CHECKBOX_SELECTION_COL_DEF, GridColumns } from '@mui/x-data-grid';
 import ColumnHeader from './ColumnHeader';
 import { EFieldColumn } from './efieldColumn';
 
+import { DynamicTooltip } from '@/@core-custom/tooltips/DynamicTooltip';
 import { DetailsType } from '../../../interfaces/overview/DetailsType';
 import { DifferenceColumn } from '../../../interfaces/overview/DifferenceGrid';
 
@@ -40,7 +41,7 @@ export const columns: GridColumns<DifferenceColumn> = [
     flex: 0.1,
     field: EFieldColumn.CAPABILITY_NAME,
     headerName: 'CAPABILITY',
-    minWidth: 150,
+    minWidth: 280,
     type: 'string',
     align: 'left',
     disableColumnMenu: true,
@@ -50,9 +51,14 @@ export const columns: GridColumns<DifferenceColumn> = [
       <ColumnHeader colDef={colDef} type={EFieldColumn.CAPABILITY_NAME} detailsType={DETAILS_TYPE} filterType='broker' />
     ),
     renderCell: ({ row }) => (
-      <Typography sx={{ color: colors.text.secondary, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
-        {row.capability_name}
-      </Typography>
+      <DynamicTooltip
+        name={row.capability_name}
+        sx={{
+          color: colors.text.secondary,
+          fontSize: fonts.size.px14,
+          fontFamily: fonts.inter
+        }}
+      />
     )
   },
   {
@@ -92,7 +98,7 @@ export const columns: GridColumns<DifferenceColumn> = [
     flex: 0.1,
     field: EFieldColumn.ACCOUNT,
     headerName: 'ACCOUNT',
-    minWidth: 180,
+    minWidth: 240,
     type: 'string',
     align: 'left',
     disableColumnMenu: true,
@@ -102,9 +108,14 @@ export const columns: GridColumns<DifferenceColumn> = [
       <ColumnHeader colDef={colDef} type={EFieldColumn.ACCOUNT} detailsType={DETAILS_TYPE} />
     ),
     renderCell: ({ row }) => (
-      <Typography sx={{ color: colors.text.secondary, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
-        {row.account}
-      </Typography>
+      <DynamicTooltip
+        name={row.account}
+        sx={{
+          color: colors.text.secondary,
+          fontSize: fonts.size.px14,
+          fontFamily: fonts.inter
+        }}
+      />
     )
   },
   {
@@ -178,9 +189,14 @@ export const columns: GridColumns<DifferenceColumn> = [
       <ColumnHeader colDef={colDef} type={EFieldColumn.USER} detailsType={DETAILS_TYPE} />
     ),
     renderCell: ({ row }) => (
-      <Typography sx={{ color: colors.text.secondary, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
-        {row.user}
-      </Typography>
+      <DynamicTooltip
+        name={row.user}
+        sx={{
+          color: colors.text.secondary,
+          fontSize: fonts.size.px14,
+          fontFamily: fonts.inter
+        }}
+      />
     )
   },
 

@@ -13,14 +13,16 @@ import { OverviewDetailsContext } from '@/views/arap/overview/context/overviewDe
 import { DetailsType } from '@/views/arap/overview/interfaces/overview/DetailsType'
 
 interface FilterMenuInputTextProps {
+  auxFilterText: string;
   detailsType: DetailsType;
   columnType: string;
+  placeholder?: string;
   handleClose?: () => void
 }
 
 
 
-const FilterMenuInputText = ({ detailsType, columnType, handleClose }: FilterMenuInputTextProps) => {
+const FilterMenuInputText = ({ auxFilterText, detailsType, columnType, placeholder = 'Search...', handleClose }: FilterMenuInputTextProps) => {
 
   const { handleChangeFilters, handleDeleteFilters } = useContext(OverviewDetailsContext);
   const searchTimeOutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -38,7 +40,7 @@ const FilterMenuInputText = ({ detailsType, columnType, handleClose }: FilterMen
         handleChangeFilters({
           type: columnType,
           value: `${value}`,
-          text: `${value}`
+          text: `${auxFilterText}: ${value}`
         }, detailsType)
 
     }, 500);
@@ -54,7 +56,7 @@ const FilterMenuInputText = ({ detailsType, columnType, handleClose }: FilterMen
   return (
     <Box component={'li'} sx={{ padding: '3px 30px', display: 'flex', alignItems: 'center', width: '100%' }}>
       <Input
-        placeholder='Search amount'
+        placeholder={placeholder}
         onChange={e => handleOnChangeSearch(e.target.value)}
         onKeyDown={e => handleCloseOnEnter(e.key)}
         sx={{

@@ -4,7 +4,6 @@ import { ForwardedRef, forwardRef, useContext, useEffect, useState } from 'react
 // ** MUI Imports
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
-import Divider from '@mui/material/Divider'
 import InputAdornment from '@mui/material/InputAdornment'
 import TextField from '@mui/material/TextField'
 
@@ -41,23 +40,6 @@ const CustomInputWithIcon = forwardRef(({ ...props }: PickerProps, ref: Forwarde
           </InputAdornment>
         )
       }}
-      sx={{
-        width: { sm: '180px', xs: '150px' },
-        padding: '0',
-        '& .MuiInputBase-input': { color: 'text.secondary', fontFamily: 'Inter' },
-        '& .MuiFormLabel-root': { padding: '0', fontFamily: 'Inter' }
-      }}
-      {...props}
-    />
-  )
-})
-
-const CustomInput = forwardRef(({ ...props }: PickerProps, ref: ForwardedRef<HTMLInputElement>) => {
-  return (
-    <TextField
-      size='small'
-      inputRef={ref}
-      variant='standard'
       sx={{
         width: { sm: '180px', xs: '150px' },
         padding: '0',
@@ -180,69 +162,7 @@ const FilterMenuDate = ({ detailsType, columnType, auxFilterText, handleClose }:
           />
         </DatePickerWrapper>
       </Box>
-
-      <Box component={'li'} sx={{ padding: '12px 16px' }}>
-        <Divider textAlign='left' sx={{ fontFamily: 'Inter', color: 'GrayText' }}>
-          or
-        </Divider>
-      </Box>
-
-      <Box component={'li'} sx={{ padding: '12px 16px 8px 16px' }}>
-        <Box sx={{ marginBottom: '12px' }}>
-          <DatePickerWrapper>
-            <DatePicker
-              showMonthYearPicker
-              dateFormat='MMMM'
-              selected={month}
-              shouldCloseOnSelect
-              id='month'
-              customInput={<CustomInput label='By month' />}
-              onChange={(date: Date) => {
-                setMonth(date)
-                setSubtype('month')
-              }}
-              popperClassName='account-datepicker-popper-only-month'
-              popperProps={{ strategy: 'fixed' }}
-              popperPlacement='left'
-              popperModifiers={[
-                {
-                  name: 'offset',
-                  options: {
-                    offset: [120, 10]
-                  }
-                }
-              ]}
-            />
-          </DatePickerWrapper>
-        </Box>
-
-        <Box sx={{ marginBottom: '12px' }}>
-          <DatePickerWrapper>
-            <DatePicker
-              showYearPicker
-              dateFormat='yyyy'
-              selected={year}
-              shouldCloseOnSelect
-              id='year'
-              customInput={<CustomInput label='By year' />}
-              onChange={(date: Date) => {
-                setYear(date)
-                setSubtype('year')
-              }}
-              popperProps={{ strategy: 'fixed' }}
-              popperPlacement='left'
-              popperModifiers={[
-                {
-                  name: 'offset',
-                  options: {
-                    offset: [120, 10]
-                  }
-                }
-              ]}
-            />
-          </DatePickerWrapper>
-        </Box>
-      </Box>
+        
       <Box component={'li'} sx={{ padding: '0 16px 12px 16px', textAlign: 'center' }}>
         <Button onClick={handleClick} sx={{ fontFamily: 'Inter' }} variant='outlined'>
           APPLY FILTER

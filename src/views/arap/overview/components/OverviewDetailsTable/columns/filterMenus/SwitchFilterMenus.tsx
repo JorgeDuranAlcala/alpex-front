@@ -26,6 +26,8 @@ export const SwitcherFilterMenus = ({ detailsType, field, filterType, handleClos
 
     [EFieldColumn.AMOUNT_RECEIVED]: (
       <FilterMenuInputText
+        auxFilterText="Amount Received"
+        placeholder="Search amount"
         columnType={field}
         detailsType={detailsType}
         handleClose={handleClose}
@@ -33,6 +35,8 @@ export const SwitcherFilterMenus = ({ detailsType, field, filterType, handleClos
     ),
     [EFieldColumn.AMOUNT_PAID]: (
       <FilterMenuInputText
+        auxFilterText="Amount Paid"
+        placeholder="Search amount"
         columnType={field}
         detailsType={detailsType}
         handleClose={handleClose}
@@ -40,6 +44,8 @@ export const SwitcherFilterMenus = ({ detailsType, field, filterType, handleClos
     ),
     [EFieldColumn.TRANSACTION_ID]: (
       <FilterMenuInputText
+        auxFilterText="Ref ID"
+        placeholder="Search by Transaction ID"
         columnType={field}
         detailsType={detailsType}
         handleClose={handleClose}
@@ -47,6 +53,8 @@ export const SwitcherFilterMenus = ({ detailsType, field, filterType, handleClos
     ),
     [EFieldColumn.DEPOSIT_ACC]: (
       <FilterMenuInputText
+        auxFilterText="Deposit Acct"
+        placeholder="Search by Deposit Account"
         columnType={field}
         detailsType={detailsType}
         handleClose={handleClose}
@@ -54,6 +62,8 @@ export const SwitcherFilterMenus = ({ detailsType, field, filterType, handleClos
     ),
     [EFieldColumn.ORIGIN_ACCT]: (
       <FilterMenuInputText
+        auxFilterText="Origin Acct"
+        placeholder="Search by Origin Account"
         columnType={field}
         detailsType={detailsType}
         handleClose={handleClose}
@@ -61,6 +71,8 @@ export const SwitcherFilterMenus = ({ detailsType, field, filterType, handleClos
     ),
     [EFieldColumn.INST]: (
       <FilterMenuInputText
+        auxFilterText="Inst"
+        placeholder="Search by Installment"
         columnType={field}
         detailsType={detailsType}
         handleClose={handleClose}
@@ -68,9 +80,17 @@ export const SwitcherFilterMenus = ({ detailsType, field, filterType, handleClos
     ),
     [EFieldColumn.CAPABILITY_NAME]: 
       filterType === 'broker' ? 
-      <FilterMenuBroker detailsType={detailsType} handleClose={handleClose} />
+        <FilterMenuBroker 
+          auxFilterText="Capability Name" 
+          detailsType={detailsType} 
+          handleClose={handleClose} 
+        />
       : filterType === 'reinsurer' ? 
-      <FilterMenuReinsurer detailsType={detailsType} handleClose={handleClose} />
+        <FilterMenuReinsurer 
+          auxFilterText="Capability Name" 
+          detailsType={detailsType} 
+          handleClose={handleClose} 
+        />
       : <></>
     ,
     [EFieldColumn.BROKER]: (
@@ -78,6 +98,8 @@ export const SwitcherFilterMenus = ({ detailsType, field, filterType, handleClos
     ),
     [EFieldColumn.ACCOUNT]: (
       <FilterMenuInputText
+      auxFilterText="Account"
+        placeholder="Search by Account"
         columnType={field}
         detailsType={detailsType}
         handleClose={handleClose}
@@ -85,6 +107,8 @@ export const SwitcherFilterMenus = ({ detailsType, field, filterType, handleClos
     ),
     [EFieldColumn.USER]: (
       <FilterMenuInputText
+        auxFilterText="User"
+        placeholder="Search by User"
         columnType={field}
         detailsType={detailsType}
         handleClose={handleClose}

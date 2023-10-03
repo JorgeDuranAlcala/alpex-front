@@ -15,3 +15,13 @@ export interface PayableColumn {
   transactionId: string;
   user: string;
 }
+
+export interface ExtendedPayableQueryFilters {
+  amountPaid?: number;
+  capabilityName?: string; //reinsurer
+  pmtDate?: string;
+  account?: string;
+  originAcct?: number;
+  transactionId?: string; //refId: INST0001
+  user?: string;
+}
