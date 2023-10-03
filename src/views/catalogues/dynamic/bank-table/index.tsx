@@ -51,18 +51,21 @@ export interface IBank {
       id: number;
       code: string;
       name: string;
-      active: boolean;        
+      active: boolean;
       country: string;
       createdAt: string;
       updatedAt: string;
-    } | null;
-    idCLocation: {
+  } | undefined;
+  idCLocation: {
       id: number;
       name: string;
       createdAt: string;
       active: boolean;
-    } | null;
+  } | undefined;
   furtherAccountInfo: string;
+  active: boolean,
+  createdAt: string,
+  updatedAt: string,
 }
 
 const BanksTable = () => {
