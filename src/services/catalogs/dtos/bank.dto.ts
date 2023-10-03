@@ -3,12 +3,12 @@ export interface BankDto {
     capacity: string;
     bank: string;
     beneficiary: string;
-    accountNumber: string;
+    accountNumber: number;
     swift: string;
-    aba: string;
-    clabe: string;
+    aba: number;
+    clabe: number;
     intermediary: string;
-    idCCurrency: {
+    idCCurrency?: {
         id: number;
         code: string;
         name: string;
@@ -17,7 +17,7 @@ export interface BankDto {
         createdAt: string;
         updatedAt: string;
     } | undefined;
-    idCLocation: {
+    idCLocation?: {
         id: number;
         name: string;
         createdAt: string;
