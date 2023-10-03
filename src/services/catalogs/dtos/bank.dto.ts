@@ -8,7 +8,7 @@ export interface BankDto {
     aba: string;
     clabe: string;
     intermediary: string;
-    idCCurrency: {
+    idCCurrency?: {
         id: number;
         code: string;
         name: string;
@@ -17,7 +17,7 @@ export interface BankDto {
         createdAt: string;
         updatedAt: string;
     } | undefined;
-    idCLocation: {
+    idCLocation?: {
         id: number;
         name: string;
         createdAt: string;
