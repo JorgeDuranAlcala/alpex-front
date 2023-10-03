@@ -6,6 +6,7 @@ import {
   CountInstallmentByBrokerDto,
   CountInstallmentsDto,
   InstallmentDto,
+  installmentsByAccountDto,
   installmentsHeaderDto
 } from './dtos/installments.dto'
 
@@ -107,6 +108,17 @@ class InstallmentService {
     try {
       const { data } = await AppAlpexApiGateWay.get<Promise<CountInstallmentByBrokerDto>>(
         `${INSTALLMENT_ROUTERS.COUNT_INSTALLMENTS_BY_BROKER}/?${idBroker}`
+      )
+
+      return data
+    } catch (error) {
+      throw error
+    }
+  }
+  async getInstallmentByAccount(idAccount: number): Promise<installmentsByAccountDto[]> {
+    try {
+      const { data } = await AppAlpexApiGateWay.get<Promise<installmentsByAccountDto[]>>(
+        `${INSTALLMENT_ROUTERS.INSTALLMENT_BY_ACCOUNT}/${idAccount}`
       )
 
       return data
