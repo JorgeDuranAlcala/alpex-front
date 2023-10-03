@@ -31,9 +31,9 @@ class BankService {
         'Authorization': 'Bearer ' + localStorage.getItem('accessToken'),
         'Content-type': "application/json",
         'Accept': "application/json",
-        'x-api-key': 'ZlExQKG0xPB673L3B6hClORm6oPaKcer'
+        'x-api-key': process.env.NEXT_PUBLIC_ALPEX_API_TOKEN
       }
-      const fetch_res = await fetch('https://dev.api.alpex.dynamicreinsurance.com/api/v1/catalogs/bank-accounts/add', { headers, method: 'POST', body: JSON.stringify(bank) })
+      const fetch_res = await fetch(`${process.env.NEXT_PUBLIC_APP_ALPEX_API_GATEWAY}/catalogs/bank-accounts/add`, { headers, method: 'POST', body: JSON.stringify(bank) })
       const data = await fetch_res.json()
 
       return data
@@ -49,9 +49,9 @@ class BankService {
         'Authorization': 'Bearer ' + localStorage.getItem('accessToken'),
         'Content-type': "application/json",
         'Accept': "application/json",
-        'x-api-key': 'ZlExQKG0xPB673L3B6hClORm6oPaKcer'
+        'x-api-key': process.env.NEXT_PUBLIC_ALPEX_API_TOKEN
       }
-      const fetch_res = await fetch('https://dev.api.alpex.dynamicreinsurance.com/api/v1/catalogs/bank-accounts/update', { headers, method: 'POST', body: JSON.stringify(updateData) })
+      const fetch_res = await fetch(`${process.env.NEXT_PUBLIC_APP_ALPEX_API_GATEWAY}/catalogs/bank-accounts/update`, { headers, method: 'POST', body: JSON.stringify(updateData) })
       const data = await fetch_res.json()
 
       return data

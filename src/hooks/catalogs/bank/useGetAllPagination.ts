@@ -11,7 +11,7 @@ const initialState: BankPaginationDto = {
   info: {
     count: 0,
     page: 1,
-    take: 4, //temp
+    take: 10, //temp
     pages: 0,
     next: '',
     prev: ''
@@ -21,7 +21,7 @@ const initialState: BankPaginationDto = {
 const initialStateInfo: BankInfoDto = {
   count: 0,
   page: 1,
-  take: 4,
+  take: 10,
   pages: 0,
   next: '',
   prev: ''
