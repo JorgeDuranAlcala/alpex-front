@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router'
-import { ReactNode, useState } from 'react'
+import { ReactNode, useRef, useState } from 'react'
 
 import { Filter } from '@/views/arap/_commons/interfaces/Grid'
 import { QueryFilters } from '@/views/arap/overview/interfaces/QueryFilters'
@@ -8,37 +8,44 @@ import { DifferenceGrid } from '@/views/arap/overview/interfaces/overview/Differ
 import { PayableGrid } from '@/views/arap/overview/interfaces/overview/PayableGrid'
 import { ReceivableGrid } from '@/views/arap/overview/interfaces/overview/ReceivableGrid'
 
+import { useDifferenceGrid } from '../../hooks/overviewDetails/useDifferenceGrid'
+import { usePayableGrid } from '../../hooks/overviewDetails/usePayableGrid'
+import { useReceivableGrid } from '../../hooks/overviewDetails/useReceivableGrid'
+import { ExtendedQueryFilters } from '../../interfaces/overview/ExtendedQueryFilters'
 import { useOverviewDetailsQueriesAdapter } from '../../services/_common/hooks/useOverviewDetailsQueriesAdapter'
-import { overviewDifferencesAdapter } from '../../services/getOverviewDifference/frontAdapters/overviewDifferencesAdapter'
-import { getOverviewDifferenceAllService } from '../../services/getOverviewDifference/getOverviewDifferenceAllService'
-import { overviewPayablesAdapter } from '../../services/getOverviewPayableAll/frontAdapters/overviewPayablesAdapter'
-import { getOverviewPayableAllService } from '../../services/getOverviewPayableAll/getOverviewPayableAllService'
-import { overviewReceivablesAdapter } from '../../services/getOverviewReceivableAll/frontAdapters/overviewReceivablesAdapter'
-import { getOverviewReceivableAllService } from '../../services/getOverviewReceivableAll/getOverviewReceivableAllService'
 import { GetInfoPagination, GetTotalAmount, OverviewDetailsContext } from './OverviewDetailsContext'
 
 const SWITCH_DETAILS_ERROR = 'Error: no details type provided'
 
 export const OverViewDetailsProvider = ({ children }: { children: ReactNode }) => {
   const router = useRouter()
+  
   const {getParamsToSend} = useOverviewDetailsQueriesAdapter()
+  const { getReceivableGrid, getReceivableTableFilters, deleteReceivableTableFilters } = useReceivableGrid()
+  const { getPayableGrid, getPayableTableFilters, deletePayableTableFilters } = usePayableGrid()
+  const { getDifferenceGrid, getDifferenceTableFilters, deleteDifferenceTableFilters } = useDifferenceGrid()
+
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [payableGrid, setPayableGrid] = useState<PayableGrid | null>(null)
   const [receivableGrid, setReceivableGrid] = useState<ReceivableGrid | null>(null)
   const [differenceGrid, setDifferenceGrid] = useState<DifferenceGrid | null>(null)
 
+  const pageRef = useRef(1);
+  const filtersRef = useRef<Filter[]>([]);
+  const extendedQueryFiltersRef = useRef<ExtendedQueryFilters | null>(null); 
+
+
   const getQueryFilters = (): QueryFilters => {
-    const queryFilters: QueryFilters = {
+   return {
       broker: (router.query.broker as string) || 'all',
       reinsurer: (router.query.reinsurer as string) || 'all',
       status: (router.query.status as QueryFilters['status']) || 'all',
       transaction: (router.query.transaction as QueryFilters['transaction']) || 'all',
       date: (router.query.date as string) || '',
       id: (router.query.id as string) || '',
-      transactionType: (router.query.transactionType as QueryFilters['transactionType']) || 'all'
+      transactionType: (router.query.transactionType as QueryFilters['transactionType']) || 'all',
+      page: pageRef.current,
     }
-
-    return queryFilters
   }
 
   const loadDetailsGrid = (detailsType: DetailsType) => {
@@ -62,16 +69,16 @@ export const OverViewDetailsProvider = ({ children }: { children: ReactNode }) =
 
   const loadPayableGrid = async () => {
     const queryFilters = getQueryFilters()
-    console.log('queryFilters', queryFilters)
-
     const paramsToSend = getParamsToSend(queryFilters);
-    const payables = await getOverviewPayableAllService(paramsToSend);
-    const payablesAdapted = overviewPayablesAdapter(payables, {
-      totalAmount: router.query.totalAmount ? +router.query.totalAmount : 0,
-      currency: router.query.currency  ? router.query.currency as string: 'unknown'
-    })
+    const payablesAdapted = await getPayableGrid({
+      ...paramsToSend, 
+      ...extendedQueryFiltersRef.current
+    });
 
-    setPayableGrid(payablesAdapted);
+    setPayableGrid({
+      ...payablesAdapted,
+      filters: [...filtersRef.current, ...payablesAdapted.filters]
+    });
 
     setIsLoading(false);
 
@@ -79,32 +86,32 @@ export const OverViewDetailsProvider = ({ children }: { children: ReactNode }) =
 
   const loadReceivableGrid = async () => {
     const queryFilters = getQueryFilters()
-    console.log('queryFilters', queryFilters)
-
     const paramsToSend = getParamsToSend(queryFilters);
-    const receivables = await getOverviewReceivableAllService(paramsToSend);
-    const receivablesAdapted = overviewReceivablesAdapter(receivables, {
-      totalAmount: router.query.totalAmount ? +router.query.totalAmount : 0,
-      currency: router.query.currency  ? router.query.currency as string: 'unknown'
+    const receivablesAdapted = await getReceivableGrid({
+      ...paramsToSend,
+      ...extendedQueryFiltersRef.current
     })
 
-    setReceivableGrid(receivablesAdapted);
+    setReceivableGrid({
+      ...receivablesAdapted,
+      filters: [...filtersRef.current, ...receivablesAdapted.filters]
+    });
 
     setIsLoading(false);
   }
 
   const loadDifferenceGrid = async () => {
     const queryFilters = getQueryFilters()
-    console.log('queryFilters', queryFilters)
-    
     const paramsToSend = getParamsToSend(queryFilters);
-    const differences = await getOverviewDifferenceAllService(paramsToSend);
-    const differencesAdapted = overviewDifferencesAdapter(differences, {
-      totalAmount: router.query.totalAmount ? +router.query.totalAmount : 0,
-      currency: router.query.currency  ? router.query.currency as string: 'unknown'
-    })
+    const differencesAdapted = await getDifferenceGrid({
+      ...paramsToSend, 
+      ...extendedQueryFiltersRef.current
+    }); 
 
-    setDifferenceGrid(differencesAdapted);
+    setDifferenceGrid({
+      ...differencesAdapted,
+      filters: [...filtersRef.current, ...differencesAdapted.filters]
+    });
 
     setIsLoading(false);
 
@@ -114,94 +121,44 @@ export const OverViewDetailsProvider = ({ children }: { children: ReactNode }) =
     console.log('onChangePage', page, detailsType)
 
     const detailsGrid = payableGrid || receivableGrid || differenceGrid
-
     if (!detailsGrid) return
 
-    switch (detailsType) {
-      case 'Payable':
-        setPayableGrid({
-          ...payableGrid!,
-          info: {
-            ...payableGrid!.info,
-            page
-          }
-        })
-        break
-      case 'Receivable':
-        setReceivableGrid({
-          ...receivableGrid!,
-          info: {
-            ...receivableGrid!.info,
-            page
-          }
-        })
-        break
-      case 'Difference':
-        setDifferenceGrid({
-          ...differenceGrid!,
-          info: {
-            ...differenceGrid!.info,
-            page
-          }
-        })
-      default:
-        break
-    }
+    pageRef.current = page;
+
+    loadDetailsGrid(detailsType)
   }
 
   const handleChangeFilters = (filters: Filter, detailsType: DetailsType) => {
     console.log('handleChangeFilters', filters)
 
-    const detailsGrid = payableGrid || receivableGrid || differenceGrid
-
-    if (!detailsGrid) return
+    // const detailsGrid = payableGrid || receivableGrid || differenceGrid
+    // if (!detailsGrid) return
 
     setIsLoading(true)
 
     switch (detailsType) {
       case 'Payable':
-        if (payableGrid!.payableGridList.length === 0) return
-        const tempPayableFilters: Filter[] = payableGrid!.filters || []
-
-        // Todo: reemplazar este Timeout por el servicio que se implementará
-        setTimeout(() => {
-          setPayableGrid({
-            ...payableGrid!,
-            filters: [...tempPayableFilters, filters]
-          })
-
-          setIsLoading(false)
-        }, 500)
+        // if (payableGrid!.payableGridList.length === 0) return
+        const payableFilters = getPayableTableFilters(filters, payableGrid);
+        extendedQueryFiltersRef.current = payableFilters.queryFilters;
+        filtersRef.current = payableFilters.tableFilters;
+        loadDetailsGrid(detailsType);
         break
 
       case 'Receivable':
-        if (receivableGrid!.receivableGridList.length === 0) return
-        const tempReceivableFilters: Filter[] = receivableGrid!.filters || []
-
-        // Todo: reemplazar este Timeout por el servicio que se implementará
-        setTimeout(() => {
-          setReceivableGrid({
-            ...receivableGrid!,
-            filters: [...tempReceivableFilters, filters]
-          })
-
-          setIsLoading(false)
-        }, 500)
+        // if (receivableGrid!.receivableGridList.length === 0) return
+        const receivableFilters = getReceivableTableFilters(filters, receivableGrid);
+        extendedQueryFiltersRef.current = receivableFilters.queryFilters;
+        filtersRef.current = receivableFilters.tableFilters;
+        loadDetailsGrid(detailsType);
         break
 
       case 'Difference':
-        if (differenceGrid!.differenceGridList.length === 0) return
-        const tempDifferenceFilters: Filter[] = differenceGrid!.filters || []
-
-        // Todo: reemplazar este Timeout por el servicio que se implementará
-        setTimeout(() => {
-          setDifferenceGrid({
-            ...differenceGrid!,
-            filters: [...tempDifferenceFilters, filters]
-          })
-
-          setIsLoading(false)
-        }, 500)
+        // if (differenceGrid!.differenceGridList.length === 0) return
+        const differenceFilters = getDifferenceTableFilters(filters, differenceGrid);
+        extendedQueryFiltersRef.current = differenceFilters.queryFilters;
+        filtersRef.current = differenceFilters.tableFilters;
+        loadDetailsGrid(detailsType);
         break
 
       default:
@@ -211,56 +168,34 @@ export const OverViewDetailsProvider = ({ children }: { children: ReactNode }) =
   }
 
   const handleDeleteFilters = (type: string, detailsType: DetailsType) => {
-    const detailsGrid = payableGrid || receivableGrid || differenceGrid
-
-    if (!detailsGrid) return
+    // const detailsGrid = payableGrid || receivableGrid || differenceGrid
+    // if (!detailsGrid) return
 
     setIsLoading(true)
 
     switch (detailsType) {
       case 'Payable':
-        if (payableGrid!.payableGridList.length === 0) return
-        const tempPayableFilters: Filter[] = payableGrid!.filters.filter(filterItem => filterItem.type !== type)
-
-        // Todo: reemplazar este Timeout por el servicio que se implementará
-        setTimeout(() => {
-          setPayableGrid({
-            ...payableGrid!,
-            filters: [...tempPayableFilters]
-          })
-
-          setIsLoading(false)
-        }, 500)
+        // if (payableGrid!.payableGridList.length === 0) return
+        const payableFilters = deletePayableTableFilters(type, payableGrid);
+        extendedQueryFiltersRef.current = payableFilters.queryFilters;
+        filtersRef.current = payableFilters.tableFilters;
+        loadDetailsGrid(detailsType);
         break
 
       case 'Receivable':
-        if (receivableGrid!.receivableGridList.length === 0) return
-        const tempReceivableFilters: Filter[] = receivableGrid!.filters.filter(filterItem => filterItem.type !== type)
-
-        // Todo: reemplazar este Timeout por el servicio que se implementará
-        setTimeout(() => {
-          setReceivableGrid({
-            ...receivableGrid!,
-            filters: [...tempReceivableFilters]
-          })
-
-          setIsLoading(false)
-        }, 500)
+        // if (receivableGrid!.receivableGridList.length === 0) return
+        const receivableFilters = deleteReceivableTableFilters(type, receivableGrid);
+        extendedQueryFiltersRef.current = receivableFilters.queryFilters;
+        filtersRef.current = receivableFilters.tableFilters;
+        loadDetailsGrid(detailsType);
         break
 
       case 'Difference':
-        if (differenceGrid!.differenceGridList.length === 0) return
-        const tempDifferenceFilters: Filter[] = differenceGrid!.filters.filter(filterItem => filterItem.type !== type)
-
-        // Todo: reemplazar este Timeout por el servicio que se implementará
-        setTimeout(() => {
-          setDifferenceGrid({
-            ...differenceGrid!,
-            filters: [...tempDifferenceFilters]
-          })
-
-          setIsLoading(false)
-        }, 500)
+        // if (differenceGrid!.differenceGridList.length === 0) return
+       const differenceFilters =deleteDifferenceTableFilters(type, differenceGrid);
+        extendedQueryFiltersRef.current = differenceFilters.queryFilters;
+        filtersRef.current = differenceFilters.tableFilters;
+        loadDetailsGrid(detailsType);
         break
 
       default:

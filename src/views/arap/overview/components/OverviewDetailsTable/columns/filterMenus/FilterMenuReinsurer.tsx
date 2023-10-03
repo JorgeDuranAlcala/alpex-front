@@ -8,12 +8,13 @@ import { useGetAllReinsuranceCompanies } from '@/hooks/catalogs/reinsuranceCompa
 
 
 interface FilterMenuReinsurerProps {
+  auxFilterText?: string
   detailsType: DetailsType;
   handleClose?: () => void;
 
 }
 
-const FilterMenuReinsurer = ({ detailsType, handleClose }: FilterMenuReinsurerProps) => {
+const FilterMenuReinsurer = ({auxFilterText = 'Reinsurer', detailsType, handleClose }: FilterMenuReinsurerProps) => {
 
   const { handleChangeFilters } = useContext(OverviewDetailsContext);
   const { reinsuranceCompany: reinsurers } = useGetAllReinsuranceCompanies();
@@ -30,7 +31,7 @@ const FilterMenuReinsurer = ({ detailsType, handleClose }: FilterMenuReinsurerPr
     handleChangeFilters({
       type: 'reinsurer',
       value: selectedReinsurer.id,
-      text: selectedReinsurer.name
+      text: `${auxFilterText}: ${	selectedReinsurer.name}`
     }, detailsType);
 
     if (handleClose) {
