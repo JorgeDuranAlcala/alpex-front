@@ -277,7 +277,6 @@ const BanksTable = () => {
     })
   }
 
-
   const onSearchBank = (value: string) => {
     /* TODO */
     console.log("SEARCH", value)
