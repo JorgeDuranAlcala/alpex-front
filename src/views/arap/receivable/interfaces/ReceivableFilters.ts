@@ -2,8 +2,6 @@
 export interface ReceivableFilters {
   date: string;
   capability: string;
-
-  
   accountId?: number;
   capabilityId?: number;
   capabilityName?: string;
