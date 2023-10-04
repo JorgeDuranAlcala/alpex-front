@@ -3,7 +3,6 @@ import { GetArapAllParamsToSend } from '../getArapAllParamsToSend'
 
 export const overviewPaymentsAdapterQueries = (queryParams: QueryFilters): GetArapAllParamsToSend => {
 
-  console.log(queryParams)
   const paramsToSend: GetArapAllParamsToSend = {
     date: queryParams.date.split('T')[0],
   }
@@ -29,7 +28,9 @@ export const overviewPaymentsAdapterQueries = (queryParams: QueryFilters): GetAr
   }
 
   if (queryParams.transactionType !== 'all') {
-    paramsToSend.transactionType = queryParams.transactionType
+    paramsToSend.transaction = queryParams.transactionType
+    
+    // paramsToSend.transactionType = queryParams.transactionType
   }
 
   if (queryParams.page) {

@@ -15,7 +15,14 @@ export const TextId = ({ value, onChange }: TextIdProps) => {
   const [inputValue, setInputValue] = useState(value)
 
   const handleOnChange = (e:  ChangeEvent<HTMLInputElement>) => {
+
+    if (isNaN(+e.target.value) || +e.target.value <= 0) {    
+      setInputValue('');
+      return;
+    }
+
     setInputValue(e.target.value)
+
     if (timeout) {
       clearTimeout(timeout);
     }
