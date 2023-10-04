@@ -18,6 +18,7 @@ export const TextId = ({ value, onChange }: TextIdProps) => {
 
     if (isNaN(+e.target.value) || +e.target.value <= 0) {    
       setInputValue('');
+      
       return;
     }
 
