@@ -54,7 +54,7 @@ const schema = yup.object().shape({
 });
 
 interface FormProps {
-    id: string
+    id: number
 }
 
 const Form = ({
