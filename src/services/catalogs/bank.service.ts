@@ -38,7 +38,6 @@ class BankService {
 
       return data
     } catch (error) {
-      console.log("error while posting: ", error.message)
       throw error
     }
   }

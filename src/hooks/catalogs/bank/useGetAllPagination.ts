@@ -41,7 +41,9 @@ const useGetAllPagination = () => {
       const pages = Math.ceil(banksCount.length / bankPagination.info.take)
       setBankInfoPage({ ...bankPagination.info, count: banksCount.length, pages })
     } catch (err) {
+      if(!(err instanceof Error)) return;
       console.log("error", err)
+      throw error
     }
   }
 

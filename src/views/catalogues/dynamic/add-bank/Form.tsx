@@ -86,6 +86,7 @@ const Form = () => {
         reset();
       }
     } catch(err) {
+      if(!(err instanceof Error)) return;
       toast.error('error: ' + err.message)
     }
   };

@@ -42,27 +42,30 @@ export interface IBank {
   capacity: string;
   bank: string;
   beneficiary: string;
-  accountNumber: string;
+  accountNumber: number;
   swift: string;
-  aba: string;
-  clabe: string;
+  aba: number;
+  clabe: number;
   intermediary: string;
-  idCCurrency: {
+  idCCurrency?: {
       id: number;
       code: string;
       name: string;
-      active: boolean;        
+      active: boolean;
       country: string;
       createdAt: string;
       updatedAt: string;
-    } | null;
-    idCLocation: {
+  } | null;
+  idCLocation?: {
       id: number;
       name: string;
       createdAt: string;
       active: boolean;
-    } | null;
+  } | null;
   furtherAccountInfo: string;
+  active: boolean,
+  createdAt: string,
+  updatedAt: string,
 }
 
 const BanksTable = () => {

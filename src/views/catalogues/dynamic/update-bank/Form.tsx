@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 import { DynamicContext } from 'src/context/dynamic/reducer';
 import DynamicActionTypes from 'src/context/dynamic/actionTypes';
-
+import { BankDto } from 'src/services/catalogs/dtos/bank.dto'
 
 //import { IBank} from 'src/views/dynamic/bank-table'
 
@@ -53,7 +53,7 @@ const schema = yup.object().shape({
 });
 
 interface FormProps {
-    id: string
+    id: number
 }
 
 const Form = ({
@@ -92,14 +92,14 @@ const Form = ({
     clabe:  Number(bank.clabe),
     intermediary: bank.intermediary,
     furtherAccountInfo: bank.furtherAccountInfo,
-    idCCurrency: Number(bank.idCCurrency), 
-    idCLocation: Number(bank.idCLocation),
+    idCCurrency: bank.idCCurrency, 
+    idCLocation: bank.idCLocation,
   }
 
   const onSubmit = async (data: any) => {
     try {
       if(!bank) return;
-      const result = await updateBank({
+      const body = {
         id: bank.id,
         capacity: data.capacity,
         bank: data.bank,
@@ -113,7 +113,8 @@ const Form = ({
         active: bank.active,
         createdAt: bank.createdAt,
         updatedAt: new Date().toISOString(),
-      });
+      } as Partial<BankDto>;
+      const result = await updateBank(body);
 
       if(result) {
         dispatch({ type: DynamicActionTypes.UPDATE_BANK, payload: {...result, id: bank.id}});
@@ -121,6 +122,7 @@ const Form = ({
         reset(result)
       }
     } catch(err) {
+      if(!(err instanceof Error)) return;
       toast.error('error: ' + err.message)
     }
   };
