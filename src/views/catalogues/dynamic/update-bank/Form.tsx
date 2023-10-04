@@ -14,6 +14,7 @@ import {
 } from '@mui/material';
 import { DynamicContext } from 'src/context/dynamic/reducer';
 import DynamicActionTypes from 'src/context/dynamic/actionTypes';
+import { BankDto } from 'src/services/catalogs/dtos/bank.dto'
 
 
 //import { IBank} from 'src/views/dynamic/bank-table'
@@ -92,29 +93,25 @@ const Form = ({
     clabe:  Number(bank.clabe),
     intermediary: bank.intermediary,
     furtherAccountInfo: bank.furtherAccountInfo,
-    idCCurrency: Number(bank.idCCurrency), 
-    idCLocation: Number(bank.idCLocation),
+    idCCurrency: bank.idCCurrency, 
+    idCLocation: bank.idCLocation,
   }
 
   const onSubmit = async (data: any) => {
     try {
       if(!bank) return;
-      const result = await updateBank({
+      const body = {
+        ...data,
         id: bank.id,
-        capacity: data.capacity,
-        bank: data.bank,
         beneficiary: data.beneficiary,
         accountNumber: Number(data.accountNumber),
-        swift: data.swift,
         aba: Number(data.aba),
         clabe:  Number(data.clabe),
-        intermediary: data.intermediary,
-        furtherAccountInfo: data.furtherAccountInfo,
         active: bank.active,
         createdAt: bank.createdAt,
         updatedAt: new Date().toISOString(),
-      });
-
+      } as Partial<BankDto>;
+      const result = await updateBank(body);
       if(result) {
         dispatch({ type: DynamicActionTypes.UPDATE_BANK, payload: {...result, id: bank.id}});
         toast.success('Bank Account updated Successfully')
