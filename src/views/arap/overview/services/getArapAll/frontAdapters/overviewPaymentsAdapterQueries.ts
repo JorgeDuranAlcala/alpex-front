@@ -2,8 +2,10 @@ import { QueryFilters } from '@/views/arap/overview/interfaces/QueryFilters'
 import { GetArapAllParamsToSend } from '../getArapAllParamsToSend'
 
 export const overviewPaymentsAdapterQueries = (queryParams: QueryFilters): GetArapAllParamsToSend => {
+
+  console.log(queryParams)
   const paramsToSend: GetArapAllParamsToSend = {
-    date: queryParams.date.split('T')[0]
+    date: queryParams.date.split('T')[0],
   }
 
   if (queryParams.id) {

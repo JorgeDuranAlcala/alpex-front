@@ -12,7 +12,7 @@ export const InputDateFilter = ({ value, onChange }: InputDateFilterProps) => {
   const {handleSaveMasterFilters} = useMasterFiltersStorage();
   const [dateValue, setDatetValue] = useState(value)
 
-  console.log(dateValue)
+  // console.log(dateValue)
 
   const handleOnChange = (date: Date | null) => {
     if (!date) return

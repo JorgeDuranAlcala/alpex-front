@@ -14,7 +14,7 @@ export const MasterFilters = () => {
   const { queryFilters, handleSelectChange, handleDateChange, handleTextChange } = useMasterFilters()
   
   const { gridFilters } = useContext(MasterFiltersContext)
-
+  
   const selectedFilters = {
     ...queryFilters,
     ...gridFilters,
