@@ -16,6 +16,7 @@ import { ButtonClose, HeaderTitleModal } from 'src/styles/modal/modal.styled'
 import Icon from 'src/@core/components/icon'
 
 // ** Custom Hooks imports
+import { useDeleteBank } from 'src/hooks/catalogs/bank/useDelete'
 
 // ** Custom Components Imports
 import CustomPagination from '../CustomPaginationImpl'
@@ -31,22 +32,40 @@ import fonts from 'src/views/accounts/font'
 import { DynamicContext } from 'src/context/dynamic/reducer';
 import DynamicActionTypes from 'src/context/dynamic/actionTypes';
 
+import toast from 'react-hot-toast'
+
 // bank
 
 
 export interface IBank {
-    id: string
-    capacity: string;
-    location: 'MX' | 'USA';
-    bank: string;
-    beneficiary: string;
-    accountNumber: string;
-    swift: string;
-    aba: string;
-    clabe: string;
-    currency: string;
-    intermediary: string;
-    furtherAccountInfo: string;
+  id: number
+  capacity: string;
+  bank: string;
+  beneficiary: string;
+  accountNumber: number;
+  swift: string;
+  aba: number;
+  clabe: number;
+  intermediary: string;
+  idCCurrency?: {
+      id: number;
+      code: string;
+      name: string;
+      active: boolean;
+      country: string;
+      createdAt: string;
+      updatedAt: string;
+  } | null;
+  idCLocation?: {
+      id: number;
+      name: string;
+      createdAt: string;
+      active: boolean;
+  } | null;
+  furtherAccountInfo: string;
+  active: boolean,
+  createdAt: string,
+  updatedAt: string,
 }
 
 const BanksTable = () => {
@@ -56,15 +75,20 @@ const BanksTable = () => {
 
   const [openDelete, setOpenDelete] = useState(false)
   const [openDeleteRows, setOpenDeleteRows] = useState(false)
-  const [bankToDelete, setBankToDelete] = useState("0")
+  const [bankToDelete, setBankToDelete] = useState(0)
+
+  
 
   //hooks
-  const {  
+  const {
     banksPagination,
     setBanksPagination,
     banks,
-    bankInfoPage
-   } = useGetAllPagination()
+    bankInfoPage,
+    getBanksPagination
+  } = useGetAllPagination()
+
+  const { deleteBank } = useDeleteBank()
 
 
   // context
@@ -90,7 +114,7 @@ const BanksTable = () => {
       disableColumnMenu: true,
       sortable: false,
       headerClassName: 'catalogue-column-header',
-      renderHeader: ({}) => (
+      renderHeader: ({ }) => (
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative' }}>
           <Typography
             component={'span'}
@@ -116,7 +140,7 @@ const BanksTable = () => {
       disableColumnMenu: true,
       sortable: false,
       headerClassName: 'catalogue-column-header',
-      renderHeader: ({}) => (
+      renderHeader: ({ }) => (
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative' }}>
           <Typography
             component={'span'}
@@ -142,7 +166,7 @@ const BanksTable = () => {
       disableColumnMenu: true,
       sortable: false,
       headerClassName: 'catalogue-column-header',
-      renderHeader: ({}) => (
+      renderHeader: ({ }) => (
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative' }}>
           <Typography
             component={'span'}
@@ -154,7 +178,7 @@ const BanksTable = () => {
       ),
       renderCell: ({ row }) => (
         <Typography sx={{ color: colors.text.secondary, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
-          {row.location}
+          {row.idCLocation ? row.idCLocation.name : "None"}
         </Typography>
       )
     },
@@ -167,7 +191,7 @@ const BanksTable = () => {
       align: 'right',
       disableColumnMenu: true,
       cellClassName: 'catalogue-column-cell-pl-0',
-      renderHeader: ({}) => (
+      renderHeader: ({ }) => (
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative' }}>
           <Typography
             component={'span'}
@@ -212,43 +236,51 @@ const BanksTable = () => {
     }
   ]
 
-  useEffect(() => {
-    setBanksPagination({ ...banksPagination })
-    //eslint-disable-next-line
-  }, [])
+
 
   useEffect(() => {
     setBanksList(banks || [])
   }, [banks])
 
-
-  const handleSelectEdit = (id: string | null) => {
+  const handleSelectEdit = (id: number | null) => {
     router.push({ pathname: '/catalogues/dynamic/update-bank', query: { id } })
   }
 
 
   const deleteRows = async () => {
+    Promise.all(selectedRows.map(async (id) => await deleteBank(id)))
+    .then(() => {
+      getBanksPagination({ ...banksPagination });
+      toast.success("all rows deleted")
+    })
+    .catch(error => toast.error(error.message))
     setOpenDeleteRows(false)
   }
 
-  const openDeleteModal = (id: string) => {
+  const openDeleteModal = (id: number) => {
     setBankToDelete(id)
     setOpenDelete(true)
   }
 
   const deleteSingleBank = async () => {
-    dispatch({ type: DynamicActionTypes.REMOVE_BANK, payload: { id: bankToDelete}})
+    dispatch({ type: DynamicActionTypes.REMOVE_BANK, payload: { id: bankToDelete } })
+    deleteBank(bankToDelete)
+    .then(() => {
+      getBanksPagination({ ...banksPagination });
+      toast.success("Row deleted")
+    })
+    .catch(error => toast.error(error.message))
     setOpenDelete(false)
   }
 
   const handleDispatch = (e: any, value: number) => {
     setBanksPagination({
       ...banksPagination,
-      info: { ...banksPagination.info, page: value }
+      info: { ...bankInfoPage, page: value }
     })
   }
 
-  
+
   const onSearchBank = (value: string) => {
     /* TODO */
     console.log("SEARCH", value)
@@ -274,7 +306,7 @@ const BanksTable = () => {
             rows={banksList}
             columns={column}
             pagination
-            pageSize={10}
+            pageSize={bankInfoPage.take}
             components={{
               Pagination: CustomPagination
             }}
