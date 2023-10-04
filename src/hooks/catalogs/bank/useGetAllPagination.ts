@@ -43,7 +43,7 @@ const useGetAllPagination = () => {
     } catch (err) {
       if(!(err instanceof Error)) return;
       console.log("error", err)
-      throw error
+      throw err
     }
   }
 
