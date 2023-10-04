@@ -151,9 +151,14 @@ export const columns: GridColumns<ReceivableColumn> = [
       <ColumnHeader colDef={colDef} type={EFieldColumn.DEPOSIT_ACC} detailsType={DETAILS_TYPE} />
     ),
     renderCell: ({ row }) => (
-      <Typography sx={{ color: colors.text.secondary, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
-        {row.deposit_acc}
-      </Typography>
+      <DynamicTooltip
+        name={row.deposit_acc}
+        sx={{
+          color: colors.text.secondary,
+          fontSize: fonts.size.px14,
+          fontFamily: fonts.inter
+        }}
+      />
     )
   },
   {
