@@ -5,7 +5,9 @@ import { PayableGrid } from '../interfaces/PayableGrid';
 import { PayableContext } from "./PayableContext";
 
 import { Filter } from "../../_commons/interfaces/Grid";
-import { payables_mock } from "../../mocks/payables_mock";
+import { payablesAdapter } from "../services/getPayablesAll/frontAdapters/payablesAdapter";
+import { payablesFiltersAdapter } from "../services/getPayablesAll/frontAdapters/payablesFiltersAdapter";
+import { getPayablesAllService } from "../services/getPayablesAll/getPayablesAllService";
 
 export const PayableProvider = ({ children }: { children: ReactNode }) => {
 
@@ -13,36 +15,21 @@ export const PayableProvider = ({ children }: { children: ReactNode }) => {
 
   const [payableGrid, setPayableGrid] = useState<PayableGrid | null>(null);
 
-
-
-  const loadPayableGrid = (filters: PayableFilters) => {
+  const loadPayableGrid = async (payableFilters: PayableFilters) => {
     setIsLoading(true);
 
-    console.log('filters', filters);
+    const filters = payablesFiltersAdapter(payableFilters)
+    const payables = await getPayablesAllService(filters);
+    const payablesAdapted = payablesAdapter(payables);
 
-    // Todo: reemplazar este timeout por el servicio que se implementará
-    setTimeout(() => {
-
-
-      const infoPages = {
-        count: payables_mock.length,
-        page: 1,
-        take: 10,
-        pages: Math.ceil(payables_mock.length / 10),
-        next: null,
-        prev: null,
-      }
-
-      setPayableGrid({
-        payableGridList: payables_mock,
-        info: infoPages,
+    setPayableGrid({
+        payableGridList: payablesAdapted.payableGridList,
+        info: payablesAdapted.info,
         isLoading: false,
-        filters: [],
+        filters: [...payablesAdapted.filters],
       });
 
-      setIsLoading(false);
-    }, 500);
-
+    setIsLoading(false);
 
   }
 

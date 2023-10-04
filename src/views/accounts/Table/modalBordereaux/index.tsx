@@ -23,6 +23,8 @@ import {
 import React, { useEffect, useState } from 'react'
 import Icon from 'src/@core/components/icon'
 
+import { IS_DEMO } from 'src/utils/isDemo'
+
 interface IModalBordereaux {
   headingText: string
   text: string
@@ -133,7 +135,7 @@ const ModalBordereaux: React.FC<IModalBordereaux> = ({
           })
           await delayMs(1000)
 
-          const fileToDownload = new File([bourderauBuffer], 'REINSURANCE BDX DYNAMIC.xlsx')
+          const fileToDownload = new File([bourderauBuffer], `REINSURANCE BDX ${!IS_DEMO ? "DYNAMIC" : ""}.xlsx`)
           const downloadUrl = URL.createObjectURL(fileToDownload)
           const link = document.createElement('a')
           link.href = downloadUrl

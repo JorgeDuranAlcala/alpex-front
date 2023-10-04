@@ -4,6 +4,8 @@ import Box, { BoxProps } from '@mui/material/Box'
 import Lottie from 'react-lottie'
 import LoaderAlpex from './Alpex-loader.json'
 
+import { IS_DEMO } from 'src/utils/isDemo'
+
 interface IPropsLoader {
   width: string
   height: string
@@ -42,7 +44,7 @@ const Spinner = ({ sx }: { sx?: BoxProps['sx'] }) => {
         ...sx
       }}
     >
-      <Loader width={'59.31px'} height={'66.52px'} />
+      {!IS_DEMO && <Loader width={'59.31px'} height={'66.52px'} /> }
       <Typography
         sx={{
           fontStyle: 'normal',

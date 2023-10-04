@@ -47,21 +47,13 @@ export const InfoCardHeader = ({
           <TitleH5>{name}</TitleH5>
         </Box>
 
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'flex-end',
-
-            color: 'rgba(77, 80, 98, 0.87)'
-          }}
-        >
+        <InfoTextsContainer>
           {addressString ? <Subtitle_1>{addressString}</Subtitle_1> : null}
 
           {phone ? <Subtitle_1>Tel: {phone}</Subtitle_1> : null}
 
           {email ? <Subtitle_1>Email: {email}</Subtitle_1> : null}
-        </Box>
+        </InfoTextsContainer>
       </ChildContainer>
 
       <ChildContainer>
@@ -88,8 +80,33 @@ const InfoCardHeaderContainer = styled(Box)(() => ({
   padding: '20px'
 }))
 
-const ChildContainer = styled(Box)(() => ({
+const ChildContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
-  justifyContent: 'space-between'
+  justifyContent: 'space-between',
+
+  [theme.breakpoints.down('md')]: {
+    flexDirection: 'column',
+    alignItems: 'stretch',
+    gap: '16px'
+  }
+}))
+
+const InfoTextsContainer = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'flex-end',
+
+  color: 'rgba(77, 80, 98, 0.87)',
+
+  minWidth: '200px',
+  
+  // ? this selector is the email
+  '>p:nth-child(3)': {
+    textAlign: 'right',
+  },
+
+  [theme.breakpoints.down('sm')]: {
+    alignItems: 'flex-start'
+  }
 }))

@@ -49,7 +49,9 @@ import { ButtonClose, HeaderTitleModal } from '@/styles/modal/modal.styled'
 import { DisableForm } from '@/views/accounts/new-account-steps/_commons/DisableForm'
 
 // ** Nextjs
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/router';
+
+import { IS_DEMO } from 'src/utils/isDemo'
 
 interface InstallmentErrors {
   errorFieldRequired: boolean
@@ -406,7 +408,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange, disableSect
                     thousandSeparator=','
                     customInput={TextField}
                     id='DynamicNetPremium'
-                    label='Dynamic net premium'
+                    label={`${!IS_DEMO ? "Dynamic" : ""} net premium`}
                     multiline
                     variant='outlined'
                     value={accountData ? accountData?.securitiesTotal[0]?.receivedNetPremium : ' '}

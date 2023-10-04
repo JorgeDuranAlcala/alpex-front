@@ -14,12 +14,15 @@ import {
 import { DynamicContext } from 'src/context/dynamic/reducer';
 import DynamicActionTypes from 'src/context/dynamic/actionTypes';
 
-import { useRouter } from 'next/router'
+import { useAddBank } from 'src/hooks/catalogs/bank/useAdd'
+import { useGetAllCurrencies } from 'src/hooks/catalogs/currency/useGetAll'
+import { useGetAllCountries } from 'src/hooks/catalogs/country/useGetAll'
 
+import toast from 'react-hot-toast'
 
 const schema = yup.object().shape({
   capacity: yup.string().required('Este campo es obligatorio'),
-  location: yup.string().required('Este campo es obligatorio'),
+  idCLocation: yup.string(),
   bank: yup.string().required('Este campo es obligatorio'),
   beneficiary: yup.string().required('Este campo es obligatorio'),
   accountNumber: yup
@@ -39,7 +42,7 @@ const schema = yup.object().shape({
     .string()
     .required('Este campo es obligatorio')
     .matches(/^\d{1,18}$/, 'El campo debe contener hasta 18 caracteres numéricos'),
-  currency: yup.string().required('Este campo es obligatorio'),
+  idCCurrency: yup.string(),
   intermediary: yup.string().required('Este campo es obligatorio'),
   furtherAccountInfo: yup.string().required('Este campo es obligatorio'),
 });
@@ -48,19 +51,44 @@ const Form = () => {
   const {
     control,
     handleSubmit,
-    formState: { errors }
+    formState: { errors },
+    reset
   } = useForm({
     mode: 'onBlur',
     resolver: yupResolver(schema)
   })
 
   const { dispatch } = React.useContext(DynamicContext);
-  const router = useRouter()
+  const { saveBank } = useAddBank()
+  const { currencies } = useGetAllCurrencies()
+  const { countries } =  useGetAllCountries()
 
-
-  const onSubmit = (data: any) => {
-    dispatch({ type: DynamicActionTypes.SET_BANK, payload: data});
-    router.push('/catalogues/dynamic')
+  const onSubmit = async (data: any) => {
+    try {      
+      const body = {
+        capacity: data.capacity,
+        bank: data.bank,
+        beneficiary: data.beneficiary,
+        accountNumber: Number(data.accountNumber),
+        swift: data.swift,
+        aba: Number(data.aba),
+        clabe:  Number(data.clabe),
+        intermediary: data.intermediary,
+        furtherAccountInfo: data.furtherAccountInfo,
+        active: true,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      }
+      const result = await saveBank(body);
+      if(result) {
+        dispatch({ type: DynamicActionTypes.SET_BANK, payload: result});
+        toast.success('Bank Account created Successfully')
+        reset();
+      }
+    } catch(err: any) {
+      if(!(err instanceof Error)) return;
+      toast.error('error: ' + err.message)
+    }
   };
 
   return (
@@ -86,17 +114,18 @@ const Form = () => {
                 </FormControl>
               </Grid>
 
-              <Grid item xs={12} md={4} >
-                <FormControl fullWidth sx={{ mb: 2 }}>
+              <Grid item xs={12} md={4}>
+                <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
                   <InputLabel id="location-label">Location</InputLabel>
                   <Controller
-                    name="location"
+                    name="idCLocation"
                     control={control}
                     defaultValue=""
                     render={({ field }) => (
                       <Select labelId="location-label" label="Location" {...field}>
-                        <MenuItem value="MX">MX</MenuItem>
-                        <MenuItem value="USA">USA</MenuItem>
+                        {countries.map(country => (
+                           <MenuItem key={country.id} value={country.id}>{country.name}</MenuItem>
+                        ))}
                       </Select>
                     )}
                   />
@@ -294,16 +323,21 @@ const Form = () => {
               </Grid>
 
               <Grid item xs={12} md={4} >
-                <FormControl fullWidth sx={{ mb: 2 }}>
+                <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
                   <InputLabel id="currency-label">Currency</InputLabel>
                   <Controller
-                    name="currency"
+                    name="idCCurrency"
                     control={control}
                     defaultValue=""
                     render={({ field }) => (
                       <Select labelId="currency-label" label="Currency" {...field}>
+                        {currencies.map(currency => (
+                          <MenuItem key={currency.id} value={currency.id}>{currency.code}</MenuItem>
+                        ))}
+                        {/*
                         <MenuItem value="USD">USD</MenuItem>
                         <MenuItem value="MXN">MXN</MenuItem>
+                        */}
                       </Select>
                     )}
                   />

@@ -1,5 +1,6 @@
 // ** Type import
 import { VerticalNavItemsType } from 'src/@core/layouts/types'
+import { IS_DEMO } from 'src/utils/isDemo'
 
 const navigation = (): VerticalNavItemsType => {
   return [
@@ -185,7 +186,7 @@ const navigation = (): VerticalNavItemsType => {
       action: 'read',
       children: [
         {
-          title: 'Dynamic',
+          title: !IS_DEMO ? 'Dynamic' : "Demo",
           path: '/catalogues/dynamic',
           subject: 'catalogues',
           action: 'viewDynamicCatalogues'
@@ -223,7 +224,7 @@ const navigation = (): VerticalNavItemsType => {
       ]
     },
     {
-      title: 'Dynamic Data',
+      title: `${!IS_DEMO ? "Dynamic " : ""}Data`,
       icon: 'custom:dynamic-data',
       subject: 'dynamicData',
       action: 'read',

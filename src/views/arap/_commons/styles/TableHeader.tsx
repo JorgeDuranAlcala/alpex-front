@@ -10,11 +10,16 @@ export const TableHeaderContainer = styled(Box)(() => ({
   height: 'auto'
 }))
 
-export const RightTextsContainer = styled(Box)(() => ({
+export const RightTextsContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'flex-end',
-  gap: '8px'
+  gap: '8px',
+
+  [theme.breakpoints.down('sm')]: {
+    alignItems: 'flex-start',
+    width: '100%'
+  }
 }))
 
 export const TableHeaderTitleAndInputs = styled(Box)(({ theme }) => ({

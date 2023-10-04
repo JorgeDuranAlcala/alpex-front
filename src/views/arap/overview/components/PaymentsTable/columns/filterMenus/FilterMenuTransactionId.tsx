@@ -9,7 +9,6 @@ import InputAdornment from '@mui/material/InputAdornment'
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
 
-
 import { PaymentsContext } from '@/views/arap/overview/context/payments/PaymentsContext'
 import { EFieldColumn } from '../efieldColumn'
 
@@ -17,33 +16,27 @@ interface FilterMenuTransactionIdProps {
   handleClose?: () => void
 }
 const FilterMenuTransactionId = ({ handleClose }: FilterMenuTransactionIdProps) => {
-
-  const { handleChangeFilters, handleDeleteFilters } = useContext(PaymentsContext);
-  const searchTimeOutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-
+  const { handleChangeFilters, handleDeleteFilters } = useContext(PaymentsContext)
+  const searchTimeOutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const handleOnChangeSearch = (value: string) => {
     if (searchTimeOutRef.current) {
-
-      clearTimeout(searchTimeOutRef.current);
+      clearTimeout(searchTimeOutRef.current)
     }
     searchTimeOutRef.current = setTimeout(() => {
-      if (value === '') handleDeleteFilters(EFieldColumn.TRANSACTION_ID)
+      if (value === '') handleDeleteFilters(EFieldColumn.TRANSACTION)
       else
         handleChangeFilters({
-          type: EFieldColumn.TRANSACTION_ID,
+          type: EFieldColumn.TRANSACTION,
           value: `${value}`,
           text: `${value}`
         })
-
-    }, 500);
+    }, 500)
   }
 
   const handleCloseOnEnter = (key: string) => {
     if (handleClose && key === 'Enter') {
-
-      handleClose();
+      handleClose()
     }
   }
 
