@@ -1,6 +1,7 @@
 import { ReactNode, useContext, useEffect, useRef, useState } from 'react'
 import { BalanceOfPayments } from '../../interfaces/BalanceOfPayments'
 import { QueryFilters } from '../../interfaces/QueryFilters'
+import { extractOverviewPaymentTableFilters } from '../../utils/extractOverviewPaymentTableFilters'
 import { PaymentsContext } from '../payments/PaymentsContext'
 import { MasterFiltersContext } from './MasterFiltersContext'
 
@@ -11,9 +12,8 @@ export const MasterFiltersProvider = ({ children }: { children: ReactNode }) => 
   const queryParams = useRef<string>('')
 
   const updateFilters = (queryFilters: QueryFilters) => {
-    console.log(queryFilters)
-
-    loadPaymentsGrid(queryFilters)
+    queryParams.current = new URLSearchParams(queryFilters as any).toString();
+    loadPaymentsGrid(queryFilters);
   }
 
   useEffect(() => {
@@ -27,13 +27,16 @@ export const MasterFiltersProvider = ({ children }: { children: ReactNode }) => 
     }
   }, [paymentsGrid?.info])
 
+
   return (
     <MasterFiltersContext.Provider
       value={{
         isLoading,
         balanceOfPayments,
+        gridFilters: extractOverviewPaymentTableFilters(paymentsGrid?.filters || []),
+        updateFilters,
+        
         queryParams: queryParams.current,
-        updateFilters
       }}
     >
       {children}

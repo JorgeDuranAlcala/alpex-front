@@ -1,5 +1,5 @@
 import { useGetAccountById } from '@/hooks/accounts/forms'
-import { useAddSecurities } from '@/hooks/accounts/security'
+import { useAddSecurities, useUpdateSecurities } from '@/hooks/accounts/security'
 import { useAddSecurityTotal, useUpdateSecurityTotalById } from '@/hooks/accounts/securityTotal'
 import {
   FormInformation,
@@ -80,14 +80,15 @@ const Security = ({ onStepChange }: SecurityProps) => {
     frontingFeeP: 0
   })
   const [companiesSelect] = useState<number[]>([])
-  const [isUpdatedInfoByUser, setIsUpdatedInfoByUser] = useState(false);
+  const [isUpdatedInfoByUser, setIsUpdatedInfoByUser] = useState(false)
 
-  const { account, setAccountId, getAccountById, accountId } = useGetAccountById()
+  const { account, setAccountId, getAccountById, accountId } = useGetAccountById()  
   const { saveSecurityTotal } = useAddSecurityTotal()
   const { updateSecurityTotal } = useUpdateSecurityTotalById()
 
   // const { updateSecurities } = useUpdateSecurities()
   const { saveSecurities } = useAddSecurities()
+  const { updateSecurities } = useUpdateSecurities()
 
   const accountData = useAppSelector(state => state.accounts)
 
@@ -304,24 +305,110 @@ const Security = ({ onStepChange }: SecurityProps) => {
 
   const onNextStep = () => {
     if (isUpdatedInfoByUser) {
-      SaveData()
+      uploadSecurityData()
     }
     setIsNextStep(true)
     handleCloseModal()
   }
 
-  const SaveData = async () => {
+  const existingSecurities = (newSecurity: SecurityDto): boolean => {
+    if (account && account.securities?.length > 0 && newSecurity) {
+      return account?.securities.some(({ id }) => id === newSecurity.id)
+    }
+
+    return false
+  }
+  const refetchInfoSecurities = async () => {
+    getAccountById(Number(accountId))
+      .then(accounts => {
+        if (accounts.securities.length > 0) {
+          const securitiesAccount = accounts.securities.map(security =>
+            SecurityMapper.securityToSecurityForm(security, Number(accountId))
+          )
+          calculateSecurities(securitiesAccount)
+        } else {
+          calculateSecurities([initialSecurity])
+        }
+      })
+      .catch((error: Error) => {
+        console.log(error)
+      })
+    setTimeout(() => {
+      setBadgeData({
+        ...badgeData,
+        open: false
+      })
+    }, 2000)
+  }
+  const saveSecurity = async (save: Partial<SecurityDto>[]) => {    
+    await saveSecurities({ idAccount: +accountData.formsData.form1.id, securities: save })
+      .then(() => {
+        // response && response.length > 0 && calculateSecurities(response)
+        setBadgeData({
+          message: 'THE INFORMATION HAS BEEN SAVED',
+          theme: 'success',
+          open: true,
+          status: 'error'
+        })
+      })
+      .catch(e => {
+        console.log('ERROR saveSecurities', e)
+
+        setBadgeData({
+          message: 'Error saving data',
+          theme: 'error',
+          open: true,
+          status: 'error',
+          icon: <Icon style={{ color: '#FF4D49' }} icon='icon-park-outline:error' />
+        })
+
+        setIsUpdatedInfoByUser(true)
+      })
+  }
+
+  const updateSecuritites = async (update: Partial<SecurityDto>[]) => {    
+
+    await updateSecurities(update)
+      .then(() => {
+        setBadgeData({
+          message: 'THE INFORMATION HAS BEEN UPDATED',
+          theme: 'success',
+          open: true,
+          status: 'error'
+        })
+      })
+      .catch(e => {
+        console.log('ERROR updateSecurities', e)
+
+        setBadgeData({
+          message: 'Error update data',
+          theme: 'error',
+          open: true,
+          status: 'error',
+          icon: <Icon style={{ color: '#FF4D49' }} icon='icon-park-outline:error' />
+        })
+      })
+  }
+
+  const uploadSecurityData = async () => {
+    debugger
     const update: Partial<SecurityDto>[] = []
     const save: Partial<SecurityDto>[] = []
-
     setIsUpdatedInfoByUser(false)
     for (const security of securities) {
       // * Con esta validación no se guardarán los datos de la vista 2
       if (security.view === 2) return
-
-      const mapper = SecurityMapper.securityToSecurityForm(security, Number(accountId))
-
-      save.push({ ...mapper, view: 1 })
+      const existsSecurity = existingSecurities(security)
+    
+      
+      // si existe actualiza de lo contrario inserta
+      if (existsSecurity) {
+        const mapper = SecurityMapper.securityToSecurityUpdateForm(security, Number(accountId))
+        update.push({ ...mapper, view: 1 })
+      } else {
+        const mapper = SecurityMapper.securityToSecurityForm(security, Number(accountId))
+        save.push({ ...mapper, view: 1 })
+      }
     }
 
     if (!allFormData.id) {
@@ -362,51 +449,12 @@ const Security = ({ onStepChange }: SecurityProps) => {
     }
 
     if (save.length > 0) {
-      await saveSecurities({ idAccount: +accountData.formsData.form1.id, securities: save })
-        .then(() => {
-          // response && response.length > 0 && calculateSecurities(response)
-          if (update.length === 0) {
-
-            setBadgeData({
-              message: 'THE INFORMATION HAS BEEN SAVED',
-              theme: 'success',
-              open: true,
-              status: 'error'
-            })
-
-          }
-        })
-        .catch(e => {
-          console.log('ERROR saveSecurities', e)
-
-          setBadgeData({
-            message: 'Error saving data',
-            theme: 'error',
-            open: true,
-            status: 'error',
-            icon: <Icon style={{ color: '#FF4D49' }} icon='icon-park-outline:error' />
-          })
-
-          setIsUpdatedInfoByUser(true)
-        })
-      getAccountById(Number(accountId))
-        .then(accounts => {
-          calculateSecurities(
-            accounts.securities.length > 0
-              ? accounts.securities.map(security => SecurityMapper.securityToSecurityForm(security, Number(accountId)))
-              : [initialSecurity]
-          )
-        })
-        .catch((error: Error) => {
-          console.log(error)
-        })
-      setTimeout(() => {
-        setBadgeData({
-          ...badgeData,
-          open: false
-        })
-      }, 2000)
+      await saveSecurity(save)
     }
+    if (update.length > 0) {
+      await updateSecuritites(update)
+    }
+    await refetchInfoSecurities()
   }
 
   const DeleteNewForm = (index: number) => {
@@ -488,7 +536,7 @@ const Security = ({ onStepChange }: SecurityProps) => {
         calculateSecurities,
         setAllErrors,
         setCurrentView,
-        setIsUpdatedInfoByUser,
+        setIsUpdatedInfoByUser
       }}
     >
       <div style={{ fontFamily: inter }}>
@@ -602,11 +650,15 @@ const Security = ({ onStepChange }: SecurityProps) => {
                     style={{ float: 'right', marginRight: 'auto', marginBottom: '20px' }}
                   >
                     <Button
-                      disabled={currentView === 2 || account?.status.toLowerCase() === 'bound' ? true : false || !isUpdatedInfoByUser}
+                      disabled={
+                        currentView === 2 || account?.status.toLowerCase() === 'bound'
+                          ? true
+                          : false || !isUpdatedInfoByUser
+                      }
                       className='btn-save btn-full-mob'
                       color='success'
                       variant='contained'
-                      onClick={SaveData}
+                      onClick={uploadSecurityData}
                     >
                       <div className='btn-icon'>
                         <Icon icon='mdi:content-save' />

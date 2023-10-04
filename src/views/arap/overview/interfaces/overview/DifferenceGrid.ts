@@ -16,3 +16,15 @@ export interface DifferenceColumn {
   transactionId: string;
   user: string;
 }
+
+
+export interface ExtendedDifferenceQueryFilters {
+  amountReceived?: number;
+  broker?: string;
+  pmtDate?: string;
+  account?: string;
+  originAcct?: number;
+  depositAcc?: number;
+  transactionId?: string; //refId: INST0001
+  user?: string;
+}

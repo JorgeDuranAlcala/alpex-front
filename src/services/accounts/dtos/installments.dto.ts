@@ -43,3 +43,17 @@ export interface installmentsHeaderDto {
   balance: number
   totalDebt: number
 }
+
+export interface installmentsByAccountDto {
+  status: string
+  id: number
+  dueDate: Date
+  balanceDue: string
+  paymentsTotalAmount: number
+  outstanding: number
+  paymentHistory: Array<object>
+  actions: Array<object>
+  folders: Array<object>
+  coments: Array<object>
+  currency: string
+}

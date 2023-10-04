@@ -15,3 +15,15 @@ export interface ReceivableColumn {
   transactionId: string;
   user: string;
 }
+
+
+export interface ExtendedReceivableQueryFilters {
+  amountReceived?: number;
+  broker?: string;
+  pmtDate?: string;
+  account?: string;
+  inst?: number;
+  depositAcc?: number;
+  transactionId?: string; //refId: INST0001
+  user?: string;
+}

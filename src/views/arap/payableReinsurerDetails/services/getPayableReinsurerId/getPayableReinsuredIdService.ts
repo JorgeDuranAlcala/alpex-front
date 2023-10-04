@@ -5,9 +5,7 @@ import { GetPayableReinsuredIdResponseDto } from './getPayableReinsurerIdRespons
 
 export const getPayableReinsuredIdService = async (params: GetPayableReinsuredIdParamsToSend) => {
   try {
-    const { data } = await AppAlpexApiGateWay.get<GetPayableReinsuredIdResponseDto>(ARAP_API_ROUTES.PAYABLES_GET_REINSURER_ID, {
-      params
-    })
+    const { data } = await AppAlpexApiGateWay.get<GetPayableReinsuredIdResponseDto>(ARAP_API_ROUTES.PAYABLES_GET_REINSURER_ID + '/' + params.capabilityId)
 
     return data
   } catch (error) {

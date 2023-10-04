@@ -17,7 +17,7 @@ import Icon from 'src/@core/components/icon'
 import { OverviewDetailsContext } from '@/views/arap/overview/context/overviewDetails/OverviewDetailsContext'
 import colors from 'src/views/accounts/colors'
 import fonts from 'src/views/accounts/font'
-import { EFieldColumn } from './efieldColumn'
+import { EFieldColumn, FilterType } from './efieldColumn'
 
 // import { SwitcherFilterMenus } from './filterMenus/SwitcherFilterMenus'
 import { DetailsType } from '../../../interfaces/overview/DetailsType'
@@ -26,12 +26,13 @@ import { SwitcherFilterMenus } from './filterMenus/SwitchFilterMenus'
 interface IColunmHeader {
   colDef: GridStateColDef
   detailsType: DetailsType
+  filterType?: FilterType
   action?: (field: string) => void
   showIcon?: boolean
   type?: string
 }
 
-const ColumnHeader: React.FC<IColunmHeader> = ({ colDef, detailsType, showIcon = true, type }) => {
+const ColumnHeader: React.FC<IColunmHeader> = ({ colDef, detailsType, filterType, showIcon = true, type }) => {
   // ** Props
   const { headerName, field } = colDef;
 
@@ -106,7 +107,7 @@ const ColumnHeader: React.FC<IColunmHeader> = ({ colDef, detailsType, showIcon =
         }}
         PaperProps={{ style: { minWidth: widthMenu, borderRadius: '10px' } }}
       >
-        <SwitcherFilterMenus field={field} handleClose={handleClose} detailsType={detailsType} />
+        <SwitcherFilterMenus field={field} handleClose={handleClose} detailsType={detailsType} filterType={filterType} />
       </Menu>
     </Box>
   )
