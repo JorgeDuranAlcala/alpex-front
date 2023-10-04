@@ -10,6 +10,8 @@ import createEmotionServer from '@emotion/server/create-instance'
 // ** Utils Imports
 import { createEmotionCache } from 'src/@core/utils/create-emotion-cache'
 
+import { IS_DEMO } from 'src/utils/isDemo'
+
 class CustomDocument extends Document {
   render() {
     return (
@@ -34,7 +36,7 @@ class CustomDocument extends Document {
             href='https://fonts.googleapis.com/css2?family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap'
           />
           <link rel='apple-touch-icon' sizes='180x180' href='/images/apple-touch-icon.png' />
-          <link rel='shortcut icon' href='/images/favicon.png' />
+          {!IS_DEMO && <link rel='shortcut icon' href='/images/favicon.png' />}
         </Head>
         <body>
           <Main />

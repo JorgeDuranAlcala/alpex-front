@@ -1,58 +1,87 @@
 // import { Button } from '@mui/material'
 
-import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import { DataGrid, GridColumns } from '@mui/x-data-grid'
 
-import ButtonFilter from '@components/button-filter'
-
 // ** Next Import
+import { useEffect, useState } from 'react'
+import { useAppDispatch, useAppSelector } from 'src/store'
+import ColumnHeader from './ColumnHeader'
+import HeaderTable from './HeaderTable'
 
 // import CustomModal from '@components/modals/modal-alpex'
 import Button from '@mui/material/Button'
 
-import CustomPagination from 'src/views/accounts/Table/CustomPagination'
 import colors from 'src/views/accounts/colors'
 import fonts from 'src/views/accounts/font'
+import CustomPagination from './CustomPagination'
 
 // import ModalReinsurers from '../ModalReinsurers'
 import { Link } from '@mui/material'
 import UserThemeOptions from 'src/layouts/UserThemeOptions'
-import HeaderTable from './HeaderTable'
-import { brokers, data } from './data'
 
 // ** Next Import
 import { useRouter } from 'next/router'
 
 // ** Custom Hooks imports
+import { fetchBrokerTracker } from 'src/store/apps/installments/brokerTracker'
 
 interface INearlyPaymentStatus {
-  accountId: number
+  idAccount: number
   insured: string
-  installment: string
+  installments: string
   accountDebt: string
   actions: string
+  currency: string
+}
+
+export enum EFieldColumn {
+  idAccount = 'idAccount',
+  insured = 'insured',
+  installments = 'installments',
+  accountDebt = 'accountDebt'
 }
 
 const userThemeConfig: any = Object.assign({}, UserThemeOptions())
 
 const inter = userThemeConfig.typography?.fontFamilyInter
 
-
 const Table = () => {
   // ** Hooks
-  const router = useRouter();
-  
+  const router = useRouter()
+
   const onAction = async (id: number) => {
     localStorage.setItem('idAccount', String(id))
-    router.push(`/installments/payment-record/?&id=${String(id)}`)
+    router.push(`/broker-tracker/broker-record/?&id=${String(id)}`)
   }
-  
+
+  const handleClickColumnHeader = (field: string) => {
+    alert(field)
+  }
+
+  //** State
+  const [accounts, setAccounts] = useState<any>([])
+  const [loading, setLoading] = useState<boolean>(false)
+
+  // **Reducers
+  const dispatch = useAppDispatch()
+  const installmentsReducer = useAppSelector(state => state.brokerTracker)
+
+  useEffect(() => {
+    setAccounts(installmentsReducer.accounts || [])
+    setLoading(installmentsReducer.loading)
+    //eslint-disable-next-line
+  }, [installmentsReducer.accounts])
+
+  useEffect(() => {
+    dispatch(fetchBrokerTracker(installmentsReducer))
+    //eslint-disable-next-line
+  }, [installmentsReducer.filters])
 
   const column: GridColumns<INearlyPaymentStatus> = [
     {
       flex: 0.1,
-      field: 'accountId',
+      field: EFieldColumn.idAccount,
       headerName: 'ACCOUNT ID',
       minWidth: 150,
       maxWidth: 150,
@@ -61,29 +90,14 @@ const Table = () => {
       disableColumnMenu: true,
       sortable: false,
       headerClassName: 'account-column-header',
-      renderHeader: ({ colDef }) => {
-        const { headerName } = colDef
-  
-        return (
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <Typography
-              component={'span'}
-              variant='body1'
-              sx={{ fontFamily: fonts.inter, fontSize: fonts.size.px12, color: colors.text.light, fontWeight: 500 }}
-            >
-              {headerName}
-            </Typography>
-            <ButtonFilter dataFilter={brokers} insured />
-          </Box>
-        )
-      },
+      renderHeader: ({ colDef }) => <ColumnHeader colDef={colDef} action={handleClickColumnHeader} />,
       renderCell: ({ row }) => (
-        <Typography sx={{ fontSize: fonts.size.px14, fontFamily: fonts.inter }}>{`#${row.accountId}`}</Typography>
+        <Typography sx={{ fontSize: fonts.size.px14, fontFamily: fonts.inter }}>{`#${row.idAccount}`}</Typography>
       )
     },
     {
       flex: 0.1,
-      field: 'insured',
+      field: EFieldColumn.insured,
       headerName: 'INSURED',
       minWidth: 150,
       maxWidth: 210,
@@ -92,22 +106,7 @@ const Table = () => {
       disableColumnMenu: true,
       sortable: false,
       headerClassName: 'account-column-header',
-      renderHeader: ({ colDef }) => {
-        const { headerName } = colDef
-  
-        return (
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <Typography
-              component={'span'}
-              variant='body1'
-              sx={{ fontFamily: fonts.inter, fontSize: fonts.size.px12, color: colors.text.light, fontWeight: 500 }}
-            >
-              {headerName}
-            </Typography>
-            <ButtonFilter dataFilter={brokers} insured />
-          </Box>
-        )
-      },
+      renderHeader: ({ colDef }) => <ColumnHeader colDef={colDef} action={handleClickColumnHeader} />,
       renderCell: ({ row }) => (
         <Typography
           variant='body2'
@@ -119,7 +118,7 @@ const Table = () => {
     },
     {
       flex: 0.1,
-      field: 'installments',
+      field: EFieldColumn.installments,
       headerName: 'INSTALLMENTS',
       minWidth: 150,
       maxWidth: 210,
@@ -128,34 +127,19 @@ const Table = () => {
       disableColumnMenu: true,
       sortable: false,
       headerClassName: 'account-column-header',
-      renderHeader: ({ colDef }) => {
-        const { headerName } = colDef
-  
-        return (
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <Typography
-              component={'span'}
-              variant='body1'
-              sx={{ fontFamily: fonts.inter, fontSize: fonts.size.px12, color: colors.text.light, fontWeight: 500 }}
-            >
-              {headerName}
-            </Typography>
-            <ButtonFilter dataFilter={brokers} insured />
-          </Box>
-        )
-      },
+      renderHeader: ({ colDef }) => <ColumnHeader showIcon={false} colDef={colDef} action={handleClickColumnHeader} />,
       renderCell: ({ row }) => (
         <Typography
           variant='body2'
           sx={{ color: colors.text.light, fontFamily: fonts.inter, fontSize: fonts.size.px14, fontWeight: 400 }}
         >
-          {row.installment}
+          {row.installments}
         </Typography>
       )
     },
     {
       flex: 0.1,
-      field: 'accountDebt',
+      field: EFieldColumn.accountDebt,
       headerName: 'ACCOUNT DEBT',
       minWidth: 150,
       maxWidth: 210,
@@ -164,28 +148,13 @@ const Table = () => {
       disableColumnMenu: true,
       sortable: false,
       headerClassName: 'account-column-header',
-      renderHeader: ({ colDef }) => {
-        const { headerName } = colDef
-  
-        return (
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <Typography
-              component={'span'}
-              variant='body1'
-              sx={{ fontFamily: fonts.inter, fontSize: fonts.size.px12, color: colors.text.light, fontWeight: 500 }}
-            >
-              {headerName}
-            </Typography>
-            <ButtonFilter dataFilter={brokers} date />
-          </Box>
-        )
-      },
+      renderHeader: ({ colDef }) => <ColumnHeader colDef={colDef} action={handleClickColumnHeader} />,
       renderCell: ({ row }) => (
         <Typography
           variant='body2'
           sx={{ fontFamily: fonts.inter, fontSize: fonts.size.px14, color: colors.text.light, fontWeight: 400 }}
         >
-          {row.accountDebt}
+          ${row.accountDebt} {row.currency}
         </Typography>
       )
     },
@@ -200,7 +169,7 @@ const Table = () => {
       cellClassName: 'account-column-cell-pl-0',
       renderHeader: ({ colDef }) => {
         const { headerName } = colDef
-  
+
         return (
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <Typography
@@ -218,7 +187,7 @@ const Table = () => {
           <Link
             sx={{ cursor: 'pointer' }}
             onClick={() => {
-              onAction(row.accountId)
+              onAction(row.idAccount)
             }}
           >
             <Button
@@ -235,10 +204,6 @@ const Table = () => {
             </Button>
           </Link>
         </div>
-  
-        // <Button variant='outlined' sx={{ width: '100%', height: '30px', fontSize: '13px' }}>
-        //   Record
-        // </Button>
       )
     }
   ]
@@ -247,21 +212,20 @@ const Table = () => {
     <>
       <HeaderTable />
       <DataGrid
+        loading={loading}
         autoHeight
         disableSelectionOnClick
-        rows={data}
+        rows={accounts}
         columns={column}
         pagination
-        pageSize={4}
-        getRowId={(row: any) => row.accountId}
+        pageSize={10}
+        getRowId={(row: any) => row.idAccount}
         components={{
           Pagination: CustomPagination
         }}
       />
     </>
   )
-
-  
 }
 
 export default Table

@@ -1,9 +1,20 @@
 import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
-import { broker_info_mock } from '../../mocks/broker_info_mock'
+import { useContext, useEffect, useState } from 'react'
+import { InsuredSelectorContext } from '../../_commons/context/InsuredSelector/InsuredSelectorContext'
 import { BrokerInfo } from '../interfaces/brokerInfo'
+import { receivableBrokerIdAdapter } from '../services/getReceivableBrokerId/frontAdapters/ReceivableBrokerIdAdapter'
+import { receivableBrokerAccountingStructureAdapter } from '../services/getReceivableBrokerId/frontAdapters/receivableBrokerAccountingStructureAdapter'
+import { receivableBrokerPaymentInstallmentsAdapter } from '../services/getReceivableBrokerId/frontAdapters/receivableBrokerPaymentInstallmentsAdapter'
+import { receivableBrokerEstructureInfoAdapter } from '../services/getReceivableBrokerId/frontAdapters/receivasbleBrokerEstrctureInfoAdapter'
+import { getReceivableBrokerIdService } from '../services/getReceivableBrokerId/getReceivableBrokerIdService'
 
 export const useBrokerDetails = () => {
+
+  // ! INIT implementación temporal, se esperaba un servicio separado
+  const {TEMP_loadAccountingStructures, TEMP_loadPaymentInstallments} = useContext(InsuredSelectorContext);
+  
+  // ! END implementación temporal
+
   const router = useRouter()
 
   const [isLoading, setIsLoading] = useState(false)
@@ -11,16 +22,42 @@ export const useBrokerDetails = () => {
 
   const { id } = router.query
 
-  useEffect(() => {
-    setIsLoading(true)
+  const getReceivableBrokerIdAsync = async (id:number) => {
+    const brokerInfo = await getReceivableBrokerIdService({capabilityId: +id})
 
-    // Todo: reemplazar este timeout por el servicio que se implementará
-    setTimeout(() => {
-      if (id) {
-        setBrokerDetails(broker_info_mock)
-        setIsLoading(false)
+    const brokerDetailsAdapted = receivableBrokerIdAdapter(brokerInfo)
+    setBrokerDetails(brokerDetailsAdapted)
+    setIsLoading(false)
+
+    // ! INIT implementación temporal
+    const estructureInfo = receivableBrokerEstructureInfoAdapter(brokerInfo)
+
+    const accountingStructuresAdapted = estructureInfo.map(item => ({
+      insuredId: item.insuredId,
+      insuredName: item.insuredName,
+      ...receivableBrokerAccountingStructureAdapter(item.AccountingStructure)
+    }));
+
+    TEMP_loadAccountingStructures(accountingStructuresAdapted);
+
+    const paymentInstallmentsAdapted = estructureInfo.map(item => ({
+      insuredId: item.insuredId,
+      paymentInstallments: receivableBrokerPaymentInstallmentsAdapter(item.infoInstallment)
+    }))
+
+    TEMP_loadPaymentInstallments(paymentInstallmentsAdapted);
+    
+    // ! END implementación temporal
+
+  }
+
+  useEffect(() => {
+    if (id) {
+      setIsLoading(true)
+      if (!isLoading) {
+        getReceivableBrokerIdAsync(+id)
       }
-    }, 500)
+    }
   }, [id])
 
   return {

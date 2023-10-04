@@ -1,25 +1,22 @@
 // ** MUI Imports
 import MenuItem from '@mui/material/MenuItem'
 
-
 // ** Custom utilities
-import { OptionsARAPStatus } from '@/views/arap/overview/constants/OptionsARAPStatus'
 import { PaymentsContext } from '@/views/arap/overview/context/payments/PaymentsContext'
-import { ARAPStatus } from '@/views/arap/overview/interfaces/QueryFilters'
-import { useContext } from 'react'
-
+import { optionsPaymentStatusAdapter } from '@/views/arap/overview/services/getPaymentStatus/frontAdapters/optionsPaymentStatusAdapter'
+import { getPaymentStatusService } from '@/views/arap/overview/services/getPaymentStatus/getPaymentStatusService'
+import { useContext, useEffect, useState } from 'react'
 
 interface IFilterMenuStatusOptionProps {
-  value: ARAPStatus;
-  text: string;
+  value: number
+  text: string
   handleClose?: () => void
 }
 
 const FilterMenuStatusOption: React.FC<IFilterMenuStatusOptionProps> = ({ value, text }) => {
-  const { handleChangeFilters } = useContext(PaymentsContext);
+  const { handleChangeFilters } = useContext(PaymentsContext)
 
   const handleClick = () => {
-
     handleChangeFilters({
       type: 'status',
       value,
@@ -42,11 +39,21 @@ const FilterMenuStatusOption: React.FC<IFilterMenuStatusOptionProps> = ({ value,
   )
 }
 
-const FilterMenuStatus = ({ }) => {
+const FilterMenuStatus = ({}) => {
+  const [options, setOptionsPaymentStatus] = useState<{ value: number; text: string }[]>([])
+
+  const getPaymentStatusOptions = async () => {
+    const data = await getPaymentStatusService()
+    setOptionsPaymentStatus(optionsPaymentStatusAdapter(data))
+  }
+
+  useEffect(() => {
+    getPaymentStatusOptions()
+  }, [])
+
   return (
     <>
-      {OptionsARAPStatus.map((status) => (
-
+      {options.map(status => (
         <FilterMenuStatusOption key={status.value} value={status.value} text={status.text} />
       ))}
     </>

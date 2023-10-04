@@ -1,50 +1,45 @@
-import { ReactNode, useContext, useRef, useState } from "react";
-import { BalanceOfPayments } from '../../interfaces/BalanceOfPayments';
-import { QueryFilters } from '../../interfaces/QueryFilters';
-import { PaymentsContext } from "../payments/PaymentsContext";
-import { MasterFiltersContext } from "./MasterFiltersContext";
-
-
+import { ReactNode, useContext, useEffect, useRef, useState } from 'react'
+import { BalanceOfPayments } from '../../interfaces/BalanceOfPayments'
+import { QueryFilters } from '../../interfaces/QueryFilters'
+import { extractOverviewPaymentTableFilters } from '../../utils/extractOverviewPaymentTableFilters'
+import { PaymentsContext } from '../payments/PaymentsContext'
+import { MasterFiltersContext } from './MasterFiltersContext'
 
 export const MasterFiltersProvider = ({ children }: { children: ReactNode }) => {
+  const { isLoading, loadPaymentsGrid, paymentsGrid } = useContext(PaymentsContext)
 
-  const { loadPaymentsGrid } = useContext(PaymentsContext);
-
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [balanceOfPayments, setBalanceOfPayments] = useState<BalanceOfPayments | null>(null);
+  const [balanceOfPayments, setBalanceOfPayments] = useState<BalanceOfPayments | null>(null)
   const queryParams = useRef<string>('')
 
   const updateFilters = (queryFilters: QueryFilters) => {
-    setIsLoading(true);
-
-    console.log(queryFilters);
-
+    queryParams.current = new URLSearchParams(queryFilters as any).toString();
     loadPaymentsGrid(queryFilters);
-
-    // Todo: reemplazar este Timeout por el servicio que se implementará
-    setTimeout(() => {
-      setIsLoading(false);
-      setBalanceOfPayments({
-        receivableAmount: 15000000,
-        payableAmount: 1000000,
-        differenceAmount: 100000,
-        currency: 'USD',
-      });
-
-      queryParams.current = new URLSearchParams(queryFilters as any).toString();
-
-    }, 1000);
   }
 
+  useEffect(() => {
+    if (paymentsGrid?.info) {
+      setBalanceOfPayments({
+        receivableAmount: Number(paymentsGrid.info.receivable.totalAmountBroker),
+        payableAmount: Number(paymentsGrid.info.payable.totalAmountReinsurer),
+        differenceAmount: Number(paymentsGrid.info.difference),
+        currency: paymentsGrid.info.currency
+      })
+    }
+  }, [paymentsGrid?.info])
+
+
   return (
-    <MasterFiltersContext.Provider value={{
-      isLoading,
-      balanceOfPayments,
-      queryParams: queryParams.current,
-      updateFilters,
-    }}>
+    <MasterFiltersContext.Provider
+      value={{
+        isLoading,
+        balanceOfPayments,
+        gridFilters: extractOverviewPaymentTableFilters(paymentsGrid?.filters || []),
+        updateFilters,
+        
+        queryParams: queryParams.current,
+      }}
+    >
       {children}
     </MasterFiltersContext.Provider>
   )
-
 }

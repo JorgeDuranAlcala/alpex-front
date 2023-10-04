@@ -13,10 +13,18 @@ export const usePaymentSchedule = () => {
 
     if (scheduleFor === 'reinsurance') {
       // ?? Todo: se conectará a base de datos?
-      setNextPaymentDate(new Date().toISOString())
+      setNextPaymentDate(new Date().toLocaleDateString('en-CA', {
+        year: 'numeric',
+        day: '2-digit',
+        month: '2-digit'
+      }))
     } else if (scheduleFor === 'broker') {
       // ?? Todo: se conectará a base de datos?
-      setNextPaymentDate(new Date().toISOString())
+      setNextPaymentDate(new Date().toLocaleDateString('en-CA', {
+        year: 'numeric',
+        day: '2-digit',
+        month: '2-digit'
+      }))
     }
   }
 

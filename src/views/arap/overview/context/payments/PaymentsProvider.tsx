@@ -1,114 +1,114 @@
-import { Filter } from "@/views/arap/_commons/interfaces/Grid";
-import { payments_mock } from "@/views/arap/mocks/payments_mock";
-import { ReactNode, useState } from "react";
-import { QueryFilters } from '../../interfaces/QueryFilters';
-import { PaymentsGrid } from '../../interfaces/payments/PaymentsGrid';
-import { PaymentsContext } from "./PaymentsContext";
-
-
+import { Filter } from '@/views/arap/_commons/interfaces/Grid'
+import { getArapAllService } from '@/views/arap/overview/services/getArapAll'
+import { overviewPaymentsAdapter } from '@/views/arap/overview/services/getArapAll/frontAdapters/overviewPaymentsAdapter'
+import { overviewPaymentsAdapterQueries } from '@/views/arap/overview/services/getArapAll/frontAdapters/overviewPaymentsAdapterQueries'
+import { ReactNode, useRef, useState } from 'react'
+import { useMasterFiltersStorage } from '../../hooks/useMasterFiltersStorage'
+import { useOverviewPaymentsQueryFilters } from '../../hooks/useOverviewPaymentsQueryFilters'
+import { QueryFilters } from '../../interfaces/QueryFilters'
+import { PaymentsGrid } from '../../interfaces/payments/PaymentsGrid'
+import { extractOverviewPaymentTableFilters } from '../../utils/extractOverviewPaymentTableFilters'
+import { PaymentsContext } from './PaymentsContext'
 
 export const PaymentsProvider = ({ children }: { children: ReactNode }) => {
+  
+  const {saveMasterFiltersSelectors, removeMasterFiltersSelector} = useMasterFiltersStorage();
+  const { transformToTableFilters } = useOverviewPaymentsQueryFilters();
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [paymentsGrid, setPaymentsGrid] = useState<PaymentsGrid | null>(null)
+  const tempQueryFiltersRef = useRef<QueryFilters | null>(null)
+  const tempFiltersRef = useRef<Filter[]>([])
 
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [paymentsGrid, setPaymentsGrid] = useState<PaymentsGrid | null>(null);
 
-  const loadPaymentsGrid = (queryFilters: QueryFilters) => {
+  const loadPaymentsGrid = async (queryFilters: QueryFilters) => {
+    setIsLoading(true)
 
-    setIsLoading(true);
-    console.log('loadPayments by queryFilters', queryFilters);
+    tempQueryFiltersRef.current = queryFilters
 
-    // Todo: reemplazar este Timeout por el servicio que se implementará
-    setTimeout(() => {
+    const filters = overviewPaymentsAdapterQueries(queryFilters)
+    const payments = await getArapAllService(filters)
+    const paymentsAdapted = overviewPaymentsAdapter(payments)
+    const parsedFilters = transformToTableFilters(queryFilters);
+    
+    setPaymentsGrid({
+      paymentsGridList: paymentsAdapted.paymentsGridList,
+      info: paymentsAdapted.info,
+      isLoading: paymentsAdapted.isLoading,
+      filters: [...paymentsAdapted.filters, ...parsedFilters,]
+    })
 
-      const infoPages = {
-        count: payments_mock.length,
-        page: 1,
-        take: 10,
-        pages: Math.ceil(payments_mock.length / 10),
-        next: null,
-        prev: null,
-      }
-
-      setPaymentsGrid({
-        paymentsGridList: payments_mock,
-        info: infoPages,
-        isLoading: false,
-        filters: [],
-      });
-
-      setIsLoading(false);
-    }, 500)
+    setIsLoading(false)
   }
 
   const onChangePage = (page: number) => {
+    console.log('onChangePage', page)
 
-    console.log('onChangePage', page);
+    if (!tempQueryFiltersRef.current) return
+    if (!paymentsGrid) return
 
-    if (!paymentsGrid) return;
-
-    setPaymentsGrid({
-      ...paymentsGrid,
-      info: {
-        ...paymentsGrid.info,
-        page
-      },
-
+    loadPaymentsGrid({
+      ...tempQueryFiltersRef.current,
+      page
     })
   }
 
   const handleChangeFilters = (filters: Filter) => {
-    console.log('handleChangeFilters', filters);
 
-    if (!paymentsGrid) return;
-    if (paymentsGrid.paymentsGridList.length === 0) return;
+    saveMasterFiltersSelectors({
+      label: filters.text,
+      value: filters.value,
+      type: filters.type
+    });
 
-    setIsLoading(true);
+    if (!tempQueryFiltersRef.current) return
 
-    const tempFilters: Filter[] = paymentsGrid.filters || [];
+    let tempFilters: Filter[] = paymentsGrid?.filters || [];
+    
+    tempFilters = paymentsGrid?.filters.filter(filterItem => filterItem.type !== filters.type) || []
+    tempFilters = [...tempFilters, filters];
+    
 
-    // Todo: reemplazar este Timeout por el servicio que se implementará
-    setTimeout(() => {
-      setPaymentsGrid({
-        ...paymentsGrid,
-        filters: [...tempFilters, filters]
-      });
+    tempFiltersRef.current = [...tempFilters]
 
-      setIsLoading(false);
-    }, 500);
-
+    loadPaymentsGrid({
+      ...tempQueryFiltersRef.current,
+      ...extractOverviewPaymentTableFilters(tempFilters)
+    })
   }
 
   const handleDeleteFilters = (type: string) => {
 
-    if (!paymentsGrid) return;
-    if (paymentsGrid.paymentsGridList.length === 0) return;
+    console.log(type)
+    removeMasterFiltersSelector(type);
+    
+    const tempFilters: Filter[] = paymentsGrid?.filters.filter(filterItem => filterItem.type !== type) || []
 
-    setIsLoading(true);
+    tempFiltersRef.current = [...tempFilters]
 
-    const tempFilters: Filter[] = paymentsGrid.filters.filter(filterItem => filterItem.type !== type);
+    const tempQueryFilters = tempQueryFiltersRef.current;
+    const updateQueryFilters = tempQueryFilters ? { ...tempQueryFilters, [type]: '' } : undefined;
 
+    // console.log(tempFilters)
+    // console.log(tempQueryFilters)
+    // console.log(updateQueryFilters)
 
-    // Todo: reemplazar este Timeout por el servicio que se implementará
-    setTimeout(() => {
-      setPaymentsGrid({
-        ...paymentsGrid,
-        filters: [...tempFilters]
-      });
-      setIsLoading(false);
-    }, 500);
-
-
+    loadPaymentsGrid({
+      ...updateQueryFilters,
+      ...extractOverviewPaymentTableFilters(tempFilters)
+    })
   }
 
   return (
-    <PaymentsContext.Provider value={{
-      isLoading,
-      paymentsGrid,
-      loadPaymentsGrid,
-      onChangePage,
-      handleChangeFilters,
-      handleDeleteFilters
-    }}>
+    <PaymentsContext.Provider
+      value={{
+        isLoading,
+        paymentsGrid,
+        loadPaymentsGrid,
+        onChangePage,
+        handleChangeFilters,
+        handleDeleteFilters
+      }}
+    >
       {children}
     </PaymentsContext.Provider>
   )
