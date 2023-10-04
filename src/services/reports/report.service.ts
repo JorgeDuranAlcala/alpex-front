@@ -2,7 +2,13 @@ import { AppAlpexApiGateWay } from '../app.alpex.api-getway'
 
 //Routes
 import { BOURDEROU_ROUTES, DEBIT_NOTE_ROUTES, PRINT_ACCOUNT_ROUTES, REPORTS_ROUTES } from '@/configs/api'
-import { BourderauBodyDto, DebitNoteParamsDto, PrintReportParamsDto, ReportBodyDto } from './dtos/report.dto'
+import {
+  BourderauBodyDto,
+  DebitNoteParamsDto,
+  IInputCreditNote,
+  PrintReportParamsDto,
+  ReportBodyDto
+} from './dtos/report.dto'
 
 /**
  *  service responsible of the reports methods
@@ -83,6 +89,34 @@ class ReportServices {
     } catch (error) {
       const message = String(error)
       throw new Error(message)
+    }
+  }
+
+  public async getBufferDebitNote(idAccount: number, idLanguage: number) {
+    try {
+      const { data } = await AppAlpexApiGateWay.post(
+        REPORTS_ROUTES.DOWNLOAD_DEBIT_NOTE,
+        { idAccount, idLanguage },
+        {
+          responseType: 'arraybuffer'
+        }
+      )
+
+      return data
+    } catch (error) {
+      console.log('🚀 ~ file: report.service.ts:101 ~ ReportServices ~ getBufferDebitNote ~ error:', error)
+    }
+  }
+
+  public async getBufferCreditNote(creditNote: IInputCreditNote) {
+    try {
+      const { data } = await AppAlpexApiGateWay.post(REPORTS_ROUTES.DOWNLOAD_CREDIT_NOTE, creditNote, {
+        responseType: 'arraybuffer'
+      })
+
+      return data
+    } catch (error) {
+      console.log('🚀 ~ file: report.service.ts:119 ~ ReportServices ~ getBufferCreditNote ~ error:', error)
     }
   }
 }

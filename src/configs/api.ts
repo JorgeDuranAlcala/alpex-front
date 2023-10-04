@@ -305,7 +305,9 @@ export enum BOURDEROU_ROUTES {
 }
 
 export enum REPORTS_ROUTES {
-  DOWNLOAD = 'reports/allAccounts'
+  DOWNLOAD = 'reports/allAccounts',
+  DOWNLOAD_DEBIT_NOTE = 'reports/debit-note',
+  DOWNLOAD_CREDIT_NOTE = 'reports/credit-note'
 }
 
 export enum DEBIT_NOTE_ROUTES {
