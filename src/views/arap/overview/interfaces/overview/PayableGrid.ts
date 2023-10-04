@@ -11,7 +11,7 @@ export interface PayableColumn {
   capability_name: string;
   pmt_date: string;
   account: string;
-  origin_acct: number;
+  origin_acct: string;
   transactionId: string;
   user: string;
 }
@@ -21,7 +21,7 @@ export interface ExtendedPayableQueryFilters {
   capabilityName?: string; //reinsurer
   pmtDate?: string;
   account?: string;
-  originAcct?: number;
+  originAcct?: string;
   transactionId?: string; //refId: INST0001
   user?: string;
 }

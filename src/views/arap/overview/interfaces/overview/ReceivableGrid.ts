@@ -11,7 +11,7 @@ export interface ReceivableColumn {
   pmt_date: string;
   account: string;
   inst: string;
-  deposit_acc: number;
+  deposit_acc: string;
   transactionId: string;
   user: string;
 }
@@ -23,7 +23,7 @@ export interface ExtendedReceivableQueryFilters {
   pmtDate?: string;
   account?: string;
   inst?: number;
-  depositAcc?: number;
+  depositAcc?: string;
   transactionId?: string; //refId: INST0001
   user?: string;
 }
