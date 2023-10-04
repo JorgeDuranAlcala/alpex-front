@@ -35,6 +35,10 @@ interface IActionsHeaderProps {
   sideHeader: boolean
 }
 
+enum AccountStatus {
+  BOUND = 5
+}
+
 interface StatusHistory {
   id: number
   name: string
@@ -510,7 +514,7 @@ const FormHeader = ({
                     Last update: {accountDetails && formatDateFromUTC(accountDetails?.informations[0]?.updatedAt)}
                   </span>
                 </div>
-                {accountDetails && accountDetails?.idAccountStatus === 5 ? ( //TODO
+                {accountDetails && accountDetails?.idAccountStatus === AccountStatus.BOUND ? ( //TODO
                   <ActionsHeaderBound accountStatus='BOUND' sideHeader={true} accountId={accountId} />
                 ) : accountId ? (
                   <ActionsHeader
