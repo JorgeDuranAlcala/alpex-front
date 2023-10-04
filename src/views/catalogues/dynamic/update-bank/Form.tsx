@@ -70,6 +70,7 @@ const Form = ({
   })
 
   const { dispatch, state } = React.useContext(DynamicContext);
+
   const { updateBank } = useUpdateBank();
   const { currencies } = useGetAllCurrencies()
   const { countries } =  useGetAllCountries()
