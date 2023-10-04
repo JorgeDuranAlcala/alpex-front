@@ -21,7 +21,7 @@ export const overviewReceivablesAdapter = (data: GetOverviewReceivableAllRespons
         }),
         account: result.account,
         inst: result.inst,
-        deposit_acc:  +result.depositAcc,
+        deposit_acc:  result.depositAcc,
         transactionId: result.transactionId,
         user: result.user
       }
