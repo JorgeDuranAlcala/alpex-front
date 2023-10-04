@@ -39,11 +39,11 @@ export const useOverviewPaymentsQueryFilters = () => {
   
         if (key === 'date') {
           const savedDate = savedFilters.filter(item => item.type === key)[0]?.value
-
+          
           return {
             type: key,
             value: savedDate || queryFilters[key],
-            text: textFilters[key] + savedDate || queryFilters[key]
+            text: textFilters[key] + (savedDate || queryFilters[key])
           }
         }
 

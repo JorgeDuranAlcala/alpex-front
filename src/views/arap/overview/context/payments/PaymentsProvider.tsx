@@ -22,7 +22,7 @@ export const PaymentsProvider = ({ children }: { children: ReactNode }) => {
 
   const loadPaymentsGrid = async (queryFilters: QueryFilters) => {
     setIsLoading(true)
-
+    
     tempQueryFiltersRef.current = queryFilters
 
     const filters = overviewPaymentsAdapterQueries(queryFilters)

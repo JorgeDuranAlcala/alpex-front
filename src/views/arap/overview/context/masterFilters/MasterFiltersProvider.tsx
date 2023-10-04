@@ -17,13 +17,15 @@ export const MasterFiltersProvider = ({ children }: { children: ReactNode }) => 
   }
 
   useEffect(() => {
-    if (paymentsGrid?.info) {
+    if (paymentsGrid?.info && paymentsGrid?.paymentsGridList.length > 0) {
       setBalanceOfPayments({
         receivableAmount: Number(paymentsGrid.info.receivable.totalAmountBroker),
         payableAmount: Number(paymentsGrid.info.payable.totalAmountReinsurer),
         differenceAmount: Number(paymentsGrid.info.difference),
         currency: paymentsGrid.info.currency
       })
+    } else {
+      setBalanceOfPayments(null);
     }
   }, [paymentsGrid?.info])
 
