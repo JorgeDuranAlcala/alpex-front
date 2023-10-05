@@ -25,6 +25,7 @@ const TableHeader = () => {
   }
 
   const formatDateText = (text: string) => {
+
     const label = 'Transaction Date: '
     const dateText = text.replace(label, '')
     const dateSplitted = dateText.split('-')

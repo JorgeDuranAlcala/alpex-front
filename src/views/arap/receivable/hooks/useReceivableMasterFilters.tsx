@@ -22,7 +22,7 @@ export const useReceivableMasterFilters = () => {
   const handleSelectChange = (event: SelectChangeEvent<string>) => {
     isCallServiceOnChangeHandler.current = true
 
-    // console.log(event.target);
+    console.log(event.target);
 
     const target = event.target
     const name = target.name

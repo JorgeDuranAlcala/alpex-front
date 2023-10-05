@@ -12,10 +12,10 @@ export const OptionsARAPTransaction: OptionsARAPTransactionProps[] = [
   },
   {
     value: 'INST',
-    text: 'Reinsurer Pay'
+    text: 'Broker Pay'
   },
   {
     value: 'REC',
-    text: 'Broker Pay'
+    text: 'Reinsurer Pay'
   }
 ]

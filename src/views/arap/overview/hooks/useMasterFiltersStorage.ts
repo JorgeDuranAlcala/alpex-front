@@ -14,7 +14,7 @@ interface HandleSaveMasterFiltersSelectorsProps {
 
 }
 
-const STORAGE_NAME = 'masterFiltersStorage';
+const STORAGE_NAME = 'ARAP_OVERVIEW_PAYMENTS_masterFiltersStorage';
 
 export const useMasterFiltersStorage = () => {
 

@@ -122,7 +122,7 @@ export const columns: GridColumns<DifferenceColumn> = [
     flex: 0.1,
     field: EFieldColumn.ORIGIN_ACCT,
     headerName: 'ORIGIN ACCT.',
-    minWidth: 150,
+    minWidth: 200,
     type: 'string',
     align: 'left',
     disableColumnMenu: true,
@@ -132,16 +132,21 @@ export const columns: GridColumns<DifferenceColumn> = [
       <ColumnHeader colDef={colDef} type={EFieldColumn.ORIGIN_ACCT} detailsType={DETAILS_TYPE} />
     ),
     renderCell: ({ row }) => (
-      <Typography sx={{ color: colors.text.secondary, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
-        {row.origin_acct}
-      </Typography>
+      <DynamicTooltip
+        name={row.origin_acct}
+        sx={{
+          color: colors.text.secondary,
+          fontSize: fonts.size.px14,
+          fontFamily: fonts.inter
+        }}
+      />
     )
   },
   {
     flex: 0.1,
     field: EFieldColumn.DEPOSIT_ACC,
     headerName: 'DEPOSIT ACCT.',
-    minWidth: 150,
+    minWidth: 200,
     type: 'string',
     align: 'left',
     disableColumnMenu: true,
@@ -151,9 +156,14 @@ export const columns: GridColumns<DifferenceColumn> = [
       <ColumnHeader colDef={colDef} type={EFieldColumn.DEPOSIT_ACC} detailsType={DETAILS_TYPE} />
     ),
     renderCell: ({ row }) => (
-      <Typography sx={{ color: colors.text.secondary, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
-        {row.deposit_acct}
-      </Typography>
+      <DynamicTooltip
+        name={row.deposit_acct}
+        sx={{
+          color: colors.text.secondary,
+          fontSize: fonts.size.px14,
+          fontFamily: fonts.inter
+        }}
+      />
     )
   },
   {

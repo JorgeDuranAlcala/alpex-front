@@ -11,7 +11,7 @@ export const SelectCapabilityBroker = ({ selectedValue, onChange, isDisabled }: 
       <InputLabel>Capability</InputLabel>
 
       <Select
-        name='broker'
+        name='capability'
         label='Select Capability'
         value={selectedValue}
         onChange={onChange}

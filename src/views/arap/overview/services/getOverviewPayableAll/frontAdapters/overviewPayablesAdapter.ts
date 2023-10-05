@@ -20,7 +20,7 @@ export const overviewPayablesAdapter = (data: GetOverviewPayableAllResponseDto, 
           month: '2-digit'
         }),  
         account: result.account,
-        origin_acct: +result.originAcct,
+        origin_acct: result.originAcct,
         transactionId: result.transactionId,
         user: result.user
       }

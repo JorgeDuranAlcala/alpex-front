@@ -10,7 +10,8 @@ const keyFilters: { [key: string]: string } = {
 }
 
 const textFilters: { [key: string]: string } = {
-  id: 'Transaction ID: ',
+  id: 'ID: ',
+  transaction: 'Transaction ID: ',
   amount: 'Amount: ',
   date: 'Transaction Date: ',
   broker: 'Capability Name: ',
@@ -27,7 +28,7 @@ export const useOverviewPaymentsQueryFilters = () => {
     const savedFilters = getMasterFiltersSelectors();
     
     return Object.keys(queryFilters).map(key => {
-
+      
       if (keyFilters[key]) {
         return {
           type: key,
@@ -39,11 +40,11 @@ export const useOverviewPaymentsQueryFilters = () => {
   
         if (key === 'date') {
           const savedDate = savedFilters.filter(item => item.type === key)[0]?.value
-
+          
           return {
             type: key,
             value: savedDate || queryFilters[key],
-            text: textFilters[key] + savedDate || queryFilters[key]
+            text: textFilters[key] + (savedDate || queryFilters[key])
           }
         }
 
