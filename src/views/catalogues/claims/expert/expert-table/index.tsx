@@ -19,6 +19,7 @@ import CataloguesClaimsActionTypes from 'src/context/catalogues-claims/actionTyp
 import Icon from 'src/@core/components/icon'
 
 // ** Custom Hooks imports
+import toast from 'react-hot-toast'
 
 // ** Custom Components Imports
 import CustomPagination from '../../CustomPaginationImpl'
@@ -26,6 +27,9 @@ import TableHeader from '../../TableHeader'
 
 // ** Custom utilities
 import useGetAllPagination from '@/hooks/catalogs/experts/useGetAllPagination'
+import { useDeleteExpert } from '@/hooks/catalogs/experts/useDelete'
+
+
 import colors from 'src/views/accounts/colors'
 import fonts from 'src/views/accounts/font'
 
@@ -40,17 +44,20 @@ const ExpertTable = () => {
 
   const [openDelete, setOpenDelete] = useState(false)
   const [openDeleteRows, setOpenDeleteRows] = useState(false)
-  const [expertToDelete, setExpertToDelete] = useState("0")
+  const [expertToDelete, setExpertToDelete] = useState(0)
 
   const { dispatch } = useContext(CataloguesClaimsContext);
 
   //hooks
   const {  
+    getExpertsPagination,
     expertPagination,
     setExpertPagination,
     experts,
     expertInfoPage,
    } = useGetAllPagination()
+
+   const { deleteExpert } = useDeleteExpert()   
 
 
 
@@ -115,7 +122,7 @@ const ExpertTable = () => {
       ),
       renderCell: ({ row }) => (
         <Typography sx={{ color: colors.text.secondary, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
-          {row.siglas}
+          {row.businessName}
         </Typography>
       )
     },
@@ -141,7 +148,7 @@ const ExpertTable = () => {
       ),
       renderCell: ({ row }) => (
         <Typography sx={{ color: colors.text.secondary, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
-          {row.razonSocial}
+          {row.acronym}
         </Typography>
       )
     },
@@ -167,7 +174,7 @@ const ExpertTable = () => {
       ),
       renderCell: ({ row }) => (
         <Typography sx={{ color: colors.text.secondary, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
-          {row.estado}
+          {row.state}
         </Typography>
       )
     },
@@ -193,7 +200,7 @@ const ExpertTable = () => {
       ),
       renderCell: ({ row }) => (
         <Typography sx={{ color: colors.text.secondary, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
-          {row.proveedor}
+          {row.provider}
         </Typography>
       )
     },
@@ -251,10 +258,6 @@ const ExpertTable = () => {
     }
   ]
 
-  useEffect(() => {
-    setExpertPagination({ ...expertPagination })
-    //eslint-disable-next-line
-  }, [])
 
   useEffect(() => {
     setExpertsList(experts || [])
@@ -267,6 +270,12 @@ const ExpertTable = () => {
 
 
   const deleteRows = async () => {
+    Promise.all(selectedRows.map(async (id) => await deleteExpert(id)))
+    .then(() => {
+      getExpertsPagination({ ...expertPagination });
+      toast.success("all rows deleted")
+    })
+    .catch(error => toast.error(error.message))
     setOpenDeleteRows(false)
   }
 
@@ -276,6 +285,12 @@ const ExpertTable = () => {
   }
 
   const deleteSingleExpert = async () => {
+    deleteExpert(expertToDelete)
+    .then(() => {
+      getExpertsPagination({ ...expertPagination})
+      toast.success("Row deleted")
+    })
+    .catch(error => toast.error(error.message))
     dispatch({ type: CataloguesClaimsActionTypes.REMOVE_EXPERT, payload: {id: expertToDelete}});
     setOpenDelete(false)
   }
@@ -283,7 +298,7 @@ const ExpertTable = () => {
   const handleDispatch = (e: any, value: number) => {
     setExpertPagination({
       ...expertPagination,
-      info: { ...expertPagination.info, page: value }
+      info: { ...expertInfoPage, page: value }
     })
   }
 
@@ -312,7 +327,7 @@ const ExpertTable = () => {
             rows={expertsList}
             columns={column}
             pagination
-            pageSize={10}
+            pageSize={expertInfoPage.take}
             components={{
               Pagination: CustomPagination
             }}

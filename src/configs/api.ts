@@ -351,14 +351,16 @@ export enum BANK_ROUTES {
   DELETE_BY_ID = '/catalogs/bank-accounts/delete'
 }
 
+
+
 // ==== ADJUSTER
 
-export enum ADJUSTER_ROUTES {
-  GET = '',
+export enum CLAIMS_ROUTES {
+  GET = '/catalogs/claims/by-provider/all',
+  ADD = '/catalogs/claims/add',
+  UPDATE = '/catalogs/claims/update',
+  DELETE_BY_ID = '/catalogs/claims/delete',
   GET_BY_ID = '',
-  ADD = '',
-  UPDATE = '',
-  DELETE_BY_ID = ''
 }
 
 // ==== EXPERT

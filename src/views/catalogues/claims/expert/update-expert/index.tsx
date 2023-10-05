@@ -8,12 +8,12 @@ import { useRouter } from 'next/router'
 const UpdateExpert = () => {
 
     const router = useRouter()
-    const id = (router.query.id && router.query.id.toString()) as string;
+    const id = Number(router.query.id && router.query.id.toString()) as number;
   
     const { state } = React.useContext(CataloguesClaimsContext);
-    const expertData = expertByIdSelector(state, id as string);
+    const expertData = expertByIdSelector(state, id as number);
     if(!expertData) router.back();
-    const title = expertData && `Edit ${expertData.siglas} Account`
+    const title = expertData && `Edit ${expertData.businessName} Account`
 
   return (
     <>

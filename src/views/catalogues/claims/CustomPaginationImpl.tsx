@@ -1,32 +1,41 @@
 // ** MUI Imports
 import Pagination from '@mui/material/Pagination'
 import Typography from '@mui/material/Typography'
-import {
-    gridPageCountSelector,
-    gridPageSelector,
-    gridPageSizeSelector,
-    gridRowCountSelector, useGridApiContext,
-    useGridSelector
-} from '@mui/x-data-grid'
 
-const CustomPagination = () => {
-    const apiRef = useGridApiContext()
-    const page = useGridSelector(apiRef, gridPageSelector)
-    const pageCount = useGridSelector(apiRef, gridPageCountSelector)
-    const pageSize = useGridSelector(apiRef, gridPageSizeSelector)
-    const rowCount = useGridSelector(apiRef, gridRowCountSelector)
-  
-    return (
-      <>
-        <Pagination
-          color={"standard"}
-          count={pageCount}
-          page={page+1}
-          onChange={(event, value) => apiRef.current.setPage(value - 1)}
-        />
-        <Typography sx={{marginRight:'1rem'}}>{(((page+1)*pageSize)-pageSize)+1}-{((page+1)*pageSize)} of {rowCount}</Typography>
-      </>
-    );
+interface IInfoPage {
+  count: number
+  page: number
+  take: number
+  pages: number
+  next: string
+  prev: string
+}
+
+interface ICustomPagination {
+  handleDispatch: (e: any, value: number) => void
+  infoPage: IInfoPage
+}
+
+const CustomPagination = ({ handleDispatch, infoPage }: ICustomPagination) => {
+  const page = parseInt(infoPage.page.toString())
+  const pageCount = parseInt(infoPage.pages.toString())
+  const pageSize = parseInt(infoPage.take.toString())
+  const rowCount = parseInt(infoPage.count.toString())
+
+  return (
+    <>
+      <Pagination
+        color={'standard'}
+        count={pageCount}
+        page={page}
+        onChange={(event, value) => handleDispatch(event, value)}
+      />
+      <Typography sx={{ marginRight: '1rem' }}>
+        {rowCount === 0 ? 0 : 1 + pageSize * (page - 1)}-{page * pageSize > rowCount ? rowCount : page * pageSize} of{' '}
+        {rowCount}
+      </Typography>
+    </>
+  )
 }
 
 export default CustomPagination

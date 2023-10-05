@@ -1,22 +1,22 @@
 export interface AdjusterDto {
-    id: string;
-    siglas: string;
-    razonSocial: string;
-    proveedor: string;
-    estado: string;
+    id: number;
+    acronym: string;
+    businessName: string;
+    provider: 'Ajustador';
     rfc: string;
-    calle: string;
-    noExterior: number;
-    noInterior: number;
-    colonia: string;
-    municipio: string;
-    cp: number;
-    telefono: string;
-    correoContacto: string;
-    nombreContacto: string;
-    contactoReporte: string;
-    fechaContrato: string;
-    observaciones: string;
+    street: string;
+    numExt: string;
+    numInt: string;
+    suburb: string;
+    municipality: string;
+    state: string;
+    zipCode: string;
+    phoneNumber: string;
+    mainContactEmail: string;
+    contactName: string;
+    claimsContact: string;
+    contractDate: null | string;
+    observations: null | string;
 }
 
 

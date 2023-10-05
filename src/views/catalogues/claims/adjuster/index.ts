@@ -1,4 +1,5 @@
-export interface IAdjuster {
+import { AdjusterDto } from 'src/services/dtos/adjuster.dto'
+/*export interface IAdjuster {
     id: string;
     siglas: string;
     razonSocial: string;
@@ -18,3 +19,6 @@ export interface IAdjuster {
     fechaContrato: string;
     observaciones: string;
 }
+*/
+
+export type IAdjuster = AdjusterDto

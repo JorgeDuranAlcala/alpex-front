@@ -15,7 +15,7 @@ interface ICataloguesClaimsState {
 
 const initialState: ICataloguesClaimsState = {
     adjusters:[
-      {
+     /* {
           id: "1",
           siglas: "FFFF",
           razonSocial: "FFF",
@@ -54,9 +54,10 @@ const initialState: ICataloguesClaimsState = {
         contactoReporte: "FFF",
         fechaContrato: "FFF",
         observaciones: "FFF",
-    },
+    }, */
  ],
     experts: [
+      /*
         {
           id: "1",
           siglas: "FFFF",
@@ -97,7 +98,7 @@ const initialState: ICataloguesClaimsState = {
         fechaContrato: "FFF",
         observaciones: "FFF",
     },
-      ]
+  */]
 };
 
 const CataloguesClaimsContext = createContext<{
@@ -113,12 +114,24 @@ const reducer = (state: ICataloguesClaimsState, action: { type: CataloguesClaims
         adjusters: [...state.adjusters, {...action.payload, id: Number(state.adjusters[state.adjusters.length - 1].id) + 1}]
       }
     break;
+    case CataloguesClaimsActionTypes.SET_MANY_ADJUSTER:
+    return {
+      ...state,
+      adjusters: action.payload
+    }
+  break;
     case CataloguesClaimsActionTypes.SET_EXPERT:
         return {
             ...state,
             experts: [...state.experts, {...action.payload, id: Number(state.experts[state.experts.length - 1].id) + 1}]
         }
     break;
+    case CataloguesClaimsActionTypes.SET_MANY_EXPERT:
+    return {
+        ...state,
+        experts: action.payload
+    }
+break;
     case CataloguesClaimsActionTypes.UPDATE_ADJUSTER:
       return {
           ...state,

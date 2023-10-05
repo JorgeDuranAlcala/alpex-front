@@ -18,7 +18,9 @@ import CataloguesClaimsActionTypes from 'src/context/catalogues-claims/actionTyp
 //import { IExpert } from 'src/views/catalogues/claims/expert'
 
 // ** Hooks
-import { useRouter } from 'next/router'
+import { useUpdateExpert } from 'src/hooks/catalogs/experts/useUpdate'
+
+import toast from 'react-hot-toast'
 
 const schema = yup.object().shape({
   siglas: yup.string().required('Siglas is required'),
@@ -52,7 +54,7 @@ const schema = yup.object().shape({
 });
 
 interface FormProps {
-    id: string
+    id: number
 }
 
 const Form = ({
@@ -61,29 +63,82 @@ const Form = ({
   const {
     control,
     handleSubmit,
-    formState: { errors }
+    formState: { errors },
+    reset
   } = useForm({
     mode: 'onBlur',
     resolver: yupResolver(schema)
   })
 
   const { dispatch, state } = React.useContext(CataloguesClaimsContext);
-  const router = useRouter();
-  const initialValues = state.experts.find(exp => exp.id == id );
+  const { updateExpert } = useUpdateExpert()
+  const expert = state.experts.find(exp => exp.id == id );
 
-  const onSubmit = (data: any) => {
-    if(!initialValues) return;
-    dispatch({ type: CataloguesClaimsActionTypes.UPDATE_EXPERT, payload: {...data, id: initialValues.id}})
-    router.back()
-  };
 
-  if(!initialValues) return (
+  if(!expert) return (
     <>
       <Container>
           <Typography variant="h4">No Existe un Expert con ese ID</Typography>
       </Container>
     </>
   )
+
+  const initialValues = {
+    siglas: expert.businessName,
+    razonSocial: expert.acronym,
+    rfc: expert.rfc,
+    calle: expert.street,
+    noExterior: expert.numExt,
+    noInterior: expert.numInt,
+    colonia: expert.suburb,
+    municipio: expert.municipality,
+    estado: expert.state,
+    cp: expert.zipCode,
+    telefono: expert.phoneNumber,
+    correoContacto: expert.mainContactEmail,
+    nombreContacto: expert.contactName,
+    contactoReporte: expert.claimsContact,
+    fechaContrato: expert.contractDate,
+    observaciones: expert.observations,
+  }
+
+  const onSubmit = async (data: any) => {
+    try {
+      if(!expert) return;
+      const body = {
+        id: expert.id,
+        acronym: data.razonSocial,
+        businessName: data.siglas,
+        provider: 'Experto',
+        rfc: data.rfc,
+        street: data.calle,
+        numExt: data.noExterior,
+        numInt: data.noInterior,
+        suburb: data.colonia,
+        municipality: data.municipio,
+        state: data.estado,
+        zipCode: data.cp,
+        phoneNumber: data.telefono,
+        mainContactEmail: data.correoContacto,
+        contactName: data.nombreContacto,
+        claimsContact: data.contactoReporte,
+        contractDate: data.fechaContrato,
+        observations: data.observaciones,
+      }
+      const result = await updateExpert(body);
+
+      if(result) {
+        dispatch({ type: CataloguesClaimsActionTypes.UPDATE_EXPERT, payload: {...data, id: expert.id}})
+        toast.success('Expert updated Successfully')
+        reset(result)
+      }
+    } catch(err) {
+      if(!(err instanceof Error)) return;
+      console.log(err)
+      toast.error('error: ' + err.message)
+    }
+  };
+
 
   return (
     <>

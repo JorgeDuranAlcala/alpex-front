@@ -1,3 +1,6 @@
+import { ExpertDto } from 'src/services/dtos/expert.dto'
+
+/*
 export interface IExpert {
   id: string;
   siglas: string;
@@ -18,3 +21,6 @@ export interface IExpert {
   fechaContrato: string;
   observaciones: string;
   }
+  */
+
+  export type IExpert = ExpertDto

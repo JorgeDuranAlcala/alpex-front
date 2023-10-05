@@ -8,13 +8,13 @@ import { useRouter } from 'next/router'
 const UpdateAdjuster = () => {
 
     const router = useRouter()
-    const id = (router.query.id && router.query.id.toString()) as string;
+    const id = Number(router.query.id && router.query.id.toString()) as number;
   
     const { state } = React.useContext(CataloguesClaimsContext);
-    const adjusterData = adjusterByIdSelector(state, id as string);
+    const adjusterData = adjusterByIdSelector(state, id as number);
     if(!adjusterData) router.back();
 
-    const title = adjusterData && `Edit ${adjusterData.siglas} Account`
+    const title = adjusterData && `Edit ${adjusterData.businessName} Account`
 
   return (
     <>

@@ -16,7 +16,9 @@ import { CataloguesClaimsContext } from 'src/context/catalogues-claims/reducer';
 import CataloguesClaimsActionTypes from 'src/context/catalogues-claims/actionTypes';
 
 // ** Hooks
-import { useRouter } from 'next/router'
+import { useAddExpert } from 'src/hooks/catalogs/experts/useAdd'
+
+import toast from 'react-hot-toast'
 
 
 const schema = yup.object().shape({
@@ -54,19 +56,47 @@ const Form = () => {
   const {
     control,
     handleSubmit,
-    formState: { errors }
+    formState: { errors },
+    reset
   } = useForm({
     mode: 'onBlur',
     resolver: yupResolver(schema)
   })
 
-  const router = useRouter();
   const { dispatch } = React.useContext(CataloguesClaimsContext);
+  const { saveExpert } = useAddExpert()
 
-
-  const onSubmit = (data: any) => {
-    dispatch({ type: CataloguesClaimsActionTypes.SET_EXPERT, payload: data});
-    router.push('/catalogues/claims')
+  const onSubmit = async (data: any) => {
+    try {
+      const body = {
+        acronym: data.razonSocial,
+        businessName: data.siglas,
+        provider: 'Experto',
+        rfc: data.rfc,
+        street: data.calle,
+        numExt: data.noExterior,
+        numInt: data.noInterior,
+        suburb: data.colonia,
+        municipality: data.municipio,
+        state: data.estado,
+        zipCode: data.cp,
+        phoneNumber: data.telefono,
+        mainContactEmail: data.correoContacto,
+        contactName: data.nombreContacto,
+        claimsContact: data.contactoReporte,
+        contractDate: data.fechaContrato,
+        observations: data.observaciones,
+      }
+      const result = await saveExpert(body);
+      if(result) {
+        dispatch({ type: CataloguesClaimsActionTypes.SET_EXPERT, payload: result});
+        toast.success('Expert created Successfully')
+        reset();
+      }
+    } catch(err) {
+      if(!(err instanceof Error)) return;
+      toast.error('error: ' + err.message)
+    }
   };
 
   return (

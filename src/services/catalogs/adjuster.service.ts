@@ -1,4 +1,4 @@
-import { ADJUSTER_ROUTES } from 'src/configs/api';
+import { CLAIMS_ROUTES } from 'src/configs/api';
 import { AppAlpexApiGateWay } from 'src/services/app.alpex.api-getway';
 import { AdjusterDto, AdjusterPaginationDto } from 'src/services/catalogs/dtos/adjuster.dto';
 import { queryBuilder } from '../helper/queryBuilder';
@@ -6,7 +6,7 @@ import { queryBuilder } from '../helper/queryBuilder';
 class AdjusterService {
     async getAll(): Promise<AdjusterDto[]> {
         try {
-            const { data } = await AppAlpexApiGateWay.get<Promise<AdjusterDto[]>>("/catalogs/adjuster-accounts/all?page=1&itemsPerPage=10");
+            const { data } = await AppAlpexApiGateWay.get<Promise<AdjusterDto[]>>(`${CLAIMS_ROUTES.GET}?provider=Ajustador`);
 
             return data;
         } catch (error) {
@@ -16,7 +16,7 @@ class AdjusterService {
 
     async findById(id: number): Promise<AdjusterDto> {
         try {
-            const { data } = await AppAlpexApiGateWay.get<Promise<AdjusterDto>>(`${ADJUSTER_ROUTES.GET_BY_ID}/${id}`);
+            const { data } = await AppAlpexApiGateWay.get<Promise<AdjusterDto>>(`${CLAIMS_ROUTES.GET_BY_ID}/${id}`);
 
             return data;
         } catch (error) {
@@ -26,7 +26,7 @@ class AdjusterService {
 
     async add(adjuster: Partial<AdjusterDto>): Promise<AdjusterDto> {
         try {
-            const { data } = await AppAlpexApiGateWay.post<Promise<AdjusterDto>>(`${ADJUSTER_ROUTES.ADD}`, { ...adjuster });
+            const { data } = await AppAlpexApiGateWay.post<Promise<AdjusterDto>>(`${CLAIMS_ROUTES.ADD}`, { ...adjuster });
 
             return data;
         } catch (error) {
@@ -34,9 +34,9 @@ class AdjusterService {
         }
     }
 
-    async updateById(id: number, update: Partial<AdjusterDto>): Promise<AdjusterDto> {
+    async update(update: Partial<AdjusterDto>): Promise<AdjusterDto> {
         try {
-            const { data } = await AppAlpexApiGateWay.put<Promise<AdjusterDto>>(`${ADJUSTER_ROUTES.UPDATE}/${id}`, { ...update });
+            const { data } = await AppAlpexApiGateWay.post<Promise<AdjusterDto>>(`${CLAIMS_ROUTES.UPDATE}`, { ...update });
             
             return data;
         } catch (error) {
@@ -46,7 +46,7 @@ class AdjusterService {
 
     async deleteById(id: number): Promise<AdjusterDto> {
         try {
-            const { data } = await AppAlpexApiGateWay.delete<Promise<AdjusterDto>>(`${ADJUSTER_ROUTES.DELETE_BY_ID}/${id}`);
+            const { data } = await AppAlpexApiGateWay.delete<Promise<AdjusterDto>>(`${CLAIMS_ROUTES.DELETE_BY_ID}/${id}`);
             
             return data;
         } catch (error) {
@@ -56,8 +56,8 @@ class AdjusterService {
 
     async getAdjustersPagination(adjusterData: AdjusterPaginationDto, urlQ?: string) {
         try {
-            const url = urlQ ? urlQ : queryBuilder(adjusterData.filters, `${ADJUSTER_ROUTES.GET}`);
-            const { data } = await AppAlpexApiGateWay.get(`${url}&take=${adjusterData.info.take}&page=${adjusterData.info.page}`);
+            const url = urlQ ? urlQ : queryBuilder(adjusterData.filters, `${CLAIMS_ROUTES.GET}`);
+            const { data } = await AppAlpexApiGateWay.get(`${url}&itemsPerPage=${adjusterData.info.take}&page=${adjusterData.info.page}&provider=Ajustador`);
             
             return data;
         } catch (error) {

@@ -17,7 +17,10 @@ import CataloguesClaimsActionTypes from 'src/context/catalogues-claims/actionTyp
 
 
 // ** Hooks
-import { useRouter } from 'next/router'
+import { useUpdateAdjuster } from 'src/hooks/catalogs/adjusters/useUpdate'
+
+import toast from 'react-hot-toast'
+
 
 const schema = yup.object().shape({
   siglas: yup.string().required('Siglas is required'),
@@ -51,7 +54,7 @@ const schema = yup.object().shape({
 });
 
 interface FormProps {
-    id: string
+    id: number
 }
 
 const Form = ({
@@ -60,30 +63,81 @@ const Form = ({
   const {
     control,
     handleSubmit,
-    formState: { errors }
+    formState: { errors },
+    reset
   } = useForm({
     mode: 'onBlur',
     resolver: yupResolver(schema)
   })
 
   const { dispatch, state } = React.useContext(CataloguesClaimsContext);
-  const router = useRouter();
-  const initialValues = state.adjusters.find(ad => ad.id == id );
+  const { updateAdjuster } = useUpdateAdjuster()
+  const adjuster = state.adjusters.find(ad => ad.id == id );
 
-
-  const onSubmit = (data: any) => {
-    if(!initialValues) return;
-    dispatch({ type: CataloguesClaimsActionTypes.UPDATE_ADJUSTER, payload: {...data, id: initialValues.id}})
-    router.back()
-  };
-
-  if(!initialValues) return (
+  if(!adjuster) return (
     <>
       <Container>
           <Typography variant="h4">No Existe una Bank Account con ese ID</Typography>
       </Container>
     </>
   )
+
+  const initialValues = {
+    siglas: adjuster.businessName,
+    razonSocial: adjuster.acronym,
+    rfc: adjuster.rfc,
+    calle: adjuster.street,
+    noExterior: adjuster.numExt,
+    noInterior: adjuster.numInt,
+    colonia: adjuster.suburb,
+    municipio: adjuster.municipality,
+    estado: adjuster.state,
+    cp: adjuster.zipCode,
+    telefono: adjuster.phoneNumber,
+    correoContacto: adjuster.mainContactEmail,
+    nombreContacto: adjuster.contactName,
+    contactoReporte: adjuster.claimsContact,
+    fechaContrato: adjuster.contractDate,
+    observaciones: adjuster.observations,
+  }
+
+  const onSubmit = async (data: any) => {
+    try {
+      if(!adjuster) return;
+      const body = {
+        id: adjuster.id,
+        acronym: data.razonSocial,
+        businessName: data.siglas,
+        provider: 'Ajustador',
+        rfc: data.rfc,
+        street: data.calle,
+        numExt: data.noExterior,
+        numInt: data.noInterior,
+        suburb: data.colonia,
+        municipality: data.municipio,
+        state: data.estado,
+        zipCode: data.cp,
+        phoneNumber: data.telefono,
+        mainContactEmail: data.correoContacto,
+        contactName: data.nombreContacto,
+        claimsContact: data.contactoReporte,
+        contractDate: data.fechaContrato,
+        observations: data.observaciones,
+      }
+      const result = await updateAdjuster(body);
+
+      if(result) {
+        dispatch({ type: CataloguesClaimsActionTypes.UPDATE_ADJUSTER, payload: {...data, id: adjuster.id}})
+        toast.success('Adjuster updated Successfully')
+        reset(result)
+      }
+    } catch(err) {
+      if(!(err instanceof Error)) return;
+      toast.error('error: ' + err.message)
+    }
+
+  };
+
 
   return (
     <>
