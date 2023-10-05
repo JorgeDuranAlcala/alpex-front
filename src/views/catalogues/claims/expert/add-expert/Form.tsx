@@ -18,7 +18,11 @@ import CataloguesClaimsActionTypes from 'src/context/catalogues-claims/actionTyp
 // ** Hooks
 import { useAddExpert } from 'src/hooks/catalogs/experts/useAdd'
 
+import { IExpert } from 'src/views/catalogues/claims/expert'
+
+
 import toast from 'react-hot-toast'
+
 
 
 const schema = yup.object().shape({
@@ -86,7 +90,7 @@ const Form = () => {
         claimsContact: data.contactoReporte,
         contractDate: data.fechaContrato,
         observations: data.observaciones,
-      }
+      } as Omit<IExpert, 'id'>;
       const result = await saveExpert(body);
       if(result) {
         dispatch({ type: CataloguesClaimsActionTypes.SET_EXPERT, payload: result});

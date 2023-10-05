@@ -264,7 +264,7 @@ const ExpertTable = () => {
   }, [experts])
 
 
-  const handleSelectEdit = (id: string | null) => {
+  const handleSelectEdit = (id: number | null) => {
     router.push({ pathname: '/catalogues/claims/update-experts', query: { id } })
   }
 
@@ -279,7 +279,7 @@ const ExpertTable = () => {
     setOpenDeleteRows(false)
   }
 
-  const openDeleteModal = (id: string) => {
+  const openDeleteModal = (id: number) => {
     setExpertToDelete(id)
     setOpenDelete(true)
   }

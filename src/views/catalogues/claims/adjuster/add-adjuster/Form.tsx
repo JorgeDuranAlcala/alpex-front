@@ -18,6 +18,8 @@ import CataloguesClaimsActionTypes from 'src/context/catalogues-claims/actionTyp
 // ** Hooks
 import { useAddAdjuster } from 'src/hooks/catalogs/adjusters/useAdd'
 
+import { IAdjuster } from 'src/views/catalogues/claims/adjuster';
+
 import toast from 'react-hot-toast'
 
 // Schema
@@ -86,7 +88,7 @@ const Form = () => {
         claimsContact: data.contactoReporte,
         contractDate: data.fechaContrato,
         observations: data.observaciones,
-      }
+      } as Omit<IAdjuster, 'id'>;
       const result = await saveAdjuster(body);
       if(result) {
         dispatch({ type: CataloguesClaimsActionTypes.SET_ADJUSTER, payload: result});

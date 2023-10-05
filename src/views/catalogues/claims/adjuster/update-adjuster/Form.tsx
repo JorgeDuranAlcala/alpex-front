@@ -21,6 +21,8 @@ import { useUpdateAdjuster } from 'src/hooks/catalogs/adjusters/useUpdate'
 
 import toast from 'react-hot-toast'
 
+import { IAdjuster } from 'src/views/catalogues/claims/adjuster'
+
 
 const schema = yup.object().shape({
   siglas: yup.string().required('Siglas is required'),
@@ -123,7 +125,7 @@ const Form = ({
         claimsContact: data.contactoReporte,
         contractDate: data.fechaContrato,
         observations: data.observaciones,
-      }
+      } as Partial<IAdjuster>;
       const result = await updateAdjuster(body);
 
       if(result) {

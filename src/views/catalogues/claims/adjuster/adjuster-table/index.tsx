@@ -264,7 +264,7 @@ const AdjusterTable = () => {
   }, [adjusters])
 
 
-  const handleSelectEdit = (id: string | null) => {
+  const handleSelectEdit = (id: number | null) => {
     router.push({ pathname: '/catalogues/claims/update-adjusters', query: { id } })
   }
   
@@ -279,7 +279,7 @@ const AdjusterTable = () => {
     setOpenDeleteRows(false)
   }
 
-  const openDeleteModal = (id: string) => {
+  const openDeleteModal = (id: number) => {
     setAdjusterToDelete(id)
     setOpenDelete(true)
   }

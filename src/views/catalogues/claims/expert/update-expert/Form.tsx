@@ -20,6 +20,9 @@ import CataloguesClaimsActionTypes from 'src/context/catalogues-claims/actionTyp
 // ** Hooks
 import { useUpdateExpert } from 'src/hooks/catalogs/experts/useUpdate'
 
+import { IExpert } from 'src/views/catalogues/claims/expert'
+
+
 import toast from 'react-hot-toast'
 
 const schema = yup.object().shape({
@@ -124,7 +127,7 @@ const Form = ({
         claimsContact: data.contactoReporte,
         contractDate: data.fechaContrato,
         observations: data.observaciones,
-      }
+      } as Partial<IExpert>;
       const result = await updateExpert(body);
 
       if(result) {
