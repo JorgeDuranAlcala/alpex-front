@@ -136,7 +136,6 @@ const Form = ({
       toast.error('error: ' + err.message)
     }
 
-  };
 
 
   return (
