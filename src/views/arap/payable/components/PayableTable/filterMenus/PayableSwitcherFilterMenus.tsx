@@ -2,6 +2,7 @@ import { ReactElement } from "react"
 import { payableEFieldColumn } from "../payableEFieldColumn"
 
 import FilterMenuInputText from "./FilterMenuInputText"
+import FilterMenuReinsurer from "./FilterMenuReinsurer"
 
 export interface IComponents {
   [key: string]: ReactElement
@@ -17,11 +18,9 @@ export const PayableSwitcherFilterMenus = ({ field, handleClose }: IFilterMenu) 
 
   const FilterMenuComponents: IComponents = {
     [payableEFieldColumn.CAPABILITY_NAME]: (
-      <FilterMenuInputText
-        titleType="Linked Biz."
-        placeholder="Search by Linked Biz."
-        columnType={field}
-        handleClose={handleClose}
+      <FilterMenuReinsurer 
+        auxFilterText="Linked Biz." 
+        handleClose={handleClose} 
       />
     ),
     [payableEFieldColumn.PERIOD_0_30]: (

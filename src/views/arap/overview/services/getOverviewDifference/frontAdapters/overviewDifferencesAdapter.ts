@@ -20,8 +20,8 @@ export const overviewDifferencesAdapter = (data: GetOverviewDifferenceAllRespons
           month: '2-digit'
         }),
         account: result.account,
-        origin_acct:result.originAcct ?  +result.originAcct: 0,
-        deposit_acct: result.depositAcc ? +result.depositAcc: 0,
+        origin_acct: result.originAcct || '',
+        deposit_acct: result.depositAcc || '',
         transactionId: result.transactionId,
         user: result.user
       }

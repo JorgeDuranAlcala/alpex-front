@@ -74,7 +74,8 @@ export const BalanceOfPayments = () => {
             currency={balanceOfPayments.currency}
             footerDescription='Total amount of money left per month'
           />
-        </>) : null}
+        </>) : !isLoading 
+          ? <CardNoDetails> No data available </CardNoDetails> : null}
     </CardsContainer>
   )
 }
@@ -98,3 +99,12 @@ const LoadingContainer = styled(Box)(() => ({
   width: '100%',
   minHeight: '133px',
 }));
+
+const CardNoDetails = styled(Box)(() => ({
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  width: '100%',
+  minHeight: '133px',
+  gap: '16px',
+}))

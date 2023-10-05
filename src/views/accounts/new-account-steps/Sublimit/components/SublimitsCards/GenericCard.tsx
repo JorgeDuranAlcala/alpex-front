@@ -28,9 +28,9 @@ import { RenderFormGeneric } from './types'
 // const DONT_SHOW_DEDUCTIBLE_MATERIAL_DAMAGE = ['Business  Interruption  Machinery Breakdown', 'Business  Interruption']
 
 const coverageTypes = {
-  standard: 'Standard',
-  special: 'Special',
-  businessInterruption: 'Business Interruption'
+  businessInterruption: 'Business Interruption',
+  materialDamage: 'Material Damage',
+  materialDamageBI: 'Material Damage + BI'
 }
 
 const GenericCard: React.FC<RenderFormGeneric> = ({
@@ -59,8 +59,7 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
     setSubLimits(subLimitsTemp)
     validateForm(subLimitsTemp[index])
     if (setIsUpdatedInfoByUser) {
-
-      setIsUpdatedInfoByUser(true);
+      setIsUpdatedInfoByUser(true)
     }
   }
 
@@ -111,11 +110,9 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
       })
   }
 
-
   const getCoverageTypeByTitle = (title: string) => {
-    return selectedCoverages.find(coverage => coverage.coverage === title);
+    return selectedCoverages.find(coverage => coverage.coverage === title)
   }
-
 
   useEffect(() => {
     subLimit && setSublimitCard(subLimit)
@@ -160,7 +157,8 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
           subLimits={subLimits}
         />
 
-        {getCoverageTypeByTitle(subLimitCard.title)?.coverageTypeName === coverageTypes.special || getCoverageTypeByTitle(subLimitCard.title)?.coverageTypeName === coverageTypes.businessInterruption ? (
+        {getCoverageTypeByTitle(subLimitCard.title)?.coverageTypeName === coverageTypes.materialDamage ||
+        getCoverageTypeByTitle(subLimitCard.title)?.coverageTypeName === coverageTypes.materialDamageBI ? (
           <DeductibleMaterialDamage
             subLimit={subLimitCard}
             onHandleChangeSubLimit={handleChangeSubLimit}
@@ -169,7 +167,8 @@ const GenericCard: React.FC<RenderFormGeneric> = ({
           />
         ) : null}
 
-        {getCoverageTypeByTitle(subLimitCard.title)?.coverageTypeName === coverageTypes.standard || getCoverageTypeByTitle(subLimitCard.title)?.coverageTypeName === coverageTypes.businessInterruption ? (
+        {getCoverageTypeByTitle(subLimitCard.title)?.coverageTypeName === coverageTypes.businessInterruption ||
+        getCoverageTypeByTitle(subLimitCard.title)?.coverageTypeName === coverageTypes.materialDamageBI ? (
           <BusinessInterruption
             subLimit={subLimitCard}
             onHandleChangeSubLimit={handleChangeSubLimit}

@@ -52,7 +52,7 @@ const Table = () => {
 
   const onAction = async (id: number) => {
     localStorage.setItem('idAccount', String(id))
-    router.push(`/installments/payment-record/?&id=${String(id)}`)
+    router.push(`/broker-tracker/broker-record/?&id=${String(id)}`)
   }
 
   const handleClickColumnHeader = (field: string) => {

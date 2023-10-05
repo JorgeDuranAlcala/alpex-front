@@ -1,4 +1,7 @@
-import useDownloadDebitNote from '@/hooks/reports/useDownloadDebitNote'
+import { useGetAccountById } from '@/hooks/accounts/forms'
+import { useDownloadDebitNote } from '@/hooks/accounts/information'
+import { useDownloadCreditNote } from '@/hooks/accounts/security'
+import { useGetAllLanguage } from '@/hooks/catalogs/language'
 import { AbilityContext } from '@/layouts/components/acl/Can'
 import { delayMs } from '@/utils/formatDates'
 import CustomAlert, { IAlert } from '@/views/custom/alerts'
@@ -6,6 +9,7 @@ import CloseIcon from '@mui/icons-material/Close'
 import { Box, Button, CircularProgress, Modal, Typography, styled } from '@mui/material'
 import { Fragment, useContext, useEffect, useState } from 'react'
 import Icon from 'src/@core/components/icon'
+import { useAppSelector } from 'src/store'
 import { ButtonClose, HeaderTitleModal } from 'src/styles/Dashboard/ModalReinsurers/modalReinsurers'
 import StatusSelect from 'src/views/custom/select/StatusSelect'
 import { ActionsHeaderBoundModal, ActionsHeaderBoundModalCancel } from './modals/ModalEndorsment'
@@ -55,6 +59,11 @@ const statusHistory: StatusHistory[] = [
 ]
 
 const ActionsHeaderBound: React.FC<IActionsHeaderProps> = ({ accountStatus, sideHeader, accountId }) => {
+  const { getAccountById } = useGetAccountById()
+  const { languages } = useGetAllLanguage()
+  const { downloadDebitNote } = useDownloadDebitNote()
+  const { downloadCreditNote } = useDownloadCreditNote()
+  const currentStep = useAppSelector(state => state.stepFormSlice)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [status, setStatus] = useState({})
   const [uneditableAccount, setUneditableAccount] = useState(false)
@@ -62,6 +71,7 @@ const ActionsHeaderBound: React.FC<IActionsHeaderProps> = ({ accountStatus, side
   const [openHistory, setOpenHistory] = useState(false)
   const [cancellEndorsment, setCancellEndorsment] = useState(false)
   const ability = useContext(AbilityContext)
+  const [showOptionsNotes, setShowOptionsNotes] = useState(false)
 
   // Notifications
   const [badgeData, setBadgeData] = useState<IAlert>({
@@ -71,14 +81,10 @@ const ActionsHeaderBound: React.FC<IActionsHeaderProps> = ({ accountStatus, side
     status: 'error'
   })
 
-
   // ** Store
   // const account = useAppSelector(state => state.accounts?.formsData?.form1)
 
-
-
   // ** Custom Hooks
-  const { getDebitNote } = useDownloadDebitNote()
 
   // const downloadSpanish = () => {
   //   console.log('Spanish Download')
@@ -94,135 +100,97 @@ const ActionsHeaderBound: React.FC<IActionsHeaderProps> = ({ accountStatus, side
     event.preventDefault()
   }
 
-  const handleDebitNote = async () => {
+  const handleDownloadError = () => {
+    setBadgeData({
+      message: `UNKNOWN ERROR, TRY AGAIN`,
+      theme: 'error',
+      open: true,
+      status: 'error',
+      icon: (
+        <Icon
+          style={{
+            color: '#FF4D49',
+            marginTop: '-1px'
+          }}
+          icon='jam:alert'
+        />
+      ),
+      disableAutoHide: true
+    })
+  }
 
-    if (accountId) {
-      setBadgeData({
-        message: `DOWNLOADING DEBIT NOTE`,
-        status: 'secondary',
-        open: true,
-        icon: <CircularProgress size={20} color='primary' />,
-        backgroundColor: '#828597',
-        theme: 'info',
-        disableAutoHide: true
-      })
+  const downloadSucess = () => {
+    setBadgeData({
+      message: `DOWNLOADED`,
+      status: 'success',
+      open: true,
+      icon: <Icon icon='ic:baseline-check-circle' />,
+      theme: 'success',
+      disableAutoHide: true
+    })
+  }
+
+  const textIconNotes = () => {
+    if (currentStep?.[accountId]?.step === 1 || Object.keys(currentStep).length === 0) {
+      return 'DEBIT NOTE'
+    } else if (currentStep?.[accountId]?.step === 2) {
+      return 'CREDIT NOTE'
+    }
+  }
+
+  const downloadNote = async (idLanguage: number) => {
+    setBadgeData({
+      message: `DOWNLOADING...`,
+      status: 'secondary',
+      open: true,
+      icon: <CircularProgress size={20} color='primary' />,
+      backgroundColor: '#828597',
+      theme: 'info',
+      disableAutoHide: true
+    })
+    if (accountId && (currentStep?.[accountId]?.step === 1 || Object.keys(currentStep).length === 0)) {
       await delayMs(1000)
 
       try {
-        const debitNoteBuffer = await getDebitNote({ idAccount: accountId })
+        const downloaded = await downloadDebitNote(accountId, idLanguage)
 
-        if (debitNoteBuffer) {
-          setBadgeData({
-            message: `DOWNLOADED`,
-            status: 'success',
-            open: true,
-            icon: <Icon icon='ic:baseline-check-circle' />,
-            theme: 'success',
-            disableAutoHide: true
-          })
-          await delayMs(1000)
-
-          console.log("debitNoteBuffer -> ", debitNoteBuffer);
-
-          const fileToDownload = new File([debitNoteBuffer], `DEBIT NOTE ID-${accountId}.xlsx`)
-          const downloadUrl = URL.createObjectURL(fileToDownload)
-          const link = document.createElement('a')
-          link.href = downloadUrl
-          link.download = fileToDownload.name
-          link.click()
+        if (downloaded) {
+          downloadSucess()
         }
       } catch (error) {
-        setBadgeData({
-          message: `UNKNOWN ERROR, TRY AGAIN`,
-          theme: 'error',
-          open: true,
-          status: 'error',
-          icon: (
-            <Icon
-              style={{
-                color: '#FF4D49',
-                marginTop: '-1px'
-              }}
-              icon='jam:alert'
-            />
-          ),
-          disableAutoHide: true
-        })
+        handleDownloadError()
       }
-      await delayMs(1500)
+      await delayMs(2000)
+    } else if (accountId && currentStep?.[accountId]?.step === 2) {
+      await delayMs(1000)
 
-      setBadgeData({
-        message: '',
-        status: undefined,
-        icon: undefined,
-        open: false
-      })
+      try {
+        const account = await getAccountById(accountId)
+        const downloaded = []
+        for (let index = 0; index < account.securities.length; index++) {
+          const { id } = account.securities[index]
+          const isDownload = await downloadCreditNote({
+            idAccount: accountId,
+            idSecurity: id,
+            idLanguage
+          })
+          if (isDownload) downloaded.push(isDownload)
+        }
+        const success = downloaded.length === account.securities.length
+        if (success) {
+          downloadSucess()
+        }
+      } catch (error) {
+        handleDownloadError()
+      }
+      await delayMs(2000)
     }
-
-    // else
-    //  {
-
-    //   setBadgeData({
-    //     message: `DOWNLOADING DEBIT NOTE`,
-    //     status: 'secondary',
-    //     open: true,
-    //     icon: <CircularProgress size={20} color='primary' />,
-    //     backgroundColor: '#828597',
-    //     theme: 'info',
-    //     disableAutoHide: true
-    //   })
-    //   await delayMs(1000)
-
-    //   try {
-    //     const debitNoteBuffer = await getDebitNote({ idAccount: accountId })
-
-    //     if (debitNoteBuffer) {
-    //       setBadgeData({
-    //         message: `DOWNLOADED`,
-    //         status: 'success',
-    //         open: true,
-    //         icon: <Icon icon='ic:baseline-check-circle' />,
-    //         theme: 'success',
-    //         disableAutoHide: true
-    //       })
-    //       await delayMs(1000)
-
-    //       console.log("debitNoteBuffer -> ", debitNoteBuffer);
-
-    //       const fileToDownload = new File([debitNoteBuffer], `DEBIT NOTE ID-${accountId}.xlsx`)
-    //       const downloadUrl = URL.createObjectURL(fileToDownload)
-    //       const link = document.createElement('a')
-    //       link.href = downloadUrl
-    //       link.download = fileToDownload.name
-    //       link.click()
-    //     }
-    //   } catch (error) {
-    //     setBadgeData({
-    //       message: `UNKNOWN ERROR, TRY AGAIN`,
-    //       theme: 'error',
-    //       open: true,
-    //       status: 'error',
-    //       icon: (
-    //         <Icon
-    //           style={{
-    //             color: '#FF4D49',
-    //             marginTop: '-1px'
-    //           }}
-    //           icon='jam:alert'
-    //         />
-    //       ),
-    //       disableAutoHide: true
-    //     })
-    //   }
-    //   await delayMs(1500)
-
-    //   setBadgeData({
-    //     message: '',
-    //     status: undefined,
-    //     icon: undefined,
-    //     open: false
-    //   })
-    // }
+    setBadgeData({
+      message: '',
+      status: undefined,
+      icon: undefined,
+      open: false
+    })
   }
 
   useEffect(() => {
@@ -231,19 +199,41 @@ const ActionsHeaderBound: React.FC<IActionsHeaderProps> = ({ accountStatus, side
     }
   }, [sideHeader])
 
-  const downloadDebitNoteButton = () => {
+  const downloadNotesButton = () => {
     if (ability?.can('downloadDebitNote', 'account')) {
-
       return (
-        <ButtonIcon onClick={handleDebitNote} disabled={uneditableAccount} title='DEBIT NOTE'>
-          <Icon icon='material-symbols:post-add' />
+        <ButtonIcon
+          onClick={() => setShowOptionsNotes(!showOptionsNotes)}
+          disabled={uneditableAccount}
+          title={textIconNotes()}
+        >
+          <div className='btn-icon'>
+            <Icon icon='material-symbols:post-add' />
+          </div>
+          {showOptionsNotes ? (
+            <div className='print-options'>
+              <div className='title'>Select a language</div>
+              {languages.map(language => {
+                return (
+                  <div
+                    key={language.id}
+                    className='language'
+                    onClick={() => {
+                      downloadNote(language.id)
+                    }}
+                  >
+                    {language.language}
+                  </div>
+                )
+              })}
+            </div>
+          ) : (
+            ''
+          )}
         </ButtonIcon>
       )
     }
   }
-
-  console.log("Este es el account: -> ", accountId);
-
 
   return (
     <>
@@ -260,9 +250,7 @@ const ActionsHeaderBound: React.FC<IActionsHeaderProps> = ({ accountStatus, side
                 <StatusSelect setSelectedStatus={setStatus} initialStatus={accountStatus || 'PENDING'} />
               </div>
             )}
-            <div className='header-btns'>
-              {downloadDebitNoteButton()}
-            </div>
+            <div className='header-btns'>{downloadNotesButton()}</div>
             {/* ESTE ES EL MODAL QUE SE DESPLIEGA CUANDO SE GENERA EL ENDORSEMENT*/}
             <ActionsHeaderBoundModal
               setOpenHistory={setOpenHistory}

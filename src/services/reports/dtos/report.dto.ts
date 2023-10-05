@@ -18,3 +18,9 @@ export interface ReportBodyDto {
 export interface DebitNoteParamsDto {
   idAccount: number
 }
+
+export interface IInputCreditNote {
+  idAccount: number
+  idSecurity: number
+  idLanguage: number
+}

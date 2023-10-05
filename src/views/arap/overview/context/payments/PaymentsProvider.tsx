@@ -3,6 +3,7 @@ import { getArapAllService } from '@/views/arap/overview/services/getArapAll'
 import { overviewPaymentsAdapter } from '@/views/arap/overview/services/getArapAll/frontAdapters/overviewPaymentsAdapter'
 import { overviewPaymentsAdapterQueries } from '@/views/arap/overview/services/getArapAll/frontAdapters/overviewPaymentsAdapterQueries'
 import { ReactNode, useRef, useState } from 'react'
+import { EFieldColumn } from '../../components/PaymentsTable/columns/efieldColumn'
 import { useMasterFiltersStorage } from '../../hooks/useMasterFiltersStorage'
 import { useOverviewPaymentsQueryFilters } from '../../hooks/useOverviewPaymentsQueryFilters'
 import { QueryFilters } from '../../interfaces/QueryFilters'
@@ -22,7 +23,7 @@ export const PaymentsProvider = ({ children }: { children: ReactNode }) => {
 
   const loadPaymentsGrid = async (queryFilters: QueryFilters) => {
     setIsLoading(true)
-
+    
     tempQueryFiltersRef.current = queryFilters
 
     const filters = overviewPaymentsAdapterQueries(queryFilters)
@@ -64,9 +65,28 @@ export const PaymentsProvider = ({ children }: { children: ReactNode }) => {
 
     let tempFilters: Filter[] = paymentsGrid?.filters || [];
     
-    tempFilters = paymentsGrid?.filters.filter(filterItem => filterItem.type !== filters.type) || []
+    tempFilters = paymentsGrid?.filters.filter(filterItem => filterItem.type !== filters.type) || [];
+
     tempFilters = [...tempFilters, filters];
     
+    // ? INIT INFO:
+    // ? Transaction ID y Transaction Type apuntan al mismo filtro : "transaction"
+    // ? si existe uno de ellos, se elimina el otro.
+
+    if (filters.type === EFieldColumn.TRANSACTION_TYPE) {
+       tempFilters = tempFilters.filter(filterItem => filterItem.type !== EFieldColumn.TRANSACTION);
+       delete tempQueryFiltersRef.current[EFieldColumn.TRANSACTION];
+       removeMasterFiltersSelector(EFieldColumn.TRANSACTION);
+    }
+
+    if (filters.type === EFieldColumn.TRANSACTION) {
+       tempFilters = tempFilters.filter(filterItem => filterItem.type !== EFieldColumn.TRANSACTION_TYPE);
+       
+       tempQueryFiltersRef.current[EFieldColumn.TRANSACTION_TYPE] = 'all'
+       removeMasterFiltersSelector(EFieldColumn.TRANSACTION_TYPE);
+    }
+    
+    // ? END INFO
 
     tempFiltersRef.current = [...tempFilters]
 
@@ -88,9 +108,9 @@ export const PaymentsProvider = ({ children }: { children: ReactNode }) => {
     const tempQueryFilters = tempQueryFiltersRef.current;
     const updateQueryFilters = tempQueryFilters ? { ...tempQueryFilters, [type]: '' } : undefined;
 
-    console.log(tempFilters)
-    console.log(tempQueryFilters)
-    console.log(updateQueryFilters)
+    // console.log(tempFilters)
+    // console.log(tempQueryFilters)
+    // console.log(updateQueryFilters)
 
     loadPaymentsGrid({
       ...updateQueryFilters,

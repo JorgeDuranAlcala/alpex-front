@@ -1,14 +1,16 @@
 export interface GetPayablesAllParamsToSend {
+  
+  // accountId?: number;
+  // currency?: string,
+
   date: string;
-  accountId?: number;
   capabilityId?: number;
-  capabilityName?: string;
-  currency?: string,
+  op0_30?: number;
+  op31_60?: number;
+  op61_90?: number;
+  op91_120?: number;
+  op120?: number;
   totalDebt?: number,
-  opc120?: number;
-  "0a30"?: number;
-  "31a60"?: number;
-  "61a90"?: number;
-  "91a120"?: number;
   paidPercent?: number;
+  page?: number;
 }
