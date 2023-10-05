@@ -1,3 +1,3 @@
-import { AdjusterDto } from 'src/services/dtos/adjuster.dto'
+import { AdjusterDto } from 'src/services/catalogs/dtos/adjuster.dto'
 
 export type IAdjuster = AdjusterDto
