@@ -8,6 +8,7 @@ import { useRouter } from 'next/router'
 const UpdateAdjuster = () => {
 
     const router = useRouter()
+
     const id = Number(router.query.id && router.query.id.toString()) as number;
   
     const { state } = React.useContext(CataloguesClaimsContext);
