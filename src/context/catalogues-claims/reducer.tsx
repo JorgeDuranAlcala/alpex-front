@@ -174,8 +174,8 @@ const CataloguesClaimsContextProvider = ({ children }: { children: ReactNode }) 
   );
 };
 
-const adjusterByIdSelector = (state: ICataloguesClaimsState, id: string) => state.adjusters.find(adj => adj.id == id);
-const expertByIdSelector = (state: ICataloguesClaimsState, id: string) => state.experts.find(exp => exp.id == id);
+const adjusterByIdSelector = (state: ICataloguesClaimsState, id: number) => state.adjusters.find(adj => adj.id === id);
+const expertByIdSelector = (state: ICataloguesClaimsState, id: number) => state.experts.find(exp => exp.id === id);
 
 export default CataloguesClaimsContextProvider;
 export { CataloguesClaimsContext, adjusterByIdSelector, expertByIdSelector };
