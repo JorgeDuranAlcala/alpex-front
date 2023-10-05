@@ -5,6 +5,7 @@ import { GRID_CHECKBOX_SELECTION_COL_DEF, GridColumns } from '@mui/x-data-grid'
 import ColumnHeader from './ColumnHeader'
 import { EFieldColumn } from './efieldColumn'
 
+import { DynamicTooltip } from '@/@core-custom/tooltips/DynamicTooltip'
 import { DetailsType } from '../../../interfaces/overview/DetailsType'
 import { PayableColumn } from '../../../interfaces/overview/PayableGrid'
 
@@ -42,19 +43,24 @@ export const columns: GridColumns<PayableColumn> = [
     flex: 0.1,
     field: EFieldColumn.CAPABILITY_NAME,
     headerName: 'CAPABILITY',
-    minWidth: 150,
+    minWidth: 280,
     type: 'string',
     align: 'left',
     disableColumnMenu: true,
     sortable: false,
     headerClassName: 'account-column-header',
     renderHeader: ({ colDef }) => (
-      <ColumnHeader colDef={colDef} type={EFieldColumn.CAPABILITY_NAME} detailsType={DETAILS_TYPE} />
+      <ColumnHeader colDef={colDef} type={EFieldColumn.CAPABILITY_NAME} detailsType={DETAILS_TYPE} filterType='reinsurer' />
     ),
     renderCell: ({ row }) => (
-      <Typography sx={{ color: colors.text.secondary, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
-        {row.capability_name}
-      </Typography>
+      <DynamicTooltip
+        name={row.capability_name}
+        sx={{
+          color: colors.text.secondary,
+          fontSize: fonts.size.px14,
+          fontFamily: fonts.inter
+        }}
+      />
     )
   },
   {
@@ -89,7 +95,7 @@ export const columns: GridColumns<PayableColumn> = [
     flex: 0.1,
     field: EFieldColumn.ACCOUNT,
     headerName: 'ACCOUNT',
-    minWidth: 180,
+    minWidth: 240,
     type: 'string',
     align: 'left',
     disableColumnMenu: true,
@@ -99,16 +105,21 @@ export const columns: GridColumns<PayableColumn> = [
       <ColumnHeader colDef={colDef} type={EFieldColumn.ACCOUNT} detailsType={DETAILS_TYPE} />
     ),
     renderCell: ({ row }) => (
-      <Typography sx={{ color: colors.text.secondary, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
-        {row.account}
-      </Typography>
+      <DynamicTooltip
+        name={row.account}
+        sx={{
+          color: colors.text.secondary,
+          fontSize: fonts.size.px14,
+          fontFamily: fonts.inter
+        }}
+      />
     )
   },
   {
     flex: 0.1,
     field: EFieldColumn.ORIGIN_ACCT,
     headerName: 'ORIGIN ACCT.',
-    minWidth: 150,
+    minWidth: 200,
     type: 'string',
     align: 'left',
     disableColumnMenu: true,
@@ -118,9 +129,14 @@ export const columns: GridColumns<PayableColumn> = [
       <ColumnHeader colDef={colDef} type={EFieldColumn.ORIGIN_ACCT} detailsType={DETAILS_TYPE} />
     ),
     renderCell: ({ row }) => (
-      <Typography sx={{ color: colors.text.secondary, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
-        {row.origin_acct}
-      </Typography>
+      <DynamicTooltip
+        name={row.origin_acct}
+        sx={{
+          color: colors.text.secondary,
+          fontSize: fonts.size.px14,
+          fontFamily: fonts.inter
+        }}
+      />
     )
   },
 
@@ -155,9 +171,14 @@ export const columns: GridColumns<PayableColumn> = [
     headerClassName: 'account-column-header',
     renderHeader: ({ colDef }) => <ColumnHeader colDef={colDef} type={EFieldColumn.USER} detailsType={DETAILS_TYPE} />,
     renderCell: ({ row }) => (
-      <Typography sx={{ color: colors.text.secondary, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
-        {row.user}
-      </Typography>
+      <DynamicTooltip
+        name={row.user}
+        sx={{
+          color: colors.text.secondary,
+          fontSize: fonts.size.px14,
+          fontFamily: fonts.inter
+        }}
+      />
     )
   }
 ]

@@ -31,7 +31,7 @@ import {
 } from 'src/styles/Forms/PaymentWarranty/paymentWarranty'
 
 //hooks
-import { useAddInstallments, useDeleteInstallments } from 'src/hooks/accounts/installments'
+import { useAddInstallments, useDeleteInstallments, useUpdateInstallments } from 'src/hooks/accounts/installments'
 import { useAppSelector } from 'src/store'
 import * as yup from 'yup'
 
@@ -47,6 +47,8 @@ import { useRouter } from 'next/router'
 import { NumericFormat } from 'react-number-format'
 import { InstallmentDto } from 'src/services/accounts/dtos/installments.dto'
 import { DisableForm } from './_commons/DisableForm'
+
+import { IS_DEMO } from 'src/utils/isDemo'
 
 interface InstallmentErrors {
   errorFieldRequired: boolean
@@ -99,6 +101,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
   const size = userThemeConfig.typography?.size.px14
   const texButtonColor = userThemeConfig.palette?.buttonText.primary
   const [installmentsList, setInstallmentList] = useState<InstallmentDto[]>([])
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [initialInstallmentList, setInitialInstallmentList] = useState<InstallmentDto[]>([])
 
   const [check, setCheck] = useState<boolean>(false)
@@ -119,8 +122,9 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
   const { addInstallments } = useAddInstallments()
   const accountData = useAppSelector(state => state.accounts)
   const idAccount = accountData?.formsData?.form1?.id
-  const { account, setAccountId } = useGetAccountById()
+  const { account, setAccountId, getInstallmentsByAccount } = useGetAccountById()
   const { deleteInstallments } = useDeleteInstallments()
+  const { updateInstallments } = useUpdateInstallments()
   const newAccount = account
   const lastIdAccount = useRef<number>(0)
 
@@ -263,9 +267,46 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
     }
   }
 
+  const mergeAndDeleteInstallments = async () => {
+    const installmentsInDB = await getInstallmentsByAccount(idAccount)
+    const uniqueIDs = [...new Set(installmentsInDB.map(ins => ins.id))]
+    const finalInstallments: InstallmentDto[] = installmentsList.map(installment => ({ ...installment }))
+    finalInstallments.forEach(obj => {
+      if (obj.id === 0 && uniqueIDs.length > 0) {
+        obj.id = Number(uniqueIDs.shift())
+      }
+    })
+    const uniqueInstallments = [...new Set(finalInstallments.map(({ id }) => id))]
+    const installmentToDelete = installmentsInDB.filter(({ id }) => !uniqueInstallments.includes(id))
+    if (installmentToDelete.length > 0) {
+      await deleteInstallments(installmentToDelete)
+    }
+
+    return finalInstallments
+  }
+
   const saveInstallments = async () => {
+    const toUpdate: InstallmentDto[] = []
+    const toSave: InstallmentDto[] = []
+
+    const installments = await mergeAndDeleteInstallments()
     setDisableSaveBtn(true)
     if (isChange) {
+      const installmentsInDB = await getInstallmentsByAccount(idAccount)
+      if (installmentsInDB.length > 0) {
+        for (const install of installments) {
+          const existsInstallment = installmentsInDB.some(({ id }) => id === install.id)
+          if (existsInstallment) {
+            toUpdate.push(install)
+          } else {
+            toSave.push(install)
+          }
+        }
+      } else {
+        const newInitialInstallments = await addInstallments(installments)
+        setInitialInstallmentList(newInitialInstallments)
+      }
+
       setBadgeData({
         message: `SAVING INSTALLMENTS`,
         status: 'secondary',
@@ -275,10 +316,21 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
         theme: 'info',
         disableAutoHide: true
       })
-      await deleteInstallments(initialInstallmentList)
-      const newInitialInstallments = await addInstallments(installmentsList)
+      const newInstallments: InstallmentDto[] = []
+      if (toSave.length > 0) {
+        const newInitialInstallments = await addInstallments(toSave)
+        newInstallments.push(...newInitialInstallments)
+      }
+
+      if (toUpdate.length > 0) {
+        const newInitialInstallments = await updateInstallments(toUpdate)
+        newInstallments.push(...newInitialInstallments)
+      }
+      setInitialInstallmentList(newInstallments)
+
+      // await deleteInstallments(initialInstallmentList)
+      // const newInitialInstallments = await addInstallments(installmentsList)
       setIsChange(false)
-      setInitialInstallmentList(newInitialInstallments)
 
       await delayMs(1000)
       setBadgeData({
@@ -361,7 +413,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
   }, [idAccount, setAccountId])
 
   useEffect(() => {
-    if (account && account.installments.length > 0) {
+    if (account && account.installments.length > 0) {     
       setCount(account.installments.length)
       const installments = [...account.installments]
       for (const item of installments) {
@@ -439,7 +491,7 @@ const PaymentWarranty: React.FC<InformationProps> = ({ onStepChange }) => {
                     thousandSeparator=','
                     customInput={TextField}
                     id='DynamicNetPremium'
-                    label='Dynamic net premium'
+                    label={`${!IS_DEMO ? 'Dynamic' : ''} net premium`}
                     multiline
                     variant='outlined'
                     value={account ? account?.securitiesTotal[0]?.receivedNetPremium : ' '}

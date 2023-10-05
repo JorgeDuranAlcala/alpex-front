@@ -99,6 +99,46 @@ export interface FormInfo extends BrokerFormInfo {
   hasFrontingFee: boolean
   isGross: boolean
 }
+export interface SecurityUpdateDto {
+  id: number
+  netPremiumAt100: number
+  share: number
+  shareAmount?: number
+  premiumPerShare?: number
+  premiumPerShareAmount?: number
+  frontingFeeActive: boolean
+  taxesActive?: boolean
+  dynamicCommission: number
+  dynamicCommissionAmount?: number
+  isChangeDynamicCommissionAmount?: boolean
+  frontingFee: number
+  frontingFeeAmount?: number
+  isChangeFrontingFeeAmount?: boolean
+  grossPremiumPerShare: number
+  netReinsurancePremium: number
+  taxes: number
+  taxesAmount?: number
+  isChangeTaxesAmount?: boolean
+  reinsuranceBrokerage: number
+  brokerAgeAmount?: number
+  isChangeBrokerAgeAmount?: boolean
+  receivedNetPremium: number
+  distributedNetPremium: number
+  difference: number
+  active: boolean
+  consecutive?: number | null
+  view?: number
+  activeView?: number
+  discounts: SecurityDiscountDto[] | []
+  idCReinsuranceCompany: ReinsuranceCompanyDto
+  idCReinsuranceCompanyBinder?: ReinsuranceCompanyBinderDto | null
+  idCRetroCedant: RetroCedantDto | null
+  idCRetroCedantContact: RetroCedantContactDto | null
+  idAccount: number
+  isGross?: boolean
+  recievedNetPremium?: number
+  totalAmountOfDiscounts?: number
+}
 
 interface BrokerFormInfo {
   BrokerAge: number

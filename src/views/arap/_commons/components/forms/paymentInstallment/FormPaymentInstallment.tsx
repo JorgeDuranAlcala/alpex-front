@@ -55,7 +55,7 @@ export const FormPaymentInstallment = () => {
               <InputDate
                 label='Settlement due date'
                 isDisabled={true}
-                value={installment.settlementDueDate}
+                value={installment.settlementDueDate.toISOString()}
                 onChange={() => null}
               />
             </Box>

@@ -16,9 +16,7 @@ import PayableTableHeader from './PayableTableHeader'
 // import { columns } from './columns/Columns';
 
 export const PayableTable = () => {
-  const { isLoading, payableGrid, onChangePage } = useContext(PayableContext)
-
-  console.log(isLoading)
+  const {  payableGrid, onChangePage } = useContext(PayableContext)
 
   return (
     <CardTableContainer>

@@ -1,4 +1,23 @@
-
+export interface ExpertDto {
+    id: number;
+    acronym: string;
+    businessName: string;
+    provider: 'Experto';
+    rfc: string;
+    street: string;
+    numExt: string;
+    numInt: string;
+    suburb: string;
+    municipality: string;
+    state: string;
+    zipCode: string;
+    phoneNumber: string;
+    mainContactEmail: string;
+    contactName: string;
+    claimsContact: string;
+    contractDate: null | string;
+    observations: null | string;
+}
 
 export interface ExpertsDeleteDto {
     idDeleteList: number[]

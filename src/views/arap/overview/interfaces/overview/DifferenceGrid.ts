@@ -11,8 +11,20 @@ export interface DifferenceColumn {
   capability_name: string;
   pmt_date: string;
   account: string;
-  origin_acct: number;
-  deposit_acct: number;
+  origin_acct: string;
+  deposit_acct: string;
   transactionId: string;
   user: string;
+}
+
+
+export interface ExtendedDifferenceQueryFilters {
+  amountReceived?: number;
+  broker?: string;
+  pmtDate?: string;
+  account?: string;
+  originAcct?: string;
+  depositAcc?: string;
+  transactionId?: string; //refId: INST0001
+  user?: string;
 }

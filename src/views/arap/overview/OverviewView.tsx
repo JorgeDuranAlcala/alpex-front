@@ -7,6 +7,8 @@ import { BalanceOfPayments } from "./components/BalanceOfPayments/BalanceOfPayme
 import { HeaderCard } from "./components/HeaderCard"
 import { MasterFilters } from "./components/MasterFilters/MasterFilters"
 import { PaymentsTable } from "./components/PaymentsTable/PaymentsTable"
+import { useCleanPaymentsStorage } from "./hooks/useCleanPaymentsStorage"
+
 
 const ViewContainer = styled(Box)(() => ({
   display: 'flex',
@@ -17,6 +19,8 @@ const ViewContainer = styled(Box)(() => ({
 }))
 
 export const OverviewView = () => {
+  useCleanPaymentsStorage();
+
   return (
     <PaymentsProvider>
       <MasterFiltersProvider>

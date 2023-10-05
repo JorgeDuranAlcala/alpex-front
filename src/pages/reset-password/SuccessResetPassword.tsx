@@ -10,6 +10,8 @@ import { Icon } from '@iconify/react'
 import { Button, Typography } from '@mui/material'
 import { useRouter } from 'next/router'
 
+import { IS_DEMO } from 'src/utils/isDemo'
+
 const SuccessResetPassword = () => {
   const router = useRouter()
 
@@ -33,7 +35,7 @@ const SuccessResetPassword = () => {
                 variant='body2'
                 sx={{ fontSize: '14px', color: 'rgba(77, 80, 98, 0.68)', letterSpacing: '0.15px' }}
               >
-                You can login with your new password and continue navigating the Alpex Platform. Remember to keep your
+                You can login with your new password and continue navigating the {!IS_DEMO ? "Alpex" : ""} Platform. Remember to keep your
                 new password safe and confidential.
               </Typography>
             </Description>

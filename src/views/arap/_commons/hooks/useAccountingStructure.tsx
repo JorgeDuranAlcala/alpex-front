@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { accounting_structure_mock } from '../../mocks/accounting_structure_mock'
+import { useContext, useState } from 'react'
+import { InsuredSelectorContext } from '../context/InsuredSelector/InsuredSelectorContext'
 import { AccountingStructure } from '../interfaces/AccountingStructure'
 
 const initial_accounting_structure: AccountingStructure = {
@@ -19,6 +19,10 @@ const initial_accounting_structure: AccountingStructure = {
 }
 
 export const useAccountingStructure = () => {
+
+  // ! implementación temporal, se espera obtener la data de un servicio separado
+  const {TEMP_accountingStructures} = useContext(InsuredSelectorContext);
+
   const [isLoading, setIsLoading] = useState(false)
 
   const [accountingStructure, setAccountingStructure] = useState<AccountingStructure>(initial_accounting_structure)
@@ -28,12 +32,19 @@ export const useAccountingStructure = () => {
 
     console.log(insuredId)
 
+    const accounting_structure = TEMP_accountingStructures.find((accountingStructure) => accountingStructure.insuredId === insuredId)
+
+    if (accounting_structure) {
+      setAccountingStructure(accounting_structure)
+    }
+    setIsLoading(false)
+
     // Todo: usar insuredId;
     // Todo: reemplazar este timeout por el servicio que se implementará
-    setTimeout(() => {
-      setAccountingStructure(accounting_structure_mock)
-      setIsLoading(false)
-    }, 1000)
+    // setTimeout(() => {
+    //   setAccountingStructure(accounting_structure_mock)
+    //   setIsLoading(false)
+    // }, 1000)
   }
 
   return {

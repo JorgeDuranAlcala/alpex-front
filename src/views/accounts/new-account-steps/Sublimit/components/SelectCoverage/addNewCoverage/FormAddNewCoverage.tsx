@@ -107,12 +107,12 @@ export const FormAddNewCoverage = ({ onCreated, onCancel, idAccount }: FormAddNe
       </ContainerCheckbox>
       <RadioGroup
         aria-labelledby="demo-radio-buttons-group-label"
-        defaultValue="Business Interruption"
+        defaultValue="Material Damage + BI"
         name="coverageType"
       >
+        <FormControlLabel value="Material Damage + BI" control={<Radio />} label="Material Damage + BI" />
         <FormControlLabel value="Business Interruption" control={<Radio />} label="Business Interruption" />
-        <FormControlLabel value="Standard" control={<Radio />} label="Standard" />
-        <FormControlLabel value="Special" control={<Radio />} label="Special" />
+        <FormControlLabel value="Material Damage" control={<Radio />} label="Material Damage" />
       </RadioGroup>
 
       {status.message ? (

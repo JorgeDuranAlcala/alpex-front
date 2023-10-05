@@ -26,8 +26,12 @@ import TableHeader from '../../TableHeader'
 
 // ** Custom utilities
 import useGetAllPagination from '@/hooks/catalogs/adjusters/useGetAllPagination'
+import { useDeleteAdjuster } from '@/hooks/catalogs/adjusters/useDelete'
+
 import colors from 'src/views/accounts/colors'
 import fonts from 'src/views/accounts/font'
+
+import toast from 'react-hot-toast'
 
 // adjuster
 
@@ -40,18 +44,21 @@ const AdjusterTable = () => {
 
   const [openDelete, setOpenDelete] = useState(false)
   const [openDeleteRows, setOpenDeleteRows] = useState(false)
-  const [adjusterToDelete, setAdjusterToDelete] = useState("0")
+  const [adjusterToDelete, setAdjusterToDelete] = useState(0)
 
   const { dispatch } = useContext(CataloguesClaimsContext);
 
   //hooks
   const {  
+    getAdjusterPagination,
     adjusterPagination,
     setAdjusterPagination,
     adjusters,
     adjusterInfoPage
    } = useGetAllPagination()
 
+
+  const { deleteAdjuster } = useDeleteAdjuster()   
 
 
   const router = useRouter()
@@ -115,7 +122,7 @@ const AdjusterTable = () => {
       ),
       renderCell: ({ row }) => (
         <Typography sx={{ color: colors.text.secondary, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
-          {row.siglas}
+          {row.businessName}
         </Typography>
       )
     },
@@ -141,7 +148,7 @@ const AdjusterTable = () => {
       ),
       renderCell: ({ row }) => (
         <Typography sx={{ color: colors.text.secondary, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
-          {row.razonSocial}
+          {row.acronym}
         </Typography>
       )
     },
@@ -167,7 +174,7 @@ const AdjusterTable = () => {
       ),
       renderCell: ({ row }) => (
         <Typography sx={{ color: colors.text.secondary, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
-          {row.estado}
+          {row.state}
         </Typography>
       )
     },
@@ -193,7 +200,7 @@ const AdjusterTable = () => {
       ),
       renderCell: ({ row }) => (
         <Typography sx={{ color: colors.text.secondary, fontSize: fonts.size.px14, fontFamily: fonts.inter }}>
-          {row.proveedor}
+          {row.provider}
         </Typography>
       )
     },
@@ -251,33 +258,39 @@ const AdjusterTable = () => {
     }
   ]
 
-  useEffect(() => {
-    setAdjusterPagination({ ...adjusterPagination })
-    //eslint-disable-next-line
-  }, [])
 
   useEffect(() => {
     setAdjusterList(adjusters || [])
   }, [adjusters])
 
 
-  const handleSelectEdit = (id: string | null) => {
+  const handleSelectEdit = (id: number | null) => {
     router.push({ pathname: '/catalogues/claims/update-adjusters', query: { id } })
   }
   
 
 
   const deleteRows = async () => {
+    Promise.all(selectedRows.map(async (id) => await deleteAdjuster(id)))
+    .then(() => {
+      getAdjusterPagination({ ...adjusterPagination})
+      toast.success("all rows deleted")
+    })
     setOpenDeleteRows(false)
   }
 
-  const openDeleteModal = (id: string) => {
+  const openDeleteModal = (id: number) => {
     setAdjusterToDelete(id)
     setOpenDelete(true)
   }
 
   const deleteSingleAdjuster = async () => {
-    
+    deleteAdjuster(adjusterToDelete)
+    .then(() => {
+      getAdjusterPagination({ ...adjusterPagination})
+      toast.success("Row deleted")
+    })
+    .catch(error => toast.error(error.message))
     dispatch({ type: CataloguesClaimsActionTypes.REMOVE_ADJUSTER, payload: {id: adjusterToDelete}});
     setOpenDelete(false)
   }
@@ -285,7 +298,7 @@ const AdjusterTable = () => {
   const handleDispatch = (e: any, value: number) => {
     setAdjusterPagination({
       ...adjusterPagination,
-      info: { ...adjusterPagination.info, page: value }
+      info: { ...adjusterInfoPage, page: value }
     })
   }
 
@@ -314,7 +327,7 @@ const AdjusterTable = () => {
             rows={adjusterList}
             columns={column}
             pagination
-            pageSize={10}
+            pageSize={adjusterInfoPage.take}
             components={{
               Pagination: CustomPagination
             }}
@@ -376,7 +389,7 @@ const AdjusterTable = () => {
               onClick={() => {
                 setOpenDeleteRows(false)
               }}
-            >
+            >k
               <CloseIcon />
             </ButtonClose>
           </HeaderTitleModal>

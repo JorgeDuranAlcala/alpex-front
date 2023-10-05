@@ -1,6 +1,7 @@
 import { ReactElement } from "react"
 import { receivableEFieldColumn } from "../receivableEFieldColumn"
 
+import FilterMenuBroker from "./FilterMenuBroker"
 import FilterMenuInputText from "./FilterMenuInputText"
 
 export interface IComponents {
@@ -17,11 +18,9 @@ export const ReceivableSwitcherFilterMenus = ({ field, handleClose }: IFilterMen
 
   const FilterMenuComponents: IComponents = {
     [receivableEFieldColumn.CAPABILITY_NAME]: (
-      <FilterMenuInputText
-        titleType="Linked Biz."
-        placeholder="Search by Linked Biz."
-        columnType={field}
-        handleClose={handleClose}
+      <FilterMenuBroker 
+        auxFilterText="Linked Biz." 
+        handleClose={handleClose} 
       />
     ),
     [receivableEFieldColumn.PERIOD_0_30]: (

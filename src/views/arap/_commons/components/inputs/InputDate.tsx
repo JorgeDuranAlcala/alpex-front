@@ -1,4 +1,5 @@
 import DatePickerWrapper from '@/@core/styles/libs/react-datepicker'
+import { getDateFromAmericanTemplate } from '@/utils/formatDates'
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
 import { Grid, InputAdornment, SxProps, TextField, Theme } from '@mui/material'
 import { ForwardedRef, forwardRef } from 'react'
@@ -16,7 +17,7 @@ export const InputDate = ({
     <Grid item xs={12} sm={12} sx={{ width: '100%' }}>
       <DatePickerWrapper className='information-datepicker'>
         <DatePicker
-          selected={new Date(value)}
+          selected={getDateFromAmericanTemplate(value.toString())}
           shouldCloseOnSelect
           id='date'
           customInput={<CustomInput label={label} sx={sx} />}

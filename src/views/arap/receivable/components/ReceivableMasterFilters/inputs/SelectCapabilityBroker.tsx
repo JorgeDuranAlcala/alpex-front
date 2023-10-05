@@ -1,27 +1,24 @@
-import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
+import { FormControl, InputLabel, MenuItem, Select } from '@mui/material'
 
-import { InputSelectProps } from '@/views/arap/_commons/interfaces/InputSelectProps';
-import { useGetAll as useBrokerGetAll } from 'src/hooks/catalogs/broker';
+import { InputSelectProps } from '@/views/arap/_commons/interfaces/InputSelectProps'
+import { useGetAll as useBrokerGetAll } from 'src/hooks/catalogs/broker'
 
 export const SelectCapabilityBroker = ({ selectedValue, onChange, isDisabled }: InputSelectProps) => {
-
-  const { brokers } = useBrokerGetAll();
+  const { brokers } = useBrokerGetAll()
 
   return (
-    <FormControl fullWidth sx={{ mb: 2, mt: 2 }} >
-      <InputLabel>Broker</InputLabel>
+    <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
+      <InputLabel>Capability</InputLabel>
 
       <Select
-        name='broker'
-        label='Select Broker'
+        name='capability'
+        label='Select Capability'
         value={selectedValue}
         onChange={onChange}
         labelId='broker'
         disabled={isDisabled}
       >
-        <MenuItem value="all">
-          ALL
-        </MenuItem>
+        <MenuItem value='all'>ALL</MenuItem>
         {brokers.length > 0 ? (
           brokers.map(broker => {
             return (
@@ -36,7 +33,6 @@ export const SelectCapabilityBroker = ({ selectedValue, onChange, isDisabled }: 
           </MenuItem>
         )}
       </Select>
-
     </FormControl>
   )
 }

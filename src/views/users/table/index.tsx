@@ -40,6 +40,8 @@ import { IAlert } from 'src/views/custom/alerts'
 import StyledChip from 'src/views/custom/chips/styledChips'
 import ModalAction from 'src/views/custom/modal'
 
+import { IS_DEMO } from 'src/utils/isDemo'
+
 interface IRolesUserGrid {
   id: number
   role: string
@@ -274,7 +276,7 @@ const Table = ({ handleView, setSelectUser }: IUsersTable) => {
             }}
           >
             <Link sx={{ color: colors.text.primary }} href='#'>
-              <StyledChip color='primary' sx={{}} label={row.idCompany?.name || 'W/ company'} />
+              <StyledChip color='primary' sx={{}} label={!IS_DEMO ? (row.idCompany?.name || 'W/ company') : "Rocket Code" } />
             </Link>
           </Box>
         </Box>

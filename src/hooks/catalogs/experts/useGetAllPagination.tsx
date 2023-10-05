@@ -1,6 +1,10 @@
 import { useEffect, useState, useContext } from 'react'
 import { ExpertsInfoDto, ExpertPaginationDto } from 'src/services/catalogs/dtos/expert.dto'
 import { CataloguesClaimsContext } from 'src/context/catalogues-claims/reducer'
+import CataloguesClaimsActionTypes from 'src/context/catalogues-claims/actionTypes';
+
+import ExpertService from 'src/services/catalogs/expert.service';
+
 
 const initialState: ExpertPaginationDto = {
   filters: [],
@@ -17,7 +21,7 @@ const initialState: ExpertPaginationDto = {
 const initialStateInfo: ExpertsInfoDto = {
   count: 0,
   page: 1,
-  take: 5,
+  take: 10,
   pages: 0,
   next: '',
   prev: ''
@@ -26,15 +30,30 @@ const initialStateInfo: ExpertsInfoDto = {
 
 const useGetAllPagination = () => {
   const [expertPagination, setExpertPagination] = useState(initialState)
-  const { state: { experts } } = useContext(CataloguesClaimsContext);
+  const { state: { experts }, dispatch } = useContext(CataloguesClaimsContext);
   const [expertInfoPage, setExpertInfoPage] = useState(initialStateInfo);
 
 
+  const getExpertsPagination = async (expertPagination: ExpertPaginationDto) => {
+    try {
+      const expsCount = await ExpertService.getAll();
+      const fetched = await ExpertService.getExpertsPagination(expertPagination)
+      dispatch({ type: CataloguesClaimsActionTypes.SET_MANY_EXPERT, payload: fetched })
+      const pages = Math.ceil(expsCount.length / expertPagination.info.take)
+      setExpertInfoPage({ ...expertPagination.info, count: expsCount.length, pages })
+    } catch (err) {
+      if(!(err instanceof Error)) return;
+      console.log("error", err)
+      throw err
+    }
+  }
+
   useEffect(() => {
-    setExpertInfoPage(initialStateInfo)
-  }, [])
+    expertPagination && getExpertsPagination(expertPagination)
+  }, [expertPagination])
 
   return {
+    getExpertsPagination,
     expertPagination,
     setExpertPagination,
     experts,

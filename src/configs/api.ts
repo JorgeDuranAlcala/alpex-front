@@ -305,7 +305,9 @@ export enum BOURDEROU_ROUTES {
 }
 
 export enum REPORTS_ROUTES {
-  DOWNLOAD = 'reports/allAccounts'
+  DOWNLOAD = 'reports/allAccounts',
+  DOWNLOAD_DEBIT_NOTE = 'reports/debit-note',
+  DOWNLOAD_CREDIT_NOTE = 'reports/credit-note'
 }
 
 export enum DEBIT_NOTE_ROUTES {
@@ -339,4 +341,36 @@ export enum DOCUMENTS_ROUTES {
   DELETEFOLDER = 'documents/delete/folder',
   UPLOADFILE = 'documents/upload',
   CREATEFOLDER = 'documents/create/folder'
+}
+
+// ==== BANK
+
+export enum BANK_ROUTES {
+  GET = '/catalogs/bank-accounts/all',
+  GET_BY_ID = '',
+  ADD = '/catalogs/bank-accounts/add',
+  UPDATE = '/catalogs/bank-accounts/update',
+  DELETE_BY_ID = '/catalogs/bank-accounts/delete'
+}
+
+
+
+// ==== ADJUSTER
+
+export enum CLAIMS_ROUTES {
+  GET = '/catalogs/claims/by-provider/all',
+  ADD = '/catalogs/claims/add',
+  UPDATE = '/catalogs/claims/update',
+  DELETE_BY_ID = '/catalogs/claims/delete',
+  GET_BY_ID = '',
+}
+
+// ==== EXPERT
+
+export enum EXPERT_ROUTES {
+  GET = '',
+  GET_BY_ID = '',
+  ADD = '',
+  UPDATE = '',
+  DELETE_BY_ID = ''
 }
